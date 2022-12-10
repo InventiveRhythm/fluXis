@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "fluXis.sln",
+    "projects": [
+      "fluXis.Game\\fluXis.Game.csproj",
+      "fluXis.Resources\\fluXis.Resources.csproj",
+      "fluXis.iOS\\fluXis.iOS.csproj"
+    ]
+  }
+}
