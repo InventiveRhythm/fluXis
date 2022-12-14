@@ -27,12 +27,13 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     RelativeSizeAxes = Axes.Y,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = new Colour4(0, 0, 0, .4f)
+                    Colour = new Colour4(0, 0, 0, .4f),
+                    Width = Receptor.SIZE.X * 4 + lane_margin * 2
                 },
                 borderLeft = new Box
                 {
                     RelativeSizeAxes = Axes.Y,
-                    Height = 0f,
+                    Height = 1f,
                     Width = 5,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopRight,
@@ -42,7 +43,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 borderRight = new Box
                 {
                     RelativeSizeAxes = Axes.Y,
-                    Height = 0f,
+                    Height = 1f,
                     Width = 5,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomLeft,
@@ -50,32 +51,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     X = Receptor.SIZE.X * 2 + lane_margin
                 }
             });
-        }
-
-        protected override void LoadComplete()
-        {
-            const float duration = 800f;
-
-            background.ResizeWidthTo(0).ResizeWidthTo(Receptor.SIZE.X * 4 + lane_margin * 2, duration, Easing.OutQuint);
-            borderLeft.ResizeHeightTo(0).ResizeHeightTo(1f, duration, Easing.OutQuint);
-            borderRight.ResizeHeightTo(0).ResizeHeightTo(1f, duration, Easing.OutQuint);
-
-            base.LoadComplete();
-        }
-
-        public void OnExit()
-        {
-            const float duration = 800f;
-
-            borderLeft.Anchor = Anchor.BottomCentre;
-            borderLeft.Origin = Anchor.BottomLeft;
-            borderLeft.ResizeHeightTo(0f, duration, Easing.OutQuint);
-
-            borderRight.Anchor = Anchor.TopCentre;
-            borderRight.Origin = Anchor.TopRight;
-            borderRight.ResizeHeightTo(0f, duration, Easing.OutQuint);
-
-            background.ResizeWidthTo(0, duration, Easing.OutQuint);
         }
     }
 }

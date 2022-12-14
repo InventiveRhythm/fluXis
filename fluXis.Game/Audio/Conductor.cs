@@ -1,32 +1,65 @@
+using fluXis.Game.Map;
+using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
-using osu.Framework.Timing;
+using osu.Framework.Bindables;
+using osu.Framework.Graphics;
+using osu.Framework.IO.Stores;
+using osu.Framework.Platform;
 
 namespace fluXis.Game.Audio
 {
-    public class Conductor
+    public class Conductor : Component
     {
+        private static MapStore mapStore;
+        private static ITrackStore trackStore;
         private static Track track;
-        public static int Time;
+        public static int CurrentTime;
+        public static int Offset = 0;
 
-        public static void Update(FrameTimeInfo time)
+        public static float Speed
         {
-            if (Time < 0)
+            get => instance.untweenedSpeed;
+            set => SetSpeed(value);
+        }
+
+        private const float max_speed = 2.0f;
+        private const float min_speed = 0.5f;
+
+        private static readonly BindableNumber<double> bind_speed = new BindableDouble(1);
+        private static Conductor instance;
+        private float speed = 1;
+        private float untweenedSpeed = 1;
+
+        [BackgroundDependencyLoader]
+        private void load(MapStore mapStore, AudioManager audioManager, Storage storage)
+        {
+            instance = this;
+            Conductor.mapStore = mapStore;
+            trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage));
+        }
+
+        protected override void Update()
+        {
+            bind_speed.Value = speed;
+
+            if (CurrentTime < 0)
             {
-                Time += (int)time.Elapsed;
+                CurrentTime += (int)Time.Elapsed;
                 return;
             }
 
             if (track != null)
             {
-                Time = (int)track.CurrentTime;
+                CurrentTime = (int)track.CurrentTime + Offset;
             }
             else
             {
-                Time += (int)time.Elapsed;
+                CurrentTime += (int)Time.Elapsed + Offset;
             }
         }
 
-        public static void PlayTrack(ITrackStore store, string path, bool start = false, int time = 0)
+        public static void PlayTrack(MapInfo info, bool start = false, int time = 0)
         {
             if (track != null)
             {
@@ -34,7 +67,8 @@ namespace fluXis.Game.Audio
                 track.Dispose();
             }
 
-            track = store.Get(path);
+            track = trackStore.Get(mapStore.GetMapAudioPath(info)) ?? trackStore.GetVirtual();
+            track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
 
             if (start)
                 track.Start();
@@ -50,6 +84,22 @@ namespace fluXis.Game.Audio
         public static void ResumeTrack()
         {
             track?.Start();
+        }
+
+        public static void SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint)
+        {
+            if (newSpeed > max_speed)
+                newSpeed = max_speed;
+            else if (newSpeed < min_speed)
+                newSpeed = min_speed;
+
+            instance.untweenedSpeed = newSpeed;
+            instance.TransformTo(nameof(speed), newSpeed, duration, ease);
+        }
+
+        public static void AddSpeed(float addSpeed, int duration = 400, Easing ease = Easing.OutQuint)
+        {
+            SetSpeed(instance.untweenedSpeed + addSpeed, duration, ease);
         }
     }
 }

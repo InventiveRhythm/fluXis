@@ -3,6 +3,7 @@ using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
 {
@@ -46,7 +47,12 @@ namespace fluXis.Game.Screens.Gameplay.HUD
 
             text.Text = judgement.Key.ToString();
             text.Colour = judgement.Color;
-            text.RotateTo(rotation).ScaleTo(1f).ScaleTo(scale, 1000, Easing.OutBack).FadeOutFromOne(500);
+            text.RotateTo(rotation)
+                .ScaleTo(1f)
+                .TransformSpacingTo(new Vector2(0, 0))
+                .ScaleTo(scale, 1000, Easing.OutQuint)
+                .FadeOutFromOne(500)
+                .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint);
         }
     }
 }

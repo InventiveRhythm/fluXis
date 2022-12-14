@@ -33,7 +33,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD
 
         protected override void LoadComplete()
         {
-            accuracyText.FadeOut().Then(1000).FadeInFromZero(800);
+            accuracyText.FadeOut().Then(500).FadeInFromZero(250);
 
             base.LoadComplete();
         }

@@ -1,7 +1,8 @@
+using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring;
-using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Result.UI;
+using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -83,26 +84,28 @@ namespace fluXis.Game.Screens.Result
                 int count = performance.Judgements.ContainsKey(jud.Key) ? performance.Judgements[jud.Key] : 0;
                 judgements.Add(new ResultJudgement(jud, count, i, Judgement.LIST.Length));
             }
+
+            Discord.Update("Viewing Results", "", "results");
         }
 
         protected override void LoadComplete()
         {
             metadataLine.ResizeTo(new Vector2(5, 0))
-                        .ResizeTo(new Vector2(5, 120), 1000, Easing.OutQuint);
+                        .ResizeTo(new Vector2(5, 120), 250, Easing.OutQuint);
 
             songTitle.MoveTo(new Vector2(15, -20))
-                     .FadeInFromZero(1000)
-                     .MoveTo(new Vector2(15, 0), 1000, Easing.OutQuint);
+                     .FadeInFromZero(250)
+                     .MoveTo(new Vector2(15, 0), 250, Easing.OutQuint);
 
             songArtist.MoveTo(new Vector2(15, 56 - 20))
-                      .Then(200)
-                      .FadeInFromZero(1000)
-                      .MoveTo(new Vector2(15, 56), 1000, Easing.OutQuint);
+                      .Then(250)
+                      .FadeInFromZero(250)
+                      .MoveTo(new Vector2(15, 56), 250, Easing.OutQuint);
 
             songDiffMapper.MoveTo(new Vector2(15, 82 - 20))
-                          .Then(400)
-                          .FadeInFromZero(1000)
-                          .MoveTo(new Vector2(15, 82), 1000, Easing.OutQuint);
+                          .Then(500)
+                          .FadeInFromZero(250)
+                          .MoveTo(new Vector2(15, 82), 250, Easing.OutQuint);
 
             base.LoadComplete();
         }
@@ -110,13 +113,13 @@ namespace fluXis.Game.Screens.Result
         protected override bool OnKeyDown(KeyDownEvent e)
         {
             if (e.Key == Key.Escape)
-                this.Push(new GameplayScreen());
+                this.Push(new SelectScreen());
             return base.OnKeyDown(e);
         }
 
         public override void OnSuspending(ScreenTransitionEvent e)
         {
-            this.FadeOutFromOne(500f);
+            this.FadeOutFromOne(250);
         }
     }
 }

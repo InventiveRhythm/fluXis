@@ -1,13 +1,12 @@
-﻿using System.IO;
-using fluXis.Game.Map;
+﻿using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
+using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
@@ -20,18 +19,24 @@ namespace fluXis.Game.Screens.Gameplay
 {
     public class GameplayScreen : Screen
     {
-        private Playfield playfield { get; set; }
         private bool starting = true;
         private bool ended;
+        private bool restarting = false;
 
         public GameplayInput Input;
         public Performance Performance;
         public MapInfo Map;
         public JudgementDisplay JudgementDisplay;
+        public Playfield Playfield { get; private set; }
 
         public Sample HitSound;
         public Sample Combobreak;
         public Sample Restart;
+
+        public GameplayScreen(MapInfo map)
+        {
+            Map = map;
+        }
 
         [BackgroundDependencyLoader]
         private void load(ITrackStore tracks, ISampleStore samples)
@@ -51,7 +56,7 @@ namespace fluXis.Game.Screens.Gameplay
 
             InternalChildren = new Drawable[]
             {
-                playfield = new Playfield(this),
+                Playfield = new Playfield(this),
                 new PauseMenu(this)
             };
 
@@ -59,25 +64,32 @@ namespace fluXis.Game.Screens.Gameplay
             AddInternal(new AccuracyDisplay(this));
             AddInternal(new Progressbar(this));
             AddInternal(JudgementDisplay = new JudgementDisplay(this));
+            AddInternal(new AutoPlayDisplay(this));
 
-            Map = JsonConvert.DeserializeObject<MapInfo>(File.ReadAllText("C:/Users/Flux/AppData/Roaming/fluXis/maps/polkamania/hyper.fsc"));
-
-            playfield.LoadMap(Map);
+            Playfield.LoadMap(Map);
             Performance.SetMapInfo(Map);
+            Conductor.CurrentTime = -100000; // should be enough to load the map right?
+            Conductor.PlayTrack(Map);
 
-            Conductor.PlayTrack(tracks, "audio.ogg");
-            Conductor.Time = -3000;
+            Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (Map.EndTime - Conductor.CurrentTime) / 1000);
+        }
+
+        protected override void LoadComplete()
+        {
+            Conductor.CurrentTime = -1000;
+
+            base.LoadComplete();
         }
 
         protected override void Update()
         {
-            if (Conductor.Time >= 0 && starting)
+            if (Conductor.CurrentTime >= 0 && starting)
             {
                 starting = false;
                 Conductor.ResumeTrack();
             }
 
-            if (!starting && playfield.Manager.IsFinished)
+            if (!starting && Playfield.Manager.IsFinished)
             {
                 End();
             }
@@ -102,10 +114,20 @@ namespace fluXis.Game.Screens.Gameplay
             fadeOut();
         }
 
+        public override void OnEntering(ScreenTransitionEvent e)
+        {
+            Alpha = 0;
+            this.ScaleTo(1.2f)
+                .ScaleTo(1f, 750, Easing.OutQuint)
+                .Delay(250)
+                .FadeIn(250);
+
+            base.OnEntering(e);
+        }
+
         private void fadeOut()
         {
-            playfield.OnExit();
-            this.FadeOut(800);
+            this.FadeOut(restarting ? 0 : 250);
         }
 
         protected override bool OnKeyDown(KeyDownEvent e)
@@ -117,9 +139,25 @@ namespace fluXis.Game.Screens.Gameplay
 
             if (e.Key == Key.ShiftLeft)
             {
+                restarting = true;
                 Restart.Play();
-                Conductor.Time = 0;
-                this.Push(new GameplayScreen());
+                this.Push(new GameplayScreen(Map));
+            }
+
+            if (e.Key == Key.F1)
+            {
+                Playfield.Manager.AutoPlay.Value = !Playfield.Manager.AutoPlay.Value;
+            }
+
+            switch (e.Key)
+            {
+                case Key.Left:
+                    Conductor.AddSpeed(-.1f);
+                    break;
+
+                case Key.Right:
+                    Conductor.AddSpeed(.1f);
+                    break;
             }
 
             return base.OnKeyDown(e);

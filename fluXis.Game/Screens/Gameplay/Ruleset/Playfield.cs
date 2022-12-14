@@ -37,14 +37,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             AddInternal(Manager = new HitObjectManager(this));
         }
 
-        public void OnExit()
-        {
-            foreach (var receptor in Receptors)
-                receptor.OnExit();
-
-            Stage.OnExit();
-        }
-
         public void LoadMap(MapInfo map)
         {
             Manager.LoadMap(map);

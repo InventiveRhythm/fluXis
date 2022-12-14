@@ -5,6 +5,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.Input;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -13,14 +14,16 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
     public class HitObjectManager : CompositeDrawable
     {
+        public float ScrollSpeed => 3.5f / Conductor.Speed;
         public Playfield Playfield { get; }
         public Performance Performance { get; }
+        public MapInfo Map { get; set; }
         public List<HitObject> FutureHitObjects { get; } = new List<HitObject>();
         public List<HitObject> HitObjects { get; } = new List<HitObject>();
 
         public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
 
-        private const bool auto_play = false;
+        public Bindable<bool> AutoPlay = new Bindable<bool>();
 
         public HitObjectManager(Playfield playfield)
         {
@@ -37,12 +40,12 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         protected override void Update()
         {
-            if (auto_play)
+            if (AutoPlay.Value)
                 updateAutoPlay();
             else
                 updateInput();
 
-            while (FutureHitObjects != null && FutureHitObjects.Count > 0 && FutureHitObjects[0].Data.Time <= Conductor.Time + 2000 * HitObject.ScrollSpeed)
+            while (FutureHitObjects != null && FutureHitObjects.Count > 0 && FutureHitObjects[0].Data.Time <= Conductor.CurrentTime + 2000 * ScrollSpeed)
             {
                 HitObject hitObject = FutureHitObjects[0];
                 FutureHitObjects.RemoveAt(0);
@@ -60,12 +63,14 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 }
             }
 
+            // Logger.Log($"Current scroll speed: {ScrollSpeed} || {Conductor.CurrentTime}");
+
             base.Update();
         }
 
         private void updateAutoPlay()
         {
-            List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Conductor.Time && h.Exists).ToList();
+            List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Conductor.CurrentTime && h.Exists).ToList();
 
             foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
             {
@@ -77,7 +82,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             {
                 hitObject.IsBeingHeld = true;
 
-                if (hitObject.Data.HoldEndTime <= Conductor.Time)
+                if (hitObject.Data.HoldEndTime <= Conductor.CurrentTime)
                 {
                     Playfield.Screen.HitSound.Play();
                     hit(hitObject, true);
@@ -153,7 +158,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         private void hit(HitObject hitObject, bool isHoldEnd)
         {
-            int diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.Time : hitObject.Data.Time - Conductor.Time;
+            int diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.CurrentTime : hitObject.Data.Time - Conductor.CurrentTime;
             hitObject.GotHit = true;
             judmentDisplay(diff);
 
@@ -188,6 +193,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         public void LoadMap(MapInfo map)
         {
+            Map = map;
             map.Sort();
 
             foreach (var hit in map.HitObjects)
@@ -195,6 +201,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 HitObject hitObject = new HitObject(this, hit);
                 FutureHitObjects.Add(hitObject);
             }
+
+            // Conductor.Offset = map.HitObjects[0].Time - map.TimingPoints[0].Time;
         }
     }
 }

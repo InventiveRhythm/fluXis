@@ -8,6 +8,8 @@ namespace fluXis.Game.Graphics.Toolbar
 {
     public class Toolbar : Container
     {
+        private bool visible = true;
+
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -23,6 +25,18 @@ namespace fluXis.Game.Graphics.Toolbar
                 },
                 new ToolbarProfile()
             };
+
+            Toggle();
+        }
+
+        public void Toggle()
+        {
+            visible = !visible;
+
+            if (!visible)
+                this.MoveToY(-Height, 500, Easing.OutQuint);
+            else
+                this.MoveToY(0, 500, Easing.OutQuint);
         }
     }
 }

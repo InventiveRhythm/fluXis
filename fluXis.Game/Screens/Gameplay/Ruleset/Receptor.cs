@@ -53,34 +53,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             };
         }
 
-        protected override void LoadComplete()
-        {
-            const float duration = 500f;
-            const float delay = 80f;
-
-            this.RotateTo(7)
-                .MoveToY(Y + 100)
-                .FadeOut()
-                .Then(delay * id)
-                .RotateTo(0, duration, Easing.OutCubic)
-                .MoveToY(Y - 100, duration, Easing.OutCubic)
-                .FadeInFromZero(duration);
-
-            base.LoadComplete();
-        }
-
-        public void OnExit()
-        {
-            const float duration = 500f;
-            const float delay = 80f;
-
-            this.RotateTo(0)
-                .Then(delay * id)
-                .RotateTo(-7, duration, Easing.InCubic)
-                .MoveToY(Y - 100, duration, Easing.InCubic)
-                .FadeOutFromOne(duration);
-        }
-
         protected override void Update()
         {
             if (Playfield.Screen.Input.Pressed[id])

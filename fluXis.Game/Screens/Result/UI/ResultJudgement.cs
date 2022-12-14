@@ -71,9 +71,9 @@ namespace fluXis.Game.Screens.Result.UI
 
             this.FadeTo(0)
                 .MoveToX(200)
-                .Then(id * 150)
-                .MoveToX(0, 600, Easing.OutQuint)
-                .FadeInFromZero(600);
+                .Then(id * 100)
+                .MoveToX(0, 250, Easing.OutQuint)
+                .FadeInFromZero(250);
         }
     }
 }

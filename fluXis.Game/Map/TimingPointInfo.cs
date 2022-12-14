@@ -13,3 +13,4 @@ namespace fluXis.Game.Map
         Triple = 3
     }
 }
+    
