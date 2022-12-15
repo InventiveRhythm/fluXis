@@ -16,13 +16,13 @@ namespace fluXis.Game.Screens.Select.UI
     {
         private readonly SelectScreen screen;
         private readonly MapInfo map;
+        private int index;
 
-        private Box background;
-
-        public MapListEntry(SelectScreen screen, MapInfo map)
+        public MapListEntry(SelectScreen screen, MapInfo map, int index)
         {
             this.screen = screen;
             this.map = map;
+            this.index = index;
         }
 
         [BackgroundDependencyLoader]
@@ -84,6 +84,18 @@ namespace fluXis.Game.Screens.Select.UI
             screen.Push(new GameplayScreen(map));
 
             return base.OnClick(e);
+        }
+
+        protected override void LoadComplete()
+        {
+            const float duration = 200;
+            const float delay = 50;
+
+            this.FadeOut()
+                .Delay(delay * index)
+                .FadeIn(duration);
+
+            base.LoadComplete();
         }
 
         protected override bool OnHover(HoverEvent e)

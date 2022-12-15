@@ -3,8 +3,6 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select
@@ -18,19 +16,17 @@ namespace fluXis.Game.Screens.Select
         {
             Backgrounds = background;
 
-            FillFlowContainer list;
-            AddInternal(list = new FillFlowContainer
-            {
-                Direction = FillDirection.Vertical,
-                RelativeSizeAxes = Axes.Both,
-                Width = .5f,
-                Masking = true,
-                Padding = new MarginPadding(10),
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopRight,
-            });
+            MapList list;
+            AddInternal(list = new MapList());
 
-            foreach (var map in maps.GetMaps()) list.Add(new MapListEntry(this, map));
+            int i = 0;
+
+            foreach (var map in maps.GetMaps())
+            {
+                list.AddMap(this, map, i);
+                i++;
+            }
+
             Backgrounds.AddBackgroundFromMap(maps.GetMaps().First());
         }
     }
