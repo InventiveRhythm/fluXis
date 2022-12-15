@@ -10,7 +10,7 @@ namespace fluXis.Game.Map
 {
     public class MapStore
     {
-        private static readonly List<MapInfo> maps = new List<MapInfo>();
+        private static readonly List<MapSet> mapsets = new List<MapSet>();
         private static Storage storage;
 
         public void LoadMaps(Storage stor)
@@ -24,6 +24,8 @@ namespace fluXis.Game.Map
 
                 foreach (var dir in dirs)
                 {
+                    MapSet mapset = new MapSet(dir.Split(Path.DirectorySeparatorChar).Last());
+
                     try
                     {
                         var charts = storage.GetFiles(dir, "*.fsc");
@@ -37,13 +39,16 @@ namespace fluXis.Game.Map
                             Logger.Log($"Loaded map {map.ID} from {map.MapsetID}");
 
                             if (map.Validate())
-                                maps.Add(map);
+                                mapset.AddMap(map);
                         }
                     }
                     catch (Exception e)
                     {
                         Logger.Error(e, "Error loading map");
                     }
+
+                    if (mapset.Maps.Count > 0)
+                        mapsets.Add(mapset);
                 }
             }
             else
@@ -52,8 +57,14 @@ namespace fluXis.Game.Map
             }
         }
 
-        public List<MapInfo> GetMaps() => maps;
-        public MapInfo GetMap(string mapsetID, string mapID) => maps.Find(x => x.MapsetID == mapsetID && x.ID == mapID);
+        public List<MapSet> GetMapSets() => mapsets;
+
+        public MapInfo GetMap(string mapsetID, string mapID)
+        {
+            var mapset = mapsets.Find(x => x.ID == mapsetID);
+            return mapset?.Maps.Find(x => x.ID == mapID);
+        }
+
         public string GetMapAudioPath(MapInfo map) => storage.GetFullPath($"maps{Path.DirectorySeparatorChar}{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetAudioFile()}");
     }
 }

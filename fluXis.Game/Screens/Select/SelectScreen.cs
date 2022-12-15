@@ -21,13 +21,13 @@ namespace fluXis.Game.Screens.Select
 
             int i = 0;
 
-            foreach (var map in maps.GetMaps())
+            foreach (var set in maps.GetMapSets())
             {
-                list.AddMap(this, map, i);
+                list.AddMap(this, set.Maps.First(), i);
                 i++;
             }
 
-            Backgrounds.AddBackgroundFromMap(maps.GetMaps().First());
+            Backgrounds.AddBackgroundFromMap(maps.GetMapSets().First().Maps.First());
         }
     }
 }

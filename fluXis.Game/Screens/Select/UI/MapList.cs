@@ -16,6 +16,10 @@ namespace fluXis.Game.Screens.Select.UI
             RelativeSizeAxes = Axes.Both;
             Width = .5f;
             Padding = new MarginPadding(10);
+
+            Scrollbar.CornerRadius = 5;
+            Scrollbar.Width = 10;
+            Scrollbar.Colour = Colour4.White;
         }
 
         public void AddMap(SelectScreen screen, MapInfo map, int index)
