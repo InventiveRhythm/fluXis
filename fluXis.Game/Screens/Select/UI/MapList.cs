@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
@@ -13,9 +14,8 @@ namespace fluXis.Game.Screens.Select.UI
         {
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;
-            RelativeSizeAxes = Axes.X;
+            RelativeSizeAxes = Axes.Both;
             Width = .5f;
-            Height = 75;
             Masking = false;
             Padding = new MarginPadding(10);
 
@@ -30,6 +30,20 @@ namespace fluXis.Game.Screens.Select.UI
             entry.Y = Content.Children.Count > 0 ? Content.Children.Last().Y + Content.Children.Last().Height + 5 : 0;
             Content.Add(entry);
             return entry;
+        }
+
+        public void ScrollTo(MapListEntry entry)
+        {
+            var pos1 = GetChildPosInContent(entry);
+            var pos2 = GetChildPosInContent(entry, entry.DrawSize);
+
+            var min = Math.Min(pos1, pos2);
+            var max = Math.Max(pos1, pos2);
+
+            if (min < Current || (min > Current && entry.DrawSize[ScrollDim] > DisplayableContent))
+                ScrollTo(min);
+            else if (max > Current + DisplayableContent)
+                ScrollTo(max - DisplayableContent);
         }
     }
 }
