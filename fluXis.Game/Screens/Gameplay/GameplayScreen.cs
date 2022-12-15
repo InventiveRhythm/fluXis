@@ -4,6 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
+using fluXis.Game.Screens.Gameplay.HUD.Judgement;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
@@ -65,6 +66,7 @@ namespace fluXis.Game.Screens.Gameplay
             AddInternal(new Progressbar(this));
             AddInternal(JudgementDisplay = new JudgementDisplay(this));
             AddInternal(new AutoPlayDisplay(this));
+            AddInternal(new JudgementCounter(Performance));
 
             Playfield.LoadMap(Map);
             Performance.SetMapInfo(Map);

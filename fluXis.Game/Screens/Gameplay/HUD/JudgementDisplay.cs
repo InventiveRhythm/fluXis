@@ -33,7 +33,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD
             };
         }
 
-        public void PopUp(Judgement judgement)
+        public void PopUp(Scoring.Judgement judgement)
         {
             const int random_angle = 7;
             float scale = 1.4f;
