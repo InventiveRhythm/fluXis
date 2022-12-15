@@ -169,6 +169,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             {
                 hitObject.Kill(false);
                 HitObjects.Remove(hitObject);
+                RemoveInternal(hitObject, true);
             }
         }
 
@@ -182,6 +183,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
             hitObject.Kill(true);
             HitObjects.Remove(hitObject);
+            RemoveInternal(hitObject, true);
         }
 
         private void judmentDisplay(int diff)
