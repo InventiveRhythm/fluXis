@@ -29,7 +29,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
         protected override void Update()
         {
             int delta = position - Conductor.CurrentTime;
-            Y = -20 - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
+            Y = -60 - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
 
             base.Update();
         }
