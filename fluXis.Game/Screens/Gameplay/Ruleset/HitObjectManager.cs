@@ -53,14 +53,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 AddInternal(hitObject);
             }
 
-            foreach (var internalChild in InternalChildren)
+            foreach (var hitObject in HitObjects.Where(h => h.Missed && h.Exists).ToList())
             {
-                HitObject hitObject = (HitObject)internalChild;
-
-                if (hitObject.Missed && hitObject.Exists)
-                {
-                    miss(hitObject);
-                }
+                miss(hitObject);
             }
 
             // Logger.Log($"Current scroll speed: {ScrollSpeed} || {Conductor.CurrentTime}");
