@@ -10,7 +10,6 @@ using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
-using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -40,13 +39,10 @@ namespace fluXis.Game.Screens.Gameplay
         }
 
         [BackgroundDependencyLoader]
-        private void load(ITrackStore tracks, ISampleStore samples)
+        private void load(ISampleStore samples)
         {
             Input = new GameplayInput();
             Performance = new Performance();
-
-            tracks.Volume.Value = 0.1f;
-            samples.Volume.Value = 0.1f;
 
             HitSound = samples.Get("gameplay/hit.ogg");
             Combobreak = samples.Get("gameplay/combobreak.ogg");

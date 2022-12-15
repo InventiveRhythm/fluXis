@@ -1,27 +1,29 @@
-using System.IO;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
-using fluXis.Game.Screens.Gameplay;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select.UI
 {
     public class MapListEntry : Container
     {
         private readonly SelectScreen screen;
-        private readonly MapInfo map;
-        private int index;
+        private readonly MapSet mapset;
+        private readonly int index;
 
-        public MapListEntry(SelectScreen screen, MapInfo map, int index)
+        public bool Selected => screen?.MapSet == mapset;
+        private bool selected;
+
+        private Box dim;
+
+        public MapListEntry(SelectScreen screen, MapSet mapset, int index)
         {
             this.screen = screen;
-            this.map = map;
+            this.mapset = mapset;
             this.index = index;
         }
 
@@ -39,12 +41,12 @@ namespace fluXis.Game.Screens.Select.UI
                 new Sprite
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Texture = backgrounds.Get($"{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetBackgroundFile()}"),
+                    Texture = backgrounds.Get(mapset.GetBackgroundPath()),
                     FillMode = FillMode.Fill,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 },
-                new Box
+                dim = new Box
                 {
                     Name = "Background Dim",
                     RelativeSizeAxes = Axes.Both,
@@ -60,7 +62,7 @@ namespace fluXis.Game.Screens.Select.UI
                         new SpriteText
                         {
                             Font = new FontUsage("Quicksand", 32f, "SemiBold"),
-                            Text = map.Metadata.Title,
+                            Text = mapset.Title,
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
                             Y = -2
@@ -68,7 +70,7 @@ namespace fluXis.Game.Screens.Select.UI
                         new SpriteText
                         {
                             Font = new FontUsage("Quicksand", 28f),
-                            Text = map.Metadata.Artist,
+                            Text = mapset.Artist,
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
                             Y = 24
@@ -78,10 +80,34 @@ namespace fluXis.Game.Screens.Select.UI
             };
         }
 
+        protected override void Update()
+        {
+            if (Selected != selected)
+            {
+                if (Selected)
+                {
+                    dim.FadeOut(100);
+                }
+                else
+                {
+                    dim.FadeTo(.2f, 100);
+                }
+            }
+
+            selected = Selected;
+
+            base.Update();
+        }
+
         protected override bool OnClick(ClickEvent e)
         {
-            screen.Backgrounds.AddBackgroundFromMap(map);
-            screen.Push(new GameplayScreen(map));
+            if (Selected)
+            {
+            }
+            else
+            {
+                screen.SelectMapSet(mapset);
+            }
 
             return base.OnClick(e);
         }

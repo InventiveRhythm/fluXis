@@ -37,6 +37,7 @@ namespace fluXis.Game.Audio
             instance = this;
             Conductor.mapStore = mapStore;
             trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage));
+            audioManager.Volume.Value = 0.1f;
         }
 
         protected override void Update()
@@ -70,10 +71,10 @@ namespace fluXis.Game.Audio
             track = trackStore.Get(mapStore.GetMapAudioPath(info)) ?? trackStore.GetVirtual();
             track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
 
+            track.Seek(time);
+
             if (start)
                 track.Start();
-            else
-                track.Seek(time);
         }
 
         public static void PauseTrack()

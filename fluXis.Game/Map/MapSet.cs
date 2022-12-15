@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace fluXis.Game.Map
 {
@@ -29,6 +30,14 @@ namespace fluXis.Game.Map
             }
 
             Maps.Add(map);
+        }
+
+        public string GetBackgroundPath()
+        {
+            if (Maps.Count > 0)
+                return ID + Path.DirectorySeparatorChar + Maps[0].GetBackgroundFile();
+            else
+                return null;
         }
     }
 }

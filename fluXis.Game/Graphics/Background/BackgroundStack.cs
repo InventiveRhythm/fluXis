@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,7 +12,7 @@ namespace fluXis.Game.Graphics.Background
     {
         private readonly List<Background> scheduledBackgrounds = new List<Background>();
         private Container backgroundContainer;
-        private MapInfo currentMap;
+        private string currentBackground;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -55,10 +56,15 @@ namespace fluXis.Game.Graphics.Background
 
         public void AddBackgroundFromMap(MapInfo map)
         {
-            if (map == null || map == currentMap)
+            if (map == null)
                 return;
 
-            currentMap = map;
+            string path = map.ID + Path.DirectorySeparatorChar + map.GetBackgroundFile();
+
+            if (path == currentBackground)
+                return;
+
+            currentBackground = path;
             scheduledBackgrounds.Add(new Background(map));
         }
     }

@@ -11,10 +11,12 @@ namespace fluXis.Game.Screens.Select.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            Anchor = Anchor.TopRight;
-            Origin = Anchor.TopRight;
-            RelativeSizeAxes = Axes.Both;
+            Anchor = Anchor.CentreRight;
+            Origin = Anchor.CentreRight;
+            RelativeSizeAxes = Axes.X;
             Width = .5f;
+            Height = 75;
+            Masking = false;
             Padding = new MarginPadding(10);
 
             Scrollbar.CornerRadius = 5;
@@ -22,11 +24,12 @@ namespace fluXis.Game.Screens.Select.UI
             Scrollbar.Colour = Colour4.White;
         }
 
-        public void AddMap(SelectScreen screen, MapInfo map, int index)
+        public MapListEntry AddMap(SelectScreen screen, MapSet map, int index)
         {
             var entry = new MapListEntry(screen, map, index);
             entry.Y = Content.Children.Count > 0 ? Content.Children.Last().Y + Content.Children.Last().Height + 5 : 0;
             Content.Add(entry);
+            return entry;
         }
     }
 }
