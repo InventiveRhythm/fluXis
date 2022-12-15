@@ -27,7 +27,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     RelativeSizeAxes = Axes.Y,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = new Colour4(0, 0, 0, .4f),
+                    Colour = Colour4.Black,
+                    Alpha = 0.5f,
                     Width = Receptor.SIZE.X * 4 + lane_margin * 2
                 },
                 BorderLeft = new Box
@@ -37,7 +38,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Width = 5,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopRight,
-                    Colour = new Colour4(255, 255, 255, .4f),
+                    Colour = Colour4.White,
                     X = -(Receptor.SIZE.X * 2 + lane_margin)
                 },
                 BorderRight = new Box
@@ -47,7 +48,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Width = 5,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomLeft,
-                    Colour = new Colour4(255, 255, 255, .4f),
+                    Colour = Colour4.White,
                     X = Receptor.SIZE.X * 2 + lane_margin
                 }
             });
