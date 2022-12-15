@@ -4,13 +4,12 @@ namespace fluXis.Game.Map
     {
         public int Time;
         public int BPM;
-        public TimeSignature Signature;
-    }
+        public int Signature;
 
-    public enum TimeSignature
-    {
-        Quad = 4,
-        Triple = 3
+        public int GetMsPerBeat()
+        {
+            return 60000 / BPM;
+        }
     }
 }
-    
+

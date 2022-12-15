@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,6 +13,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public List<Receptor> Receptors = new List<Receptor>();
         public GameplayScreen Screen;
         public HitObjectManager Manager;
+        public TimingLineManager TimingLineManager;
         public Stage Stage;
 
         public Playfield(GameplayScreen screen)
@@ -34,12 +36,17 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 AddInternal(receptor);
             }
 
-            AddInternal(Manager = new HitObjectManager(this));
+            Manager = new HitObjectManager(this);
+            TimingLineManager = new TimingLineManager(Manager);
+
+            AddInternal(TimingLineManager);
+            AddInternal(Manager);
         }
 
         public void LoadMap(MapInfo map)
         {
             Manager.LoadMap(map);
+            TimingLineManager.CreateLines(map);
         }
     }
 }

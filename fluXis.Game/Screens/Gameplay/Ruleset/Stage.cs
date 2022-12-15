@@ -9,9 +9,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
     {
         private const int lane_margin = 20;
 
-        private Box background;
-        private Box borderLeft;
-        private Box borderRight;
+        public Box Background;
+        public Box BorderLeft;
+        public Box BorderRight;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -22,7 +22,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
             AddRangeInternal(new[]
             {
-                background = new Box
+                Background = new Box
                 {
                     RelativeSizeAxes = Axes.Y,
                     Anchor = Anchor.Centre,
@@ -30,7 +30,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Colour = new Colour4(0, 0, 0, .4f),
                     Width = Receptor.SIZE.X * 4 + lane_margin * 2
                 },
-                borderLeft = new Box
+                BorderLeft = new Box
                 {
                     RelativeSizeAxes = Axes.Y,
                     Height = 1f,
@@ -40,7 +40,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Colour = new Colour4(255, 255, 255, .4f),
                     X = -(Receptor.SIZE.X * 2 + lane_margin)
                 },
-                borderRight = new Box
+                BorderRight = new Box
                 {
                     RelativeSizeAxes = Axes.Y,
                     Height = 1f,
