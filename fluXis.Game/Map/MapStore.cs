@@ -55,6 +55,22 @@ namespace fluXis.Game.Map
             {
                 Logger.Log("No maps found.");
             }
+
+            mapsets.Sort((a, b) =>
+            {
+                string aTitle = a.Title.ToLower();
+                string bTitle = b.Title.ToLower();
+
+                if (aTitle == bTitle)
+                {
+                    string aArtist = a.Artist.ToLower();
+                    string bArtist = b.Artist.ToLower();
+
+                    return string.Compare(aArtist, bArtist, StringComparison.Ordinal);
+                }
+
+                return string.Compare(aTitle, bTitle, StringComparison.Ordinal);
+            });
         }
 
         public List<MapSet> GetMapSets() => mapsets;

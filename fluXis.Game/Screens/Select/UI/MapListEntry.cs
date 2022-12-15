@@ -6,23 +6,26 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.UI
 {
     public class MapListEntry : Container
     {
-        private readonly SelectScreen screen;
+        public readonly SelectScreen Screen;
         private readonly MapSet mapset;
         private readonly int index;
 
-        public bool Selected => screen?.MapSet == mapset;
-        private bool selected;
+        public bool Selected => Screen?.MapSet == mapset;
+        private bool selected = true; // so that the first mapset is selected by default
 
         private Box dim;
+        private Container difficultyContainer;
+        private FillFlowContainer<MapDifficultyEntry> difficultyFlow;
 
         public MapListEntry(SelectScreen screen, MapSet mapset, int index)
         {
-            this.screen = screen;
+            Screen = screen;
             this.mapset = mapset;
             this.index = index;
         }
@@ -31,53 +34,80 @@ namespace fluXis.Game.Screens.Select.UI
         private void load(BackgroundTextureStore backgrounds)
         {
             RelativeSizeAxes = Axes.X;
-            Height = 75;
-            Margin = new MarginPadding { Bottom = 5 };
-            CornerRadius = 10;
-            Masking = true;
+            AutoSizeAxes = Axes.Y;
 
             InternalChildren = new Drawable[]
             {
-                new Sprite
+                difficultyContainer = new Container
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Texture = backgrounds.Get(mapset.GetBackgroundPath()),
-                    FillMode = FillMode.Fill,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
-                },
-                dim = new Box
-                {
-                    Name = "Background Dim",
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.Black,
-                    Alpha = .2f
+                    Masking = true,
+                    RelativeSizeAxes = Axes.X,
+                    Y = 80,
+                    Child = difficultyFlow = new FillFlowContainer<MapDifficultyEntry>
+                    {
+                        Direction = FillDirection.Vertical,
+                        AutoSizeAxes = Axes.Y,
+                        RelativeSizeAxes = Axes.X,
+                        Spacing = new Vector2(0, 5),
+                        Masking = true
+                    },
                 },
                 new Container
                 {
-                    Padding = new MarginPadding(10),
-                    RelativeSizeAxes = Axes.Both,
-                    Children = new[]
+                    RelativeSizeAxes = Axes.X,
+                    Height = 75,
+                    CornerRadius = 10,
+                    Margin = new MarginPadding { Bottom = 5 },
+                    Masking = true,
+                    Children = new Drawable[]
                     {
-                        new SpriteText
+                        new Sprite
                         {
-                            Font = new FontUsage("Quicksand", 32f, "SemiBold"),
-                            Text = mapset.Title,
-                            Anchor = Anchor.TopLeft,
-                            Origin = Anchor.TopLeft,
-                            Y = -2
+                            RelativeSizeAxes = Axes.Both,
+                            Texture = backgrounds.Get(mapset.GetBackgroundPath()),
+                            FillMode = FillMode.Fill,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre
                         },
-                        new SpriteText
+                        dim = new Box
                         {
-                            Font = new FontUsage("Quicksand", 28f),
-                            Text = mapset.Artist,
-                            Anchor = Anchor.TopLeft,
-                            Origin = Anchor.TopLeft,
-                            Y = 24
+                            Name = "Background Dim",
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Colour4.Black,
+                            Alpha = .4f
+                        },
+                        new Container
+                        {
+                            Padding = new MarginPadding(10),
+                            RelativeSizeAxes = Axes.Both,
+                            Children = new[]
+                            {
+                                new SpriteText
+                                {
+                                    Font = new FontUsage("Quicksand", 32f, "SemiBold"),
+                                    Text = mapset.Title,
+                                    Anchor = Anchor.TopLeft,
+                                    Origin = Anchor.TopLeft,
+                                    Y = -2
+                                },
+                                new SpriteText
+                                {
+                                    Font = new FontUsage("Quicksand", 28f),
+                                    Text = mapset.Artist,
+                                    Anchor = Anchor.TopLeft,
+                                    Origin = Anchor.TopLeft,
+                                    Y = 24
+                                }
+                            }
                         }
                     }
                 }
             };
+
+            foreach (var map in mapset.Maps)
+            {
+                difficultyFlow.Add(new MapDifficultyEntry(this, map));
+            }
         }
 
         protected override void Update()
@@ -86,11 +116,13 @@ namespace fluXis.Game.Screens.Select.UI
             {
                 if (Selected)
                 {
-                    dim.FadeOut(100);
+                    dim.FadeTo(.2f, 100);
+                    difficultyContainer.ResizeHeightTo(difficultyFlow.Height, 200, Easing.OutQuint);
                 }
                 else
                 {
-                    dim.FadeTo(.2f, 100);
+                    dim.FadeTo(.4f, 100);
+                    difficultyContainer.ResizeHeightTo(0, 200, Easing.OutQuint);
                 }
             }
 
@@ -102,14 +134,10 @@ namespace fluXis.Game.Screens.Select.UI
         protected override bool OnClick(ClickEvent e)
         {
             if (Selected)
-            {
-            }
-            else
-            {
-                screen.SelectMapSet(mapset);
-            }
+                return false; // dont handle clicks when we already selected this mapset
 
-            return base.OnClick(e);
+            Screen.SelectMapSet(mapset);
+            return true;
         }
 
         protected override void LoadComplete()
@@ -126,11 +154,13 @@ namespace fluXis.Game.Screens.Select.UI
 
         protected override bool OnHover(HoverEvent e)
         {
+            dim.FadeTo(Selected ? .1f : .3f, 100);
             return base.OnHover(e);
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
+            dim.FadeTo(Selected ? .2f : .4f, 300);
             base.OnHoverLost(e);
         }
     }

@@ -12,8 +12,8 @@ namespace fluXis.Game.Screens.Select.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            Anchor = Anchor.CentreRight;
-            Origin = Anchor.CentreRight;
+            Anchor = Anchor.CentreLeft;
+            Origin = Anchor.CentreLeft;
             RelativeSizeAxes = Axes.Both;
             Width = .5f;
             Masking = false;
@@ -22,6 +22,8 @@ namespace fluXis.Game.Screens.Select.UI
             Scrollbar.CornerRadius = 5;
             Scrollbar.Width = 10;
             Scrollbar.Colour = Colour4.White;
+            Scrollbar.Anchor = Anchor.TopLeft;
+            Scrollbar.Origin = Anchor.TopLeft;
         }
 
         public MapListEntry AddMap(SelectScreen screen, MapSet map, int index)
@@ -30,6 +32,21 @@ namespace fluXis.Game.Screens.Select.UI
             entry.Y = Content.Children.Count > 0 ? Content.Children.Last().Y + Content.Children.Last().Height + 5 : 0;
             Content.Add(entry);
             return entry;
+        }
+
+        protected override void Update()
+        {
+            for (var i = 0; i < Content.Children.Count; i++)
+            {
+                var child = Content.Children[i];
+
+                if (i > 0)
+                    child.Y = Content.Children[i - 1].Y + Content.Children[i - 1].Height + 5;
+                else
+                    child.Y = 0;
+            }
+
+            base.Update();
         }
 
         public void ScrollTo(MapListEntry entry)
