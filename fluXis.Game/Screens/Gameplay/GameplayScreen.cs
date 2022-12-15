@@ -78,7 +78,7 @@ namespace fluXis.Game.Screens.Gameplay
 
         protected override void LoadComplete()
         {
-            Conductor.CurrentTime = -1000;
+            Conductor.CurrentTime = -2000;
 
             base.LoadComplete();
         }

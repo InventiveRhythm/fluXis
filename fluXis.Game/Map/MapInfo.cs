@@ -24,6 +24,22 @@ namespace fluXis.Game.Map
             TimingPoints = new List<TimingPointInfo>();
         }
 
+        public bool Validate()
+        {
+            if (HitObjects.Count == 0)
+                return false;
+            if (TimingPoints.Count == 0)
+                return false;
+
+            foreach (var hitObject in HitObjects)
+            {
+                if (hitObject.Lane > 4 || hitObject.Lane < 1)
+                    return false;
+            }
+
+            return true;
+        }
+
         public void Sort()
         {
             HitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));

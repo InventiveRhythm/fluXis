@@ -35,7 +35,9 @@ namespace fluXis.Game.Map
                             map.MapsetID = dirName;
                             map.ID = Path.GetFileNameWithoutExtension(chart);
                             Logger.Log($"Loaded map {map.ID} from {map.MapsetID}");
-                            maps.Add(map);
+
+                            if (map.Validate())
+                                maps.Add(map);
                         }
                     }
                     catch (Exception e)
