@@ -1,8 +1,8 @@
 ﻿using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Graphics.Toolbar;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Overlay;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -16,7 +16,7 @@ namespace fluXis.Game
     public class FluXisGame : FluXisGameBase
     {
         private ScreenStack screenStack;
-        private Toolbar toolbar;
+        private OnlineOverlay overlay;
 
         [Cached]
         private MapStore mapStore = new MapStore();
@@ -37,7 +37,7 @@ namespace fluXis.Game
             {
                 backgroundStack,
                 screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
-                toolbar = new Toolbar()
+                overlay = new OnlineOverlay()
             };
         }
 
@@ -54,7 +54,7 @@ namespace fluXis.Game
             switch (e.Key)
             {
                 case Key.Tab:
-                    toolbar.Toggle();
+                    overlay.ToggleVisibility();
                     return true;
             }
 
