@@ -114,15 +114,18 @@ namespace fluXis.Game.Screens.Select.UI
         {
             if (Selected != selected)
             {
+                // the more difficulties, the longer the animation
+                int duration = 200 * mapset.Maps.Count;
+
                 if (Selected)
                 {
                     dim.FadeTo(.2f, 100);
-                    difficultyContainer.ResizeHeightTo(difficultyFlow.Height, 200, Easing.OutQuint);
+                    difficultyContainer.ResizeHeightTo(difficultyFlow.Height, duration, Easing.OutQuint);
                 }
                 else
                 {
                     dim.FadeTo(.4f, 100);
-                    difficultyContainer.ResizeHeightTo(0, 200, Easing.OutQuint);
+                    difficultyContainer.ResizeHeightTo(0, duration, Easing.OutQuint);
                 }
             }
 

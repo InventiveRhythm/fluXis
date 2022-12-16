@@ -68,6 +68,7 @@ namespace fluXis.Game.Screens.Select.UI
 
         protected override bool OnClick(ClickEvent e)
         {
+            mapListEntry.Screen.MenuAccept.Play();
             mapListEntry.Screen.Backgrounds.AddBackgroundFromMap(map);
             mapListEntry.Screen.Push(new GameplayScreen(map));
 

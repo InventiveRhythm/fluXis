@@ -4,6 +4,7 @@ using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.UI
 {
@@ -18,12 +19,6 @@ namespace fluXis.Game.Screens.Select.UI
             Width = .5f;
             Masking = false;
             Padding = new MarginPadding(10);
-
-            Scrollbar.CornerRadius = 5;
-            Scrollbar.Width = 10;
-            Scrollbar.Colour = Colour4.White;
-            Scrollbar.Anchor = Anchor.TopLeft;
-            Scrollbar.Origin = Anchor.TopLeft;
         }
 
         public MapListEntry AddMap(SelectScreen screen, MapSet map, int index)
@@ -61,6 +56,32 @@ namespace fluXis.Game.Screens.Select.UI
                 ScrollTo(min);
             else if (max > Current + DisplayableContent)
                 ScrollTo(max - DisplayableContent);
+        }
+
+        protected override ScrollbarContainer CreateScrollbar(Direction direction) => new MapListScrollbar(direction);
+
+        protected class MapListScrollbar : ScrollbarContainer
+        {
+            public MapListScrollbar(Direction direction)
+                : base(direction)
+            {
+                // the fuck did i do its just gone
+                CornerRadius = 5;
+                Margin = new MarginPadding(2);
+                Masking = true;
+                Size = new Vector2(10);
+                Colour = Colour4.White;
+                Anchor = Origin = Anchor.TopLeft;
+            }
+
+            public override void ResizeTo(float val, int duration = 0, Easing easing = Easing.None)
+            {
+                Vector2 size = new Vector2(10)
+                {
+                    [(int)ScrollDirection] = val
+                };
+                this.ResizeTo(size, duration, easing);
+            }
         }
     }
 }

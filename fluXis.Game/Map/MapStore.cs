@@ -24,7 +24,8 @@ namespace fluXis.Game.Map
 
                 foreach (var dir in dirs)
                 {
-                    MapSet mapset = new MapSet(dir.Split(Path.DirectorySeparatorChar).Last());
+                    string dirName = dir.Split(Path.DirectorySeparatorChar).Last();
+                    MapSet mapset = new MapSet(dirName);
 
                     try
                     {
@@ -32,7 +33,6 @@ namespace fluXis.Game.Map
 
                         foreach (var chart in charts)
                         {
-                            string dirName = dir.Split(Path.DirectorySeparatorChar).Last();
                             MapInfo map = JsonConvert.DeserializeObject<MapInfo>(File.ReadAllText(storage.GetFullPath(chart)));
                             map.MapsetID = dirName;
                             map.ID = Path.GetFileNameWithoutExtension(chart);
