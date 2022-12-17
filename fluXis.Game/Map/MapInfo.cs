@@ -13,8 +13,8 @@ namespace fluXis.Game.Map
         public List<TimingPointInfo> TimingPoints;
         public List<ScrollVelocityInfo> ScrollVelocities;
 
-        public int StartTime => HitObjects[0].Time;
-        public int EndTime => HitObjects[^1].HoldEndTime;
+        public float StartTime => HitObjects[0].Time;
+        public float EndTime => HitObjects[^1].HoldEndTime;
 
         public MapInfo(MapMetadata metadata)
         {

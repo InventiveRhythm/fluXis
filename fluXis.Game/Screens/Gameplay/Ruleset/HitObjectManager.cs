@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
@@ -20,6 +21,10 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public MapInfo Map { get; set; }
         public List<HitObject> FutureHitObjects { get; } = new List<HitObject>();
         public List<HitObject> HitObjects { get; } = new List<HitObject>();
+
+        public float CurrentTime { get; private set; }
+
+        public List<float> ScrollVelocityMarks { get; } = new List<float>();
 
         public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
 
@@ -40,12 +45,14 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         protected override void Update()
         {
+            updateTime();
+
             if (AutoPlay.Value)
                 updateAutoPlay();
             else
                 updateInput();
 
-            while (FutureHitObjects != null && FutureHitObjects.Count > 0 && FutureHitObjects[0].Data.Time <= Conductor.CurrentTime + 2000 * ScrollSpeed)
+            while (FutureHitObjects != null && FutureHitObjects.Count > 0 && FutureHitObjects[0].ScrollVelocityTime <= CurrentTime + 2000 * ScrollSpeed)
             {
                 HitObject hitObject = FutureHitObjects[0];
                 FutureHitObjects.RemoveAt(0);
@@ -61,6 +68,16 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             // Logger.Log($"Current scroll speed: {ScrollSpeed} || {Conductor.CurrentTime}");
 
             base.Update();
+        }
+
+        private void updateTime()
+        {
+            int curSv = 0;
+
+            while (curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= Conductor.CurrentTime)
+                curSv++;
+
+            CurrentTime = PositionFromTime(Conductor.CurrentTime, curSv);
         }
 
         private void updateAutoPlay()
@@ -153,7 +170,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         private void hit(HitObject hitObject, bool isHoldEnd)
         {
-            int diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.CurrentTime : hitObject.Data.Time - Conductor.CurrentTime;
+            float diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.CurrentTime : hitObject.Data.Time - Conductor.CurrentTime;
             hitObject.GotHit = true;
             judmentDisplay(diff);
 
@@ -181,7 +198,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             RemoveInternal(hitObject, true);
         }
 
-        private void judmentDisplay(int diff)
+        private void judmentDisplay(float diff)
         {
             Judgement judgement = Judgement.FromTiming(diff);
             Performance.AddJudgement(judgement.Key);
@@ -192,6 +209,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             Map = map;
             map.Sort();
+            initScrollVelocityMarks();
 
             foreach (var hit in map.HitObjects)
             {
@@ -200,6 +218,52 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             }
 
             // Conductor.Offset = map.HitObjects[0].Time - map.TimingPoints[0].Time;
+        }
+
+        private void initScrollVelocityMarks()
+        {
+            if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
+                return;
+
+            ScrollVelocityInfo first = Map.ScrollVelocities[0];
+
+            float time = first.Time;
+            ScrollVelocityMarks.Add(time);
+            Logger.Log($"Time: {time}");
+
+            for (var i = 1; i < Map.ScrollVelocities.Count; i++)
+            {
+                ScrollVelocityInfo prev = Map.ScrollVelocities[i - 1];
+                ScrollVelocityInfo current = Map.ScrollVelocities[i];
+
+                time += (int)((current.Time - prev.Time) * prev.Multiplier);
+                ScrollVelocityMarks.Add(time);
+                Logger.Log($"Time: {time}");
+            }
+        }
+
+        public float PositionFromTime(float time, int index = -1)
+        {
+            if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
+                return time;
+
+            if (index == -1)
+            {
+                for (index = 0; index < Map.ScrollVelocities.Count; index++)
+                {
+                    if (time < Map.ScrollVelocities[index].Time)
+                        break;
+                }
+            }
+
+            if (index == 0)
+                return time;
+
+            ScrollVelocityInfo prev = Map.ScrollVelocities[index - 1];
+
+            float position = ScrollVelocityMarks[index - 1];
+            position += (time - prev.Time) * prev.Multiplier;
+            return position;
         }
     }
 }

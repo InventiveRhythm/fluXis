@@ -2,7 +2,7 @@ namespace fluXis.Game.Map
 {
     public class TimingPointInfo
     {
-        public int Time;
+        public float Time;
         public int BPM;
         public int Signature;
 

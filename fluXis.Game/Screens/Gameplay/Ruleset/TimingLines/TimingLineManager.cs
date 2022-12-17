@@ -21,13 +21,13 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
             for (int i = 0; i < map.TimingPoints.Count; i++)
             {
                 var point = map.TimingPoints[i];
-                int target = i + 1 < map.TimingPoints.Count ? map.TimingPoints[i + 1].Time : map.EndTime;
+                float target = i + 1 < map.TimingPoints.Count ? map.TimingPoints[i + 1].Time : map.EndTime;
                 int increase = point.Signature * point.GetMsPerBeat();
-                int position = point.Time;
+                float position = point.Time;
 
                 while (position < target)
                 {
-                    AddInternal(new TimingLine(this, position));
+                    AddInternal(new TimingLine(this, HitObjectManager.PositionFromTime(position)));
                     position += increase;
                 }
             }

@@ -1,4 +1,3 @@
-using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -8,9 +7,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
     public class TimingLine : Box
     {
         private readonly TimingLineManager manager;
-        private readonly int position;
+        private readonly float position;
 
-        public TimingLine(TimingLineManager manager, int position)
+        public TimingLine(TimingLineManager manager, float position)
         {
             this.manager = manager;
             this.position = position;
@@ -28,7 +27,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
 
         protected override void Update()
         {
-            int delta = position - Conductor.CurrentTime;
+            float delta = position - manager.HitObjectManager.CurrentTime;
             Y = -60 - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
 
             base.Update();

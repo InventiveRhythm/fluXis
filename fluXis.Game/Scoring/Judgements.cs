@@ -37,7 +37,7 @@ namespace fluXis.Game.Scoring
             Accuracy = accuracy;
         }
 
-        public static Judgement FromTiming(int timing)
+        public static Judgement FromTiming(float timing)
         {
             foreach (var judgement in LIST)
             {

@@ -69,7 +69,7 @@ namespace fluXis.Game.Screens.Gameplay
             Conductor.CurrentTime = -100000; // should be enough to load the map right?
             Conductor.PlayTrack(Map);
 
-            Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (Map.EndTime - Conductor.CurrentTime) / 1000);
+            Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
         }
 
         protected override void LoadComplete()

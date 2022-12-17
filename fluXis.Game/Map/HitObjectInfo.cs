@@ -2,11 +2,11 @@ namespace fluXis.Game.Map
 {
     public class HitObjectInfo
     {
-        public int Time;
+        public float Time;
         public int Lane;
-        public int HoldTime;
+        public float HoldTime;
 
-        public int HoldEndTime => Time + HoldTime;
+        public float HoldEndTime => Time + HoldTime;
 
         public bool IsLongNote()
         {

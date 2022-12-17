@@ -12,6 +12,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
     public class HitObject : CompositeDrawable
     {
         public HitObjectInfo Data;
+        public readonly float ScrollVelocityTime;
+        public readonly float ScrollVelocityEndTime;
 
         private readonly HitObjectManager manager;
         private Sprite spr;
@@ -29,6 +31,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             this.manager = manager;
             Data = data;
+            ScrollVelocityTime = manager.PositionFromTime(data.Time);
+            ScrollVelocityEndTime = manager.PositionFromTime(data.HoldEndTime);
         }
 
         [BackgroundDependencyLoader]
@@ -91,19 +95,17 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             Releasable = Data.IsLongNote() && Conductor.CurrentTime - Data.HoldEndTime > -150 && !Missed;
 
             if (!Exists)
-            {
                 return;
-            }
 
             var receptor = manager.Playfield.Receptors[Data.Lane - 1];
-            spr.Y = receptor.Y - .5f * ((Data.Time - Conductor.CurrentTime) * manager.ScrollSpeed);
+            spr.Y = receptor.Y - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);
 
             if (IsBeingHeld)
                 spr.Y = receptor.Y;
 
             if (Data.IsLongNote())
             {
-                var endY = receptor.Y - .5f * ((Data.HoldEndTime - Conductor.CurrentTime) * manager.ScrollSpeed);
+                var endY = receptor.Y - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * manager.ScrollSpeed);
 
                 var height = endY - spr.Y;
                 holdBodySpr.Size = new Vector2(Receptor.SIZE.X, height);
