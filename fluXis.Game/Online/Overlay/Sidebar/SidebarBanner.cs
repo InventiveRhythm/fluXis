@@ -18,8 +18,8 @@ namespace fluXis.Game.Online.Overlay.Sidebar
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            Texture = textures.Get($"{APIConstants.API_URL}/assets/banner/{user.ID}");
             FillMode = FillMode.Fill;
+            Texture = textures.Get($"{APIConstants.API_URL}/assets/banner/{user.ID}");
         }
     }
 }

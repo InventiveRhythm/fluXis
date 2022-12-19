@@ -12,7 +12,7 @@ namespace fluXis.Game.Online.Overlay
         private bool visible;
 
         private Box background;
-        private Container content;
+        private FillFlowContainer content;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -27,17 +27,19 @@ namespace fluXis.Game.Online.Overlay
                     Colour = Colour4.Black,
                     Alpha = 0
                 },
-                content = new Container
+                content = new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
+                    Direction = FillDirection.Horizontal,
                     Alpha = 0,
-                    Scale = new Vector2(0.9f),
+                    Scale = new Vector2(1.1f),
                     Padding = new MarginPadding(20),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
-                        new OnlineSidebar()
+                        new OnlineSidebar(),
+                        new OverlayChat()
                     }
                 }
             };
@@ -48,12 +50,12 @@ namespace fluXis.Game.Online.Overlay
             if (visible)
             {
                 background.FadeOut(200);
-                content.ScaleTo(.9f, 200, Easing.InQuint).FadeOut(200);
+                content.ScaleTo(1.1f, 200, Easing.InQuint).FadeOut(200);
             }
             else
             {
                 background.FadeTo(.4f, 200);
-                content.ScaleTo(1f, 200, Easing.OutQuint).FadeIn(200);
+                content.ScaleTo(1f, 400, Easing.OutQuint).FadeIn(200);
             }
 
             visible = !visible;
