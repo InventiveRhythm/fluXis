@@ -1,4 +1,6 @@
-﻿using fluXis.Game.Audio;
+﻿using System;
+using System.Reflection;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -6,7 +8,9 @@ using fluXis.Game.Online.Overlay;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK.Input;
@@ -61,9 +65,25 @@ namespace fluXis.Game
             return base.OnKeyDown(e);
         }
 
-        protected override void Update()
+        public override void SetHost(GameHost host)
         {
-            base.Update();
+            base.SetHost(host);
+
+            Version version = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
+
+            var window = (SDL2DesktopWindow)host.Window;
+            window.Title = "fluXis v" + version;
+            window.ConfineMouseMode.Value = ConfineMouseMode.Never;
+            // window.CursorState = CursorState.Hidden;
+            window.DragDrop += f => onDragDrop(new[] { f });
+        }
+
+        private void onDragDrop(string[] paths)
+        {
+            foreach (var path in paths)
+            {
+                Logger.Log($"DragDrop: {path}");
+            }
         }
     }
 }
