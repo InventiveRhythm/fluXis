@@ -138,8 +138,8 @@ namespace fluXis.Game.Screens.Gameplay
 
             if (e.Key == Key.Space)
             {
-                paused = !paused;
                 Conductor.SetSpeed(paused ? 1 : 0);
+                paused = !paused;
             }
 
             if (e.Key == Key.ShiftLeft)
