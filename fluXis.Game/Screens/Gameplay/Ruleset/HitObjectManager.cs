@@ -74,7 +74,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             int curSv = 0;
 
-            while (curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= Conductor.CurrentTime)
+            while (Map.ScrollVelocities != null && curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= Conductor.CurrentTime)
                 curSv++;
 
             CurrentTime = PositionFromTime(Conductor.CurrentTime, curSv);
