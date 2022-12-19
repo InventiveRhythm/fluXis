@@ -21,7 +21,8 @@ namespace fluXis.Game.Screens.Gameplay
     {
         private bool starting = true;
         private bool ended;
-        private bool restarting = false;
+        private bool restarting;
+        private bool paused;
 
         public GameplayInput Input;
         public Performance Performance;
@@ -134,6 +135,12 @@ namespace fluXis.Game.Screens.Gameplay
 
             if (e.Key == Key.Escape)
                 End();
+
+            if (e.Key == Key.Space)
+            {
+                paused = !paused;
+                Conductor.SetSpeed(paused ? 1 : 0);
+            }
 
             if (e.Key == Key.ShiftLeft)
             {

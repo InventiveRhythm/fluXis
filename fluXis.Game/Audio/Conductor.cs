@@ -89,10 +89,14 @@ namespace fluXis.Game.Audio
 
         public static void SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint)
         {
-            if (newSpeed > max_speed)
-                newSpeed = max_speed;
-            else if (newSpeed < min_speed)
-                newSpeed = min_speed;
+            // make an exception when pausing
+            if (newSpeed != 0)
+            {
+                if (newSpeed > max_speed)
+                    newSpeed = max_speed;
+                else if (newSpeed < min_speed)
+                    newSpeed = min_speed;
+            }
 
             instance.untweenedSpeed = newSpeed;
             instance.TransformTo(nameof(speed), newSpeed, duration, ease);

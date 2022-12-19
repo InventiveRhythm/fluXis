@@ -63,7 +63,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD
 
         protected override void Update()
         {
-            float speed = Conductor.Speed;
+            float speed = Conductor.Speed == 0 ? 1 : Conductor.Speed;
             int currentTime = (int)((Conductor.CurrentTime - Screen.Map.StartTime) / speed);
             int timeLeft = (int)((Screen.Map.EndTime - Conductor.CurrentTime) / speed);
             int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / speed);
