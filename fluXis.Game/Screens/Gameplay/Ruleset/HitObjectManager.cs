@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
@@ -229,7 +228,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
             float time = first.Time;
             ScrollVelocityMarks.Add(time);
-            Logger.Log($"Time: {time}");
 
             for (var i = 1; i < Map.ScrollVelocities.Count; i++)
             {
@@ -238,7 +236,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
                 time += (int)((current.Time - prev.Time) * prev.Multiplier);
                 ScrollVelocityMarks.Add(time);
-                Logger.Log($"Time: {time}");
             }
         }
 
