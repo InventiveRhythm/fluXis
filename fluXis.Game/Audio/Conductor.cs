@@ -12,6 +12,7 @@ namespace fluXis.Game.Audio
     public class Conductor : Component
     {
         private static MapStore mapStore;
+        private static MapInfo map;
         private static ITrackStore trackStore;
         private static Track track;
         public static int CurrentTime;
@@ -58,6 +59,8 @@ namespace fluXis.Game.Audio
             {
                 CurrentTime += (int)Time.Elapsed + Offset;
             }
+
+            updateStep();
         }
 
         public static void PlayTrack(MapInfo info, bool start = false, int time = 0)
@@ -75,6 +78,8 @@ namespace fluXis.Game.Audio
 
             if (start)
                 track.Start();
+
+            map = info;
         }
 
         public static void PauseTrack()
@@ -105,6 +110,26 @@ namespace fluXis.Game.Audio
         public static void AddSpeed(float addSpeed, int duration = 400, Easing ease = Easing.OutQuint)
         {
             SetSpeed(instance.untweenedSpeed + addSpeed, duration, ease);
+        }
+
+        private int lastStep;
+        private int step;
+
+        // gonna be used somewhere later
+        private void updateStep()
+        {
+            if (map == null)
+                return;
+
+            // todo: get bpm from current time
+            float stepTime = 60000f / map.TimingPoints[0].BPM / 4;
+            lastStep = step;
+            step = (int)(CurrentTime / stepTime);
+
+            if (lastStep != step && step % 4 == 0)
+            {
+                // beat
+            }
         }
     }
 }
