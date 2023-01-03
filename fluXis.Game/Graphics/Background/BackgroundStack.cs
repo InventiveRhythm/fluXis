@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Graphics.Background
 {
@@ -13,6 +14,7 @@ namespace fluXis.Game.Graphics.Background
         private readonly List<Background> scheduledBackgrounds = new List<Background>();
         private Container backgroundContainer;
         private string currentBackground;
+        private Box swipeAnimation;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -30,6 +32,16 @@ namespace fluXis.Game.Graphics.Background
                     Colour = Colour4.Black,
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0.25f
+                },
+                swipeAnimation = new Box
+                {
+                    Colour = Colour4.Black,
+                    RelativeSizeAxes = Axes.Both,
+                    RelativePositionAxes = Axes.Both,
+                    Width = 1.1f,
+                    Alpha = 0,
+                    Shear = new Vector2(.1f, 0),
+                    X = -1.1f
                 }
             };
         }
@@ -66,6 +78,19 @@ namespace fluXis.Game.Graphics.Background
 
             currentBackground = path;
             scheduledBackgrounds.Add(new Background(map));
+        }
+
+        public void SwipeAnimation()
+        {
+            const int duration = 1100;
+            const int delay = 1200;
+            const int fade_duration = 1500;
+
+            swipeAnimation.MoveToX(-1.1f)
+                          .FadeTo(.5f)
+                          .MoveToX(0, duration, Easing.OutQuint)
+                          .Delay(delay)
+                          .FadeOut(fade_duration);
         }
     }
 }

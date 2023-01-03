@@ -70,6 +70,7 @@ namespace fluXis.Game.Screens.Select.UI
         {
             mapListEntry.Screen.MenuAccept.Play();
             mapListEntry.Screen.Backgrounds.AddBackgroundFromMap(map);
+            mapListEntry.Screen.Backgrounds.SwipeAnimation();
             mapListEntry.Screen.Push(new GameplayScreen(map));
 
             return base.OnClick(e);
