@@ -4,6 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online;
 using fluXis.Game.Online.Overlay;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
@@ -50,6 +51,7 @@ namespace fluXis.Game
             base.LoadComplete();
 
             Add(new Conductor());
+            Fluxel.Connect();
             screenStack.Push(new SelectScreen());
         }
 
