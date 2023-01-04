@@ -32,7 +32,7 @@ namespace fluXis.Game.Online.Overlay
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Horizontal,
                     Alpha = 0,
-                    Scale = new Vector2(1.1f),
+                    Scale = new Vector2(.96f),
                     Padding = new MarginPadding(20),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -50,12 +50,12 @@ namespace fluXis.Game.Online.Overlay
             if (visible)
             {
                 background.FadeOut(200);
-                content.ScaleTo(1.1f, 200, Easing.InQuint).FadeOut(200);
+                content.ScaleTo(.96f, 200, Easing.InQuint).FadeOut(200);
             }
             else
             {
                 background.FadeTo(.4f, 200);
-                content.ScaleTo(1f, 400, Easing.OutQuint).FadeIn(200);
+                content.ScaleTo(1f, 800, Easing.OutElastic).FadeIn(400);
             }
 
             visible = !visible;
