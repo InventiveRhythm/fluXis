@@ -14,6 +14,10 @@ namespace fluXis.Game.Online.Overlay
 {
     public class OnlineSidebar : Container
     {
+        private DrawableAvatar avatar;
+        private SidebarBanner banner;
+        private UsernameBox usernameBox;
+
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -21,8 +25,6 @@ namespace fluXis.Game.Online.Overlay
             Width = .2f;
             CornerRadius = 10;
             Masking = true;
-
-            APIUser user = UserCache.GetUser(1);
 
             Box usernameBackground = new Box
             {
@@ -56,7 +58,7 @@ namespace fluXis.Game.Online.Overlay
                             CornerRadius = 10,
                             Children = new Drawable[]
                             {
-                                new SidebarBanner(user)
+                                banner = new SidebarBanner(null)
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
@@ -69,23 +71,32 @@ namespace fluXis.Game.Online.Overlay
                                     CornerRadius = 10,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Child = new DrawableAvatar(user)
+                                    Child = avatar = new DrawableAvatar(null)
                                     {
                                         RelativeSizeAxes = Axes.Both
                                     }
                                 }
                             }
                         },
-                        new UsernameBox(usernameBackground, user)
+                        usernameBox = new UsernameBox(usernameBackground, null)
                     }
                 }
             };
+        }
+
+        public void OnUserLogin()
+        {
+            APIUser user = Fluxel.Fluxel.GetLoggedInUser();
+            avatar.UpdateUser(user);
+            banner.UpdateUser(user);
+            usernameBox.UpdateUser(user);
         }
 
         protected class UsernameBox : Container
         {
             private readonly APIUser user;
             private readonly Box background;
+            private SpriteText username;
 
             public UsernameBox(Box background, APIUser user)
             {
@@ -100,10 +111,10 @@ namespace fluXis.Game.Online.Overlay
                 Height = 50;
                 RelativeSizeAxes = Axes.X;
 
-                Child = new SpriteText
+                Child = username = new SpriteText
                 {
                     Name = "Username",
-                    Text = user.Username,
+                    Text = user?.Username ?? "Not logged in",
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Font = new FontUsage("Quicksand", 30, "SemiBold")
@@ -127,6 +138,11 @@ namespace fluXis.Game.Online.Overlay
                 background.FadeTo(.4f).FadeTo(.2f, 200);
                 Logger.Log("Clicked on username... (not implemented yet)");
                 return true;
+            }
+
+            public void UpdateUser(APIUserShort user)
+            {
+                username.Text = user?.Username ?? "Not logged in";
             }
         }
     }

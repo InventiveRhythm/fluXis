@@ -9,7 +9,11 @@ namespace fluXis.Game.Online.Overlay
 {
     public class OnlineOverlay : CompositeDrawable
     {
-        private bool visible;
+        public bool Visible;
+
+        public LoginOverlay LoginOverlay;
+        public OnlineSidebar Sidebar;
+        public OverlayChat Chat;
 
         private Box background;
         private FillFlowContainer content;
@@ -38,39 +42,47 @@ namespace fluXis.Game.Online.Overlay
                     Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
-                        new OnlineSidebar(),
-                        new OverlayChat()
+                        Sidebar = new OnlineSidebar(),
+                        Chat = new OverlayChat(),
                     }
-                }
+                },
+                LoginOverlay = new LoginOverlay(this)
             };
         }
 
         public void ToggleVisibility()
         {
-            if (visible)
+            if (Visible)
             {
                 background.FadeOut(200);
                 content.ScaleTo(.96f, 200, Easing.InQuint).FadeOut(200);
+                LoginOverlay.Hide();
             }
             else
             {
                 background.FadeTo(.4f, 200);
                 content.ScaleTo(1f, 800, Easing.OutElastic).FadeIn(400);
+                LoginOverlay.Show();
             }
 
-            visible = !visible;
+            Visible = !Visible;
         }
 
         protected override bool OnClick(ClickEvent e)
         {
             // only handle if we're visible
-            return visible;
+            return Visible;
         }
 
         protected override bool OnHover(HoverEvent e)
         {
             // only handle if we're visible
-            return visible;
+            return Visible;
+        }
+
+        public void OnUserLogin()
+        {
+            Sidebar.OnUserLogin();
         }
     }
 }

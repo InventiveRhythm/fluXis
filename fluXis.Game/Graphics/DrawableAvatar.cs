@@ -8,7 +8,8 @@ namespace fluXis.Game.Graphics
 {
     public class DrawableAvatar : Sprite
     {
-        private readonly APIUserShort user;
+        private APIUserShort user;
+        private TextureStore textures;
 
         public DrawableAvatar(APIUserShort user)
         {
@@ -18,7 +19,14 @@ namespace fluXis.Game.Graphics
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user.ID}");
+            this.textures = textures;
+            Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
+        }
+
+        public void UpdateUser(APIUserShort user)
+        {
+            this.user = user;
+            Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
         }
     }
 }

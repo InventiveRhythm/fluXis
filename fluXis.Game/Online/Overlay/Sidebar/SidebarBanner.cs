@@ -8,7 +8,8 @@ namespace fluXis.Game.Online.Overlay.Sidebar
 {
     public class SidebarBanner : Sprite
     {
-        private readonly APIUserShort user;
+        private APIUserShort user;
+        private TextureStore textures;
 
         public SidebarBanner(APIUserShort user)
         {
@@ -18,8 +19,15 @@ namespace fluXis.Game.Online.Overlay.Sidebar
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
+            this.textures = textures;
             FillMode = FillMode.Fill;
-            Texture = textures.Get($"{APIConstants.API_URL}/assets/banner/{user.ID}");
+            Texture = textures.Get($"{APIConstants.API_URL}/assets/banner/{user?.ID ?? -1}");
+        }
+
+        public void UpdateUser(APIUserShort user)
+        {
+            this.user = user;
+            Texture = textures.Get($"{APIConstants.API_URL}/assets/banner/{user?.ID ?? -1}");
         }
     }
 }
