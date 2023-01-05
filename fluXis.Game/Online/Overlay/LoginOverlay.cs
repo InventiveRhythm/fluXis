@@ -134,7 +134,7 @@ namespace fluXis.Game.Online.Overlay
 
         public override void Hide()
         {
-            this.FadeOut(400).ScaleTo(.9f, 400);
+            this.FadeOut(200).ScaleTo(.9f, 200, Easing.InQuint);
         }
 
         public override void Show()
@@ -142,7 +142,7 @@ namespace fluXis.Game.Online.Overlay
             if (!visible)
                 return;
 
-            this.FadeIn(400).ScaleTo(1f, 400);
+            this.FadeIn(200).ScaleTo(1f, 200, Easing.OutElastic);
         }
 
         private class TextBox : BasicTextBox

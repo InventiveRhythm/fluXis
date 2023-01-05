@@ -20,7 +20,7 @@ namespace fluXis.Game.Online.Fluxel
         {
             Logger.Log("Connecting to server...");
             connection = new ClientWebSocket();
-            await connection.ConnectAsync(new Uri("ws://localhost:2435"), CancellationToken.None);
+            await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
 
             // create thread
             Thread thread = new Thread(receive);
