@@ -172,5 +172,14 @@ namespace fluXis.Game.Screens.Gameplay
         {
             Input.OnKeyUp(e);
         }
+
+        public override void OnResuming(ScreenTransitionEvent e)
+        {
+            // probably coming back from results screen
+            // so just go to song select
+            this.Exit();
+
+            base.OnResuming(e);
+        }
     }
 }

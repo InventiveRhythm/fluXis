@@ -6,6 +6,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
+using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK.Input;
@@ -88,6 +89,17 @@ namespace fluXis.Game.Screens.Select
                 current = 0;
 
             SelectMapSet(mapSets[current]);
+        }
+
+        public override void OnSuspending(ScreenTransitionEvent e)
+        {
+            this.FadeOut(500);
+        }
+
+        public override void OnResuming(ScreenTransitionEvent e)
+        {
+            this.FadeIn(500);
+            base.OnResuming(e);
         }
     }
 }

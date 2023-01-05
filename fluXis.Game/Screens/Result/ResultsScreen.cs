@@ -2,7 +2,6 @@ using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result.UI;
-using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -113,7 +112,7 @@ namespace fluXis.Game.Screens.Result
         protected override bool OnKeyDown(KeyDownEvent e)
         {
             if (e.Key == Key.Escape)
-                this.Push(new SelectScreen());
+                this.Exit();
             return base.OnKeyDown(e);
         }
 
