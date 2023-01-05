@@ -1,3 +1,4 @@
+using fluXis.Game.Integration;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Account;
@@ -104,6 +105,7 @@ namespace fluXis.Game.Online.Overlay
             Fluxel.Fluxel.SetLoggedInUser(packet.Data);
             onlineOverlay.OnUserLogin();
             completed = true;
+            Discord.Reload();
         }
 
         private bool completed;

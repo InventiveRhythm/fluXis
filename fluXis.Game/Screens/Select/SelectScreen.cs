@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
@@ -99,6 +100,9 @@ namespace fluXis.Game.Screens.Select
         public override void OnResuming(ScreenTransitionEvent e)
         {
             this.FadeIn(500);
+
+            Discord.Update("Selecting a map", "", "songselect");
+
             base.OnResuming(e);
         }
     }
