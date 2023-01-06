@@ -61,6 +61,7 @@ namespace fluXis.Game.Screens.Select
             MapSet = set;
             Backgrounds.AddBackgroundFromMap(map);
             Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
+            Conductor.SetLoop(map.Metadata.PreviewTime);
             MenuScroll.Play();
             MapList.ScrollTo(lookup[set]);
         }
@@ -102,6 +103,7 @@ namespace fluXis.Game.Screens.Select
             this.FadeIn(500);
 
             Discord.Update("Selecting a map", "", "songselect");
+            Conductor.SetLoop(MapInfo.Metadata.PreviewTime);
 
             base.OnResuming(e);
         }

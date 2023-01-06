@@ -92,6 +92,23 @@ namespace fluXis.Game.Audio
             track?.Start();
         }
 
+        public static void SetLoop(int start)
+        {
+            if (track == null)
+                return;
+
+            track.Looping = true;
+            track.RestartPoint = start;
+        }
+
+        public static void ResetLoop()
+        {
+            if (track == null)
+                return;
+
+            track.Looping = false;
+        }
+
         public static void SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint)
         {
             // make an exception when pausing
