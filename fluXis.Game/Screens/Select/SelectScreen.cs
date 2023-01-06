@@ -49,10 +49,10 @@ namespace fluXis.Game.Screens.Select
                 i++;
             }
 
-            MapSet firstSet = mapSets.First();
-            MapInfo firstMap = firstSet.Maps.First();
-            MapSet = firstSet;
-            Backgrounds.AddBackgroundFromMap(firstMap);
+            if (MapSet != null)
+                return;
+
+            SelectMapSet(mapSets.First());
         }
 
         public void SelectMapSet(MapSet set)
