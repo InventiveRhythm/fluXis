@@ -9,10 +9,8 @@ using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select
@@ -33,13 +31,8 @@ namespace fluXis.Game.Screens.Select
         private readonly Dictionary<MapSet, MapListEntry> lookup = new Dictionary<MapSet, MapListEntry>();
 
         [BackgroundDependencyLoader]
-        private void load(MapStore maps, BackgroundStack background, ISampleStore samples, TextureStore textures)
+        private void load(MapStore maps, BackgroundStack background, ISampleStore samples)
         {
-            foreach (var resource in textures.GetAvailableResources())
-            {
-                Logger.Log(resource);
-            }
-
             Backgrounds = background;
             mapSets = maps.GetMapSets();
 
