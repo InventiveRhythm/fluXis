@@ -16,18 +16,13 @@ namespace fluXis.Game
         // It allows for caching global dependencies that should be accessible to tests, or changing
         // the screen scaling for all components including the test browser and framework overlays.
 
-        protected override Container<Drawable> Content { get; }
-
         private DependencyContainer dependencies;
+
+        protected override Container<Drawable> Content => content;
+        private Container content;
 
         protected FluXisGameBase()
         {
-            // Ensure game and tests scale with window size and screen DPI.
-            base.Content.Add(Content = new DrawSizePreservingFillContainer
-            {
-                // You may want to change TargetDrawSize to your "default" resolution, which will decide how things scale and position when using absolute coordinates.
-                TargetDrawSize = new Vector2(1920, 1080)
-            });
         }
 
         [BackgroundDependencyLoader]
@@ -36,11 +31,29 @@ namespace fluXis.Game
             Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
             InitFonts();
 
-            GlobalKeybindContainer keybinds = new GlobalKeybindContainer();
-
             dependencies.Cache(new BackgroundTextureStore(Host, storage));
 
-            base.Content.Add(keybinds);
+            FluXisKeybindContainer keybinds;
+
+            base.Content.Add(new SafeAreaContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = new DrawSizePreservingFillContainer
+                {
+                    TargetDrawSize = new Vector2(1920, 1080),
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        content = new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                        },
+                        keybinds = new FluXisKeybindContainer(this)
+                    }
+                }
+            });
+
+            dependencies.Cache(keybinds);
         }
 
         protected void InitFonts()

@@ -2,19 +2,20 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select
 {
-    public class SelectScreen : Screen
+    public class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         public BackgroundStack Backgrounds;
         private List<MapSet> mapSets;
@@ -66,20 +67,6 @@ namespace fluXis.Game.Screens.Select
             MapList.ScrollTo(lookup[set]);
         }
 
-        protected override bool OnKeyDown(KeyDownEvent e)
-        {
-            if (e.Key == Key.Left)
-            {
-                changeSelection(-1);
-            }
-            else if (e.Key == Key.Right)
-            {
-                changeSelection(1);
-            }
-
-            return base.OnKeyDown(e);
-        }
-
         private void changeSelection(int by = 0)
         {
             int current = mapSets.IndexOf(MapSet);
@@ -107,5 +94,23 @@ namespace fluXis.Game.Screens.Select
 
             base.OnResuming(e);
         }
+
+        public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+        {
+            switch (e.Action)
+            {
+                case FluXisKeybind.PreviousGroup:
+                    changeSelection(-1);
+                    return true;
+
+                case FluXisKeybind.NextGroup:
+                    changeSelection(1);
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
     }
 }

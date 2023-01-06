@@ -109,10 +109,10 @@ namespace fluXis.Game.Audio
             track.Looping = false;
         }
 
-        public static void SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint)
+        public static void SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint, bool force = false)
         {
             // make an exception when pausing
-            if (newSpeed != 0)
+            if (newSpeed != 0 || force)
             {
                 if (newSpeed > max_speed)
                     newSpeed = max_speed;

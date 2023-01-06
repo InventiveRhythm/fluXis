@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
     public class HitObjectManager : CompositeDrawable
     {
-        public float ScrollSpeed => 3.5f / (Conductor.Speed == 0 ? 1 : Conductor.Speed);
+        public float ScrollSpeed => 3.5f;
         public Playfield Playfield { get; }
         public Performance Performance { get; }
         public MapInfo Map { get; set; }

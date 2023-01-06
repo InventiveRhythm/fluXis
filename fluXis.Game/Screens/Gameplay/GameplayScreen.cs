@@ -1,6 +1,7 @@
 ﻿using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
+using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
@@ -11,13 +12,13 @@ using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Gameplay
 {
-    public class GameplayScreen : Screen
+    public class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         private bool starting = true;
         private bool ended;
@@ -54,6 +55,7 @@ namespace fluXis.Game.Screens.Gameplay
 
             InternalChildren = new Drawable[]
             {
+                Input,
                 Playfield = new Playfield(this),
                 new PauseMenu(this)
             };
@@ -67,14 +69,13 @@ namespace fluXis.Game.Screens.Gameplay
 
             Playfield.LoadMap(Map);
             Performance.SetMapInfo(Map);
-            Conductor.CurrentTime = -100000; // should be enough to load the map right?
-            Conductor.PlayTrack(Map);
 
             Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
         }
 
         protected override void LoadComplete()
         {
+            Conductor.PlayTrack(Map);
             Conductor.CurrentTime = -2000;
 
             base.LoadComplete();
@@ -93,9 +94,12 @@ namespace fluXis.Game.Screens.Gameplay
                 End();
             }
 
-            Input.Update();
-
             base.Update();
+        }
+
+        public void Die()
+        {
+            Conductor.SetSpeed(.25f, 1000, Easing.None, true);
         }
 
         public void End()
@@ -129,50 +133,6 @@ namespace fluXis.Game.Screens.Gameplay
             this.FadeOut(restarting ? 0 : 250);
         }
 
-        protected override bool OnKeyDown(KeyDownEvent e)
-        {
-            Input.OnKeyDown(e);
-
-            if (e.Key == Key.Escape)
-                End();
-
-            if (e.Key == Key.Space)
-            {
-                Conductor.SetSpeed(paused ? 1 : 0);
-                paused = !paused;
-            }
-
-            if (e.Key == Key.ShiftLeft)
-            {
-                restarting = true;
-                Restart.Play();
-                this.Push(new GameplayScreen(Map));
-            }
-
-            if (e.Key == Key.F1)
-            {
-                Playfield.Manager.AutoPlay.Value = !Playfield.Manager.AutoPlay.Value;
-            }
-
-            switch (e.Key)
-            {
-                case Key.Left:
-                    Conductor.AddSpeed(-.1f);
-                    break;
-
-                case Key.Right:
-                    Conductor.AddSpeed(.1f);
-                    break;
-            }
-
-            return base.OnKeyDown(e);
-        }
-
-        protected override void OnKeyUp(KeyUpEvent e)
-        {
-            Input.OnKeyUp(e);
-        }
-
         public override void OnResuming(ScreenTransitionEvent e)
         {
             // probably coming back from results screen
@@ -180,6 +140,38 @@ namespace fluXis.Game.Screens.Gameplay
             this.Exit();
 
             base.OnResuming(e);
+        }
+
+        public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+        {
+            switch (e.Action)
+            {
+                case FluXisKeybind.ToggleAutoplay:
+                    Playfield.Manager.AutoPlay.Value = !Playfield.Manager.AutoPlay.Value;
+                    return true;
+
+                case FluXisKeybind.ForceDeath:
+                    Die();
+                    return true;
+
+                case FluXisKeybind.Restart:
+                    restarting = true;
+                    Restart.Play();
+                    this.Push(new GameplayScreen(Map)); // TODO: restart in a better way
+                    return true;
+
+                case FluXisKeybind.Pause:
+                    Conductor.SetSpeed(paused ? 1 : 0);
+                    paused = !paused;
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
+        {
+            // nothing to do here...
         }
     }
 }

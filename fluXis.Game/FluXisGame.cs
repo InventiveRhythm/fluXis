@@ -2,6 +2,7 @@
 using System.Reflection;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
@@ -10,15 +11,15 @@ using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osuTK.Input;
 
 namespace fluXis.Game
 {
-    public class FluXisGame : FluXisGameBase
+    public class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybind>
     {
         private ScreenStack screenStack;
         private OnlineOverlay overlay;
@@ -55,18 +56,6 @@ namespace fluXis.Game
             screenStack.Push(new SelectScreen());
         }
 
-        protected override bool OnKeyDown(KeyDownEvent e)
-        {
-            switch (e.Key)
-            {
-                case Key.Tab:
-                    overlay.ToggleVisibility();
-                    return true;
-            }
-
-            return base.OnKeyDown(e);
-        }
-
         public override void SetHost(GameHost host)
         {
             base.SetHost(host);
@@ -87,5 +76,19 @@ namespace fluXis.Game
                 Logger.Log($"DragDrop: {path}");
             }
         }
+
+        public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+        {
+            switch (e.Action)
+            {
+                case FluXisKeybind.ToggleOnlineOverlay:
+                    overlay.ToggleVisibility();
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
     }
 }

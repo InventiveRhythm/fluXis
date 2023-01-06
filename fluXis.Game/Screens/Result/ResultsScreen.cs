@@ -1,3 +1,4 @@
+using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring;
@@ -7,14 +8,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Result
 {
-    public class ResultsScreen : Screen
+    public class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         private readonly MapInfo map;
         private readonly Performance performance;
@@ -109,16 +110,18 @@ namespace fluXis.Game.Screens.Result
             base.LoadComplete();
         }
 
-        protected override bool OnKeyDown(KeyDownEvent e)
+        public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
         {
-            if (e.Key == Key.Escape)
-                this.Exit();
-            return base.OnKeyDown(e);
+            switch (e.Action)
+            {
+                case FluXisKeybind.Back:
+                    this.Exit();
+                    return true;
+            }
+
+            return false;
         }
 
-        public override void OnSuspending(ScreenTransitionEvent e)
-        {
-            this.FadeOutFromOne(250);
-        }
+        public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
     }
 }
