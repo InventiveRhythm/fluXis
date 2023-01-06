@@ -15,7 +15,7 @@ namespace fluXis.Game.Audio
         private static MapInfo map;
         private static ITrackStore trackStore;
         private static Track track;
-        public static int CurrentTime;
+        public static float CurrentTime;
         public static int Offset = 0;
 
         public static float Speed
@@ -47,17 +47,17 @@ namespace fluXis.Game.Audio
 
             if (CurrentTime < 0)
             {
-                CurrentTime += (int)Time.Elapsed;
+                CurrentTime += (float)Time.Elapsed;
                 return;
             }
 
             if (track != null)
             {
-                CurrentTime = (int)track.CurrentTime + Offset;
+                CurrentTime = (float)track.CurrentTime + Offset;
             }
             else
             {
-                CurrentTime += (int)Time.Elapsed + Offset;
+                CurrentTime += (float)Time.Elapsed + Offset;
             }
 
             updateStep();
