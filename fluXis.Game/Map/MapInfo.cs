@@ -37,7 +37,7 @@ namespace fluXis.Game.Map
             foreach (var hitObject in HitObjects)
                 KeyCount = Math.Max(KeyCount, hitObject.Lane);
 
-            return KeyCount == 4 || KeyCount == 7;
+            return KeyCount > 0 || KeyCount < 8;
         }
 
         public void Sort()
