@@ -43,7 +43,7 @@ namespace fluXis.Game.Screens.Gameplay
         [BackgroundDependencyLoader]
         private void load(ISampleStore samples)
         {
-            Input = new GameplayInput();
+            Input = new GameplayInput(Map.KeyCount);
             Performance = new Performance();
 
             HitSound = samples.Get("gameplay/hit.ogg");
@@ -67,7 +67,6 @@ namespace fluXis.Game.Screens.Gameplay
             AddInternal(new AutoPlayDisplay(this));
             AddInternal(new JudgementCounter(Performance));
 
-            Playfield.LoadMap(Map);
             Performance.SetMapInfo(Map);
 
             Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));

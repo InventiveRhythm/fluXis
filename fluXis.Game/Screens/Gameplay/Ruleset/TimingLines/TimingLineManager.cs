@@ -11,13 +11,14 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
         public TimingLineManager(HitObjectManager hitObjectManager)
         {
             HitObjectManager = hitObjectManager;
-            Width = HitObjectManager.Playfield.Stage.Background.Width;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
         }
 
         public void CreateLines(MapInfo map)
         {
+            Width = HitObjectManager.Playfield.Stage.Background.Width;
+
             for (int i = 0; i < map.TimingPoints.Count; i++)
             {
                 var point = map.TimingPoints[i];

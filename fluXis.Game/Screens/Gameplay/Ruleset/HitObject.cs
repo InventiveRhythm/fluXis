@@ -49,14 +49,14 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 {
                     Anchor = Anchor.TopLeft,
                     Origin = Anchor.TopLeft,
-                    Texture = textures.Get("gameplay/hitobject/holdend-" + Data.Lane),
+                    Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/holdend-" + Data.Lane),
                     Alpha = 0
                 },
                 holdBodySpr = new Sprite
                 {
                     Anchor = Anchor.TopLeft,
                     Origin = Anchor.TopLeft,
-                    Texture = textures.Get("gameplay/hitobject/holdbody-" + Data.Lane),
+                    Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/holdbody-" + Data.Lane),
                     Alpha = 0
                 },
                 spr = new Sprite
@@ -64,7 +64,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Anchor = Anchor.TopLeft,
                     Origin = Anchor.TopLeft,
                     RelativeSizeAxes = Axes.Both,
-                    Texture = textures.Get("gameplay/hitobject/hitobject-" + Data.Lane),
+                    Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/hitobject-" + Data.Lane),
                 },
             };
 

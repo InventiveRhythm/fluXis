@@ -16,9 +16,12 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public TimingLineManager TimingLineManager;
         public Stage Stage;
 
+        private readonly MapInfo map;
+
         public Playfield(GameplayScreen screen)
         {
             Screen = screen;
+            map = screen.Map;
         }
 
         [BackgroundDependencyLoader]
@@ -27,26 +30,30 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1, 1);
 
-            AddInternal(Stage = new Stage());
+            Stage = new Stage(map);
 
-            for (int i = 0; i < 4; i++)
+            Manager = new HitObjectManager(this);
+            Manager.LoadMap(map);
+
+            TimingLineManager = new TimingLineManager(Manager);
+
+            AddInternal(Stage);
+
+            for (int i = 0; i < map.KeyCount; i++)
             {
                 Receptor receptor = new Receptor(this, i);
                 Receptors.Add(receptor);
                 AddInternal(receptor);
             }
 
-            Manager = new HitObjectManager(this);
-            TimingLineManager = new TimingLineManager(Manager);
-
             AddInternal(TimingLineManager);
             AddInternal(Manager);
         }
 
-        public void LoadMap(MapInfo map)
+        protected override void LoadComplete()
         {
-            Manager.LoadMap(map);
             TimingLineManager.CreateLines(map);
+            base.LoadComplete();
         }
     }
 }

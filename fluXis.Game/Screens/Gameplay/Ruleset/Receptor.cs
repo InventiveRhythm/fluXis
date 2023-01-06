@@ -28,7 +28,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             Origin = Anchor.BottomCentre;
             Anchor = Anchor.BottomCentre;
             Size = SIZE;
-            X = (id - 1.5f) * SIZE.X;
+            X = (id - (Playfield.Manager.Map.KeyCount / 2f - .5f)) * SIZE.X;
             Y = -60;
 
             InternalChildren = new Drawable[]
@@ -39,7 +39,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = SIZE,
-                    Texture = textures.Get("gameplay/receptor/up-" + (id + 1))
+                    Texture = textures.Get($"Gameplay/_{Playfield.Manager.Map.KeyCount}k/Receptor/up-{id + 1}")
                 },
                 sprDown = new Sprite
                 {
@@ -48,7 +48,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Origin = Anchor.Centre,
                     Size = SIZE,
                     Alpha = 0,
-                    Texture = textures.Get("gameplay/receptor/down-" + (id + 1))
+                    Texture = textures.Get($"Gameplay/_{Playfield.Manager.Map.KeyCount}k/Receptor/down-{id + 1}")
                 }
             };
         }

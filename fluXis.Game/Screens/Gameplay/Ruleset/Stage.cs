@@ -1,3 +1,4 @@
+using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -12,6 +13,13 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public Box Background;
         public Box BorderLeft;
         public Box BorderRight;
+
+        private readonly MapInfo map;
+
+        public Stage(MapInfo map)
+        {
+            this.map = map;
+        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -29,7 +37,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Origin = Anchor.Centre,
                     Colour = Colour4.Black,
                     Alpha = 0.5f,
-                    Width = Receptor.SIZE.X * 4 + lane_margin * 2
+                    Width = Receptor.SIZE.X * map.KeyCount + lane_margin * 2
                 },
                 BorderLeft = new Box
                 {
@@ -39,7 +47,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopRight,
                     Colour = Colour4.White,
-                    X = -(Receptor.SIZE.X * 2 + lane_margin)
+                    X = -(Receptor.SIZE.X * (map.KeyCount / 2f) + lane_margin)
                 },
                 BorderRight = new Box
                 {
@@ -49,9 +57,14 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomLeft,
                     Colour = Colour4.White,
-                    X = Receptor.SIZE.X * 2 + lane_margin
+                    X = Receptor.SIZE.X * (map.KeyCount / 2f) + lane_margin
                 }
             });
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
         }
     }
 }

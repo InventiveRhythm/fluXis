@@ -117,7 +117,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                         hitable.Add(hit);
                 }
 
-                bool[] pressed = { false, false, false, false };
+                bool[] pressed = new bool[Map.KeyCount];
 
                 if (hitable.Count > 0)
                 {
@@ -151,7 +151,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                         releaseable.Add(hit);
                 }
 
-                bool[] pressed = { false, false, false, false };
+                bool[] pressed = new bool[Map.KeyCount];
 
                 if (releaseable.Count > 0)
                 {

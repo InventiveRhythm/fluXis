@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace fluXis.Game.Map
@@ -16,6 +17,8 @@ namespace fluXis.Game.Map
         public float StartTime => HitObjects[0].Time;
         public float EndTime => HitObjects[^1].HoldEndTime;
 
+        public int KeyCount;
+
         public MapInfo(MapMetadata metadata)
         {
             ID = "";
@@ -32,12 +35,9 @@ namespace fluXis.Game.Map
                 return false;
 
             foreach (var hitObject in HitObjects)
-            {
-                if (hitObject.Lane > 4 || hitObject.Lane < 1)
-                    return false;
-            }
+                KeyCount = Math.Max(KeyCount, hitObject.Lane);
 
-            return true;
+            return KeyCount == 4 || KeyCount == 7;
         }
 
         public void Sort()
