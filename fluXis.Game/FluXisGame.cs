@@ -54,6 +54,7 @@ namespace fluXis.Game
             Add(new Conductor());
             Fluxel.Connect();
             screenStack.Push(new SelectScreen());
+            // screenStack.Push(new Editor());
         }
 
         public override void SetHost(GameHost host)
