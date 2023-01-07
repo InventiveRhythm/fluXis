@@ -56,7 +56,8 @@ namespace fluXis.Game.Screens.Select.UI
                     Y = -1,
                     Margin = new MarginPadding { Left = 10 },
                     Font = new FontUsage("Quicksand", 22)
-                }
+                },
+                new DiffKeyCount(map.KeyCount)
             };
         }
 
