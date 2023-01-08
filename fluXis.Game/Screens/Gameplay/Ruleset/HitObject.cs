@@ -41,7 +41,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             Size = Receptor.SIZE;
             Anchor = Anchor.BottomCentre;
             Origin = Anchor.BottomCentre;
-            X = manager.Playfield.Receptors[Data.Lane - 1].X;
 
             InternalChildren = new Drawable[]
             {
@@ -96,6 +95,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
             if (!Exists)
                 return;
+
+            X = manager.Playfield.Receptors[Data.Lane - 1].X;
 
             var receptor = manager.Playfield.Receptors[Data.Lane - 1];
             spr.Y = receptor.Y - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);

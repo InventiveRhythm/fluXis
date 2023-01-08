@@ -36,6 +36,7 @@ namespace fluXis.Game.Map
                             MapInfo map = JsonConvert.DeserializeObject<MapInfo>(File.ReadAllText(storage.GetFullPath(chart)));
                             map.MapsetID = dirName;
                             map.ID = Path.GetFileNameWithoutExtension(chart);
+                            map.Sort();
                             Logger.Log($"Loaded map {map.ID} from {map.MapsetID}");
 
                             if (map.Validate())

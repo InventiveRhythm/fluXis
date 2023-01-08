@@ -22,6 +22,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public List<HitObject> HitObjects { get; } = new List<HitObject>();
 
         public float CurrentTime { get; private set; }
+        public int CurrentKeyCount { get; private set; }
 
         public List<float> ScrollVelocityMarks { get; } = new List<float>();
 
@@ -62,6 +63,17 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             foreach (var hitObject in HitObjects.Where(h => h.Missed && h.Exists).ToList())
             {
                 miss(hitObject);
+            }
+
+            foreach (var eventInfo in Map.Events)
+            {
+                if (eventInfo.Type == "laneswitch")
+                {
+                    if (eventInfo.Time <= CurrentTime)
+                    {
+                        CurrentKeyCount = eventInfo.Value;
+                    }
+                }
             }
 
             // Logger.Log($"Current scroll speed: {ScrollSpeed} || {Conductor.CurrentTime}");
@@ -207,7 +219,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public void LoadMap(MapInfo map)
         {
             Map = map;
-            map.Sort();
+            CurrentKeyCount = map.InitialKeyCount;
             initScrollVelocityMarks();
 
             foreach (var hit in map.HitObjects)

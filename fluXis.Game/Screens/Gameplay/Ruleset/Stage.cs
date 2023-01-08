@@ -14,11 +14,13 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public Box BorderLeft;
         public Box BorderRight;
 
-        private readonly MapInfo map;
+        private readonly Playfield playfield;
 
-        public Stage(MapInfo map)
+        private int currentKeyCount;
+
+        public Stage(Playfield playfield)
         {
-            this.map = map;
+            this.playfield = playfield;
         }
 
         [BackgroundDependencyLoader]
@@ -27,6 +29,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+
+            MapInfo map = playfield.Map;
+            currentKeyCount = map.InitialKeyCount;
 
             AddRangeInternal(new[]
             {
@@ -37,7 +42,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Origin = Anchor.Centre,
                     Colour = Colour4.Black,
                     Alpha = 0.5f,
-                    Width = Receptor.SIZE.X * map.KeyCount + lane_margin * 2
+                    Width = Receptor.SIZE.X * map.InitialKeyCount + lane_margin * 2
                 },
                 BorderLeft = new Box
                 {
@@ -47,7 +52,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopRight,
                     Colour = Colour4.White,
-                    X = -(Receptor.SIZE.X * (map.KeyCount / 2f) + lane_margin)
+                    X = -(Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin)
                 },
                 BorderRight = new Box
                 {
@@ -57,14 +62,22 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomLeft,
                     Colour = Colour4.White,
-                    X = Receptor.SIZE.X * (map.KeyCount / 2f) + lane_margin
+                    X = Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin
                 }
             });
         }
 
-        protected override void LoadComplete()
+        protected override void Update()
         {
-            base.LoadComplete();
+            if (currentKeyCount != playfield.Manager.CurrentKeyCount)
+            {
+                currentKeyCount = playfield.Manager.CurrentKeyCount;
+                Background.ResizeWidthTo(Receptor.SIZE.X * currentKeyCount + lane_margin * 2, 200, Easing.OutQuint);
+                BorderLeft.MoveToX(-(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin), 200, Easing.OutQuint);
+                BorderRight.MoveToX(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin, 200, Easing.OutQuint);
+            }
+
+            base.Update();
         }
     }
 }
