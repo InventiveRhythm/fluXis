@@ -37,7 +37,6 @@ namespace fluXis.Game.Map
                             map.MapsetID = dirName;
                             map.ID = Path.GetFileNameWithoutExtension(chart);
                             map.Sort();
-                            Logger.Log($"Loaded map {map.ID} from {map.MapsetID}");
 
                             if (map.Validate())
                                 mapset.AddMap(map);
@@ -45,7 +44,7 @@ namespace fluXis.Game.Map
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Error loading map");
+                        Logger.Error(e, "Failed to load mapset " + dirName);
                     }
 
                     if (mapset.Maps.Count > 0)

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Map
 {
@@ -66,8 +65,6 @@ namespace fluXis.Game.Map
 
             if (InitialKeyCount == 0)
                 InitialKeyCount = KeyCount;
-
-            Logger.Log($"Keys: {KeyCount}, Initial: {InitialKeyCount}");
 
             return KeyCount > 3 && KeyCount < 8;
         }
