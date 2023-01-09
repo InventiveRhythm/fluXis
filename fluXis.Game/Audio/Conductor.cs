@@ -82,6 +82,11 @@ namespace fluXis.Game.Audio
             map = info;
         }
 
+        public static void Seek(float time)
+        {
+            track?.Seek(time);
+        }
+
         public static void PauseTrack()
         {
             track?.Stop();

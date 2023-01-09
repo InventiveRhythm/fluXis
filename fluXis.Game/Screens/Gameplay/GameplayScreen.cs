@@ -163,6 +163,11 @@ namespace fluXis.Game.Screens.Gameplay
                     Conductor.SetSpeed(paused ? 1 : 0);
                     paused = !paused;
                     return true;
+
+                case FluXisKeybind.Skip:
+                    if (Map.StartTime - Conductor.CurrentTime > 2000)
+                        Conductor.Seek(Map.StartTime - 2000);
+                    return true;
             }
 
             return false;
