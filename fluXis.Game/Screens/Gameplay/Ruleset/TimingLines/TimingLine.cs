@@ -7,12 +7,12 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
     public class TimingLine : Box
     {
         private readonly TimingLineManager manager;
-        private readonly float position;
+        public float ScrollVelocityTime { get; }
 
-        public TimingLine(TimingLineManager manager, float position)
+        public TimingLine(TimingLineManager manager, float time)
         {
             this.manager = manager;
-            this.position = position;
+            ScrollVelocityTime = time;
         }
 
         [BackgroundDependencyLoader]
@@ -27,7 +27,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
 
         protected override void Update()
         {
-            float delta = position - manager.HitObjectManager.CurrentTime;
+            float delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
             Y = -60 - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
 
             base.Update();

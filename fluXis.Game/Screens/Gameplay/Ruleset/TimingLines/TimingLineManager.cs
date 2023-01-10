@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using fluXis.Game.Map;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -8,6 +9,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
     {
         public HitObjectManager HitObjectManager { get; }
 
+        private readonly List<TimingLine> timingLines = new List<TimingLine>();
+        private readonly List<TimingLine> futureTimingLines = new List<TimingLine>();
+
         public TimingLineManager(HitObjectManager hitObjectManager)
         {
             HitObjectManager = hitObjectManager;
@@ -17,8 +21,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
 
         public void CreateLines(MapInfo map)
         {
-            Width = HitObjectManager.Playfield.Stage.Background.Width;
-
             for (int i = 0; i < map.TimingPoints.Count; i++)
             {
                 var point = map.TimingPoints[i];
@@ -28,10 +30,26 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
 
                 while (position < target)
                 {
-                    AddInternal(new TimingLine(this, HitObjectManager.PositionFromTime(position)));
+                    futureTimingLines.Add(new TimingLine(this, HitObjectManager.PositionFromTime(position)));
                     position += increase;
                 }
             }
+
+            futureTimingLines.Sort((a, b) => a.ScrollVelocityTime.CompareTo(b.ScrollVelocityTime));
+        }
+
+        protected override void Update()
+        {
+            while (futureTimingLines != null && futureTimingLines.Count > 0 && futureTimingLines[0].ScrollVelocityTime <= HitObjectManager.CurrentTime + 2000 * HitObjectManager.ScrollSpeed)
+            {
+                TimingLine line = futureTimingLines[0];
+                futureTimingLines.RemoveAt(0);
+                timingLines.Add(line);
+                AddInternal(line);
+            }
+
+            Width = HitObjectManager.Playfield.Stage.Background.Width;
+            base.Update();
         }
     }
 }
