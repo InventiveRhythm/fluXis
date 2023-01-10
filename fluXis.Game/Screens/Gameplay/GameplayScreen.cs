@@ -46,9 +46,9 @@ namespace fluXis.Game.Screens.Gameplay
             Input = new GameplayInput(Map.KeyCount);
             Performance = new Performance();
 
-            HitSound = samples.Get("gameplay/hit.ogg");
-            Combobreak = samples.Get("gameplay/combobreak.ogg");
-            Restart = samples.Get("gameplay/restart.ogg");
+            HitSound = samples.Get("Gameplay/hitsound.mp3");
+            Combobreak = samples.Get("Gameplay/combobreak.ogg");
+            Restart = samples.Get("Gameplay/restart.ogg");
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;

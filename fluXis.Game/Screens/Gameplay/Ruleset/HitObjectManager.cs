@@ -107,7 +107,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
                 if (hitObject.Data.HoldEndTime <= Conductor.CurrentTime)
                 {
-                    Playfield.Screen.HitSound.Play();
                     hit(hitObject, true);
                 }
             }
