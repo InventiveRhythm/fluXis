@@ -1,5 +1,3 @@
-using System.IO;
-using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -14,9 +12,9 @@ namespace fluXis.Game.Graphics.Background
         private readonly string backgroundFile;
         private Sprite backgroundSprite;
 
-        public Background(MapInfo map)
+        public Background(string path)
         {
-            backgroundFile = $"{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetBackgroundFile()}";
+            backgroundFile = path;
         }
 
         [BackgroundDependencyLoader]

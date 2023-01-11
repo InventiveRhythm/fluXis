@@ -9,6 +9,8 @@ using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -19,7 +21,6 @@ namespace fluXis.Game.Screens.Select
     {
         public BackgroundStack Backgrounds;
         public MapStore MapStore;
-        private List<MapSet> mapSets;
         public MapSet MapSet;
         public MapInfo MapInfo;
 
@@ -29,6 +30,8 @@ namespace fluXis.Game.Screens.Select
         public Sample MenuBack;
         public Sample MenuScroll;
 
+        private SpriteText noMapsText;
+
         private readonly Dictionary<MapSet, MapListEntry> lookup = new Dictionary<MapSet, MapListEntry>();
 
         [BackgroundDependencyLoader]
@@ -36,30 +39,56 @@ namespace fluXis.Game.Screens.Select
         {
             Backgrounds = background;
             MapStore = maps;
-            mapSets = maps.GetMapSets();
 
             MenuAccept = samples.Get("ui/accept.ogg");
             MenuBack = samples.Get("ui/back.ogg");
             MenuScroll = samples.Get("ui/scroll.ogg");
 
             AddInternal(MapList = new MapList());
-
-            int i = 0;
-
-            foreach (var set in mapSets)
+            AddInternal(new Container
             {
-                lookup[set] = MapList.AddMap(this, set, i);
-                i++;
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                RelativeSizeAxes = Axes.Both,
+                Width = .5f,
+                Child = noMapsText = new SpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Text = "No maps found!",
+                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Blending = BlendingParameters.Additive,
+                    Alpha = 0
+                }
+            });
+
+            if (MapStore.MapSets.Count == 0)
+            {
+                noMapsText.Alpha = 1;
+            }
+            else
+            {
+                int i = 0;
+
+                foreach (var set in MapStore.MapSets)
+                {
+                    lookup[set] = MapList.AddMap(this, set, i);
+                    i++;
+                }
             }
         }
 
         protected override void LoadComplete()
         {
-            SelectMapSet(MapStore.currentMapSet);
+            if (MapStore.MapSets.Count > 0)
+                SelectMapSet(MapStore.CurrentMapSet);
         }
 
         public void SelectMapSet(MapSet set)
         {
+            if (MapSet != null)
+                return;
+
             MapInfo map = set.Maps.First();
             MapSet = set;
             Backgrounds.AddBackgroundFromMap(map);
@@ -67,23 +96,26 @@ namespace fluXis.Game.Screens.Select
             MenuScroll.Play();
             MapList.ScrollTo(lookup[set]);
 
-            if (MapStore.currentMapSet != set || !Conductor.IsPlaying)
+            if (MapStore.CurrentMapSet != set || !Conductor.IsPlaying)
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
 
-            MapStore.currentMapSet = set;
+            MapStore.CurrentMapSet = set;
         }
 
         private void changeSelection(int by = 0)
         {
-            int current = mapSets.IndexOf(MapSet);
+            if (MapStore.MapSets.Count == 0)
+                return;
+
+            int current = MapStore.MapSets.IndexOf(MapSet);
             current += by;
 
             if (current < 0)
-                current = mapSets.Count - 1;
-            else if (current >= mapSets.Count)
+                current = MapStore.MapSets.Count - 1;
+            else if (current >= MapStore.MapSets.Count)
                 current = 0;
 
-            SelectMapSet(mapSets[current]);
+            SelectMapSet(MapStore.MapSets[current]);
         }
 
         public override void OnSuspending(ScreenTransitionEvent e)
@@ -103,7 +135,7 @@ namespace fluXis.Game.Screens.Select
 
         public override void OnEntering(ScreenTransitionEvent e)
         {
-            this.FadeIn(500);
+            this.FadeInFromZero(500);
             Discord.Update("Selecting a map", "", "songselect");
 
             base.OnEntering(e);

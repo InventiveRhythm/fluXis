@@ -10,10 +10,12 @@ namespace fluXis.Game.Map
 {
     public class MapStore
     {
-        private static readonly List<MapSet> mapsets = new List<MapSet>();
+        private static readonly List<MapSet> map_sets = new List<MapSet>();
         private static Storage storage;
 
-        public MapSet currentMapSet;
+        public List<MapSet> MapSets => map_sets;
+
+        public MapSet CurrentMapSet;
 
         public void LoadMaps(Storage stor)
         {
@@ -50,15 +52,14 @@ namespace fluXis.Game.Map
                     }
 
                     if (mapset.Maps.Count > 0)
-                        mapsets.Add(mapset);
+                        map_sets.Add(mapset);
                 }
             }
-            else
-            {
-                Logger.Log("No maps found.");
-            }
 
-            mapsets.Sort((a, b) =>
+            if (map_sets.Count == 0)
+                Logger.Log("No maps found.");
+
+            map_sets.Sort((a, b) =>
             {
                 string aTitle = a.Title.ToLower();
                 string bTitle = b.Title.ToLower();
@@ -78,14 +79,14 @@ namespace fluXis.Game.Map
         public MapSet GetRandom()
         {
             Random rnd = new Random();
-            return mapsets[rnd.Next(mapsets.Count)];
+            return map_sets[rnd.Next(map_sets.Count)];
         }
 
-        public List<MapSet> GetMapSets() => mapsets;
+        public List<MapSet> GetMapSets() => map_sets;
 
         public MapInfo GetMap(string mapsetID, string mapID)
         {
-            var mapset = mapsets.Find(x => x.ID == mapsetID);
+            var mapset = map_sets.Find(x => x.ID == mapsetID);
             return mapset?.Maps.Find(x => x.ID == mapID);
         }
 

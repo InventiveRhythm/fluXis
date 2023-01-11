@@ -20,8 +20,13 @@ namespace fluXis.Game.Screens.Menu
         private void load(MapStore maps, BackgroundStack backgrounds)
         {
             // load a random map
-            maps.currentMapSet = maps.GetRandom();
-            backgrounds.AddBackgroundFromMap(maps.currentMapSet.Maps.First());
+            if (maps.GetMapSets().Any())
+            {
+                maps.CurrentMapSet = maps.GetRandom();
+                backgrounds.AddBackgroundFromMap(maps.CurrentMapSet.Maps.First());
+            }
+            else
+                backgrounds.AddBackgroundFromMap(null);
 
             InternalChildren = new Drawable[]
             {

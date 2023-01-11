@@ -68,16 +68,18 @@ namespace fluXis.Game.Graphics.Background
 
         public void AddBackgroundFromMap(MapInfo map)
         {
-            if (map == null)
-                return;
+            string path;
 
-            string path = map.ID + Path.DirectorySeparatorChar + map.GetBackgroundFile();
+            if (map == null)
+                path = ""; // if empty, it will use the default background
+            else
+                path = map.ID + Path.DirectorySeparatorChar + map.GetBackgroundFile();
 
             if (path == currentBackground)
                 return;
 
             currentBackground = path;
-            scheduledBackgrounds.Add(new Background(map));
+            scheduledBackgrounds.Add(new Background(path));
         }
 
         public void SwipeAnimation()
