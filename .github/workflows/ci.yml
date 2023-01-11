@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
-          name: fluXis-ci-build
+          name: fluXis-ci-build-linux
           path: |
             bin/*
             !bin/runtimes/osx*
@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
-          name: fluXis-ci-build
+          name: fluXis-ci-build-windows
           path: |
             bin/*
             !bin/runtimes/osx*
