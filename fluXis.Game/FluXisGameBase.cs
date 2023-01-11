@@ -60,6 +60,7 @@ namespace fluXis.Game
         {
             AddFont(Resources, @"Fonts/Quicksand/Quicksand");
             AddFont(Resources, @"Fonts/Quicksand/Quicksand-SemiBold");
+            AddFont(Resources, @"Fonts/Quicksand/Quicksand-Bold");
         }
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

@@ -13,6 +13,8 @@ namespace fluXis.Game.Map
         private static readonly List<MapSet> mapsets = new List<MapSet>();
         private static Storage storage;
 
+        public MapSet currentMapSet;
+
         public void LoadMaps(Storage stor)
         {
             storage = stor;
@@ -71,6 +73,12 @@ namespace fluXis.Game.Map
 
                 return string.Compare(aTitle, bTitle, StringComparison.Ordinal);
             });
+        }
+
+        public MapSet GetRandom()
+        {
+            Random rnd = new Random();
+            return mapsets[rnd.Next(mapsets.Count)];
         }
 
         public List<MapSet> GetMapSets() => mapsets;

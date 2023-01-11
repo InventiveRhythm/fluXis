@@ -18,6 +18,7 @@ namespace fluXis.Game.Screens.Select
     public class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         public BackgroundStack Backgrounds;
+        public MapStore MapStore;
         private List<MapSet> mapSets;
         public MapSet MapSet;
         public MapInfo MapInfo;
@@ -34,6 +35,7 @@ namespace fluXis.Game.Screens.Select
         private void load(MapStore maps, BackgroundStack background, ISampleStore samples)
         {
             Backgrounds = background;
+            MapStore = maps;
             mapSets = maps.GetMapSets();
 
             MenuAccept = samples.Get("ui/accept.ogg");
@@ -49,11 +51,11 @@ namespace fluXis.Game.Screens.Select
                 lookup[set] = MapList.AddMap(this, set, i);
                 i++;
             }
+        }
 
-            if (MapSet != null)
-                return;
-
-            SelectMapSet(mapSets.First());
+        protected override void LoadComplete()
+        {
+            SelectMapSet(MapStore.currentMapSet);
         }
 
         public void SelectMapSet(MapSet set)
@@ -61,10 +63,14 @@ namespace fluXis.Game.Screens.Select
             MapInfo map = set.Maps.First();
             MapSet = set;
             Backgrounds.AddBackgroundFromMap(map);
-            Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
             Conductor.SetLoop(map.Metadata.PreviewTime);
             MenuScroll.Play();
             MapList.ScrollTo(lookup[set]);
+
+            if (MapStore.currentMapSet != set || !Conductor.IsPlaying)
+                Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
+
+            MapStore.currentMapSet = set;
         }
 
         private void changeSelection(int by = 0)
@@ -95,6 +101,21 @@ namespace fluXis.Game.Screens.Select
             base.OnResuming(e);
         }
 
+        public override void OnEntering(ScreenTransitionEvent e)
+        {
+            this.FadeIn(500);
+            Discord.Update("Selecting a map", "", "songselect");
+
+            base.OnEntering(e);
+        }
+
+        public override bool OnExiting(ScreenExitEvent e)
+        {
+            this.FadeOut(500);
+
+            return base.OnExiting(e);
+        }
+
         public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
         {
             switch (e.Action)
@@ -105,6 +126,11 @@ namespace fluXis.Game.Screens.Select
 
                 case FluXisKeybind.NextGroup:
                     changeSelection(1);
+                    return true;
+
+                case FluXisKeybind.Back:
+                    MenuBack.Play();
+                    this.Exit();
                     return true;
             }
 

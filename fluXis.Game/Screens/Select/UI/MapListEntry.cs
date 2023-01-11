@@ -17,7 +17,7 @@ namespace fluXis.Game.Screens.Select.UI
         private readonly int index;
 
         public bool Selected => Screen?.MapSet == mapset;
-        private bool selected = true; // so that the first mapset is selected by default
+        private bool selected; // so that the first mapset is selected by default
 
         private MapListEntryHeader header;
         private Container difficultyContainer;

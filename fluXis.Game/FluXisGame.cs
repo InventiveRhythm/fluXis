@@ -7,7 +7,7 @@ using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Overlay;
-using fluXis.Game.Screens.Select;
+using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
@@ -53,8 +53,7 @@ namespace fluXis.Game
 
             Add(new Conductor());
             Fluxel.Connect();
-            screenStack.Push(new SelectScreen());
-            // screenStack.Push(new Editor());
+            screenStack.Push(new MenuScreen());
         }
 
         public override void SetHost(GameHost host)

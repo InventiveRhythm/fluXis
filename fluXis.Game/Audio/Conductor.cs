@@ -24,6 +24,8 @@ namespace fluXis.Game.Audio
             set => SetSpeed(value);
         }
 
+        public static bool IsPlaying => track?.IsRunning ?? false;
+
         private const float max_speed = 2.0f;
         private const float min_speed = 0.5f;
 
