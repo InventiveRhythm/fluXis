@@ -29,4 +29,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: fluXis-ci-build
-          path: bin/*
+          path: 'bin/*', '!bin/runtimes/osx*', '!bin/runtimes/win*'
