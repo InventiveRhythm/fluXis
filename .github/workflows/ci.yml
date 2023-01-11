@@ -33,3 +33,29 @@ jobs:
             bin/*
             !bin/runtimes/osx*
             !bin/runtimes/win*
+
+  build-windows:
+    name: Build (Windows)
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: install dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "6.0.x"
+
+      - name: build
+        run: dotnet publish -c Release fluXis.Desktop --output ./bin
+
+      - name: upload build artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: fluXis-ci-build
+          path: |
+            bin/*
+            !bin/runtimes/osx*
+            !bin/runtimes/linux*
