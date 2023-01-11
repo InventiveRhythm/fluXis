@@ -86,7 +86,7 @@ namespace fluXis.Game.Screens.Select
 
         public void SelectMapSet(MapSet set)
         {
-            if (MapSet != null)
+            if (set == null)
                 return;
 
             MapInfo map = set.Maps.First();

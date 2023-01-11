@@ -15,6 +15,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
         public TimingLineManager(HitObjectManager hitObjectManager)
         {
             HitObjectManager = hitObjectManager;
+            RelativeSizeAxes = Axes.Y;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
         }

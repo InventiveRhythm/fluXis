@@ -68,12 +68,7 @@ namespace fluXis.Game.Graphics.Background
 
         public void AddBackgroundFromMap(MapInfo map)
         {
-            string path;
-
-            if (map == null)
-                path = ""; // if empty, it will use the default background
-            else
-                path = map.ID + Path.DirectorySeparatorChar + map.GetBackgroundFile();
+            var path = map == null ? "" : $"{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetBackgroundFile()}";
 
             if (path == currentBackground)
                 return;

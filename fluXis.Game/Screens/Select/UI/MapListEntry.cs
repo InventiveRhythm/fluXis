@@ -65,31 +65,38 @@ namespace fluXis.Game.Screens.Select.UI
         {
             if (Selected != selected)
             {
-                // the more difficulties, the longer the animation
-                const int duration = 300;
-
                 if (Selected)
-                {
-                    header.SetDim(.2f);
-                    difficultyContainer.FadeIn(duration, Easing.OutQuint)
-                                       .ResizeHeightTo(difficultyFlow.Height, duration, Easing.OutQuint);
-                }
+                    select();
                 else
-                {
-                    header.SetDim(.4f);
-                    difficultyContainer.FadeOut(duration, Easing.OutQuint)
-                                       .ResizeHeightTo(0, duration, Easing.OutQuint);
-                }
+                    deselect();
             }
+
+            // kind of a hack to make sure the first mapset is selected by default
+            if (Selected && difficultyContainer.Height == 0)
+                select();
 
             selected = Selected;
 
             base.Update();
         }
 
+        private void select()
+        {
+            header.SetDim(.2f);
+            difficultyContainer.FadeIn(300, Easing.OutQuint)
+                               .ResizeHeightTo(difficultyFlow.Height, 300, Easing.OutQuint);
+        }
+
+        private void deselect()
+        {
+            header.SetDim(.4f);
+            difficultyContainer.FadeOut(300, Easing.OutQuint)
+                               .ResizeHeightTo(0, 300, Easing.OutQuint);
+        }
+
         protected override bool OnClick(ClickEvent e)
         {
-            if (Selected)
+            if (selected)
                 return false; // dont handle clicks when we already selected this mapset
 
             Screen.SelectMapSet(mapset);
