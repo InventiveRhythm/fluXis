@@ -21,7 +21,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD.Judgement
             Origin = Anchor.CentreRight;
             X = -5;
 
-            foreach (var judgement in Scoring.Judgement.LIST)
+            foreach (var judgement in Scoring.HitWindow.LIST)
             {
                 var counter = new JudgementCounterItem(performance, judgement.Key);
                 counter.Y = (int)Height;

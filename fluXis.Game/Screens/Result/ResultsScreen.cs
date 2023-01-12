@@ -7,11 +7,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace fluXis.Game.Screens.Result
 {
@@ -19,12 +17,6 @@ namespace fluXis.Game.Screens.Result
     {
         private readonly MapInfo map;
         private readonly Performance performance;
-
-        private Box metadataLine;
-        private SpriteText songTitle;
-        private SpriteText songArtist;
-        private SpriteText songDiffMapper;
-        private Container judgements;
 
         public ResultsScreen(MapInfo map, Performance performance)
         {
@@ -35,79 +27,44 @@ namespace fluXis.Game.Screens.Result
         [BackgroundDependencyLoader]
         private void load()
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+
             InternalChildren = new Drawable[]
             {
                 new Container
                 {
-                    Position = new Vector2(20, 20),
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    CornerRadius = 10,
+                    Masking = true,
                     Children = new Drawable[]
                     {
-                        metadataLine = new Box
+                        new Box
                         {
-                            Width = 5,
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Colour4.FromHex("#222228"),
                         },
-                        songTitle = new SpriteText
+                        new FillFlowContainer()
                         {
-                            X = 15,
-                            Text = map.Metadata.Title,
-                            Font = new FontUsage("Quicksand", 64f, "SemiBold"),
-                        },
-                        songArtist = new SpriteText
-                        {
-                            X = 15,
-                            Y = 0,
-                            Text = map.Metadata.Artist,
-                            Font = new FontUsage("Quicksand", 32f),
-                            Alpha = 0
-                        },
-                        songDiffMapper = new SpriteText
-                        {
-                            X = 15,
-                            Y = 0,
-                            Text = $"[{map.Metadata.Difficulty}] mapped by {map.Metadata.Mapper}",
-                            Font = new FontUsage("Quicksand", 32f),
-                            Alpha = 0
+                            AutoSizeAxes = Axes.Both,
+                            Direction = FillDirection.Vertical,
+                            Margin = new MarginPadding(20),
+                            Children = new Drawable[]
+                            {
+                                new ResultTitle(map),
+                                new ResultScore(performance),
+                                new ResultHitPoints(map, performance)
+                            }
                         }
                     }
-                },
-                judgements = new Container
-                {
-                    Anchor = Anchor.BottomLeft,
-                    Origin = Anchor.BottomLeft,
-                    Position = new Vector2(20, -20)
                 }
             };
 
-            for (var i = 0; i < Judgement.LIST.Length; i++)
-            {
-                Judgement jud = Judgement.LIST[i];
-                int count = performance.Judgements.ContainsKey(jud.Key) ? performance.Judgements[jud.Key] : 0;
-                judgements.Add(new ResultJudgement(jud, count, i, Judgement.LIST.Length));
-            }
-
             Discord.Update("Viewing Results", "", "results");
-        }
 
-        protected override void LoadComplete()
-        {
-            metadataLine.ResizeTo(new Vector2(5, 0))
-                        .ResizeTo(new Vector2(5, 120), 250, Easing.OutQuint);
-
-            songTitle.MoveTo(new Vector2(15, -20))
-                     .FadeInFromZero(250)
-                     .MoveTo(new Vector2(15, 0), 250, Easing.OutQuint);
-
-            songArtist.MoveTo(new Vector2(15, 56 - 20))
-                      .Then(250)
-                      .FadeInFromZero(250)
-                      .MoveTo(new Vector2(15, 56), 250, Easing.OutQuint);
-
-            songDiffMapper.MoveTo(new Vector2(15, 82 - 20))
-                          .Then(500)
-                          .FadeInFromZero(250)
-                          .MoveTo(new Vector2(15, 82), 250, Easing.OutQuint);
-
-            base.LoadComplete();
+            // Logger.Log(JsonConvert.SerializeObject(performance, Formatting.None));
         }
 
         public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
@@ -123,5 +80,23 @@ namespace fluXis.Game.Screens.Result
         }
 
         public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
+        public override void OnEntering(ScreenTransitionEvent e)
+        {
+            this.ScaleTo(0.95f)
+                .FadeOut()
+                .ScaleTo(1f, 250, Easing.OutQuint)
+                .FadeIn(250, Easing.OutQuint);
+
+            base.OnEntering(e);
+        }
+
+        public override bool OnExiting(ScreenExitEvent e)
+        {
+            this.ScaleTo(1.05f, 250, Easing.OutQuint)
+                .FadeOut(250, Easing.OutQuint);
+
+            return base.OnExiting(e);
+        }
     }
 }

@@ -72,6 +72,7 @@ namespace fluXis.Game.Input
 
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.A), FluXisKeybind.ToggleAutoplay),
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.D), FluXisKeybind.ForceDeath),
+            new KeyBinding(new KeyCombination(InputKey.Control, InputKey.E), FluXisKeybind.ForceEnd),
         };
 
         protected override IEnumerable<Drawable> KeyBindingInputQueue
@@ -140,5 +141,6 @@ namespace fluXis.Game.Input
         // Ingame (Debug)
         ToggleAutoplay,
         ForceDeath,
+        ForceEnd
     }
 }

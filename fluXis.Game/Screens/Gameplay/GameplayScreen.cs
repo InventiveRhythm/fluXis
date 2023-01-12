@@ -44,7 +44,7 @@ namespace fluXis.Game.Screens.Gameplay
         private void load(ISampleStore samples)
         {
             Input = new GameplayInput(Map.KeyCount);
-            Performance = new Performance();
+            Performance = new Performance(Map);
 
             HitSound = samples.Get("Gameplay/hitsound.mp3");
             Combobreak = samples.Get("Gameplay/combobreak.ogg");
@@ -66,8 +66,6 @@ namespace fluXis.Game.Screens.Gameplay
             AddInternal(JudgementDisplay = new JudgementDisplay(this));
             AddInternal(new AutoPlayDisplay(this));
             AddInternal(new JudgementCounter(Performance));
-
-            Performance.SetMapInfo(Map);
 
             Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
         }
@@ -167,6 +165,10 @@ namespace fluXis.Game.Screens.Gameplay
                 case FluXisKeybind.Skip:
                     if (Map.StartTime - Conductor.CurrentTime > 2000)
                         Conductor.Seek(Map.StartTime - 2000);
+                    return true;
+
+                case FluXisKeybind.ForceEnd:
+                    End();
                     return true;
             }
 

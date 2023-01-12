@@ -33,20 +33,20 @@ namespace fluXis.Game.Screens.Gameplay.HUD
             };
         }
 
-        public void PopUp(Scoring.Judgement judgement)
+        public void PopUp(HitWindow hitWindow)
         {
             const int random_angle = 7;
             float scale = 1.4f;
             float rotation = 0;
 
-            if (judgement.Key == Judgements.Miss)
+            if (hitWindow.Key == Judgements.Miss)
             {
                 scale = 1.8f;
                 rotation = new Random().Next(-random_angle, random_angle);
             }
 
-            text.Text = judgement.Key.ToString();
-            text.Colour = judgement.Color;
+            text.Text = hitWindow.Key.ToString();
+            text.Colour = hitWindow.Color;
             text.RotateTo(rotation)
                 .ScaleTo(1f)
                 .TransformSpacingTo(new Vector2(0, 0))
