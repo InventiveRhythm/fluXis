@@ -36,7 +36,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD.Judgement
             CornerRadius = 5;
             Masking = true;
 
-            Scoring.Judgement jud = Scoring.Judgement.FromKey(judgement);
+            Scoring.HitWindow jud = Scoring.HitWindow.FromKey(judgement);
 
             Children = new Drawable[]
             {
@@ -87,7 +87,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD.Judgement
 
         private void lightUp()
         {
-            Scoring.Judgement jud = Scoring.Judgement.FromKey(judgement);
+            Scoring.HitWindow jud = Scoring.HitWindow.FromKey(judgement);
 
             background.FadeTo(.5f)
                       .FadeTo(.1f, 200);

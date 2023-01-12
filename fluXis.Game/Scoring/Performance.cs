@@ -1,27 +1,55 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Map;
+using Newtonsoft.Json;
 
 namespace fluXis.Game.Scoring
 {
     public class Performance
     {
+        [JsonProperty("accuracy")]
         public float Accuracy { get; private set; }
-        public string Grade { get; private set; }
-        public int Score { get; private set; }
-        public int Combo { get; private set; }
-        public int MaxCombo { get; private set; }
-        public Dictionary<Judgements, int> Judgements { get; }
-        private MapInfo mapInfo { get; set; }
 
-        public Performance()
+        [JsonProperty("grade")]
+        public string Grade { get; private set; }
+
+        [JsonProperty("score")]
+        public int Score { get; private set; }
+
+        [JsonProperty("combo")]
+        public int Combo { get; private set; }
+
+        [JsonProperty("maxCombo")]
+        public int MaxCombo { get; private set; }
+
+        [JsonProperty("judgements")]
+        public Dictionary<Judgements, int> Judgements { get; }
+
+        [JsonProperty("hitPoints")]
+        public List<HitPoint> HitPoints { get; }
+
+        [JsonProperty("mapid")]
+        public string MapID { get; private set; }
+
+        private readonly MapInfo map;
+
+        public Performance(MapInfo map)
         {
+            this.map = map;
+            MapID = map.ID;
+
             Accuracy = 0;
             Grade = "X";
             Score = 0;
             Combo = 0;
             MaxCombo = 0;
             Judgements = new Dictionary<Judgements, int>();
+            HitPoints = new List<HitPoint>();
+        }
+
+        public void AddHitPoint(HitPoint hitPoint)
+        {
+            HitPoints.Add(hitPoint);
         }
 
         public void AddJudgement(Judgements jud)
@@ -55,19 +83,16 @@ namespace fluXis.Game.Scoring
 
             Accuracy = (float)Math.Round(Accuracy, 2);
 
-            if (mapInfo != null)
+            int totalHitable = 0;
+
+            foreach (var h in map.HitObjects)
             {
-                int totalHitable = 0;
-
-                foreach (var h in mapInfo.HitObjects)
-                {
+                totalHitable++;
+                if (h.IsLongNote())
                     totalHitable++;
-                    if (h.IsLongNote())
-                        totalHitable++;
-                }
-
-                Score = (int)(GetRated() / totalHitable * 100000);
             }
+
+            Score = (int)(GetRated() / totalHitable * 1000000);
         }
 
         public int GetHit()
@@ -76,7 +101,7 @@ namespace fluXis.Game.Scoring
 
             foreach (var j in Judgements)
             {
-                Judgement j2 = Judgement.FromKey(j.Key);
+                HitWindow j2 = HitWindow.FromKey(j.Key);
                 if (j2 != null && j2.Accuracy > 0)
                     total += j.Value;
             }
@@ -90,7 +115,7 @@ namespace fluXis.Game.Scoring
 
             foreach (var j in Judgements)
             {
-                Judgement j2 = Judgement.FromKey(j.Key);
+                HitWindow j2 = HitWindow.FromKey(j.Key);
                 val += j.Value * j2.Accuracy;
             }
 
@@ -112,9 +137,31 @@ namespace fluXis.Game.Scoring
             return GetHit() + GetMiss();
         }
 
-        public void SetMapInfo(MapInfo mapInfo)
+        public int GetJudgementCount(Judgements jud)
         {
-            this.mapInfo = mapInfo;
+            if (Judgements.ContainsKey(jud))
+                return Judgements[jud];
+            else
+                return 0;
+        }
+    }
+
+    public class HitPoint
+    {
+        [JsonProperty("time")]
+        public float Time { get; }
+
+        [JsonProperty("difference")]
+        public float Difference { get; }
+
+        [JsonProperty("judgement")]
+        public Judgements Judgement { get; }
+
+        public HitPoint(float time, float diff, Judgements jud)
+        {
+            Time = time;
+            Difference = diff;
+            Judgement = jud;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
@@ -182,7 +183,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             float diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.CurrentTime : hitObject.Data.Time - Conductor.CurrentTime;
             hitObject.GotHit = true;
-            judmentDisplay(diff);
+
+            judmentDisplay(hitObject, diff);
 
             Performance.IncCombo();
 
@@ -200,7 +202,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             if (Performance.Combo >= 5)
                 Playfield.Screen.Combobreak.Play();
 
-            judmentDisplay(150);
+            judmentDisplay(hitObject, 0, true);
             Performance.ResetCombo();
 
             hitObject.Kill(true);
@@ -208,11 +210,13 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             RemoveInternal(hitObject, true);
         }
 
-        private void judmentDisplay(float diff)
+        private void judmentDisplay(HitObject hitObject, float difference, bool missed = false)
         {
-            Judgement judgement = Judgement.FromTiming(diff);
-            Performance.AddJudgement(judgement.Key);
-            Playfield.Screen.JudgementDisplay.PopUp(judgement);
+            HitWindow hitWindow = missed ? HitWindow.FromKey(Judgements.Miss) : HitWindow.FromTiming(Math.Abs(difference));
+
+            Performance.AddJudgement(hitWindow.Key);
+            Performance.AddHitPoint(new HitPoint(hitObject.Data.Time, difference, hitWindow.Key));
+            Playfield.Screen.JudgementDisplay.PopUp(hitWindow);
         }
 
         public void LoadMap(MapInfo map)
