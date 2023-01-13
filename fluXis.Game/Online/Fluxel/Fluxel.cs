@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Threading;
 using fluXis.Game.Online.API;
@@ -11,6 +12,7 @@ namespace fluXis.Game.Online.Fluxel
 {
     public class Fluxel
     {
+        internal static HttpClient Http = new();
         private static ClientWebSocket connection;
         private static APIUser loggedInUser;
 
