@@ -31,7 +31,7 @@ namespace fluXis.Game.Online
                 APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(data);
 
                 if (user.Status == 200)
-                    return user.GetResponse();
+                    return user.Data;
 
                 return null;
             }
