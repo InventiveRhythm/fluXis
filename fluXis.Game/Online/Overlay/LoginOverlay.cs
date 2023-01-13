@@ -82,8 +82,8 @@ namespace fluXis.Game.Online.Overlay
             Alpha = 0;
             Scale = new Vector2(0.9f);
 
-            Fluxel.Fluxel.RegisterListener(0, new ResponseListener<string>(onToken));
-            Fluxel.Fluxel.RegisterListener(1, new ResponseListener<APIUser>(onLogin));
+            Fluxel.Fluxel.RegisterListener<string>(EventType.Token, onToken);
+            Fluxel.Fluxel.RegisterListener<APIUser>(EventType.Login, onLogin);
         }
 
         private void submit()

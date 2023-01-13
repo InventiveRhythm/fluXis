@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.WebSockets;
@@ -16,7 +17,7 @@ namespace fluXis.Game.Online.Fluxel
         private static ClientWebSocket connection;
         private static APIUser loggedInUser;
 
-        private static readonly Dictionary<int, IResponseListener> response_listeners = new Dictionary<int, IResponseListener>();
+        private static readonly ConcurrentDictionary<EventType, List<Action<FluxelResponse<dynamic>>>> response_listeners = new();
 
         public static async void Connect()
         {
@@ -42,9 +43,10 @@ namespace fluXis.Game.Online.Fluxel
                 string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
                 FluxelResponse<dynamic> response = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(message);
 
-                if (response_listeners.ContainsKey(response.ID))
+                if (response_listeners.ContainsKey(response.Type))
                 {
-                    response_listeners[response.ID].Invoke(message);
+                    foreach (var listener in response_listeners[response.Type])
+                        listener(response);
                 }
             }
 
@@ -64,14 +66,15 @@ namespace fluXis.Game.Online.Fluxel
             Send(json);
         }
 
-        public static void RegisterListener(int id, IResponseListener listener)
+        public static void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
         {
-            response_listeners.Add(id, listener);
+            response_listeners.GetOrAdd(id, _ => new()).Add(listener as Action<FluxelResponse<dynamic>>);
         }
 
-        public static void UnregisterListener(int id)
+        public static void UnregisterListener(EventType id)
         {
-            response_listeners.Remove(id);
+            response_listeners.Remove(id, out var listeners);
+            listeners?.Clear();
         }
 
         public static void SetLoggedInUser(APIUser user)
@@ -84,5 +87,11 @@ namespace fluXis.Game.Online.Fluxel
         {
             return loggedInUser;
         }
+    }
+
+    public enum EventType : int
+    {
+        Token = 0,
+        Login = 1
     }
 }
