@@ -47,8 +47,8 @@ namespace fluXis.Game.Online.Fluxel
 
                     if (response_listeners.ContainsKey(response.Type))
                     {
-                        foreach (var listener in response_listeners[response.Type])
                             listener(response);
+                        foreach (var listener in response_listeners.GetOrAdd(response.Type, _ => new()))
                     }
                 }
             }
