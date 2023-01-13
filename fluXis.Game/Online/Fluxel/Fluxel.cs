@@ -7,6 +7,7 @@ using System.Threading;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel.Packets;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.Fluxel
@@ -17,7 +18,7 @@ namespace fluXis.Game.Online.Fluxel
         private static ClientWebSocket connection;
         private static APIUser loggedInUser;
 
-        private static readonly ConcurrentDictionary<EventType, List<Action<FluxelResponse<dynamic>>>> response_listeners = new();
+        private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();
 
         public static async void Connect()
         {
@@ -26,8 +27,7 @@ namespace fluXis.Game.Online.Fluxel
             await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
 
             // create thread
-            Thread thread = new Thread(receive);
-            thread.Start();
+            receive();
             Logger.Log("Connected to server.");
         }
 
@@ -43,13 +43,32 @@ namespace fluXis.Game.Online.Fluxel
 
                     // convert to string
                     string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-                    FluxelResponse<dynamic> response = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(message);
 
-                    if (response_listeners.ContainsKey(response.Type))
+                    // handler logic
+                    void handleListener<T>()
                     {
-                            listener(response);
-                        foreach (var listener in response_listeners.GetOrAdd(response.Type, _ => new()))
+                        var response = FluxelResponse<T>.Parse(message);
+
+                        if (response_listeners.ContainsKey(response.Type))
+                        {
+                            foreach (var listener
+                                     in (IEnumerable<Action<object>>)response_listeners.GetValueOrDefault(response.Type)
+                                        ?? ArraySegment<Action<object>>.Empty)
+                            {
+                                listener(response);
+                            }
+                        }
                     }
+
+                    // find right handler
+                    Action handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
+                    {
+                        EventType.Token => handleListener<string>,
+                        EventType.Login => handleListener<APIUser>,
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+                    // execute handler
+                    handler();
                 }
             }
             catch (Exception e)
@@ -75,7 +94,7 @@ namespace fluXis.Game.Online.Fluxel
 
         public static void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
         {
-            response_listeners.GetOrAdd(id, _ => new()).Add(listener as Action<FluxelResponse<dynamic>>);
+            response_listeners.GetOrAdd(id, _ => new()).Add(response => listener((FluxelResponse<T>)response));
         }
 
         public static void UnregisterListener(EventType id)
