@@ -33,21 +33,28 @@ namespace fluXis.Game.Online.Fluxel
 
         private static async void receive()
         {
-            while (connection.State == WebSocketState.Open)
+            try
             {
-                // receive data
-                byte[] buffer = new byte[2048];
-                await connection.ReceiveAsync(buffer, CancellationToken.None);
-
-                // convert to string
-                string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-                FluxelResponse<dynamic> response = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(message);
-
-                if (response_listeners.ContainsKey(response.Type))
+                while (connection.State == WebSocketState.Open)
                 {
-                    foreach (var listener in response_listeners[response.Type])
-                        listener(response);
+                    // receive data
+                    byte[] buffer = new byte[2048];
+                    await connection.ReceiveAsync(buffer, CancellationToken.None);
+
+                    // convert to string
+                    string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+                    FluxelResponse<dynamic> response = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(message);
+
+                    if (response_listeners.ContainsKey(response.Type))
+                    {
+                        foreach (var listener in response_listeners[response.Type])
+                            listener(response);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Fatal Error in receiver: " + e);
             }
 
             Logger.Log("Disconnected from server.");
