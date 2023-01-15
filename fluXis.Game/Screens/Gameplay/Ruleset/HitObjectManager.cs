@@ -19,22 +19,27 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public Playfield Playfield { get; }
         public Performance Performance { get; }
         public MapInfo Map { get; set; }
-        public List<HitObject> FutureHitObjects { get; } = new List<HitObject>();
-        public List<HitObject> HitObjects { get; } = new List<HitObject>();
+        public List<HitObject> FutureHitObjects { get; } = new();
+        public List<HitObject> HitObjects { get; } = new();
 
         public float CurrentTime { get; private set; }
         public int CurrentKeyCount { get; private set; }
 
-        public List<float> ScrollVelocityMarks { get; } = new List<float>();
+        public bool Dead { get; set; }
+        public HealthMode HealthMode => HealthMode.Hard;
+        public float Health { get; private set; }
+
+        public List<float> ScrollVelocityMarks { get; } = new();
 
         public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
 
-        public Bindable<bool> AutoPlay = new Bindable<bool>();
+        public Bindable<bool> AutoPlay = new();
 
         public HitObjectManager(Playfield playfield)
         {
             Playfield = playfield;
             Performance = playfield.Screen.Performance;
+            Health = HealthMode == HealthMode.Hard ? 100 : 0;
         }
 
         [BackgroundDependencyLoader]
@@ -77,6 +82,16 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 }
             }
 
+            if (Health > 100)
+                Health = 100;
+            else if (Health < 0 && !Dead)
+            {
+                if (HealthMode == HealthMode.Hard)
+                    Playfield.Screen.Die();
+                else
+                    Health = 0;
+            }
+
             // Logger.Log($"Current scroll speed: {ScrollSpeed} || {Conductor.CurrentTime}");
 
             base.Update();
@@ -115,6 +130,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         private void updateInput()
         {
+            if (Dead)
+                return;
+
             GameplayInput input = Playfield.Screen.Input;
 
             if (input.JustPressed.Contains(true))
@@ -214,9 +232,14 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             HitWindow hitWindow = missed ? HitWindow.FromKey(Judgements.Miss) : HitWindow.FromTiming(Math.Abs(difference));
 
-            Performance.AddJudgement(hitWindow.Key);
-            Performance.AddHitPoint(new HitPoint(hitObject.Data.Time, difference, hitWindow.Key));
             Playfield.Screen.JudgementDisplay.PopUp(hitWindow);
+
+            if (Dead)
+                return;
+
+            Performance.AddHitPoint(new HitPoint(hitObject.Data.Time, difference, hitWindow.Key));
+            Performance.AddJudgement(hitWindow.Key);
+            Health += hitWindow.Health;
         }
 
         public void LoadMap(MapInfo map)

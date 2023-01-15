@@ -29,6 +29,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1, 1);
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
 
             Stage = new Stage(this);
 

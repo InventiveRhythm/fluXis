@@ -12,6 +12,7 @@ using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -30,6 +31,7 @@ namespace fluXis.Game.Screens.Gameplay
         public MapInfo Map;
         public JudgementDisplay JudgementDisplay;
         public Playfield Playfield { get; private set; }
+        private Box overlay;
 
         public Sample HitSound;
         public Sample Combobreak;
@@ -66,6 +68,15 @@ namespace fluXis.Game.Screens.Gameplay
             AddInternal(JudgementDisplay = new JudgementDisplay(this));
             AddInternal(new AutoPlayDisplay(this));
             AddInternal(new JudgementCounter(Performance));
+            AddInternal(new HealthBar(this));
+            AddInternal(new DangerHealthOverlay(this));
+
+            AddInternal(overlay = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Red,
+                Alpha = 0
+            });
 
             Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
         }
@@ -86,9 +97,19 @@ namespace fluXis.Game.Screens.Gameplay
                 Conductor.ResumeTrack();
             }
 
-            if (!starting && Playfield.Manager.IsFinished)
+            if (!starting && Playfield.Manager.IsFinished && !Playfield.Manager.Dead)
             {
-                End();
+                if (Playfield.Manager.HealthMode == HealthMode.Normal)
+                {
+                    if (Playfield.Manager.Health < 70)
+                        Die();
+                    else
+                        End();
+                }
+                else
+                {
+                    End();
+                }
             }
 
             base.Update();
@@ -96,7 +117,14 @@ namespace fluXis.Game.Screens.Gameplay
 
         public void Die()
         {
-            Conductor.SetSpeed(.25f, 1000, Easing.None, true);
+            Playfield.Manager.Dead = true;
+            overlay.FadeTo(0.2f, 500);
+            Conductor.SetSpeed(.25f, 1000, Easing.None, true).OnComplete(_ =>
+            {
+                Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 400, Easing.None);
+                Conductor.SetSpeed(1, 400, Easing.None);
+                this.Exit();
+            });
         }
 
         public void End()
@@ -112,6 +140,12 @@ namespace fluXis.Game.Screens.Gameplay
         public override void OnSuspending(ScreenTransitionEvent e)
         {
             fadeOut();
+        }
+
+        public override bool OnExiting(ScreenExitEvent e)
+        {
+            fadeOut();
+            return base.OnExiting(e);
         }
 
         public override void OnEntering(ScreenTransitionEvent e)

@@ -4,12 +4,14 @@ using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Transforms;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Audio
 {
-    public class Conductor : Component
+    public class Conductor : Container
     {
         private static MapStore mapStore;
         private static MapInfo map;
@@ -17,6 +19,8 @@ namespace fluXis.Game.Audio
         private static Track track;
         public static float CurrentTime;
         public static int Offset = 0;
+
+        public static LowPassFilter LowPassFilter;
 
         public static float Speed
         {
@@ -41,6 +45,7 @@ namespace fluXis.Game.Audio
             Conductor.mapStore = mapStore;
             trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage));
             audioManager.Volume.Value = 0.1f;
+            Add(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
         }
 
         protected override void Update()
@@ -116,7 +121,7 @@ namespace fluXis.Game.Audio
             track.Looping = false;
         }
 
-        public static void SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint, bool force = false)
+        public static TransformSequence<Conductor> SetSpeed(float newSpeed, int duration = 400, Easing ease = Easing.OutQuint, bool force = false)
         {
             // make an exception when pausing
             if (newSpeed != 0 || force)
@@ -128,7 +133,7 @@ namespace fluXis.Game.Audio
             }
 
             instance.untweenedSpeed = newSpeed;
-            instance.TransformTo(nameof(speed), newSpeed, duration, ease);
+            return instance.TransformTo(nameof(speed), newSpeed, duration, ease);
         }
 
         public static void AddSpeed(float addSpeed, int duration = 400, Easing ease = Easing.OutQuint)
