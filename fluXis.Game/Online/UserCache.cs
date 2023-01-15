@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using fluXis.Game.Online.API;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
@@ -26,13 +26,12 @@ namespace fluXis.Game.Online
         {
             try
             {
-                var req = WebRequest.Create($"{APIConstants.API_URL}/user/{id}");
-                req.Method = "GET";
-                var res = new StreamReader(req.GetResponse().GetResponseStream()).ReadToEnd();
-                APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(res);
+                var res = Fluxel.Fluxel.Http.Send(new HttpRequestMessage(HttpMethod.Get, $"{APIConstants.API_URL}/user/{id}"));
+                var data = new StreamReader(res.Content.ReadAsStream()).ReadToEnd();
+                APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(data);
 
                 if (user.Status == 200)
-                    return user.GetResponse();
+                    return user.Data;
 
                 return null;
             }

@@ -6,7 +6,7 @@ namespace fluXis.Game.Online.Fluxel
     public class FluxelResponse<T> : APIResponse<T>
     {
         [JsonProperty("id")]
-        public int ID;
+        public EventType Type;
 
         public static FluxelResponse<T> Parse(string json)
         {

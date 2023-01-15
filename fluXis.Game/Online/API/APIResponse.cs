@@ -12,10 +12,5 @@ namespace fluXis.Game.Online.API
 
         [JsonProperty("data")]
         public T Data;
-
-        public T GetResponse()
-        {
-            return JsonConvert.DeserializeObject<T>(Data.ToString());
-        }
     }
 }
