@@ -48,7 +48,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD
                 lastAccuracy = currentAccuracy;
             }
 
-            accuracyText.Text = $"{displayedAccuracy:00.00}%".Replace(",", ".");
+            accuracyText.Text = $"{Screen.Performance.Grade} - {displayedAccuracy:00.00}%".Replace(",", ".");
 
             base.Update();
         }

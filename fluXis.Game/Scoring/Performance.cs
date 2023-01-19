@@ -93,6 +93,27 @@ namespace fluXis.Game.Scoring
             }
 
             Score = (int)(GetRated() / totalHitable * 1000000);
+            calculateGrade();
+        }
+
+        private void calculateGrade()
+        {
+            if (Accuracy == 100)
+                Grade = "X";
+            else if (Accuracy >= 99)
+                Grade = "SS";
+            else if (Accuracy >= 98)
+                Grade = "S";
+            else if (Accuracy >= 95)
+                Grade = "AA";
+            else if (Accuracy >= 90)
+                Grade = "A";
+            else if (Accuracy >= 80)
+                Grade = "B";
+            else if (Accuracy >= 70)
+                Grade = "C";
+            else
+                Grade = "D";
         }
 
         public int GetHit()
