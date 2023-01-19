@@ -6,9 +6,9 @@ namespace fluXis.Game.Map
         public int BPM;
         public int Signature;
 
-        public int GetMsPerBeat()
+        public float GetMsPerBeat()
         {
-            return 60000 / BPM;
+            return 60000f / BPM;
         }
     }
 }

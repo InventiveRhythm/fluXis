@@ -9,8 +9,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
     {
         public HitObjectManager HitObjectManager { get; }
 
-        private readonly List<TimingLine> timingLines = new List<TimingLine>();
-        private readonly List<TimingLine> futureTimingLines = new List<TimingLine>();
+        private readonly List<TimingLine> timingLines = new();
+        private readonly List<TimingLine> futureTimingLines = new();
 
         public TimingLineManager(HitObjectManager hitObjectManager)
         {
@@ -26,7 +26,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
             {
                 var point = map.TimingPoints[i];
                 float target = i + 1 < map.TimingPoints.Count ? map.TimingPoints[i + 1].Time : map.EndTime;
-                int increase = point.Signature * point.GetMsPerBeat();
+                float increase = point.Signature * point.GetMsPerBeat();
                 float position = point.Time;
 
                 while (position < target)
