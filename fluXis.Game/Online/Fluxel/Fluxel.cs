@@ -18,6 +18,8 @@ namespace fluXis.Game.Online.Fluxel
         private static ClientWebSocket connection;
         private static APIUser loggedInUser;
 
+        public static string Token;
+
         private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();
 
         public static async void Connect()

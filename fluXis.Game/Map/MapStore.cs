@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -26,6 +27,8 @@ namespace fluXis.Game.Map
                 Logger.Log("Loading maps...");
                 var dirs = storage.GetDirectories("maps");
 
+                MD5 md5 = MD5.Create();
+
                 foreach (var dir in dirs)
                 {
                     string dirName = dir.Split(Path.DirectorySeparatorChar).Last();
@@ -41,6 +44,10 @@ namespace fluXis.Game.Map
                             map.MapsetID = dirName;
                             map.ID = Path.GetFileNameWithoutExtension(chart);
                             map.Sort();
+
+                            md5.Initialize();
+                            map.MD5 = BitConverter.ToString(md5.ComputeHash(File.ReadAllBytes(storage.GetFullPath(chart)))).Replace("-", "").ToLower();
+                            Logger.Log($"map: {map.ID} - {map.MD5}");
 
                             if (map.Validate())
                                 mapset.AddMap(map);

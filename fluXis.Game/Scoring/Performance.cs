@@ -31,12 +31,16 @@ namespace fluXis.Game.Scoring
         [JsonProperty("mapid")]
         public string MapID { get; private set; }
 
+        [JsonProperty("maphash")]
+        public string MapHash { get; private set; }
+
         private readonly MapInfo map;
 
         public Performance(MapInfo map)
         {
             this.map = map;
             MapID = map.ID;
+            MapHash = map.MD5;
 
             Accuracy = 0;
             Grade = "X";

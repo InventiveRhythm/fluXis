@@ -12,5 +12,12 @@ namespace fluXis.Game.Online.API
 
         [JsonProperty("data")]
         public T Data;
+
+        public APIResponse(int status, string message, T data)
+        {
+            Status = status;
+            Message = message;
+            Data = data;
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace fluXis.Game.Map
     {
         public string MapsetID { get; set; }
         public string ID { get; set; }
+        public string MD5 { get; set; }
         public string AudioFile { get; set; }
         public string BackgroundFile { get; set; }
         public MapMetadata Metadata { get; set; }

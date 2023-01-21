@@ -1,6 +1,7 @@
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Scores;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result.UI;
 using osu.Framework.Allocation;
@@ -9,6 +10,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Result
@@ -22,6 +24,11 @@ namespace fluXis.Game.Screens.Result
         {
             this.map = map;
             this.performance = performance;
+
+            OnlineScores.UploadScore(performance, res =>
+            {
+                Logger.Log(res.Message);
+            });
         }
 
         [BackgroundDependencyLoader]

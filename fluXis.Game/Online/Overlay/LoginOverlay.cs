@@ -95,7 +95,10 @@ namespace fluXis.Game.Online.Overlay
         private void onToken(FluxelResponse<string> packet)
         {
             if (packet.Status == 200)
+            {
                 Fluxel.Fluxel.SendPacket(new LoginPacket(packet.Data));
+                Fluxel.Fluxel.Token = packet.Data;
+            }
             else
                 loginButton.Enabled.Value = true;
         }
