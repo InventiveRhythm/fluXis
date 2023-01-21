@@ -20,6 +20,23 @@ namespace fluXis.Game.Map
         public float StartTime => HitObjects[0].Time;
         public float EndTime => HitObjects[^1].HoldEndTime;
 
+        public int MaxCombo
+        {
+            get
+            {
+                int maxCombo = 0;
+
+                foreach (var hitObject in HitObjects)
+                {
+                    maxCombo++;
+                    if (hitObject.IsLongNote())
+                        maxCombo++;
+                }
+
+                return maxCombo;
+            }
+        }
+
         [JsonIgnore]
         public int KeyCount;
 

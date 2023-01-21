@@ -34,11 +34,12 @@ namespace fluXis.Game.Scoring
         [JsonProperty("maphash")]
         public string MapHash { get; private set; }
 
-        private readonly MapInfo map;
+        [JsonIgnore]
+        public readonly MapInfo Map;
 
         public Performance(MapInfo map)
         {
-            this.map = map;
+            Map = map;
             MapID = map.ID;
             MapHash = map.MD5;
 
@@ -87,16 +88,7 @@ namespace fluXis.Game.Scoring
 
             Accuracy = (float)Math.Round(Accuracy, 2);
 
-            int totalHitable = 0;
-
-            foreach (var h in map.HitObjects)
-            {
-                totalHitable++;
-                if (h.IsLongNote())
-                    totalHitable++;
-            }
-
-            Score = (int)(GetRated() / totalHitable * 1000000);
+            Score = (int)(GetRated() / Map.MaxCombo * 1000000);
             calculateGrade();
         }
 
@@ -168,6 +160,22 @@ namespace fluXis.Game.Scoring
                 return Judgements[jud];
             else
                 return 0;
+        }
+
+        public bool IsFullCombo()
+        {
+            return GetMiss() == 0;
+        }
+
+        public bool IsAllFlawless()
+        {
+            foreach (var (key, count) in Judgements)
+            {
+                if (key != Scoring.Judgements.Flawless && count > 0)
+                    return false;
+            }
+
+            return true;
         }
     }
 

@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Result.UI
 {
@@ -12,9 +13,11 @@ namespace fluXis.Game.Screens.Result.UI
         private readonly SpriteText scoreText;
         private readonly SpriteText accuracyText;
         private readonly FillFlowContainer judgementsContainer;
+        private readonly SpriteText comboText;
 
         private int score = 0;
         private float accuracy = 0;
+        private int combo = 0;
 
         public ResultScore(Performance performance)
         {
@@ -48,6 +51,28 @@ namespace fluXis.Game.Screens.Result.UI
                     Origin = Anchor.TopCentre,
                     Spacing = new Vector2(10, 0),
                     Margin = new MarginPadding { Top = 20 }
+                },
+                new FillFlowContainer
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Direction = FillDirection.Horizontal,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Spacing = new Vector2(10, 0),
+                    Margin = new MarginPadding { Top = 15 },
+                    Children = new[]
+                    {
+                        new SpriteText
+                        {
+                            Font = new FontUsage("Quicksand", 24, "Bold"),
+                            Text = "Max Combo"
+                        },
+                        comboText = new SpriteText
+                        {
+                            Font = new FontUsage("Quicksand", 24, "SemiBold"),
+                            Colour = performance.IsAllFlawless() ? HitWindow.FromKey(Judgements.Flawless).Color : performance.IsFullCombo() ? HitWindow.FromKey(Judgements.Great).Color : Color4.White
+                        },
+                    }
                 }
             });
 
@@ -62,6 +87,7 @@ namespace fluXis.Game.Screens.Result.UI
         {
             this.TransformTo(nameof(score), performance.Score, 1000, Easing.OutQuint);
             this.TransformTo(nameof(accuracy), performance.Accuracy, 800, Easing.OutQuint);
+            this.TransformTo(nameof(combo), performance.MaxCombo, 800, Easing.OutQuint);
 
             base.LoadComplete();
         }
@@ -70,6 +96,7 @@ namespace fluXis.Game.Screens.Result.UI
         {
             scoreText.Text = score.ToString().PadLeft(7, "0"[0]);
             accuracyText.Text = $"{performance.Grade} - {accuracy:00.00}%".Replace(",", ".");
+            comboText.Text = $"{combo}/{performance.Map.MaxCombo}";
 
             base.Update();
         }
