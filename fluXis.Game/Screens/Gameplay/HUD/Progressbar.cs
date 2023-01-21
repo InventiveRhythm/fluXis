@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 
@@ -25,38 +26,54 @@ namespace fluXis.Game.Screens.Gameplay.HUD
             Anchor = Anchor.TopLeft;
             Origin = Anchor.TopLeft;
             RelativeSizeAxes = Axes.X;
+            Padding = new MarginPadding { Top = 10, Left = 10, Right = 10 };
 
             InternalChildren = new Drawable[]
             {
-                bar = new Box
+                new Container
                 {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 10,
+                    CornerRadius = 5,
+                    Masking = true,
                     Anchor = Anchor.TopLeft,
-                    Origin = Anchor.TopLeft
+                    Origin = Anchor.TopLeft,
+                    Height = 10,
+                    RelativeSizeAxes = Axes.X,
+                    Children = new Drawable[]
+                    {
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Alpha = .2f,
+                            Blending = BlendingParameters.Additive
+                        },
+                        bar = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                        }
+                    }
                 },
                 currentTimeText = new SpriteText
                 {
                     Anchor = Anchor.TopLeft,
                     Origin = Anchor.TopLeft,
-                    Y = 20,
-                    X = 20,
-                    Font = new FontUsage("Quicksand", 32f, "SemiBold")
+                    Y = 10,
+                    X = 10,
+                    Font = new FontUsage("Quicksand", 32f, "Bold")
                 },
                 percentText = new SpriteText
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-                    Y = 20,
-                    Font = new FontUsage("Quicksand", 32f, "SemiBold")
+                    Y = 10,
+                    Font = new FontUsage("Quicksand", 32f, "Bold")
                 },
                 timeLeftText = new SpriteText
                 {
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,
-                    Y = 20,
-                    X = -20,
-                    Font = new FontUsage("Quicksand", 32f, "SemiBold")
+                    Y = 10,
+                    X = -10,
+                    Font = new FontUsage("Quicksand", 32f, "Bold")
                 },
             };
         }
@@ -68,9 +85,11 @@ namespace fluXis.Game.Screens.Gameplay.HUD
             int timeLeft = (int)((Screen.Map.EndTime - Conductor.CurrentTime) / speed);
             int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / speed);
             bool negative = currentTime < 0;
+            float percent = (float)currentTime / totalTime;
+            if (percent < 0) percent = 0;
 
-            bar.Width = (float)currentTime / totalTime;
-            percentText.Text = $"{(int)((float)currentTime / totalTime * 100)}%";
+            bar.Width = percent;
+            percentText.Text = $"{(int)(percent * 100)}%";
             currentTimeText.Text = (negative ? "-" : "") + $"{currentTime / 1000 / 60}:{Math.Abs(currentTime / 1000 % 60):00}";
             timeLeftText.Text = $"{timeLeft / 1000 / 60}:{timeLeft / 1000 % 60:00}";
 
