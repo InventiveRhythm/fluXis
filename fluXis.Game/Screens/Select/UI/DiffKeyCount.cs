@@ -8,51 +8,42 @@ namespace fluXis.Game.Screens.Select.UI
 {
     public class DiffKeyCount : Container
     {
+        public Colour4 KeyColour { get; set; }
+
         public DiffKeyCount(int count)
         {
             CornerRadius = 5;
             Masking = true;
-            AutoSizeAxes = Axes.Both;
+            RelativeSizeAxes = Axes.Y;
+            Width = 50;
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;
-            Margin = new MarginPadding { Right = 10 };
 
-            Colour4 colour = Color4.White;
-
-            switch (count)
+            KeyColour = count switch
             {
-                case 4:
-                    colour = Colour4.FromHex("62bafe");
-                    break;
-
-                case 5:
-                    colour = Colour4.FromHex("61f984");
-                    break;
-
-                case 6:
-                    colour = Colour4.FromHex("e3bb45");
-                    break;
-
-                case 7:
-                    colour = Colour4.FromHex("ec3b8d");
-                    break;
-            }
+                4 => Colour4.FromHex("62bafe"),
+                5 => Colour4.FromHex("61f984"),
+                6 => Colour4.FromHex("e3bb45"),
+                7 => Colour4.FromHex("ec3b8d"),
+                _ => Color4.White
+            };
 
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = colour
+                    Colour = KeyColour
                 },
                 new SpriteText
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight,
                     Text = $"{count}K",
                     Font = new FontUsage("Quicksand", 20, "SemiBold"),
-                    Margin = new MarginPadding { Horizontal = 10 },
-                    Y = -1
+                    Margin = new MarginPadding { Right = 13 },
+                    Y = -1,
+                    Colour = KeyColour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Color4.White
                 }
             };
         }

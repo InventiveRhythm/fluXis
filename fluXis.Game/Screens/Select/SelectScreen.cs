@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -91,15 +92,37 @@ namespace fluXis.Game.Screens.Select
 
             MapInfo map = set.Maps.First();
             MapSet = set;
-            Backgrounds.AddBackgroundFromMap(map);
+            MapInfo = map;
+            SelectMap(map);
             Conductor.SetLoop(map.Metadata.PreviewTime);
-            MenuScroll.Play();
             MapList.ScrollTo(lookup[set]);
 
             if (MapStore.CurrentMapSet != set || !Conductor.IsPlaying)
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
 
             MapStore.CurrentMapSet = set;
+        }
+
+        public void SelectMap(MapInfo map)
+        {
+            if (map == null)
+                return;
+
+            MapInfo = map;
+            MenuScroll.Play();
+            Backgrounds.AddBackgroundFromMap(map);
+            MapList.ScrollTo(lookup[MapSet]);
+        }
+
+        public void Accept()
+        {
+            if (MapInfo == null)
+                return;
+
+            MenuAccept.Play();
+            Backgrounds.AddBackgroundFromMap(MapInfo);
+            Backgrounds.SwipeAnimation();
+            this.Push(new GameplayScreen(MapInfo));
         }
 
         private void changeSelection(int by = 0)
@@ -116,6 +139,27 @@ namespace fluXis.Game.Screens.Select
                 current = 0;
 
             SelectMapSet(MapStore.MapSets[current]);
+        }
+
+        private void changeMapSelection(int by = 0)
+        {
+            int current = MapSet.Maps.IndexOf(MapInfo);
+            current += by;
+
+            if (current < 0)
+            {
+                changeSelection(-1);
+                changeMapSelection(MapSet.Maps.Count - 1);
+                return;
+            }
+
+            if (current >= MapSet.Maps.Count)
+            {
+                changeSelection(1);
+                return;
+            }
+
+            SelectMap(MapSet.Maps[current]);
         }
 
         public override void OnSuspending(ScreenTransitionEvent e)
@@ -156,8 +200,20 @@ namespace fluXis.Game.Screens.Select
                     changeSelection(-1);
                     return true;
 
+                case FluXisKeybind.Previous:
+                    changeMapSelection(-1);
+                    return true;
+
                 case FluXisKeybind.NextGroup:
                     changeSelection(1);
+                    return true;
+
+                case FluXisKeybind.Next:
+                    changeMapSelection(1);
+                    return true;
+
+                case FluXisKeybind.Select:
+                    Accept();
                     return true;
 
                 case FluXisKeybind.Back:

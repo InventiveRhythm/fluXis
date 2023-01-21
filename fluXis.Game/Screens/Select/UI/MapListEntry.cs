@@ -43,14 +43,14 @@ namespace fluXis.Game.Screens.Select.UI
                 {
                     Masking = true,
                     RelativeSizeAxes = Axes.X,
-                    Y = 80,
+                    Y = 75,
+                    Padding = new MarginPadding(5),
                     Child = difficultyFlow = new FillFlowContainer<MapDifficultyEntry>
                     {
                         Direction = FillDirection.Vertical,
                         AutoSizeAxes = Axes.Y,
                         RelativeSizeAxes = Axes.X,
-                        Spacing = new Vector2(0, 5),
-                        Masking = true
+                        Spacing = new Vector2(0, 5)
                     }
                 }
             };
@@ -84,7 +84,7 @@ namespace fluXis.Game.Screens.Select.UI
         {
             header.SetDim(.2f);
             difficultyContainer.FadeIn(300, Easing.OutQuint)
-                               .ResizeHeightTo(difficultyFlow.Height, 300, Easing.OutQuint);
+                               .ResizeHeightTo(difficultyFlow.Height + 10, 300, Easing.OutQuint);
         }
 
         private void deselect()
@@ -160,7 +160,7 @@ namespace fluXis.Game.Screens.Select.UI
                         {
                             new SpriteText
                             {
-                                Font = new FontUsage("Quicksand", 32f, "SemiBold"),
+                                Font = new FontUsage("Quicksand", 32f, "Bold"),
                                 Text = mapset.Title,
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
@@ -168,7 +168,7 @@ namespace fluXis.Game.Screens.Select.UI
                             },
                             new SpriteText
                             {
-                                Font = new FontUsage("Quicksand", 28f),
+                                Font = new FontUsage("Quicksand", 28f, "SemiBold"),
                                 Text = mapset.Artist,
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,

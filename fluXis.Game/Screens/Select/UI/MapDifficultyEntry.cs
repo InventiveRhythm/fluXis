@@ -1,12 +1,11 @@
 using fluXis.Game.Map;
-using fluXis.Game.Screens.Gameplay;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select.UI
 {
@@ -17,6 +16,11 @@ namespace fluXis.Game.Screens.Select.UI
 
         private SpriteText difficultyName;
         private SpriteText difficultyMapper;
+        private Container backgroundContainer;
+        private DiffKeyCount keyCount;
+
+        private bool selected;
+        private float glowAmount = 0f;
 
         public MapDifficultyEntry(MapListEntry parentEntry, MapInfo map)
         {
@@ -31,13 +35,26 @@ namespace fluXis.Game.Screens.Select.UI
             Height = 40;
             CornerRadius = 5;
             Masking = true;
+            EdgeEffect = new EdgeEffectParameters
+            {
+                Type = EdgeEffectType.Glow,
+                Colour = Colour4.Transparent,
+                Radius = 5
+            };
 
             InternalChildren = new Drawable[]
             {
-                new Box
+                keyCount = new DiffKeyCount(map.KeyCount),
+                backgroundContainer = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.FromHex("#1a1a20")
+                    Masking = true,
+                    CornerRadius = 5,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.FromHex("#1a1a20")
+                    },
                 },
                 difficultyName = new SpriteText
                 {
@@ -56,26 +73,47 @@ namespace fluXis.Game.Screens.Select.UI
                     Y = -1,
                     Margin = new MarginPadding { Left = 10 },
                     Font = new FontUsage("Quicksand", 22)
-                },
-                new DiffKeyCount(map.KeyCount)
+                }
             };
         }
 
         protected override void LoadComplete()
         {
             difficultyMapper.X = difficultyName.DrawWidth + 3;
+            backgroundContainer.Width = (backgroundContainer.RelativeToAbsoluteFactor.X - 40) / backgroundContainer.RelativeToAbsoluteFactor.X;
             base.LoadComplete();
         }
 
         protected override bool OnClick(ClickEvent e)
         {
-            mapListEntry.Screen.MapInfo = map;
-            mapListEntry.Screen.MenuAccept.Play();
-            mapListEntry.Screen.Backgrounds.AddBackgroundFromMap(map);
-            mapListEntry.Screen.Backgrounds.SwipeAnimation();
-            mapListEntry.Screen.Push(new GameplayScreen(map));
+            if (mapListEntry.Screen.MapInfo == map)
+                mapListEntry.Screen.Accept();
+            else
+                mapListEntry.Screen.SelectMap(map);
 
             return base.OnClick(e);
+        }
+
+        protected override void Update()
+        {
+            bool newSelected = mapListEntry.Screen.MapInfo == map;
+
+            if (selected != newSelected)
+            {
+                this.TransformTo(nameof(glowAmount), newSelected ? 1f : 0f, 200, Easing.OutQuint);
+                selected = newSelected;
+            }
+
+            updateGlow();
+
+            base.Update();
+        }
+
+        private void updateGlow()
+        {
+            EdgeEffectParameters glow = EdgeEffect;
+            glow.Colour = keyCount.KeyColour.Opacity(glowAmount);
+            EdgeEffect = glow;
         }
     }
 }
