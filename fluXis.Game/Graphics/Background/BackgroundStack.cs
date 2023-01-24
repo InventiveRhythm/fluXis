@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -17,7 +18,7 @@ namespace fluXis.Game.Graphics.Background
         private Box swipeAnimation;
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(FluXisConfig config)
         {
             RelativeSizeAxes = Axes.Both;
 
@@ -31,7 +32,7 @@ namespace fluXis.Game.Graphics.Background
                 {
                     Colour = Colour4.Black,
                     RelativeSizeAxes = Axes.Both,
-                    Alpha = 0.25f
+                    Alpha = config.Get<float>(FluXisSetting.BackgroundDim)
                 },
                 swipeAnimation = new Box
                 {

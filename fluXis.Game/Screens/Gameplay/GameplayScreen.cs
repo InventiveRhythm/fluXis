@@ -1,6 +1,7 @@
 ﻿using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
@@ -31,7 +32,9 @@ namespace fluXis.Game.Screens.Gameplay
         public MapInfo Map;
         public JudgementDisplay JudgementDisplay;
         public Playfield Playfield { get; private set; }
+
         private Box overlay;
+        private FluXisConfig config;
 
         public Sample HitSound;
         public Sample Combobreak;
@@ -43,8 +46,10 @@ namespace fluXis.Game.Screens.Gameplay
         }
 
         [BackgroundDependencyLoader]
-        private void load(ISampleStore samples)
+        private void load(ISampleStore samples, FluXisConfig config)
         {
+            this.config = config;
+
             Input = new GameplayInput(Map.KeyCount);
             Performance = new Performance(Map);
 
@@ -203,6 +208,14 @@ namespace fluXis.Game.Screens.Gameplay
 
                 case FluXisKeybind.ForceEnd:
                     End();
+                    return true;
+
+                case FluXisKeybind.ScrollSpeedIncrease:
+                    config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value += 0.1f;
+                    return true;
+
+                case FluXisKeybind.ScrollSpeedDecrease:
+                    config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
                     return true;
             }
 

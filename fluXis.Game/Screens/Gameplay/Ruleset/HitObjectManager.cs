@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.Input;
@@ -15,7 +16,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
     public class HitObjectManager : CompositeDrawable
     {
-        public float ScrollSpeed => 3.5f;
+        private Bindable<float> scrollSpeed;
+        public float ScrollSpeed => scrollSpeed.Value;
         public Playfield Playfield { get; }
         public Performance Performance { get; }
         public MapInfo Map { get; set; }
@@ -35,6 +37,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         public Bindable<bool> AutoPlay = new();
 
+        private FluXisConfig config;
+
         public HitObjectManager(Playfield playfield)
         {
             Playfield = playfield;
@@ -43,10 +47,13 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(FluXisConfig config)
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1, 1);
+            this.config = config;
+
+            scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         }
 
         protected override void Update()

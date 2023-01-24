@@ -69,6 +69,8 @@ namespace fluXis.Game.Input
             new KeyBinding(InputKey.Escape, FluXisKeybind.Pause),
             new KeyBinding(InputKey.Left, FluXisKeybind.SeekBackward),
             new KeyBinding(InputKey.Right, FluXisKeybind.SeekForward),
+            new KeyBinding(InputKey.F3, FluXisKeybind.ScrollSpeedDecrease),
+            new KeyBinding(InputKey.F4, FluXisKeybind.ScrollSpeedIncrease),
 
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.A), FluXisKeybind.ToggleAutoplay),
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.D), FluXisKeybind.ForceDeath),
@@ -137,6 +139,8 @@ namespace fluXis.Game.Input
         Pause,
         SeekBackward,
         SeekForward,
+        ScrollSpeedIncrease,
+        ScrollSpeedDecrease,
 
         // Ingame (Debug)
         ToggleAutoplay,

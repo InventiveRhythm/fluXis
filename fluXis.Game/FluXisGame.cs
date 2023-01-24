@@ -25,10 +25,10 @@ namespace fluXis.Game
         private OnlineOverlay overlay;
 
         [Cached]
-        private MapStore mapStore = new MapStore();
+        private MapStore mapStore = new();
 
         [Cached]
-        private BackgroundStack backgroundStack = new BackgroundStack();
+        private BackgroundStack backgroundStack = new();
 
         [BackgroundDependencyLoader]
         private void load(Storage storage)

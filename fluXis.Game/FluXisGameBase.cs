@@ -1,3 +1,4 @@
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Resources;
@@ -20,6 +21,8 @@ namespace fluXis.Game
 
         protected override Container<Drawable> Content => content;
         private Container content;
+
+        public FluXisConfig Config;
 
         protected FluXisGameBase()
         {
@@ -54,6 +57,7 @@ namespace fluXis.Game
             });
 
             dependencies.Cache(keybinds);
+            dependencies.CacheAs(Config = new FluXisConfig(storage));
         }
 
         protected void InitFonts()
