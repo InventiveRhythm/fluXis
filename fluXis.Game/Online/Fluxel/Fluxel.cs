@@ -24,13 +24,20 @@ namespace fluXis.Game.Online.Fluxel
 
         public static async void Connect()
         {
-            Logger.Log("Connecting to server...");
-            connection = new ClientWebSocket();
-            await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
+            try
+            {
+                Logger.Log("Connecting to server...");
+                connection = new ClientWebSocket();
+                await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
 
-            // create thread
-            receive();
-            Logger.Log("Connected to server.");
+                // create thread
+                receive();
+                Logger.Log("Connected to server.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Could not connect to server!");
+            }
         }
 
         private static async void receive()
