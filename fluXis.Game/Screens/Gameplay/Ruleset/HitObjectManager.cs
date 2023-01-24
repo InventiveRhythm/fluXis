@@ -37,8 +37,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         public Bindable<bool> AutoPlay = new();
 
-        private FluXisConfig config;
-
         public HitObjectManager(Playfield playfield)
         {
             Playfield = playfield;
@@ -51,7 +49,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1, 1);
-            this.config = config;
 
             scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         }
