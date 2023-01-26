@@ -8,9 +8,21 @@ namespace fluXis.Game.Graphics
 {
     public class TicTac : CircularContainer
     {
+        private float size;
+
+        public float TicTacSize
+        {
+            get => size;
+            set
+            {
+                Size = new Vector2(value / 2, value);
+                size = value;
+            }
+        }
+
         public TicTac(float size)
         {
-            Size = new Vector2(size / 2, size);
+            TicTacSize = size;
             Masking = true;
 
             Child = new Box

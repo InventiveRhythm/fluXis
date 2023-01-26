@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
@@ -166,35 +167,27 @@ namespace fluXis.Game.Online.Overlay
         {
             protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer()
             {
-                AutoSizeAxes = Axes.Both,
+                Height = CalculatedTextSize,
+                Width = CalculatedTextSize / 2,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
                 Child = new PasswordChar(CalculatedTextSize)
             };
 
-            private class PasswordChar : CircularContainer
+            private class PasswordChar : TicTac
             {
-                private readonly float size;
-
                 public PasswordChar(float size)
+                    : base(size)
                 {
-                    this.size = size;
-
                     Anchor = Anchor.Centre;
                     Origin = Anchor.Centre;
-                    Size = new Vector2(size / 2, 0);
-                    Masking = true;
-                    Y = size;
-                    Child = new Box
-                    {
-                        Colour = Colour4.White,
-                        RelativeSizeAxes = Axes.Both
-                    };
+                    Size = new Vector2(size / 2);
                 }
 
                 protected override void LoadComplete()
                 {
                     base.LoadComplete();
-                    this.ResizeHeightTo(0)
-                        .ResizeHeightTo(size / 2, 100);
+                    this.ScaleTo(0).ScaleTo(1, 100);
                 }
             }
         }
