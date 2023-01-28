@@ -1,9 +1,11 @@
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Account;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -15,11 +17,13 @@ namespace fluXis.Game.Online.Overlay
 {
     public class LoginOverlay : Container
     {
+        private Bindable<string> tokenBind;
+
+        private readonly OnlineOverlay onlineOverlay;
+
         private TextBox username;
         private PasswordTextBox password;
         private BasicButton loginButton;
-
-        private OnlineOverlay onlineOverlay;
 
         public LoginOverlay(OnlineOverlay onlineOverlay)
         {
@@ -27,8 +31,10 @@ namespace fluXis.Game.Online.Overlay
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(FluXisConfig config)
         {
+            tokenBind = config.GetBindable<string>(FluXisSetting.Token);
+
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Width = 300;
@@ -85,6 +91,12 @@ namespace fluXis.Game.Online.Overlay
 
             Fluxel.Fluxel.RegisterListener<string>(EventType.Token, onToken);
             Fluxel.Fluxel.RegisterListener<APIUser>(EventType.Login, onLogin);
+
+            if (string.IsNullOrEmpty(tokenBind.Value)) return;
+
+            loginButton.Enabled.Value = false;
+            Fluxel.Fluxel.SendPacket(new LoginPacket(tokenBind.Value));
+            Fluxel.Fluxel.Token = tokenBind.Value;
         }
 
         private void submit()
@@ -99,6 +111,7 @@ namespace fluXis.Game.Online.Overlay
             {
                 Fluxel.Fluxel.SendPacket(new LoginPacket(packet.Data));
                 Fluxel.Fluxel.Token = packet.Data;
+                tokenBind.Value = packet.Data;
             }
             else
                 loginButton.Enabled.Value = true;
@@ -106,10 +119,15 @@ namespace fluXis.Game.Online.Overlay
 
         private void onLogin(FluxelResponse<APIUser> packet)
         {
-            Fluxel.Fluxel.SetLoggedInUser(packet.Data);
-            onlineOverlay.OnUserLogin();
-            completed = true;
-            Discord.Reload();
+            if (packet.Status == 200)
+            {
+                Fluxel.Fluxel.SetLoggedInUser(packet.Data);
+                onlineOverlay.OnUserLogin();
+                completed = true;
+                Discord.Reload();
+            }
+            else
+                loginButton.Enabled.Value = true;
         }
 
         private bool completed;

@@ -18,6 +18,8 @@ namespace fluXis.Game.Online.Fluxel
         private static ClientWebSocket connection;
         private static APIUser loggedInUser;
 
+        private static List<string> packetQueue = new();
+
         public static string Token;
 
         private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();
@@ -33,6 +35,10 @@ namespace fluXis.Game.Online.Fluxel
                 // create thread
                 receive();
                 Logger.Log("Connected to server.");
+
+                // send queued packets
+                foreach (var packet in packetQueue)
+                    Send(packet);
             }
             catch (Exception ex)
             {
@@ -90,6 +96,12 @@ namespace fluXis.Game.Online.Fluxel
 
         public static void Send(string message)
         {
+            if (connection == null || connection.State != WebSocketState.Open)
+            {
+                packetQueue.Add(message);
+                return;
+            }
+
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
             connection.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
         }
