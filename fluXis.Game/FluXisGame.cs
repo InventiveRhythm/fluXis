@@ -7,6 +7,7 @@ using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Overlay;
+using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -41,9 +42,11 @@ namespace fluXis.Game
             // A screen stack and sample screen has been provided for convenience, but you can replace it if you don't want to use screens.
             Children = new Drawable[]
             {
+                new Conductor(),
                 backgroundStack,
                 screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
-                overlay = new OnlineOverlay()
+                overlay = new OnlineOverlay(),
+                new VolumeOverlay()
             };
         }
 
@@ -51,7 +54,6 @@ namespace fluXis.Game
         {
             base.LoadComplete();
 
-            Add(new Conductor());
             Fluxel.Connect();
             screenStack.Push(new MenuScreen());
         }

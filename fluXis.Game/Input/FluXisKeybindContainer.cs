@@ -12,7 +12,7 @@ namespace fluXis.Game.Input
         private InputManager inputManager;
 
         public FluXisKeybindContainer(FluXisGameBase game)
-            : base(matchingMode: KeyCombinationMatchingMode.Any, simultaneousMode: SimultaneousBindingMode.All)
+            : base(matchingMode: KeyCombinationMatchingMode.Modifiers, simultaneousMode: SimultaneousBindingMode.All)
         {
             if (game != null)
                 handleInput = game;

@@ -44,7 +44,6 @@ namespace fluXis.Game.Audio
             instance = this;
             Conductor.mapStore = mapStore;
             trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage));
-            audioManager.Volume.Value = 0.1f;
             Add(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
         }
 
