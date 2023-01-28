@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit;
@@ -25,7 +26,10 @@ namespace fluXis.Game.Screens.Menu
             else
             {
                 maps.CurrentMapSet = maps.GetRandom();
-                backgrounds.AddBackgroundFromMap(maps.CurrentMapSet.Maps.First());
+
+                MapInfo map = maps.CurrentMapSet.Maps.First();
+                backgrounds.AddBackgroundFromMap(map);
+                Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
             }
 
             InternalChildren = new Drawable[]
