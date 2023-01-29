@@ -1,6 +1,8 @@
 using System;
+using fluXis.Game.Configuration;
 using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
@@ -15,10 +17,13 @@ namespace fluXis.Game.Screens.Gameplay.HUD
         }
 
         private SpriteText text;
+        private Bindable<bool> hideFlawless;
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(FluXisConfig config)
         {
+            hideFlawless = config.GetBindable<bool>(FluXisSetting.HideFlawless);
+
             Anchor = Anchor.TopCentre;
             Origin = Anchor.Centre;
             RelativePositionAxes = Axes.Y;
@@ -35,6 +40,8 @@ namespace fluXis.Game.Screens.Gameplay.HUD
 
         public void PopUp(HitWindow hitWindow)
         {
+            if (hideFlawless.Value && hitWindow.Key == Judgements.Flawless) return;
+
             const int random_angle = 7;
             float scale = 1.4f;
             float rotation = 0;
