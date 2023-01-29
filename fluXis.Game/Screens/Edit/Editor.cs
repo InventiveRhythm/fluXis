@@ -68,7 +68,7 @@ namespace fluXis.Game.Screens.Edit
         {
             switch (e.Action)
             {
-                case FluXisKeybind.Exit:
+                case FluXisKeybind.Back:
                     this.Exit();
                     return true;
             }
