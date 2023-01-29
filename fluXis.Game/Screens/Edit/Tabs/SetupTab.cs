@@ -16,8 +16,6 @@ namespace fluXis.Game.Screens.Edit.Tabs
         [BackgroundDependencyLoader]
         private void load()
         {
-            Padding = new MarginPadding(10);
-
             Children = new Drawable[]
             {
                 new Container

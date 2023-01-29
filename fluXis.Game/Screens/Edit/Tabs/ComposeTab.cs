@@ -1,9 +1,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs
 {
@@ -24,19 +22,15 @@ namespace fluXis.Game.Screens.Edit.Tabs
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Color4.DarkGray,
-                        },
                         new SpriteText
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Text = "Compose",
-                        },
-                    },
-                },
+                            Text = "This is still work in progress! Check back later.",
+                            Font = new FontUsage("QuickSand", 48, "Bold")
+                        }
+                    }
+                }
             };
         }
     }

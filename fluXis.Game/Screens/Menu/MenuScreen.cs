@@ -51,7 +51,7 @@ namespace fluXis.Game.Screens.Menu
                             Origin = Anchor.TopCentre,
                         },
                         new MenuButton("Play", () => this.Push(new SelectScreen())),
-                        new MenuButton("Edit", () => this.Push(new Editor()))
+                        new MenuButton("Edit", () => this.Push(new Editor(maps.CurrentMapSet)))
                     }
                 }
             };
@@ -85,6 +85,24 @@ namespace fluXis.Game.Screens.Menu
                     }
                 };
             }
+        }
+
+        public override void OnEntering(ScreenTransitionEvent e)
+        {
+            this.FadeInFromZero(100);
+            base.OnEntering(e);
+        }
+
+        public override void OnSuspending(ScreenTransitionEvent e)
+        {
+            this.FadeOut(100);
+            base.OnSuspending(e);
+        }
+
+        public override void OnResuming(ScreenTransitionEvent e)
+        {
+            this.FadeIn(100);
+            base.OnResuming(e);
         }
     }
 }

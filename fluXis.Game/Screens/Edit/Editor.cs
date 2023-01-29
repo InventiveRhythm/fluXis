@@ -18,9 +18,10 @@ namespace fluXis.Game.Screens.Edit
         private Container tabs;
         private int currentTab;
 
-        public Editor(MapInfo map = null)
+        public Editor(MapSet mapset = null, MapInfo map = null)
         {
-            Map = map ?? new MapInfo(new MapMetadata());
+            var set = mapset ?? new MapSet("");
+            Map = map ?? (set.Maps.Count > 0 ? set.Maps[0] : new MapInfo(new MapMetadata()));
         }
 
         [BackgroundDependencyLoader]
@@ -32,7 +33,7 @@ namespace fluXis.Game.Screens.Edit
             {
                 tabs = new Container
                 {
-                    Padding = new MarginPadding { Top = 40 },
+                    Padding = new MarginPadding { Top = 50, Bottom = 10, Left = 10, Right = 10 },
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
@@ -40,15 +41,16 @@ namespace fluXis.Game.Screens.Edit
                         new ComposeTab(this),
                         new TimingTab(this),
                     }
-                }
+                },
+                new EditorToolbar(this)
             };
 
             ChangeTab(0);
         }
 
-        public void ChangeTab(int by)
+        public void ChangeTab(int to)
         {
-            currentTab += by;
+            currentTab = to;
 
             if (currentTab < 0)
                 currentTab = 0;
@@ -66,12 +68,8 @@ namespace fluXis.Game.Screens.Edit
         {
             switch (e.Action)
             {
-                case FluXisKeybind.PreviousGroup:
-                    ChangeTab(-1);
-                    return true;
-
-                case FluXisKeybind.NextGroup:
-                    ChangeTab(1);
+                case FluXisKeybind.Exit:
+                    this.Exit();
                     return true;
             }
 
@@ -80,6 +78,18 @@ namespace fluXis.Game.Screens.Edit
 
         public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
         {
+        }
+
+        public override void OnEntering(ScreenTransitionEvent e)
+        {
+            this.FadeInFromZero(100);
+            base.OnEntering(e);
+        }
+
+        public override bool OnExiting(ScreenExitEvent e)
+        {
+            this.FadeOut(100);
+            return base.OnExiting(e);
         }
     }
 }
