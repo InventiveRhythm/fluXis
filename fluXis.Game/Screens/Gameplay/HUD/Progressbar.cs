@@ -1,5 +1,5 @@
-using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -84,14 +84,13 @@ namespace fluXis.Game.Screens.Gameplay.HUD
             int currentTime = (int)((Conductor.CurrentTime - Screen.Map.StartTime) / speed);
             int timeLeft = (int)((Screen.Map.EndTime - Conductor.CurrentTime) / speed);
             int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / speed);
-            bool negative = currentTime < 0;
             float percent = (float)currentTime / totalTime;
             if (percent < 0) percent = 0;
 
             bar.Width = percent;
             percentText.Text = $"{(int)(percent * 100)}%";
-            currentTimeText.Text = (negative ? "-" : "") + $"{currentTime / 1000 / 60}:{Math.Abs(currentTime / 1000 % 60):00}";
-            timeLeftText.Text = $"{timeLeft / 1000 / 60}:{timeLeft / 1000 % 60:00}";
+            currentTimeText.Text = TimeUtils.Format(currentTime, false);
+            timeLeftText.Text = TimeUtils.Format(timeLeft, false);
 
             base.Update();
         }
