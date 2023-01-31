@@ -164,12 +164,12 @@ namespace fluXis.Game.Screens.Select
 
         public override void OnSuspending(ScreenTransitionEvent e)
         {
-            this.FadeOut(500);
+            this.FadeOut(200);
         }
 
         public override void OnResuming(ScreenTransitionEvent e)
         {
-            this.FadeIn(500);
+            this.FadeIn(200);
 
             Discord.Update("Selecting a map", "", "songselect");
             Conductor.SetLoop(MapInfo.Metadata.PreviewTime);
@@ -179,7 +179,7 @@ namespace fluXis.Game.Screens.Select
 
         public override void OnEntering(ScreenTransitionEvent e)
         {
-            this.FadeInFromZero(500);
+            this.FadeInFromZero(200);
             Discord.Update("Selecting a map", "", "songselect");
 
             base.OnEntering(e);
@@ -187,7 +187,7 @@ namespace fluXis.Game.Screens.Select
 
         public override bool OnExiting(ScreenExitEvent e)
         {
-            this.FadeOut(500);
+            this.FadeOut(200);
 
             return base.OnExiting(e);
         }

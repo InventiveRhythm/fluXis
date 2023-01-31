@@ -39,5 +39,10 @@ namespace fluXis.Game.Map
             else
                 return null;
         }
+
+        public MapInfo GetFirstMap()
+        {
+            return Maps[0];
+        }
     }
 }

@@ -108,9 +108,11 @@ namespace fluXis.Game.Screens.Select.UI
             const float duration = 200;
             const float delay = 50;
 
-            this.FadeOut()
+            this.MoveToX(-100)
+                .FadeOut()
                 .Delay(delay * index)
-                .FadeIn(duration);
+                .FadeIn(duration)
+                .MoveToX(0, duration, Easing.OutQuint);
 
             base.LoadComplete();
         }
@@ -120,6 +122,7 @@ namespace fluXis.Game.Screens.Select.UI
             private readonly MapListEntry parent;
             private readonly MapSet mapset;
             private Box dim;
+            private DelayedLoadWrapper backgroundWrapper;
 
             public MapListEntryHeader(MapListEntry parent, MapSet mapset)
             {
@@ -128,7 +131,7 @@ namespace fluXis.Game.Screens.Select.UI
             }
 
             [BackgroundDependencyLoader]
-            private void load(BackgroundTextureStore backgrounds)
+            private void load()
             {
                 RelativeSizeAxes = Axes.X;
                 Height = 75;
@@ -137,14 +140,13 @@ namespace fluXis.Game.Screens.Select.UI
                 Masking = true;
                 Children = new Drawable[]
                 {
-                    new Sprite
+                    backgroundWrapper = new DelayedLoadWrapper(() => new MapBackground(mapset)
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Texture = backgrounds.Get(mapset.GetBackgroundPath()),
                         FillMode = FillMode.Fill,
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    },
+                        Origin = Anchor.Centre,
+                    }, 100),
                     dim = new Box
                     {
                         Name = "Background Dim",
@@ -177,6 +179,8 @@ namespace fluXis.Game.Screens.Select.UI
                         }
                     }
                 };
+
+                backgroundWrapper.DelayedLoadComplete += drawable => drawable.FadeInFromZero(200);
             }
 
             protected override bool OnHover(HoverEvent e)
