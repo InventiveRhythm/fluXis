@@ -45,7 +45,7 @@ public class DangerHealthOverlay : GameplayHUDElement
         base.Update();
 
         // on normal health, this effect can only be seen at the very end of the song
-        if (Screen.Playfield.Manager.HealthMode == HealthMode.Normal)
+        if (Screen.Playfield.Manager.HealthMode == HealthMode.Requirement)
             return;
 
         if (health != Screen.Playfield.Manager.Health)

@@ -28,8 +28,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public int CurrentKeyCount { get; private set; }
 
         public bool Dead { get; set; }
-        public HealthMode HealthMode => HealthMode.Hard;
+        public HealthMode HealthMode => HealthMode.Drain;
         public float Health { get; private set; }
+        public float HealthDrainRate { get; private set; }
 
         public List<float> ScrollVelocityMarks { get; } = new();
 
@@ -41,7 +42,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         {
             Playfield = playfield;
             Performance = playfield.Screen.Performance;
-            Health = HealthMode == HealthMode.Hard ? 100 : 0;
+            Health = HealthMode == HealthMode.Requirement ? 0 : 100;
         }
 
         [BackgroundDependencyLoader]
@@ -86,17 +87,17 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 }
             }
 
-            if (Health > 100)
-                Health = 100;
-            else if (Health < 0 && !Dead)
+            if (!Playfield.Screen.Paused && HitObjects.Count > 0 && HitObjects[0].Data.Time - 4000 < Conductor.CurrentTime)
             {
-                if (HealthMode == HealthMode.Hard)
-                    Playfield.Screen.Die();
-                else
-                    Health = 0;
+                HealthDrainRate = Math.Max(HealthDrainRate, -1f);
+
+                Health -= HealthDrainRate * ((float)Clock.ElapsedFrameTime / 1000f);
+                HealthDrainRate += 0.001f * (float)Clock.ElapsedFrameTime;
             }
 
-            // Logger.Log($"Current scroll speed: {ScrollSpeed} || {Conductor.CurrentTime}");
+            Health = Math.Clamp(Health, 0, 100);
+            if (Health == 0 && !Dead && HealthMode != HealthMode.Requirement)
+                Playfield.Screen.Die();
 
             base.Update();
         }
@@ -243,7 +244,11 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
             Performance.AddHitPoint(new HitPoint(hitObject.Data.Time, difference, hitWindow.Key));
             Performance.AddJudgement(hitWindow.Key);
-            Health += hitWindow.Health;
+
+            if (HealthMode == HealthMode.Drain)
+                HealthDrainRate -= hitWindow.Health;
+            else
+                Health += hitWindow.Health;
         }
 
         public void LoadMap(MapInfo map)

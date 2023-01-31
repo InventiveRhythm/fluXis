@@ -25,7 +25,8 @@ namespace fluXis.Game.Screens.Gameplay
         private bool starting = true;
         private bool ended;
         private bool restarting;
-        private bool paused;
+
+        public bool Paused { get; private set; }
 
         public GameplayInput Input;
         public Performance Performance;
@@ -104,7 +105,7 @@ namespace fluXis.Game.Screens.Gameplay
 
             if (!starting && Playfield.Manager.IsFinished && !Playfield.Manager.Dead)
             {
-                if (Playfield.Manager.HealthMode == HealthMode.Normal)
+                if (Playfield.Manager.HealthMode == HealthMode.Requirement)
                 {
                     if (Playfield.Manager.Health < 70)
                         Die();
@@ -197,8 +198,8 @@ namespace fluXis.Game.Screens.Gameplay
                     return true;
 
                 case FluXisKeybind.Pause:
-                    Conductor.SetSpeed(paused ? 1 : 0);
-                    paused = !paused;
+                    Conductor.SetSpeed(Paused ? 1 : 0);
+                    Paused = !Paused;
                     return true;
 
                 case FluXisKeybind.Skip:
