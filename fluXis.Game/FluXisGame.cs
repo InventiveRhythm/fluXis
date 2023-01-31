@@ -31,6 +31,8 @@ namespace fluXis.Game
         [Cached]
         private BackgroundStack backgroundStack = new();
 
+        public bool Sex = true;
+
         [BackgroundDependencyLoader]
         private void load(Storage storage)
         {
