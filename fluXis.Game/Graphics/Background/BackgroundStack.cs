@@ -12,7 +12,7 @@ namespace fluXis.Game.Graphics.Background
 {
     public class BackgroundStack : CompositeDrawable
     {
-        private readonly List<Background> scheduledBackgrounds = new List<Background>();
+        private readonly List<Background> scheduledBackgrounds = new();
         private Container backgroundContainer;
         private string currentBackground;
         private Box swipeAnimation;
