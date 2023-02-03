@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Screens.Select.UI
+namespace fluXis.Game.Screens.Select.List
 {
     public class DiffKeyCount : Container
     {

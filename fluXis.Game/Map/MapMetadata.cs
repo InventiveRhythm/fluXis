@@ -2,13 +2,13 @@ namespace fluXis.Game.Map
 {
     public class MapMetadata
     {
-        public string Title;
-        public string Artist;
-        public string Mapper;
+        public string Title { get; set; }
+        public string Artist { get; set; }
+        public string Mapper { get; set; }
         public string Difficulty { get; set; }
-        public string Source;
-        public string Tags;
-        public int PreviewTime;
+        public string Source { get; set; }
+        public string Tags { get; set; }
+        public int PreviewTime { get; set; }
 
         public MapMetadata()
         {

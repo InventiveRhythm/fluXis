@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -37,6 +38,10 @@ namespace fluXis.Game.Audio
         private static Conductor instance;
         private float speed = 1;
         private float untweenedSpeed = 1;
+
+        public static Action<int> OnBeat;
+        public static float StepTime => instance.stepTime;
+        public static float BeatTime => instance.stepTime * 4;
 
         [BackgroundDependencyLoader]
         private void load(MapStore mapStore, AudioManager audioManager, Storage storage)
@@ -142,6 +147,7 @@ namespace fluXis.Game.Audio
 
         private int lastStep;
         private int step;
+        private float stepTime;
 
         // gonna be used somewhere later
         private void updateStep()
@@ -149,15 +155,12 @@ namespace fluXis.Game.Audio
             if (map == null)
                 return;
 
-            // todo: get bpm from current time
-            float stepTime = 60000f / map.TimingPoints[0].BPM / 4;
+            stepTime = 60000f / map.GetTimingPoint(CurrentTime).BPM / 4;
             lastStep = step;
             step = (int)(CurrentTime / stepTime);
 
             if (lastStep != step && step % 4 == 0)
-            {
-                // beat
-            }
+                OnBeat?.Invoke(step / 4);
         }
     }
 }

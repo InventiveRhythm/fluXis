@@ -6,7 +6,8 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay;
-using fluXis.Game.Screens.Select.UI;
+using fluXis.Game.Screens.Select.Info;
+using fluXis.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -26,6 +27,7 @@ namespace fluXis.Game.Screens.Select
         public MapInfo MapInfo;
 
         public MapList MapList;
+        public SelectMapInfo SelectMapInfo;
 
         public Sample MenuAccept;
         public Sample MenuBack;
@@ -33,7 +35,7 @@ namespace fluXis.Game.Screens.Select
 
         private SpriteText noMapsText;
 
-        private readonly Dictionary<MapSet, MapListEntry> lookup = new Dictionary<MapSet, MapListEntry>();
+        private readonly Dictionary<MapSet, MapListEntry> lookup = new();
 
         [BackgroundDependencyLoader]
         private void load(MapStore maps, BackgroundStack background, ISampleStore samples)
@@ -46,6 +48,7 @@ namespace fluXis.Game.Screens.Select
             MenuScroll = samples.Get("ui/scroll.ogg");
 
             AddInternal(MapList = new MapList());
+            AddInternal(SelectMapInfo = new SelectMapInfo());
             AddInternal(new Container
             {
                 Anchor = Anchor.CentreLeft,
@@ -111,6 +114,7 @@ namespace fluXis.Game.Screens.Select
             MapInfo = map;
             MenuScroll.Play();
             Backgrounds.AddBackgroundFromMap(map);
+            SelectMapInfo.ChangeMap(map);
             MapList.ScrollTo(lookup[MapSet]);
         }
 

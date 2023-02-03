@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Range = fluXis.Game.Utils.Range;
 
 namespace fluXis.Game.Map
 {
@@ -103,6 +104,34 @@ namespace fluXis.Game.Map
         public string GetBackgroundFile()
         {
             return BackgroundFile ?? "bg.png";
+        }
+
+        public Range GetBPM()
+        {
+            var range = new Range();
+
+            foreach (var timingPoint in TimingPoints)
+            {
+                range.Min = range.Min == 0 ? timingPoint.BPM : Math.Min(range.Min, timingPoint.BPM);
+                range.Max = Math.Max(range.Max, timingPoint.BPM);
+            }
+
+            return range;
+        }
+
+        public TimingPointInfo GetTimingPoint(float time)
+        {
+            TimingPointInfo timingPoint = null;
+
+            foreach (var tp in TimingPoints)
+            {
+                if (tp.Time > time)
+                    break;
+
+                timingPoint = tp;
+            }
+
+            return timingPoint ?? TimingPoints[0];
         }
     }
 }

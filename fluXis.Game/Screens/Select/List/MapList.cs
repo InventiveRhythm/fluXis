@@ -6,7 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Game.Screens.Select.UI
+namespace fluXis.Game.Screens.Select.List
 {
     public class MapList : BasicScrollContainer
     {

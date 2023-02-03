@@ -8,7 +8,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Game.Screens.Select.UI
+namespace fluXis.Game.Screens.Select.List
 {
     public class MapListEntry : Container
     {

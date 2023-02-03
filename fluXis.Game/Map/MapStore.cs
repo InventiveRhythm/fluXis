@@ -97,6 +97,11 @@ namespace fluXis.Game.Map
             return mapset?.Maps.Find(x => x.ID == mapID);
         }
 
+        public MapSet GetMapSet(string mapsetID)
+        {
+            return map_sets.Find(x => x.ID == mapsetID);
+        }
+
         public string GetMapAudioPath(MapInfo map) => storage.GetFullPath($"maps{Path.DirectorySeparatorChar}{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetAudioFile()}");
     }
 }
