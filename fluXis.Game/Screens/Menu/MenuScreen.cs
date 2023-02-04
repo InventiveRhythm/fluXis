@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
-using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -15,22 +15,24 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Menu
 {
-    public class MenuScreen : Screen
+    public partial class MenuScreen : Screen
     {
+        [Resolved]
+        private MapStore maps { get; set; }
+
         [BackgroundDependencyLoader]
-        private void load(MapStore maps, BackgroundStack backgrounds)
+        private void load(BackgroundStack backgrounds)
         {
             // load a random map
-            if (maps.MapSets.Count == 0)
-                backgrounds.AddBackgroundFromMap(null);
-            else
+            if (maps.MapSets.Count > 0)
             {
                 maps.CurrentMapSet = maps.GetRandom();
 
-                MapInfo map = maps.CurrentMapSet.Maps.First();
-                backgrounds.AddBackgroundFromMap(map);
+                RealmMap map = maps.CurrentMapSet.Maps.First();
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
             }
+
+            backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
 
             InternalChildren = new Drawable[]
             {
@@ -51,13 +53,21 @@ namespace fluXis.Game.Screens.Menu
                             Origin = Anchor.TopCentre,
                         },
                         new MenuButton("Play", () => this.Push(new SelectScreen())),
-                        new MenuButton("Edit", () => this.Push(new Editor(maps.CurrentMapSet)))
+                        new MenuButton("Edit (Locked for now...)", () =>
+                        {
+                            // this.Push(new Editor(maps.CurrentMapSet));
+                        })
                     }
                 }
             };
         }
 
-        private class MenuButton : Button
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+        }
+
+        private partial class MenuButton : Button
         {
             public MenuButton(string text, Action action)
             {

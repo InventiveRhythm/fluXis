@@ -6,7 +6,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.List
 {
-    public class DiffKeyCount : Container
+    public partial class DiffKeyCount : Container
     {
         public Colour4 KeyColour { get; set; }
 

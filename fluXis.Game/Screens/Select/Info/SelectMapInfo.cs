@@ -1,4 +1,5 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
@@ -11,8 +12,11 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info;
 
-public class SelectMapInfo : FillFlowContainer
+public partial class SelectMapInfo : FillFlowContainer
 {
+    [Resolved]
+    private MapStore maps { get; set; }
+
     private BackgroundStack backgroundStack;
     private SpriteText titleText;
     private SpriteText artistText;
@@ -22,7 +26,7 @@ public class SelectMapInfo : FillFlowContainer
     private SpriteText lengthText;
 
     [BackgroundDependencyLoader]
-    private void load(MapStore maps)
+    private void load()
     {
         Anchor = Anchor.CentreRight;
         Origin = Anchor.CentreRight;
@@ -195,17 +199,15 @@ public class SelectMapInfo : FillFlowContainer
         base.LoadComplete();
     }
 
-    public void ChangeMap(MapInfo map)
+    public void ChangeMap(RealmMap map)
     {
         backgroundStack.ChangeMap(map);
         titleText.Text = map.Metadata.Title;
         artistText.Text = map.Metadata.Artist;
-        difficultyText.Text = map.Metadata.Difficulty;
+        difficultyText.Text = map.Difficulty;
         mapperText.Text = map.Metadata.Mapper;
-        lengthText.Text = "Length " + TimeUtils.Format(map.EndTime, false);
-
-        Range bpm = map.GetBPM();
-        bpmText.Text = bpm.Same ? $"BPM {bpm.Min}" : $"BPM {bpm.Min}-{bpm.Max}";
+        lengthText.Text = "Length " + TimeUtils.Format(map.Length, false);
+        bpmText.Text = map.BPMMin == map.BPMMax ? $"BPM {map.BPMMin}" : $"BPM {map.BPMMin}-{map.BPMMax}";
     }
 
     private void OnBeat(int beat)
@@ -219,7 +221,7 @@ public class SelectMapInfo : FillFlowContainer
         base.Dispose(isDisposing);
     }
 
-    private class BackgroundStack : Container
+    private partial class BackgroundStack : Container
     {
         private readonly MapStore mapStore;
 
@@ -231,11 +233,9 @@ public class SelectMapInfo : FillFlowContainer
             Origin = Anchor.Centre;
         }
 
-        public void ChangeMap(MapInfo map)
+        public void ChangeMap(RealmMap map)
         {
-            MapSet set = mapStore.GetMapSet(map.MapsetID);
-
-            var background = new MapBackground(set)
+            var background = new MapBackground(map)
             {
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fill,

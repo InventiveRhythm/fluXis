@@ -9,7 +9,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
-    public class HitObject : CompositeDrawable
+    public partial class HitObject : CompositeDrawable
     {
         public HitObjectInfo Data;
         public readonly float ScrollVelocityTime;
@@ -73,7 +73,11 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 holdEndSpr.Alpha = 1;
 
                 var factor = Receptor.SIZE.X / holdBodySpr.Size.X;
-                holdEndSpr.Scale = new Vector2(factor, factor);
+
+                if (!double.IsPositiveInfinity(factor) && !double.IsNegativeInfinity(factor))
+                {
+                    holdEndSpr.Scale = new Vector2(factor, factor);
+                }
             }
         }
 

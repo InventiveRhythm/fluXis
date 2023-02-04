@@ -1,3 +1,4 @@
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
@@ -11,17 +12,18 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit
 {
-    public class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
+    public partial class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
     {
-        public MapInfo Map;
+        public RealmMap Map;
+        public MapInfo MapInfo;
 
         private Container tabs;
         private int currentTab;
 
-        public Editor(MapSet mapset = null, MapInfo map = null)
+        public Editor(RealmMap realmMap = null, MapInfo map = null)
         {
-            var set = mapset ?? new MapSet("");
-            Map = map ?? (set.Maps.Count > 0 ? set.Maps[0] : new MapInfo(new MapMetadata()));
+            Map = realmMap ?? new RealmMap();
+            MapInfo = map ?? new MapInfo(new MapMetadata());
         }
 
         [BackgroundDependencyLoader]

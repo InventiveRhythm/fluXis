@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
@@ -19,12 +20,14 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select
 {
-    public class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+    public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
+        [Resolved]
+        private MapStore maps { get; set; }
+
         public BackgroundStack Backgrounds;
-        public MapStore MapStore;
-        public MapSet MapSet;
-        public MapInfo MapInfo;
+        public RealmMapSet MapSet;
+        public RealmMap MapInfo;
 
         public MapList MapList;
         public SelectMapInfo SelectMapInfo;
@@ -35,13 +38,12 @@ namespace fluXis.Game.Screens.Select
 
         private SpriteText noMapsText;
 
-        private readonly Dictionary<MapSet, MapListEntry> lookup = new();
+        private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
         [BackgroundDependencyLoader]
-        private void load(MapStore maps, BackgroundStack background, ISampleStore samples)
+        private void load(BackgroundStack background, ISampleStore samples)
         {
             Backgrounds = background;
-            MapStore = maps;
 
             MenuAccept = samples.Get("ui/accept.ogg");
             MenuBack = samples.Get("ui/back.ogg");
@@ -66,47 +68,52 @@ namespace fluXis.Game.Screens.Select
                 }
             });
 
-            if (MapStore.MapSets.Count == 0)
-            {
-                noMapsText.Alpha = 1;
-            }
-            else
-            {
-                int i = 0;
+            loadMapSets();
+        }
 
-                foreach (var set in MapStore.MapSets)
-                {
-                    lookup[set] = MapList.AddMap(this, set, i);
-                    i++;
-                }
+        private void loadMapSets()
+        {
+            var sets = maps.GetMapSets();
+
+            int i = 0;
+
+            foreach (RealmMapSet set in sets)
+            {
+                MapListEntry entry = new(this, set, i);
+                MapList.Add(entry);
+                lookup[set] = entry;
+                i++;
             }
+
+            if (!sets.Any())
+                noMapsText.FadeIn(500);
         }
 
         protected override void LoadComplete()
         {
-            if (MapStore.MapSets.Count > 0)
-                SelectMapSet(MapStore.CurrentMapSet);
+            if (maps.MapSets.Count > 0)
+                SelectMapSet(maps.CurrentMapSet);
         }
 
-        public void SelectMapSet(MapSet set)
+        public void SelectMapSet(RealmMapSet set)
         {
             if (set == null)
                 return;
 
-            MapInfo map = set.Maps.First();
+            RealmMap map = set.Maps.First();
             MapSet = set;
             MapInfo = map;
             SelectMap(map);
             Conductor.SetLoop(map.Metadata.PreviewTime);
             MapList.ScrollTo(lookup[set]);
 
-            if (MapStore.CurrentMapSet != set || !Conductor.IsPlaying)
+            if (!Equals(maps.CurrentMapSet, set) || !Conductor.IsPlaying)
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
 
-            MapStore.CurrentMapSet = set;
+            maps.CurrentMapSet = set;
         }
 
-        public void SelectMap(MapInfo map)
+        public void SelectMap(RealmMap map)
         {
             if (map == null)
                 return;
@@ -126,23 +133,24 @@ namespace fluXis.Game.Screens.Select
             MenuAccept.Play();
             Backgrounds.AddBackgroundFromMap(MapInfo);
             Backgrounds.SwipeAnimation();
+
             this.Push(new GameplayScreen(MapInfo));
         }
 
         private void changeSelection(int by = 0)
         {
-            if (MapStore.MapSets.Count == 0)
+            if (maps.MapSets.Count == 0)
                 return;
 
-            int current = MapStore.MapSets.IndexOf(MapSet);
+            int current = maps.MapSets.IndexOf(MapSet);
             current += by;
 
             if (current < 0)
-                current = MapStore.MapSets.Count - 1;
-            else if (current >= MapStore.MapSets.Count)
+                current = maps.MapSets.Count - 1;
+            else if (current >= maps.MapSets.Count)
                 current = 0;
 
-            SelectMapSet(MapStore.MapSets[current]);
+            SelectMapSet(maps.MapSets[current]);
         }
 
         private void changeMapSelection(int by = 0)

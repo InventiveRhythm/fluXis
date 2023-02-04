@@ -6,7 +6,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics
 {
-    public class TicTac : CircularContainer
+    public partial class TicTac : CircularContainer
     {
         private float size;
 

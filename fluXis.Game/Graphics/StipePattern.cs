@@ -5,7 +5,7 @@ using osuTK;
 
 namespace fluXis.Game.Graphics;
 
-public class StripePattern : InfiniteScrollingPattern
+public partial class StripePattern : InfiniteScrollingPattern
 {
     public StripePattern()
     {

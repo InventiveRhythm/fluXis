@@ -1,6 +1,8 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Database;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
+using fluXis.Game.Map;
 using fluXis.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,7 +13,7 @@ using osuTK;
 
 namespace fluXis.Game
 {
-    public class FluXisGameBase : osu.Framework.Game
+    public partial class FluXisGameBase : osu.Framework.Game
     {
         // Anything in this class is shared between the test browser and the game implementation.
         // It allows for caching global dependencies that should be accessible to tests, or changing
@@ -22,6 +24,8 @@ namespace fluXis.Game
         protected override Container<Drawable> Content => content;
         private Container content;
 
+        public FluXisRealm Realm;
+        public MapStore MapStore;
         public FluXisConfig Config;
 
         protected FluXisGameBase()
@@ -34,6 +38,8 @@ namespace fluXis.Game
             Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
             InitFonts();
 
+            dependencies.Cache(Realm = new FluXisRealm(storage));
+            dependencies.Cache(MapStore = new MapStore(storage, Realm));
             dependencies.Cache(new BackgroundTextureStore(Host, storage));
 
             FluXisKeybindContainer keybinds;

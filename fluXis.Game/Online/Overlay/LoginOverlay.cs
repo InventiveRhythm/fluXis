@@ -15,7 +15,7 @@ using osuTK;
 
 namespace fluXis.Game.Online.Overlay
 {
-    public class LoginOverlay : Container
+    public partial class LoginOverlay : Container
     {
         private Bindable<string> tokenBind;
 

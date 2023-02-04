@@ -1,22 +1,27 @@
-using fluXis.Game.Map;
+using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Graphics.Background;
 
-public class MapBackground : Sprite
+public partial class MapBackground : Sprite
 {
-    private readonly MapSet mapset;
+    private readonly RealmMap map;
 
-    public MapBackground(MapSet mapset)
+    public MapBackground(RealmMap map)
     {
-        this.mapset = mapset;
+        this.map = map;
     }
 
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgrounds, TextureStore textures)
     {
-        Texture = backgrounds.Get($"{mapset.GetBackgroundPath()}") ?? textures.Get("Backgrounds/default.png");
+        if (map == null)
+            return;
+
+        RealmFile background = map.MapSet.GetFile(map.Metadata.Background);
+        Texture = backgrounds.Get($"{background?.GetPath()}") ?? textures.Get("Backgrounds/default.png");
     }
 }

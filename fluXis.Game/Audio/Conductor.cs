@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Map;
+using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -12,10 +12,8 @@ using osu.Framework.Platform;
 
 namespace fluXis.Game.Audio
 {
-    public class Conductor : Container
+    public partial class Conductor : Container
     {
-        private static MapStore mapStore;
-        private static MapInfo map;
         private static ITrackStore trackStore;
         private static Track track;
         public static float CurrentTime;
@@ -44,11 +42,10 @@ namespace fluXis.Game.Audio
         public static float BeatTime => instance.stepTime * 4;
 
         [BackgroundDependencyLoader]
-        private void load(MapStore mapStore, AudioManager audioManager, Storage storage)
+        private void load(AudioManager audioManager, Storage storage)
         {
             instance = this;
-            Conductor.mapStore = mapStore;
-            trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage));
+            trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
             Add(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
         }
 
@@ -74,7 +71,7 @@ namespace fluXis.Game.Audio
             updateStep();
         }
 
-        public static void PlayTrack(MapInfo info, bool start = false, int time = 0)
+        public static void PlayTrack(RealmMap info, bool start = false, int time = 0)
         {
             if (track != null)
             {
@@ -82,15 +79,13 @@ namespace fluXis.Game.Audio
                 track.Dispose();
             }
 
-            track = trackStore.Get(mapStore.GetMapAudioPath(info)) ?? trackStore.GetVirtual();
+            track = trackStore.Get(info.MapSet.GetFile(info.Metadata.Audio)?.GetPath()) ?? trackStore.GetVirtual();
             track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
 
             track.Seek(time);
 
             if (start)
                 track.Start();
-
-            map = info;
         }
 
         public static void Seek(float time)
@@ -152,7 +147,12 @@ namespace fluXis.Game.Audio
         // gonna be used somewhere later
         private void updateStep()
         {
-            if (map == null)
+            // TODO: rewrite this
+            lastStep = step;
+            step = 0;
+            stepTime = 0;
+
+            /*if (map == null)
                 return;
 
             stepTime = 60000f / map.GetTimingPoint(CurrentTime).BPM / 4;
@@ -160,7 +160,7 @@ namespace fluXis.Game.Audio
             step = (int)(CurrentTime / stepTime);
 
             if (lastStep != step && step % 4 == 0)
-                OnBeat?.Invoke(step / 4);
+                OnBeat?.Invoke(step / 4);*/
         }
     }
 }

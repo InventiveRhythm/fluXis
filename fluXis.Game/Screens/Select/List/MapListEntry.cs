@@ -1,5 +1,5 @@
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,20 +10,20 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.List
 {
-    public class MapListEntry : Container
+    public partial class MapListEntry : Container
     {
         public readonly SelectScreen Screen;
-        private readonly MapSet mapset;
+        private readonly RealmMapSet mapset;
         private readonly int index;
 
-        public bool Selected => Screen?.MapSet == mapset;
+        public bool Selected => Equals(Screen?.MapSet, mapset);
         private bool selected; // so that the first mapset is selected by default
 
         private MapListEntryHeader header;
         private Container difficultyContainer;
         private FillFlowContainer<MapDifficultyEntry> difficultyFlow;
 
-        public MapListEntry(SelectScreen screen, MapSet mapset, int index)
+        public MapListEntry(SelectScreen screen, RealmMapSet mapset, int index)
         {
             Screen = screen;
             this.mapset = mapset;
@@ -117,14 +117,14 @@ namespace fluXis.Game.Screens.Select.List
             base.LoadComplete();
         }
 
-        private class MapListEntryHeader : Container
+        private partial class MapListEntryHeader : Container
         {
             private readonly MapListEntry parent;
-            private readonly MapSet mapset;
+            private readonly RealmMapSet mapset;
             private Box dim;
             private DelayedLoadWrapper backgroundWrapper;
 
-            public MapListEntryHeader(MapListEntry parent, MapSet mapset)
+            public MapListEntryHeader(MapListEntry parent, RealmMapSet mapset)
             {
                 this.parent = parent;
                 this.mapset = mapset;
@@ -140,7 +140,7 @@ namespace fluXis.Game.Screens.Select.List
                 Masking = true;
                 Children = new Drawable[]
                 {
-                    backgroundWrapper = new DelayedLoadWrapper(() => new MapBackground(mapset)
+                    backgroundWrapper = new DelayedLoadWrapper(() => new MapBackground(mapset.Maps[0])
                     {
                         RelativeSizeAxes = Axes.Both,
                         FillMode = FillMode.Fill,
@@ -163,7 +163,7 @@ namespace fluXis.Game.Screens.Select.List
                             new SpriteText
                             {
                                 Font = new FontUsage("Quicksand", 32f, "Bold"),
-                                Text = mapset.Title,
+                                Text = mapset.Metadata.Title,
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
                                 Y = -2
@@ -171,7 +171,7 @@ namespace fluXis.Game.Screens.Select.List
                             new SpriteText
                             {
                                 Font = new FontUsage("Quicksand", 28f, "SemiBold"),
-                                Text = mapset.Artist,
+                                Text = mapset.Metadata.Artist,
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
                                 Y = 24

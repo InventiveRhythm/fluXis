@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Edit.Tabs
 {
-    public class SetupTab : EditorTab
+    public partial class SetupTab : EditorTab
     {
         public SetupTab(Editor screen)
             : base(screen)
@@ -48,7 +48,7 @@ namespace fluXis.Game.Screens.Edit.Tabs
                             Children = new Drawable[]
                             {
                                 new AssetsSetupSection(),
-                                new MetadataSetupSection(Screen.Map.Metadata),
+                                new MetadataSetupSection(Screen.MapInfo.Metadata),
                                 new KeyModeSetupSection()
                             }
                         }

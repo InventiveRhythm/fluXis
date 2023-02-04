@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using System.IO;
 using fluXis.Game.Configuration;
+using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -10,8 +11,11 @@ using osuTK;
 
 namespace fluXis.Game.Graphics.Background
 {
-    public class BackgroundStack : CompositeDrawable
+    public partial class BackgroundStack : CompositeDrawable
     {
+        [Resolved]
+        private MapStore maps { get; set; }
+
         private readonly List<Background> scheduledBackgrounds = new();
         private Container backgroundContainer;
         private string currentBackground;
@@ -67,9 +71,15 @@ namespace fluXis.Game.Graphics.Background
             base.Update();
         }
 
-        public void AddBackgroundFromMap(MapInfo map)
+        public void AddBackgroundFromMap(RealmMap map)
         {
-            var path = map == null ? "" : $"{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetBackgroundFile()}";
+            string path = "";
+
+            if (map != null)
+            {
+                RealmFile file = map.MapSet.GetFile(map.Metadata.Background);
+                path = file?.GetPath();
+            }
 
             if (path == currentBackground)
                 return;

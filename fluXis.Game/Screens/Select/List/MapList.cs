@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -8,7 +8,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.List
 {
-    public class MapList : BasicScrollContainer
+    public partial class MapList : BasicScrollContainer
     {
         [BackgroundDependencyLoader]
         private void load()
@@ -21,7 +21,7 @@ namespace fluXis.Game.Screens.Select.List
             Padding = new MarginPadding(10);
         }
 
-        public MapListEntry AddMap(SelectScreen screen, MapSet map, int index)
+        public MapListEntry AddMap(SelectScreen screen, RealmMapSet map, int index)
         {
             var entry = new MapListEntry(screen, map, index);
             entry.Y = Content.Children.Count > 0 ? Content.Children.Last().Y + Content.Children.Last().Height + 5 : 0;
@@ -60,7 +60,7 @@ namespace fluXis.Game.Screens.Select.List
 
         protected override ScrollbarContainer CreateScrollbar(Direction direction) => new MapListScrollbar(direction);
 
-        protected class MapListScrollbar : ScrollbarContainer
+        protected partial class MapListScrollbar : ScrollbarContainer
         {
             public MapListScrollbar(Direction direction)
                 : base(direction)

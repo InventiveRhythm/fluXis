@@ -7,7 +7,7 @@ using osuTK;
 
 namespace fluXis.Game.Graphics;
 
-public class InfiniteScrollingPattern : Container
+public partial class InfiniteScrollingPattern : Container
 {
     private Texture texture;
 

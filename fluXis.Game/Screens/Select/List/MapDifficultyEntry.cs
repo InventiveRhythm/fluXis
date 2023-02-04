@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,10 +9,10 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Select.List
 {
-    public class MapDifficultyEntry : Container
+    public partial class MapDifficultyEntry : Container
     {
         private readonly MapListEntry mapListEntry;
-        private readonly MapInfo map;
+        private readonly RealmMap map;
 
         private SpriteText difficultyName;
         private SpriteText difficultyMapper;
@@ -22,7 +22,7 @@ namespace fluXis.Game.Screens.Select.List
         private bool selected;
         private float glowAmount = 0f;
 
-        public MapDifficultyEntry(MapListEntry parentEntry, MapInfo map)
+        public MapDifficultyEntry(MapListEntry parentEntry, RealmMap map)
         {
             mapListEntry = parentEntry;
             this.map = map;
@@ -58,7 +58,7 @@ namespace fluXis.Game.Screens.Select.List
                 },
                 difficultyName = new SpriteText
                 {
-                    Text = map.Metadata.Difficulty,
+                    Text = map.Difficulty,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Y = -1,
@@ -86,7 +86,7 @@ namespace fluXis.Game.Screens.Select.List
 
         protected override bool OnClick(ClickEvent e)
         {
-            if (mapListEntry.Screen.MapInfo == map)
+            if (Equals(mapListEntry.Screen.MapInfo, map))
                 mapListEntry.Screen.Accept();
             else
                 mapListEntry.Screen.SelectMap(map);
@@ -96,7 +96,7 @@ namespace fluXis.Game.Screens.Select.List
 
         protected override void Update()
         {
-            bool newSelected = mapListEntry.Screen.MapInfo == map;
+            bool newSelected = Equals(mapListEntry.Screen.MapInfo, map);
 
             if (selected != newSelected)
             {

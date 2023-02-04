@@ -8,7 +8,7 @@ using osuTK;
 
 namespace fluXis.Game.Graphics.Background
 {
-    public class Background : CompositeDrawable
+    public partial class Background : CompositeDrawable
     {
         private readonly string texture;
         private readonly Sprite sprite;

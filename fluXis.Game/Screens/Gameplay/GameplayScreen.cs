@@ -1,26 +1,31 @@
-﻿using fluXis.Game.Map;
+﻿using System.IO;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
+using fluXis.Game.Map;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.HUD.Judgement;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Gameplay
 {
-    public class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+    public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         private bool starting = true;
         private bool ended;
@@ -31,6 +36,7 @@ namespace fluXis.Game.Screens.Gameplay
         public GameplayInput Input;
         public Performance Performance;
         public MapInfo Map;
+        public RealmMap RealmMap;
         public JudgementDisplay JudgementDisplay;
         public Playfield Playfield { get; private set; }
 
@@ -41,15 +47,18 @@ namespace fluXis.Game.Screens.Gameplay
         public Sample Combobreak;
         public Sample Restart;
 
-        public GameplayScreen(MapInfo map)
+        public GameplayScreen(RealmMap realmMap)
         {
-            Map = map;
+            RealmMap = realmMap;
         }
 
         [BackgroundDependencyLoader]
-        private void load(ISampleStore samples, FluXisConfig config)
+        private void load(ISampleStore samples, FluXisConfig config, Storage storage)
         {
             this.config = config;
+
+            Map = JsonConvert.DeserializeObject<MapInfo>(File.ReadAllText(storage.GetFullPath("files/" + PathUtils.HashToPath(RealmMap.Hash))));
+            if (!Map.Validate()) this.Exit(); // map is invalid, leave
 
             Input = new GameplayInput(Map.KeyCount);
             Performance = new Performance(Map);
@@ -89,7 +98,7 @@ namespace fluXis.Game.Screens.Gameplay
 
         protected override void LoadComplete()
         {
-            Conductor.PlayTrack(Map);
+            Conductor.PlayTrack(RealmMap);
             Conductor.CurrentTime = -2000;
 
             base.LoadComplete();
@@ -194,7 +203,7 @@ namespace fluXis.Game.Screens.Gameplay
                 case FluXisKeybind.Restart:
                     restarting = true;
                     Restart.Play();
-                    this.Push(new GameplayScreen(Map)); // TODO: restart in a better way
+                    this.Push(new GameplayScreen(RealmMap)); // TODO: restart in a better way
                     return true;
 
                 case FluXisKeybind.Pause:

@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Graphics
 {
-    public class DrawableAvatar : Sprite
+    public partial class DrawableAvatar : Sprite
     {
         private APIUserShort user;
         private TextureStore textures;

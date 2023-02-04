@@ -4,7 +4,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Audio;
 
-public class LowPassFilter : Component
+public partial class LowPassFilter : Component
 {
     public AudioMixer Mixer { get; private set; }
     private readonly BQFParameters parameters;
