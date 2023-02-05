@@ -1,3 +1,4 @@
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -8,11 +9,11 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 {
-    public class KeyModeSetupSection : SetupSection
+    public partial class KeyModeSetupSection : SetupSection
     {
         private readonly FillFlowContainer<KeyModeButton> keyModeContainer;
 
-        public KeyModeSetupSection()
+        public KeyModeSetupSection(RealmMap map)
             : base("Keys")
         {
             AddInternal(keyModeContainer = new FillFlowContainer<KeyModeButton>
@@ -30,8 +31,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
                 }
             });
 
-            // Default to 4K
-            SetKeyMode(4);
+            SetKeyMode(map.KeyCount);
         }
 
         public void SetKeyMode(int keyMode)
@@ -39,7 +39,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
             keyModeContainer.Children.ForEach(b => b.Selected = b.KeyMode == keyMode);
         }
 
-        private class KeyModeButton : Container
+        private partial class KeyModeButton : Container
         {
             private readonly Box background;
             private readonly FillFlowContainer keyContainer;

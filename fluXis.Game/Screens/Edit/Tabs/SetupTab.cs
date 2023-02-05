@@ -49,7 +49,7 @@ namespace fluXis.Game.Screens.Edit.Tabs
                             {
                                 new AssetsSetupSection(),
                                 new MetadataSetupSection(Screen.MapInfo.Metadata),
-                                new KeyModeSetupSection()
+                                new KeyModeSetupSection(Screen.Map)
                             }
                         }
                     }
