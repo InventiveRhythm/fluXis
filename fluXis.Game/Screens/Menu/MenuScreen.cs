@@ -4,13 +4,16 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Select;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Menu
@@ -21,7 +24,7 @@ namespace fluXis.Game.Screens.Menu
         private MapStore maps { get; set; }
 
         [BackgroundDependencyLoader]
-        private void load(BackgroundStack backgrounds)
+        private void load(BackgroundStack backgrounds, Storage storage)
         {
             // load a random map
             if (maps.MapSets.Count > 0)
@@ -53,9 +56,11 @@ namespace fluXis.Game.Screens.Menu
                             Origin = Anchor.TopCentre,
                         },
                         new MenuButton("Play", () => this.Push(new SelectScreen())),
-                        new MenuButton("Edit (Locked for now...)", () =>
+                        new MenuButton("Edit", () =>
                         {
-                            // this.Push(new Editor(maps.CurrentMapSet));
+                            RealmMap map = maps.CurrentMapSet.Maps.First();
+                            MapInfo mapInfo = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(map.Hash)));
+                            this.Push(new Editor(map, mapInfo));
                         })
                     }
                 }
