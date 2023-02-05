@@ -104,11 +104,12 @@ namespace fluXis.Game.Screens.Select
             MapSet = set;
             MapInfo = map;
             SelectMap(map);
-            Conductor.SetLoop(map.Metadata.PreviewTime);
             MapList.ScrollTo(lookup[set]);
 
             if (!Equals(maps.CurrentMapSet, set) || !Conductor.IsPlaying)
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
+
+            Conductor.SetLoop(map.Metadata.PreviewTime);
 
             maps.CurrentMapSet = set;
         }
@@ -185,6 +186,7 @@ namespace fluXis.Game.Screens.Select
 
             Discord.Update("Selecting a map", "", "songselect");
             Conductor.SetLoop(MapInfo.Metadata.PreviewTime);
+            SelectMapInfo.ScoreList.Refresh();
 
             base.OnResuming(e);
         }
@@ -193,6 +195,7 @@ namespace fluXis.Game.Screens.Select
         {
             this.FadeInFromZero(200);
             Discord.Update("Selecting a map", "", "songselect");
+            Conductor.SetLoop(MapInfo.Metadata.PreviewTime);
 
             base.OnEntering(e);
         }
@@ -200,6 +203,7 @@ namespace fluXis.Game.Screens.Select
         public override bool OnExiting(ScreenExitEvent e)
         {
             this.FadeOut(200);
+            Conductor.SetLoop(0);
 
             return base.OnExiting(e);
         }

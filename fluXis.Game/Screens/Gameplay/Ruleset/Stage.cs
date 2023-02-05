@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
-    public class Stage : Container
+    public partial class Stage : Container
     {
         private const int lane_margin = 20;
 

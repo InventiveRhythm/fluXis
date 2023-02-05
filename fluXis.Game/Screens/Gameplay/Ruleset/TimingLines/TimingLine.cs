@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
 {
-    public class TimingLine : Box
+    public partial class TimingLine : Box
     {
         private readonly TimingLineManager manager;
         public float ScrollVelocityTime { get; }

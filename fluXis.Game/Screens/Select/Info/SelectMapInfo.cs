@@ -2,6 +2,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Select.Info.Scores;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -16,6 +17,10 @@ public partial class SelectMapInfo : FillFlowContainer
 {
     [Resolved]
     private MapStore maps { get; set; }
+
+    private RealmMap map;
+
+    public ScoreList ScoreList;
 
     private BackgroundStack backgroundStack;
     private SpriteText titleText;
@@ -180,13 +185,7 @@ public partial class SelectMapInfo : FillFlowContainer
                 {
                     Name = "Scores",
                     RelativeSizeAxes = Axes.Both,
-                    Child = new SpriteText
-                    {
-                        Text = "No scores yet!",
-                        Font = new FontUsage("Quicksand", 32, "Bold"),
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    }
+                    Child = ScoreList = new ScoreList()
                 }
             }
         };
@@ -201,7 +200,10 @@ public partial class SelectMapInfo : FillFlowContainer
 
     public void ChangeMap(RealmMap map)
     {
+        this.map = map;
+
         backgroundStack.ChangeMap(map);
+        ScoreList.SetMap(map);
         titleText.Text = map.Metadata.Title;
         artistText.Text = map.Metadata.Artist;
         difficultyText.Text = map.Difficulty;

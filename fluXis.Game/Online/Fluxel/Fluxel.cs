@@ -6,6 +6,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel.Packets;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Logging;
@@ -130,6 +131,7 @@ namespace fluXis.Game.Online.Fluxel
             Logger.Log($"Logged in as {user.Username}");
         }
 
+        [CanBeNull]
         public static APIUser GetLoggedInUser()
         {
             return loggedInUser;

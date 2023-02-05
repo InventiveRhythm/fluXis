@@ -1,3 +1,6 @@
+using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -15,20 +18,35 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Result
 {
-    public class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+    public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
-        private readonly MapInfo map;
-        private readonly Performance performance;
+        [Resolved]
+        private FluXisRealm realm { get; set; }
 
-        public ResultsScreen(MapInfo map, Performance performance)
+        private readonly RealmMap map;
+        private readonly MapInfo mapInfo;
+        private readonly Performance performance;
+        private readonly RealmScore score;
+
+        public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool canSubmitScore = true)
         {
             this.map = map;
+            this.mapInfo = mapInfo;
             this.performance = performance;
 
-            OnlineScores.UploadScore(performance, res =>
+            if (canSubmitScore)
             {
-                Logger.Log(res.Message);
-            });
+                score = new RealmScore(map)
+                {
+                    Accuracy = performance.Accuracy,
+                    Grade = performance.Grade,
+                    Score = performance.Score,
+                    MaxCombo = performance.MaxCombo,
+                    Judgements = new RealmJudgements(performance.Judgements)
+                };
+
+                OnlineScores.UploadScore(performance, res => Logger.Log(res.Message));
+            }
         }
 
         [BackgroundDependencyLoader]
@@ -53,7 +71,7 @@ namespace fluXis.Game.Screens.Result
                             RelativeSizeAxes = Axes.Both,
                             Colour = Colour4.FromHex("#222228"),
                         },
-                        new FillFlowContainer()
+                        new FillFlowContainer
                         {
                             AutoSizeAxes = Axes.Both,
                             Direction = FillDirection.Vertical,
@@ -62,7 +80,7 @@ namespace fluXis.Game.Screens.Result
                             {
                                 new ResultTitle(map),
                                 new ResultScore(performance),
-                                new ResultHitPoints(map, performance)
+                                new ResultHitPoints(mapInfo, performance)
                             }
                         }
                     }
@@ -70,6 +88,9 @@ namespace fluXis.Game.Screens.Result
             };
 
             Discord.Update("Viewing Results", "", "results");
+
+            if (score != null)
+                realm.RunWrite(r => r.Add(score));
 
             // Logger.Log(JsonConvert.SerializeObject(performance, Formatting.None));
         }

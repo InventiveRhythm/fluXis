@@ -45,6 +45,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public Sample Combobreak;
     public Sample Restart;
 
+    public bool CanSubmitScore { get; set; } = true;
+
     public GameplayScreen(RealmMap realmMap)
     {
         RealmMap = realmMap;
@@ -153,7 +155,9 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         ended = true;
 
-        this.Push(new ResultsScreen(Map, Performance));
+        Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 400, Easing.None);
+        Conductor.SetSpeed(1, 400, Easing.None);
+        this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -221,6 +225,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 return true;
 
             case FluXisKeybind.ForceEnd:
+                CanSubmitScore = false;
                 End();
                 return true;
 

@@ -7,7 +7,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
-    public class Receptor : CompositeDrawable
+    public partial class Receptor : CompositeDrawable
     {
         public static readonly Vector2 SIZE = new Vector2(114, 114);
         public Playfield Playfield;

@@ -31,4 +31,9 @@ public class RealmMap : RealmObject
     private RealmMap()
     {
     }
+
+    public override string ToString()
+    {
+        return ID.ToString();
+    }
 }

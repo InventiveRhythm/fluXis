@@ -1,13 +1,13 @@
-using fluXis.Game.Map;
+using fluXis.Game.Database.Maps;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Result.UI
 {
-    public class ResultTitle : FillFlowContainer
+    public partial class ResultTitle : FillFlowContainer
     {
-        public ResultTitle(MapInfo map)
+        public ResultTitle(RealmMap map)
         {
             Direction = FillDirection.Vertical;
             AutoSizeAxes = Axes.Both;
@@ -32,7 +32,7 @@ namespace fluXis.Game.Screens.Result.UI
                 },
                 new SpriteText
                 {
-                    Text = $"[{map.Metadata.Difficulty}] mapped by {map.Metadata.Mapper}",
+                    Text = $"[{map.Difficulty}] mapped by {map.Metadata.Mapper}",
                     Font = new FontUsage("Quicksand", 24, "SemiBold"),
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,

@@ -8,7 +8,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
-    public class Playfield : CompositeDrawable
+    public partial class Playfield : CompositeDrawable
     {
         public List<Receptor> Receptors = new List<Receptor>();
         public GameplayScreen Screen;

@@ -7,7 +7,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Result.UI
 {
-    public class ResultHitPoints : Container
+    public partial class ResultHitPoints : Container
     {
         public ResultHitPoints(MapInfo map, Performance performance)
         {
@@ -20,7 +20,7 @@ namespace fluXis.Game.Screens.Result.UI
             }
         }
 
-        private class Dot : CircularContainer
+        private partial class Dot : CircularContainer
         {
             public Dot(MapInfo map, HitPoint point)
             {

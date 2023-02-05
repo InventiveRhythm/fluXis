@@ -6,7 +6,7 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Gameplay.Input
 {
-    public class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
+    public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
     {
         private static readonly FluXisKeybind[] keys4 =
         {

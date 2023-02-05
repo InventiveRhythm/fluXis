@@ -14,7 +14,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset
 {
-    public class HitObjectManager : CompositeDrawable
+    public partial class HitObjectManager : CompositeDrawable
     {
         private Bindable<float> scrollSpeed;
         public float ScrollSpeed => scrollSpeed.Value;
@@ -114,6 +114,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
         private void updateAutoPlay()
         {
+            Playfield.Screen.CanSubmitScore = false;
+
             List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Conductor.CurrentTime && h.Exists).ToList();
 
             foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())

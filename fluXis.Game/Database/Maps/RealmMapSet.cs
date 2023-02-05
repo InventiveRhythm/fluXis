@@ -25,7 +25,7 @@ public class RealmMapSet : RealmObject
     }
 
     [UsedImplicitly]
-    private RealmMapSet()
+    public RealmMapSet()
     {
     }
 
@@ -59,5 +59,10 @@ public class RealmMapSet : RealmObject
         }
 
         return file;
+    }
+
+    public override string ToString()
+    {
+        return ID.ToString();
     }
 }

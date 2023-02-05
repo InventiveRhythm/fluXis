@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
 {
-    public class TimingLineManager : CompositeDrawable
+    public partial class TimingLineManager : CompositeDrawable
     {
         public HitObjectManager HitObjectManager { get; }
 
