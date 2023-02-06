@@ -56,7 +56,11 @@ public partial class ScoreList : Container
         this.map = map;
 
         List<RealmScore> scores = new();
-        realm.Run(r => r.All<RealmScore>().ToList().ForEach(s => scores.Add(s)));
+        realm.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
+        {
+            if (s.MapID == map.ID)
+                scores.Add(s);
+        }));
 
         scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
         scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
