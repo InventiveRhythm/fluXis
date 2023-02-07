@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.UI
 {
-    public class PauseMenu : CompositeDrawable
+    public partial class PauseMenu : CompositeDrawable
     {
         public GameplayScreen Screen;
 

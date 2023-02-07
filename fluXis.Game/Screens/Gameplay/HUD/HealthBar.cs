@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
-public class HealthBar : GameplayHUDElement
+public partial class HealthBar : GameplayHUDElement
 {
     private readonly HitObjectManager manager;
     private float health;

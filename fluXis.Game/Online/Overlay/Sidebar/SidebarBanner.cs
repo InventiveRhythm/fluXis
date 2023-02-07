@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Online.Overlay.Sidebar
 {
-    public class SidebarBanner : Sprite
+    public partial class SidebarBanner : Sprite
     {
         private APIUserShort user;
         private TextureStore textures;

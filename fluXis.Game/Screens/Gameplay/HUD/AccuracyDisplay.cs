@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
 {
-    public class AccuracyDisplay : GameplayHUDElement
+    public partial class AccuracyDisplay : GameplayHUDElement
     {
         private SpriteText accuracyText;
         private float displayedAccuracy;

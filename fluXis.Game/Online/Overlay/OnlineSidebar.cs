@@ -12,7 +12,7 @@ using osuTK;
 
 namespace fluXis.Game.Online.Overlay
 {
-    public class OnlineSidebar : Container
+    public partial class OnlineSidebar : Container
     {
         private DrawableAvatar avatar;
         private SidebarBanner banner;
@@ -92,7 +92,7 @@ namespace fluXis.Game.Online.Overlay
             usernameBox.UpdateUser(user);
         }
 
-        protected class UsernameBox : Container
+        protected partial class UsernameBox : Container
         {
             private readonly APIUser user;
             private readonly Box background;

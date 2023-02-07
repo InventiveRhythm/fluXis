@@ -8,7 +8,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Judgement
 {
-    public class JudgementCounterItem : Container
+    public partial class JudgementCounterItem : Container
     {
         public const int SIZE = 50;
         public const int MARGIN = 5;

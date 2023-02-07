@@ -8,7 +8,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Volume;
 
-public class VolumeOverlay : Container
+public partial class VolumeOverlay : Container
 {
     private const int max_inactive = 2000;
 

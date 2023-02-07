@@ -9,7 +9,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
 {
-    public class JudgementDisplay : GameplayHUDElement
+    public partial class JudgementDisplay : GameplayHUDElement
     {
         public JudgementDisplay(GameplayScreen screen)
             : base(screen)

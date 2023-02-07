@@ -7,7 +7,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Result.UI
 {
-    public class ResultScore : FillFlowContainer
+    public partial class ResultScore : FillFlowContainer
     {
         private readonly Performance performance;
         private readonly SpriteText scoreText;

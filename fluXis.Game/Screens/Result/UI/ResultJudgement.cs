@@ -6,7 +6,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Result.UI
 {
-    public class ResultJudgement : FillFlowContainer
+    public partial class ResultJudgement : FillFlowContainer
     {
         public ResultJudgement(HitWindow hitWindow, int count)
         {

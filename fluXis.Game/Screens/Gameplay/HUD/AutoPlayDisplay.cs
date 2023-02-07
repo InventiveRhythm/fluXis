@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
 {
-    public class AutoPlayDisplay : GameplayHUDElement
+    public partial class AutoPlayDisplay : GameplayHUDElement
     {
         public AutoPlayDisplay(GameplayScreen screen)
             : base(screen)

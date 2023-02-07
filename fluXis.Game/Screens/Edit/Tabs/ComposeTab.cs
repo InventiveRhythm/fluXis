@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Edit.Tabs
 {
-    public class ComposeTab : EditorTab
+    public partial class ComposeTab : EditorTab
     {
         public ComposeTab(Editor screen)
             : base(screen)

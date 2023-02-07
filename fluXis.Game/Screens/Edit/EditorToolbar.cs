@@ -7,7 +7,7 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit;
 
-public class EditorToolbar : Container
+public partial class EditorToolbar : Container
 {
     public EditorToolbar(Editor editor)
     {
@@ -60,7 +60,7 @@ public class EditorToolbar : Container
         };
     }
 
-    private class EditorToolbarButton : Container
+    private partial class EditorToolbarButton : Container
     {
         private readonly Box background;
         private readonly Action onClick;

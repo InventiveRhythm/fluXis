@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
-public class DangerHealthOverlay : GameplayHUDElement
+public partial class DangerHealthOverlay : GameplayHUDElement
 {
     private readonly Box glow;
     private readonly Box darken;

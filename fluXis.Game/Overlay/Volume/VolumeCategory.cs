@@ -7,7 +7,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Volume;
 
-public class VolumeCategory : Container
+public partial class VolumeCategory : Container
 {
     public VolumeCategory(string type, BindableNumber<double> bind)
     {

@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
 {
-    public class ComboCounter : GameplayHUDElement
+    public partial class ComboCounter : GameplayHUDElement
     {
         public ComboCounter(GameplayScreen screen)
             : base(screen)

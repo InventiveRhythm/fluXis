@@ -7,7 +7,7 @@ using osuTK;
 
 namespace fluXis.Game.Online.Overlay
 {
-    public class OnlineOverlay : CompositeDrawable
+    public partial class OnlineOverlay : CompositeDrawable
     {
         public bool Visible;
 

@@ -169,7 +169,7 @@ namespace fluXis.Game.Online.Overlay
             this.FadeIn(200).ScaleTo(1f, 200, Easing.OutElastic);
         }
 
-        private class TextBox : BasicTextBox
+        private partial class TextBox : BasicTextBox
         {
             public TextBox()
             {
@@ -181,7 +181,7 @@ namespace fluXis.Game.Online.Overlay
             }
         }
 
-        private class PasswordTextBox : TextBox
+        private partial class PasswordTextBox : TextBox
         {
             protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer()
             {
@@ -192,7 +192,7 @@ namespace fluXis.Game.Online.Overlay
                 Child = new PasswordChar(CalculatedTextSize)
             };
 
-            private class PasswordChar : TicTac
+            private partial class PasswordChar : TicTac
             {
                 public PasswordChar(float size)
                     : base(size)

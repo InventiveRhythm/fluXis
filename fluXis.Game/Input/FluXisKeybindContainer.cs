@@ -6,7 +6,7 @@ using osu.Framework.Input.Bindings;
 
 namespace fluXis.Game.Input
 {
-    public class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
+    public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
     {
         private readonly Drawable handleInput;
         private InputManager inputManager;

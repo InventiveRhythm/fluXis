@@ -2,7 +2,7 @@ using fluXis.Game.Map;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 {
-    public class MetadataSetupSection : SetupSection
+    public partial class MetadataSetupSection : SetupSection
     {
         private readonly SetupTextBox titleTextBox;
         private readonly SetupTextBox artistTextBox;

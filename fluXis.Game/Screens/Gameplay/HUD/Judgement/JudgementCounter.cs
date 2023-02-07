@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Judgement
 {
-    public class JudgementCounter : CompositeDrawable
+    public partial class JudgementCounter : CompositeDrawable
     {
         private readonly Performance performance;
 

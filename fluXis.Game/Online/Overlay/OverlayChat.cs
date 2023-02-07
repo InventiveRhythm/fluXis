@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Online.Overlay
 {
-    public class OverlayChat : Container
+    public partial class OverlayChat : Container
     {
         [BackgroundDependencyLoader]
         private void load()

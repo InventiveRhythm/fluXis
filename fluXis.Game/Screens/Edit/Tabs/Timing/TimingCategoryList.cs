@@ -10,7 +10,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing;
 
-public class TimingCategoryList<T> : Container
+public partial class TimingCategoryList<T> : Container
 {
     public TimingCategoryList(string title, List<T> list, Colour4 background)
     {
@@ -53,7 +53,7 @@ public class TimingCategoryList<T> : Container
         }
     }
 
-    private class ListEntry : Container
+    private partial class ListEntry : Container
     {
         public ListEntry(T item)
         {

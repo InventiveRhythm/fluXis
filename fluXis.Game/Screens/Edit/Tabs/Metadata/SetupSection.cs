@@ -5,7 +5,7 @@ using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 {
-    public class SetupSection : FillFlowContainer
+    public partial class SetupSection : FillFlowContainer
     {
         public SetupSection(string title)
         {
@@ -17,7 +17,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
         }
     }
 
-    public class MetadataSectionHeader : SpriteText
+    public partial class MetadataSectionHeader : SpriteText
     {
         public MetadataSectionHeader(string text)
         {
@@ -26,7 +26,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
         }
     }
 
-    public class SetupTextBox : Container
+    public partial class SetupTextBox : Container
     {
         private readonly TextBox textBox;
 
@@ -62,7 +62,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
             };
         }
 
-        private class TextBox : BasicTextBox
+        private partial class TextBox : BasicTextBox
         {
             public TextBox()
             {

@@ -8,7 +8,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
 {
-    public class Progressbar : GameplayHUDElement
+    public partial class Progressbar : GameplayHUDElement
     {
         public Progressbar(GameplayScreen screen)
             : base(screen)
