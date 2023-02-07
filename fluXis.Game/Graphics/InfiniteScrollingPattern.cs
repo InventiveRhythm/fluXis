@@ -74,8 +74,6 @@ public partial class InfiniteScrollingPattern : Container
 
     protected override void Update()
     {
-        base.Update();
-
         foreach (var child in Children)
         {
             child.Position += Speed * ((float)Clock.ElapsedFrameTime / 1000f);
@@ -90,5 +88,12 @@ public partial class InfiniteScrollingPattern : Container
             else if (Speed.Y < 0 && child.Y < -DrawHeight)
                 child.Y += child.Size.Y * yCount;
         }
+
+        base.Update();
+    }
+
+    public void SpeedTo(Vector2 newSpeed, double duration = 0, Easing easing = Easing.None)
+    {
+        this.TransformTo(nameof(Speed), newSpeed, duration, easing);
     }
 }

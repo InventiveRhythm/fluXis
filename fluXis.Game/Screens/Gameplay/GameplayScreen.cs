@@ -9,6 +9,7 @@ using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.HUD.Judgement;
 using fluXis.Game.Screens.Gameplay.Input;
+using fluXis.Game.Screens.Gameplay.Overlay;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Utils;
@@ -37,6 +38,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public RealmMap RealmMap;
     public JudgementDisplay JudgementDisplay;
     public Playfield Playfield { get; private set; }
+    private FailOverlay failOverlay;
+    private FullComboOverlay fcOverlay;
 
     private Box overlay;
     private FluXisConfig config;
@@ -99,6 +102,9 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             Alpha = 0
         });
 
+        AddInternal(failOverlay = new FailOverlay());
+        AddInternal(fcOverlay = new FullComboOverlay());
+
         Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
     }
 
@@ -140,10 +146,11 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         Playfield.Manager.Dead = true;
         overlay.FadeTo(0.2f, 500);
+        failOverlay.Show();
         Conductor.SetSpeed(.25f, 1000, Easing.None, true).OnComplete(_ =>
         {
-            Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 400, Easing.None);
-            Conductor.SetSpeed(1, 400, Easing.None);
+            Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
+            Conductor.SetSpeed(1, 500, Easing.None);
             this.Exit();
         });
     }
@@ -157,7 +164,14 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 400, Easing.None);
         Conductor.SetSpeed(1, 400, Easing.None);
-        this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
+
+        if (Performance.IsFullCombo() || Performance.IsAllFlawless())
+        {
+            fcOverlay.Show(Performance.IsAllFlawless() ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
+            this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore)));
+        }
+        else
+            this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -184,7 +198,10 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
     private void fadeOut()
     {
-        this.FadeOut(restarting ? 0 : 250);
+        if (Playfield.Manager.Dead)
+            this.FadeOut(500);
+        else
+            this.FadeOut(restarting ? 0 : 250);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
