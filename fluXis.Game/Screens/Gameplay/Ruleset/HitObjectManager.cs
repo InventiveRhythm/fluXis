@@ -87,7 +87,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
                 }
             }
 
-            if (!Playfield.Screen.Paused && HitObjects.Count > 0 && HitObjects[0].Data.Time - 4000 < Conductor.CurrentTime)
+            if (!Playfield.Screen.Paused && HitObjects.Count > 0 && HitObjects[0].Data.Time - 4000 < Conductor.CurrentTime && HealthMode == HealthMode.Drain)
             {
                 HealthDrainRate = Math.Max(HealthDrainRate, -1f);
 
