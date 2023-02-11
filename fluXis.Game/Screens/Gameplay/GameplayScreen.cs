@@ -95,6 +95,41 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         AddInternal(new HealthBar(this));
         AddInternal(new DangerHealthOverlay(this));
 
+        AddRangeInternal(new Drawable[]
+        {
+            new AttributeText(this)
+            {
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding(10),
+                AttributeType = AttributeType.Title,
+                FontSize = 48
+            },
+            new AttributeText(this)
+            {
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding(10) { Bottom = 52 },
+                AttributeType = AttributeType.Artist,
+            },
+            new AttributeText(this)
+            {
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Margin = new MarginPadding(10),
+                AttributeType = AttributeType.Difficulty,
+                FontSize = 48
+            },
+            new AttributeText(this)
+            {
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Margin = new MarginPadding(10) { Bottom = 52 },
+                AttributeType = AttributeType.Mapper,
+                Text = "mapped by {value}"
+            },
+        });
+
         AddInternal(overlay = new Box
         {
             RelativeSizeAxes = Axes.Both,
