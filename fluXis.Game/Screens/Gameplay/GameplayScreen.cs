@@ -182,7 +182,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         Playfield.Manager.Dead = true;
         overlay.FadeTo(0.2f, 500);
         failOverlay.Show();
-        Conductor.SetSpeed(.25f, 1000, Easing.None, true).OnComplete(_ =>
+        Conductor.SetSpeed(.25f, 1000, Easing.None).OnComplete(_ =>
         {
             Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
             Conductor.SetSpeed(1, 500, Easing.None);
