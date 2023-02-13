@@ -73,7 +73,7 @@ namespace fluXis.Game.Screens.Select
 
         private void loadMapSets()
         {
-            var sets = maps.GetMapSets();
+            var sets = maps.MapSets;
 
             int i = 0;
 
@@ -175,6 +175,17 @@ namespace fluXis.Game.Screens.Select
             SelectMap(MapSet.Maps[current]);
         }
 
+        private void deleteMap()
+        {
+            if (MapSet == null)
+                return;
+
+            maps.DeleteMapSet(MapSet);
+            MapList.Remove(lookup[MapSet], false);
+            lookup.Remove(MapSet);
+            changeSelection(1);
+        }
+
         public override void OnSuspending(ScreenTransitionEvent e)
         {
             this.FadeOut(200);
@@ -235,6 +246,10 @@ namespace fluXis.Game.Screens.Select
                 case FluXisKeybind.Back:
                     MenuBack.Play();
                     this.Exit();
+                    return true;
+
+                case FluXisKeybind.Delete:
+                    deleteMap();
                     return true;
             }
 

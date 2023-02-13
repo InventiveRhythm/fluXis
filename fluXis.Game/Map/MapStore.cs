@@ -1,64 +1,83 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 
-namespace fluXis.Game.Map
+namespace fluXis.Game.Map;
+
+public class MapStore
 {
-    public class MapStore
+    private readonly Storage storage;
+    private readonly FluXisRealm realm;
+
+    public List<RealmMapSet> MapSets { get; } = new();
+    public RealmMapSet CurrentMapSet;
+
+    public MapStore(Storage storage, FluXisRealm realm)
     {
-        private static readonly List<RealmMapSet> sets = new();
-        private static Storage storage;
+        this.storage = storage.GetStorageForDirectory("files");
+        this.realm = realm;
 
-        public List<RealmMapSet> MapSets => sets;
+        Logger.Log("Loading maps...");
 
-        public RealmMapSet CurrentMapSet;
+        realm.Run(r => loadMapSets(r.All<RealmMapSet>()));
+    }
 
-        private FluXisRealm realm;
+    private void loadMapSets(IEnumerable<RealmMapSet> sets)
+    {
+        Logger.Log($"Found {sets.Count()} maps");
 
-        public MapStore(Storage storage, FluXisRealm realm)
+        foreach (var map in sets)
+            AddMapSet(map.Detach());
+    }
+
+    public void AddMapSet(RealmMapSet mapSet)
+    {
+        MapSets.Add(mapSet);
+        sortMapSets();
+    }
+
+    public void DeleteMapSet(RealmMapSet mapSet)
+    {
+        realm.RunWrite(r =>
         {
-            MapStore.storage = storage;
-            this.realm = realm;
+            RealmMapSet mapSetToDelete = r.Find<RealmMapSet>(mapSet.ID);
+            if (mapSetToDelete == null) return;
 
-            Logger.Log("Loading maps...");
+            foreach (var map in mapSetToDelete.Maps)
+                r.Remove(map);
 
-            realm.Run(r => loadMapSets(r.All<RealmMapSet>()));
-        }
+            foreach (var file in mapSetToDelete.Files)
+            {
+                try
+                {
+                    storage.Delete(file.GetPath());
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, $"Could not delete file {file.GetPath()}");
+                }
 
-        private void loadMapSets(IEnumerable<RealmMapSet> sets)
-        {
-            Logger.Log($"Found {sets.Count()} maps");
+                r.Remove(file);
+            }
 
-            foreach (var map in sets)
-                AddMapSet(map.Detach());
-        }
+            r.Remove(mapSetToDelete);
 
-        public void AddMapSet(RealmMapSet mapSet)
-        {
-            sets.Add(mapSet);
-            sortMapSets();
-        }
+            MapSets.Remove(mapSet);
+        });
+    }
 
-        private void sortMapSets()
-        {
-            sets.Sort((x, y) => string.Compare(x.Metadata.Title, y.Metadata.Title, StringComparison.Ordinal));
-        }
+    private void sortMapSets()
+    {
+        MapSets.Sort((x, y) => string.Compare(x.Metadata.Title, y.Metadata.Title, StringComparison.Ordinal));
+    }
 
-        public RealmMapSet GetRandom()
-        {
-            Random rnd = new Random();
-            return sets[rnd.Next(sets.Count)];
-        }
-
-        public List<RealmMapSet> GetMapSets() => sets;
-
-        public RealmMapSet FindSetFromMap(RealmMap map) => sets.Find(x => x.Maps.Contains(map));
-
-        public string GetMapAudioPath(MapInfo map) => storage.GetFullPath($"maps{Path.DirectorySeparatorChar}{map.MapsetID}{Path.DirectorySeparatorChar}{map.GetAudioFile()}");
+    public RealmMapSet GetRandom()
+    {
+        Random rnd = new Random();
+        return MapSets[rnd.Next(MapSets.Count)];
     }
 }

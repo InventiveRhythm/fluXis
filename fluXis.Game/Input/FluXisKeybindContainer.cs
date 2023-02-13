@@ -36,6 +36,7 @@ namespace fluXis.Game.Input
             new KeyBinding(InputKey.Left, FluXisKeybind.PreviousGroup),
             new KeyBinding(InputKey.Right, FluXisKeybind.NextGroup),
             new KeyBinding(InputKey.Tab, FluXisKeybind.ToggleOnlineOverlay),
+            new KeyBinding(InputKey.Delete, FluXisKeybind.Delete),
 
             new KeyBinding(InputKey.A, FluXisKeybind.Key4k1),
             new KeyBinding(InputKey.S, FluXisKeybind.Key4k2),
@@ -101,6 +102,7 @@ namespace fluXis.Game.Input
         PreviousGroup,
         NextGroup,
         ToggleOnlineOverlay,
+        Delete,
 
         // 4k
         Key4k1,
