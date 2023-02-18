@@ -73,7 +73,25 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
 
             foreach (var hitObject in HitObjects.Where(h => h.Missed && h.Exists).ToList())
             {
-                miss(hitObject);
+                if (hitObject.Data.IsLongNote())
+                {
+                    if (!hitObject.LongNoteMissed)
+                    {
+                        hitObject.MissLongNote();
+                        miss(hitObject);
+                    }
+
+                    if (hitObject.IsOffScreen())
+                    {
+                        hitObject.Kill();
+                        HitObjects.Remove(hitObject);
+                        RemoveInternal(hitObject, true);
+                    }
+                }
+                else
+                {
+                    miss(hitObject);
+                }
             }
 
             foreach (var eventInfo in Map.Events)
@@ -217,7 +235,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             if (hitObject.Data.IsLongNote() && !isHoldEnd) { }
             else
             {
-                hitObject.Kill(false);
+                hitObject.Kill();
                 HitObjects.Remove(hitObject);
                 RemoveInternal(hitObject, true);
             }
@@ -231,7 +249,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             judmentDisplay(hitObject, 0, true);
             Performance.ResetCombo();
 
-            hitObject.Kill(true);
+            if (hitObject.Data.IsLongNote()) return;
+
+            hitObject.Kill();
             HitObjects.Remove(hitObject);
             RemoveInternal(hitObject, true);
         }
