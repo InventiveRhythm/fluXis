@@ -37,6 +37,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public MapInfo Map;
     public RealmMap RealmMap;
     public JudgementDisplay JudgementDisplay;
+    public HitErrorBar HitErrorBar;
     public Playfield Playfield { get; private set; }
     private FailOverlay failOverlay;
     private FullComboOverlay fcOverlay;
@@ -94,6 +95,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         AddInternal(new JudgementCounter(Performance));
         AddInternal(new HealthBar(this));
         AddInternal(new DangerHealthOverlay(this));
+        AddInternal(HitErrorBar = new HitErrorBar(this));
 
         AddRangeInternal(new Drawable[]
         {

@@ -96,7 +96,7 @@ namespace fluXis.Game.Screens.Select.List
 
         protected override void Update()
         {
-            bool newSelected = Equals(mapListEntry.Screen.MapInfo, map);
+            bool newSelected = Equals(mapListEntry.Screen?.MapInfo, map);
 
             if (selected != newSelected)
             {

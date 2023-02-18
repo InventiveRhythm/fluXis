@@ -28,7 +28,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
         public int CurrentKeyCount { get; private set; }
 
         public bool Dead { get; set; }
-        public HealthMode HealthMode => HealthMode.Drain;
+        public HealthMode HealthMode => HealthMode.Normal;
         public float Health { get; private set; }
         public float HealthDrainRate { get; private set; }
 
@@ -210,6 +210,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset
             hitObject.GotHit = true;
 
             judmentDisplay(hitObject, diff);
+            Playfield.Screen.HitErrorBar.AddHit(diff);
 
             Performance.IncCombo();
 

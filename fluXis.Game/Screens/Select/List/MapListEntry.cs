@@ -99,7 +99,7 @@ namespace fluXis.Game.Screens.Select.List
             if (selected)
                 return false; // dont handle clicks when we already selected this mapset
 
-            Screen.SelectMapSet(mapset);
+            Screen?.SelectMapSet(mapset);
             return true;
         }
 
