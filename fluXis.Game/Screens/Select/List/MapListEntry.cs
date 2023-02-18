@@ -16,8 +16,7 @@ namespace fluXis.Game.Screens.Select.List
         private readonly RealmMapSet mapset;
         private readonly int index;
 
-        public bool Selected => Equals(Screen?.MapSet, mapset);
-        private bool selected; // so that the first mapset is selected by default
+        public bool Selected => Equals(Screen.MapSet.Value, mapset);
 
         private MapListEntryHeader header;
         private Container difficultyContainer;
@@ -44,6 +43,7 @@ namespace fluXis.Game.Screens.Select.List
                     Masking = true,
                     RelativeSizeAxes = Axes.X,
                     Y = 75,
+                    Height = 10,
                     Padding = new MarginPadding(5),
                     Child = difficultyFlow = new FillFlowContainer<MapDifficultyEntry>
                     {
@@ -61,46 +61,40 @@ namespace fluXis.Game.Screens.Select.List
             }
         }
 
-        protected override void Update()
+        private void updateSelected()
         {
-            if (Selected != selected)
-            {
-                if (Selected)
-                    select();
-                else
-                    deselect();
-            }
-
-            // kind of a hack to make sure the first mapset is selected by default
-            if (Selected && difficultyContainer.Height == 0)
+            if (Selected)
                 select();
-
-            selected = Selected;
-
-            base.Update();
+            else
+                deselect();
         }
 
         private void select()
         {
             header.SetDim(.2f);
-            difficultyContainer.FadeIn(300, Easing.OutQuint)
+            difficultyContainer.FadeIn()
                                .ResizeHeightTo(difficultyFlow.Height + 10, 300, Easing.OutQuint);
         }
 
         private void deselect()
         {
             header.SetDim(.4f);
-            difficultyContainer.FadeOut(300, Easing.OutQuint)
-                               .ResizeHeightTo(0, 300, Easing.OutQuint);
+            difficultyContainer.ResizeHeightTo(0, 300, Easing.OutQuint)
+                               .Then().FadeOut();
         }
 
         protected override bool OnClick(ClickEvent e)
         {
-            if (selected)
+            if (Selected)
                 return false; // dont handle clicks when we already selected this mapset
 
-            Screen?.SelectMapSet(mapset);
-            return true;
+            if (Screen != null)
+            {
+                Screen.MapSet.Value = mapset;
+                return true;
+            }
+
+            return false;
         }
 
         protected override void LoadComplete()
@@ -113,6 +107,14 @@ namespace fluXis.Game.Screens.Select.List
                 .Delay(delay * index)
                 .FadeIn(duration)
                 .MoveToX(0, duration, Easing.OutQuint);
+
+            // hacky thing because it doesnt get the height properly
+            if (Selected)
+                difficultyContainer.ResizeHeightTo(difficultyFlow.Children.Count * 45 + 5);
+            else
+                difficultyContainer.ResizeHeightTo(0);
+
+            Screen?.MapSet.BindValueChanged(_ => updateSelected());
 
             base.LoadComplete();
         }
@@ -185,13 +187,13 @@ namespace fluXis.Game.Screens.Select.List
 
             protected override bool OnHover(HoverEvent e)
             {
-                dim.FadeTo(parent.selected ? .1f : .3f, 100);
+                dim.FadeTo(parent.Selected ? .1f : .3f, 100);
                 return base.OnHover(e);
             }
 
             protected override void OnHoverLost(HoverLostEvent e)
             {
-                dim.FadeTo(parent.selected ? .2f : .4f, 300);
+                dim.FadeTo(parent.Selected ? .2f : .4f, 300);
                 base.OnHoverLost(e);
             }
 

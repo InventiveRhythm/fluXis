@@ -1,9 +1,8 @@
 using System;
-using System.Linq;
-using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.List
@@ -18,15 +17,7 @@ namespace fluXis.Game.Screens.Select.List
             RelativeSizeAxes = Axes.Both;
             Width = .5f;
             Masking = false;
-            Padding = new MarginPadding(10);
-        }
-
-        public MapListEntry AddMap(SelectScreen screen, RealmMapSet map, int index)
-        {
-            var entry = new MapListEntry(screen, map, index);
-            entry.Y = Content.Children.Count > 0 ? Content.Children.Last().Y + Content.Children.Last().Height + 5 : 0;
-            Content.Add(entry);
-            return entry;
+            Padding = new MarginPadding(10) { Left = 20 };
         }
 
         protected override void Update()
@@ -65,18 +56,26 @@ namespace fluXis.Game.Screens.Select.List
             public MapListScrollbar(Direction direction)
                 : base(direction)
             {
-                // the fuck did i do its just gone
-                CornerRadius = 5;
-                Margin = new MarginPadding(2);
+                CornerRadius = 4;
                 Masking = true;
-                Size = new Vector2(10);
-                Colour = Colour4.White;
+                Margin = new MarginPadding(2) { Left = -10 };
+
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.FromHex("#222228")
+                };
+            }
+
+            protected override void LoadComplete()
+            {
                 Anchor = Origin = Anchor.TopLeft;
+                base.LoadComplete();
             }
 
             public override void ResizeTo(float val, int duration = 0, Easing easing = Easing.None)
             {
-                Vector2 size = new Vector2(10)
+                Vector2 size = new Vector2(8)
                 {
                     [(int)ScrollDirection] = val
                 };

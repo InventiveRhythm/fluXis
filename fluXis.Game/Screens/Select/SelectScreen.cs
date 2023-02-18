@@ -11,6 +11,7 @@ using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -26,8 +27,8 @@ namespace fluXis.Game.Screens.Select
         private MapStore maps { get; set; }
 
         public BackgroundStack Backgrounds;
-        public RealmMapSet MapSet;
-        public RealmMap MapInfo;
+        public Bindable<RealmMapSet> MapSet = new();
+        public Bindable<RealmMap> MapInfo = new();
 
         public MapList MapList;
         public SelectMapInfo SelectMapInfo;
@@ -69,6 +70,9 @@ namespace fluXis.Game.Screens.Select
             });
 
             loadMapSets();
+
+            MapSet.ValueChanged += e => selectMapSet(e.NewValue);
+            MapInfo.ValueChanged += e => selectMap(e.NewValue);
         }
 
         private void loadMapSets()
@@ -92,19 +96,16 @@ namespace fluXis.Game.Screens.Select
         protected override void LoadComplete()
         {
             if (maps.MapSets.Count > 0)
-                SelectMapSet(maps.CurrentMapSet);
+                MapSet.Value = maps.CurrentMapSet;
         }
 
-        public void SelectMapSet(RealmMapSet set)
+        private void selectMapSet(RealmMapSet set)
         {
             if (set == null)
                 return;
 
             RealmMap map = set.Maps.First();
-            MapSet = set;
-            MapInfo = map;
-            SelectMap(map);
-            MapList.ScrollTo(lookup[set]);
+            MapInfo.Value = map;
 
             if (!Equals(maps.CurrentMapSet, set) || !Conductor.IsPlaying)
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
@@ -114,16 +115,15 @@ namespace fluXis.Game.Screens.Select
             maps.CurrentMapSet = set;
         }
 
-        public void SelectMap(RealmMap map)
+        private void selectMap(RealmMap map)
         {
             if (map == null)
                 return;
 
-            MapInfo = map;
             MenuScroll.Play();
             Backgrounds.AddBackgroundFromMap(map);
             SelectMapInfo.ChangeMap(map);
-            MapList.ScrollTo(lookup[MapSet]);
+            MapList.ScrollTo(lookup[MapSet.Value]);
         }
 
         public void Accept()
@@ -132,10 +132,10 @@ namespace fluXis.Game.Screens.Select
                 return;
 
             MenuAccept.Play();
-            Backgrounds.AddBackgroundFromMap(MapInfo);
+            Backgrounds.AddBackgroundFromMap(MapInfo.Value);
             Backgrounds.SwipeAnimation();
 
-            this.Push(new GameplayScreen(MapInfo));
+            this.Push(new GameplayScreen(MapInfo.Value));
         }
 
         private void changeSelection(int by = 0)
@@ -143,7 +143,7 @@ namespace fluXis.Game.Screens.Select
             if (maps.MapSets.Count == 0)
                 return;
 
-            int current = maps.MapSets.IndexOf(MapSet);
+            int current = maps.MapSets.IndexOf(MapSet.Value);
             current += by;
 
             if (current < 0)
@@ -151,28 +151,28 @@ namespace fluXis.Game.Screens.Select
             else if (current >= maps.MapSets.Count)
                 current = 0;
 
-            SelectMapSet(maps.MapSets[current]);
+            MapSet.Value = maps.MapSets[current];
         }
 
         private void changeMapSelection(int by = 0)
         {
-            int current = MapSet.Maps.IndexOf(MapInfo);
+            int current = MapSet.Value.Maps.IndexOf(MapInfo.Value);
             current += by;
 
             if (current < 0)
             {
                 changeSelection(-1);
-                changeMapSelection(MapSet.Maps.Count - 1);
+                changeMapSelection(MapSet.Value.Maps.Count - 1);
                 return;
             }
 
-            if (current >= MapSet.Maps.Count)
+            if (current >= MapSet.Value.Maps.Count)
             {
                 changeSelection(1);
                 return;
             }
 
-            SelectMap(MapSet.Maps[current]);
+            MapInfo.Value = MapSet.Value.Maps[current];
         }
 
         private void deleteMap()
@@ -180,9 +180,9 @@ namespace fluXis.Game.Screens.Select
             if (MapSet == null)
                 return;
 
-            maps.DeleteMapSet(MapSet);
-            MapList.Remove(lookup[MapSet], false);
-            lookup.Remove(MapSet);
+            maps.DeleteMapSet(MapSet.Value);
+            MapList.Remove(lookup[MapSet.Value], false);
+            lookup.Remove(MapSet.Value);
             changeSelection(1);
         }
 
@@ -196,7 +196,7 @@ namespace fluXis.Game.Screens.Select
             this.FadeIn(200);
 
             Discord.Update("Selecting a map", "", "songselect");
-            Conductor.SetLoop(MapInfo.Metadata.PreviewTime);
+            Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
             SelectMapInfo.ScoreList.Refresh();
 
             base.OnResuming(e);
@@ -206,7 +206,7 @@ namespace fluXis.Game.Screens.Select
         {
             this.FadeInFromZero(200);
             Discord.Update("Selecting a map", "", "songselect");
-            Conductor.SetLoop(MapInfo.Metadata.PreviewTime);
+            Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
 
             base.OnEntering(e);
         }
