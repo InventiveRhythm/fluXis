@@ -86,7 +86,7 @@ public partial class MapDifficultyEntry : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (Equals(mapListEntry.Screen.MapInfo, map))
+        if (Equals(mapListEntry.Screen.MapInfo.Value, map))
             mapListEntry.Screen.Accept();
         else
             mapListEntry.Screen.MapInfo.Value = map;
