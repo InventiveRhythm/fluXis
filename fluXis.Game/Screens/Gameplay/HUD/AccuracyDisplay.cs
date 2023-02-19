@@ -1,5 +1,8 @@
+using fluXis.Game.Graphics;
+using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD
@@ -9,6 +12,9 @@ namespace fluXis.Game.Screens.Gameplay.HUD
         private SpriteText accuracyText;
         private float displayedAccuracy;
         private float lastAccuracy;
+
+        private Grade grade = Grade.X;
+        private DrawableGrade drawableGrade;
 
         public AccuracyDisplay(GameplayScreen screen)
             : base(screen)
@@ -23,11 +29,17 @@ namespace fluXis.Game.Screens.Gameplay.HUD
             Anchor = Anchor.Centre;
             Origin = Anchor.TopCentre;
 
-            Add(accuracyText = new SpriteText
+            Add(new FillFlowContainer
             {
-                Font = new FontUsage("Quicksand", 32f, "SemiBold", false, true),
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Horizontal,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.TopCentre
+                Origin = Anchor.TopCentre,
+                Children = new Drawable[]
+                {
+                    drawableGrade = new DrawableGrade { Size = 32 },
+                    accuracyText = new SpriteText { Font = new FontUsage("Quicksand", 32f, "SemiBold", false, true) }
+                }
             });
         }
 
@@ -44,11 +56,18 @@ namespace fluXis.Game.Screens.Gameplay.HUD
 
             if (currentAccuracy != lastAccuracy)
             {
-                this.TransformTo(nameof(displayedAccuracy), currentAccuracy, 400, Easing.Out);
-                lastAccuracy = currentAccuracy;
+                float acc = (int)(currentAccuracy * 100) / 100f;
+                this.TransformTo(nameof(displayedAccuracy), acc, 400, Easing.Out);
+                lastAccuracy = acc;
             }
 
-            accuracyText.Text = $"{Screen.Performance.Grade} - {displayedAccuracy:00.00}%".Replace(",", ".");
+            accuracyText.Text = $"{displayedAccuracy:00.00}%".Replace(",", ".");
+
+            if (grade != Screen.Performance.Grade)
+            {
+                grade = Screen.Performance.Grade;
+                drawableGrade.Grade = grade;
+            }
 
             base.Update();
         }

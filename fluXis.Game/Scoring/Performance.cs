@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using fluXis.Game.Map;
 using Newtonsoft.Json;
@@ -11,7 +10,7 @@ namespace fluXis.Game.Scoring
         public float Accuracy { get; private set; }
 
         [JsonProperty("grade")]
-        public string Grade { get; private set; }
+        public Grade Grade { get; private set; }
 
         [JsonProperty("score")]
         public int Score { get; private set; }
@@ -44,7 +43,7 @@ namespace fluXis.Game.Scoring
             MapHash = map.MD5;
 
             Accuracy = 0;
-            Grade = "X";
+            Grade = Grade.X;
             Score = 0;
             Combo = 0;
             MaxCombo = 0;
@@ -86,8 +85,6 @@ namespace fluXis.Game.Scoring
             else
                 Accuracy = GetRated() / GetAllJudgements() * 100;
 
-            Accuracy = (float)Math.Round(Accuracy, 2);
-
             Score = (int)(GetRated() / Map.MaxCombo * 1000000);
             calculateGrade();
         }
@@ -95,21 +92,21 @@ namespace fluXis.Game.Scoring
         private void calculateGrade()
         {
             if (Accuracy == 100)
-                Grade = "X";
+                Grade = Grade.X;
             else if (Accuracy >= 99)
-                Grade = "SS";
+                Grade = Grade.SS;
             else if (Accuracy >= 98)
-                Grade = "S";
+                Grade = Grade.S;
             else if (Accuracy >= 95)
-                Grade = "AA";
+                Grade = Grade.AA;
             else if (Accuracy >= 90)
-                Grade = "A";
+                Grade = Grade.A;
             else if (Accuracy >= 80)
-                Grade = "B";
+                Grade = Grade.B;
             else if (Accuracy >= 70)
-                Grade = "C";
+                Grade = Grade.C;
             else
-                Grade = "D";
+                Grade = Grade.D;
         }
 
         public int GetHit()

@@ -39,7 +39,7 @@ namespace fluXis.Game.Screens.Result
                 score = new RealmScore(map)
                 {
                     Accuracy = performance.Accuracy,
-                    Grade = performance.Grade,
+                    Grade = performance.Grade.ToString(),
                     Score = performance.Score,
                     MaxCombo = performance.MaxCombo,
                     Judgements = new RealmJudgements(performance.Judgements)
