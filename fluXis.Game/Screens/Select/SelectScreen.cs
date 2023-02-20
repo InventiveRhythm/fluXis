@@ -9,6 +9,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
+using fluXis.Game.Screens.Select.Search;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -24,7 +25,7 @@ namespace fluXis.Game.Screens.Select
     public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         [Resolved]
-        private MapStore maps { get; set; }
+        private MapStore mapStore { get; set; }
 
         public BackgroundStack Backgrounds;
         public Bindable<RealmMapSet> MapSet = new();
@@ -32,10 +33,60 @@ namespace fluXis.Game.Screens.Select
 
         public MapList MapList;
         public SelectMapInfo SelectMapInfo;
+        public SearchBar SearchBar;
 
         public Sample MenuAccept;
         public Sample MenuBack;
         public Sample MenuScroll;
+
+        public readonly List<RealmMapSet> Maps = new();
+
+        public string Search
+        {
+            set
+            {
+                Maps.Clear();
+
+                foreach (var child in MapList.Children)
+                {
+                    if (child is MapListEntry entry)
+                    {
+                        RealmMapSet set = entry.MapSet;
+                        string title = set.Metadata.Title.ToLower();
+                        string artist = set.Metadata.Artist.ToLower();
+                        string mapper = set.Metadata.Mapper.ToLower();
+                        string source = set.Metadata.Source.ToLower();
+                        string tags = set.Metadata.Tags.ToLower();
+
+                        bool matches = title.Contains(value);
+                        matches |= artist.Contains(value);
+                        matches |= mapper.Contains(value);
+                        matches |= source.Contains(value);
+                        matches |= tags.Contains(value);
+
+                        foreach (var map in set.Maps)
+                        {
+                            string difficulty = map.Difficulty.ToLower();
+                            string chartMapper = map.Metadata.Mapper.ToLower();
+                            matches |= difficulty.Contains(value) || chartMapper.Contains(value);
+                        }
+
+                        if (matches)
+                        {
+                            Maps.Add(set);
+                            entry.Show();
+                        }
+                        else
+                            entry.Hide();
+                    }
+                }
+
+                if (!Maps.Any())
+                    noMapsText.FadeIn(200);
+                else
+                    noMapsText.FadeOut(200);
+            }
+        }
 
         private SpriteText noMapsText;
 
@@ -51,6 +102,7 @@ namespace fluXis.Game.Screens.Select
             MenuScroll = samples.Get("ui/scroll.ogg");
 
             AddInternal(MapList = new MapList());
+            AddInternal(SearchBar = new SearchBar(this));
             AddInternal(SelectMapInfo = new SelectMapInfo());
             AddInternal(new Container
             {
@@ -77,7 +129,7 @@ namespace fluXis.Game.Screens.Select
 
         private void loadMapSets()
         {
-            var sets = maps.MapSets;
+            var sets = mapStore.MapSets;
 
             int i = 0;
 
@@ -85,6 +137,7 @@ namespace fluXis.Game.Screens.Select
             {
                 MapListEntry entry = new(this, set, i);
                 MapList.Add(entry);
+                Maps.Add(set);
                 lookup[set] = entry;
                 i++;
             }
@@ -95,8 +148,8 @@ namespace fluXis.Game.Screens.Select
 
         protected override void LoadComplete()
         {
-            if (maps.MapSets.Count > 0)
-                MapSet.Value = maps.CurrentMapSet;
+            if (Maps.Count > 0)
+                MapSet.Value = mapStore.CurrentMapSet;
         }
 
         private void selectMapSet(RealmMapSet set)
@@ -107,12 +160,12 @@ namespace fluXis.Game.Screens.Select
             RealmMap map = set.Maps.First();
             MapInfo.Value = map;
 
-            if (!Equals(maps.CurrentMapSet, set) || !Conductor.IsPlaying)
+            if (!Equals(mapStore.CurrentMapSet, set) || !Conductor.IsPlaying)
                 Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
 
             Conductor.SetLoop(map.Metadata.PreviewTime);
 
-            maps.CurrentMapSet = set;
+            mapStore.CurrentMapSet = set;
         }
 
         private void selectMap(RealmMap map)
@@ -140,22 +193,24 @@ namespace fluXis.Game.Screens.Select
 
         private void changeSelection(int by = 0)
         {
-            if (maps.MapSets.Count == 0)
+            if (Maps.Count == 0)
                 return;
 
-            int current = maps.MapSets.IndexOf(MapSet.Value);
+            int current = Maps.IndexOf(MapSet.Value);
             current += by;
 
             if (current < 0)
-                current = maps.MapSets.Count - 1;
-            else if (current >= maps.MapSets.Count)
+                current = Maps.Count - 1;
+            else if (current >= Maps.Count)
                 current = 0;
 
-            MapSet.Value = maps.MapSets[current];
+            MapSet.Value = Maps[current];
         }
 
         private void changeMapSelection(int by = 0)
         {
+            if (!Maps.Contains(MapInfo.Value.MapSet)) return;
+
             int current = MapSet.Value.Maps.IndexOf(MapInfo.Value);
             current += by;
 
@@ -180,8 +235,9 @@ namespace fluXis.Game.Screens.Select
             if (MapSet == null)
                 return;
 
-            maps.DeleteMapSet(MapSet.Value);
+            mapStore.DeleteMapSet(MapSet.Value);
             MapList.Remove(lookup[MapSet.Value], false);
+            Maps.Remove(MapSet.Value);
             lookup.Remove(MapSet.Value);
             changeSelection(1);
         }

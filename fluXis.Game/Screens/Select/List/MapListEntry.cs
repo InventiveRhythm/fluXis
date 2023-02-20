@@ -13,19 +13,19 @@ namespace fluXis.Game.Screens.Select.List
     public partial class MapListEntry : Container
     {
         public readonly SelectScreen Screen;
-        private readonly RealmMapSet mapset;
+        public readonly RealmMapSet MapSet;
         private readonly int index;
 
-        public bool Selected => Equals(Screen.MapSet.Value, mapset);
+        public bool Selected => Equals(Screen.MapSet.Value, MapSet);
 
         private MapListEntryHeader header;
         private Container difficultyContainer;
         private FillFlowContainer<MapDifficultyEntry> difficultyFlow;
 
-        public MapListEntry(SelectScreen screen, RealmMapSet mapset, int index)
+        public MapListEntry(SelectScreen screen, RealmMapSet mapSet, int index)
         {
             Screen = screen;
-            this.mapset = mapset;
+            this.MapSet = mapSet;
             this.index = index;
         }
 
@@ -37,7 +37,7 @@ namespace fluXis.Game.Screens.Select.List
 
             InternalChildren = new Drawable[]
             {
-                header = new MapListEntryHeader(this, mapset),
+                header = new MapListEntryHeader(this, MapSet),
                 difficultyContainer = new Container
                 {
                     Masking = true,
@@ -55,7 +55,7 @@ namespace fluXis.Game.Screens.Select.List
                 }
             };
 
-            foreach (var map in mapset.Maps)
+            foreach (var map in MapSet.Maps)
             {
                 difficultyFlow.Add(new MapDifficultyEntry(this, map));
             }
@@ -90,7 +90,7 @@ namespace fluXis.Game.Screens.Select.List
 
             if (Screen != null)
             {
-                Screen.MapSet.Value = mapset;
+                Screen.MapSet.Value = MapSet;
                 return true;
             }
 

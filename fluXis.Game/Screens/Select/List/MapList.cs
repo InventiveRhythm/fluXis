@@ -24,7 +24,7 @@ public partial class MapList : BasicScrollContainer
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
         Masking = false;
-        Padding = new MarginPadding(10) { Left = 20 };
+        Padding = new MarginPadding(10) { Left = 20, Top = 105 };
     }
 
     protected override void Update()
@@ -33,8 +33,16 @@ public partial class MapList : BasicScrollContainer
         {
             var child = Content.Children[i];
 
+            int prevIndex = i - 1;
+
             if (i > 0)
-                child.Y = Content.Children[i - 1].Y + Content.Children[i - 1].Height + 5;
+            {
+                while (Content.Children[prevIndex].Alpha == 0 && prevIndex > 0)
+                    prevIndex--;
+            }
+
+            if (i > 0 && Content.Children[prevIndex].Alpha != 0)
+                child.Y = Content.Children[prevIndex].Y + Content.Children[prevIndex].Height + 5;
             else
                 child.Y = 0;
         }
