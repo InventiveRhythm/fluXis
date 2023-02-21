@@ -13,6 +13,7 @@ using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Overlay;
+using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Menu;
 using Newtonsoft.Json;
@@ -31,6 +32,7 @@ namespace fluXis.Game
     {
         private ScreenStack screenStack;
         private OnlineOverlay overlay;
+        private SettingsMenu settings;
 
         [Cached]
         private BackgroundStack backgroundStack = new();
@@ -54,6 +56,7 @@ namespace fluXis.Game
                 backgroundStack,
                 screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
                 overlay = new OnlineOverlay(),
+                settings = new SettingsMenu(),
                 new VolumeOverlay()
             };
         }
@@ -198,6 +201,10 @@ namespace fluXis.Game
             {
                 case FluXisKeybind.ToggleOnlineOverlay:
                     overlay.ToggleVisibility();
+                    return true;
+
+                case FluXisKeybind.ToggleSettings:
+                    settings.ToggleVisibility();
                     return true;
             }
 
