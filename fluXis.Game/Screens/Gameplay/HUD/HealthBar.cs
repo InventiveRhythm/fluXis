@@ -22,7 +22,7 @@ public partial class HealthBar : GameplayHUDElement
         : base(screen)
     {
         manager = screen.Playfield.Manager;
-        health = manager.Health;
+        health = 0;
 
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
