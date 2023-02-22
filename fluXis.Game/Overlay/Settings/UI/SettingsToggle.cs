@@ -64,7 +64,7 @@ public partial class SettingsToggle : SettingsItem
 
         private void updateState()
         {
-            box.FadeTo(Bindable.Value ? 1 : 0);
+            box.FadeTo(Bindable.Value ? 1 : .1f, 100);
         }
     }
 }

@@ -13,6 +13,7 @@ public partial class GameplaySection : SettingsSection
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
+        Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.ScrollSpeed), "Scroll Speed", "{value}"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.HideFlawless), "Hide Flawless Judgements"));
     }
 }

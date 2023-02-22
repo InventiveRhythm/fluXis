@@ -14,6 +14,12 @@ namespace fluXis.Game.Graphics.Background
         private readonly Sprite sprite;
         private readonly BufferedContainer buffer;
 
+        public float Blur
+        {
+            get => buffer.BlurSigma.X / 25;
+            set => buffer.BlurSigma = new Vector2(value * 25);
+        }
+
         public Background(string path)
         {
             texture = path;
@@ -37,7 +43,7 @@ namespace fluXis.Game.Graphics.Background
         private void load(TextureStore textures, BackgroundTextureStore backgrounds, FluXisConfig config)
         {
             sprite.Texture = backgrounds.Get(texture) ?? textures.Get(@"Backgrounds/default.png");
-            buffer.BlurSigma = new Vector2(config.Get<float>(FluXisSetting.BackgroundBlur) * 25);
+            Blur = config.Get<float>(FluXisSetting.BackgroundBlur);
             Alpha = 0f;
         }
 

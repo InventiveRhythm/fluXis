@@ -4,6 +4,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -20,6 +21,10 @@ namespace fluXis.Game.Graphics.Background
         private Container backgroundContainer;
         private string currentBackground;
         private Box swipeAnimation;
+        private Box backgroundDim;
+
+        private Bindable<float> backgroundDimBindable;
+        private Bindable<float> backgroundBlurBindable;
 
         [BackgroundDependencyLoader]
         private void load(FluXisConfig config)
@@ -32,11 +37,11 @@ namespace fluXis.Game.Graphics.Background
                 {
                     RelativeSizeAxes = Axes.Both
                 },
-                new Box
+                backgroundDim = new Box
                 {
                     Colour = Colour4.Black,
                     RelativeSizeAxes = Axes.Both,
-                    Alpha = config.Get<float>(FluXisSetting.BackgroundDim)
+                    Alpha = 0
                 },
                 swipeAnimation = new Box
                 {
@@ -49,6 +54,9 @@ namespace fluXis.Game.Graphics.Background
                     X = -1.1f
                 }
             };
+
+            backgroundDimBindable = config.GetBindable<float>(FluXisSetting.BackgroundDim);
+            backgroundBlurBindable = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
         }
 
         protected override void Update()
@@ -66,6 +74,19 @@ namespace fluXis.Game.Graphics.Background
                     backgroundContainer.Remove(backgroundContainer.Children[0], false);
                 else
                     break;
+            }
+
+            // for some reason using the bindable directly doesn't work
+            if (backgroundDimBindable.Value != backgroundDim.Alpha)
+                backgroundDim.Alpha = backgroundDimBindable.Value;
+
+            foreach (var background in backgroundContainer)
+            {
+                if (background is Background b)
+                {
+                    if (b.Blur != backgroundBlurBindable.Value)
+                        b.Blur = backgroundBlurBindable.Value;
+                }
             }
 
             base.Update();
