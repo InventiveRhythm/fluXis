@@ -1,7 +1,9 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 {
@@ -64,14 +66,16 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 
         private partial class TextBox : BasicTextBox
         {
+            protected override Color4 SelectionColour => FluXisColors.Accent2;
+
             public TextBox()
             {
                 CornerRadius = 5;
                 Masking = true;
                 RelativeSizeAxes = Axes.Both;
-                BackgroundUnfocused = Colour4.FromHex("#2a2a30");
-                BackgroundFocused = Colour4.FromHex("#818182");
-                BackgroundCommit = Colour4.FromHex("#acacad");
+                BackgroundUnfocused = FluXisColors.Surface;
+                BackgroundFocused = FluXisColors.Hover;
+                BackgroundCommit = FluXisColors.Click;
             }
 
             protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer

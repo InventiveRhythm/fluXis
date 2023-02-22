@@ -1,5 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.Info.Scores;
@@ -91,7 +92,7 @@ public partial class SelectMapInfo : FillFlowContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.FromHex("#222228")
+                        Colour = FluXisColors.Background2
                     },
                     new FillFlowContainer
                     {
@@ -144,7 +145,7 @@ public partial class SelectMapInfo : FillFlowContainer
                                             new Box
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Colour = Colour4.FromHex("#2a2a30")
+                                                Colour = FluXisColors.Background2
                                             },
                                             new FillFlowContainer
                                             {

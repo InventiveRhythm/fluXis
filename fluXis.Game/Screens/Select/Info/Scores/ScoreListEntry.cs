@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Score;
+using fluXis.Game.Graphics;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
@@ -28,7 +29,7 @@ public partial class ScoreListEntry : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.FromHex("#323238")
+                Colour = FluXisColors.Surface
             },
             new GridContainer
             {
@@ -61,7 +62,7 @@ public partial class ScoreListEntry : Container
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = Colour4.FromHex("#222228")
+                                    Colour = FluXisColors.Background2
                                 },
                                 new SpriteText
                                 {

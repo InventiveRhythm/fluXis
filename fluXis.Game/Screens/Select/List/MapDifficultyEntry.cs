@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -44,7 +45,7 @@ public partial class MapDifficultyEntry : Container
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.FromHex("#1a1a20")
+                    Colour = FluXisColors.Background
                 },
             },
             difficultyName = new SpriteText

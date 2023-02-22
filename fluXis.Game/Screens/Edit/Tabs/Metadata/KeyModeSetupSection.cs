@@ -47,11 +47,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 
             private bool selected;
 
-            private readonly Colour4 backgroundColour = Colour4.FromHex("#2a2a30");
-            private readonly Colour4 backgroundColourHover = Colour4.FromHex("#818182");
-            private readonly Colour4 backgroundSelectColour = Colour4.FromHex("#323238");
-            private readonly Colour4 backgroundSelectColourHover = Colour4.FromHex("#838384");
-            private readonly Colour4 backgroundSelectColourClick = Colour4.FromHex("#adadae");
+            private readonly Colour4 backgroundColour = FluXisColors.Surface;
+            private readonly Colour4 backgroundColourHover = FluXisColors.Hover;
+            private readonly Colour4 backgroundSelected = FluXisColors.Surface2;
+            private readonly Colour4 backgroundColourClick = FluXisColors.Click;
 
             public int KeyMode { get; }
 
@@ -61,10 +60,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
                 {
                     selected = value;
 
-                    setBackgroundColour(value ? backgroundSelectColour : backgroundColour);
+                    setBackgroundColour(value ? backgroundSelected : backgroundColour);
 
                     if (IsHovered)
-                        setBackgroundColour(value ? backgroundSelectColourHover : backgroundColourHover);
+                        setBackgroundColour(backgroundColourHover);
                 }
             }
 
@@ -118,20 +117,20 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
 
             protected override bool OnHover(HoverEvent e)
             {
-                setBackgroundColour(selected ? backgroundSelectColourHover : backgroundColourHover);
+                setBackgroundColour(backgroundColourHover);
                 return base.OnHover(e);
             }
 
             protected override void OnHoverLost(HoverLostEvent e)
             {
-                setBackgroundColour(selected ? backgroundSelectColour : backgroundColour);
+                setBackgroundColour(selected ? backgroundSelected : backgroundColour);
                 base.OnHoverLost(e);
             }
 
             protected override bool OnClick(ClickEvent e)
             {
-                background.Colour = backgroundSelectColourClick;
-                setBackgroundColour(backgroundSelectColourHover);
+                background.Colour = backgroundColourClick;
+                setBackgroundColour(backgroundColourHover);
                 parent.SetKeyMode(KeyMode);
 
                 return base.OnClick(e);

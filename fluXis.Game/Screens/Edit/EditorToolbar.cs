@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -25,7 +26,7 @@ public partial class EditorToolbar : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.FromHex("#222228")
+                    Colour = FluXisColors.Background2
                 },
                 new FillFlowContainer
                 {

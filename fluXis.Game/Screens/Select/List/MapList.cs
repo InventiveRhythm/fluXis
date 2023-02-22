@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -117,7 +118,7 @@ public partial class MapList : BasicScrollContainer
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.FromHex("#222228")
+                Colour = FluXisColors.Background2
             };
         }
 

@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing;
 using osu.Framework.Graphics;
@@ -19,8 +20,8 @@ public partial class TimingTab : EditorTab
             Masking = true,
             Children = new Drawable[]
             {
-                new TimingCategoryList<TimingPointInfo>("Timing Points", screen.MapInfo.TimingPoints, Colour4.FromHex("#2a2a30")),
-                new TimingCategoryList<ScrollVelocityInfo>("Scroll Velocities", screen.MapInfo.ScrollVelocities, Colour4.FromHex("#222228")),
+                new TimingCategoryList<TimingPointInfo>("Timing Points", screen.MapInfo.TimingPoints, FluXisColors.Surface),
+                new TimingCategoryList<ScrollVelocityInfo>("Scroll Velocities", screen.MapInfo.ScrollVelocities, FluXisColors.Background2),
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -28,7 +29,7 @@ public partial class TimingTab : EditorTab
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.FromHex("#1a1a20"),
+                        Colour = FluXisColors.Background,
                     }
                 }
             }

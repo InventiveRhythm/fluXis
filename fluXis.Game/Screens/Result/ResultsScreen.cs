@@ -1,6 +1,7 @@
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
+using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -69,7 +70,7 @@ namespace fluXis.Game.Screens.Result
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.FromHex("#222228"),
+                            Colour = FluXisColors.Background2,
                         },
                         new FillFlowContainer
                         {

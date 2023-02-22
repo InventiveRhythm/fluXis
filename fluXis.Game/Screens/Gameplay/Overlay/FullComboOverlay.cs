@@ -24,7 +24,7 @@ public partial class FullComboOverlay : Container
             gradient = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = ColourInfo.GradientHorizontal(Colour4.FromHex("#3650eb"), Colour4.FromHex("#5f30a7")),
+                Colour = ColourInfo.GradientHorizontal(FluXisColors.Accent, FluXisColors.Accent4),
                 Alpha = 0.2f,
             },
             pattern = new StripePattern

@@ -47,7 +47,7 @@ namespace fluXis.Game.Online.Overlay
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.FromHex("#1a1a20")
+                    Colour = FluXisColors.Background2
                 },
                 new SpriteText
                 {
@@ -173,8 +173,8 @@ namespace fluXis.Game.Online.Overlay
         {
             public TextBox()
             {
-                BackgroundUnfocused = Colour4.FromHex("#222228");
-                BackgroundFocused = Colour4.FromHex("#7e7e7f");
+                BackgroundUnfocused = FluXisColors.Background2;
+                BackgroundFocused = FluXisColors.Hover;
                 CornerRadius = 5;
                 Masking = true;
                 // SelectionColour = Colour4.FromHex("#7e7e7f");

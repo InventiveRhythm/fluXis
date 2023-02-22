@@ -1,9 +1,11 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Search;
 
@@ -41,7 +43,7 @@ public partial class SearchBar : FillFlowContainer
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.FromHex("#222228")
+                    Colour = FluXisColors.Background2
                 }
             },
         };
@@ -51,6 +53,8 @@ public partial class SearchBar : FillFlowContainer
     {
         private readonly SearchBar search;
 
+        protected override Color4 SelectionColour => FluXisColors.Accent2;
+
         public SearchTextBox(SearchBar search)
         {
             this.search = search;
@@ -59,10 +63,11 @@ public partial class SearchBar : FillFlowContainer
             Masking = true;
             CornerRadius = 5;
             TextContainer.Padding = new MarginPadding { Left = 10 };
-            BackgroundUnfocused = Colour4.FromHex("#222228");
-            BackgroundFocused = Colour4.FromHex("#7e7e7f");
+            BackgroundUnfocused = FluXisColors.Background2;
+            BackgroundFocused = FluXisColors.Hover;
             PlaceholderText = "Search...";
             Placeholder.Colour = Colour4.Gray;
+            Placeholder.Font = new FontUsage("Quicksand", 40, "Bold");
         }
 
         protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer

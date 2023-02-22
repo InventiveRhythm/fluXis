@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Settings.Sections;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -32,7 +33,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         Add(new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = Colour4.FromHex("#222228")
+            Colour = FluXisColors.Background2
         });
 
         Add(new GridContainer
@@ -166,7 +167,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                 Height = 3,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Colour = Colour4.FromHex("#2f2f36")
+                Colour = FluXisColors.Surface2
             });
 
             AddInternal(new Container

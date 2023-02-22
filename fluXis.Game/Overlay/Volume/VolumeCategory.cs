@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -23,7 +24,7 @@ public partial class VolumeCategory : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.FromHex("#222228"),
+                Colour = FluXisColors.Background2,
             },
             new FillFlowContainer
             {

@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
@@ -24,7 +25,7 @@ namespace fluXis.Game.Screens.Result.UI
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.FromHex("#2a2a30")
+                    Colour = FluXisColors.Surface
                 },
                 new Container
                 {
