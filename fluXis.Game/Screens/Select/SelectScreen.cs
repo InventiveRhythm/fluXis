@@ -10,6 +10,7 @@ using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
 using fluXis.Game.Screens.Select.Search;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -47,33 +48,22 @@ namespace fluXis.Game.Screens.Select
             {
                 Maps.Clear();
 
+                SearchFilters filters = SearchFilters.Create(value);
+
                 foreach (var child in MapList.Children)
                 {
                     if (child is MapListEntry entry)
                     {
-                        RealmMapSet set = entry.MapSet;
-                        string title = set.Metadata.Title.ToLower();
-                        string artist = set.Metadata.Artist.ToLower();
-                        string mapper = set.Metadata.Mapper.ToLower();
-                        string source = set.Metadata.Source.ToLower();
-                        string tags = set.Metadata.Tags.ToLower();
+                        bool matches = false;
 
-                        bool matches = title.Contains(value);
-                        matches |= artist.Contains(value);
-                        matches |= mapper.Contains(value);
-                        matches |= source.Contains(value);
-                        matches |= tags.Contains(value);
-
-                        foreach (var map in set.Maps)
+                        foreach (var map in entry.MapSet.Maps)
                         {
-                            string difficulty = map.Difficulty.ToLower();
-                            string chartMapper = map.Metadata.Mapper.ToLower();
-                            matches |= difficulty.Contains(value) || chartMapper.Contains(value);
+                            matches |= filters.Matches(map);
                         }
 
                         if (matches)
                         {
-                            Maps.Add(set);
+                            Maps.Add(entry.MapSet);
                             entry.Show();
                         }
                         else
