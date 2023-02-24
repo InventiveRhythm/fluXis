@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
+using fluXis.Game.Configuration;
 using fluXis.Game.Scoring;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,6 +14,8 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class HitErrorBar : GameplayHUDElement
 {
+    private Bindable<float> scaleBind;
+
     private readonly SpriteIcon icon;
     private readonly Container hits;
 
@@ -81,6 +86,19 @@ public partial class HitErrorBar : GameplayHUDElement
                 }
             });
         }
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        scaleBind = config.GetBindable<float>(FluXisSetting.HitErrorScale);
+    }
+
+    protected override void Update()
+    {
+        // why do bindables not work properly??
+        Scale = new Vector2(scaleBind.Value);
+        base.Update();
     }
 
     public void AddHit(float time)

@@ -1,7 +1,9 @@
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Input;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Settings.Sections;
+using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -14,6 +16,9 @@ namespace fluXis.Game.Overlay.Settings;
 
 public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 {
+    [Resolved]
+    private GlobalCursorOverlay cursorOverlay { get; set; }
+
     public CategorySelector Selector { get; }
     public Container<SettingsSection> SectionContent { get; }
 
@@ -110,6 +115,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     public override void Show()
     {
         visible = true;
+        cursorOverlay.ShowCursor = true;
 
         this.RotateTo(0)
             .ScaleTo(1f, 500, Easing.OutElastic)

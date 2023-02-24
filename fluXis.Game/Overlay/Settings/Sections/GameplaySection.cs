@@ -16,5 +16,6 @@ public partial class GameplaySection : SettingsSection
         Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.ScrollSpeed), "Scroll Speed", "{value}"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.HideFlawless), "Hide Flawless Judgements"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.BackgroundPulse), "Background Pulse"));
+        Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.HitErrorScale), "Hit Error Bar Scale", "", true));
     }
 }
