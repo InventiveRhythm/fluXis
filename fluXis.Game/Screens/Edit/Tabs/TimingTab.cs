@@ -1,6 +1,5 @@
 using fluXis.Game.Graphics;
-using fluXis.Game.Map;
-using fluXis.Game.Screens.Edit.Tabs.Timing;
+using fluXis.Game.Screens.Edit.Tabs.Timing.List;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -12,24 +11,35 @@ public partial class TimingTab : EditorTab
     public TimingTab(Editor screen)
         : base(screen)
     {
-        AddInternal(new FillFlowContainer
+        AddInternal(new Container
         {
-            Direction = FillDirection.Horizontal,
-            RelativeSizeAxes = Axes.Both,
             CornerRadius = 10,
             Masking = true,
-            Children = new Drawable[]
+            RelativeSizeAxes = Axes.Both,
+            Child = new GridContainer
             {
-                new TimingCategoryList<TimingPointInfo>("Timing Points", screen.MapInfo.TimingPoints, FluXisColors.Surface),
-                new TimingCategoryList<ScrollVelocityInfo>("Scroll Velocities", screen.MapInfo.ScrollVelocities, FluXisColors.Background2),
-                new Container
+                RelativeSizeAxes = Axes.Both,
+                ColumnDimensions = new Dimension[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Width = 1f / 3f,
-                    Child = new Box
+                    new(),
+                    new(),
+                    new(),
+                },
+                Content = new[]
+                {
+                    new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background,
+                        new TimingPointList(screen.MapInfo.TimingPoints),
+                        new ScrollVelocityList(screen.MapInfo.ScrollVelocities),
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background,
+                            }
+                        }
                     }
                 }
             }

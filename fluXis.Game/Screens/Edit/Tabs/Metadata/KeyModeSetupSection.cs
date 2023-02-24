@@ -16,18 +16,31 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
         public KeyModeSetupSection(RealmMap map)
             : base("Keys")
         {
-            AddInternal(keyModeContainer = new FillFlowContainer<KeyModeButton>
+            AddInternal(new Container
             {
-                CornerRadius = 10,
-                Masking = true,
+                AutoSizeAxes = Axes.Y,
                 RelativeSizeAxes = Axes.X,
-                Height = 100,
-                Children = new[]
+                Children = new Drawable[]
                 {
-                    new KeyModeButton(this, 4),
-                    new KeyModeButton(this, 5),
-                    new KeyModeButton(this, 6),
-                    new KeyModeButton(this, 7),
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Surface
+                    },
+                    keyModeContainer = new FillFlowContainer<KeyModeButton>
+                    {
+                        CornerRadius = 10,
+                        Masking = true,
+                        RelativeSizeAxes = Axes.X,
+                        Height = 100,
+                        Children = new[]
+                        {
+                            new KeyModeButton(this, 4),
+                            new KeyModeButton(this, 5),
+                            new KeyModeButton(this, 6),
+                            new KeyModeButton(this, 7),
+                        }
+                    }
                 }
             });
 
@@ -42,15 +55,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
         private partial class KeyModeButton : Container
         {
             private readonly Box background;
-            private readonly FillFlowContainer keyContainer;
+            private readonly FillFlowContainer<TicTac> keyContainer;
             private readonly KeyModeSetupSection parent;
 
             private bool selected;
-
-            private readonly Colour4 backgroundColour = FluXisColors.Surface;
-            private readonly Colour4 backgroundColourHover = FluXisColors.Hover;
-            private readonly Colour4 backgroundSelected = FluXisColors.Surface2;
-            private readonly Colour4 backgroundColourClick = FluXisColors.Click;
 
             public int KeyMode { get; }
 
@@ -60,10 +68,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
                 {
                     selected = value;
 
-                    setBackgroundColour(value ? backgroundSelected : backgroundColour);
+                    background.FadeTo(value ? .1f : 0f, 200);
 
                     if (IsHovered)
-                        setBackgroundColour(backgroundColourHover);
+                        background.FadeTo(.2f, 200);
                 }
             }
 
@@ -79,7 +87,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
                     background = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = backgroundColour,
+                        Alpha = 0,
                     },
                     new Container
                     {
@@ -88,7 +96,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
                         Origin = Anchor.Centre,
                         Children = new Drawable[]
                         {
-                            keyContainer = new FillFlowContainer
+                            keyContainer = new FillFlowContainer<TicTac>
                             {
                                 AutoSizeAxes = Axes.Both,
                                 Origin = Anchor.TopCentre,
@@ -110,28 +118,32 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata
                     keyContainer.Add(new TicTac(25));
             }
 
-            private void setBackgroundColour(Colour4 colour)
-            {
-                background.FadeColour(colour, 200);
-            }
-
             protected override bool OnHover(HoverEvent e)
             {
-                setBackgroundColour(backgroundColourHover);
+                background.FadeTo(.2f, 200);
                 return base.OnHover(e);
             }
 
             protected override void OnHoverLost(HoverLostEvent e)
             {
-                setBackgroundColour(selected ? backgroundSelected : backgroundColour);
+                background.FadeTo(selected ? .1f : 0f, 200);
                 base.OnHoverLost(e);
             }
 
             protected override bool OnClick(ClickEvent e)
             {
-                background.Colour = backgroundColourClick;
-                setBackgroundColour(backgroundColourHover);
+                background.FadeTo(.4f)
+                          .FadeTo(.2f, 400);
                 parent.SetKeyMode(KeyMode);
+
+                for (var i = 0; i < keyContainer.Count; i++)
+                {
+                    var ticTac = keyContainer[i];
+                    ticTac.Delay(i * 50)
+                          .ResizeHeightTo(30, 200)
+                          .Then()
+                          .ResizeHeightTo(25, 200);
+                }
 
                 return base.OnClick(e);
             }

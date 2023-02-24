@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -14,20 +13,16 @@ namespace fluXis.Game.Graphics.Background
 {
     public partial class BackgroundStack : CompositeDrawable
     {
-        [Resolved]
-        private MapStore maps { get; set; }
-
         private readonly List<Background> scheduledBackgrounds = new();
-        private Container backgroundContainer;
+        private readonly Container backgroundContainer;
+        private readonly Box swipeAnimation;
+        private readonly Box backgroundDim;
         private string currentBackground;
-        private Box swipeAnimation;
-        private Box backgroundDim;
 
         private Bindable<float> backgroundDimBindable;
         private Bindable<float> backgroundBlurBindable;
 
-        [BackgroundDependencyLoader]
-        private void load(FluXisConfig config)
+        public BackgroundStack()
         {
             RelativeSizeAxes = Axes.Both;
 
@@ -54,7 +49,11 @@ namespace fluXis.Game.Graphics.Background
                     X = -1.1f
                 }
             };
+        }
 
+        [BackgroundDependencyLoader]
+        private void load(FluXisConfig config)
+        {
             backgroundDimBindable = config.GetBindable<float>(FluXisSetting.BackgroundDim);
             backgroundBlurBindable = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
         }
@@ -94,13 +93,8 @@ namespace fluXis.Game.Graphics.Background
 
         public void AddBackgroundFromMap(RealmMap map)
         {
-            string path = "";
-
-            if (map != null)
-            {
-                RealmFile file = map.MapSet.GetFile(map.Metadata.Background);
-                path = file?.GetPath();
-            }
+            RealmFile file = map?.MapSet?.GetFile(map.Metadata?.Background);
+            string path = file?.GetPath() ?? "";
 
             if (path == currentBackground)
                 return;

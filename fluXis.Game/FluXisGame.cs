@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -34,9 +33,6 @@ namespace fluXis.Game
         private OnlineOverlay overlay;
         private SettingsMenu settings;
 
-        [Cached]
-        private BackgroundStack backgroundStack = new();
-
         private Storage storage;
 
         public bool Sex = true;
@@ -53,7 +49,7 @@ namespace fluXis.Game
             Children = new Drawable[]
             {
                 new Conductor(),
-                backgroundStack,
+                BackgroundStack,
                 screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
                 overlay = new OnlineOverlay(),
                 settings = new SettingsMenu(),

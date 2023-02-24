@@ -133,5 +133,23 @@ namespace fluXis.Game.Map
 
             return timingPoint ?? TimingPoints[0];
         }
+
+        public MapInfo Clone()
+        {
+            return new MapInfo(Metadata)
+            {
+                MapsetID = MapsetID,
+                ID = ID,
+                MD5 = MD5,
+                AudioFile = AudioFile,
+                BackgroundFile = BackgroundFile,
+                HitObjects = HitObjects,
+                TimingPoints = TimingPoints,
+                ScrollVelocities = ScrollVelocities,
+                Events = Events,
+                KeyCount = KeyCount,
+                InitialKeyCount = InitialKeyCount
+            };
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Realms;
 
@@ -35,5 +36,13 @@ public class RealmMap : RealmObject
     public override string ToString()
     {
         return ID.ToString();
+    }
+
+    public static RealmMap CreateNew()
+    {
+        RealmMap map = new RealmMap();
+        RealmMapSet set = new RealmMapSet(new List<RealmMap> { map });
+        map.MapSet = set;
+        return map;
     }
 }

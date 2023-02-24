@@ -27,6 +27,7 @@ namespace fluXis.Game
         public FluXisRealm Realm;
         public MapStore MapStore;
         public FluXisConfig Config;
+        public BackgroundStack BackgroundStack;
 
         protected FluXisGameBase()
         {
@@ -41,6 +42,7 @@ namespace fluXis.Game
             dependencies.Cache(Realm = new FluXisRealm(storage));
             dependencies.Cache(MapStore = new MapStore(storage, Realm));
             dependencies.Cache(new BackgroundTextureStore(Host, storage));
+            dependencies.Cache(BackgroundStack = new BackgroundStack());
 
             FluXisKeybindContainer keybinds;
 
