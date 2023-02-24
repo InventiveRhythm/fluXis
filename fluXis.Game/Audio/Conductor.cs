@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Map;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -21,6 +25,7 @@ public partial class Conductor : Container
     private static readonly BindableNumber<double> bind_speed = new BindableDouble(1);
     private static Conductor instance;
     private static ITrackStore trackStore;
+    private static Storage storage;
     private static Track track;
 
     /// <summary>
@@ -70,10 +75,13 @@ public partial class Conductor : Container
     /// </summary>
     public static float BeatTime => instance.stepTime * 4;
 
+    public static List<TimingPointInfo> TimingPoints = new();
+
     [BackgroundDependencyLoader]
     private void load(AudioManager audioManager, Storage storage)
     {
         instance = this;
+        Conductor.storage = storage;
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
         Add(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
     }
@@ -113,6 +121,8 @@ public partial class Conductor : Container
 
         if (start)
             track.Start();
+
+        TimingPoints = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(info.Hash)))?.TimingPoints ?? new List<TimingPointInfo>();
     }
 
     /// <summary>
@@ -148,6 +158,7 @@ public partial class Conductor : Container
         track?.Stop();
         track?.Dispose();
         track = null;
+        TimingPoints.Clear();
     }
 
     /// <summary>
@@ -194,19 +205,20 @@ public partial class Conductor : Container
     // gonna be used somewhere later
     private void updateStep()
     {
-        // TODO: rewrite this
         lastStep = step;
         step = 0;
         stepTime = 0;
 
-        /*if (map == null)
+        if (!TimingPoints.Any())
             return;
 
-        stepTime = 60000f / map.GetTimingPoint(CurrentTime).BPM / 4;
+        var point = TimingPoints.LastOrDefault(p => p.Time <= CurrentTime) ?? TimingPoints.First();
+
+        stepTime = 60000f / point.BPM / point.Signature;
         lastStep = step;
         step = (int)(CurrentTime / stepTime);
 
         if (lastStep != step && step % 4 == 0)
-            OnBeat?.Invoke(step / 4);*/
+            OnBeat?.Invoke(step / 4);
     }
 }

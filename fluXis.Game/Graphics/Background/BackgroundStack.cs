@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -30,7 +31,9 @@ namespace fluXis.Game.Graphics.Background
             {
                 backgroundContainer = new Container
                 {
-                    RelativeSizeAxes = Axes.Both
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                 },
                 backgroundDim = new Box
                 {
@@ -56,6 +59,12 @@ namespace fluXis.Game.Graphics.Background
         {
             backgroundDimBindable = config.GetBindable<float>(FluXisSetting.BackgroundDim);
             backgroundBlurBindable = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
+
+            Conductor.OnBeat += _ =>
+            {
+                if (config.Get<bool>(FluXisSetting.BackgroundPulse))
+                    backgroundContainer.ScaleTo(1.005f).ScaleTo(1, Conductor.BeatTime, Easing.Out);
+            };
         }
 
         protected override void Update()

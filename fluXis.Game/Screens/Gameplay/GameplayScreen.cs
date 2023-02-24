@@ -149,6 +149,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         Conductor.PlayTrack(RealmMap);
         Conductor.CurrentTime = -2000;
+        Conductor.TimingPoints = Map.TimingPoints;
 
         base.LoadComplete();
     }
