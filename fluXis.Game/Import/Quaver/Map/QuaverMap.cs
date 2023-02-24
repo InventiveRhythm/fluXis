@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using fluXis.Game.Import.Quaver.Map.Structs;
 using fluXis.Game.Map;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Import.Quaver.Map;
 
@@ -21,6 +22,7 @@ public class QuaverMap
     public List<QuaverHitObjectInfo> HitObjects { get; set; }
     public List<QuaverTimingPointInfo> TimingPoints { get; set; }
     public List<QuaverSliderVelocityInfo> SliderVelocities { get; set; }
+    public List<QuaverBookmark> Bookmarks { get; set; }
 
     public MapInfo ToMapInfo()
     {
@@ -74,6 +76,31 @@ public class QuaverMap
                 Time = s.StartTime,
                 Multiplier = s.Multiplier
             });
+        }
+
+        foreach (var b in Bookmarks)
+        {
+            var split = b.Note.ToLower().Split(':');
+
+            if (split.Length != 2)
+                continue;
+
+            if (split[0] == "laneswitch")
+            {
+                if (int.TryParse(split[1], out var lane))
+                {
+                    mapInfo.Events.Add(new EventInfo
+                    {
+                        Time = b.StartTime,
+                        Type = "laneswitch",
+                        Value = lane
+                    });
+                }
+                else
+                {
+                    Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
+                }
+            }
         }
 
         return mapInfo;
