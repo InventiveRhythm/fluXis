@@ -18,7 +18,12 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
 
     public override void OnAdd()
     {
-        AddEntry(new ScrollVelocityEntry(new ScrollVelocityInfo(Conductor.CurrentTime, 1.0f)));
+        AddEntry(new ScrollVelocityEntry(new ScrollVelocityInfo
+        {
+            Time = Conductor.CurrentTime,
+            Multiplier = 1.0f
+        }));
+
         base.OnAdd();
     }
 

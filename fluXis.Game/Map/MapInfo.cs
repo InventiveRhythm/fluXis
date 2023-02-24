@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Range = fluXis.Game.Utils.Range;
 
 namespace fluXis.Game.Map
 {
     public class MapInfo
     {
-        public string MapsetID { get; set; }
         public string ID { get; set; }
         public string MD5 { get; set; }
         public string AudioFile { get; set; }
@@ -18,9 +16,13 @@ namespace fluXis.Game.Map
         public List<ScrollVelocityInfo> ScrollVelocities;
         public List<EventInfo> Events;
 
+        [JsonIgnore]
         public float StartTime => HitObjects[0].Time;
+
+        [JsonIgnore]
         public float EndTime => HitObjects[^1].HoldEndTime;
 
+        [JsonIgnore]
         public int MaxCombo
         {
             get
@@ -66,6 +68,17 @@ namespace fluXis.Game.Map
                 KeyCount = Math.Max(KeyCount, hitObject.Lane);
             }
 
+            foreach (var timingPoint in TimingPoints)
+            {
+                if (timingPoint.BPM <= 0)
+                    return false;
+
+                if (timingPoint.Time < 0)
+                    return false;
+
+                if (timingPoint.Signature < 0) { }
+            }
+
             if (Events != null)
             {
                 foreach (var mapEvent in Events)
@@ -96,29 +109,6 @@ namespace fluXis.Game.Map
             Events?.Sort((a, b) => a.Time.CompareTo(b.Time));
         }
 
-        public string GetAudioFile()
-        {
-            return AudioFile ?? "audio.ogg";
-        }
-
-        public string GetBackgroundFile()
-        {
-            return BackgroundFile ?? "bg.png";
-        }
-
-        public Range GetBPM()
-        {
-            var range = new Range();
-
-            foreach (var timingPoint in TimingPoints)
-            {
-                range.Min = range.Min == 0 ? timingPoint.BPM : Math.Min(range.Min, timingPoint.BPM);
-                range.Max = Math.Max(range.Max, timingPoint.BPM);
-            }
-
-            return range;
-        }
-
         public TimingPointInfo GetTimingPoint(float time)
         {
             TimingPointInfo timingPoint = null;
@@ -138,7 +128,6 @@ namespace fluXis.Game.Map
         {
             return new MapInfo(Metadata)
             {
-                MapsetID = MapsetID,
                 ID = ID,
                 MD5 = MD5,
                 AudioFile = AudioFile,

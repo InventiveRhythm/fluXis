@@ -4,11 +4,5 @@ namespace fluXis.Game.Map
     {
         public float Time { get; set; }
         public float Multiplier { get; set; }
-
-        public ScrollVelocityInfo(float time, float multiplier)
-        {
-            Time = time;
-            Multiplier = multiplier;
-        }
     }
 }
