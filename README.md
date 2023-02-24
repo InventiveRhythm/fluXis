@@ -1,6 +1,9 @@
 # fluXis
 A free and open-source vertical scrolling rhythm game.
 
+## Downloading and playing the game
+See [INSTALLING.md](docs/INSTALLING.md)
+
 ## Building and Developing
 ### Requirements
 * A desktop computer running Windows, macOS, or Linux with the [.NET 6.0 SDK](https://dotnet.microsoft.com/download) installed.
