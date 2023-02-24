@@ -25,7 +25,7 @@ namespace fluXis.Game.Screens.Select.List
         public MapListEntry(SelectScreen screen, RealmMapSet mapSet, int index)
         {
             Screen = screen;
-            this.MapSet = mapSet;
+            MapSet = mapSet;
             this.index = index;
         }
 
@@ -160,7 +160,7 @@ namespace fluXis.Game.Screens.Select.List
                     {
                         Padding = new MarginPadding(10),
                         RelativeSizeAxes = Axes.Both,
-                        Children = new[]
+                        Children = new Drawable[]
                         {
                             new SpriteText
                             {
@@ -177,7 +177,8 @@ namespace fluXis.Game.Screens.Select.List
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
                                 Y = 24
-                            }
+                            },
+                            new StatusTag(mapset)
                         }
                     }
                 };
