@@ -78,27 +78,30 @@ public class QuaverMap
             });
         }
 
-        foreach (var b in Bookmarks)
+        if (Bookmarks != null)
         {
-            var split = b.Note.ToLower().Split(':');
-
-            if (split.Length != 2)
-                continue;
-
-            if (split[0] == "laneswitch")
+            foreach (var b in Bookmarks)
             {
-                if (int.TryParse(split[1], out var lane))
+                var split = b.Note.ToLower().Split(':');
+
+                if (split.Length != 2)
+                    continue;
+
+                if (split[0] == "laneswitch")
                 {
-                    mapInfo.Events.Add(new EventInfo
+                    if (int.TryParse(split[1], out var lane))
                     {
-                        Time = b.StartTime,
-                        Type = "laneswitch",
-                        Value = lane
-                    });
-                }
-                else
-                {
-                    Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
+                        mapInfo.Events.Add(new EventInfo
+                        {
+                            Time = b.StartTime,
+                            Type = "laneswitch",
+                            Value = lane
+                        });
+                    }
+                    else
+                    {
+                        Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
+                    }
                 }
             }
         }
