@@ -1,5 +1,6 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Overlay.Mouse;
@@ -7,6 +8,8 @@ namespace fluXis.Game.Overlay.Mouse;
 public partial class GlobalCursorOverlay : Container
 {
     private readonly Cursor cursor;
+
+    private InputManager inputManager;
 
     public bool ShowCursor
     {
@@ -27,9 +30,29 @@ public partial class GlobalCursorOverlay : Container
         Add(cursor = new Cursor());
     }
 
+    protected override void LoadComplete()
+    {
+        inputManager = GetContainingInputManager();
+        base.LoadComplete();
+    }
+
+    protected override void Update()
+    {
+        foreach (var drawable in inputManager.HoveredDrawables)
+        {
+            if (drawable is IHasTooltip desc)
+            {
+                cursor.TooltipText = desc.Tooltip;
+                break;
+            }
+        }
+
+        base.Update();
+    }
+
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
-        cursor.Position = e.ScreenSpaceMousePosition;
+        cursor.Position = e.MousePosition;
         return base.OnMouseMove(e);
     }
 

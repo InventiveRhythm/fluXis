@@ -1,6 +1,8 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
+using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -42,10 +44,16 @@ namespace fluXis.Game.Screens.Result.UI
                 hitPoints.Add(new Dot(map, hitPoint));
         }
 
-        private partial class Dot : CircularContainer
+        private partial class Dot : CircularContainer, IHasTooltip
         {
+            public string Tooltip => TimeUtils.Format(point.Time) + " | " + point.Difference + "ms";
+
+            private readonly HitPoint point;
+
             public Dot(MapInfo map, HitPoint point)
             {
+                this.point = point;
+
                 Size = new Vector2(3);
                 Masking = true;
                 RelativePositionAxes = Axes.X;
