@@ -25,6 +25,10 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines
             for (int i = 0; i < map.TimingPoints.Count; i++)
             {
                 var point = map.TimingPoints[i];
+
+                if (point.HideLines || point.Signature == 0)
+                    continue;
+
                 float target = i + 1 < map.TimingPoints.Count ? map.TimingPoints[i + 1].Time : map.EndTime;
                 float increase = point.Signature * point.GetMsPerBeat();
                 float position = point.Time;
