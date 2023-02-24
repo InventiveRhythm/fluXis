@@ -13,7 +13,18 @@ public class RealmMap : RealmObject
     public string Difficulty { get; set; } = string.Empty;
     public RealmMapMetadata Metadata { get; set; } = null!;
     public RealmMapSet MapSet { get; set; } = null!;
+
+    /**
+     * -3 = Quaver
+     * -2 = Local
+     * -1 = Blacklisted
+     * 0 = Unsubmitted
+     * 1 = Pending
+     * 2 = Impure
+     * 3 = Pure
+     */
     public int Status { get; set; } = -2;
+
     public int OnlineID { get; set; } = -1;
     public string Hash { get; set; } = string.Empty;
     public float Length { get; set; } = 0;

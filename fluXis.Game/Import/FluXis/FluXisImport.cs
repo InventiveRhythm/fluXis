@@ -14,6 +14,11 @@ namespace fluXis.Game.Import.FluXis;
 
 public class FluXisImport : MapImporter
 {
+    /**
+     * Used to set the status of the next imported mapset.
+     */
+    public int MapStatus { get; set; } = -2;
+
     public FluXisImport(FluXisRealm realm, MapStore mapStore, Storage storage)
         : base(realm, mapStore, storage)
     {
@@ -89,6 +94,7 @@ public class FluXisImport : MapImporter
                         BPMMin = bpmMin,
                         BPMMax = bpmMax,
                         Rating = 0,
+                        Status = MapStatus
                     };
 
                     maps.Add(map);

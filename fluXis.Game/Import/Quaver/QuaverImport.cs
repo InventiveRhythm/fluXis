@@ -62,7 +62,12 @@ public class QuaverImport : MapImporter
 
             fms.Dispose();
             Directory.Delete(Path.Combine(Storage.GetFullPath("import"), fileName), true);
-            new FluXisImport(Realm, MapStore, Storage).Import(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms")).Start();
+
+            var import = new FluXisImport(Realm, MapStore, Storage)
+            {
+                MapStatus = -3
+            };
+            import.Import(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms")).Start();
         });
     }
 
