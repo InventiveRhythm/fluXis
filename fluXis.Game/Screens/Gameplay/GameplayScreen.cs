@@ -5,6 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.HUD.Judgement;
@@ -27,6 +28,9 @@ namespace fluXis.Game.Screens.Gameplay;
 
 public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 {
+    [Resolved]
+    private GlobalCursorOverlay cursorOverlay { get; set; }
+
     private bool starting = true;
     private bool ended;
     private bool restarting;
@@ -163,6 +167,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         {
             starting = false;
             Conductor.ResumeTrack();
+            cursorOverlay.ShowCursor = false;
         }
 
         if (!starting && Playfield.Manager.IsFinished && !Playfield.Manager.Dead)
@@ -201,6 +206,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         ended = true;
 
+        cursorOverlay.ShowCursor = true;
+
         if (Performance.IsFullCombo() || Performance.IsAllFlawless())
         {
             fcOverlay.Show(Performance.IsAllFlawless() ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
@@ -225,6 +232,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public override bool OnExiting(ScreenExitEvent e)
     {
         fadeOut();
+        cursorOverlay.ShowCursor = true;
 
         Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
         Conductor.SetSpeed(1, 500, Easing.None);

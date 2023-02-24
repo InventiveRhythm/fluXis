@@ -3,6 +3,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -28,6 +29,7 @@ namespace fluXis.Game
         public MapStore MapStore;
         public FluXisConfig Config;
         public BackgroundStack BackgroundStack;
+        public GlobalCursorOverlay CursorOverlay;
 
         protected FluXisGameBase()
         {
@@ -43,6 +45,7 @@ namespace fluXis.Game
             dependencies.Cache(MapStore = new MapStore(storage, Realm));
             dependencies.Cache(new BackgroundTextureStore(Host, storage));
             dependencies.Cache(BackgroundStack = new BackgroundStack());
+            dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
 
             FluXisKeybindContainer keybinds;
 

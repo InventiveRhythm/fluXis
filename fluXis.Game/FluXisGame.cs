@@ -48,7 +48,8 @@ namespace fluXis.Game
                 screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
                 overlay = new OnlineOverlay(),
                 settings = new SettingsMenu(),
-                new VolumeOverlay()
+                new VolumeOverlay(),
+                CursorOverlay,
             };
         }
 
@@ -69,7 +70,7 @@ namespace fluXis.Game
             var window = (SDL2DesktopWindow)host.Window;
             window.Title = "fluXis v" + version;
             window.ConfineMouseMode.Value = ConfineMouseMode.Never;
-            // window.CursorState = CursorState.Hidden;
+            window.CursorState = CursorState.Hidden;
             window.DragDrop += f => onDragDrop(new[] { f });
         }
 
