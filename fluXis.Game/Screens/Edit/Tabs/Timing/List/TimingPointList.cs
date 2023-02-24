@@ -52,7 +52,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
         {
             new SpriteText
             {
-                Text = TimeUtils.Format(PointInfo.Time / 1000),
+                Text = TimeUtils.Format(PointInfo.Time),
                 Font = new FontUsage("Quicksand", 24, "Bold", false, true),
                 Width = 100
             },

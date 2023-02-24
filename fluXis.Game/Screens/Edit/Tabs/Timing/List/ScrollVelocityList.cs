@@ -51,7 +51,7 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
         {
             new SpriteText
             {
-                Text = TimeUtils.Format(VelocityInfo.Time / 1000),
+                Text = TimeUtils.Format(VelocityInfo.Time),
                 Font = new FontUsage("Quicksand", 24, "Bold", false, true),
                 Width = 100
             },

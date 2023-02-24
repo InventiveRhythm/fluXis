@@ -6,6 +6,8 @@ public class TimeUtils
 {
     public static string Format(float time, bool showMs = true)
     {
+        time /= 1000f;
+
         bool negative = time < 0;
         if (negative)
             time = Math.Abs(time);
