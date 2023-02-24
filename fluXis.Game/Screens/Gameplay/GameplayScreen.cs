@@ -15,6 +15,7 @@ using fluXis.Game.Screens.Result;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
@@ -30,7 +31,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     private bool ended;
     private bool restarting;
 
-    public bool Paused { get; private set; }
+    public BindableBool IsPaused { get; } = new();
 
     public GameplayInput Input;
     public Performance Performance;
@@ -70,7 +71,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             return;
         }
 
-        Input = new GameplayInput(Map.KeyCount);
+        Input = new GameplayInput(this, Map.KeyCount);
         Performance = new Performance(Map);
 
         HitSound = samples.Get("Gameplay/hitsound.mp3");
@@ -83,8 +84,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         InternalChildren = new Drawable[]
         {
             Input,
-            Playfield = new Playfield(this),
-            new PauseMenu(this)
+            Playfield = new Playfield(this)
         };
 
         AddInternal(new ComboCounter(this));
@@ -142,6 +142,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         AddInternal(failOverlay = new FailOverlay());
         AddInternal(fcOverlay = new FullComboOverlay());
 
+        AddInternal(new PauseMenu(this));
+
         Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
     }
 
@@ -187,8 +189,6 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         failOverlay.Show();
         Conductor.SetSpeed(.25f, 1000, Easing.None).OnComplete(_ =>
         {
-            Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
-            Conductor.SetSpeed(1, 500, Easing.None);
             this.Exit();
         });
     }
@@ -200,9 +200,6 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         ended = true;
 
-        Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 400, Easing.None);
-        Conductor.SetSpeed(1, 400, Easing.None);
-
         if (Performance.IsFullCombo() || Performance.IsAllFlawless())
         {
             fcOverlay.Show(Performance.IsAllFlawless() ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
@@ -210,6 +207,13 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         }
         else
             this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
+    }
+
+    public void RestartMap()
+    {
+        restarting = true;
+        Restart.Play();
+        this.Push(new GameplayScreen(RealmMap));
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -220,6 +224,10 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public override bool OnExiting(ScreenExitEvent e)
     {
         fadeOut();
+
+        Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
+        Conductor.SetSpeed(1, 500, Easing.None);
+
         return base.OnExiting(e);
     }
 
@@ -259,29 +267,17 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 Playfield.Manager.AutoPlay.Value = !Playfield.Manager.AutoPlay.Value;
                 return true;
 
-            case FluXisKeybind.ForceDeath:
-                Die();
-                return true;
-
             case FluXisKeybind.Restart:
-                restarting = true;
-                Restart.Play();
-                this.Push(new GameplayScreen(RealmMap)); // TODO: restart in a better way
+                RestartMap();
                 return true;
 
             case FluXisKeybind.Pause:
-                Conductor.SetSpeed(Paused ? 1 : 0);
-                Paused = !Paused;
+                IsPaused.Value = !IsPaused.Value;
                 return true;
 
             case FluXisKeybind.Skip:
                 if (Map.StartTime - Conductor.CurrentTime > 2000)
                     Conductor.Seek(Map.StartTime - 2000);
-                return true;
-
-            case FluXisKeybind.ForceEnd:
-                CanSubmitScore = false;
-                End();
                 return true;
 
             case FluXisKeybind.ScrollSpeedIncrease:

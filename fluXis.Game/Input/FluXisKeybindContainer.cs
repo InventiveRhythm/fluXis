@@ -75,8 +75,6 @@ namespace fluXis.Game.Input
             new KeyBinding(InputKey.F4, FluXisKeybind.ScrollSpeedIncrease),
 
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.A), FluXisKeybind.ToggleAutoplay),
-            new KeyBinding(new KeyCombination(InputKey.Control, InputKey.D), FluXisKeybind.ForceDeath),
-            new KeyBinding(new KeyCombination(InputKey.Control, InputKey.E), FluXisKeybind.ForceEnd),
         };
 
         protected override IEnumerable<Drawable> KeyBindingInputQueue
@@ -147,8 +145,6 @@ namespace fluXis.Game.Input
         ScrollSpeedDecrease,
 
         // Ingame (Debug)
-        ToggleAutoplay,
-        ForceDeath,
-        ForceEnd
+        ToggleAutoplay
     }
 }

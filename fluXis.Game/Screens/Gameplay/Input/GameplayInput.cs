@@ -53,8 +53,12 @@ namespace fluXis.Game.Screens.Gameplay.Input
         public bool[] Pressed { get; }
         public bool[] JustReleased { get; }
 
-        public GameplayInput(int mode = 4)
+        private GameplayScreen screen;
+
+        public GameplayInput(GameplayScreen screen, int mode = 4)
         {
+            this.screen = screen;
+
             int keyCount = mode switch
             {
                 4 => 4,
@@ -105,6 +109,9 @@ namespace fluXis.Game.Screens.Gameplay.Input
 
         public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
         {
+            if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay.Value)
+                return false;
+
             for (int i = 0; i < keys.Length; i++)
             {
                 if (e.Action == keys[i])
@@ -119,6 +126,9 @@ namespace fluXis.Game.Screens.Gameplay.Input
 
         public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
         {
+            if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay.Value)
+                return;
+
             for (int i = 0; i < keys.Length; i++)
             {
                 if (e.Action == keys[i])
