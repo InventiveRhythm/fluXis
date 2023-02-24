@@ -33,7 +33,8 @@ public class QuaverMap
             Source = Source,
             Tags = Tags,
             Mapper = Creator,
-            Difficulty = DifficultyName
+            Difficulty = DifficultyName,
+            PreviewTime = SongPreviewTime
         };
 
         var mapInfo = new MapInfo(metadata)
