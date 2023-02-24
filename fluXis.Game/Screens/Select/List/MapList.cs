@@ -67,7 +67,8 @@ public partial class MapList : BasicScrollContainer
 
     private void rightMouseScroll(MouseEvent e)
     {
-        ScrollTo(Clamp(ToLocalSpace(e.ScreenSpaceMousePosition)[ScrollDim] / DrawSize[ScrollDim]) * DrawSize[ScrollDim], true, 0.02);
+        float contentSize = Content.DrawSize[ScrollDim] - DrawSize[ScrollDim] + Padding.Top + Padding.Bottom;
+        ScrollTo(ToLocalSpace(e.ScreenSpaceMousePosition)[ScrollDim] / DrawSize[ScrollDim] * contentSize, true, 0.02);
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
