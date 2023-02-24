@@ -8,6 +8,8 @@
 ![image](https://user-images.githubusercontent.com/65369281/221314326-d3ffd205-9ee8-43af-adcb-9d97c53f1dc9.png)
 
 ### Scroll down and download the zip file for the platform you use
+> You need to be logged into your GitHub account to download the build artifacts
+
 ![image](https://user-images.githubusercontent.com/65369281/221314697-8bc939ce-653d-4b55-9d55-aaec2b7eba06.png)
 
 ### Extract the downloaded zip and you're done!
