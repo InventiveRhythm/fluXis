@@ -242,7 +242,10 @@ namespace fluXis.Game.Screens.Select
             this.FadeIn(200);
 
             Discord.Update("Selecting a map", "", "songselect");
-            Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
+
+            if (MapInfo.Value != null)
+                Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
+
             SelectMapInfo.ScoreList.Refresh();
 
             base.OnResuming(e);
@@ -252,7 +255,9 @@ namespace fluXis.Game.Screens.Select
         {
             this.FadeInFromZero(200);
             Discord.Update("Selecting a map", "", "songselect");
-            Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
+
+            if (MapInfo.Value != null)
+                Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
 
             base.OnEntering(e);
         }
