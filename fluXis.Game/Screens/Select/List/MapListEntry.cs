@@ -102,11 +102,11 @@ namespace fluXis.Game.Screens.Select.List
             const float duration = 200;
             const float delay = 50;
 
-            this.MoveToX(-100)
+            /*this.MoveToX(-100)
                 .FadeOut()
                 .Delay(delay * index)
                 .FadeIn(duration)
-                .MoveToX(0, duration, Easing.OutQuint);
+                .MoveToX(0, duration, Easing.OutQuint);*/
 
             // hacky thing because it doesnt get the height properly
             if (Selected)

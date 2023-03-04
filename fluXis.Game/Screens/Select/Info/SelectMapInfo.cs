@@ -39,7 +39,7 @@ public partial class SelectMapInfo : FillFlowContainer
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
         Padding = new MarginPadding { Vertical = 10 };
-        X = 10;
+        Margin = new MarginPadding { Right = -10 };
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(0, 10);
 

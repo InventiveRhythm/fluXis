@@ -235,6 +235,10 @@ namespace fluXis.Game.Screens.Select
         public override void OnSuspending(ScreenTransitionEvent e)
         {
             this.FadeOut(200);
+
+            MapList.MoveToX(-200, 500, Easing.OutQuint);
+            SearchBar.MoveToY(-200, 500, Easing.OutQuint);
+            SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
         }
 
         public override void OnResuming(ScreenTransitionEvent e)
@@ -242,14 +246,16 @@ namespace fluXis.Game.Screens.Select
             this.FadeIn(200);
             Backgrounds.Zoom = 1.1f;
 
+            MapList.MoveToX(0, 500, Easing.OutQuint);
+            SearchBar.MoveToY(0, 500, Easing.OutQuint);
+            SelectMapInfo.MoveToX(0, 500, Easing.OutQuint);
+
             Discord.Update("Selecting a map", "", "songselect");
 
             if (MapInfo.Value != null)
                 Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
 
             SelectMapInfo.ScoreList.Refresh();
-
-            base.OnResuming(e);
         }
 
         public override void OnEntering(ScreenTransitionEvent e)
@@ -257,18 +263,29 @@ namespace fluXis.Game.Screens.Select
             this.FadeInFromZero(200);
             Backgrounds.Zoom = 1.1f;
 
+            MapList.MoveToX(-200)
+                   .MoveToX(0, 500, Easing.OutQuint);
+
+            SearchBar.MoveToY(-200)
+                     .MoveToY(0, 500, Easing.OutQuint);
+
+            SelectMapInfo.MoveToX(200)
+                         .MoveToX(0, 500, Easing.OutQuint);
+
             Discord.Update("Selecting a map", "", "songselect");
 
             if (MapInfo.Value != null)
                 Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
-
-            base.OnEntering(e);
         }
 
         public override bool OnExiting(ScreenExitEvent e)
         {
             this.FadeOut(200);
             Conductor.SetLoop(0);
+
+            MapList.MoveToX(-200, 500, Easing.OutQuint);
+            SearchBar.MoveToY(-200, 500, Easing.OutQuint);
+            SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
 
             return base.OnExiting(e);
         }
