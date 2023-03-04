@@ -44,12 +44,7 @@ public class QuaverImport : MapImporter
                     Directory.CreateDirectory(Path.GetDirectoryName(destPath));
                     File.WriteAllText(destPath, json);
                 }
-                else
-                {
-                    string destPath = Path.Combine(Storage.GetFullPath("import"), fileName, entry.FullName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(destPath));
-                    entry.ExtractToFile(destPath, true);
-                }
+                else CopyFile(entry, fileName);
             }
 
             qp.Dispose();

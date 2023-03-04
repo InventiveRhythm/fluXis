@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using fluXis.Game.Audio;
 using fluXis.Game.Import.FluXis;
+using fluXis.Game.Import.osu;
 using fluXis.Game.Import.Quaver;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
@@ -94,6 +95,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
                     case ".qp":
                         new QuaverImport(Realm, MapStore, storage).Import(path).Start();
+                        break;
+
+                    case ".osz":
+                        new OsuImport(Realm, MapStore, storage).Import(path).Start();
                         break;
                 }
             }

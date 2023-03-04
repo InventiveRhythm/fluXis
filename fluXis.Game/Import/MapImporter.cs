@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -33,5 +34,19 @@ public class MapImporter
         var hashString = BitConverter.ToString(hashBytes);
 
         return hashString.Replace("-", "").ToLower();
+    }
+
+    public void CopyFile(ZipArchiveEntry entry, string folder)
+    {
+        string destPath = Path.Combine(Storage.GetFullPath("import"), folder, entry.FullName);
+        Directory.CreateDirectory(Path.GetDirectoryName(destPath));
+        entry.ExtractToFile(destPath, true);
+    }
+
+    public void WriteFile(string content, string path)
+    {
+        string destPath = Path.Combine(Storage.GetFullPath("import"), path);
+        Directory.CreateDirectory(Path.GetDirectoryName(destPath));
+        File.WriteAllText(destPath, content);
     }
 }

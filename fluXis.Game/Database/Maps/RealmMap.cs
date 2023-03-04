@@ -15,6 +15,7 @@ public class RealmMap : RealmObject
     public RealmMapSet MapSet { get; set; } = null!;
 
     /**
+     * -4 = osu!mania
      * -3 = Quaver
      * -2 = Local
      * -1 = Blacklisted

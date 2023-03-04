@@ -20,6 +20,7 @@ public partial class StatusTag : Container
 
         Colour4 colour = map.Status switch
         {
+            -4 => Colour4.FromHex("#e7659f"),
             -3 => Colour4.FromHex("#0cb2d8"),
             -2 => Colour4.FromHex("#8fffc8"),
             -1 => Colour4.FromHex("#888888"),
@@ -41,6 +42,7 @@ public partial class StatusTag : Container
             {
                 Text = map.Status switch
                 {
+                    -4 => "osu!mania",
                     -3 => "QUAVER",
                     -2 => "LOCAL",
                     -1 => "UNSUBMITTED", // blacklisted, but we show it as "unsubmitted"

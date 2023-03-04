@@ -10,6 +10,7 @@ namespace fluXis.Game.Map
         public string MD5 { get; set; }
         public string AudioFile { get; set; }
         public string BackgroundFile { get; set; }
+        public string VideoFile { get; set; }
         public MapMetadata Metadata { get; set; }
         public List<HitObjectInfo> HitObjects;
         public List<TimingPointInfo> TimingPoints;
