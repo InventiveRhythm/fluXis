@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
@@ -26,6 +27,8 @@ public partial class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
         Map = realmMap ?? RealmMap.CreateNew();
         OriginalMapInfo = map ?? new MapInfo(new MapMetadata());
         MapInfo = OriginalMapInfo.Clone();
+
+        Conductor.ResetLoop();
     }
 
     [BackgroundDependencyLoader]

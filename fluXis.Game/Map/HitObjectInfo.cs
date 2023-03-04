@@ -16,6 +16,16 @@ public class HitObjectInfo
         return HoldTime > 0;
     }
 
+    public HitObjectInfo Copy()
+    {
+        return new HitObjectInfo
+        {
+            Time = Time,
+            Lane = Lane,
+            HoldTime = HoldTime
+        };
+    }
+
     public override string ToString()
     {
         return $"Time: {Time}, Lane: {Lane}, HoldTime: {HoldTime}";

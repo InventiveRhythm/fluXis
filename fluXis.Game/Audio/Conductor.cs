@@ -57,6 +57,25 @@ public partial class Conductor : Container
     /// </summary>
     public static bool IsPlaying => track?.IsRunning ?? false;
 
+    /// <summary>
+    /// Returns whether the track has finished playing or not.
+    /// </summary>
+    public static bool HasFinished => track?.HasCompleted ?? false;
+
+    /// <summary>
+    /// Returns the length of the track in milliseconds.
+    /// </summary>
+    public static float Length
+    {
+        get
+        {
+            if (track == null)
+                return 0;
+
+            return (float)track.Length;
+        }
+    }
+
     private float speed = 1;
     private float untweenedSpeed = 1;
 

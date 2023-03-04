@@ -12,6 +12,7 @@ public partial class TestEditor : FluXisTestScene
     private BackgroundStack backgroundStack { get; set; }
 
     private ScreenStack screenStack { get; set; }
+    private Editor editor { get; set; }
 
     public TestEditor()
     {
@@ -26,6 +27,14 @@ public partial class TestEditor : FluXisTestScene
     {
         Add(backgroundStack);
         Add(screenStack);
-        screenStack.Push(new Editor());
+
+        editor = new Editor();
+        screenStack.Push(editor);
+    }
+
+    protected override void LoadComplete()
+    {
+        editor.ChangeTab(1);
+        base.LoadComplete();
     }
 }
