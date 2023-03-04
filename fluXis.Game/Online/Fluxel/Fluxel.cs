@@ -11,136 +11,137 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Logging;
 
-namespace fluXis.Game.Online.Fluxel
+namespace fluXis.Game.Online.Fluxel;
+
+public class Fluxel
 {
-    public class Fluxel
+    internal static HttpClient Http = new();
+    private static ClientWebSocket connection;
+    private static APIUser loggedInUser;
+
+    private static List<string> packetQueue = new();
+
+    public static string Token;
+    public static Action<APIUser> OnUserLoggedIn;
+
+    private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();
+
+    public static async void Connect()
     {
-        internal static HttpClient Http = new();
-        private static ClientWebSocket connection;
-        private static APIUser loggedInUser;
-
-        private static List<string> packetQueue = new();
-
-        public static string Token;
-
-        private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();
-
-        public static async void Connect()
+        try
         {
-            try
-            {
-                Logger.Log("Connecting to server...");
-                connection = new ClientWebSocket();
-                await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
+            Logger.Log("Connecting to server...");
+            connection = new ClientWebSocket();
+            await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
 
-                // create thread
-                receive();
-                Logger.Log("Connected to server.");
+            // create thread
+            receive();
+            Logger.Log("Connected to server.");
 
-                // send queued packets
-                foreach (var packet in packetQueue)
-                    Send(packet);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Could not connect to server!");
-            }
+            // send queued packets
+            foreach (var packet in packetQueue)
+                Send(packet);
         }
-
-        private static async void receive()
+        catch (Exception ex)
         {
-            try
+            Logger.Error(ex, "Could not connect to server!");
+        }
+    }
+
+    private static async void receive()
+    {
+        try
+        {
+            while (connection.State == WebSocketState.Open)
             {
-                while (connection.State == WebSocketState.Open)
+                // receive data
+                byte[] buffer = new byte[2048];
+                await connection.ReceiveAsync(buffer, CancellationToken.None);
+
+                // convert to string
+                string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+
+                // handler logic
+                void handleListener<T>()
                 {
-                    // receive data
-                    byte[] buffer = new byte[2048];
-                    await connection.ReceiveAsync(buffer, CancellationToken.None);
+                    var response = FluxelResponse<T>.Parse(message);
 
-                    // convert to string
-                    string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-
-                    // handler logic
-                    void handleListener<T>()
+                    if (response_listeners.ContainsKey(response.Type))
                     {
-                        var response = FluxelResponse<T>.Parse(message);
-
-                        if (response_listeners.ContainsKey(response.Type))
+                        foreach (var listener
+                                 in (IEnumerable<Action<object>>)response_listeners.GetValueOrDefault(response.Type)
+                                    ?? ArraySegment<Action<object>>.Empty)
                         {
-                            foreach (var listener
-                                     in (IEnumerable<Action<object>>)response_listeners.GetValueOrDefault(response.Type)
-                                        ?? ArraySegment<Action<object>>.Empty)
-                            {
-                                listener(response);
-                            }
+                            listener(response);
                         }
                     }
-
-                    // find right handler
-                    Action handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
-                    {
-                        EventType.Token => handleListener<string>,
-                        EventType.Login => handleListener<APIUser>,
-                        _ => throw new ArgumentOutOfRangeException()
-                    };
-                    // execute handler
-                    handler();
                 }
+
+                // find right handler
+                Action handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
+                {
+                    EventType.Token => handleListener<string>,
+                    EventType.Login => handleListener<APIUser>,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                // execute handler
+                handler();
             }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Fatal Error in receiver: " + e);
-            }
-
-            Logger.Log("Disconnected from server.");
         }
-
-        public static void Send(string message)
+        catch (Exception e)
         {
-            if (connection == null || connection.State != WebSocketState.Open)
-            {
-                packetQueue.Add(message);
-                return;
-            }
-
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
-            connection.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            Logger.Error(e, "Fatal Error in receiver: " + e);
         }
 
-        public static void SendPacket(Packet packet)
-        {
-            FluxelRequest request = new FluxelRequest(packet.ID, packet);
-            string json = JsonConvert.SerializeObject(request);
-            Send(json);
-        }
-
-        public static void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
-        {
-            response_listeners.GetOrAdd(id, _ => new()).Add(response => listener((FluxelResponse<T>)response));
-        }
-
-        public static void UnregisterListener(EventType id)
-        {
-            response_listeners.Remove(id, out var listeners);
-            listeners?.Clear();
-        }
-
-        public static void SetLoggedInUser(APIUser user)
-        {
-            loggedInUser = user;
-            Logger.Log($"Logged in as {user.Username}");
-        }
-
-        [CanBeNull]
-        public static APIUser GetLoggedInUser()
-        {
-            return loggedInUser;
-        }
+        Logger.Log("Disconnected from server.");
     }
 
-    public enum EventType : int
+    public static void Send(string message)
     {
-        Token = 0,
-        Login = 1
+        if (connection == null || connection.State != WebSocketState.Open)
+        {
+            packetQueue.Add(message);
+            return;
+        }
+
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
+        connection.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
     }
+
+    public static void SendPacket(Packet packet)
+    {
+        FluxelRequest request = new FluxelRequest(packet.ID, packet);
+        string json = JsonConvert.SerializeObject(request);
+        Send(json);
+    }
+
+    public static void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
+    {
+        response_listeners.GetOrAdd(id, _ => new()).Add(response => listener((FluxelResponse<T>)response));
+    }
+
+    public static void UnregisterListener(EventType id)
+    {
+        response_listeners.Remove(id, out var listeners);
+        listeners?.Clear();
+    }
+
+    public static void SetLoggedInUser(APIUser user)
+    {
+        OnUserLoggedIn?.Invoke(user);
+        loggedInUser = user;
+        Logger.Log($"Logged in as {user.Username}");
+    }
+
+    [CanBeNull]
+    public static APIUser GetLoggedInUser()
+    {
+        return loggedInUser;
+    }
+}
+
+public enum EventType : int
+{
+    Token = 0,
+    Login = 1
 }

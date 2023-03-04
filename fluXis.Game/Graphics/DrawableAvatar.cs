@@ -1,32 +1,39 @@
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Game.Graphics
+namespace fluXis.Game.Graphics;
+
+public partial class DrawableAvatar : Sprite
 {
-    public partial class DrawableAvatar : Sprite
+    private APIUserShort user;
+    private TextureStore textures;
+
+    public DrawableAvatar(APIUserShort user)
     {
-        private APIUserShort user;
-        private TextureStore textures;
+        this.user = user;
+        Alpha = 0;
+    }
 
-        public DrawableAvatar(APIUserShort user)
-        {
-            this.user = user;
-        }
+    [BackgroundDependencyLoader]
+    private void load(TextureStore textures)
+    {
+        this.textures = textures;
+        Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
+    }
 
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            this.textures = textures;
-            Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
-        }
+    protected override void LoadAsyncComplete()
+    {
+        this.FadeInFromZero(200);
+        base.LoadAsyncComplete();
+    }
 
-        public void UpdateUser(APIUserShort user)
-        {
-            this.user = user;
-            Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
-        }
+    public void UpdateUser(APIUserShort user)
+    {
+        this.user = user;
+        Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
     }
 }

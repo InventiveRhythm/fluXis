@@ -27,7 +27,7 @@ public partial class GlobalCursorOverlay : Container
         RelativeSizeAxes = Axes.Both;
         AlwaysPresent = true;
 
-        Add(cursor = new Cursor());
+        Add(cursor = new Cursor(this));
     }
 
     protected override void LoadComplete()
@@ -38,14 +38,18 @@ public partial class GlobalCursorOverlay : Container
 
     protected override void Update()
     {
+        IHasTooltip tooltip = null;
+
         foreach (var drawable in inputManager.HoveredDrawables)
         {
             if (drawable is IHasTooltip desc)
             {
-                cursor.TooltipText = desc.Tooltip;
+                tooltip = desc;
                 break;
             }
         }
+
+        cursor.TooltipText = tooltip?.Tooltip ?? "";
 
         base.Update();
     }

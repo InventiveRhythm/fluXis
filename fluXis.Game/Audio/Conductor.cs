@@ -78,6 +78,7 @@ public partial class Conductor : Container
 
     private float speed = 1;
     private float untweenedSpeed = 1;
+    private float trackVolume = 1f;
 
     /// <summary>
     /// A callback that is invoked every beat.
@@ -108,6 +109,8 @@ public partial class Conductor : Container
     protected override void Update()
     {
         bind_speed.Value = speed;
+
+        if (track != null) track.Volume.Value = trackVolume;
 
         if (CurrentTime < 0)
         {
@@ -215,6 +218,11 @@ public partial class Conductor : Container
     {
         instance.untweenedSpeed = newSpeed;
         return instance.TransformTo(nameof(speed), newSpeed, duration, ease);
+    }
+
+    public static void FadeOut(int duration = 400)
+    {
+        instance.TransformTo(nameof(trackVolume), 0f, duration);
     }
 
     private int lastStep;

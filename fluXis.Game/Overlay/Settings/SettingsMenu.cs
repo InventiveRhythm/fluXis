@@ -23,49 +23,63 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     public Container<SettingsSection> SectionContent { get; }
 
     private bool visible;
+    private readonly SettingsContent content;
 
     public SettingsMenu()
     {
-        Width = 1200;
-        Height = 600;
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
-        Scale = new Vector2(.95f);
+        RelativeSizeAxes = Axes.Both;
         Alpha = 0;
-        CornerRadius = 10;
-        Masking = true;
 
         Add(new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Background2
+            Colour = Colour4.Black,
+            Alpha = .25f
         });
 
-        Add(new GridContainer
+        Add(content = new SettingsContent
         {
-            RelativeSizeAxes = Axes.Both,
-            RowDimensions = new Dimension[]
+            Width = 1200,
+            Height = 600,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Scale = new Vector2(.95f),
+            CornerRadius = 10,
+            Masking = true,
+            Children = new Drawable[]
             {
-                new(GridSizeMode.AutoSize),
-                new()
-            },
-            Content = new[]
-            {
-                new Drawable[]
+                new Box
                 {
-                    Selector = new CategorySelector(this)
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2
                 },
-                new Drawable[]
+                new GridContainer
                 {
-                    new BasicScrollContainer
+                    RelativeSizeAxes = Axes.Both,
+                    RowDimensions = new Dimension[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        ScrollbarVisible = false,
-                        Child = SectionContent = new Container<SettingsSection>
+                        new(GridSizeMode.AutoSize),
+                        new()
+                    },
+                    Content = new[]
+                    {
+                        new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Padding = new MarginPadding { Horizontal = 50, Top = 20 }
+                            Selector = new CategorySelector(this)
+                        },
+                        new Drawable[]
+                        {
+                            new BasicScrollContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                ScrollbarVisible = false,
+                                Child = SectionContent = new Container<SettingsSection>
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Padding = new MarginPadding { Horizontal = 50, Top = 20 }
+                                }
+                            }
                         }
                     }
                 }
@@ -107,9 +121,10 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     {
         visible = false;
 
-        this.ScaleTo(.95f, 150, Easing.InQuint)
-            .RotateTo(1, 150, Easing.InQuint)
-            .FadeOut(150);
+        content.ScaleTo(.95f, 150, Easing.InQuint)
+               .RotateTo(1, 150, Easing.InQuint);
+
+        this.FadeOut(150);
     }
 
     public override void Show()
@@ -117,12 +132,19 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         visible = true;
         cursorOverlay.ShowCursor = true;
 
-        this.RotateTo(0)
-            .ScaleTo(1f, 500, Easing.OutElastic)
-            .FadeIn(150);
+        content.RotateTo(0)
+               .ScaleTo(1f, 500, Easing.OutElastic);
+
+        this.FadeIn(150);
     }
 
     protected override bool OnClick(ClickEvent e)
+    {
+        Hide();
+        return true;
+    }
+
+    protected override bool OnHover(HoverEvent e)
     {
         return true;
     }
@@ -140,6 +162,14 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
+    private partial class SettingsContent : Container
+    {
+        protected override bool OnClick(ClickEvent e)
+        {
+            return true;
+        }
+    }
 
     public partial class CategorySelector : Container
     {
