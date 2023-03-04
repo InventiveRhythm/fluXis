@@ -35,7 +35,6 @@ public class OsuImport : MapImporter
                 if (entry.FullName.EndsWith(".osu"))
                 {
                     string json = JsonConvert.SerializeObject(parseOsuMap(entry).ToMapInfo());
-                    Logger.Log(json);
                     WriteFile(json, folder + "/" + entry.FullName + ".fsc");
                 }
                 else
