@@ -140,6 +140,25 @@ namespace fluXis.Game.Screens.Select
         {
             if (Maps.Count > 0)
                 MapSet.Value = mapStore.CurrentMapSet;
+
+            mapStore.MapSetAdded += addMapSet;
+        }
+
+        private void addMapSet(RealmMapSet set)
+        {
+            Schedule(() =>
+            {
+                int index = mapStore.MapSets.IndexOf(set);
+
+                MapListEntry entry = new(this, set, Maps.Count);
+                Maps.Insert(index, set);
+                MapList.Insert(index, entry);
+                lookup[set] = entry;
+
+                MapSet.Value = set;
+
+                noMapsText.FadeOut(200);
+            });
         }
 
         private void selectMapSet(RealmMapSet set)
@@ -286,6 +305,8 @@ namespace fluXis.Game.Screens.Select
             MapList.MoveToX(-200, 500, Easing.OutQuint);
             SearchBar.MoveToY(-200, 500, Easing.OutQuint);
             SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+
+            mapStore.MapSetAdded -= addMapSet;
 
             return base.OnExiting(e);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -10,7 +11,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select.List;
 
-public partial class MapList : BasicScrollContainer
+public partial class MapList : BasicScrollContainer<MapListEntry>
 {
     private bool isDragging;
     private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Right;
@@ -69,6 +70,18 @@ public partial class MapList : BasicScrollContainer
     {
         float contentSize = Content.DrawSize[ScrollDim] - DrawSize[ScrollDim] + Padding.Top + Padding.Bottom;
         ScrollTo(ToLocalSpace(e.ScreenSpaceMousePosition)[ScrollDim] / DrawSize[ScrollDim] * contentSize, true, 0.02);
+    }
+
+    public void Insert(int index, MapListEntry entry)
+    {
+        List<MapListEntry> entries = new List<MapListEntry>();
+
+        for (var i = 0; i < Content.Children.Count; i++)
+            entries.Add(Content.Children[i]);
+
+        entries.Insert(index, entry);
+        Content.Clear(false);
+        Content.AddRange(entries);
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

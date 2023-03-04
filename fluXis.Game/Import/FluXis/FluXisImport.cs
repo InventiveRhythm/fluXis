@@ -106,7 +106,6 @@ public class FluXisImport : MapImporter
                 Realm.RunWrite(realm =>
                 {
                     realm.Add(mapSet);
-                    MapStore.AddMapSet(mapSet.Detach());
 
                     foreach (var file in files)
                     {
@@ -119,6 +118,7 @@ public class FluXisImport : MapImporter
                     }
 
                     archive.Dispose();
+                    MapStore.AddMapSet(mapSet.Detach());
 
                     try { File.Delete(path); }
                     catch { Logger.Log($"Failed to delete {path}"); }

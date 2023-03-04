@@ -16,6 +16,8 @@ public class MapStore
     public List<RealmMapSet> MapSets { get; } = new();
     public RealmMapSet CurrentMapSet;
 
+    public Action<RealmMapSet> MapSetAdded;
+
     public MapStore(Storage storage, FluXisRealm realm)
     {
         this.storage = storage.GetStorageForDirectory("files");
@@ -38,6 +40,7 @@ public class MapStore
     {
         MapSets.Add(mapSet);
         sortMapSets();
+        MapSetAdded?.Invoke(mapSet);
     }
 
     public void DeleteMapSet(RealmMapSet mapSet)
