@@ -2,6 +2,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -30,6 +31,9 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 {
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
+
+    [Resolved]
+    private BackgroundStack backgrounds { get; set; }
 
     private bool starting = true;
     private bool ended;
@@ -247,6 +251,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             .ScaleTo(1f, 750, Easing.OutQuint)
             .Delay(250)
             .FadeIn(250);
+
+        backgrounds.Zoom = 1f;
 
         base.OnEntering(e);
     }

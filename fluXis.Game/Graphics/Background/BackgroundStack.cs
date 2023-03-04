@@ -23,6 +23,20 @@ namespace fluXis.Game.Graphics.Background
         private Bindable<float> backgroundDimBindable;
         private Bindable<float> backgroundBlurBindable;
 
+        private float zoom = 1;
+        private bool isZooming;
+
+        public float Zoom
+        {
+            get => zoom;
+            set
+            {
+                isZooming = true;
+                backgroundContainer.ScaleTo(value, 1000, Easing.OutQuint).OnComplete(_ => isZooming = false);
+                zoom = value;
+            }
+        }
+
         public BackgroundStack()
         {
             RelativeSizeAxes = Axes.Both;
@@ -62,9 +76,31 @@ namespace fluXis.Game.Graphics.Background
 
             Conductor.OnBeat += _ =>
             {
-                if (config.Get<bool>(FluXisSetting.BackgroundPulse))
-                    backgroundContainer.ScaleTo(1.005f).ScaleTo(1, Conductor.BeatTime, Easing.Out);
+                if (config.Get<bool>(FluXisSetting.BackgroundPulse) && !isZooming)
+                {
+                    backgroundContainer.ScaleTo(zoom + .005f)
+                                       .ScaleTo(zoom, Conductor.BeatTime, Easing.Out);
+                }
             };
+        }
+
+        protected override void LoadComplete()
+        {
+            backgroundDimBindable.BindValueChanged(_ => backgroundDim.Alpha = backgroundDimBindable.Value, true);
+
+            backgroundBlurBindable.BindValueChanged(_ =>
+            {
+                foreach (var background in backgroundContainer)
+                {
+                    if (background is Background b)
+                    {
+                        if (b.Blur != backgroundBlurBindable.Value)
+                            b.Blur = backgroundBlurBindable.Value;
+                    }
+                }
+            }, true);
+
+            base.LoadComplete();
         }
 
         protected override void Update()
@@ -82,19 +118,6 @@ namespace fluXis.Game.Graphics.Background
                     backgroundContainer.Remove(backgroundContainer.Children[0], false);
                 else
                     break;
-            }
-
-            // for some reason using the bindable directly doesn't work
-            if (backgroundDimBindable.Value != backgroundDim.Alpha)
-                backgroundDim.Alpha = backgroundDimBindable.Value;
-
-            foreach (var background in backgroundContainer)
-            {
-                if (background is Background b)
-                {
-                    if (b.Blur != backgroundBlurBindable.Value)
-                        b.Blur = backgroundBlurBindable.Value;
-                }
             }
 
             base.Update();

@@ -23,8 +23,11 @@ namespace fluXis.Game.Screens.Menu
         [Resolved]
         private MapStore maps { get; set; }
 
+        [Resolved]
+        private BackgroundStack backgrounds { get; set; }
+
         [BackgroundDependencyLoader]
-        private void load(BackgroundStack backgrounds, Storage storage)
+        private void load(Storage storage)
         {
             // load a random map
             if (maps.MapSets.Count > 0)
@@ -117,6 +120,7 @@ namespace fluXis.Game.Screens.Menu
         public override void OnResuming(ScreenTransitionEvent e)
         {
             this.FadeIn(100);
+            backgrounds.Zoom = 1;
             base.OnResuming(e);
         }
     }

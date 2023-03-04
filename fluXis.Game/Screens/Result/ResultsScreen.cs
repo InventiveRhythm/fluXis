@@ -2,6 +2,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -17,115 +18,119 @@ using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 
-namespace fluXis.Game.Screens.Result
+namespace fluXis.Game.Screens.Result;
+
+public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 {
-    public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private BackgroundStack backgrounds { get; set; }
+
+    private readonly RealmMap map;
+    private readonly MapInfo mapInfo;
+    private readonly Performance performance;
+    private readonly RealmScore score;
+
+    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool canSubmitScore = true)
     {
-        [Resolved]
-        private FluXisRealm realm { get; set; }
+        this.map = map;
+        this.mapInfo = mapInfo;
+        this.performance = performance;
 
-        private readonly RealmMap map;
-        private readonly MapInfo mapInfo;
-        private readonly Performance performance;
-        private readonly RealmScore score;
-
-        public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool canSubmitScore = true)
+        if (canSubmitScore)
         {
-            this.map = map;
-            this.mapInfo = mapInfo;
-            this.performance = performance;
-
-            if (canSubmitScore)
+            score = new RealmScore(map)
             {
-                score = new RealmScore(map)
-                {
-                    Accuracy = performance.Accuracy,
-                    Grade = performance.Grade.ToString(),
-                    Score = performance.Score,
-                    MaxCombo = performance.MaxCombo,
-                    Judgements = new RealmJudgements(performance.Judgements)
-                };
+                Accuracy = performance.Accuracy,
+                Grade = performance.Grade.ToString(),
+                Score = performance.Score,
+                MaxCombo = performance.MaxCombo,
+                Judgements = new RealmJudgements(performance.Judgements)
+            };
 
-                OnlineScores.UploadScore(performance, res => Logger.Log(res.Message));
-            }
+            OnlineScores.UploadScore(performance, res => Logger.Log(res.Message));
         }
+    }
 
-        [BackgroundDependencyLoader]
-        private void load()
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+
+        InternalChildren = new Drawable[]
         {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-
-            InternalChildren = new Drawable[]
+            new Container
             {
-                new Container
+                AutoSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                CornerRadius = 10,
+                Masking = true,
+                Children = new Drawable[]
                 {
-                    AutoSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    CornerRadius = 10,
-                    Masking = true,
-                    Children = new Drawable[]
+                    new Box
                     {
-                        new Box
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2,
+                    },
+                    new FillFlowContainer
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Vertical,
+                        Margin = new MarginPadding(20),
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2,
-                        },
-                        new FillFlowContainer
-                        {
-                            AutoSizeAxes = Axes.Both,
-                            Direction = FillDirection.Vertical,
-                            Margin = new MarginPadding(20),
-                            Children = new Drawable[]
-                            {
-                                new ResultTitle(map),
-                                new ResultScore(performance),
-                                new ResultHitPoints(mapInfo, performance)
-                            }
+                            new ResultTitle(map),
+                            new ResultScore(performance),
+                            new ResultHitPoints(mapInfo, performance)
                         }
                     }
                 }
-            };
-
-            Discord.Update("Viewing Results", "", "results");
-
-            if (score != null)
-                realm.RunWrite(r => r.Add(score));
-
-            // Logger.Log(JsonConvert.SerializeObject(performance, Formatting.None));
-        }
-
-        public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
-        {
-            switch (e.Action)
-            {
-                case FluXisKeybind.Back:
-                    this.Exit();
-                    return true;
             }
+        };
 
-            return false;
-        }
+        Discord.Update("Viewing Results", "", "results");
 
-        public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+        if (score != null)
+            realm.RunWrite(r => r.Add(score));
 
-        public override void OnEntering(ScreenTransitionEvent e)
+        // Logger.Log(JsonConvert.SerializeObject(performance, Formatting.None));
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
         {
-            this.ScaleTo(0.95f)
-                .FadeOut()
-                .ScaleTo(1f, 250, Easing.OutQuint)
-                .FadeIn(250, Easing.OutQuint);
-
-            base.OnEntering(e);
+            case FluXisKeybind.Back:
+                this.Exit();
+                return true;
         }
 
-        public override bool OnExiting(ScreenExitEvent e)
-        {
-            this.ScaleTo(1.05f, 250, Easing.OutQuint)
-                .FadeOut(250, Easing.OutQuint);
+        return false;
+    }
 
-            return base.OnExiting(e);
-        }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        this.ScaleTo(0.95f)
+            .FadeOut()
+            .ScaleTo(1f, 250, Easing.OutQuint)
+            .FadeIn(250, Easing.OutQuint);
+
+        backgrounds.Zoom = 1.2f;
+
+        base.OnEntering(e);
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        this.ScaleTo(1.05f, 250, Easing.OutQuint)
+            .FadeOut(250, Easing.OutQuint);
+
+        return base.OnExiting(e);
     }
 }

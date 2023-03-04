@@ -240,6 +240,7 @@ namespace fluXis.Game.Screens.Select
         public override void OnResuming(ScreenTransitionEvent e)
         {
             this.FadeIn(200);
+            Backgrounds.Zoom = 1.1f;
 
             Discord.Update("Selecting a map", "", "songselect");
 
@@ -254,6 +255,8 @@ namespace fluXis.Game.Screens.Select
         public override void OnEntering(ScreenTransitionEvent e)
         {
             this.FadeInFromZero(200);
+            Backgrounds.Zoom = 1.1f;
+
             Discord.Update("Selecting a map", "", "songselect");
 
             if (MapInfo.Value != null)
