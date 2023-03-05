@@ -21,6 +21,8 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.BackgroundDim, 0.25f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.BackgroundBlur, 0f, 0f, 1f, 0.01f);
 
+        SetDefault(FluXisSetting.MainMenuVisualizer, true);
+
         SetDefault(FluXisSetting.Token, string.Empty);
     }
 }
@@ -36,6 +38,9 @@ public enum FluXisSetting
     // Graphics
     BackgroundDim,
     BackgroundBlur,
+
+    // UI
+    MainMenuVisualizer,
 
     // Account
     Token,

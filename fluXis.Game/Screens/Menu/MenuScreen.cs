@@ -8,6 +8,7 @@ using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.Profile;
+using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -54,6 +55,7 @@ public partial class MenuScreen : Screen
 
         InternalChildren = new Drawable[]
         {
+            new MenuVisualizer(),
             content = new Container
             {
                 RelativeSizeAxes = Axes.Both,

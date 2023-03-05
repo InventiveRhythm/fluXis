@@ -26,7 +26,6 @@ public partial class Conductor : Container
     private static Conductor instance;
     private static ITrackStore trackStore;
     private static Storage storage;
-    private static Track track;
 
     /// <summary>
     /// Current time of the track in milliseconds.
@@ -55,12 +54,12 @@ public partial class Conductor : Container
     /// <summary>
     /// Returns whether the track is playing or not.
     /// </summary>
-    public static bool IsPlaying => track?.IsRunning ?? false;
+    public static bool IsPlaying => Track?.IsRunning ?? false;
 
     /// <summary>
     /// Returns whether the track has finished playing or not.
     /// </summary>
-    public static bool HasFinished => track?.HasCompleted ?? false;
+    public static bool HasFinished => Track?.HasCompleted ?? false;
 
     /// <summary>
     /// Returns the length of the track in milliseconds.
@@ -69,12 +68,17 @@ public partial class Conductor : Container
     {
         get
         {
-            if (track == null)
+            if (Track == null)
                 return 0;
 
-            return (float)track.Length;
+            return (float)Track.Length;
         }
     }
+
+    /// <summary>
+    /// The current Track itself.
+    /// </summary>
+    public static Track Track { get; private set; }
 
     private float speed = 1;
     private float untweenedSpeed = 1;
@@ -110,7 +114,7 @@ public partial class Conductor : Container
     {
         bind_speed.Value = speed;
 
-        if (track != null) track.Volume.Value = trackVolume;
+        if (Track != null) Track.Volume.Value = trackVolume;
 
         if (CurrentTime < 0)
         {
@@ -118,8 +122,8 @@ public partial class Conductor : Container
             return;
         }
 
-        if (track != null)
-            CurrentTime = (float)track.CurrentTime + Offset;
+        if (Track != null)
+            CurrentTime = (float)Track.CurrentTime + Offset;
         else
             CurrentTime += (float)Time.Elapsed + Offset;
 
@@ -136,13 +140,13 @@ public partial class Conductor : Container
     {
         StopTrack();
 
-        track = trackStore.Get(info.MapSet.GetFile(info.Metadata.Audio)?.GetPath()) ?? trackStore.GetVirtual();
-        track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
+        Track = trackStore.Get(info.MapSet.GetFile(info.Metadata.Audio)?.GetPath()) ?? trackStore.GetVirtual();
+        Track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
 
-        track.Seek(time);
+        Track.Seek(time);
 
         if (start)
-            track.Start();
+            Track.Start();
 
         TimingPoints = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(info.Hash)))?.TimingPoints ?? new List<TimingPointInfo>();
     }
@@ -153,7 +157,7 @@ public partial class Conductor : Container
     /// <param name="time">The time to seek to.</param>
     public static void Seek(float time)
     {
-        track?.Seek(time);
+        Track?.Seek(time);
     }
 
     /// <summary>
@@ -161,7 +165,7 @@ public partial class Conductor : Container
     /// </summary>
     public static void PauseTrack()
     {
-        track?.Stop();
+        Track?.Stop();
     }
 
     /// <summary>
@@ -169,7 +173,7 @@ public partial class Conductor : Container
     /// </summary>
     public static void ResumeTrack()
     {
-        track?.Start();
+        Track?.Start();
     }
 
     /// <summary>
@@ -177,9 +181,9 @@ public partial class Conductor : Container
     /// </summary>
     public static void StopTrack()
     {
-        track?.Stop();
-        track?.Dispose();
-        track = null;
+        Track?.Stop();
+        Track?.Dispose();
+        Track = null;
         TimingPoints.Clear();
     }
 
@@ -189,11 +193,11 @@ public partial class Conductor : Container
     /// <param name="start">The time to start the loop at.</param>
     public static void SetLoop(float start)
     {
-        if (track == null)
+        if (Track == null)
             return;
 
-        track.Looping = true;
-        track.RestartPoint = start;
+        Track.Looping = true;
+        Track.RestartPoint = start;
     }
 
     /// <summary>
@@ -201,10 +205,10 @@ public partial class Conductor : Container
     /// </summary>
     public static void ResetLoop()
     {
-        if (track == null)
+        if (Track == null)
             return;
 
-        track.Looping = false;
+        Track.Looping = false;
     }
 
     /// <summary>
