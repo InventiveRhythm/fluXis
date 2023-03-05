@@ -6,6 +6,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI.Visualizer;
@@ -84,7 +85,11 @@ public partial class MenuVisualizer : Container
             circle.X += x;*/
 
             if (circle.Y < -DrawHeight - circle.Height / 2f)
+            {
+                circle.X = DrawWidth * RNG.NextSingle();
                 circle.Y += DrawHeight + circle.Height;
+                circle.RandomSpeed = 1 + RNG.NextSingle() * 2;
+            }
         }
 
         base.Update();
