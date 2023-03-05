@@ -64,8 +64,8 @@ public partial class HitObject : CompositeDrawable
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopLeft,
                 RelativeSizeAxes = Axes.Both,
-                Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/hitobject-" + Data.Lane),
-            },
+                Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/hitobject-" + Data.Lane)
+            }
         };
 
         if (Data.IsLongNote())

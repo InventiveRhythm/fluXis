@@ -20,7 +20,7 @@ public partial class SettingsToggle : SettingsItem
             Text = label,
             Font = new FontUsage("Quicksand", 24, "Bold"),
             Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft,
+            Origin = Anchor.CentreLeft
         });
 
         Add(new Checkbox(bindable));

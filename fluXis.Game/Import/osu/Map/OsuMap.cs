@@ -39,9 +39,9 @@ public class OsuMap
 
     public OsuMap()
     {
-        Events = new();
-        TimingPoints = new();
-        HitObjects = new();
+        Events = new List<OsuEvent>();
+        TimingPoints = new List<OsuTimingPoint>();
+        HitObjects = new List<OsuHitObject>();
     }
 
     public MapInfo ToMapInfo()
@@ -54,15 +54,15 @@ public class OsuMap
             Difficulty = Version.Trim(),
             Source = Source.Trim(),
             Tags = Tags.Trim(),
-            PreviewTime = PreviewTime,
+            PreviewTime = PreviewTime
         })
         {
             AudioFile = AudioFilename.Trim(),
             BackgroundFile = "",
-            HitObjects = new(),
-            TimingPoints = new(),
-            ScrollVelocities = new(),
-            Events = new(),
+            HitObjects = new List<HitObjectInfo>(),
+            TimingPoints = new List<TimingPointInfo>(),
+            ScrollVelocities = new List<ScrollVelocityInfo>(),
+            Events = new List<EventInfo>(),
             KeyCount = 4,
             InitialKeyCount = 4
         };

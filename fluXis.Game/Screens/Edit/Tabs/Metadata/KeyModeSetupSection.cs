@@ -7,146 +7,145 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Metadata
+namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
+
+public partial class KeyModeSetupSection : SetupSection
 {
-    public partial class KeyModeSetupSection : SetupSection
+    private readonly FillFlowContainer<KeyModeButton> keyModeContainer;
+
+    public KeyModeSetupSection(RealmMap map)
+        : base("Keys")
     {
-        private readonly FillFlowContainer<KeyModeButton> keyModeContainer;
-
-        public KeyModeSetupSection(RealmMap map)
-            : base("Keys")
+        AddInternal(new Container
         {
-            AddInternal(new Container
+            AutoSizeAxes = Axes.Y,
+            RelativeSizeAxes = Axes.X,
+            Children = new Drawable[]
             {
-                AutoSizeAxes = Axes.Y,
-                RelativeSizeAxes = Axes.X,
-                Children = new Drawable[]
+                new Box
                 {
-                    new Box
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Surface
+                },
+                keyModeContainer = new FillFlowContainer<KeyModeButton>
+                {
+                    CornerRadius = 10,
+                    Masking = true,
+                    RelativeSizeAxes = Axes.X,
+                    Height = 100,
+                    Children = new[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Surface
-                    },
-                    keyModeContainer = new FillFlowContainer<KeyModeButton>
+                        new KeyModeButton(this, 4),
+                        new KeyModeButton(this, 5),
+                        new KeyModeButton(this, 6),
+                        new KeyModeButton(this, 7)
+                    }
+                }
+            }
+        });
+
+        SetKeyMode(map.KeyCount);
+    }
+
+    public void SetKeyMode(int keyMode)
+    {
+        keyModeContainer.Children.ForEach(b => b.Selected = b.KeyMode == keyMode);
+    }
+
+    private partial class KeyModeButton : Container
+    {
+        private readonly Box background;
+        private readonly FillFlowContainer<TicTac> keyContainer;
+        private readonly KeyModeSetupSection parent;
+
+        private bool selected;
+
+        public int KeyMode { get; }
+
+        public bool Selected
+        {
+            set
+            {
+                selected = value;
+
+                background.FadeTo(value ? .1f : 0f, 200);
+
+                if (IsHovered)
+                    background.FadeTo(.2f, 200);
+            }
+        }
+
+        public KeyModeButton(KeyModeSetupSection parent, int keys)
+        {
+            this.parent = parent;
+            KeyMode = keys;
+
+            RelativeSizeAxes = Axes.Both;
+            Width = .25f;
+            Children = new Drawable[]
+            {
+                background = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                new Container
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Children = new Drawable[]
                     {
-                        CornerRadius = 10,
-                        Masking = true,
-                        RelativeSizeAxes = Axes.X,
-                        Height = 100,
-                        Children = new[]
+                        keyContainer = new FillFlowContainer<TicTac>
                         {
-                            new KeyModeButton(this, 4),
-                            new KeyModeButton(this, 5),
-                            new KeyModeButton(this, 6),
-                            new KeyModeButton(this, 7),
+                            AutoSizeAxes = Axes.Both,
+                            Origin = Anchor.TopCentre,
+                            Anchor = Anchor.TopCentre
+                        },
+                        new SpriteText
+                        {
+                            Text = $"{keys} Keys",
+                            Font = new FontUsage("Quicksand", 20, "SemiBold"),
+                            Y = 30,
+                            Origin = Anchor.TopCentre,
+                            Anchor = Anchor.TopCentre
                         }
                     }
                 }
-            });
+            };
 
-            SetKeyMode(map.KeyCount);
+            for (int i = 0; i < keys; i++)
+                keyContainer.Add(new TicTac(25));
         }
 
-        public void SetKeyMode(int keyMode)
+        protected override bool OnHover(HoverEvent e)
         {
-            keyModeContainer.Children.ForEach(b => b.Selected = b.KeyMode == keyMode);
+            background.FadeTo(.2f, 200);
+            return base.OnHover(e);
         }
 
-        private partial class KeyModeButton : Container
+        protected override void OnHoverLost(HoverLostEvent e)
         {
-            private readonly Box background;
-            private readonly FillFlowContainer<TicTac> keyContainer;
-            private readonly KeyModeSetupSection parent;
+            background.FadeTo(selected ? .1f : 0f, 200);
+            base.OnHoverLost(e);
+        }
 
-            private bool selected;
+        protected override bool OnClick(ClickEvent e)
+        {
+            background.FadeTo(.4f)
+                      .FadeTo(.2f, 400);
+            parent.SetKeyMode(KeyMode);
 
-            public int KeyMode { get; }
-
-            public bool Selected
+            for (var i = 0; i < keyContainer.Count; i++)
             {
-                set
-                {
-                    selected = value;
-
-                    background.FadeTo(value ? .1f : 0f, 200);
-
-                    if (IsHovered)
-                        background.FadeTo(.2f, 200);
-                }
+                var ticTac = keyContainer[i];
+                ticTac.Delay(i * 50)
+                      .ResizeHeightTo(30, 200)
+                      .Then()
+                      .ResizeHeightTo(25, 200);
             }
 
-            public KeyModeButton(KeyModeSetupSection parent, int keys)
-            {
-                this.parent = parent;
-                KeyMode = keys;
-
-                RelativeSizeAxes = Axes.Both;
-                Width = .25f;
-                Children = new Drawable[]
-                {
-                    background = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                    },
-                    new Container
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Children = new Drawable[]
-                        {
-                            keyContainer = new FillFlowContainer<TicTac>
-                            {
-                                AutoSizeAxes = Axes.Both,
-                                Origin = Anchor.TopCentre,
-                                Anchor = Anchor.TopCentre,
-                            },
-                            new SpriteText
-                            {
-                                Text = $"{keys} Keys",
-                                Font = new FontUsage("Quicksand", 20, "SemiBold"),
-                                Y = 30,
-                                Origin = Anchor.TopCentre,
-                                Anchor = Anchor.TopCentre,
-                            }
-                        }
-                    }
-                };
-
-                for (int i = 0; i < keys; i++)
-                    keyContainer.Add(new TicTac(25));
-            }
-
-            protected override bool OnHover(HoverEvent e)
-            {
-                background.FadeTo(.2f, 200);
-                return base.OnHover(e);
-            }
-
-            protected override void OnHoverLost(HoverLostEvent e)
-            {
-                background.FadeTo(selected ? .1f : 0f, 200);
-                base.OnHoverLost(e);
-            }
-
-            protected override bool OnClick(ClickEvent e)
-            {
-                background.FadeTo(.4f)
-                          .FadeTo(.2f, 400);
-                parent.SetKeyMode(KeyMode);
-
-                for (var i = 0; i < keyContainer.Count; i++)
-                {
-                    var ticTac = keyContainer[i];
-                    ticTac.Delay(i * 50)
-                          .ResizeHeightTo(30, 200)
-                          .Then()
-                          .ResizeHeightTo(25, 200);
-                }
-
-                return base.OnClick(e);
-            }
+            return base.OnClick(e);
         }
     }
 }

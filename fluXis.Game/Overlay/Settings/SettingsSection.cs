@@ -1,6 +1,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osuTK;
 
 namespace fluXis.Game.Overlay.Settings;
 
@@ -14,6 +15,6 @@ public partial class SettingsSection : FillFlowContainer
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
-        Spacing = new(0, 10);
+        Spacing = new Vector2(0, 10);
     }
 }

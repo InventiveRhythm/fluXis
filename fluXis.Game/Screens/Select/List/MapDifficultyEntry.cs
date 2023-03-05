@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using Realms;
 
 namespace fluXis.Game.Screens.Select.List;
 
@@ -46,7 +47,7 @@ public partial class MapDifficultyEntry : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background
-                },
+                }
             },
             difficultyName = new SpriteText
             {
@@ -95,5 +96,5 @@ public partial class MapDifficultyEntry : Container
         return base.OnClick(e);
     }
 
-    private void updateSelected(RealmMap newMap) => FadeEdgeEffectTo(keyCount.KeyColour.Opacity(Equals(newMap, map) ? 1f : 0f), 200, Easing.OutQuint);
+    private void updateSelected(ISettableManagedAccessor newMap) => FadeEdgeEffectTo(keyCount.KeyColour.Opacity(Equals(newMap, map) ? 1f : 0f), 200, Easing.OutQuint);
 }

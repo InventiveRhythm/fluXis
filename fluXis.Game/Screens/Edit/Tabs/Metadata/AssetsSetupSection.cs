@@ -1,10 +1,9 @@
-namespace fluXis.Game.Screens.Edit.Tabs.Metadata
+namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
+
+public partial class AssetsSetupSection : SetupSection
 {
-    public partial class AssetsSetupSection : SetupSection
+    public AssetsSetupSection()
+        : base("Assets")
     {
-        public AssetsSetupSection()
-            : base("Assets")
-        {
-        }
     }
 }

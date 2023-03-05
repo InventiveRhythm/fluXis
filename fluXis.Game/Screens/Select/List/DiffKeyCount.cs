@@ -4,48 +4,47 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Screens.Select.List
+namespace fluXis.Game.Screens.Select.List;
+
+public partial class DiffKeyCount : Container
 {
-    public partial class DiffKeyCount : Container
+    public Colour4 KeyColour { get; set; }
+
+    public DiffKeyCount(int count)
     {
-        public Colour4 KeyColour { get; set; }
+        CornerRadius = 5;
+        Masking = true;
+        RelativeSizeAxes = Axes.Y;
+        Width = 50;
+        Anchor = Anchor.CentreRight;
+        Origin = Anchor.CentreRight;
 
-        public DiffKeyCount(int count)
+        KeyColour = count switch
         {
-            CornerRadius = 5;
-            Masking = true;
-            RelativeSizeAxes = Axes.Y;
-            Width = 50;
-            Anchor = Anchor.CentreRight;
-            Origin = Anchor.CentreRight;
+            4 => Colour4.FromHex("62bafe"),
+            5 => Colour4.FromHex("61f984"),
+            6 => Colour4.FromHex("e3bb45"),
+            7 => Colour4.FromHex("ec3b8d"),
+            _ => Color4.White
+        };
 
-            KeyColour = count switch
+        Children = new Drawable[]
+        {
+            new Box
             {
-                4 => Colour4.FromHex("62bafe"),
-                5 => Colour4.FromHex("61f984"),
-                6 => Colour4.FromHex("e3bb45"),
-                7 => Colour4.FromHex("ec3b8d"),
-                _ => Color4.White
-            };
-
-            Children = new Drawable[]
+                RelativeSizeAxes = Axes.Both,
+                Colour = KeyColour
+            },
+            new SpriteText
             {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = KeyColour
-                },
-                new SpriteText
-                {
-                    Anchor = Anchor.CentreRight,
-                    Origin = Anchor.CentreRight,
-                    Text = $"{count}K",
-                    Font = new FontUsage("Quicksand", 20, "SemiBold"),
-                    Margin = new MarginPadding { Right = 13 },
-                    Y = -1,
-                    Colour = KeyColour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Color4.White
-                }
-            };
-        }
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Text = $"{count}K",
+                Font = new FontUsage("Quicksand", 20, "SemiBold"),
+                Margin = new MarginPadding { Right = 13 },
+                Y = -1,
+                Colour = KeyColour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Color4.White
+            }
+        };
     }
 }

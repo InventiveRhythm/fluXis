@@ -4,6 +4,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.Search;
 
@@ -43,7 +44,7 @@ public partial class DropdownIcon : Container
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Icon = FontAwesome.Solid.ChevronDown,
-                    Size = new(20),
+                    Size = new Vector2(20)
                 }
             }
         };

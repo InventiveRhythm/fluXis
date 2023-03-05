@@ -42,23 +42,12 @@ public class RealmMapSet : RealmObject
 
         if (string.IsNullOrEmpty(hash)) return string.Empty;
 
-        return hash.Substring(0, 1) + "/" + hash.Substring(1, 1) + "/" + hash;
+        return hash[..1] + "/" + hash.Substring(1, 1) + "/" + hash;
     }
 
     public RealmFile GetFile(string name)
     {
-        RealmFile file = null;
-
-        foreach (var setFile in Files)
-        {
-            if (setFile.Name == name)
-            {
-                file = setFile;
-                break;
-            }
-        }
-
-        return file;
+        return Files.FirstOrDefault(setFile => setFile.Name == name);
     }
 
     public override string ToString()

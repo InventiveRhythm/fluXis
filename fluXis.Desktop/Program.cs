@@ -2,15 +2,14 @@
 using osu.Framework;
 using fluXis.Game;
 
-namespace fluXis.Desktop
+namespace fluXis.Desktop;
+
+public static class Program
 {
-    public static class Program
+    public static void Main()
     {
-        public static void Main()
-        {
-            using (GameHost host = Host.GetSuitableDesktopHost(@"fluXis"))
-            using (osu.Framework.Game game = new FluXisGame())
-                host.Run(game);
-        }
+        using GameHost host = Host.GetSuitableDesktopHost(@"fluXis");
+        using osu.Framework.Game game = new FluXisGame();
+        host.Run(game);
     }
 }

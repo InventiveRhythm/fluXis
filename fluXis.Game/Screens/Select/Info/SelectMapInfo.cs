@@ -2,7 +2,6 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.Info.Scores;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -16,11 +15,6 @@ namespace fluXis.Game.Screens.Select.Info;
 
 public partial class SelectMapInfo : FillFlowContainer
 {
-    [Resolved]
-    private MapStore maps { get; set; }
-
-    private RealmMap map;
-
     public ScoreList ScoreList;
 
     private BackgroundStack backgroundStack;
@@ -54,7 +48,7 @@ public partial class SelectMapInfo : FillFlowContainer
                 Masking = true,
                 Children = new Drawable[]
                 {
-                    backgroundStack = new BackgroundStack(maps),
+                    backgroundStack = new BackgroundStack(),
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -118,18 +112,18 @@ public partial class SelectMapInfo : FillFlowContainer
                                             difficultyText = new SpriteText
                                             {
                                                 Text = "diffname",
-                                                Font = new FontUsage("Quicksand", 22, "Bold"),
+                                                Font = new FontUsage("Quicksand", 22, "Bold")
                                             },
                                             new SpriteText
                                             {
                                                 Text = "mapped by",
-                                                Font = new FontUsage("Quicksand", 22),
+                                                Font = new FontUsage("Quicksand", 22)
                                             },
                                             mapperText = new SpriteText
                                             {
                                                 Text = "mapper",
-                                                Font = new FontUsage("Quicksand", 22),
-                                            },
+                                                Font = new FontUsage("Quicksand", 22)
+                                            }
                                         }
                                     },
                                     new Container
@@ -159,15 +153,15 @@ public partial class SelectMapInfo : FillFlowContainer
                                                     bpmText = new SpriteText
                                                     {
                                                         Text = "BPM",
-                                                        Font = new FontUsage("Quicksand", 22, "Bold"),
+                                                        Font = new FontUsage("Quicksand", 22, "Bold")
                                                     },
                                                     lengthText = new SpriteText
                                                     {
                                                         Text = "Length",
-                                                        Font = new FontUsage("Quicksand", 22, "Bold"),
-                                                    },
+                                                        Font = new FontUsage("Quicksand", 22, "Bold")
+                                                    }
                                                 }
-                                            },
+                                            }
                                         }
                                     }
                                 }
@@ -201,8 +195,6 @@ public partial class SelectMapInfo : FillFlowContainer
 
     public void ChangeMap(RealmMap map)
     {
-        this.map = map;
-
         backgroundStack.ChangeMap(map);
         ScoreList.SetMap(map);
         titleText.Text = map.Metadata.Title;
@@ -226,11 +218,8 @@ public partial class SelectMapInfo : FillFlowContainer
 
     private partial class BackgroundStack : Container
     {
-        private readonly MapStore mapStore;
-
-        public BackgroundStack(MapStore mapStore)
+        public BackgroundStack()
         {
-            this.mapStore = mapStore;
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;

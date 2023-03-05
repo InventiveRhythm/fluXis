@@ -10,7 +10,7 @@ namespace fluXis.Game.Overlay.Volume;
 
 public partial class VolumeCategory : Container
 {
-    public VolumeCategory(string type, BindableNumber<double> bind)
+    public VolumeCategory(string type, IBindable<double> bind)
     {
         AutoSizeAxes = Axes.Both;
         CornerRadius = 5;
@@ -24,7 +24,7 @@ public partial class VolumeCategory : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = FluXisColors.Background2
             },
             new FillFlowContainer
             {
@@ -53,7 +53,7 @@ public partial class VolumeCategory : Container
                 Width = (float)bind.Value,
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft,
-                Colour = Colour4.White,
+                Colour = Colour4.White
             }
         });
 

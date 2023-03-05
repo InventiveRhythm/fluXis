@@ -4,5 +4,5 @@ public enum EditorTool
 {
     Select,
     Single,
-    Long,
+    Long
 }

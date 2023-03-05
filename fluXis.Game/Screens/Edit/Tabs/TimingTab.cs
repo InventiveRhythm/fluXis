@@ -23,7 +23,7 @@ public partial class TimingTab : EditorTab
                 {
                     new(),
                     new(),
-                    new(),
+                    new()
                 },
                 Content = new[]
                 {
@@ -37,7 +37,7 @@ public partial class TimingTab : EditorTab
                             Child = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background,
+                                Colour = FluXisColors.Background
                             }
                         }
                     }

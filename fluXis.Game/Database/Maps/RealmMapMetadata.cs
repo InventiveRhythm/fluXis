@@ -12,7 +12,7 @@ public class RealmMapMetadata : RealmObject
     public string Tags { get; set; } = string.Empty;
     public string Background { get; set; } = string.Empty;
     public string Audio { get; set; } = string.Empty;
-    public int PreviewTime { get; set; } = 0;
+    public int PreviewTime { get; set; }
 
     [UsedImplicitly]
     public RealmMapMetadata()

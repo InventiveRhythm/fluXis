@@ -43,13 +43,13 @@ public partial class Cursor : Container
     {
         Add(new Sprite
         {
-            Texture = textures.Get("Cursor/cursor.png"),
+            Texture = textures.Get("Cursor/cursor.png")
         });
 
         Add(clickSprite = new Sprite
         {
             Texture = textures.Get("Cursor/cursorclick.png"),
-            Alpha = 0,
+            Alpha = 0
         });
 
         Add(tooltipContainer = new Container
@@ -64,7 +64,7 @@ public partial class Cursor : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Surface,
+                    Colour = FluXisColors.Surface
                 },
                 tooltipText = new SpriteText
                 {
@@ -72,8 +72,8 @@ public partial class Cursor : Container
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Margin = new MarginPadding { Horizontal = 10 },
-                    Y = -2,
-                },
+                    Y = -2
+                }
             }
         });
     }

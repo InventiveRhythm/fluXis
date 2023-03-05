@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
@@ -22,7 +23,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
         {
             Time = Conductor.CurrentTime,
             BPM = 120,
-            Signature = 4,
+            Signature = 4
         }));
 
         base.OnAdd();
@@ -30,10 +31,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
     public override void Sort()
     {
-        var entries = new List<TimingPointEntry>();
-
-        foreach (var entry in GetEntries())
-            entries.Add(entry);
+        var entries = GetEntries().ToList();
 
         entries.Sort((a, b) => a.PointInfo.Time.CompareTo(b.PointInfo.Time));
         ReplaceEntries(entries);
@@ -66,7 +64,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
             {
                 Text = PointInfo.Signature + "/4",
                 Font = new FontUsage("Quicksand", 24, "Bold")
-            },
+            }
         };
     }
 }

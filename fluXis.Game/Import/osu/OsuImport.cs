@@ -20,7 +20,7 @@ public class OsuImport : MapImporter
     {
     }
 
-    public override Task Import(string path)
+    public virtual Task Import(string path)
     {
         return new Task(() =>
         {
@@ -92,25 +92,17 @@ public class OsuImport : MapImporter
     {
         string section = line.Substring(1, line.Length - 2);
 
-        switch (section)
+        return section switch
         {
-            case "General": return OsuFileSection.General;
-
-            case "Editor": return OsuFileSection.Editor;
-
-            case "Metadata": return OsuFileSection.Metadata;
-
-            case "Difficulty": return OsuFileSection.Difficulty;
-
-            case "Events": return OsuFileSection.Events;
-
-            case "TimingPoints": return OsuFileSection.TimingPoints;
-
-            case "Colours": return OsuFileSection.Colours;
-
-            case "HitObjects": return OsuFileSection.HitObjects;
-
-            default: return OsuFileSection.General;
-        }
+            "General" => OsuFileSection.General,
+            "Editor" => OsuFileSection.Editor,
+            "Metadata" => OsuFileSection.Metadata,
+            "Difficulty" => OsuFileSection.Difficulty,
+            "Events" => OsuFileSection.Events,
+            "TimingPoints" => OsuFileSection.TimingPoints,
+            "Colours" => OsuFileSection.Colours,
+            "HitObjects" => OsuFileSection.HitObjects,
+            _ => OsuFileSection.General
+        };
     }
 }

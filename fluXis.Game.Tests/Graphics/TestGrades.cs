@@ -21,7 +21,7 @@ public partial class TestGrades : FluXisTestScene
                 new DrawableGrade { Grade = Grade.A, Size = 64 },
                 new DrawableGrade { Grade = Grade.B, Size = 64 },
                 new DrawableGrade { Grade = Grade.C, Size = 64 },
-                new DrawableGrade { Grade = Grade.D, Size = 64 },
+                new DrawableGrade { Grade = Grade.D, Size = 64 }
             }
         });
     }

@@ -63,7 +63,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 {
                     content = new Container
                     {
-                        RelativeSizeAxes = Axes.Both,
+                        RelativeSizeAxes = Axes.Both
                     },
                     keybinds = new FluXisKeybindContainer(this)
                 }

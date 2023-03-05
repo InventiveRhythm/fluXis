@@ -28,11 +28,11 @@ public class RealmMap : RealmObject
 
     public int OnlineID { get; set; } = -1;
     public string Hash { get; set; } = string.Empty;
-    public float Length { get; set; } = 0;
-    public float BPMMin { get; set; } = 0;
-    public float BPMMax { get; set; } = 0;
+    public float Length { get; set; }
+    public float BPMMin { get; set; }
+    public float BPMMax { get; set; }
     public int KeyCount { get; set; } = 4;
-    public float Rating { get; set; } = 0;
+    public float Rating { get; set; }
 
     public RealmMap([CanBeNull] RealmMapMetadata meta = null)
     {

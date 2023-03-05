@@ -46,7 +46,7 @@ public partial class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
                 {
                     new SetupTab(this),
                     new ComposeTab(this),
-                    new TimingTab(this),
+                    new TimingTab(this)
                 }
             },
             new EditorToolbar(this)

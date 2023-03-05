@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using fluXis.Game.Audio;
@@ -50,7 +51,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             overlay = new OnlineOverlay(),
             Settings,
             new VolumeOverlay(),
-            CursorOverlay,
+            CursorOverlay
         };
     }
 
@@ -81,7 +82,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         exitAction?.Invoke();
     }
 
-    private void onDragDrop(string[] paths)
+    private void onDragDrop(IEnumerable<string> paths)
     {
         try
         {

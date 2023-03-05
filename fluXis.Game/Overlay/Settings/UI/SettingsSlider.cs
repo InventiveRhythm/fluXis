@@ -26,7 +26,7 @@ public partial class SettingsSlider<T> : SettingsItem
                 Text = label,
                 Font = new FontUsage("Quicksand", 24, "Bold"),
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft
             },
             valueLabel = new SpriteText
             {
@@ -69,7 +69,7 @@ public partial class SettingsSlider<T> : SettingsItem
                 RelativeSizeAxes = Axes.Both,
                 Current = bindable,
                 BackgroundColour = FluXisColors.Accent2.Opacity(.2f),
-                SelectionColour = FluXisColors.Accent2,
+                SelectionColour = FluXisColors.Accent2
             });
         }
 

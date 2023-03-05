@@ -1,9 +1,8 @@
-namespace fluXis.Game.Map
+namespace fluXis.Game.Map;
+
+public class EventInfo
 {
-    public class EventInfo
-    {
-        public float Time;
-        public string Type;
-        public int Value;
-    }
+    public float Time;
+    public string Type;
+    public int Value;
 }

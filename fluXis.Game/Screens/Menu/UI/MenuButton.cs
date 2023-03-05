@@ -44,19 +44,19 @@ public partial class MenuButton : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2,
+                Colour = FluXisColors.Background2
             },
             hover = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
+                Alpha = 0
             },
             icon = new SpriteIcon
             {
                 Size = new Vector2(30),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 10 },
+                Margin = new MarginPadding { Left = 10 }
             },
             text = new SpriteText
             {
@@ -73,7 +73,7 @@ public partial class MenuButton : Container
                 Origin = Anchor.TopLeft,
                 Margin = new MarginPadding { Left = 50 },
                 Y = -1
-            },
+            }
         };
     }
 

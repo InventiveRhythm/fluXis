@@ -52,23 +52,14 @@ public partial class AttributeText : GameplayHUDElement
 
     private string getValue()
     {
-        switch (AttributeType)
+        return AttributeType switch
         {
-            case AttributeType.Title:
-                return Screen.RealmMap.Metadata.Title;
-
-            case AttributeType.Artist:
-                return Screen.RealmMap.Metadata.Artist;
-
-            case AttributeType.Difficulty:
-                return Screen.RealmMap.Difficulty;
-
-            case AttributeType.Mapper:
-                return Screen.RealmMap.Metadata.Mapper;
-
-            default:
-                return "";
-        }
+            AttributeType.Title => Screen.RealmMap.Metadata.Title,
+            AttributeType.Artist => Screen.RealmMap.Metadata.Artist,
+            AttributeType.Difficulty => Screen.RealmMap.Difficulty,
+            AttributeType.Mapper => Screen.RealmMap.Metadata.Mapper,
+            _ => ""
+        };
     }
 }
 
@@ -77,5 +68,5 @@ public enum AttributeType
     Title,
     Artist,
     Difficulty,
-    Mapper,
+    Mapper
 }

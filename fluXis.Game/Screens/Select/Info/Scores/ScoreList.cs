@@ -17,8 +17,8 @@ public partial class ScoreList : Container
 
     private RealmMap map;
 
-    private SpriteText noScoresText;
-    private BasicScrollContainer scrollContainer;
+    private readonly SpriteText noScoresText;
+    private readonly BasicScrollContainer scrollContainer;
 
     public ScoreList()
     {
@@ -37,7 +37,7 @@ public partial class ScoreList : Container
             scrollContainer = new BasicScrollContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                ScrollbarVisible = false,
+                ScrollbarVisible = false
             }
         };
     }

@@ -160,7 +160,7 @@ public partial class MenuScreen : Screen
                                 Icon = FontAwesome.Solid.Globe,
                                 Action = () => host.OpenUrlExternally("https://fluxis.foxes4life.net"),
                                 Text = "Website"
-                            },
+                            }
                         }
                     },
                     new MenuProfile()

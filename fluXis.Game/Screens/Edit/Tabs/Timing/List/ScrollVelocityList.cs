@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
@@ -29,10 +30,7 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
 
     public override void Sort()
     {
-        var entries = new List<ScrollVelocityEntry>();
-
-        foreach (var entry in GetEntries())
-            entries.Add(entry);
+        var entries = GetEntries().ToList();
 
         entries.Sort((a, b) => a.VelocityInfo.Time.CompareTo(b.VelocityInfo.Time));
         ReplaceEntries(entries);

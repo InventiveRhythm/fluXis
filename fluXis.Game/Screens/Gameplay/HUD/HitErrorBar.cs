@@ -53,8 +53,8 @@ public partial class HitErrorBar : GameplayHUDElement
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.White,
-                    },
+                        Colour = Colour4.White
+                    }
                 }
             },
             hits = new Container
@@ -62,7 +62,7 @@ public partial class HitErrorBar : GameplayHUDElement
                 Margin = new MarginPadding { Top = 20 },
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Origin = Anchor.Centre
             }
         };
 
@@ -82,7 +82,7 @@ public partial class HitErrorBar : GameplayHUDElement
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = hitWindow.Color,
+                    Colour = hitWindow.Color
                 }
             });
         }
@@ -117,7 +117,7 @@ public partial class HitErrorBar : GameplayHUDElement
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = hitWindow.Color,
+                Colour = hitWindow.Color
             }
         };
 

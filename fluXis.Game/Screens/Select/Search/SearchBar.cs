@@ -52,7 +52,7 @@ public partial class SearchBar : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background2
                 }
-            },
+            }
         };
 
         dropdownOpen.BindValueChanged(_ => updateDropdownStatus());

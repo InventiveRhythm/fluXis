@@ -20,7 +20,7 @@ public class SearchFilters
         {
             if (split.StartsWith("bpm"))
             {
-                var bpm = split.Substring(3);
+                var bpm = split[3..];
                 Type bpmType;
 
                 if (bpm.StartsWith("="))
@@ -32,7 +32,7 @@ public class SearchFilters
                 else
                     continue;
 
-                bpm = bpm.Substring(1);
+                bpm = bpm[1..];
 
                 if (int.TryParse(bpm, out var bpmValue))
                 {
@@ -42,30 +42,17 @@ public class SearchFilters
             }
             else if (split.StartsWith("status="))
             {
-                var status = split.Substring(7);
+                var status = split[7..];
 
-                switch (status)
+                filter.Status = status switch
                 {
-                    case "l" or "local":
-                        filter.Status = -2;
-                        break;
-
-                    case "u" or "unsubmitted":
-                        filter.Status = 0;
-                        break;
-
-                    case "p" or "pending":
-                        filter.Status = 1;
-                        break;
-
-                    case "i" or "impure":
-                        filter.Status = 2;
-                        break;
-
-                    case "p" or "pure":
-                        filter.Status = 3;
-                        break;
-                }
+                    "l" or "local" => -2,
+                    "u" or "unsubmitted" => 0,
+                    "p" or "pending" => 1,
+                    "i" or "impure" => 2,
+                    "p" or "pure" => 3,
+                    _ => filter.Status
+                };
             }
             else
                 filter.SearchTerms.Add(split);
@@ -157,6 +144,6 @@ public class SearchFilters
     {
         Exact,
         Over,
-        Under,
+        Under
     }
 }

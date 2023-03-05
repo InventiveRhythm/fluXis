@@ -193,7 +193,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                 RelativeSizeAxes = Axes.Y,
                 AutoSizeAxes = Axes.X,
                 Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre,
+                Origin = Anchor.TopCentre
             });
 
             AddInternal(new Box
@@ -262,8 +262,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
         public void SelectTab(SettingsCategoryTab tab = null)
         {
-            if (tab == null)
-                tab = tabs.Children.First();
+            tab ??= tabs.Children.First();
 
             // if still null, return
             if (tab == null)

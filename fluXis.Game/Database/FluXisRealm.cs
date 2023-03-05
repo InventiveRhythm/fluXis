@@ -42,8 +42,8 @@ public class FluXisRealm : IDisposable
         if (ThreadSafety.IsUpdateThread)
             return action(Realm);
 
-        using (var realm = getInstance())
-            return action(realm);
+        using var realm = getInstance();
+        return action(realm);
     }
 
     public void Run(Action<Realm> action)
@@ -52,8 +52,8 @@ public class FluXisRealm : IDisposable
             action(Realm);
         else
         {
-            using (var realm = getInstance())
-                action(realm);
+            using var realm = getInstance();
+            action(realm);
         }
     }
 
@@ -62,8 +62,8 @@ public class FluXisRealm : IDisposable
         if (ThreadSafety.IsUpdateThread)
             return write(Realm, action);
 
-        using (var realm = getInstance())
-            return write(realm, action);
+        using var realm = getInstance();
+        return write(realm, action);
     }
 
     public void RunWrite(Action<Realm> action)
@@ -72,8 +72,8 @@ public class FluXisRealm : IDisposable
             write(Realm, action);
         else
         {
-            using (var realm = getInstance())
-                write(realm, action);
+            using var realm = getInstance();
+            write(realm, action);
         }
     }
 

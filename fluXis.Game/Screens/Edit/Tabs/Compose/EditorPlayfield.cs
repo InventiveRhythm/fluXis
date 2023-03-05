@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
@@ -62,15 +63,15 @@ public partial class EditorPlayfield : Container
                 Width = 4,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopRight,
+                Origin = Anchor.TopRight
             },
             new Box
             {
                 Width = 4,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.TopRight,
-                Origin = Anchor.TopLeft,
-            },
+                Origin = Anchor.TopLeft
+            }
         });
 
         // column dividers
@@ -165,43 +166,48 @@ public partial class EditorPlayfield : Container
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        if (e.Button == MouseButton.Left)
+        switch (e.Button)
         {
-            switch (Tool)
+            case MouseButton.Left:
+                switch (Tool)
+                {
+                    case EditorTool.Select:
+                        break;
+
+                    case EditorTool.Single:
+                        var hitObject = GetHitObjectAt(ghostNote.Info.Time, ghostNote.Info.Lane);
+                        if (hitObject != null) return true;
+
+                        HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
+                        MapInfo.HitObjects.Add(ghostNote.Info.Copy());
+                        break;
+
+                    case EditorTool.Long:
+                        isDragging = true;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return true;
+
+            case MouseButton.Right:
             {
-                case EditorTool.Select:
-                    break;
+                var hitObject = GetHitObjectAt(ghostNote.Info.Time, ghostNote.Info.Lane);
 
-                case EditorTool.Single:
-                    var hitObject = GetHitObjectAt(ghostNote.Info.Time, ghostNote.Info.Lane);
-                    if (hitObject != null) return true;
+                if (hitObject != null)
+                {
+                    HitObjects.Remove(hitObject, true);
+                    MapInfo.HitObjects.Remove(hitObject.Info);
+                }
 
-                    HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
-                    MapInfo.HitObjects.Add(ghostNote.Info.Copy());
-                    break;
-
-                case EditorTool.Long:
-                    isDragging = true;
-                    break;
+                return true;
             }
 
-            return true;
+            default:
+                return base.OnMouseDown(e);
         }
-
-        if (e.Button == MouseButton.Right)
-        {
-            var hitObject = GetHitObjectAt(ghostNote.Info.Time, ghostNote.Info.Lane);
-
-            if (hitObject != null)
-            {
-                HitObjects.Remove(hitObject, true);
-                MapInfo.HitObjects.Remove(hitObject.Info);
-            }
-
-            return true;
-        }
-
-        return base.OnMouseDown(e);
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
@@ -273,13 +279,7 @@ public partial class EditorPlayfield : Container
 
     private void updateHitObjects()
     {
-        List<EditorHitObject> toAdd = new();
-
-        foreach (var hitObject in FutureHitObjects)
-        {
-            if (hitObject.IsOnScreen)
-                toAdd.Add(hitObject);
-        }
+        List<EditorHitObject> toAdd = FutureHitObjects.Where(hitObject => hitObject.IsOnScreen).ToList();
 
         foreach (var hitObject in toAdd)
         {
@@ -287,13 +287,7 @@ public partial class EditorPlayfield : Container
             HitObjects.Add(hitObject);
         }
 
-        List<EditorHitObject> toRemove = new();
-
-        foreach (var hitObject in HitObjects)
-        {
-            if (!hitObject.IsOnScreen)
-                toRemove.Add(hitObject);
-        }
+        List<EditorHitObject> toRemove = HitObjects.Where(hitObject => !hitObject.IsOnScreen).ToList();
 
         foreach (var hitObject in toRemove)
         {
@@ -304,13 +298,7 @@ public partial class EditorPlayfield : Container
 
     private void updateTimingLines()
     {
-        List<EditorTimingLine> toAdd = new();
-
-        foreach (var timingLine in FutureTimingLines)
-        {
-            if (timingLine.IsOnScreen)
-                toAdd.Add(timingLine);
-        }
+        List<EditorTimingLine> toAdd = FutureTimingLines.Where(timingLine => timingLine.IsOnScreen).ToList();
 
         foreach (var timingLine in toAdd)
         {
@@ -318,13 +306,7 @@ public partial class EditorPlayfield : Container
             TimingLines.Add(timingLine);
         }
 
-        List<EditorTimingLine> toRemove = new();
-
-        foreach (var timingLine in TimingLines)
-        {
-            if (!timingLine.IsOnScreen)
-                toRemove.Add(timingLine);
-        }
+        List<EditorTimingLine> toRemove = TimingLines.Where(timingLine => !timingLine.IsOnScreen).ToList();
 
         foreach (var timingLine in toRemove)
         {
@@ -344,17 +326,12 @@ public partial class EditorPlayfield : Container
                 return val == 0 ? Colour4.White : Colour4.Red;
 
             case 4:
-                switch (val)
+                return val switch
                 {
-                    case 0 or 4:
-                        return Colour4.White;
-
-                    case 1 or 3:
-                        return Colour4.FromHex("#0085ff");
-
-                    default:
-                        return Colour4.Red;
-                }
+                    0 or 4 => Colour4.White,
+                    1 or 3 => Colour4.FromHex("#0085ff"),
+                    _ => Colour4.Red
+                };
 
             case 3:
             case 6:

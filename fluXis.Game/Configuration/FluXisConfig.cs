@@ -43,5 +43,5 @@ public enum FluXisSetting
     MainMenuVisualizer,
 
     // Account
-    Token,
+    Token
 }

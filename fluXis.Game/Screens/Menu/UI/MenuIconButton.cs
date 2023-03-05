@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
@@ -19,7 +20,7 @@ public partial class MenuIconButton : Container, IHasTooltip
 
     public MenuIconButton()
     {
-        Size = new(40);
+        Size = new Vector2(40);
         Alpha = .6f;
 
         Child = icon = new SpriteIcon

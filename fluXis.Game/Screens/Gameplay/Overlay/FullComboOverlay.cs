@@ -10,7 +10,6 @@ namespace fluXis.Game.Screens.Gameplay.Overlay;
 
 public partial class FullComboOverlay : Container
 {
-    private readonly Box gradient;
     private readonly StripePattern pattern;
     private readonly SpriteText text;
 
@@ -21,11 +20,11 @@ public partial class FullComboOverlay : Container
 
         Children = new Drawable[]
         {
-            gradient = new Box
+            new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = ColourInfo.GradientHorizontal(FluXisColors.Accent, FluXisColors.Accent4),
-                Alpha = 0.2f,
+                Alpha = 0.2f
             },
             pattern = new StripePattern
             {
@@ -35,7 +34,7 @@ public partial class FullComboOverlay : Container
             {
                 Font = new FontUsage("Quicksand", 100, "Bold"),
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Origin = Anchor.Centre
             }
         };
     }
@@ -57,6 +56,6 @@ public partial class FullComboOverlay : Container
     public enum FullComboType
     {
         FullCombo,
-        AllFlawless,
+        AllFlawless
     }
 }

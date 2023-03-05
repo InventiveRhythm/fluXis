@@ -44,7 +44,7 @@ public partial class HealthBar : GameplayHUDElement
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft
             }
         };
     }

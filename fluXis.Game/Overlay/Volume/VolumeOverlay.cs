@@ -102,10 +102,12 @@ public partial class VolumeOverlay : Container
         timeInactive = 0;
 
         index += amount;
-        if (index < 0)
-            index = 2;
-        else if (index > 2)
-            index = 0;
+        index = index switch
+        {
+            < 0 => 2,
+            > 2 => 0,
+            _ => index
+        };
 
         for (var i = 0; i < categories.Children.Count; i++)
         {

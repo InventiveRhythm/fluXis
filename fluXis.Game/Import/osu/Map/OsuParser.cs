@@ -15,11 +15,11 @@ public class OsuParser
 
     public OsuParser()
     {
-        General = new();
-        Metadata = new();
-        Events = new();
-        TimingPoints = new();
-        HitObjects = new();
+        General = new List<string>();
+        Metadata = new List<string>();
+        Events = new List<string>();
+        TimingPoints = new List<string>();
+        HitObjects = new List<string>();
     }
 
     public void AddLine(string line, OsuFileSection section)
@@ -133,7 +133,7 @@ public class OsuParser
             {
                 EventType = split[0],
                 StartTime = split[1],
-                Parameter = split[2],
+                Parameter = split[2]
             };
 
             map.Events.Add(@event);
@@ -146,12 +146,12 @@ public class OsuParser
         {
             string[] split = line.Split(',');
 
-            map.TimingPoints.Add(new()
+            map.TimingPoints.Add(new OsuTimingPoint
             {
                 Time = int.Parse(split[0]),
                 BeatLength = decimal.Parse(split[1], CultureInfo.InvariantCulture),
                 Meter = int.Parse(split[2]),
-                Inherited = int.Parse(split[6]),
+                Inherited = int.Parse(split[6])
             });
         }
     }
@@ -162,11 +162,11 @@ public class OsuParser
         {
             string[] split = line.Split(',');
 
-            map.HitObjects.Add(new()
+            map.HitObjects.Add(new OsuHitObject
             {
                 X = int.Parse(split[0]),
                 StartTime = int.Parse(split[2]),
-                EndTime = int.Parse(split[5].Split(":")[0]),
+                EndTime = int.Parse(split[5].Split(":")[0])
             });
         }
     }

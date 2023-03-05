@@ -29,13 +29,13 @@ public partial class DangerHealthOverlay : GameplayHUDElement
                 Height = .6f,
                 Alpha = 0,
                 Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre
             },
             darken = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = Colour4.Black.Opacity(.6f),
-                Alpha = 0,
+                Alpha = 0
             }
         });
     }

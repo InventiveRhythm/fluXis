@@ -4,32 +4,31 @@ using osu.Framework.Graphics.Shapes;
 using osuTK;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Graphics
+namespace fluXis.Game.Graphics;
+
+public partial class TicTac : CircularContainer
 {
-    public partial class TicTac : CircularContainer
+    private float size;
+
+    public float TicTacSize
     {
-        private float size;
-
-        public float TicTacSize
+        get => size;
+        set
         {
-            get => size;
-            set
-            {
-                Size = new Vector2(value / 2, value);
-                size = value;
-            }
+            Size = new Vector2(value / 2, value);
+            size = value;
         }
+    }
 
-        public TicTac(float size)
+    public TicTac(float size)
+    {
+        TicTacSize = size;
+        Masking = true;
+
+        Child = new Box
         {
-            TicTacSize = size;
-            Masking = true;
-
-            Child = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Color4.White,
-            };
-        }
+            RelativeSizeAxes = Axes.Both,
+            Colour = Color4.White
+        };
     }
 }

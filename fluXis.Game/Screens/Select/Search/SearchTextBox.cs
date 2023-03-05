@@ -36,7 +36,7 @@ public partial class SearchTextBox : BasicTextBox
         Child = new SpriteText
         {
             Text = c.ToString(),
-            Font = new FontUsage("Quicksand", 40, "Bold"),
+            Font = new FontUsage("Quicksand", 40, "Bold")
         }
     };
 

@@ -74,7 +74,7 @@ public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2,
+                        Colour = FluXisColors.Background2
                     },
                     new FillFlowContainer
                     {

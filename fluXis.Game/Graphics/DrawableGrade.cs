@@ -109,7 +109,7 @@ public partial class DrawableGrade : Container
                 Origin = Anchor.Centre,
                 Margin = new MarginPadding { Right = 10 },
                 Colour = color
-            },
+            }
         });
     }
 }

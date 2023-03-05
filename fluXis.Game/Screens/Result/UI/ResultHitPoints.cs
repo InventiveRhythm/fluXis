@@ -39,9 +39,9 @@ public partial class ResultHitPoints : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
+                    Origin = Anchor.Centre
                 }
-            },
+            }
         });
 
         foreach (var hitPoint in performance.HitPoints)
@@ -50,10 +50,7 @@ public partial class ResultHitPoints : Container
 
     protected override bool OnDragStart(DragStartEvent e)
     {
-        if (e.Button == MouseButton.Left)
-            return true;
-
-        return false;
+        return e.Button == MouseButton.Left;
     }
 
     protected override void OnDrag(DragEvent e)

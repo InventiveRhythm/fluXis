@@ -19,7 +19,7 @@ public class Fluxel
     private static ClientWebSocket connection;
     private static APIUser loggedInUser;
 
-    private static List<string> packetQueue = new();
+    private static readonly List<string> packet_queue = new();
 
     public static string Token;
     public static Action<APIUser> OnUserLoggedIn;
@@ -39,7 +39,7 @@ public class Fluxel
             Logger.Log("Connected to server.");
 
             // send queued packets
-            foreach (var packet in packetQueue)
+            foreach (var packet in packet_queue)
                 Send(packet);
         }
         catch (Exception ex)
@@ -98,9 +98,9 @@ public class Fluxel
 
     public static void Send(string message)
     {
-        if (connection == null || connection.State != WebSocketState.Open)
+        if (connection is not { State: WebSocketState.Open })
         {
-            packetQueue.Add(message);
+            packet_queue.Add(message);
             return;
         }
 
@@ -117,7 +117,7 @@ public class Fluxel
 
     public static void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
     {
-        response_listeners.GetOrAdd(id, _ => new()).Add(response => listener((FluxelResponse<T>)response));
+        response_listeners.GetOrAdd(id, _ => new List<Action<object>>()).Add(response => listener((FluxelResponse<T>)response));
     }
 
     public static void UnregisterListener(EventType id)
@@ -140,7 +140,7 @@ public class Fluxel
     }
 }
 
-public enum EventType : int
+public enum EventType
 {
     Token = 0,
     Login = 1

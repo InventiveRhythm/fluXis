@@ -43,17 +43,17 @@ public partial class TimingCategoryList<T> : Container
                         {
                             Text = title,
                             Font = new FontUsage("Quicksand", 32, "Bold"),
-                            Margin = new MarginPadding { Bottom = 10, Left = 10 },
+                            Margin = new MarginPadding { Bottom = 10, Left = 10 }
                         },
                         flow = new FillFlowContainer<T>
                         {
                             Padding = new MarginPadding { Top = 48 },
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Vertical,
+                            Direction = FillDirection.Vertical
                         }
                     }
-                },
+                }
             },
             new Container
             {

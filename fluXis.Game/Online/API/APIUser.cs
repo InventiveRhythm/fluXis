@@ -1,17 +1,16 @@
-namespace fluXis.Game.Online.API
-{
-    public class APIUser : APIUserShort
-    {
-        public string AboutMe;
+namespace fluXis.Game.Online.API;
 
-        public static APIUser DummyUser(int id, string username = "Player")
+public class APIUser : APIUserShort
+{
+    public string AboutMe;
+
+    public static APIUser DummyUser(int id, string username = "Player")
+    {
+        return new APIUser
         {
-            return new APIUser
-            {
-                ID = id,
-                Username = username,
-                AboutMe = ""
-            };
-        }
+            ID = id,
+            Username = username,
+            AboutMe = ""
+        };
     }
 }

@@ -24,7 +24,7 @@ public class FluXisImport : MapImporter
     {
     }
 
-    public override Task Import(string path)
+    public virtual Task Import(string path)
     {
         return new Task(() =>
         {
@@ -46,7 +46,7 @@ public class FluXisImport : MapImporter
                 files.Add(new RealmFile
                 {
                     Hash = hash,
-                    Name = entry.FullName,
+                    Name = entry.FullName
                 });
 
                 if (filename.EndsWith(".fsc"))
@@ -83,7 +83,7 @@ public class FluXisImport : MapImporter
                         Tags = mapInfo.Metadata.Tags ?? "",
                         Audio = mapInfo.AudioFile,
                         Background = mapInfo.BackgroundFile,
-                        PreviewTime = mapInfo.Metadata.PreviewTime,
+                        PreviewTime = mapInfo.Metadata.PreviewTime
                     })
                     {
                         Difficulty = mapInfo.Metadata.Difficulty ?? "Unknown",

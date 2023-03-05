@@ -20,7 +20,7 @@ public class QuaverImport : MapImporter
     {
     }
 
-    public override Task Import(string path)
+    public virtual Task Import(string path)
     {
         return new Task(() =>
         {

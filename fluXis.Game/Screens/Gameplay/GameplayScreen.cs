@@ -120,7 +120,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding(10) { Bottom = 52 },
-                AttributeType = AttributeType.Artist,
+                AttributeType = AttributeType.Artist
             },
             new AttributeText(this)
             {
@@ -137,7 +137,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 Margin = new MarginPadding(10) { Bottom = 52 },
                 AttributeType = AttributeType.Mapper,
                 Text = "mapped by {value}"
-            },
+            }
         });
 
         AddInternal(overlay = new Box

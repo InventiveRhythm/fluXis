@@ -6,40 +6,36 @@ using fluXis.Game.Online.API;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 
-namespace fluXis.Game.Online
+namespace fluXis.Game.Online;
+
+public class UserCache
 {
-    public class UserCache
+    private static readonly Dictionary<int, APIUser> users = new();
+
+    public static APIUser GetUser(int id)
     {
-        private static readonly Dictionary<int, APIUser> users = new Dictionary<int, APIUser>();
+        if (users.ContainsKey(id))
+            return users[id];
 
-        public static APIUser GetUser(int id)
+        APIUser user = loadUser(id) ?? APIUser.DummyUser(id);
+        users.Add(id, user);
+        return user;
+    }
+
+    private static APIUser loadUser(int id)
+    {
+        try
         {
-            if (users.ContainsKey(id))
-                return users[id];
+            var res = Fluxel.Fluxel.Http.Send(new HttpRequestMessage(HttpMethod.Get, $"{APIConstants.API_URL}/user/{id}"));
+            var data = new StreamReader(res.Content.ReadAsStream()).ReadToEnd();
+            APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(data);
 
-            APIUser user = loadUser(id) ?? APIUser.DummyUser(id);
-            users.Add(id, user);
-            return user;
+            return user.Status == 200 ? user.Data : null;
         }
-
-        private static APIUser loadUser(int id)
+        catch (Exception e)
         {
-            try
-            {
-                var res = Fluxel.Fluxel.Http.Send(new HttpRequestMessage(HttpMethod.Get, $"{APIConstants.API_URL}/user/{id}"));
-                var data = new StreamReader(res.Content.ReadAsStream()).ReadToEnd();
-                APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(data);
-
-                if (user.Status == 200)
-                    return user.Data;
-
-                return null;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Failed to load user from API");
-                return null;
-            }
+            Logger.Error(e, "Failed to load user from API");
+            return null;
         }
     }
 }

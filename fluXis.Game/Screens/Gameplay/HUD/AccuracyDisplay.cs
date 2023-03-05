@@ -5,71 +5,70 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Game.Screens.Gameplay.HUD
+namespace fluXis.Game.Screens.Gameplay.HUD;
+
+public partial class AccuracyDisplay : GameplayHUDElement
 {
-    public partial class AccuracyDisplay : GameplayHUDElement
+    private SpriteText accuracyText;
+    private float displayedAccuracy;
+    private float lastAccuracy;
+
+    private Grade grade = Grade.X;
+    private DrawableGrade drawableGrade;
+
+    public AccuracyDisplay(GameplayScreen screen)
+        : base(screen)
     {
-        private SpriteText accuracyText;
-        private float displayedAccuracy;
-        private float lastAccuracy;
+        displayedAccuracy = 0;
+        lastAccuracy = 0;
+    }
 
-        private Grade grade = Grade.X;
-        private DrawableGrade drawableGrade;
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.TopCentre;
 
-        public AccuracyDisplay(GameplayScreen screen)
-            : base(screen)
+        Add(new FillFlowContainer
         {
-            displayedAccuracy = 0;
-            lastAccuracy = 0;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.TopCentre;
-
-            Add(new FillFlowContainer
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Horizontal,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.TopCentre,
+            Children = new Drawable[]
             {
-                AutoSizeAxes = Axes.Both,
-                Direction = FillDirection.Horizontal,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.TopCentre,
-                Children = new Drawable[]
-                {
-                    drawableGrade = new DrawableGrade { Size = 32 },
-                    accuracyText = new SpriteText { Font = new FontUsage("Quicksand", 32f, "SemiBold", false, true) }
-                }
-            });
-        }
-
-        protected override void LoadComplete()
-        {
-            accuracyText.FadeOut().Then(500).FadeInFromZero(250);
-
-            base.LoadComplete();
-        }
-
-        protected override void Update()
-        {
-            var currentAccuracy = Screen.Performance.Accuracy;
-
-            if (currentAccuracy != lastAccuracy)
-            {
-                float acc = (int)(currentAccuracy * 100) / 100f;
-                this.TransformTo(nameof(displayedAccuracy), acc, 400, Easing.Out);
-                lastAccuracy = acc;
+                drawableGrade = new DrawableGrade { Size = 32 },
+                accuracyText = new SpriteText { Font = new FontUsage("Quicksand", 32f, "SemiBold", false, true) }
             }
+        });
+    }
 
-            accuracyText.Text = $"{displayedAccuracy:00.00}%".Replace(",", ".");
+    protected override void LoadComplete()
+    {
+        accuracyText.FadeOut().Then(500).FadeInFromZero(250);
 
-            if (grade != Screen.Performance.Grade)
-            {
-                grade = Screen.Performance.Grade;
-                drawableGrade.Grade = grade;
-            }
+        base.LoadComplete();
+    }
 
-            base.Update();
+    protected override void Update()
+    {
+        var currentAccuracy = Screen.Performance.Accuracy;
+
+        if (currentAccuracy != lastAccuracy)
+        {
+            float acc = (int)(currentAccuracy * 100) / 100f;
+            this.TransformTo(nameof(displayedAccuracy), acc, 400, Easing.Out);
+            lastAccuracy = acc;
         }
+
+        accuracyText.Text = $"{displayedAccuracy:00.00}%".Replace(",", ".");
+
+        if (grade != Screen.Performance.Grade)
+        {
+            grade = Screen.Performance.Grade;
+            drawableGrade.Grade = grade;
+        }
+
+        base.Update();
     }
 }

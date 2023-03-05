@@ -37,7 +37,7 @@ public partial class ScoreListEntry : Container
                 {
                     new(GridSizeMode.Absolute, 50),
                     new(),
-                    new(GridSizeMode.Absolute, 100),
+                    new(GridSizeMode.Absolute, 100)
                 },
                 RelativeSizeAxes = Axes.Both,
                 Content = new[]
@@ -106,7 +106,7 @@ public partial class ScoreListEntry : Container
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
                                     Y = -2
-                                },
+                                }
                             }
                         }
                     }

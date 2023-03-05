@@ -27,7 +27,7 @@ public partial class FailOverlay : Container
                 Text = "FAILED",
                 Font = new FontUsage("Quicksand", 100, "Bold"),
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Origin = Anchor.Centre
             }
         };
     }

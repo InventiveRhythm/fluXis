@@ -56,7 +56,7 @@ public partial class EditorToolbar : Container
                         new EditorToolbarButton("compose", () => editor.ChangeTab(1)),
                         new EditorToolbarButton("timing", () => editor.ChangeTab(2))
                     }
-                },
+                }
             }
         };
     }

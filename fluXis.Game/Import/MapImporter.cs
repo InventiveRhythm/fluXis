@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using fluXis.Game.Database;
 using fluXis.Game.Map;
 using osu.Framework.Platform;
@@ -22,12 +21,7 @@ public class MapImporter
         Storage = storage;
     }
 
-    public virtual Task Import(string path)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetHash(ZipArchiveEntry entry)
+    public static string GetHash(ZipArchiveEntry entry)
     {
         var sha256 = SHA256.Create();
         var hashBytes = sha256.ComputeHash(entry.Open());

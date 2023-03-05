@@ -36,7 +36,7 @@ public partial class StatusTag : Container
             new Box
             {
                 Colour = colour,
-                RelativeSizeAxes = Axes.Both,
+                RelativeSizeAxes = Axes.Both
             },
             new SpriteText
             {
@@ -57,7 +57,7 @@ public partial class StatusTag : Container
                 Colour = colour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White,
                 Font = new FontUsage("Quicksand", 20, "Bold"),
                 Margin = new MarginPadding { Horizontal = 10 },
-                Y = -1,
+                Y = -1
             }
         };
     }

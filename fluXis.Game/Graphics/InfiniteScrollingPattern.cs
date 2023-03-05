@@ -57,7 +57,7 @@ public partial class InfiniteScrollingPattern : Container
                     Anchor = Anchor.TopLeft,
                     Origin = Anchor.TopLeft,
                     Position = new Vector2(x * spriteSize.X + x * TextureSpacing.X, y * spriteSize.Y + y * TextureSpacing.Y),
-                    Size = spriteSize,
+                    Size = spriteSize
                 };
 
                 Add(sprite);

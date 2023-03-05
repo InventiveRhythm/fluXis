@@ -27,7 +27,7 @@ public partial class TestMapEntry : FluXisTestScene
         AddStep("Test MapEntry", () =>
         {
             ClearInternal();
-            Add(new MapListEntry(null, set, 0));
+            Add(new MapListEntry(null, set));
         });
     }
 }

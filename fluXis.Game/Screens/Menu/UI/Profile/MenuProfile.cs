@@ -33,7 +33,7 @@ public partial class MenuProfile : Container
                     RelativeSizeAxes = Axes.Both
                 },
                 Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight,
+                Origin = Anchor.CentreRight
             },
             username = new SpriteText
             {
@@ -42,8 +42,8 @@ public partial class MenuProfile : Container
                 Y = -2,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Margin = new MarginPadding { Right = 120 },
-            },
+                Margin = new MarginPadding { Right = 120 }
+            }
         };
 
         Fluxel.OnUserLoggedIn += updateUser;

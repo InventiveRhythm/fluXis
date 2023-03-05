@@ -30,19 +30,19 @@ public partial class SmallMenuButton : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background,
+                Colour = FluXisColors.Background
             },
             hover = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
+                Alpha = 0
             },
             icon = new SpriteIcon
             {
                 Size = new Vector2(20),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 10 },
+                Margin = new MarginPadding { Left = 10 }
             },
             text = new SpriteText
             {
@@ -50,8 +50,8 @@ public partial class SmallMenuButton : Container
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 40 },
                 Font = new FontUsage("Quicksand", 20, "Bold"),
-                Y = -2,
-            },
+                Y = -2
+            }
         };
     }
 

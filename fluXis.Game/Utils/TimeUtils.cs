@@ -37,22 +37,25 @@ public class TimeUtils
     {
         TimeSpan span = DateTimeOffset.Now - time;
 
-        if (span.TotalDays > 365)
+        switch (span.TotalDays)
         {
-            int years = (int)(span.TotalDays / 365);
-            return years == 1 ? "1 year ago" : $"{years} years ago";
-        }
+            case > 365:
+            {
+                int years = (int)(span.TotalDays / 365);
+                return years == 1 ? "1 year ago" : $"{years} years ago";
+            }
 
-        if (span.TotalDays > 30)
-        {
-            int months = (int)(span.TotalDays / 30);
-            return months == 1 ? "1 month ago" : $"{months} months ago";
-        }
+            case > 30:
+            {
+                int months = (int)(span.TotalDays / 30);
+                return months == 1 ? "1 month ago" : $"{months} months ago";
+            }
 
-        if (span.TotalDays > 1)
-        {
-            int days = (int)span.TotalDays;
-            return days == 1 ? "1 day ago" : $"{days} days ago";
+            case > 1:
+            {
+                int days = (int)span.TotalDays;
+                return days == 1 ? "1 day ago" : $"{days} days ago";
+            }
         }
 
         if (span.TotalHours > 1)
