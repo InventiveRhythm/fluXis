@@ -1,5 +1,7 @@
 using System;
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -18,6 +20,9 @@ public partial class SmallMenuButton : Container
     private readonly Box hover;
     private readonly SpriteIcon icon;
     private readonly SpriteText text;
+
+    private Sample sampleClick;
+    private Sample sampleHover;
 
     public SmallMenuButton()
     {
@@ -55,9 +60,17 @@ public partial class SmallMenuButton : Container
         };
     }
 
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        sampleClick = samples.Get("ui/accept.ogg");
+        sampleHover = samples.Get("ui/scroll.ogg");
+    }
+
     protected override bool OnHover(HoverEvent e)
     {
         hover.FadeTo(.2f, 200);
+        sampleHover?.Play();
         return true;
     }
 
@@ -69,6 +82,7 @@ public partial class SmallMenuButton : Container
     protected override bool OnClick(ClickEvent e)
     {
         Action?.Invoke();
+        sampleClick?.Play();
         return true;
     }
 }
