@@ -33,6 +33,7 @@ public partial class EditorPlayfield : Container
     public List<EditorHitObject> FutureHitObjects { get; } = new();
 
     public Container<EditorTimingLine> TimingLines { get; }
+    public List<EditorTimingLine> FutureTimingLines { get; } = new();
 
     private readonly EditorHitObject ghostNote;
     private bool isDragging;
@@ -131,7 +132,7 @@ public partial class EditorPlayfield : Container
 
             while (position < target)
             {
-                TimingLines.Add(new EditorTimingLine(this)
+                FutureTimingLines.Add(new EditorTimingLine(this)
                 {
                     Time = position,
                     Colour = getSnapColor(i % Snap, i)
@@ -265,6 +266,7 @@ public partial class EditorPlayfield : Container
     protected override void Update()
     {
         updateHitObjects();
+        updateTimingLines();
 
         base.Update();
     }
@@ -297,6 +299,37 @@ public partial class EditorPlayfield : Container
         {
             HitObjects.Remove(hitObject, false);
             FutureHitObjects.Add(hitObject);
+        }
+    }
+
+    private void updateTimingLines()
+    {
+        List<EditorTimingLine> toAdd = new();
+
+        foreach (var timingLine in FutureTimingLines)
+        {
+            if (timingLine.IsOnScreen)
+                toAdd.Add(timingLine);
+        }
+
+        foreach (var timingLine in toAdd)
+        {
+            FutureTimingLines.Remove(timingLine);
+            TimingLines.Add(timingLine);
+        }
+
+        List<EditorTimingLine> toRemove = new();
+
+        foreach (var timingLine in TimingLines)
+        {
+            if (!timingLine.IsOnScreen)
+                toRemove.Add(timingLine);
+        }
+
+        foreach (var timingLine in toRemove)
+        {
+            TimingLines.Remove(timingLine, false);
+            FutureTimingLines.Add(timingLine);
         }
     }
 

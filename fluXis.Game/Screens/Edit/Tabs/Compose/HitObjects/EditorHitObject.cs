@@ -12,7 +12,7 @@ public partial class EditorHitObject : Container
 
     public HitObjectInfo Info { get; set; }
 
-    public bool IsOnScreen => Conductor.CurrentTime <= Info.HoldEndTime;
+    public bool IsOnScreen => Conductor.CurrentTime <= Info.HoldEndTime && Conductor.CurrentTime >= Info.Time - 3000 / Playfield.Zoom;
 
     private readonly Box note;
     private readonly Box holdBody;

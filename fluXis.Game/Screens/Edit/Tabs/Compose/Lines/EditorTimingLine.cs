@@ -10,6 +10,8 @@ public partial class EditorTimingLine : Box
 
     public new float Time { get; set; }
 
+    public bool IsOnScreen => Conductor.CurrentTime <= Time + 1000 && Conductor.CurrentTime >= Time - 3000 / Playfield.Zoom;
+
     public EditorTimingLine(EditorPlayfield playfield)
     {
         Playfield = playfield;
