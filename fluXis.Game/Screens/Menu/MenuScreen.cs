@@ -39,6 +39,8 @@ public partial class MenuScreen : Screen
     private Box blackBox;
     private Container content;
 
+    private MenuButton playButton;
+
     [BackgroundDependencyLoader]
     private void load(Storage storage, GameHost host)
     {
@@ -83,7 +85,7 @@ public partial class MenuScreen : Screen
                         Origin = Anchor.BottomLeft,
                         Children = new Drawable[]
                         {
-                            new MenuButton
+                            playButton = new MenuButton
                             {
                                 Text = "Play!",
                                 Description = $"{maps.MapSets.Count} maps loaded",
@@ -143,6 +145,12 @@ public partial class MenuScreen : Screen
                         {
                             new MenuIconButton
                             {
+                                Icon = FontAwesome.Brands.Discord,
+                                Action = () => host.OpenUrlExternally("https://discord.gg/29hMftpNq9"),
+                                Text = "Discord"
+                            },
+                            new MenuIconButton
+                            {
                                 Icon = FontAwesome.Brands.Github,
                                 Action = () => host.OpenUrlExternally("https://github.com/TeamFluXis/fluXis"),
                                 Text = "GitHub"
@@ -165,6 +173,8 @@ public partial class MenuScreen : Screen
                 Alpha = 0
             }
         };
+
+        maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
     }
 
     private void exit()
