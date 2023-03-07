@@ -4,21 +4,18 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
 
 public partial class JudgementCounterItem : Container
 {
-    public const int SIZE = 50;
-    public const int MARGIN = 5;
-
     private readonly Performance performance;
     private readonly Judgements judgement;
+
+    private HitWindow hitWindow;
     private int count;
 
     private Box background;
-    private Box line;
     private SpriteText text;
 
     public JudgementCounterItem(Performance performance, Judgements judgement)
@@ -30,37 +27,25 @@ public partial class JudgementCounterItem : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(SIZE);
-        Anchor = Anchor.TopRight;
-        Origin = Anchor.CentreRight;
-        CornerRadius = 5;
-        Masking = true;
+        RelativeSizeAxes = Axes.X;
+        Height = 50;
 
-        HitWindow jud = HitWindow.FromKey(judgement);
+        hitWindow = HitWindow.FromKey(judgement);
 
         Children = new Drawable[]
         {
             background = new Box
             {
-                Colour = jud.Color,
+                Colour = hitWindow.Color,
                 RelativeSizeAxes = Axes.Both,
-                Alpha = .2f
-            },
-            line = new Box
-            {
-                Colour = jud.Color,
-                RelativeSizeAxes = Axes.Y,
-                Width = 5,
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight
+                Alpha = 0
             },
             text = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 24, "SemiBold"),
+                Font = new FontUsage("Grade", 24),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = Colour4.White,
-                Y = -2
+                Colour = hitWindow.Color
             }
         };
     }
@@ -73,26 +58,37 @@ public partial class JudgementCounterItem : Container
             {
                 count = performance.Judgements[judgement];
                 lightUp();
+                text.Font = new FontUsage("Grade", count switch
+                {
+                    > 0 and < 100 => 24,
+                    > 99 and < 1000 => 20,
+                    > 999 and < 10000 => 16,
+                    _ => 12 // > 9999
+                });
             }
+
+            text.Text = count.ToString();
         }
         else
         {
-            count = 0;
+            text.Text = judgement switch
+            {
+                Judgements.Flawless => "FL",
+                Judgements.Perfect => "PF",
+                Judgements.Great => "GR",
+                Judgements.Alright => "AL",
+                Judgements.Okay => "OK",
+                Judgements.Miss => "MS",
+                _ => "??"
+            };
         }
-
-        text.Text = count.ToString();
 
         base.Update();
     }
 
     private void lightUp()
     {
-        HitWindow jud = HitWindow.FromKey(judgement);
-
-        background.FadeTo(.5f)
-                  .FadeTo(.1f, 200);
-
-        line.FadeColour(Colour4.White)
-            .FadeColour(jud.Color, 200);
+        background.FadeTo(.25f)
+                  .FadeOut(200);
     }
 }

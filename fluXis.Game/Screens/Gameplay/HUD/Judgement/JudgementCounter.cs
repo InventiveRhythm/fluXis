@@ -1,7 +1,9 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
 
@@ -19,14 +21,40 @@ public partial class JudgementCounter : CompositeDrawable
     {
         Anchor = Anchor.CentreRight;
         Origin = Anchor.CentreRight;
-        X = -5;
+        Width = 50;
+        Margin = new MarginPadding { Right = 5 };
 
-        foreach (var judgement in HitWindow.LIST)
+        AddInternal(new Container
         {
-            var counter = new JudgementCounterItem(performance, judgement.Key);
-            counter.Y = (int)Height;
-            Height += JudgementCounterItem.SIZE + JudgementCounterItem.MARGIN;
-            AddInternal(counter);
-        }
+            Anchor = Anchor.CentreRight,
+            Origin = Anchor.CentreRight,
+            RelativeSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Y,
+            CornerRadius = 5,
+            Masking = true,
+            Children = new Drawable[]
+            {
+                new Box
+                {
+                    Colour = FluXisColors.Surface2,
+                    RelativeSizeAxes = Axes.Both
+                },
+                new FillFlowContainer<JudgementCounterItem>
+                {
+                    Direction = FillDirection.Vertical,
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Children = new JudgementCounterItem[]
+                    {
+                        new(performance, Judgements.Flawless),
+                        new(performance, Judgements.Perfect),
+                        new(performance, Judgements.Great),
+                        new(performance, Judgements.Alright),
+                        new(performance, Judgements.Okay),
+                        new(performance, Judgements.Miss)
+                    }
+                }
+            }
+        });
     }
 }
