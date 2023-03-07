@@ -42,33 +42,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
     public readonly List<RealmMapSet> Maps = new();
 
-    public string Search
-    {
-        set
-        {
-            Maps.Clear();
-
-            SearchFilters filters = SearchFilters.Create(value);
-
-            foreach (var child in MapList.Children)
-            {
-                bool matches = child.MapSet.Maps.Aggregate(false, (current, map) => current | filters.Matches(map));
-
-                if (matches)
-                {
-                    Maps.Add(child.MapSet);
-                    child.Show();
-                }
-                else
-                    child.Hide();
-            }
-
-            if (!Maps.Any())
-                noMapsText.FadeIn(200);
-            else
-                noMapsText.FadeOut(200);
-        }
-    }
+    public SearchFilters Filters = new();
 
     private SpriteText noMapsText;
 
@@ -82,6 +56,8 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         MenuAccept = samples.Get("ui/accept.ogg");
         MenuBack = samples.Get("ui/back.ogg");
         MenuScroll = samples.Get("ui/scroll.ogg");
+
+        Filters.OnChange += UpdateSearch;
 
         AddInternal(MapList = new MapList());
         AddInternal(SearchBar = new SearchBar(this));
@@ -113,15 +89,12 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         var sets = mapStore.MapSets;
 
-        int i = 0;
-
         foreach (RealmMapSet set in sets)
         {
             MapListEntry entry = new(this, set);
             MapList.Add(entry);
             Maps.Add(set);
             lookup[set] = entry;
-            i++;
         }
 
         if (!sets.Any())
@@ -341,4 +314,27 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
+    public void UpdateSearch()
+    {
+        Maps.Clear();
+
+        foreach (var child in MapList.Children)
+        {
+            bool matches = child.MapSet.Maps.Aggregate(false, (current, map) => current | Filters.Matches(map));
+
+            if (matches)
+            {
+                Maps.Add(child.MapSet);
+                child.Show();
+            }
+            else
+                child.Hide();
+        }
+
+        if (!Maps.Any())
+            noMapsText.FadeIn(200);
+        else
+            noMapsText.FadeOut(200);
+    }
 }

@@ -1,65 +1,45 @@
-using System.Collections.Generic;
+using System;
 using fluXis.Game.Database.Maps;
 
 namespace fluXis.Game.Utils;
 
 public class SearchFilters
 {
-    public List<string> SearchTerms { get; set; } = new();
+    public Action OnChange { get; set; } = () => { };
 
-    public int BPM { get; set; }
-    public Type BPMType { get; set; }
-
-    public int Status { get; set; } = -5;
-
-    public static SearchFilters Create(string search)
+    public string Query
     {
-        var filter = new SearchFilters();
-
-        foreach (var split in search.ToLower().Trim().Split(" "))
+        get => query;
+        set
         {
-            if (split.StartsWith("bpm"))
-            {
-                var bpm = split[3..];
-                Type bpmType;
-
-                if (bpm.StartsWith("="))
-                    bpmType = Type.Exact;
-                else if (bpm.StartsWith(">"))
-                    bpmType = Type.Over;
-                else if (bpm.StartsWith("<"))
-                    bpmType = Type.Under;
-                else
-                    continue;
-
-                bpm = bpm[1..];
-
-                if (int.TryParse(bpm, out var bpmValue))
-                {
-                    filter.BPM = bpmValue;
-                    filter.BPMType = bpmType;
-                }
-            }
-            else if (split.StartsWith("status="))
-            {
-                var status = split[7..];
-
-                filter.Status = status switch
-                {
-                    "l" or "local" => -2,
-                    "u" or "unsubmitted" => 0,
-                    "p" or "pending" => 1,
-                    "i" or "impure" => 2,
-                    "p" or "pure" => 3,
-                    _ => filter.Status
-                };
-            }
-            else
-                filter.SearchTerms.Add(split);
+            query = value;
+            OnChange.Invoke();
         }
-
-        return filter;
     }
+
+    public int BPM
+    {
+        get => bpm;
+        set
+        {
+            bpm = value;
+            OnChange.Invoke();
+        }
+    }
+
+    public Type BPMType
+    {
+        get => bpmType;
+        set
+        {
+            bpmType = value;
+            OnChange.Invoke();
+        }
+    }
+
+    private int bpm;
+    private Type bpmType;
+    private string query;
 
     public bool Matches(RealmMap map)
     {
@@ -81,7 +61,7 @@ public class SearchFilters
 
                 case Type.Over:
                 {
-                    if (map.BPMMin > BPM)
+                    if (map.BPMMin >= BPM)
                         matches = true;
                     else
                         return false;
@@ -91,7 +71,7 @@ public class SearchFilters
 
                 case Type.Under:
                 {
-                    if (map.BPMMax < BPM)
+                    if (map.BPMMax <= BPM)
                         matches = true;
                     else
                         return false;
@@ -101,40 +81,29 @@ public class SearchFilters
             }
         }
 
-        if (Status != -5)
+        if (Query.Length > 0)
         {
-            if (map.Status == Status)
-                matches = true;
-            else
+            bool termMatches = false;
+
+            string title = map.Metadata.Title.ToLower();
+            string artist = map.Metadata.Artist.ToLower();
+            string mapper = map.Metadata.Mapper.ToLower();
+            string source = map.Metadata.Source.ToLower();
+            string tags = map.Metadata.Tags.ToLower();
+            string difficulty = map.Difficulty.ToLower();
+
+            termMatches |= title.Contains(Query);
+            termMatches |= artist.Contains(Query);
+            termMatches |= mapper.Contains(Query);
+            termMatches |= source.Contains(Query);
+            termMatches |= tags.Contains(Query);
+            termMatches |= difficulty.Contains(Query);
+
+            if (!termMatches)
                 return false;
-        }
 
-        if (SearchTerms.Count > 0)
-        {
-            foreach (var term in SearchTerms)
-            {
-                bool termMatches = false;
-
-                string title = map.Metadata.Title.ToLower();
-                string artist = map.Metadata.Artist.ToLower();
-                string mapper = map.Metadata.Mapper.ToLower();
-                string source = map.Metadata.Source.ToLower();
-                string tags = map.Metadata.Tags.ToLower();
-                string difficulty = map.Difficulty.ToLower();
-
-                termMatches |= title.Contains(term);
-                termMatches |= artist.Contains(term);
-                termMatches |= mapper.Contains(term);
-                termMatches |= source.Contains(term);
-                termMatches |= tags.Contains(term);
-                termMatches |= difficulty.Contains(term);
-
-                if (!termMatches)
-                    return false;
-
-                if (!matches)
-                    matches = true;
-            }
+            if (!matches)
+                matches = true;
         }
 
         return matches;

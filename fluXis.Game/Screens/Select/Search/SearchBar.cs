@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Select.Search;
 
@@ -11,6 +12,7 @@ public partial class SearchBar : Container
     public SelectScreen Screen;
 
     private readonly Container dropdownContainer;
+    private readonly SearchDropdown dropdown;
 
     private readonly BindableBool dropdownOpen = new();
 
@@ -47,10 +49,14 @@ public partial class SearchBar : Container
                 RelativeSizeAxes = Axes.X,
                 Height = 0,
                 Margin = new MarginPadding { Top = 50 },
-                Child = new Box
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2
+                    },
+                    dropdown = new SearchDropdown(Screen.Filters)
                 }
             }
         };
@@ -61,8 +67,13 @@ public partial class SearchBar : Container
     private void updateDropdownStatus()
     {
         if (dropdownOpen.Value)
-            dropdownContainer.ResizeHeightTo(400, 400, Easing.OutQuint);
+            dropdownContainer.ResizeHeightTo(dropdown.DrawHeight, 400, Easing.OutQuint);
         else
             dropdownContainer.ResizeHeightTo(0, 400, Easing.InQuint);
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        return true;
     }
 }

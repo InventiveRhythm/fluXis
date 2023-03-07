@@ -42,7 +42,7 @@ public partial class SearchTextBox : BasicTextBox
 
     private void updateSearch()
     {
-        search.Screen.Search = Text;
+        search.Screen.Filters.Query = Text;
     }
 
     protected override void OnUserTextAdded(string added)
