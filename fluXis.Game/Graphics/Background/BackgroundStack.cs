@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,6 +17,7 @@ public partial class BackgroundStack : CompositeDrawable
 {
     private readonly List<Background> scheduledBackgrounds = new();
     private readonly Container backgroundContainer;
+    private readonly BackgroundVideo backgroundVideo;
     private readonly Box swipeAnimation;
     private readonly Box backgroundDim;
     private string currentBackground;
@@ -49,6 +51,7 @@ public partial class BackgroundStack : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
+            backgroundVideo = new BackgroundVideo(),
             backgroundDim = new Box
             {
                 Colour = Colour4.Black,
@@ -133,6 +136,19 @@ public partial class BackgroundStack : CompositeDrawable
 
         currentBackground = path;
         scheduledBackgrounds.Add(new Background(path));
+    }
+
+    public void SetVideoBackground(RealmMap map, MapInfo info, int delay = 2000)
+    {
+        backgroundVideo.Map = map;
+        backgroundVideo.Info = info;
+        backgroundVideo.Delay = delay;
+        backgroundVideo.LoadVideo();
+    }
+
+    public void StopVideo()
+    {
+        backgroundVideo.Stop();
     }
 
     public void SwipeAnimation()

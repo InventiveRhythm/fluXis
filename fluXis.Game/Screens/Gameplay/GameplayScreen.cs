@@ -161,6 +161,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         Conductor.CurrentTime = -2000;
         Conductor.TimingPoints = Map.TimingPoints;
         Conductor.SetSpeed(1, 0);
+        backgrounds.SetVideoBackground(RealmMap, Map);
 
         base.LoadComplete();
     }
@@ -231,6 +232,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         fadeOut();
+        backgrounds.StopVideo();
     }
 
     public override bool OnExiting(ScreenExitEvent e)
@@ -240,6 +242,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
         Conductor.SetSpeed(1, 500, Easing.None);
+        backgrounds.StopVideo();
 
         return base.OnExiting(e);
     }
