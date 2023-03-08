@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -11,8 +12,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 
 public partial class TimingPointList : TimingCategoryList<TimingPointList.TimingPointEntry>
 {
-    public TimingPointList(List<TimingPointInfo> points)
-        : base("Timing Points", FluXisColors.Surface)
+    public TimingPointList(List<TimingPointInfo> points, TimingTab tab)
+        : base("Timing Points", FluXisColors.Surface, tab)
     {
         points.ForEach(point => AddEntry(new TimingPointEntry(point)));
     }
@@ -25,6 +26,8 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
             BPM = 120,
             Signature = 4
         }));
+
+        TimingTab.OnTimingPointChanged();
 
         base.OnAdd();
     }
@@ -41,30 +44,44 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
     {
         public readonly TimingPointInfo PointInfo;
 
+        private SpriteText timeText;
+        private SpriteText bpmText;
+        private SpriteText signatureText;
+
         public TimingPointEntry(TimingPointInfo pointInfo)
         {
             PointInfo = pointInfo;
         }
 
+        protected override void Update()
+        {
+            timeText.Text = TimeUtils.Format(PointInfo.Time);
+            bpmText.Text = PointInfo.BPM + "bpm";
+            signatureText.Text = PointInfo.Signature + "/4";
+            base.Update();
+        }
+
         public override Drawable[] CreateContent() => new Drawable[]
         {
-            new SpriteText
+            timeText = new SpriteText
             {
                 Text = TimeUtils.Format(PointInfo.Time),
                 Font = new FontUsage("Quicksand", 24, "Bold", false, true),
                 Width = 100
             },
-            new SpriteText
+            bpmText = new SpriteText
             {
                 Text = PointInfo.BPM + "bpm",
                 Font = new FontUsage("Quicksand", 24, "Bold"),
                 Width = 70
             },
-            new SpriteText
+            signatureText = new SpriteText
             {
                 Text = PointInfo.Signature + "/4",
                 Font = new FontUsage("Quicksand", 24, "Bold")
             }
         };
+
+        public override PointSettings CreatePointSettings() => new TimingPointSettings(PointInfo);
     }
 }

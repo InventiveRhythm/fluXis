@@ -11,8 +11,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 
 public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.ScrollVelocityEntry>
 {
-    public ScrollVelocityList(List<ScrollVelocityInfo> velocities)
-        : base("Scroll Velocities", FluXisColors.Background2)
+    public ScrollVelocityList(List<ScrollVelocityInfo> velocities, TimingTab tab)
+        : base("Scroll Velocities", FluXisColors.Background2, tab)
     {
         velocities.ForEach(point => AddEntry(new ScrollVelocityEntry(point)));
     }
@@ -40,20 +40,30 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
     {
         public readonly ScrollVelocityInfo VelocityInfo;
 
+        private SpriteText timeText;
+        private SpriteText multiplierText;
+
         public ScrollVelocityEntry(ScrollVelocityInfo velocityInfo)
         {
             VelocityInfo = velocityInfo;
         }
 
+        protected override void Update()
+        {
+            timeText.Text = TimeUtils.Format(VelocityInfo.Time);
+            multiplierText.Text = VelocityInfo.Multiplier + "x";
+            base.Update();
+        }
+
         public override Drawable[] CreateContent() => new Drawable[]
         {
-            new SpriteText
+            timeText = new SpriteText
             {
                 Text = TimeUtils.Format(VelocityInfo.Time),
                 Font = new FontUsage("Quicksand", 24, "Bold", false, true),
                 Width = 100
             },
-            new SpriteText
+            multiplierText = new SpriteText
             {
                 Text = VelocityInfo.Multiplier + "x",
                 Font = new FontUsage("Quicksand", 24, "Bold")

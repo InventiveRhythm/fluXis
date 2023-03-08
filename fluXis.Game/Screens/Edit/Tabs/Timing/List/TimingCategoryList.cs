@@ -16,9 +16,11 @@ public partial class TimingCategoryList<T> : Container
     where T : TimingCategoryList<T>.ListEntry
 {
     private readonly FillFlowContainer<T> flow;
+    public readonly TimingTab TimingTab;
 
-    public TimingCategoryList(string title, Colour4 background)
+    public TimingCategoryList(string title, Colour4 background, TimingTab tab)
     {
+        TimingTab = tab;
         RelativeSizeAxes = Axes.Both;
 
         AddRange(new Drawable[]
@@ -69,6 +71,7 @@ public partial class TimingCategoryList<T> : Container
 
     public void AddEntry(T item)
     {
+        item.TimingTab = TimingTab;
         flow.Add(item);
     }
 
@@ -187,6 +190,8 @@ public partial class TimingCategoryList<T> : Container
 
     public partial class ListEntry : Container
     {
+        public TimingTab TimingTab;
+
         public ListEntry()
         {
             RelativeSizeAxes = Axes.X;
@@ -215,6 +220,14 @@ public partial class TimingCategoryList<T> : Container
             });
         }
 
+        protected override bool OnClick(ClickEvent e)
+        {
+            TimingTab.SetPointSettings(CreatePointSettings());
+            return true;
+        }
+
         public virtual Drawable[] CreateContent() => Array.Empty<Drawable>();
+
+        public virtual PointSettings CreatePointSettings() => null;
     }
 }

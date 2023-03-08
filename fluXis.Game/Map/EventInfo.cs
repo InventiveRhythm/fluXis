@@ -1,8 +1,7 @@
 namespace fluXis.Game.Map;
 
-public class EventInfo
+public class EventInfo : TimedObject
 {
-    public float Time;
     public string Type;
     public int Value;
 }

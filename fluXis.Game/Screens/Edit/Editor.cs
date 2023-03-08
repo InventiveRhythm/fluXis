@@ -22,6 +22,8 @@ public partial class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
     private Container tabs;
     private int currentTab;
 
+    private ComposeTab composeTab;
+
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
         Map = realmMap ?? RealmMap.CreateNew();
@@ -45,8 +47,8 @@ public partial class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
                 Children = new Drawable[]
                 {
                     new SetupTab(this),
-                    new ComposeTab(this),
-                    new TimingTab(this)
+                    composeTab = new ComposeTab(this),
+                    new TimingTab(this) { OnTimingPointChanged = composeTab.OnTimingPointChanged }
                 }
             },
             new EditorToolbar(this)

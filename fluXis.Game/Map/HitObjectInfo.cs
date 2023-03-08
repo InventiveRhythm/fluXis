@@ -2,9 +2,8 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map;
 
-public class HitObjectInfo
+public class HitObjectInfo : TimedObject
 {
-    public float Time;
     public int Lane;
     public float HoldTime;
 

@@ -143,6 +143,13 @@ public partial class EditorPlayfield : Container
         }
     }
 
+    public void RedrawLines()
+    {
+        FutureTimingLines.Clear();
+        TimingLines.Clear();
+        loadTimingLines();
+    }
+
     protected override bool OnHover(HoverEvent e)
     {
         return true;

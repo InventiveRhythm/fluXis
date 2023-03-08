@@ -6,50 +6,42 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Timing;
+namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
-public partial class PointSettings<T> : PointSettings
-    where T : TimedObject
+public partial class TimingPointSettings : PointSettings<TimingPointInfo>
 {
-    public T Point { get; }
+    public PointSettingsTextBox BPMTextBox { get; }
 
-    public PointSettings(T point)
+    private readonly SignatureTextBoxContainer signatureTextBox;
+
+    public TimingPointSettings(TimingPointInfo point)
+        : base(point)
     {
-        Point = point;
-        TimeTextBox.Text = point.Time.ToString(CultureInfo.InvariantCulture);
-    }
-}
-
-public partial class PointSettings : FillFlowContainer
-{
-    public TimingTab Tab { get; set; }
-
-    public PointSettingsTextBox TimeTextBox { get; }
-
-    public PointSettings()
-    {
-        Direction = FillDirection.Vertical;
-        RelativeSizeAxes = Axes.X;
-        AutoSizeAxes = Axes.Y;
-        Spacing = new Vector2(0, 10);
-
-        Add(TimeTextBox = new PointSettingsTextBox("Time", ""));
+        Add(BPMTextBox = new PointSettingsTextBox("BPM", point.BPM.ToString(CultureInfo.InvariantCulture)));
+        Add(signatureTextBox = new SignatureTextBoxContainer
+        {
+            Text = point.Signature.ToString(),
+            OnTextChanged = OnTextChanged
+        });
     }
 
-    public virtual void OnTextChanged() { }
-
-    public override void Add(Drawable drawable)
+    public override void OnTextChanged()
     {
-        if (drawable is PointSettingsTextBox textBox)
-            textBox.OnTextChanged += OnTextChanged;
+        if (float.TryParse(TimeTextBox.Text, out var time))
+            Point.Time = time;
 
-        base.Add(drawable);
+        if (float.TryParse(BPMTextBox.Text, out var bpm))
+            Point.BPM = bpm;
+
+        if (int.TryParse(signatureTextBox.Text, out var signature))
+            Point.Signature = signature;
+
+        Tab.OnTimingPointChanged();
     }
 
-    public partial class PointSettingsTextBox : Container
+    private partial class SignatureTextBoxContainer : Container
     {
         private readonly TextBox textBox;
 
@@ -65,22 +57,36 @@ public partial class PointSettings : FillFlowContainer
             set => textBox.OnTextChanged = value;
         }
 
-        public PointSettingsTextBox(string text, string value)
+        public SignatureTextBoxContainer()
         {
             RelativeSizeAxes = Axes.X;
             Height = 40;
 
-            AddRange(new Drawable[]
+            AddRangeInternal(new Drawable[]
             {
                 new SpriteText
                 {
-                    Text = text,
+                    Text = "Signature",
                     Font = new FontUsage("Quicksand", 32, "Bold"),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Y = -2
                 },
-                textBox = new TextBox { Text = value }
+                textBox = new TextBox
+                {
+                    RelativeSizeAxes = Axes.Y,
+                    Width = 70,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight,
+                    Margin = new MarginPadding { Right = 35 }
+                },
+                new SpriteText
+                {
+                    Text = "/4",
+                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Anchor = Anchor.BottomRight,
+                    Origin = Anchor.BottomRight
+                }
             });
         }
 
@@ -88,12 +94,11 @@ public partial class PointSettings : FillFlowContainer
         {
             protected override Color4 SelectionColour => FluXisColors.Accent2;
 
-            public Action OnTextChanged { get; set; } = () => { };
+            public Action OnTextChanged { get; set; }
 
             public TextBox()
             {
                 RelativeSizeAxes = Axes.Y;
-                Width = 200;
                 Anchor = Anchor.CentreRight;
                 Origin = Anchor.CentreRight;
                 CornerRadius = 5;

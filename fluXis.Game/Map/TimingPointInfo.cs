@@ -1,11 +1,9 @@
-using System;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map;
 
-public class TimingPointInfo
+public class TimingPointInfo : TimedObject
 {
-    public float Time;
     public float BPM;
     public int Signature;
     public bool HideLines;
@@ -13,9 +11,5 @@ public class TimingPointInfo
     [JsonIgnore]
     public float MsPerBeat => 60000f / BPM;
 
-    [Obsolete("Use MsPerBeat instead")]
-    public float GetMsPerBeat()
-    {
-        return 60000f / BPM;
-    }
+    public override string ToString() => $"Time: {Time}, BPM: {BPM}, Signature: {Signature}, HideLines: {HideLines}";
 }

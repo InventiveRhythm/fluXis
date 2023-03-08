@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Screens.Edit.Tabs.Compose;
 using osu.Framework.Allocation;
@@ -9,6 +10,13 @@ namespace fluXis.Game.Screens.Edit.Tabs;
 
 public partial class ComposeTab : EditorTab
 {
+    public Action OnTimingPointChanged => () =>
+    {
+        playfield.RedrawLines();
+    };
+
+    private EditorPlayfield playfield;
+
     public ComposeTab(Editor screen)
         : base(screen)
     {
@@ -19,7 +27,7 @@ public partial class ComposeTab : EditorTab
     {
         Children = new Drawable[]
         {
-            new EditorPlayfield(this)
+            playfield = new EditorPlayfield(this)
         };
     }
 
