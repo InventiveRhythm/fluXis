@@ -19,7 +19,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
@@ -51,7 +50,6 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     private FailOverlay failOverlay;
     private FullComboOverlay fcOverlay;
 
-    private Box overlay;
     private FluXisConfig config;
 
     public Sample HitSound;
@@ -140,13 +138,6 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             }
         });
 
-        AddInternal(overlay = new Box
-        {
-            RelativeSizeAxes = Axes.Both,
-            Colour = Colour4.Red,
-            Alpha = 0
-        });
-
         AddInternal(failOverlay = new FailOverlay());
         AddInternal(fcOverlay = new FullComboOverlay());
 
@@ -196,12 +187,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public void Die()
     {
         Playfield.Manager.Dead = true;
-        overlay.FadeTo(0.2f, 500);
         failOverlay.Show();
-        Conductor.SetSpeed(.25f, 1000, Easing.None).OnComplete(_ =>
-        {
-            this.Exit();
-        });
+        Conductor.SetSpeed(0f, 2000, Easing.OutQuart).OnComplete(_ => this.Exit());
     }
 
     public void End()
@@ -240,8 +227,10 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         fadeOut();
         cursorOverlay.ShowCursor = true;
 
-        Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500, Easing.None);
-        Conductor.SetSpeed(1, 500, Easing.None);
+        int time = Playfield.Manager.Dead ? 1400 : 500;
+
+        Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, time, Easing.None);
+        Conductor.SetSpeed(1, time, Easing.None);
         backgrounds.StopVideo();
 
         return base.OnExiting(e);
