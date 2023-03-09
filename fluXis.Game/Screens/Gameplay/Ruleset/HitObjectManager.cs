@@ -94,14 +94,11 @@ public partial class HitObjectManager : CompositeDrawable
             }
         }
 
-        foreach (var eventInfo in Map.Events)
+        foreach (var laneSwitchEvent in Playfield.Screen.MapEvents.LaneSwitchEvents)
         {
-            if (eventInfo.Type == "laneswitch")
+            if (laneSwitchEvent.Time <= CurrentTime)
             {
-                if (eventInfo.Time <= CurrentTime)
-                {
-                    CurrentKeyCount = eventInfo.Value;
-                }
+                CurrentKeyCount = laneSwitchEvent.Count;
             }
         }
 

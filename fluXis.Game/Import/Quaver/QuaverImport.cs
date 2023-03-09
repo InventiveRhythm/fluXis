@@ -39,6 +39,18 @@ public class QuaverImport : MapImporter
                     MapInfo map = quaverMap.ToMapInfo();
                     mapInfos.Add(map);
 
+                    string effect = quaverMap.GetEffects();
+
+                    if (effect != "")
+                    {
+                        string name = entry.FullName.ToLower() + ".ffx";
+                        string dest = Path.Combine(Storage.GetFullPath("import"), fileName, name);
+                        Directory.CreateDirectory(Path.GetDirectoryName(dest));
+                        File.WriteAllText(dest, effect);
+
+                        map.EffectFile = name;
+                    }
+
                     string json = JsonConvert.SerializeObject(map);
                     string destPath = Path.Combine(Storage.GetFullPath("import"), fileName, entry.FullName + ".fsc");
                     Directory.CreateDirectory(Path.GetDirectoryName(destPath));

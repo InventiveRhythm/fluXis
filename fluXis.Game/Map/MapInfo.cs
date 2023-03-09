@@ -11,11 +11,11 @@ public class MapInfo
     public string AudioFile { get; set; }
     public string BackgroundFile { get; set; }
     public string VideoFile { get; set; }
+    public string EffectFile { get; set; }
     public MapMetadata Metadata { get; set; }
     public List<HitObjectInfo> HitObjects;
     public List<TimingPointInfo> TimingPoints;
     public List<ScrollVelocityInfo> ScrollVelocities;
-    public List<EventInfo> Events;
 
     [JsonIgnore]
     public float StartTime => HitObjects[0].Time;
@@ -54,7 +54,6 @@ public class MapInfo
         HitObjects = new List<HitObjectInfo>();
         TimingPoints = new List<TimingPointInfo>();
         ScrollVelocities = new List<ScrollVelocityInfo>();
-        Events = new List<EventInfo>();
     }
 
     public bool Validate()
@@ -80,25 +79,6 @@ public class MapInfo
             if (timingPoint.Signature < 0) { }
         }
 
-        if (Events != null)
-        {
-            foreach (var mapEvent in Events)
-            {
-                switch (mapEvent.Type)
-                {
-                    case "laneswitch":
-                        if (InitialKeyCount == 0)
-                            InitialKeyCount = mapEvent.Value;
-
-                        KeyCount = Math.Max(KeyCount, mapEvent.Value);
-                        break;
-                }
-            }
-        }
-
-        if (InitialKeyCount == 0)
-            InitialKeyCount = KeyCount;
-
         return KeyCount is > 3 and < 8;
     }
 
@@ -107,7 +87,6 @@ public class MapInfo
         HitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
         TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
-        Events?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public TimingPointInfo GetTimingPoint(float time)
@@ -133,10 +112,11 @@ public class MapInfo
             MD5 = MD5,
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
+            VideoFile = VideoFile,
+            EffectFile = EffectFile,
             HitObjects = HitObjects,
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
-            Events = Events,
             KeyCount = KeyCount,
             InitialKeyCount = InitialKeyCount
         };

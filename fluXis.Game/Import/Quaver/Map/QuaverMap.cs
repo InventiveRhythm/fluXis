@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using fluXis.Game.Import.Quaver.Map.Structs;
@@ -45,8 +46,7 @@ public class QuaverMap
             BackgroundFile = BackgroundFile,
             HitObjects = new List<HitObjectInfo>(),
             TimingPoints = new List<TimingPointInfo>(),
-            ScrollVelocities = new List<ScrollVelocityInfo>(),
-            Events = new List<EventInfo>()
+            ScrollVelocities = new List<ScrollVelocityInfo>()
         };
 
         foreach (var o in HitObjects)
@@ -79,6 +79,13 @@ public class QuaverMap
             });
         }
 
+        return mapInfo;
+    }
+
+    public string GetEffects()
+    {
+        string effectFile = "";
+
         if (Bookmarks != null)
         {
             foreach (var b in Bookmarks)
@@ -91,22 +98,13 @@ public class QuaverMap
                 if (split[0] == "laneswitch")
                 {
                     if (int.TryParse(split[1], out var lane))
-                    {
-                        mapInfo.Events.Add(new EventInfo
-                        {
-                            Time = b.StartTime,
-                            Type = "laneswitch",
-                            Value = lane
-                        });
-                    }
+                        effectFile += $"LaneSwitch({b.StartTime},{lane}){Environment.NewLine}";
                     else
-                    {
                         Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
-                    }
                 }
             }
         }
 
-        return mapInfo;
+        return effectFile;
     }
 }

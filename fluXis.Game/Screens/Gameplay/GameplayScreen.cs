@@ -1,4 +1,6 @@
-﻿using fluXis.Game.Screens.Gameplay.Ruleset;
+﻿using System;
+using System.IO;
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
@@ -21,6 +23,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 
@@ -44,6 +47,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public Performance Performance;
     public MapInfo Map;
     public RealmMap RealmMap;
+    public MapEvents MapEvents;
     public JudgementDisplay JudgementDisplay;
     public HitErrorBar HitErrorBar;
     public Playfield Playfield { get; private set; }
@@ -76,6 +80,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             this.Exit();
             return;
         }
+
+        loadMapEvents(storage);
 
         Input = new GameplayInput(this, Map.KeyCount);
         Performance = new Performance(Map);
@@ -302,5 +308,36 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
     {
         // nothing to do here...
+    }
+
+    private void loadMapEvents(Storage storage)
+    {
+        var mapEvents = new MapEvents();
+
+        try
+        {
+            if (!string.IsNullOrEmpty(Map.EffectFile))
+            {
+                var effectFile = RealmMap.MapSet.GetFile(Map.EffectFile);
+                if (effectFile == null) return;
+
+                string content = File.ReadAllText(storage.GetFullPath("files/" + effectFile.GetPath()));
+                mapEvents.Load(content);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Error loading map events");
+        }
+
+        MapEvents = mapEvents;
+
+        foreach (var switchEvent in MapEvents.LaneSwitchEvents)
+        {
+            if (Map.InitialKeyCount == 0)
+                Map.InitialKeyCount = switchEvent.Count;
+
+            Map.KeyCount = Math.Max(Map.KeyCount, switchEvent.Count);
+        }
     }
 }
