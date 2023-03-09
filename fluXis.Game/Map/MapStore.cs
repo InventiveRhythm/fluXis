@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -11,6 +13,7 @@ namespace fluXis.Game.Map;
 public class MapStore
 {
     private readonly Storage storage;
+    private readonly Storage files;
     private readonly FluXisRealm realm;
 
     public List<RealmMapSet> MapSets { get; } = new();
@@ -20,7 +23,8 @@ public class MapStore
 
     public MapStore(Storage storage, FluXisRealm realm)
     {
-        this.storage = storage.GetStorageForDirectory("files");
+        this.storage = storage;
+        files = storage.GetStorageForDirectory("files");
         this.realm = realm;
 
         Logger.Log("Loading maps...");
@@ -57,7 +61,7 @@ public class MapStore
             {
                 try
                 {
-                    storage.Delete(file.GetPath());
+                    files.Delete(file.GetPath());
                 }
                 catch (Exception e)
                 {
@@ -82,5 +86,24 @@ public class MapStore
     {
         Random rnd = new Random();
         return MapSets[rnd.Next(MapSets.Count)];
+    }
+
+    public void Export(RealmMapSet set)
+    {
+        string folder = storage.GetFullPath("export");
+        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+        string path = Path.Combine(folder, $"{set.Metadata.Title} - {set.Metadata.Artist}.fms");
+        ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
+
+        foreach (var file in set.Files)
+        {
+            var entry = archive.CreateEntry(file.Name);
+            using var stream = entry.Open();
+            using var fileStream = files.GetStream(file.GetPath());
+            fileStream.CopyTo(stream);
+        }
+
+        archive.Dispose();
     }
 }

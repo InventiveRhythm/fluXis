@@ -20,6 +20,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select;
 
@@ -314,6 +315,13 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key == Key.F1) mapStore.Export(MapSet.Value);
+
+        return base.OnKeyDown(e);
+    }
 
     public void UpdateSearch()
     {
