@@ -40,6 +40,7 @@ public class QuaverImport : MapImporter
                     mapInfos.Add(map);
 
                     string effect = quaverMap.GetEffects();
+                    Logger.Log(effect);
 
                     if (effect != "")
                     {

@@ -14,6 +14,7 @@ using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.HUD.Judgement;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
+using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Utils;
@@ -143,6 +144,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 Text = "mapped by {value}"
             }
         });
+
+        AddInternal(new FlashOverlay(MapEvents.FlashEvents));
 
         AddInternal(failOverlay = new FailOverlay());
         AddInternal(fcOverlay = new FullComboOverlay());
@@ -339,5 +342,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
             Map.KeyCount = Math.Max(Map.KeyCount, switchEvent.Count);
         }
+
+        if (Map.InitialKeyCount == 0)
+            Map.InitialKeyCount = Map.KeyCount;
     }
 }

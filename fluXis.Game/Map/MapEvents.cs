@@ -7,6 +7,7 @@ namespace fluXis.Game.Map;
 public class MapEvents
 {
     public List<LaneSwitchEvent> LaneSwitchEvents = new();
+    public List<FlashEvent> FlashEvents = new();
 
     public void Load(string content)
     {
@@ -28,6 +29,16 @@ public class MapEvents
                     {
                         Time = float.Parse(args[0]),
                         Count = int.Parse(args[1])
+                    });
+                    break;
+
+                case "Flash":
+                    FlashEvents.Add(new FlashEvent
+                    {
+                        Time = float.Parse(args[0]),
+                        FadeInTime = float.Parse(args[1]),
+                        HoldTime = float.Parse(args[2]),
+                        FadeOutTime = float.Parse(args[3])
                     });
                     break;
             }

@@ -92,15 +92,20 @@ public class QuaverMap
             {
                 var split = b.Note.ToLower().Split(':');
 
-                if (split.Length != 2)
-                    continue;
-
-                if (split[0] == "laneswitch")
+                if (split[0] == "laneswitch" && split.Length == 2)
                 {
                     if (int.TryParse(split[1], out var lane))
                         effectFile += $"LaneSwitch({b.StartTime},{lane}){Environment.NewLine}";
                     else
                         Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
+                }
+
+                if (split[0] == "flash" && split.Length == 4)
+                {
+                    if (int.TryParse(split[1], out var fadeIn) && int.TryParse(split[2], out var hold) && int.TryParse(split[3], out var fadeOut))
+                        effectFile += $"Flash({b.StartTime},{fadeIn},{hold},{fadeOut}){Environment.NewLine}";
+                    else
+                        Logger.Log("Invalid flash event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
                 }
             }
         }
