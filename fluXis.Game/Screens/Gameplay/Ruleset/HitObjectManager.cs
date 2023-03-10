@@ -254,7 +254,7 @@ public partial class HitObjectManager : CompositeDrawable
         Performance.AddJudgement(hitWindow.Key);
 
         if (HealthMode == HealthMode.Drain)
-            HealthDrainRate -= hitWindow.Health;
+            HealthDrainRate -= hitWindow.DrainRate;
         else
             Health += hitWindow.Health;
     }
