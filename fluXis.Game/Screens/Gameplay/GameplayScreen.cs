@@ -22,6 +22,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -52,6 +53,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public JudgementDisplay JudgementDisplay;
     public HitErrorBar HitErrorBar;
     public Playfield Playfield { get; private set; }
+    public Container HUD { get; private set; }
+
     private FailOverlay failOverlay;
     private FullComboOverlay fcOverlay;
 
@@ -97,53 +100,57 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         InternalChildren = new Drawable[]
         {
             Input,
-            Playfield = new Playfield(this)
-        };
-
-        AddInternal(new ComboCounter(this));
-        AddInternal(new AccuracyDisplay(this));
-        AddInternal(new Progressbar(this));
-        AddInternal(JudgementDisplay = new JudgementDisplay(this));
-        AddInternal(new AutoPlayDisplay(this));
-        AddInternal(new JudgementCounter(Performance));
-        AddInternal(new HealthBar(this));
-        AddInternal(new DangerHealthOverlay(this));
-        AddInternal(HitErrorBar = new HitErrorBar(this));
-
-        AddRangeInternal(new Drawable[]
-        {
-            new AttributeText(this)
+            Playfield = new Playfield(this),
+            HUD = new Container
             {
-                Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
-                Margin = new MarginPadding(10),
-                AttributeType = AttributeType.Title,
-                FontSize = 48
-            },
-            new AttributeText(this)
-            {
-                Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
-                Margin = new MarginPadding(10) { Bottom = 52 },
-                AttributeType = AttributeType.Artist
-            },
-            new AttributeText(this)
-            {
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomRight,
-                Margin = new MarginPadding(10),
-                AttributeType = AttributeType.Difficulty,
-                FontSize = 48
-            },
-            new AttributeText(this)
-            {
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomRight,
-                Margin = new MarginPadding(10) { Bottom = 52 },
-                AttributeType = AttributeType.Mapper,
-                Text = "mapped by {value}"
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    new ComboCounter(this),
+                    new AccuracyDisplay(this),
+                    new Progressbar(this),
+                    JudgementDisplay = new JudgementDisplay(this),
+                    new AutoPlayDisplay(this),
+                    new JudgementCounter(Performance),
+                    new HealthBar(this),
+                    new DangerHealthOverlay(this),
+                    HitErrorBar = new HitErrorBar(this),
+                    new AttributeText(this)
+                    {
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Margin = new MarginPadding(10),
+                        AttributeType = AttributeType.Title,
+                        FontSize = 48
+                    },
+                    new AttributeText(this)
+                    {
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Margin = new MarginPadding(10) { Bottom = 52 },
+                        AttributeType = AttributeType.Artist
+                    },
+                    new AttributeText(this)
+                    {
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight,
+                        Margin = new MarginPadding(10),
+                        AttributeType = AttributeType.Difficulty,
+                        FontSize = 48
+                    },
+                    new AttributeText(this)
+                    {
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight,
+                        Margin = new MarginPadding(10) { Bottom = 52 },
+                        AttributeType = AttributeType.Mapper,
+                        Text = "mapped by {value}"
+                    }
+                }
             }
-        });
+        };
 
         AddInternal(new FlashOverlay(MapEvents.FlashEvents));
 
@@ -261,7 +268,11 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     private void fadeOut()
     {
         if (Playfield.Manager.Dead)
+        {
+            HUD.FadeOut();
+            Playfield.FadeOut();
             this.FadeOut(500);
+        }
         else
             this.FadeOut(restarting ? 0 : 250);
     }
@@ -288,6 +299,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 return true;
 
             case FluXisKeybind.Pause:
+                if (Playfield.Manager.Dead) return false;
+
                 IsPaused.Value = !IsPaused.Value;
                 return true;
 

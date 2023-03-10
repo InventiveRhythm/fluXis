@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -22,11 +21,7 @@ public partial class Playfield : CompositeDrawable
     {
         Screen = screen;
         Map = screen.Map;
-    }
 
-    [BackgroundDependencyLoader]
-    private void load()
-    {
         RelativeSizeAxes = Axes.Both;
         Size = new Vector2(1, 1);
         Anchor = Anchor.Centre;
