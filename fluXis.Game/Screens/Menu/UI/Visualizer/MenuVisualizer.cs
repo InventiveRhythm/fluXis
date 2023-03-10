@@ -97,7 +97,7 @@ public partial class MenuVisualizer : Container
 
     private void updateAmplitude()
     {
-        var span = Conductor.Track.CurrentAmplitudes.FrequencyAmplitudes.Span;
+        float[] span = Conductor.Track?.CurrentAmplitudes.FrequencyAmplitudes.Span.ToArray() ?? new float[256];
 
         float newAmplitude = 0;
 
