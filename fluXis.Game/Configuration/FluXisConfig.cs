@@ -15,6 +15,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
     {
         SetDefault(FluXisSetting.ScrollSpeed, 2f, 1f, 10f, 0.1f);
         SetDefault(FluXisSetting.HideFlawless, false);
+        SetDefault(FluXisSetting.ShowEarlyLate, false);
         SetDefault(FluXisSetting.BackgroundPulse, false);
         SetDefault(FluXisSetting.HitErrorScale, 1f, 0.5f, 1.2f, 0.01f);
 
@@ -35,6 +36,7 @@ public enum FluXisSetting
     // Gameplay
     ScrollSpeed,
     HideFlawless,
+    ShowEarlyLate,
     BackgroundPulse,
     HitErrorScale,
 

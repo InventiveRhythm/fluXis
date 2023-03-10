@@ -13,8 +13,9 @@ public partial class GameplaySection : SettingsSection
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
-        Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.ScrollSpeed), "Scroll Speed", "{value}"));
+        Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.ScrollSpeed), "Scroll Speed"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.HideFlawless), "Hide Flawless Judgement"));
+        Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.ShowEarlyLate), "Show Early/Late"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.BackgroundPulse), "Background Pulse"));
         Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.HitErrorScale), "Hit Error Bar Scale", "", true));
     }
