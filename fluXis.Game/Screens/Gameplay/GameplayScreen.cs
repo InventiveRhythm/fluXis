@@ -165,7 +165,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     protected override void LoadComplete()
     {
         Conductor.PlayTrack(RealmMap);
-        Conductor.CurrentTime = -2000;
+        Conductor.CurrentTime = -2000 + Conductor.Offset;
         Conductor.TimingPoints = Map.TimingPoints;
         Conductor.SetSpeed(1, 0);
         backgrounds.SetVideoBackground(RealmMap, Map);
@@ -196,6 +196,9 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 End();
             }
         }
+
+        // normal bindings dont work for some reason
+        HitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
 
         base.Update();
     }

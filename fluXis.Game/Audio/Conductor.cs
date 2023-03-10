@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
@@ -22,10 +23,18 @@ namespace fluXis.Game.Audio;
 /// </summary>
 public partial class Conductor : Container
 {
+    [Resolved]
+    private FluXisConfig config { get; set; }
+
     private static readonly BindableNumber<double> bind_speed = new BindableDouble(1);
     private static Conductor instance;
     private static ITrackStore trackStore;
     private static Storage storage;
+    private static Bindable<float> globalOffset => instance?.config?.GetBindable<float>(FluXisSetting.GlobalOffset);
+
+    private float speed = 1;
+    private float untweenedSpeed = 1;
+    private float trackVolume = 1f;
 
     /// <summary>
     /// Current time of the track in milliseconds.
@@ -35,7 +44,7 @@ public partial class Conductor : Container
     /// <summary>
     /// Offset of the track in milliseconds.
     /// </summary>
-    public static int Offset = 0;
+    public static float Offset => globalOffset?.Value ?? 0;
 
     /// <summary>
     /// The low pass filter for all tracks.
@@ -80,10 +89,6 @@ public partial class Conductor : Container
     /// </summary>
     public static Track Track { get; private set; }
 
-    private float speed = 1;
-    private float untweenedSpeed = 1;
-    private float trackVolume = 1f;
-
     /// <summary>
     /// A callback that is invoked every beat.
     /// </summary>
@@ -104,8 +109,9 @@ public partial class Conductor : Container
     [BackgroundDependencyLoader]
     private void load(AudioManager audioManager, Storage storage)
     {
-        instance = this;
         Conductor.storage = storage;
+
+        instance = this;
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
         Add(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
     }
@@ -125,7 +131,7 @@ public partial class Conductor : Container
         if (Track != null)
             CurrentTime = (float)Track.CurrentTime + Offset;
         else
-            CurrentTime += (float)Time.Elapsed + Offset;
+            CurrentTime += (float)Time.Elapsed;
 
         updateStep();
     }

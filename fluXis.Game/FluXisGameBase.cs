@@ -43,6 +43,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
         InitFonts();
 
+        dependencies.CacheAs(Config = new FluXisConfig(storage));
         dependencies.Cache(Realm = new FluXisRealm(storage));
         dependencies.Cache(MapStore = new MapStore(storage, Realm));
         dependencies.Cache(new BackgroundTextureStore(Host, storage));
@@ -71,7 +72,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         });
 
         dependencies.Cache(keybinds);
-        dependencies.CacheAs(Config = new FluXisConfig(storage));
     }
 
     protected void InitFonts()

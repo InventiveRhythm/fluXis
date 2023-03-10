@@ -14,7 +14,7 @@ public partial class SettingsSlider<T> : SettingsItem
 {
     public Bindable<T> Bindable { get; }
 
-    public SettingsSlider(Bindable<T> bindable, string label, string valLabel, bool displayAsPercentage = false)
+    public SettingsSlider(Bindable<T> bindable, string label, string valLabel = "{value}", bool displayAsPercentage = false, float step = .01f)
     {
         Bindable = bindable;
 
@@ -37,7 +37,7 @@ public partial class SettingsSlider<T> : SettingsItem
                 Margin = new MarginPadding { Right = 410 },
                 Y = -2
             },
-            new Slider(bindable, valueLabel, displayAsPercentage)
+            new Slider(bindable, valueLabel, displayAsPercentage, step)
         });
     }
 
@@ -51,7 +51,7 @@ public partial class SettingsSlider<T> : SettingsItem
 
         private readonly BasicSliderBar<T> sliderBar;
 
-        public Slider(Bindable<T> bindable, SpriteText valueLabel, bool displayAsPercentage)
+        public Slider(Bindable<T> bindable, SpriteText valueLabel, bool displayAsPercentage, float step)
         {
             Bindable = bindable;
             this.valueLabel = valueLabel;
@@ -69,7 +69,8 @@ public partial class SettingsSlider<T> : SettingsItem
                 RelativeSizeAxes = Axes.Both,
                 Current = bindable,
                 BackgroundColour = FluXisColors.Accent2.Opacity(.2f),
-                SelectionColour = FluXisColors.Accent2
+                SelectionColour = FluXisColors.Accent2,
+                KeyboardStep = step
             });
         }
 

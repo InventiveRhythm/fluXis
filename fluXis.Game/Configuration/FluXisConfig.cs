@@ -23,6 +23,9 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
 
+        SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
+        SetDefault(FluXisSetting.HitSoundVolume, 1d, 0d, 1d, 0.01d);
+
         SetDefault(FluXisSetting.Token, string.Empty);
     }
 }
@@ -41,6 +44,10 @@ public enum FluXisSetting
 
     // UI
     MainMenuVisualizer,
+
+    // Audio
+    GlobalOffset,
+    HitSoundVolume,
 
     // Account
     Token
