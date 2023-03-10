@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Database;
+using fluXis.Game.Database.Input;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
@@ -10,12 +13,15 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
 {
     private readonly Drawable handleInput;
     private InputManager inputManager;
+    private FluXisRealm realm;
 
-    public FluXisKeybindContainer(Drawable game)
+    public FluXisKeybindContainer(Drawable game, FluXisRealm realm)
         : base(matchingMode: KeyCombinationMatchingMode.Modifiers, simultaneousMode: SimultaneousBindingMode.All)
     {
         if (game != null)
             handleInput = game;
+
+        this.realm = realm;
     }
 
     protected override void LoadComplete()
@@ -39,31 +45,31 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), FluXisKeybind.ToggleSettings),
         new KeyBinding(InputKey.Delete, FluXisKeybind.Delete),
 
-        new KeyBinding(InputKey.A, FluXisKeybind.Key4k1),
-        new KeyBinding(InputKey.S, FluXisKeybind.Key4k2),
-        new KeyBinding(InputKey.K, FluXisKeybind.Key4k3),
-        new KeyBinding(InputKey.L, FluXisKeybind.Key4k4),
+        getBinding(FluXisKeybind.Key4k1, InputKey.A),
+        getBinding(FluXisKeybind.Key4k2, InputKey.S),
+        getBinding(FluXisKeybind.Key4k3, InputKey.K),
+        getBinding(FluXisKeybind.Key4k4, InputKey.L),
 
-        new KeyBinding(InputKey.A, FluXisKeybind.Key5k1),
-        new KeyBinding(InputKey.S, FluXisKeybind.Key5k2),
-        new KeyBinding(InputKey.Space, FluXisKeybind.Key5k3),
-        new KeyBinding(InputKey.K, FluXisKeybind.Key5k4),
-        new KeyBinding(InputKey.L, FluXisKeybind.Key5k5),
+        getBinding(FluXisKeybind.Key5k1, InputKey.A),
+        getBinding(FluXisKeybind.Key5k2, InputKey.S),
+        getBinding(FluXisKeybind.Key5k3, InputKey.Space),
+        getBinding(FluXisKeybind.Key5k4, InputKey.K),
+        getBinding(FluXisKeybind.Key5k5, InputKey.L),
 
-        new KeyBinding(InputKey.A, FluXisKeybind.Key6k1),
-        new KeyBinding(InputKey.S, FluXisKeybind.Key6k2),
-        new KeyBinding(InputKey.D, FluXisKeybind.Key6k3),
-        new KeyBinding(InputKey.J, FluXisKeybind.Key6k4),
-        new KeyBinding(InputKey.K, FluXisKeybind.Key6k5),
-        new KeyBinding(InputKey.L, FluXisKeybind.Key6k6),
+        getBinding(FluXisKeybind.Key6k1, InputKey.A),
+        getBinding(FluXisKeybind.Key6k2, InputKey.S),
+        getBinding(FluXisKeybind.Key6k3, InputKey.D),
+        getBinding(FluXisKeybind.Key6k4, InputKey.J),
+        getBinding(FluXisKeybind.Key6k5, InputKey.K),
+        getBinding(FluXisKeybind.Key6k6, InputKey.L),
 
-        new KeyBinding(InputKey.A, FluXisKeybind.Key7k1),
-        new KeyBinding(InputKey.S, FluXisKeybind.Key7k2),
-        new KeyBinding(InputKey.D, FluXisKeybind.Key7k3),
-        new KeyBinding(InputKey.Space, FluXisKeybind.Key7k4),
-        new KeyBinding(InputKey.J, FluXisKeybind.Key7k5),
-        new KeyBinding(InputKey.K, FluXisKeybind.Key7k6),
-        new KeyBinding(InputKey.L, FluXisKeybind.Key7k7),
+        getBinding(FluXisKeybind.Key7k1, InputKey.A),
+        getBinding(FluXisKeybind.Key7k2, InputKey.S),
+        getBinding(FluXisKeybind.Key7k3, InputKey.D),
+        getBinding(FluXisKeybind.Key7k4, InputKey.Space),
+        getBinding(FluXisKeybind.Key7k5, InputKey.J),
+        getBinding(FluXisKeybind.Key7k6, InputKey.K),
+        getBinding(FluXisKeybind.Key7k7, InputKey.L),
 
         new KeyBinding(InputKey.Space, FluXisKeybind.Skip),
         new KeyBinding(InputKey.Shift, FluXisKeybind.Restart),
@@ -89,6 +95,35 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
             return queue;
         }
     }
+
+    private KeyBinding getBinding(FluXisKeybind action, InputKey key)
+    {
+        KeyBinding bind = null;
+
+        realm.Run(r =>
+        {
+            var binding = r.All<RealmKeybind>().FirstOrDefault(x => x.Action == action.ToString());
+
+            if (binding == null)
+            {
+                binding = new RealmKeybind
+                {
+                    Key = key.ToString(),
+                    Action = action.ToString(),
+                };
+                r.Write(() =>
+                {
+                    r.Add(binding);
+                });
+            }
+
+            bind = new KeyBinding((InputKey)Enum.Parse(typeof(InputKey), binding.Key), action);
+        });
+
+        return bind;
+    }
+
+    public void Reload() => ReloadMappings();
 }
 
 public enum FluXisKeybind

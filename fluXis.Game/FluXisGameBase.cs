@@ -66,7 +66,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                     {
                         RelativeSizeAxes = Axes.Both
                     },
-                    keybinds = new FluXisKeybindContainer(this)
+                    keybinds = new FluXisKeybindContainer(this, Realm)
                 }
             }
         });
