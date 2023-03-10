@@ -1,3 +1,4 @@
+using System.Reflection;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -11,7 +12,7 @@ public partial class GeneralSection : SettingsSection
 
     public GeneralSection()
     {
-        var version = typeof(GeneralSection).Assembly.GetName().Version;
+        var version = Assembly.GetEntryAssembly()?.GetName().Version;
 
         Add(new Container
         {
