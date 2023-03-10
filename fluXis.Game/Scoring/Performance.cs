@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
@@ -8,13 +9,31 @@ namespace fluXis.Game.Scoring;
 public class Performance
 {
     [JsonProperty("accuracy")]
-    public float Accuracy { get; private set; }
+    public float Accuracy
+    {
+        get
+        {
+            if (NotesTotal == 0) return 100;
+
+            return NotesRated / NotesTotal * 100;
+        }
+    }
 
     [JsonProperty("grade")]
-    public Grade Grade { get; private set; }
+    public Grade Grade => Accuracy switch
+    {
+        100 => Grade.X,
+        >= 99 => Grade.SS,
+        >= 98 => Grade.S,
+        >= 95 => Grade.AA,
+        >= 90 => Grade.A,
+        >= 80 => Grade.B,
+        >= 70 => Grade.C,
+        _ => Grade.D
+    };
 
     [JsonProperty("score")]
-    public int Score { get; private set; }
+    public int Score => (int)(NotesRated / Map.MaxCombo * 1000000);
 
     [JsonProperty("combo")]
     public int Combo { get; private set; }
@@ -23,10 +42,10 @@ public class Performance
     public int MaxCombo { get; private set; }
 
     [JsonProperty("judgements")]
-    public Dictionary<Judgements, int> Judgements { get; }
+    public Dictionary<Judgement, int> Judgements { get; }
 
     [JsonProperty("hitPoints")]
-    public List<HitPoint> HitPoints { get; }
+    public List<HitStat> HitStats { get; }
 
     [JsonProperty("mapid")]
     public string MapID { get; private set; }
@@ -37,41 +56,57 @@ public class Performance
     [JsonIgnore]
     public readonly MapInfo Map;
 
+    [JsonIgnore]
+    public int TotalNotesHit => (from j in Judgements let j2 = HitWindow.FromKey(j.Key) where j2 is { Accuracy: > 0 } select j.Value).Sum();
+
+    [JsonIgnore]
+    public float NotesRated => (from j in Judgements let j2 = HitWindow.FromKey(j.Key) select j.Value * j2.Accuracy).Sum();
+
+    [JsonIgnore]
+    public int NotesMissed => (from j in Judgements where j.Key == Judgement.Miss select j.Value).Sum();
+
+    [JsonIgnore]
+    public int NotesTotal => TotalNotesHit + NotesMissed;
+
+    [JsonIgnore]
+    public bool FullCombo => NotesMissed == 0;
+
+    [JsonIgnore]
+    public bool AllFlawless => Judgements.All(j => j.Key == Judgement.Flawless);
+
+    [JsonIgnore]
+    public Action<HitStat> OnHitStatAdded;
+
     public Performance(MapInfo map)
     {
         Map = map;
         MapID = map.ID;
         MapHash = map.MD5;
 
-        Accuracy = 0;
-        Grade = Grade.X;
-        Score = 0;
         Combo = 0;
         MaxCombo = 0;
-        Judgements = new Dictionary<Judgements, int>();
-        HitPoints = new List<HitPoint>();
+        Judgements = new Dictionary<Judgement, int>();
+        HitStats = new List<HitStat>();
     }
 
-    public void AddHitPoint(HitPoint hitPoint)
+    public void AddHitStat(HitStat hitStat)
     {
-        HitPoints.Add(hitPoint);
+        HitStats.Add(hitStat);
+        OnHitStatAdded?.Invoke(hitStat);
     }
 
-    public void AddJudgement(Judgements jud)
+    public void AddJudgement(Judgement jud)
     {
         if (Judgements.ContainsKey(jud))
             Judgements[jud]++;
         else
             Judgements.Add(jud, 1);
-
-        Calculate();
     }
 
     public void IncCombo()
     {
         Combo++;
-        if (Combo > MaxCombo)
-            MaxCombo = Combo;
+        MaxCombo = Math.Max(Combo, MaxCombo);
     }
 
     public void ResetCombo()
@@ -79,78 +114,10 @@ public class Performance
         Combo = 0;
     }
 
-    public void Calculate()
-    {
-        if (GetAllJudgements() == 0)
-            Accuracy = 100;
-        else
-            Accuracy = GetRated() / GetAllJudgements() * 100;
-
-        Score = (int)(GetRated() / Map.MaxCombo * 1000000);
-        calculateGrade();
-    }
-
-    private void calculateGrade()
-    {
-        Grade = Accuracy switch
-        {
-            100 => Grade.X,
-            >= 99 => Grade.SS,
-            >= 98 => Grade.S,
-            >= 95 => Grade.AA,
-            >= 90 => Grade.A,
-            >= 80 => Grade.B,
-            >= 70 => Grade.C,
-            _ => Grade.D
-        };
-    }
-
-    public int GetHit()
-    {
-        return (from j in Judgements let j2 = HitWindow.FromKey(j.Key) where j2 is { Accuracy: > 0 } select j.Value).Sum();
-    }
-
-    public float GetRated()
-    {
-        return (from j in Judgements let j2 = HitWindow.FromKey(j.Key) select j.Value * j2.Accuracy).Sum();
-    }
-
-    public int GetMiss()
-    {
-        return (from j in Judgements where j.Key == Scoring.Judgements.Miss select j.Value).Sum();
-    }
-
-    public int GetAllJudgements()
-    {
-        return GetHit() + GetMiss();
-    }
-
-    public int GetJudgementCount(Judgements jud)
-    {
-        if (Judgements.ContainsKey(jud))
-            return Judgements[jud];
-
-        return 0;
-    }
-
-    public bool IsFullCombo()
-    {
-        return GetMiss() == 0;
-    }
-
-    public bool IsAllFlawless()
-    {
-        foreach (var (key, count) in Judgements)
-        {
-            if (key != Scoring.Judgements.Flawless && count > 0)
-                return false;
-        }
-
-        return true;
-    }
+    public int GetJudgementCount(Judgement jud) => Judgements.ContainsKey(jud) ? Judgements[jud] : 0;
 }
 
-public class HitPoint
+public class HitStat
 {
     [JsonProperty("time")]
     public float Time { get; }
@@ -159,9 +126,9 @@ public class HitPoint
     public float Difference { get; }
 
     [JsonProperty("judgement")]
-    public Judgements Judgement { get; }
+    public Judgement Judgement { get; }
 
-    public HitPoint(float time, float diff, Judgements jud)
+    public HitStat(float time, float diff, Judgement jud)
     {
         Time = time;
         Difference = diff;

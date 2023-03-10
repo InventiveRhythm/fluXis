@@ -44,7 +44,7 @@ public partial class ResultHitPoints : Container
             }
         });
 
-        foreach (var hitPoint in performance.HitPoints)
+        foreach (var hitPoint in performance.HitStats)
             hitPoints.Add(new ResultHitPoint(map, hitPoint));
     }
 
@@ -87,13 +87,13 @@ public partial class ResultHitPoints : Container
 
     public partial class ResultHitPoint : CircularContainer, IHasTooltip
     {
-        public string Tooltip => TimeUtils.Format(point.Time) + " | " + point.Difference + "ms";
+        public string Tooltip => TimeUtils.Format(stat.Time) + " | " + stat.Difference + "ms";
 
-        private readonly HitPoint point;
+        private readonly HitStat stat;
 
-        public ResultHitPoint(MapInfo map, HitPoint point)
+        public ResultHitPoint(MapInfo map, HitStat stat)
         {
-            this.point = point;
+            this.stat = stat;
 
             Size = new Vector2(3);
             Masking = true;
@@ -101,10 +101,10 @@ public partial class ResultHitPoints : Container
             Anchor = Anchor.CentreLeft;
             Origin = Anchor.Centre;
 
-            X = (point.Time - map.StartTime) / (map.EndTime - map.StartTime);
-            Y = point.Difference;
+            X = (stat.Time - map.StartTime) / (map.EndTime - map.StartTime);
+            Y = stat.Difference;
 
-            HitWindow hitWindow = HitWindow.FromKey(point.Judgement);
+            HitWindow hitWindow = HitWindow.FromKey(stat.Judgement);
 
             Children = new Drawable[]
             {

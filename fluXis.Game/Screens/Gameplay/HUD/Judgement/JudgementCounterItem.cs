@@ -10,7 +10,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
 public partial class JudgementCounterItem : Container
 {
     private readonly Performance performance;
-    private readonly Judgements judgement;
+    private readonly Scoring.Judgement judgement;
 
     private HitWindow hitWindow;
     private int count;
@@ -18,7 +18,7 @@ public partial class JudgementCounterItem : Container
     private Box background;
     private SpriteText text;
 
-    public JudgementCounterItem(Performance performance, Judgements judgement)
+    public JudgementCounterItem(Performance performance, Scoring.Judgement judgement)
     {
         this.performance = performance;
         this.judgement = judgement;
@@ -73,12 +73,12 @@ public partial class JudgementCounterItem : Container
         {
             text.Text = judgement switch
             {
-                Judgements.Flawless => "FL",
-                Judgements.Perfect => "PF",
-                Judgements.Great => "GR",
-                Judgements.Alright => "AL",
-                Judgements.Okay => "OK",
-                Judgements.Miss => "MS",
+                Scoring.Judgement.Flawless => "FL",
+                Scoring.Judgement.Perfect => "PF",
+                Scoring.Judgement.Great => "GR",
+                Scoring.Judgement.Alright => "AL",
+                Scoring.Judgement.Okay => "OK",
+                Scoring.Judgement.Miss => "MS",
                 _ => "??"
             };
         }

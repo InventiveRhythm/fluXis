@@ -15,7 +15,7 @@ public partial class TestJudgementCounter : FluXisTestScene
 
         Scheduler.AddDelayed(() =>
         {
-            Judgements toAdd = (Judgements)i;
+            Judgement toAdd = (Judgement)i;
             performance.AddJudgement(toAdd);
 
             i++;

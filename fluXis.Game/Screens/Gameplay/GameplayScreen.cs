@@ -50,8 +50,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public MapInfo Map;
     public RealmMap RealmMap;
     public MapEvents MapEvents;
-    public JudgementDisplay JudgementDisplay;
-    public HitErrorBar HitErrorBar;
+
     public Playfield Playfield { get; private set; }
     public Container HUD { get; private set; }
 
@@ -111,12 +110,12 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                     new ComboCounter(this),
                     new AccuracyDisplay(this),
                     new Progressbar(this),
-                    JudgementDisplay = new JudgementDisplay(this),
+                    new JudgementDisplay(this),
                     new AutoPlayDisplay(this),
                     new JudgementCounter(Performance),
                     new HealthBar(this),
                     new DangerHealthOverlay(this),
-                    HitErrorBar = new HitErrorBar(this),
+                    new HitErrorBar(this),
                     new AttributeText(this)
                     {
                         Anchor = Anchor.BottomLeft,
@@ -219,13 +218,12 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         cursorOverlay.ShowCursor = true;
 
-        if (Performance.IsFullCombo() || Performance.IsAllFlawless())
+        if (Performance.FullCombo || Performance.AllFlawless)
         {
-            fcOverlay.Show(Performance.IsAllFlawless() ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
+            fcOverlay.Show(Performance.AllFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
             this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore)));
         }
-        else
-            this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
+        else this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
     }
 
     public void RestartMap()

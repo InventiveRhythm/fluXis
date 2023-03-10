@@ -14,14 +14,14 @@ public class RealmJudgements : RealmObject
     public int Okay { get; set; }
     public int Miss { get; set; }
 
-    public RealmJudgements(Dictionary<Judgements, int> judgements)
+    public RealmJudgements(Dictionary<Judgement, int> judgements)
     {
-        Flawless = judgements.ContainsKey(Judgements.Flawless) ? judgements[Judgements.Flawless] : 0;
-        Perfect = judgements.ContainsKey(Judgements.Perfect) ? judgements[Judgements.Perfect] : 0;
-        Great = judgements.ContainsKey(Judgements.Great) ? judgements[Judgements.Great] : 0;
-        Alright = judgements.ContainsKey(Judgements.Alright) ? judgements[Judgements.Alright] : 0;
-        Okay = judgements.ContainsKey(Judgements.Okay) ? judgements[Judgements.Okay] : 0;
-        Miss = judgements.ContainsKey(Judgements.Miss) ? judgements[Judgements.Miss] : 0;
+        Flawless = judgements.ContainsKey(Judgement.Flawless) ? judgements[Judgement.Flawless] : 0;
+        Perfect = judgements.ContainsKey(Judgement.Perfect) ? judgements[Judgement.Perfect] : 0;
+        Great = judgements.ContainsKey(Judgement.Great) ? judgements[Judgement.Great] : 0;
+        Alright = judgements.ContainsKey(Judgement.Alright) ? judgements[Judgement.Alright] : 0;
+        Okay = judgements.ContainsKey(Judgement.Okay) ? judgements[Judgement.Okay] : 0;
+        Miss = judgements.ContainsKey(Judgement.Miss) ? judgements[Judgement.Miss] : 0;
     }
 
     [UsedImplicitly]

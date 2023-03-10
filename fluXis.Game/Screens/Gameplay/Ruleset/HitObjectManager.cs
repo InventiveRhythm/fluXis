@@ -213,7 +213,6 @@ public partial class HitObjectManager : CompositeDrawable
         hitObject.GotHit = true;
 
         judmentDisplay(hitObject, diff);
-        Playfield.Screen.HitErrorBar.AddHit(diff);
 
         Performance.IncCombo();
 
@@ -243,14 +242,12 @@ public partial class HitObjectManager : CompositeDrawable
 
     private void judmentDisplay(HitObject hitObject, float difference, bool missed = false)
     {
-        HitWindow hitWindow = missed ? HitWindow.FromKey(Judgements.Miss) : HitWindow.FromTiming(Math.Abs(difference));
-
-        Playfield.Screen.JudgementDisplay.PopUp(hitWindow);
+        HitWindow hitWindow = missed ? HitWindow.FromKey(Judgement.Miss) : HitWindow.FromTiming(Math.Abs(difference));
 
         if (Dead)
             return;
 
-        Performance.AddHitPoint(new HitPoint(hitObject.Data.Time, difference, hitWindow.Key));
+        Performance.AddHitStat(new HitStat(hitObject.Data.Time, difference, hitWindow.Key));
         Performance.AddJudgement(hitWindow.Key);
 
         if (HealthMode == HealthMode.Drain)

@@ -71,7 +71,7 @@ public partial class ResultScore : FillFlowContainer
                     comboText = new SpriteText
                     {
                         Font = new FontUsage("Quicksand", 24, "SemiBold"),
-                        Colour = performance.IsAllFlawless() ? HitWindow.FromKey(Judgements.Flawless).Color : performance.IsFullCombo() ? HitWindow.FromKey(Judgements.Great).Color : Color4.White
+                        Colour = performance.AllFlawless ? HitWindow.FromKey(Judgement.Flawless).Color : performance.FullCombo ? HitWindow.FromKey(Judgement.Great).Color : Color4.White
                     }
                 }
             }

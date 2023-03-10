@@ -46,12 +46,12 @@ public partial class JudgementCounter : CompositeDrawable
                     AutoSizeAxes = Axes.Y,
                     Children = new JudgementCounterItem[]
                     {
-                        new(performance, Judgements.Flawless),
-                        new(performance, Judgements.Perfect),
-                        new(performance, Judgements.Great),
-                        new(performance, Judgements.Alright),
-                        new(performance, Judgements.Okay),
-                        new(performance, Judgements.Miss)
+                        new(performance, Scoring.Judgement.Flawless),
+                        new(performance, Scoring.Judgement.Perfect),
+                        new(performance, Scoring.Judgement.Great),
+                        new(performance, Scoring.Judgement.Alright),
+                        new(performance, Scoring.Judgement.Okay),
+                        new(performance, Scoring.Judgement.Miss)
                     }
                 }
             }

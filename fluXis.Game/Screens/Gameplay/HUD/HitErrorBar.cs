@@ -28,6 +28,8 @@ public partial class HitErrorBar : GameplayHUDElement
         AutoSizeAxes = Axes.Y;
         Width = 280;
 
+        screen.Performance.OnHitStatAdded += AddHit;
+
         Container colors;
 
         InternalChildren = new Drawable[]
@@ -68,7 +70,7 @@ public partial class HitErrorBar : GameplayHUDElement
 
         foreach (var hitWindow in HitWindow.LIST.Reverse())
         {
-            if (hitWindow.Key == Judgements.Miss)
+            if (hitWindow.Key == Scoring.Judgement.Miss)
                 continue;
 
             colors.Add(new Container
@@ -101,8 +103,9 @@ public partial class HitErrorBar : GameplayHUDElement
         base.Update();
     }
 
-    public void AddHit(float time)
+    public void AddHit(HitStat stat)
     {
+        float time = stat.Difference;
         HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(time));
 
         icon.MoveToX(time, 100, Easing.OutQuint);

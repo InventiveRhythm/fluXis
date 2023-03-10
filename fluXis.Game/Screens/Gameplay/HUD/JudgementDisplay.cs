@@ -14,6 +14,7 @@ public partial class JudgementDisplay : GameplayHUDElement
     public JudgementDisplay(GameplayScreen screen)
         : base(screen)
     {
+        screen.Performance.OnHitStatAdded += PopUp;
     }
 
     private SpriteText text;
@@ -38,15 +39,17 @@ public partial class JudgementDisplay : GameplayHUDElement
         };
     }
 
-    public void PopUp(HitWindow hitWindow)
+    public void PopUp(HitStat stat)
     {
-        if (hideFlawless.Value && hitWindow.Key == Judgements.Flawless) return;
+        var hitWindow = HitWindow.FromKey(stat.Judgement);
+
+        if (hideFlawless.Value && hitWindow.Key == Scoring.Judgement.Flawless) return;
 
         const int random_angle = 7;
         float scale = 1.4f;
         float rotation = 0;
 
-        if (hitWindow.Key == Judgements.Miss)
+        if (hitWindow.Key == Scoring.Judgement.Miss)
         {
             scale = 1.8f;
             rotation = new Random().Next(-random_angle, random_angle);
