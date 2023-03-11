@@ -9,7 +9,6 @@ using fluXis.Game.Import.Quaver;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Overlay;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Menu;
@@ -29,7 +28,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     private static Action exitAction;
 
     private ScreenStack screenStack;
-    private OnlineOverlay overlay;
 
     private Storage storage;
 
@@ -46,14 +44,14 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         // A screen stack and sample screen has been provided for convenience, but you can replace it if you don't want to use screens.
         Children = new Drawable[]
         {
+            new Conductor(),
             BackgroundStack,
             screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
-            overlay = new OnlineOverlay(),
             Settings,
+            LoginOverlay,
             new VolumeOverlay(),
             Notifications,
-            CursorOverlay,
-            new Conductor()
+            CursorOverlay
         };
     }
 
@@ -61,9 +59,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     {
         base.LoadComplete();
 
+        screenStack.Push(new MenuScreen());
         Fluxel.Notifications = Notifications;
         Fluxel.Connect();
-        screenStack.Push(new MenuScreen());
     }
 
     public override void SetHost(GameHost host)
@@ -118,10 +116,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     {
         switch (e.Action)
         {
-            case FluXisKeybind.ToggleOnlineOverlay:
-                overlay.ToggleVisibility();
-                return true;
-
             case FluXisKeybind.ToggleSettings:
                 Settings.ToggleVisibility();
                 return true;

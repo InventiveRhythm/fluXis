@@ -41,7 +41,6 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(InputKey.Down, FluXisKeybind.Next),
         new KeyBinding(InputKey.Left, FluXisKeybind.PreviousGroup),
         new KeyBinding(InputKey.Right, FluXisKeybind.NextGroup),
-        new KeyBinding(InputKey.Tab, FluXisKeybind.ToggleOnlineOverlay),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), FluXisKeybind.ToggleSettings),
         new KeyBinding(InputKey.Delete, FluXisKeybind.Delete),
 
@@ -135,7 +134,6 @@ public enum FluXisKeybind
     Next,
     PreviousGroup,
     NextGroup,
-    ToggleOnlineOverlay,
     ToggleSettings,
     Delete,
 

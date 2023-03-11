@@ -48,7 +48,7 @@ public class Fluxel
         catch (Exception ex)
         {
             Notifications.Post("Failed to connect to server!", ex.Message, NotificationType.Error);
-            Logger.Error(ex, "Failed to connect to server!");
+            Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
         }
     }
 
@@ -64,6 +64,7 @@ public class Fluxel
 
                 // convert to string
                 string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+                Logger.Log(message, LoggingTarget.Network);
 
                 // handler logic
                 void handleListener<T>()
@@ -86,6 +87,7 @@ public class Fluxel
                 {
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUser>,
+                    EventType.Register => handleListener<APIRegisterResponse>,
                     _ => throw new ArgumentOutOfRangeException()
                 };
                 // execute handler
@@ -95,7 +97,7 @@ public class Fluxel
         catch (Exception e)
         {
             Notifications.Post("Something went wrong!", e.Message, NotificationType.Error);
-            Logger.Error(e, "Something went wrong!");
+            Logger.Error(e, "Something went wrong!", LoggingTarget.Network);
         }
 
         Notifications.Post("Disconnected from server!", "", NotificationType.Error);
@@ -135,7 +137,7 @@ public class Fluxel
     {
         OnUserLoggedIn?.Invoke(user);
         loggedInUser = user;
-        Logger.Log($"Logged in as {user.Username}");
+        Logger.Log($"Logged in as {user.Username}", LoggingTarget.Network);
     }
 
     [CanBeNull]
@@ -148,5 +150,6 @@ public class Fluxel
 public enum EventType
 {
     Token = 0,
-    Login = 1
+    Login = 1,
+    Register = 2,
 }
