@@ -10,6 +10,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Overlay;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
@@ -50,6 +51,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             overlay = new OnlineOverlay(),
             Settings,
             new VolumeOverlay(),
+            Notifications,
             CursorOverlay,
             new Conductor()
         };
@@ -59,6 +61,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     {
         base.LoadComplete();
 
+        Fluxel.Notifications = Notifications;
         Fluxel.Connect();
         screenStack.Push(new MenuScreen());
     }
@@ -91,15 +94,15 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                 switch (Path.GetExtension(path))
                 {
                     case ".fms":
-                        new FluXisImport(Realm, MapStore, storage).Import(path).Start();
+                        new FluXisImport(Realm, MapStore, storage, Notifications).Import(path).Start();
                         break;
 
                     case ".qp":
-                        new QuaverImport(Realm, MapStore, storage).Import(path).Start();
+                        new QuaverImport(Realm, MapStore, storage, Notifications).Import(path).Start();
                         break;
 
                     case ".osz":
-                        new OsuImport(Realm, MapStore, storage).Import(path).Start();
+                        new OsuImport(Realm, MapStore, storage, Notifications).Import(path).Start();
                         break;
                 }
             }
@@ -107,6 +110,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         catch (Exception e)
         {
             Logger.Error(e, "Error while importing mapset");
+            Notifications.AddNotification(new Notification("Error while importing mapset", e.Message));
         }
     }
 

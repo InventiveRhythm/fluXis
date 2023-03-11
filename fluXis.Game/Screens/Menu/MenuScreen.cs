@@ -4,6 +4,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
@@ -35,6 +36,9 @@ public partial class MenuScreen : Screen
 
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
+
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
 
     private Box blackBox;
     private Container content;
@@ -100,7 +104,7 @@ public partial class MenuScreen : Screen
                                 Icon = FontAwesome.Solid.Download,
                                 Width = 340,
                                 Margin = new MarginPadding { Top = 80 },
-                                Enabled = false
+                                Action = () => notifications.AddNotification(new Notification("Coming soon!", "This feature is not yet implemented."))
                             },
                             new MenuButton
                             {

@@ -9,6 +9,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.HUD.Judgement;
@@ -38,6 +39,9 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
+
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
 
     private bool starting = true;
     private bool ended;
@@ -80,6 +84,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         // map is null or invalid, leave
         if (Map == null || !Map.Validate())
         {
+            notifications.AddNotification(new Notification("Invalid map", "The map you tried to play not valid.", NotificationType.Error));
             this.Exit();
             return;
         }

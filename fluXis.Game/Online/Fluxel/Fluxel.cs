@@ -6,6 +6,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel.Packets;
+using fluXis.Game.Overlay.Notification;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,19 +25,21 @@ public class Fluxel
     public static string Token;
     public static Action<APIUser> OnUserLoggedIn;
 
+    public static NotificationOverlay Notifications;
+
     private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();
 
     public static async void Connect()
     {
         try
         {
-            Logger.Log("Connecting to server...");
+            Notifications.Post("Connecting to server...", "");
             connection = new ClientWebSocket();
             await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
 
             // create thread
             receive();
-            Logger.Log("Connected to server.");
+            Notifications.Post("Connected to server!", "");
 
             // send queued packets
             foreach (var packet in packet_queue)
@@ -44,7 +47,8 @@ public class Fluxel
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "Could not connect to server!");
+            Notifications.Post("Failed to connect to server!", ex.Message, NotificationType.Error);
+            Logger.Error(ex, "Failed to connect to server!");
         }
     }
 
@@ -90,10 +94,11 @@ public class Fluxel
         }
         catch (Exception e)
         {
-            Logger.Error(e, "Fatal Error in receiver: " + e);
+            Notifications.Post("Something went wrong!", e.Message, NotificationType.Error);
+            Logger.Error(e, "Something went wrong!");
         }
 
-        Logger.Log("Disconnected from server.");
+        Notifications.Post("Disconnected from server!", "", NotificationType.Error);
     }
 
     public static void Send(string message)

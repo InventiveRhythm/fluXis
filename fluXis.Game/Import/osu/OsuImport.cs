@@ -7,6 +7,7 @@ using fluXis.Game.Import.FluXis;
 using fluXis.Game.Import.osu.Map;
 using fluXis.Game.Import.osu.Map.Enums;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -15,8 +16,8 @@ namespace fluXis.Game.Import.osu;
 
 public class OsuImport : MapImporter
 {
-    public OsuImport(FluXisRealm realm, MapStore mapStore, Storage storage)
-        : base(realm, mapStore, storage)
+    public OsuImport(FluXisRealm realm, MapStore mapStore, Storage storage, NotificationOverlay notifications)
+        : base(realm, mapStore, storage, notifications)
     {
     }
 
@@ -24,36 +25,46 @@ public class OsuImport : MapImporter
     {
         return new Task(() =>
         {
-            Logger.Log("Importing osu! map: " + path);
-
-            string folder = Path.GetFileNameWithoutExtension(path);
-
-            ZipArchive osz = ZipFile.OpenRead(path);
-
-            foreach (var entry in osz.Entries)
+            try
             {
-                if (entry.FullName.EndsWith(".osu"))
+                Logger.Log("Importing osu! map: " + path);
+
+                string folder = Path.GetFileNameWithoutExtension(path);
+
+                Notifications.Post("Importing osu! map...", "");
+
+                ZipArchive osz = ZipFile.OpenRead(path);
+
+                foreach (var entry in osz.Entries)
                 {
-                    string json = JsonConvert.SerializeObject(parseOsuMap(entry).ToMapInfo());
-                    WriteFile(json, folder + "/" + entry.FullName + ".fsc");
+                    if (entry.FullName.EndsWith(".osu"))
+                    {
+                        string json = JsonConvert.SerializeObject(parseOsuMap(entry).ToMapInfo());
+                        WriteFile(json, folder + "/" + entry.FullName + ".fsc");
+                    }
+                    else
+                        CopyFile(entry, folder);
                 }
-                else
-                    CopyFile(entry, folder);
+
+                osz.Dispose();
+
+                ZipArchive fms = ZipFile.Open(Path.Combine(Storage.GetFullPath("import"), folder + ".fms"), ZipArchiveMode.Create);
+
+                // add all files from the import folder
+                foreach (var file in Directory.GetFiles(Path.Combine(Storage.GetFullPath("import"), folder)))
+                    fms.CreateEntryFromFile(file, Path.GetFileName(file));
+
+                fms.Dispose();
+                Directory.Delete(Path.Combine(Storage.GetFullPath("import"), folder), true);
+
+                var import = new FluXisImport(Realm, MapStore, Storage, Notifications) { MapStatus = -4 };
+                import.Import(Path.Combine(Storage.GetFullPath("import"), folder + ".fms")).Start();
             }
-
-            osz.Dispose();
-
-            ZipArchive fms = ZipFile.Open(Path.Combine(Storage.GetFullPath("import"), folder + ".fms"), ZipArchiveMode.Create);
-
-            // add all files from the import folder
-            foreach (var file in Directory.GetFiles(Path.Combine(Storage.GetFullPath("import"), folder)))
-                fms.CreateEntryFromFile(file, Path.GetFileName(file));
-
-            fms.Dispose();
-            Directory.Delete(Path.Combine(Storage.GetFullPath("import"), folder), true);
-
-            var import = new FluXisImport(Realm, MapStore, Storage) { MapStatus = -4 };
-            import.Import(Path.Combine(Storage.GetFullPath("import"), folder + ".fms")).Start();
+            catch (Exception e)
+            {
+                Notifications.AddNotification(new Notification("Error while importing osu! map", e.Message, NotificationType.Error));
+                Logger.Error(e, "Error while importing osu! map");
+            }
         });
     }
 

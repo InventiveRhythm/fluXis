@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -19,8 +20,8 @@ public class FluXisImport : MapImporter
      */
     public int MapStatus { get; set; } = -2;
 
-    public FluXisImport(FluXisRealm realm, MapStore mapStore, Storage storage)
-        : base(realm, mapStore, storage)
+    public FluXisImport(FluXisRealm realm, MapStore mapStore, Storage storage, NotificationOverlay notifications)
+        : base(realm, mapStore, storage, notifications)
     {
     }
 
@@ -28,101 +29,111 @@ public class FluXisImport : MapImporter
     {
         return new Task(() =>
         {
-            Logger.Log($"Loading mapset from {path}");
-
-            ZipArchive archive = ZipFile.OpenRead(path);
-
-            List<RealmFile> files = new();
-            List<RealmMap> maps = new();
-
-            RealmMapSet mapSet = new(maps, files);
-
-            foreach (ZipArchiveEntry entry in archive.Entries)
+            try
             {
-                string hash = GetHash(entry);
+                Logger.Log($"Loading mapset from {path}");
 
-                string filename = entry.FullName;
+                Notifications.Post("Importing mapset...", "");
 
-                files.Add(new RealmFile
+                ZipArchive archive = ZipFile.OpenRead(path);
+
+                List<RealmFile> files = new();
+                List<RealmMap> maps = new();
+
+                RealmMapSet mapSet = new(maps, files);
+
+                foreach (ZipArchiveEntry entry in archive.Entries)
                 {
-                    Hash = hash,
-                    Name = entry.FullName
-                });
+                    string hash = GetHash(entry);
 
-                if (filename.EndsWith(".fsc"))
-                {
-                    string json = new StreamReader(entry.Open()).ReadToEnd();
-                    MapInfo mapInfo = JsonConvert.DeserializeObject<MapInfo>(json);
+                    string filename = entry.FullName;
 
-                    float length = 0;
-                    int keys = 0;
-                    float bpmMin = float.MaxValue;
-                    float bpmMax = float.MinValue;
-
-                    foreach (var point in mapInfo.TimingPoints)
+                    files.Add(new RealmFile
                     {
-                        bpmMin = Math.Min(bpmMin, point.BPM);
-                        bpmMax = Math.Max(bpmMax, point.BPM);
-                    }
-
-                    foreach (var hitObject in mapInfo.HitObjects)
-                    {
-                        float time = hitObject.Time;
-                        if (hitObject.IsLongNote()) time += hitObject.HoldTime;
-                        length = Math.Max(length, time);
-
-                        keys = Math.Max(keys, hitObject.Lane);
-                    }
-
-                    RealmMap map = new RealmMap(new RealmMapMetadata
-                    {
-                        Title = mapInfo.Metadata.Title ?? "Untitled",
-                        Artist = mapInfo.Metadata.Artist ?? "Unknown",
-                        Mapper = mapInfo.Metadata.Mapper ?? "Unknown",
-                        Source = mapInfo.Metadata.Source ?? "",
-                        Tags = mapInfo.Metadata.Tags ?? "",
-                        Audio = mapInfo.AudioFile,
-                        Background = mapInfo.BackgroundFile,
-                        PreviewTime = mapInfo.Metadata.PreviewTime
-                    })
-                    {
-                        Difficulty = mapInfo.Metadata.Difficulty ?? "Unknown",
-                        MapSet = mapSet,
                         Hash = hash,
-                        KeyCount = keys,
-                        Length = length,
-                        BPMMin = bpmMin,
-                        BPMMax = bpmMax,
-                        Rating = 0,
-                        Status = MapStatus
-                    };
+                        Name = entry.FullName
+                    });
 
-                    maps.Add(map);
+                    if (filename.EndsWith(".fsc"))
+                    {
+                        string json = new StreamReader(entry.Open()).ReadToEnd();
+                        MapInfo mapInfo = JsonConvert.DeserializeObject<MapInfo>(json);
+
+                        float length = 0;
+                        int keys = 0;
+                        float bpmMin = float.MaxValue;
+                        float bpmMax = float.MinValue;
+
+                        foreach (var point in mapInfo.TimingPoints)
+                        {
+                            bpmMin = Math.Min(bpmMin, point.BPM);
+                            bpmMax = Math.Max(bpmMax, point.BPM);
+                        }
+
+                        foreach (var hitObject in mapInfo.HitObjects)
+                        {
+                            float time = hitObject.Time;
+                            if (hitObject.IsLongNote()) time += hitObject.HoldTime;
+                            length = Math.Max(length, time);
+
+                            keys = Math.Max(keys, hitObject.Lane);
+                        }
+
+                        RealmMap map = new RealmMap(new RealmMapMetadata
+                        {
+                            Title = mapInfo.Metadata.Title ?? "Untitled",
+                            Artist = mapInfo.Metadata.Artist ?? "Unknown",
+                            Mapper = mapInfo.Metadata.Mapper ?? "Unknown",
+                            Source = mapInfo.Metadata.Source ?? "",
+                            Tags = mapInfo.Metadata.Tags ?? "",
+                            Audio = mapInfo.AudioFile,
+                            Background = mapInfo.BackgroundFile,
+                            PreviewTime = mapInfo.Metadata.PreviewTime
+                        })
+                        {
+                            Difficulty = mapInfo.Metadata.Difficulty ?? "Unknown",
+                            MapSet = mapSet,
+                            Hash = hash,
+                            KeyCount = keys,
+                            Length = length,
+                            BPMMin = bpmMin,
+                            BPMMax = bpmMax,
+                            Rating = 0,
+                            Status = MapStatus
+                        };
+
+                        maps.Add(map);
+                    }
+                }
+
+                if (files.Count > 0 && maps.Count > 0)
+                {
+                    Realm.RunWrite(realm =>
+                    {
+                        realm.Add(mapSet);
+
+                        foreach (var file in files)
+                        {
+                            string filePath = Storage.GetStorageForDirectory("files").GetFullPath(file.GetPath());
+                            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                            if (File.Exists(filePath)) continue;
+
+                            ZipArchiveEntry entry = archive.GetEntry(file.Name);
+                            entry.ExtractToFile(filePath);
+                        }
+
+                        archive.Dispose();
+                        MapStore.AddMapSet(mapSet.Detach());
+
+                        try { File.Delete(path); }
+                        catch { Logger.Log($"Failed to delete {path}"); }
+                    });
                 }
             }
-
-            if (files.Count > 0 && maps.Count > 0)
+            catch (Exception e)
             {
-                Realm.RunWrite(realm =>
-                {
-                    realm.Add(mapSet);
-
-                    foreach (var file in files)
-                    {
-                        string filePath = Storage.GetStorageForDirectory("files").GetFullPath(file.GetPath());
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                        if (File.Exists(filePath)) continue;
-
-                        ZipArchiveEntry entry = archive.GetEntry(file.Name);
-                        entry.ExtractToFile(filePath);
-                    }
-
-                    archive.Dispose();
-                    MapStore.AddMapSet(mapSet.Detach());
-
-                    try { File.Delete(path); }
-                    catch { Logger.Log($"Failed to delete {path}"); }
-                });
+                Notifications.Post("Failed to import mapset", e.Message, NotificationType.Error);
+                Logger.Error(e, "Failed to import mapset");
             }
         });
     }

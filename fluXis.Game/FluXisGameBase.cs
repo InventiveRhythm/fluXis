@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Resources;
 using osu.Framework.Allocation;
@@ -32,6 +33,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public BackgroundStack BackgroundStack;
     public GlobalCursorOverlay CursorOverlay;
     public SettingsMenu Settings;
+    public NotificationOverlay Notifications;
 
     protected FluXisGameBase()
     {
@@ -50,6 +52,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(BackgroundStack = new BackgroundStack());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
         dependencies.Cache(Settings = new SettingsMenu());
+        dependencies.Cache(Notifications = new NotificationOverlay());
 
         FluXisKeybindContainer keybinds;
 

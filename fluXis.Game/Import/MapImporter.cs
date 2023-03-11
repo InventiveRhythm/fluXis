@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using fluXis.Game.Database;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notification;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Import;
@@ -13,12 +14,14 @@ public class MapImporter
     public FluXisRealm Realm { get; set; }
     public MapStore MapStore { get; set; }
     public Storage Storage { get; set; }
+    public NotificationOverlay Notifications { get; set; }
 
-    public MapImporter(FluXisRealm realm, MapStore mapStore, Storage storage)
+    public MapImporter(FluXisRealm realm, MapStore mapStore, Storage storage, NotificationOverlay notifications)
     {
         Realm = realm;
         MapStore = mapStore;
         Storage = storage;
+        Notifications = notifications;
     }
 
     public static string GetHash(ZipArchiveEntry entry)
