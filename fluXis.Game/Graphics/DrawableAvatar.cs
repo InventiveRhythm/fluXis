@@ -13,6 +13,8 @@ public partial class DrawableAvatar : Sprite
     private APIUserShort user;
     private TextureStore textures;
 
+    private CancellationTokenSource cancellationToken = new();
+
     public DrawableAvatar(APIUserShort user)
     {
         this.user = user;
@@ -23,7 +25,7 @@ public partial class DrawableAvatar : Sprite
     private async void load(TextureStore textures)
     {
         this.textures = textures;
-        Texture = await textures.GetAsync($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}", CancellationToken.None);
+        Texture = await textures.GetAsync($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}", cancellationToken.Token);
     }
 
     protected override void LoadAsyncComplete()
@@ -32,9 +34,12 @@ public partial class DrawableAvatar : Sprite
         base.LoadAsyncComplete();
     }
 
-    public void UpdateUser(APIUserShort user)
+    public async void UpdateUser(APIUserShort user)
     {
+        cancellationToken.Cancel();
+        cancellationToken = new CancellationTokenSource();
+
         this.user = user;
-        Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
+        Texture = await textures.GetAsync($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}", cancellationToken.Token);
     }
 }

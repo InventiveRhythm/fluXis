@@ -230,6 +230,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         this.FadeIn(200);
         Backgrounds.Zoom = 1.1f;
+        Backgrounds.ParallaxStrength = 10;
 
         MapList.MoveToX(0, 500, Easing.OutQuint);
         SearchBar.MoveToY(0, 500, Easing.OutQuint);
@@ -247,6 +248,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         this.FadeInFromZero(200);
         Backgrounds.Zoom = 1.1f;
+        Backgrounds.ParallaxStrength = 10;
 
         MapList.MoveToX(-200)
                .MoveToX(0, 500, Easing.OutQuint);

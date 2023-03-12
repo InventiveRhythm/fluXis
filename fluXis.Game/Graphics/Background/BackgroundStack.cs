@@ -17,6 +17,7 @@ public partial class BackgroundStack : CompositeDrawable
 {
     private readonly List<Background> scheduledBackgrounds = new();
     private readonly Container backgroundContainer;
+    private readonly ParallaxContainer parallaxContainer;
     private readonly BackgroundVideo backgroundVideo;
     private readonly Box swipeAnimation;
     private readonly Box backgroundDim;
@@ -34,9 +35,15 @@ public partial class BackgroundStack : CompositeDrawable
         set
         {
             isZooming = true;
-            backgroundContainer.ScaleTo(value, 1000, Easing.OutQuint).OnComplete(_ => isZooming = false);
+            backgroundContainer.ScaleTo(value + .05f, 1000, Easing.OutQuint).OnComplete(_ => isZooming = false);
             zoom = value;
         }
+    }
+
+    public float ParallaxStrength
+    {
+        get => parallaxContainer.Strength;
+        set => parallaxContainer.Strength = value;
     }
 
     public BackgroundStack()
@@ -45,11 +52,16 @@ public partial class BackgroundStack : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            backgroundContainer = new Container
+            parallaxContainer = new ParallaxContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Child = backgroundContainer = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Scale = new Vector2(1.05f)
+                },
+                RelativeSizeAxes = Axes.Both
             },
             backgroundVideo = new BackgroundVideo(),
             backgroundDim = new Box

@@ -267,6 +267,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             .FadeIn(250);
 
         backgrounds.Zoom = 1f;
+        backgrounds.ParallaxStrength = 0;
 
         base.OnEntering(e);
     }

@@ -122,6 +122,7 @@ public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             .FadeIn(250, Easing.OutQuint);
 
         backgrounds.Zoom = 1.2f;
+        backgrounds.ParallaxStrength = 10;
 
         base.OnEntering(e);
     }

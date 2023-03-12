@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
@@ -61,7 +62,12 @@ public partial class MenuScreen : Screen
 
         InternalChildren = new Drawable[]
         {
-            new MenuVisualizer(),
+            new ParallaxContainer
+            {
+                Child = new MenuVisualizer(),
+                RelativeSizeAxes = Axes.Both,
+                Strength = 5
+            },
             content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
