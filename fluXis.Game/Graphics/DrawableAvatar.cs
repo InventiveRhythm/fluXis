@@ -1,3 +1,4 @@
+using System.Threading;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using osu.Framework.Allocation;
@@ -19,10 +20,10 @@ public partial class DrawableAvatar : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures)
+    private async void load(TextureStore textures)
     {
         this.textures = textures;
-        Texture = textures.Get($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}");
+        Texture = await textures.GetAsync($"{APIConstants.API_URL}/assets/avatar/{user?.ID ?? -1}", CancellationToken.None);
     }
 
     protected override void LoadAsyncComplete()
