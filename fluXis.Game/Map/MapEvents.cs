@@ -25,12 +25,19 @@ public class MapEvents
             switch (type)
             {
                 case "LaneSwitch":
-                    LaneSwitchEvents.Add(new LaneSwitchEvent
+                {
+                    var laneSwitch = new LaneSwitchEvent
                     {
                         Time = float.Parse(args[0]),
                         Count = int.Parse(args[1])
-                    });
+                    };
+
+                    if (args.Length > 2)
+                        laneSwitch.Speed = float.Parse(args[2]);
+
+                    LaneSwitchEvents.Add(laneSwitch);
                     break;
+                }
 
                 case "Flash":
                     FlashEvents.Add(new FlashEvent

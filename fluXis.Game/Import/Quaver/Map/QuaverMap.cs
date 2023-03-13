@@ -95,7 +95,12 @@ public class QuaverMap
                 if (split[0] == "laneswitch" && split.Length == 2)
                 {
                     if (int.TryParse(split[1], out var lane))
-                        effectFile += $"LaneSwitch({b.StartTime},{lane}){Environment.NewLine}";
+                    {
+                        if (split.Length > 2 && int.TryParse(split[2], out var speed))
+                            effectFile += $"LaneSwitch({b.StartTime},{lane},{speed}){Environment.NewLine}";
+                        else
+                            effectFile += $"LaneSwitch({b.StartTime},{lane}){Environment.NewLine}";
+                    }
                     else
                         Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
                 }

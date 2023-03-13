@@ -118,15 +118,17 @@ public partial class Receptor : CompositeDrawable
         }
         else
         {
+            float duration = Playfield.Manager.CurrentLaneSwitchEvent?.Speed ?? 200;
+
             if (!prevVisible)
                 this.MoveToX(x);
             else if (visible)
-                this.MoveToX(x, 200, Easing.OutQuint);
+                this.MoveToX(x, duration, Easing.OutQuint);
 
-            this.ScaleTo(visible ? 1 : .9f, 200, Easing.OutQuint);
+            this.ScaleTo(visible ? 1 : .9f, duration, Easing.OutQuint);
 
-            sprUp.FadeTo(visible ? 1 : 0, 200);
-            sprDown.FadeTo(isDown && visible ? 1 : 0, 200);
+            sprUp.FadeTo(visible ? 1 : 0, duration);
+            sprDown.FadeTo(isDown && visible ? 1 : 0, duration);
         }
     }
 

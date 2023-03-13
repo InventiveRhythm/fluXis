@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.Input;
 using osu.Framework.Allocation;
@@ -26,6 +27,7 @@ public partial class HitObjectManager : CompositeDrawable
 
     public float CurrentTime { get; private set; }
     public int CurrentKeyCount { get; private set; }
+    public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
     public bool Dead { get; set; }
     public HealthMode HealthMode => HealthMode.Normal;
@@ -99,6 +101,7 @@ public partial class HitObjectManager : CompositeDrawable
             if (laneSwitchEvent.Time <= CurrentTime)
             {
                 CurrentKeyCount = laneSwitchEvent.Count;
+                CurrentLaneSwitchEvent = laneSwitchEvent;
             }
         }
 

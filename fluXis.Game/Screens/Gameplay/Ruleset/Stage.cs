@@ -71,10 +71,11 @@ public partial class Stage : Container
     {
         if (currentKeyCount != playfield.Manager.CurrentKeyCount)
         {
-            currentKeyCount = playfield.Manager.CurrentKeyCount;
-            Background.ResizeWidthTo(Receptor.SIZE.X * currentKeyCount + lane_margin * 2, 200, Easing.OutQuint);
-            BorderLeft.MoveToX(-(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin), 200, Easing.OutQuint);
-            BorderRight.MoveToX(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin, 200, Easing.OutQuint);
+            var currentEvent = playfield.Manager.CurrentLaneSwitchEvent;
+            currentKeyCount = currentEvent.Count;
+            Background.ResizeWidthTo(Receptor.SIZE.X * currentKeyCount + lane_margin * 2, currentEvent.Speed, Easing.OutQuint);
+            BorderLeft.MoveToX(-(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin), currentEvent.Speed, Easing.OutQuint);
+            BorderRight.MoveToX(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin, currentEvent.Speed, Easing.OutQuint);
         }
 
         base.Update();
