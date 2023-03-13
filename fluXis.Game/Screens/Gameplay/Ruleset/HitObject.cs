@@ -113,6 +113,9 @@ public partial class HitObject : CompositeDrawable
 
         X = manager.Playfield.Receptors[Data.Lane - 1].X;
 
+        if (!LongNoteMissed)
+            Alpha = manager.Playfield.Receptors[Data.Lane - 1].Alpha;
+
         var receptor = manager.Playfield.Receptors[Data.Lane - 1];
         spr.Y = receptor.Y - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);
 
