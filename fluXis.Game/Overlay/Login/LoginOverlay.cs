@@ -36,7 +36,7 @@ public partial class LoginOverlay : Container
     {
         Anchor = Origin = Anchor.Centre;
         Width = 300;
-        Height = 150;
+        Height = 180;
         CornerRadius = 10;
         Masking = true;
 
@@ -60,6 +60,10 @@ public partial class LoginOverlay : Container
                     new LoginButton("Login!")
                     {
                         Action = login
+                    },
+                    new LoginButton("Play Offline")
+                    {
+                        Action = _ => this.FadeOut(200)
                     }
                 }
             },
@@ -122,7 +126,7 @@ public partial class LoginOverlay : Container
         registerContainer.FadeOut(200)
                          .OnComplete(_ =>
                          {
-                             this.ResizeHeightTo(150, 200, Easing.OutQuint)
+                             this.ResizeHeightTo(180, 200, Easing.OutQuint)
                                  .ResizeWidthTo(300, 200, Easing.OutQuint)
                                  .OnComplete(_ => loginContainer.FadeIn(200));
                          });
