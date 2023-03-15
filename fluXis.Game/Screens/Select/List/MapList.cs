@@ -27,7 +27,7 @@ public partial class MapList : BasicScrollContainer<MapListEntry>
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
         Masking = false;
-        Padding = new MarginPadding(10) { Left = 20, Top = 60 };
+        Padding = new MarginPadding(10) { Left = 20, Vertical = 60 };
     }
 
     protected override void Update()

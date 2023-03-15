@@ -32,7 +32,7 @@ public partial class SelectMapInfo : FillFlowContainer
         Origin = Anchor.CentreRight;
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
-        Padding = new MarginPadding { Vertical = 10 };
+        Padding = new MarginPadding { Vertical = 10, };
         Margin = new MarginPadding { Right = -10 };
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(0, 10);
@@ -175,7 +175,7 @@ public partial class SelectMapInfo : FillFlowContainer
                 Name = "Scores Wrapper",
                 RelativeSizeAxes = Axes.Both,
                 Height = .5f,
-                Padding = new MarginPadding { Bottom = 20, Right = 20 },
+                Padding = new MarginPadding { Bottom = 70, Right = 20, },
                 Child = new Container
                 {
                     Name = "Scores",

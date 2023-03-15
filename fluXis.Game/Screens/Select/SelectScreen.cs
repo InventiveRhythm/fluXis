@@ -7,6 +7,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Screens.Select.Footer;
 using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
 using fluXis.Game.Screens.Select.Search;
@@ -20,6 +21,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osu.Framework.Utils;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select;
@@ -36,6 +38,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public MapList MapList;
     public SelectMapInfo SelectMapInfo;
     public SearchBar SearchBar;
+    public SelectFooter Footer;
 
     public Sample MenuAccept;
     public Sample MenuBack;
@@ -63,6 +66,8 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         AddInternal(MapList = new MapList());
         AddInternal(SearchBar = new SearchBar(this));
         AddInternal(SelectMapInfo = new SelectMapInfo());
+        AddInternal(Footer = new SelectFooter(this));
+
         AddInternal(new Container
         {
             Anchor = Anchor.CentreLeft,
@@ -224,6 +229,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         MapList.MoveToX(-200, 500, Easing.OutQuint);
         SearchBar.MoveToY(-200, 500, Easing.OutQuint);
         SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+        Footer.MoveToY(50, 500, Easing.OutQuint);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
@@ -235,6 +241,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         MapList.MoveToX(0, 500, Easing.OutQuint);
         SearchBar.MoveToY(0, 500, Easing.OutQuint);
         SelectMapInfo.MoveToX(0, 500, Easing.OutQuint);
+        Footer.MoveToY(0, 500, Easing.OutQuint);
 
         Discord.Update("Selecting a map", "", "songselect");
 
@@ -259,6 +266,9 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         SelectMapInfo.MoveToX(200)
                      .MoveToX(0, 500, Easing.OutQuint);
 
+        Footer.MoveToY(50)
+              .MoveToY(0, 500, Easing.OutQuint);
+
         Discord.Update("Selecting a map", "", "songselect");
 
         if (MapInfo.Value != null)
@@ -273,6 +283,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         MapList.MoveToX(-200, 500, Easing.OutQuint);
         SearchBar.MoveToY(-200, 500, Easing.OutQuint);
         SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+        Footer.MoveToY(50, 500, Easing.OutQuint);
 
         mapStore.MapSetAdded -= addMapSet;
 
@@ -346,5 +357,13 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             noMapsText.FadeIn(200);
         else
             noMapsText.FadeOut(200);
+    }
+
+    public void RandomMap()
+    {
+        if (Maps.Count == 0)
+            return;
+
+        MapSet.Value = Maps[RNG.Next(0, Maps.Count)];
     }
 }
