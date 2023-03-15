@@ -4,8 +4,10 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Input;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -18,12 +20,13 @@ public partial class SettingsKeybind : SettingsItem
 {
     private FluXisRealm realm { get; set; }
 
-    private readonly FillFlowContainer<SpriteText> flow;
+    public override bool AcceptsFocus => true;
+
+    private readonly FillFlowContainer<KeybindContainer> flow;
     private readonly FluXisKeybind[] keybinds;
     private FluXisKeybindContainer container;
 
-    private int index;
-    private bool isListening;
+    public int Index = -1;
 
     public SettingsKeybind(string label, FluXisKeybind[] keybinds)
     {
@@ -38,15 +41,13 @@ public partial class SettingsKeybind : SettingsItem
             Y = -2
         });
 
-        Add(flow = new FillFlowContainer<SpriteText>
+        Add(flow = new FillFlowContainer<KeybindContainer>
         {
-            RelativeSizeAxes = Axes.Y,
-            AutoSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Both,
             Anchor = Anchor.CentreRight,
             Origin = Anchor.CentreRight,
             Direction = FillDirection.Horizontal,
-            Spacing = new Vector2(5, 0),
-            Y = -2
+            Spacing = new Vector2(5, 0)
         });
     }
 
@@ -58,10 +59,10 @@ public partial class SettingsKeybind : SettingsItem
 
         foreach (var keybind in keybinds)
         {
-            flow.Add(new SpriteText
+            flow.Add(new KeybindContainer
             {
-                Text = getBind(keybind).ToString(),
-                Font = new FontUsage("Quicksand", 24, "Bold")
+                Keybind = getBind(keybind).ToString(),
+                SettingsKeybind = this
             });
         }
     }
@@ -81,37 +82,46 @@ public partial class SettingsKeybind : SettingsItem
         return key;
     }
 
-    protected override bool OnMouseDown(MouseDownEvent e)
+    protected override bool OnClick(ClickEvent e)
     {
         if (e.Button == MouseButton.Left)
         {
-            index = 0;
-            isListening = true;
+            Index = 0;
             return true;
         }
 
-        return base.OnMouseDown(e);
+        return false;
     }
 
-    protected override void OnFocusLost(FocusLostEvent e)
+    protected override void OnFocusLost(FocusLostEvent e) => Index = -1;
+
+    protected override void Update()
     {
-        isListening = false;
-        base.OnFocusLost(e);
+        for (var i = 0; i < flow.Children.Count; i++)
+        {
+            var child = flow.Children.ElementAt(i);
+            bool isCurrent = i == Index;
+
+            if (child.IsCurrent.Value != isCurrent)
+                child.IsCurrent.Value = isCurrent;
+        }
+
+        base.Update();
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
-        if (e.Repeat || !isListening) return false;
+        if (e.Repeat || Index == -1 || !HasFocus) return false;
 
-        if (index < keybinds.Length)
+        if (Index < keybinds.Length)
         {
-            var keybind = keybinds[index];
+            var keybind = keybinds[Index];
             var key = e.Key;
 
             if (key == Key.Escape)
             {
-                index++;
-                return base.OnKeyDown(e);
+                Index = -1;
+                return false;
             }
 
             realm.RunWrite(r =>
@@ -133,10 +143,63 @@ public partial class SettingsKeybind : SettingsItem
 
             container.Reload();
 
-            flow.Children.ElementAt(index).Text = key.ToString();
-            index++;
+            flow.Children.ElementAt(Index).Keybind = key.ToString();
+            Index++;
         }
+        else Index = -1;
 
         return base.OnKeyDown(e);
+    }
+
+    private partial class KeybindContainer : Container
+    {
+        public string Keybind { set => text.Text = value; }
+        public SettingsKeybind SettingsKeybind { get; set; }
+
+        public BindableBool IsCurrent { get; } = new();
+
+        private readonly SpriteText text;
+        private readonly Box box;
+
+        public KeybindContainer()
+        {
+            Height = 32;
+            AutoSizeAxes = Axes.X;
+            CornerRadius = 8;
+            Masking = true;
+
+            Children = new Drawable[]
+            {
+                box = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.Black,
+                    Alpha = 0.2f
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Y,
+                    AutoSizeAxes = Axes.X,
+                    Padding = new MarginPadding { Horizontal = 10 },
+                    Child = text = new SpriteText
+                    {
+                        Font = new FontUsage("Quicksand", 24, "Bold"),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Y = -2
+                    }
+                }
+            };
+
+            IsCurrent.BindValueChanged(updateState, true);
+        }
+
+        private void updateState(ValueChangedEvent<bool> e) => box.FadeColour(e.NewValue ? Colour4.White : Colour4.Black, 200);
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            SettingsKeybind.Index = SettingsKeybind.flow.Children.ToList().IndexOf(this);
+            return base.OnClick(e);
+        }
     }
 }
