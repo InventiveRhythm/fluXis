@@ -8,7 +8,7 @@ public partial class TestJudgementCounter : FluXisTestScene
 {
     public TestJudgementCounter()
     {
-        var performance = new Performance(new MapInfo(new MapMetadata()));
+        var performance = new Performance(new MapInfo(new MapMetadata()), 0, "");
         Add(new JudgementCounter(performance));
 
         int i = 0;

@@ -26,7 +26,7 @@ public class UserCache
     {
         try
         {
-            var res = Fluxel.Fluxel.Http.Send(new HttpRequestMessage(HttpMethod.Get, $"{APIConstants.API_URL}/user/{id}"));
+            var res = Fluxel.Fluxel.Http.Send(new HttpRequestMessage(HttpMethod.Get, $"{APIConstants.APIUrl}/user/{id}"));
             var data = new StreamReader(res.Content.ReadAsStream()).ReadToEnd();
             APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(data);
 

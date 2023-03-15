@@ -35,7 +35,7 @@ public class Fluxel
         {
             Notifications.Post("Connecting to server...", "");
             connection = new ClientWebSocket();
-            await connection.ConnectAsync(new Uri(APIConstants.WEBSOCKET_URL), CancellationToken.None);
+            await connection.ConnectAsync(new Uri(APIConstants.WebsocketUrl), CancellationToken.None);
 
             // create thread
             receive();

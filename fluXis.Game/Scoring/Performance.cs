@@ -48,7 +48,7 @@ public class Performance
     public List<HitStat> HitStats { get; }
 
     [JsonProperty("mapid")]
-    public string MapID { get; private set; }
+    public int MapID { get; private set; }
 
     [JsonProperty("maphash")]
     public string MapHash { get; private set; }
@@ -77,11 +77,11 @@ public class Performance
     [JsonIgnore]
     public Action<HitStat> OnHitStatAdded;
 
-    public Performance(MapInfo map)
+    public Performance(MapInfo map, int mapid, string hash)
     {
         Map = map;
-        MapID = map.ID;
-        MapHash = map.MD5;
+        MapID = mapid;
+        MapHash = hash;
 
         Combo = 0;
         MaxCombo = 0;

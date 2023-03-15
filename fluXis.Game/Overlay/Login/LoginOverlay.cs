@@ -164,6 +164,7 @@ public partial class LoginOverlay : Container
     {
         switchToLoading();
         loginContainer.Alpha = 0;
+        Fluxel.Token = tokenBind.Value;
         setLoadingText("Logging in...", () => Fluxel.SendPacket(new LoginPacket(tokenBind.Value)));
     }
 

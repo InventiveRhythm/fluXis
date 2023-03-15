@@ -92,7 +92,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         loadMapEvents(storage);
 
         Input = new GameplayInput(this, Map.KeyCount);
-        Performance = new Performance(Map);
+        Performance = new Performance(Map, RealmMap.OnlineID, RealmMap.Hash);
 
         HitSound = samples.Get("Gameplay/hitsound.mp3");
         Combobreak = samples.Get("Gameplay/combobreak.ogg");
