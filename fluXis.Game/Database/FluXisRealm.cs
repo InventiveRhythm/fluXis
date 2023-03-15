@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using fluXis.Game.Database.Input;
 using osu.Framework.Development;
 using osu.Framework.Platform;
 using Realms;
@@ -24,7 +26,29 @@ public class FluXisRealm : IDisposable
 
     private RealmConfiguration config => new(storage.GetFullPath("fluxis.realm"))
     {
-        SchemaVersion = 1
+        SchemaVersion = 2,
+        MigrationCallback = (migration, oldSchemaVersion) =>
+        {
+            // from version 1 to 2
+            if (oldSchemaVersion < 2)
+            {
+                Dictionary<string, RealmKeybind> keys = new Dictionary<string, RealmKeybind>();
+                List<RealmKeybind> toRemove = new List<RealmKeybind>();
+
+                foreach (var keybind in migration.NewRealm.All<RealmKeybind>())
+                {
+                    if (keys.ContainsKey(keybind.Action))
+                    {
+                        var existing = keys[keybind.Action];
+                        toRemove.Add(existing);
+                        keys[keybind.Action] = keybind;
+                    }
+                    else keys.Add(keybind.Action, keybind);
+                }
+
+                foreach (var keybind in toRemove) migration.NewRealm.Remove(keybind);
+            }
+        }
     };
 
     public FluXisRealm(Storage storage)
