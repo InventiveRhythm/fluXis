@@ -13,6 +13,7 @@ public partial class AutoPlayDisplay : GameplayHUDElement
     }
 
     private SpriteText text;
+    private readonly Bindable<bool> autoPlay = new();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -31,7 +32,13 @@ public partial class AutoPlayDisplay : GameplayHUDElement
             Alpha = 0
         });
 
-        Screen.Playfield.Manager.AutoPlay.ValueChanged += onAutoPlayChanged;
+        autoPlay.ValueChanged += onAutoPlayChanged;
+    }
+
+    protected override void Update()
+    {
+        if (Screen.Playfield.Manager.AutoPlay != autoPlay.Value)
+            autoPlay.Value = Screen.Playfield.Manager.AutoPlay;
     }
 
     private void onAutoPlayChanged(ValueChangedEvent<bool> v)

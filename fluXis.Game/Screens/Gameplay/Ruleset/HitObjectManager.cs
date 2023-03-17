@@ -5,6 +5,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Mods;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.Input;
 using osu.Framework.Allocation;
@@ -38,7 +39,7 @@ public partial class HitObjectManager : CompositeDrawable
 
     public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
 
-    public Bindable<bool> AutoPlay = new();
+    public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
 
     public HitObjectManager(Playfield playfield)
     {
@@ -60,7 +61,7 @@ public partial class HitObjectManager : CompositeDrawable
     {
         updateTime();
 
-        if (AutoPlay.Value)
+        if (AutoPlay)
             updateAutoPlay();
         else
             updateInput();

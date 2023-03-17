@@ -111,7 +111,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
     {
-        if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay.Value)
+        if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return false;
 
         for (int i = 0; i < keys.Length; i++)
@@ -128,7 +128,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
     {
-        if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay.Value)
+        if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return;
 
         for (int i = 0; i < keys.Length; i++)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
@@ -8,6 +10,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Mods;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Scoring;
@@ -54,6 +57,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public MapInfo Map;
     public RealmMap RealmMap;
     public MapEvents MapEvents;
+    public List<IMod> Mods = new();
 
     public Playfield Playfield { get; private set; }
     public Container HUD { get; private set; }
@@ -298,7 +302,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         switch (e.Action)
         {
             case FluXisKeybind.ToggleAutoplay:
-                Playfield.Manager.AutoPlay.Value = !Playfield.Manager.AutoPlay.Value;
+                if (Playfield.Manager.AutoPlay) Mods.Remove(Mods.First(m => m is AutoPlayMod));
+                else Mods.Add(new AutoPlayMod());
                 return true;
 
             case FluXisKeybind.Restart:
@@ -307,6 +312,9 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
             case FluXisKeybind.Pause:
                 if (Playfield.Manager.Dead) return false;
+
+                if (!Mods.Any(m => m is PausedMod))
+                    Mods.Add(new PausedMod());
 
                 IsPaused.Value = !IsPaused.Value;
                 return true;
