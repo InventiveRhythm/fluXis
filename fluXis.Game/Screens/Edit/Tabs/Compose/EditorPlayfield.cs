@@ -163,10 +163,7 @@ public partial class EditorPlayfield : Container
             if (holdTime < 0) holdTime = 0;
             ghostNote.Info.HoldTime = holdTime;
         }
-        else
-        {
-            updateGhostNote(ToLocalSpace(e.MousePosition));
-        }
+        else updateGhostNote(ToLocalSpace(e.MousePosition));
 
         return base.OnMouseMove(e);
     }
@@ -213,7 +210,7 @@ public partial class EditorPlayfield : Container
             }
 
             default:
-                return base.OnMouseDown(e);
+                return false;
         }
     }
 
@@ -231,8 +228,6 @@ public partial class EditorPlayfield : Container
                 ghostNote.Info.HoldTime = 0; // reset hold time
             }
         }
-
-        base.OnMouseUp(e);
     }
 
     private void updateGhostNote(Vector2 mouse)

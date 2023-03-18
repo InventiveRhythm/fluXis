@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Screens.Edit.Tabs.Compose;
+using fluXis.Game.Screens.Edit.Tabs.Compose.Toolbox;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -16,6 +17,7 @@ public partial class ComposeTab : EditorTab
     };
 
     private EditorPlayfield playfield;
+    private EditorToolbox toolbox;
 
     public ComposeTab(Editor screen)
         : base(screen)
@@ -27,7 +29,8 @@ public partial class ComposeTab : EditorTab
     {
         Children = new Drawable[]
         {
-            playfield = new EditorPlayfield(this)
+            playfield = new EditorPlayfield(this),
+            toolbox = new EditorToolbox(playfield)
         };
     }
 
