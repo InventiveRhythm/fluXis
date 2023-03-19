@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
@@ -11,50 +11,80 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 public partial class Receptor : CompositeDrawable
 {
     public static readonly Vector2 SIZE = new(114, 114);
+    public readonly float HitPosition = 130;
     public Playfield Playfield;
 
     private readonly int id;
-    private Sprite sprUp;
-    private Sprite sprDown;
+    private readonly Colour4 color;
+
+    private Container diamond;
+    private Box hitLighting;
 
     private int currentKeyCount;
     private bool visible;
-    private bool isDown;
+
+    public bool IsDown;
 
     public Receptor(Playfield playfield, int id)
     {
+        this.id = id;
         Playfield = playfield;
         currentKeyCount = playfield.Map.InitialKeyCount;
-        this.id = id;
+        color = FluXisColors.GetLaneColor(id, currentKeyCount);
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures)
+    private void load()
     {
         Origin = Anchor.BottomCentre;
         Anchor = Anchor.BottomCentre;
-        Size = SIZE;
-        X = (id - (Playfield.Manager.Map.InitialKeyCount / 2f - .5f)) * SIZE.X;
-        Y = -60;
+        Width = SIZE.X;
+        RelativeSizeAxes = Axes.Y;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {
-            sprUp = new Sprite
+            new Container
             {
-                Name = "Sprite Up",
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = SIZE,
-                Texture = textures.Get($"Gameplay/_{Playfield.Manager.Map.KeyCount}k/Receptor/up-{id + 1}")
+                RelativeSizeAxes = Axes.X,
+                Height = HitPosition,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Surface
+                    },
+                    diamond = new Container
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Size = new Vector2(24, 24),
+                        Masking = true,
+                        CornerRadius = 5,
+                        BorderColour = FluXisColors.Background,
+                        BorderThickness = 5,
+                        Rotation = 45,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            AlwaysPresent = true,
+                            Alpha = 0
+                        }
+                    }
+                }
             },
-            sprDown = new Sprite
+            hitLighting = new Box
             {
-                Name = "Sprite Down",
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = SIZE,
-                Alpha = 0,
-                Texture = textures.Get($"Gameplay/_{Playfield.Manager.Map.KeyCount}k/Receptor/down-{id + 1}")
+                Colour = ColourInfo.GradientVertical(color.Opacity(0), color),
+                Margin = new MarginPadding { Bottom = HitPosition },
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                RelativeSizeAxes = Axes.X,
+                Height = 232,
+                Alpha = 0
             }
         };
 
@@ -63,20 +93,13 @@ public partial class Receptor : CompositeDrawable
 
     protected override void Update()
     {
-        isDown = Playfield.Screen.Input.Pressed[id];
+        if (!Playfield.Manager.AutoPlay)
+            IsDown = Playfield.Screen.Input.Pressed[id];
 
         if (visible)
         {
-            if (isDown)
-            {
-                sprDown.Alpha = 1;
-                sprUp.Alpha = 0;
-            }
-            else
-            {
-                sprDown.Alpha = 0;
-                sprUp.Alpha = 1;
-            }
+            diamond.BorderColour = IsDown ? color : FluXisColors.Background;
+            hitLighting.FadeTo(IsDown ? 0.5f : 0, IsDown ? 0 : 100);
         }
 
         if (currentKeyCount != Playfield.Manager.CurrentKeyCount)
@@ -90,9 +113,6 @@ public partial class Receptor : CompositeDrawable
 
     private void updateKeyCount(bool instant)
     {
-        int offset = 0;
-        bool prevVisible = visible;
-
         // Since the current count is the same as the maximum,
         // every receptor should be visible
         if (currentKeyCount == Playfield.Map.KeyCount)
@@ -102,33 +122,16 @@ public partial class Receptor : CompositeDrawable
             bool[][] mode = switchVisibility[Playfield.Map.KeyCount - 5];
             bool[] current = mode[currentKeyCount - 4];
             visible = current[id];
-
-            offset += current.Where((t, i) => !t && i < id).Count();
         }
-
-        float x = (id - offset - (currentKeyCount / 2f - .5f)) * SIZE.X;
 
         if (instant)
         {
-            X = x;
-            this.ScaleTo(visible ? 1 : .9f);
-
-            sprUp.FadeTo(visible ? 1 : 0);
-            sprDown.FadeTo(isDown && visible ? 1 : 0);
+            this.ResizeWidthTo(visible ? SIZE.X : 0);
         }
         else
         {
             float duration = Playfield.Manager.CurrentLaneSwitchEvent?.Speed ?? 200;
-
-            if (!prevVisible)
-                this.MoveToX(x);
-            else if (visible)
-                this.MoveToX(x, duration, Easing.OutQuint);
-
-            this.ScaleTo(visible ? 1 : .9f, duration, Easing.OutQuint);
-
-            sprUp.FadeTo(visible ? 1 : 0, duration);
-            sprDown.FadeTo(isDown && visible ? 1 : 0, duration);
+            this.ResizeWidthTo(visible ? SIZE.X : 0, duration, Easing.OutQuint);
         }
     }
 

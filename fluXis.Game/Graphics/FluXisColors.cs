@@ -25,4 +25,34 @@ public class FluXisColors
     public static Colour4 Text = Colour4.FromHex("#ffffff");
     public static Colour4 Text2 = Colour4.FromHex("#c8c8c8");
     public static Colour4 TextDisabled = Colour4.FromHex("#646464");
+
+    public static Colour4 GetLaneColor(int lane, int keyCount)
+    {
+        return keyCount switch
+        {
+            4 => lane switch
+            {
+                1 or 4 => Accent,
+                _ => Accent3
+            },
+            5 => lane switch
+            {
+                1 or 5 => Accent,
+                2 or 4 => Accent3,
+                _ => Accent4
+            },
+            6 => lane switch
+            {
+                1 or 3 or 4 or 6 => Accent3,
+                _ => Accent
+            },
+            7 => lane switch
+            {
+                1 or 3 or 5 or 7 => Accent3,
+                2 or 6 => Accent,
+                _ => Accent4
+            },
+            _ => Colour4.White
+        };
+    }
 }

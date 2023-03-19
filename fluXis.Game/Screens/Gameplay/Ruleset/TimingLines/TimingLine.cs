@@ -28,7 +28,7 @@ public partial class TimingLine : Box
     protected override void Update()
     {
         float delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
-        Y = -60 - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
+        Y = manager.HitObjectManager.Playfield.Receptors[0].HitPosition - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
 
         base.Update();
     }

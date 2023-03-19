@@ -8,7 +8,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class Stage : Container
 {
-    private const int lane_margin = 20;
+    private const int lane_margin = 0;
 
     public Box Background;
     public Box BorderLeft;

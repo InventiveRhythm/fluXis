@@ -1,9 +1,11 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 using osuTK;
 
@@ -16,9 +18,10 @@ public partial class HitObject : CompositeDrawable
     public readonly float ScrollVelocityEndTime;
 
     private readonly HitObjectManager manager;
-    private Sprite spr;
-    private Sprite holdBodySpr;
-    private Sprite holdEndSpr;
+
+    private Drawable notePiece;
+    private Drawable holdBodyPiece;
+    private Drawable holdEndPiece;
 
     public bool Hitable;
     public bool Releasable;
@@ -43,42 +46,58 @@ public partial class HitObject : CompositeDrawable
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
 
-        InternalChildren = new Drawable[]
+        Colour4 color = FluXisColors.GetLaneColor(Data.Lane, manager.Map.KeyCount);
+
+        InternalChildren = new[]
         {
-            holdEndSpr = new Sprite
+            holdEndPiece = new Container
             {
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/holdend-" + Data.Lane),
+                CornerRadius = 10,
+                Masking = true,
+                Height = 42,
+                RelativeSizeAxes = Axes.X,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = color.Darken(.4f)
+                },
                 Alpha = 0
             },
-            holdBodySpr = new Sprite
+            holdBodyPiece = new Container
             {
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/holdbody-" + Data.Lane),
+                RelativeSizeAxes = Axes.X,
+                Width = 0.9f,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = ColourInfo.GradientVertical(color.Darken(.4f), color)
+                },
                 Alpha = 0
             },
-            spr = new Sprite
+            notePiece = new Container
             {
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                RelativeSizeAxes = Axes.Both,
-                Texture = textures.Get($"Gameplay/_{manager.Map.KeyCount}k/HitObject/hitobject-" + Data.Lane)
+                CornerRadius = 10,
+                Masking = true,
+                Height = 42,
+                RelativeSizeAxes = Axes.X,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = color
+                }
             }
         };
 
         if (Data.IsLongNote())
         {
-            holdBodySpr.Alpha = 1;
-            holdEndSpr.Alpha = 1;
-
-            var factor = Receptor.SIZE.X / holdBodySpr.Size.X;
-
-            if (!double.IsPositiveInfinity(factor) && !double.IsNegativeInfinity(factor))
-            {
-                holdEndSpr.Scale = new Vector2(factor, factor);
-            }
+            holdBodyPiece.Alpha = 1;
+            holdEndPiece.Alpha = 1;
         }
     }
 
@@ -97,9 +116,9 @@ public partial class HitObject : CompositeDrawable
     public bool IsOffScreen()
     {
         if (Data.IsLongNote())
-            return holdEndSpr.Y - holdEndSpr.Height > 0;
+            return holdEndPiece.Y - holdEndPiece.Height > 0;
 
-        return spr.Y - spr.Height > manager.Playfield.Receptors[0].Y;
+        return notePiece.Y - notePiece.Height > manager.Playfield.Receptors[0].Y;
     }
 
     protected override void Update()
@@ -108,29 +127,27 @@ public partial class HitObject : CompositeDrawable
         Hitable = Conductor.CurrentTime - Data.Time > -150 && !Missed;
         Releasable = Data.IsLongNote() && Conductor.CurrentTime - Data.HoldEndTime > -150 && !Missed;
 
-        if (!Exists)
-            return;
-
-        X = manager.Playfield.Receptors[Data.Lane - 1].X;
-
-        if (!LongNoteMissed)
-            Alpha = manager.Playfield.Receptors[Data.Lane - 1].Alpha;
+        if (!Exists) return;
 
         var receptor = manager.Playfield.Receptors[Data.Lane - 1];
-        spr.Y = receptor.Y - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);
 
-        if (IsBeingHeld)
-            spr.Y = receptor.Y;
+        X = receptor.X;
+        Width = receptor.Width;
+
+        float hitY = receptor.Y - receptor.HitPosition;
+        notePiece.Y = hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);
+
+        if (IsBeingHeld) notePiece.Y = hitY;
 
         if (Data.IsLongNote())
         {
-            var endY = receptor.Y - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * manager.ScrollSpeed);
+            var endY = hitY - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * manager.ScrollSpeed);
 
-            var height = endY - spr.Y;
-            holdBodySpr.Size = new Vector2(Receptor.SIZE.X, height);
-            holdBodySpr.Y = spr.Y + Receptor.SIZE.Y / 2;
+            var height = notePiece.Y - endY;
+            holdBodyPiece.Size = new Vector2(holdBodyPiece.Width, height);
+            holdBodyPiece.Y = notePiece.Y - notePiece.Height / 2;
 
-            holdEndSpr.Y = endY;
+            holdEndPiece.Y = endY;
         }
 
         IsBeingHeld = false;

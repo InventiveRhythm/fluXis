@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using osu.Framework.Graphics;
@@ -9,7 +8,7 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class Playfield : CompositeDrawable
 {
-    public List<Receptor> Receptors = new();
+    public FillFlowContainer<Receptor> Receptors;
     public GameplayScreen Screen;
     public HitObjectManager Manager;
     public TimingLineManager TimingLineManager;
@@ -28,6 +27,14 @@ public partial class Playfield : CompositeDrawable
         Origin = Anchor.Centre;
 
         Stage = new Stage(this);
+        Receptors = new FillFlowContainer<Receptor>
+        {
+            AutoSizeAxes = Axes.X,
+            RelativeSizeAxes = Axes.Y,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Direction = FillDirection.Horizontal,
+        };
 
         Manager = new HitObjectManager(this);
         Manager.LoadMap(Map);
@@ -40,10 +47,10 @@ public partial class Playfield : CompositeDrawable
         {
             Receptor receptor = new Receptor(this, i);
             Receptors.Add(receptor);
-            AddInternal(receptor);
         }
 
         AddInternal(TimingLineManager);
+        AddInternal(Receptors);
         AddInternal(Manager);
     }
 

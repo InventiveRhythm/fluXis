@@ -135,23 +135,28 @@ public partial class HitObjectManager : CompositeDrawable
     {
         Playfield.Screen.CanSubmitScore = false;
 
+        bool[] pressed = new bool[Map.KeyCount];
+
         List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Conductor.CurrentTime && h.Exists).ToList();
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
             Playfield.Screen.HitSound.Play();
             hit(hitObject, false);
+            pressed[hitObject.Data.Lane - 1] = true;
         }
 
         foreach (var hitObject in belowTime.Where(h => h.Data.IsLongNote()).ToList())
         {
             hitObject.IsBeingHeld = true;
+            pressed[hitObject.Data.Lane - 1] = true;
 
             if (hitObject.Data.HoldEndTime <= Conductor.CurrentTime)
-            {
                 hit(hitObject, true);
-            }
         }
+
+        for (var i = 0; i < pressed.Length; i++)
+            Playfield.Receptors[i].IsDown = pressed[i];
     }
 
     private void updateInput()
