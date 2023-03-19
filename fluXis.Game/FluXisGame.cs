@@ -9,7 +9,6 @@ using fluXis.Game.Import.Quaver;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
@@ -108,7 +107,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         catch (Exception e)
         {
             Logger.Error(e, "Error while importing mapset");
-            Notifications.AddNotification(new Notification("Error while importing mapset", e.Message));
+            Notifications.Post("Error while importing mapset");
         }
     }
 

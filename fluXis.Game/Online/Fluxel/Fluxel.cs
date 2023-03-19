@@ -33,13 +33,13 @@ public class Fluxel
     {
         try
         {
-            Notifications.Post("Connecting to server...", "");
+            Notifications.Post("Connecting to server...");
             connection = new ClientWebSocket();
             await connection.ConnectAsync(new Uri(APIConstants.WebsocketUrl), CancellationToken.None);
 
             // create thread
             receive();
-            Notifications.Post("Connected to server!", "");
+            Notifications.Post("Connected to server!");
 
             // send queued packets
             foreach (var packet in packet_queue)
@@ -47,7 +47,7 @@ public class Fluxel
         }
         catch (Exception ex)
         {
-            Notifications.Post("Failed to connect to server!", ex.Message, NotificationType.Error);
+            Notifications.Post("Failed to connect to server!");
             Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
         }
     }
@@ -96,11 +96,11 @@ public class Fluxel
         }
         catch (Exception e)
         {
-            Notifications.Post("Something went wrong!", e.Message, NotificationType.Error);
+            Notifications.Post("Something went wrong while receiving data from server!");
             Logger.Error(e, "Something went wrong!", LoggingTarget.Network);
         }
 
-        Notifications.Post("Disconnected from server!", "", NotificationType.Error);
+        Notifications.Post("Disconnected from server!");
     }
 
     public static void Send(string message)

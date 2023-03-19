@@ -1,80 +1,57 @@
+#nullable enable
 using System;
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
-using osuTK;
+using osu.Framework.Graphics.Transforms;
+using osu.Framework.Input.Events;
+using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Notification;
 
 public partial class Notification : Container
 {
     public float Lifetime { get; set; } = 5000;
-    public bool FadeOut { get; set; } = false;
 
-    public readonly Container Container;
+    public event Func<bool>? OnUserClick;
 
-    public Notification(string title, string desc, NotificationType type = NotificationType.Info)
+    public new Container Content;
+
+    private readonly Container animationContainer;
+
+    protected Notification()
     {
-        Height = 100;
-        Width = 300;
-        Anchor = Anchor.TopRight;
-        Origin = Anchor.TopRight;
-        Margin = new MarginPadding { Top = 10 };
+        RelativeSizeAxes = Axes.X;
+        AutoSizeAxes = Axes.Y;
 
-        InternalChild = Container = new Container
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Scale = new Vector2(1.1f),
-            CornerRadius = 10,
-            Masking = true,
-            Children = new Drawable[]
+            animationContainer = new Container
             {
-                new Box
+                CornerRadius = 10,
+                Masking = true,
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
-                },
-                new Box
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 20,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Colour = type switch
+                    new Box
                     {
-                        NotificationType.Error => ColourInfo.GradientVertical(Colour4.FromHex("#ff5555").Opacity(0), Colour4.FromHex("#ff5555")),
-                        NotificationType.Info => ColourInfo.GradientVertical(FluXisColors.Accent2.Opacity(0), FluXisColors.Accent2),
-                        _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-                    }
-                },
-                new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding(10),
-                    Children = new Drawable[]
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2
+                    },
+                    new Container
                     {
-                        new FillFlowContainer
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Padding = new MarginPadding(10),
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Direction = FillDirection.Vertical,
-                            Masking = true,
-                            Children = new Drawable[]
+                            Content = new Container
                             {
-                                new SpriteText
-                                {
-                                    Text = title,
-                                    Font = new FontUsage("Quicksand", 24, "Bold")
-                                },
-                                new SpriteText
-                                {
-                                    Text = desc,
-                                    Font = new FontUsage("Quicksand", 16, "Bold")
-                                }
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Masking = true
                             }
                         }
                     }
@@ -85,8 +62,10 @@ public partial class Notification : Container
 
     protected override void LoadComplete()
     {
-        Container.FadeInFromZero(100)
-                 .ScaleTo(1, 200, Easing.OutQuint);
+        this.FadeInFromZero(200);
+
+        animationContainer.MoveToX(DrawSize.X)
+                          .MoveToX(0, 400, Easing.OutQuint);
 
         base.LoadComplete();
     }
@@ -97,10 +76,17 @@ public partial class Notification : Container
 
         base.Update();
     }
-}
 
-public enum NotificationType
-{
-    Error,
-    Info
+    protected override bool OnClick(ClickEvent e)
+    {
+        if (e.Button == MouseButton.Left)
+        {
+            OnUserClick?.Invoke();
+            Lifetime = 0;
+        }
+
+        return true;
+    }
+
+    public virtual TransformSequence<Notification> PopOut() => this.FadeOut(200);
 }

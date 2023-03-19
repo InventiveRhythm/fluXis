@@ -110,7 +110,7 @@ public partial class MenuScreen : Screen
                                 Icon = FontAwesome.Solid.Download,
                                 Width = 340,
                                 Margin = new MarginPadding { Top = 80 },
-                                Action = () => notifications.AddNotification(new Notification("Coming soon!", "This feature is not yet implemented."))
+                                Action = () => notifications.Post("Coming soon!\nThis feature is not yet implemented.")
                             },
                             new MenuButton
                             {

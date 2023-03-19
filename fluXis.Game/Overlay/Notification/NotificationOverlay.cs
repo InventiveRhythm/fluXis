@@ -18,5 +18,5 @@ public partial class NotificationOverlay : Container
 
     public void AddNotification(Notification notification) => Schedule(() => notificationContainer.AddNotification(notification));
 
-    public void Post(string title, string desc, NotificationType type = NotificationType.Info) => AddNotification(new Notification(title, desc, type));
+    public void Post(string text) => AddNotification(new SimpleNotification { Text = text });
 }

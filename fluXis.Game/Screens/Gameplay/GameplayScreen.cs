@@ -88,7 +88,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         // map is null or invalid, leave
         if (Map == null || !Map.Validate())
         {
-            notifications.AddNotification(new Notification("Invalid map", "The map you tried to play not valid.", NotificationType.Error));
+            notifications.Post("The map you tried to play not valid.");
             this.Exit();
             return;
         }

@@ -31,7 +31,7 @@ public class QuaverImport : MapImporter
                 Logger.Log("Importing Quaver map: " + path);
                 string fileName = Path.GetFileNameWithoutExtension(path);
 
-                Notifications.Post("Importing Quaver map...", "");
+                Notifications.Post("Importing Quaver map...");
 
                 ZipArchive qp = ZipFile.OpenRead(path);
 
@@ -85,7 +85,7 @@ public class QuaverImport : MapImporter
             }
             catch (Exception e)
             {
-                Notifications.AddNotification(new Notification("Error while importing Quaver map", e.Message, NotificationType.Error));
+                Notifications.Post("Error while importing Quaver map");
                 Logger.Error(e, "Error while importing Quaver map");
             }
         });

@@ -33,7 +33,7 @@ public class FluXisImport : MapImporter
             {
                 Logger.Log($"Loading mapset from {path}");
 
-                Notifications.Post("Importing mapset...", "");
+                Notifications.Post("Importing mapset...");
 
                 ZipArchive archive = ZipFile.OpenRead(path);
 
@@ -132,7 +132,7 @@ public class FluXisImport : MapImporter
             }
             catch (Exception e)
             {
-                Notifications.Post("Failed to import mapset", e.Message, NotificationType.Error);
+                Notifications.Post("Failed to import mapset");
                 Logger.Error(e, "Failed to import mapset");
             }
         });

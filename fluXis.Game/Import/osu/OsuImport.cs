@@ -31,7 +31,7 @@ public class OsuImport : MapImporter
 
                 string folder = Path.GetFileNameWithoutExtension(path);
 
-                Notifications.Post("Importing osu! map...", "");
+                Notifications.Post("Importing osu! map...");
 
                 ZipArchive osz = ZipFile.OpenRead(path);
 
@@ -62,7 +62,7 @@ public class OsuImport : MapImporter
             }
             catch (Exception e)
             {
-                Notifications.AddNotification(new Notification("Error while importing osu! map", e.Message, NotificationType.Error));
+                Notifications.Post("Error while importing osu! map");
                 Logger.Error(e, "Error while importing osu! map");
             }
         });
