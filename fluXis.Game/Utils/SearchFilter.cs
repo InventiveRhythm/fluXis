@@ -39,7 +39,7 @@ public class SearchFilters
 
     private int bpm;
     private Type bpmType;
-    private string query;
+    private string query = string.Empty;
 
     public bool Matches(RealmMap map)
     {
@@ -80,6 +80,7 @@ public class SearchFilters
                 }
             }
         }
+        else matches = true;
 
         if (Query.Length > 0)
         {
