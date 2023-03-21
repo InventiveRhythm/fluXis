@@ -10,57 +10,99 @@ namespace fluXis.Game.Overlay.Volume;
 
 public partial class VolumeCategory : Container
 {
-    public VolumeCategory(string type, IBindable<double> bind)
+    public string Text
     {
-        AutoSizeAxes = Axes.Both;
+        get => text.Text.ToString();
+        set => text.Text = value;
+    }
+
+    public Bindable<double> Bindable
+    {
+        get => bindable;
+        set
+        {
+            bindable = value;
+            bindable.BindValueChanged(v => updateProgress(v.NewValue), true);
+        }
+    }
+
+    private readonly SpriteText text;
+    private readonly SpriteText percentText;
+    private readonly Box background;
+    private readonly Box progressBackground;
+    private readonly Box progress;
+
+    private Bindable<double> bindable;
+
+    public VolumeCategory()
+    {
+        AutoSizeAxes = Axes.Y;
+        RelativeSizeAxes = Axes.X;
         CornerRadius = 5;
         Masking = true;
 
-        SpriteText percentageText;
-        Box progress;
-
         AddRangeInternal(new Drawable[]
         {
-            new Box
+            background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Alpha = 0
             },
-            new FillFlowContainer
+            new Container
             {
-                AutoSizeAxes = Axes.Both,
-                Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(10, 0),
-                Padding = new MarginPadding { Horizontal = 10, Bottom = 5 },
-                Children = new[]
+                AutoSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.X,
+                Padding = new MarginPadding(5),
+                Children = new Drawable[]
                 {
-                    new SpriteText
+                    text = new SpriteText
                     {
-                        Text = type,
-                        Font = new FontUsage("Quicksand", 48, "Bold")
+                        Font = new FontUsage("Quicksand", 20, "Bold"),
+                        Y = -2
                     },
-                    percentageText = new SpriteText
+                    percentText = new SpriteText
                     {
-                        Text = (int)(bind.Value * 100) + "%",
-                        Font = new FontUsage("Quicksand", 48)
+                        Font = new FontUsage("Quicksand", 20, "Bold"),
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopRight,
+                        Y = -2
+                    },
+                    new CircularContainer
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 10,
+                        Masking = true,
+                        Margin = new MarginPadding { Top = 20 },
+                        Children = new Drawable[]
+                        {
+                            progressBackground = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = .5f
+                            },
+                            progress = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                            }
+                        }
                     }
                 }
-            },
-            progress = new Box
-            {
-                RelativeSizeAxes = Axes.X,
-                Height = 5,
-                Width = (float)bind.Value,
-                Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
-                Colour = Colour4.White
             }
         });
+    }
 
-        bind.BindValueChanged(e =>
-        {
-            percentageText.Text = (int)(e.NewValue * 100) + "%";
-            progress.Width = (float)e.NewValue;
-        });
+    private void updateProgress(double value)
+    {
+        progress.ResizeWidthTo((float)value, 100, Easing.OutQuint);
+        percentText.Text = $"{value:P0}";
+
+        var color = FluXisColors.AccentGradient.Interpolate(new Vector2((float)value));
+        progress.FadeColour(color, 100);
+        progressBackground.FadeColour(color, 100);
+    }
+
+    public void UpdateSelected(bool newValue)
+    {
+        background.FadeTo(newValue ? 0.1f : 0, 100);
     }
 }

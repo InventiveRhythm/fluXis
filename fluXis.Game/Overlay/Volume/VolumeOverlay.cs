@@ -1,7 +1,11 @@
+using fluXis.Game.Configuration;
+using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
@@ -14,40 +18,74 @@ public partial class VolumeOverlay : Container
 
     private AudioManager audioManager;
     private int index;
-    private int timeInactive = 1000;
+    private int timeInactive = max_inactive;
 
-    private FillFlowContainer categories;
+    private readonly BindableBool visible = new();
+
+    private Container content;
+    private FillFlowContainer<VolumeCategory> categories;
 
     public VolumeOverlay()
     {
-        AutoSizeAxes = Axes.Both;
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
-        Margin = new MarginPadding { Bottom = 50 };
+        RelativeSizeAxes = Axes.Both;
+        Padding = new MarginPadding(20);
+        AlwaysPresent = true;
     }
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager manager)
+    private void load(AudioManager manager, FluXisConfig config)
     {
         audioManager = manager;
 
-        Add(categories = new FillFlowContainer
+        Add(content = new Container
         {
-            Spacing = new Vector2(30, 0),
-            Alpha = 0,
-            Direction = FillDirection.Horizontal,
-            AutoSizeAxes = Axes.Both,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Children = new[]
+            AutoSizeAxes = Axes.Y,
+            Width = 300,
+            X = -400,
+            CornerRadius = 10,
+            Masking = true,
+            Children = new Drawable[]
             {
-                new VolumeCategory("master", manager.Volume),
-                new VolumeCategory("music", manager.VolumeTrack),
-                new VolumeCategory("effect", manager.VolumeSample)
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2
+                },
+                categories = new FillFlowContainer<VolumeCategory>
+                {
+                    AutoSizeAxes = Axes.Y,
+                    RelativeSizeAxes = Axes.X,
+                    Padding = new MarginPadding(10),
+                    Spacing = new Vector2(0, 10),
+                    Direction = FillDirection.Vertical,
+                    Children = new[]
+                    {
+                        new VolumeCategory
+                        {
+                            Text = "Master",
+                            Bindable = audioManager.Volume
+                        },
+                        new VolumeCategory
+                        {
+                            Text = "Music",
+                            Bindable = audioManager.VolumeTrack
+                        },
+                        new VolumeCategory
+                        {
+                            Text = "Effects",
+                            Bindable = audioManager.VolumeSample
+                        },
+                        new VolumeCategory
+                        {
+                            Text = "Hitsounds",
+                            Bindable = config.GetBindable<double>(FluXisSetting.HitSoundVolume)
+                        }
+                    }
+                }
             }
         });
 
-        changeCategory(0);
+        visible.BindValueChanged(updateVisibility, true);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
@@ -57,44 +95,43 @@ public partial class VolumeOverlay : Container
             switch (e.Key)
             {
                 case Key.Up:
-                    changeVolume(.01f);
-                    return true;
-
-                case Key.Down:
-                    changeVolume(-.01f);
-                    return true;
-
-                case Key.Left:
                     changeCategory(-1);
                     return true;
 
-                case Key.Right:
+                case Key.Down:
                     changeCategory(1);
+                    return true;
+
+                case Key.Left:
+                    changeVolume(-.01f);
+                    return true;
+
+                case Key.Right:
+                    changeVolume(.01f);
                     return true;
             }
         }
 
-        return base.OnKeyDown(e);
+        return false;
+    }
+
+    protected override bool OnScroll(ScrollEvent e)
+    {
+        if (e.AltPressed)
+        {
+            changeVolume(e.ScrollDelta.Y * .01f);
+            return true;
+        }
+
+        return false;
     }
 
     private void changeVolume(float amount)
     {
         timeInactive = 0;
 
-        switch (index)
-        {
-            case 0:
-                audioManager.Volume.Value += amount;
-                break;
-
-            case 1:
-                audioManager.VolumeTrack.Value += amount;
-                break;
-
-            case 2:
-                audioManager.VolumeSample.Value += amount;
-                break;
-        }
+        var category = categories.Children[index];
+        category.Bindable.Value += amount;
     }
 
     private void changeCategory(int amount)
@@ -102,28 +139,30 @@ public partial class VolumeOverlay : Container
         timeInactive = 0;
 
         index += amount;
-        index = index switch
-        {
-            < 0 => 2,
-            > 2 => 0,
-            _ => index
-        };
 
-        for (var i = 0; i < categories.Children.Count; i++)
-        {
-            var child = (VolumeCategory)categories.Children[i];
-            child.FadeTo(i == index ? 1 : .6f, 200);
-        }
+        if (index < 0)
+            index = categories.Children.Count - 1;
+        else if (index >= categories.Children.Count)
+            index = 0;
+
+        foreach (var category in categories)
+            category.UpdateSelected(category == categories.Children[index]);
     }
 
     protected override void Update()
     {
-        if (timeInactive == 0)
-            categories.FadeIn(100);
+        timeInactive += (int)Clock.ElapsedFrameTime;
+        visible.Value = timeInactive < max_inactive;
+    }
 
-        if (timeInactive > max_inactive)
-            categories.FadeOut(100);
+    private void updateVisibility(ValueChangedEvent<bool> e)
+    {
+        if (e.OldValue == e.NewValue)
+            return;
+
+        if (e.NewValue)
+            content.MoveToX(0, 500, Easing.OutQuint);
         else
-            timeInactive += (int)Clock.ElapsedFrameTime;
+            content.MoveToX(-400, 500, Easing.InQuint);
     }
 }
