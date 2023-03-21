@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,8 +12,8 @@ public partial class Stage : Container
     private const int lane_margin = 0;
 
     public Box Background;
-    public Box BorderLeft;
-    public Box BorderRight;
+    public Container BorderLeft;
+    public Container BorderRight;
 
     private readonly Playfield playfield;
 
@@ -33,7 +34,7 @@ public partial class Stage : Container
         MapInfo map = playfield.Map;
         currentKeyCount = map.InitialKeyCount;
 
-        AddRangeInternal(new[]
+        AddRangeInternal(new Drawable[]
         {
             Background = new Box
             {
@@ -44,25 +45,55 @@ public partial class Stage : Container
                 Alpha = 0.5f,
                 Width = Receptor.SIZE.X * map.InitialKeyCount + lane_margin * 2
             },
-            BorderLeft = new Box
+            BorderLeft = new Container
             {
+                AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
-                Height = 1f,
-                Width = 5,
+                X = -(Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopRight,
-                Colour = Colour4.White,
-                X = -(Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin)
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Y,
+                        Width = 5,
+                        Margin = new MarginPadding { Left = 2 },
+                        Colour = FluXisColors.Surface
+                    },
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Y,
+                        Width = 2,
+                        Alpha = .5f,
+                        Colour = FluXisColors.Accent3
+                    }
+                }
             },
-            BorderRight = new Box
+            BorderRight = new Container
             {
+                AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
-                Height = 1f,
-                Width = 5,
+                X = Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomLeft,
-                Colour = Colour4.White,
-                X = Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Y,
+                        Width = 5,
+                        Colour = FluXisColors.Surface
+                    },
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Y,
+                        Width = 2,
+                        Margin = new MarginPadding { Left = 5 },
+                        Alpha = .5f,
+                        Colour = FluXisColors.Accent
+                    }
+                }
             }
         });
     }
