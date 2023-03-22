@@ -17,6 +17,7 @@ public class MapStore
     private readonly FluXisRealm realm;
 
     public List<RealmMapSet> MapSets { get; } = new();
+    public List<RealmMapSet> MapSetsSorted => MapSets.OrderBy(x => x.Metadata.Title).ToList();
     public RealmMapSet CurrentMapSet;
 
     public Action<RealmMapSet> MapSetAdded;
@@ -43,7 +44,6 @@ public class MapStore
     public void AddMapSet(RealmMapSet mapSet)
     {
         MapSets.Add(mapSet);
-        sortMapSets();
         MapSetAdded?.Invoke(mapSet);
     }
 
@@ -75,11 +75,6 @@ public class MapStore
 
             MapSets.Remove(mapSet);
         });
-    }
-
-    private void sortMapSets()
-    {
-        MapSets.Sort((x, y) => string.Compare(x.Metadata.Title, y.Metadata.Title, StringComparison.Ordinal));
     }
 
     public RealmMapSet GetRandom()

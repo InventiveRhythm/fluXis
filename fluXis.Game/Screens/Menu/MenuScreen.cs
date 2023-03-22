@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
@@ -213,5 +214,27 @@ public partial class MenuScreen : Screen
         content.ScaleTo(1f, 400, Easing.OutQuint);
         backgrounds.Zoom = 1;
         base.OnResuming(e);
+    }
+
+    protected override void Update()
+    {
+        if (Conductor.HasFinished)
+        {
+            int index = maps.MapSets.IndexOf(maps.CurrentMapSet);
+
+            int random = index;
+
+            while (random == index)
+                random = new Random().Next(0, maps.MapSets.Count);
+
+            RealmMapSet mapSet = maps.MapSets[random];
+            RealmMap map = mapSet.Maps.First();
+
+            maps.CurrentMapSet = mapSet;
+            backgrounds.AddBackgroundFromMap(map);
+            Conductor.PlayTrack(map, true);
+        }
+
+        base.Update();
     }
 }

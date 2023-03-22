@@ -93,7 +93,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
     private void loadMapSets()
     {
-        var sets = mapStore.MapSets;
+        var sets = mapStore.MapSetsSorted;
 
         foreach (RealmMapSet set in sets)
         {
@@ -119,7 +119,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         Schedule(() =>
         {
-            int index = mapStore.MapSets.IndexOf(set);
+            int index = mapStore.MapSetsSorted.IndexOf(set);
 
             MapListEntry entry = new(this, set);
             Maps.Insert(index, set);
@@ -286,6 +286,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         Footer.MoveToY(50, 500, Easing.OutQuint);
 
         mapStore.MapSetAdded -= addMapSet;
+        Conductor.ResetLoop();
 
         return base.OnExiting(e);
     }
