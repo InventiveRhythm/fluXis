@@ -88,7 +88,9 @@ public class Fluxel
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUser>,
                     EventType.Register => handleListener<APIRegisterResponse>,
-                    _ => throw new ArgumentOutOfRangeException()
+                    EventType.MultiplayerCreateLobby => handleListener<int>,
+                    EventType.MultiplayerJoinLobby => handleListener<APIMultiplayerLobby>,
+                    _ => () => { }
                 };
                 // execute handler
                 handler();
@@ -145,6 +147,14 @@ public class Fluxel
     {
         return loggedInUser;
     }
+
+    public static void Reset()
+    {
+        loggedInUser = null;
+        Token = null;
+        response_listeners.Clear();
+        packet_queue.Clear();
+    }
 }
 
 public enum EventType
@@ -152,4 +162,7 @@ public enum EventType
     Token = 0,
     Login = 1,
     Register = 2,
+
+    MultiplayerCreateLobby = 20,
+    MultiplayerJoinLobby = 21,
 }

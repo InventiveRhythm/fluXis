@@ -155,7 +155,9 @@ public partial class LoginOverlay : Container
         {
             setLoadingText("Getting user data...", () => Fluxel.SendPacket(new LoginPacket(response.Data)));
             Fluxel.Token = response.Data;
-            tokenBind.Value = response.Data;
+
+            if (tokenBind != null)
+                tokenBind.Value = response.Data;
         }
         else setLoadingText(response.Message, () => switchToLogin(null));
     }
