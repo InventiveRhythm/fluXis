@@ -85,8 +85,8 @@ public partial class MenuButton : Container
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        sampleClick = samples.Get("ui/accept.ogg");
-        sampleHover = samples.Get("ui/scroll.ogg");
+        sampleClick = samples.Get("UI/accept.ogg");
+        sampleHover = samples.Get("UI/scroll.ogg");
     }
 
     protected override bool OnHover(HoverEvent e)
