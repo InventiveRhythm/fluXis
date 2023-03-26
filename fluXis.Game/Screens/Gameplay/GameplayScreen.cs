@@ -89,7 +89,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         // map is null or invalid, leave
         if (Map == null || !Map.Validate())
         {
-            notifications.Post("The map you tried to play not valid.");
+            notifications.PostError("The map you tried to play not valid.");
             this.Exit();
             return;
         }
@@ -100,8 +100,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         Performance = new Performance(Map, RealmMap.OnlineID, RealmMap.Hash);
 
         HitSound = samples.Get("Gameplay/hitsound.mp3");
-        Combobreak = samples.Get("Gameplay/combobreak.ogg");
-        Restart = samples.Get("Gameplay/restart.ogg");
+        Combobreak = samples.Get("Gameplay/combobreak.mp3");
+        Restart = samples.Get("Gameplay/restart.mp3");
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;

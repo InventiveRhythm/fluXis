@@ -57,9 +57,9 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         Backgrounds = background;
 
-        MenuAccept = samples.Get("UI/accept.ogg");
-        MenuBack = samples.Get("UI/back.ogg");
-        MenuScroll = samples.Get("UI/scroll.ogg");
+        MenuAccept = samples.Get("UI/accept.mp3");
+        MenuBack = samples.Get("UI/back.mp3");
+        MenuScroll = samples.Get("UI/scroll.mp3");
 
         Filters.OnChange += UpdateSearch;
 

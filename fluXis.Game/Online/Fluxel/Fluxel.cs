@@ -47,7 +47,7 @@ public class Fluxel
         }
         catch (Exception ex)
         {
-            Notifications.Post("Failed to connect to server!");
+            Notifications.PostError("Failed to connect to server!");
             Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
         }
     }
@@ -99,11 +99,11 @@ public class Fluxel
         }
         catch (Exception e)
         {
-            Notifications.Post("Something went wrong while receiving data from server!");
+            Notifications.PostError("Something went wrong while receiving data from server!");
             Logger.Error(e, "Something went wrong!", LoggingTarget.Network);
         }
 
-        Notifications.Post("Disconnected from server!");
+        Notifications.PostError("Disconnected from server!");
     }
 
     public static void Send(string message)

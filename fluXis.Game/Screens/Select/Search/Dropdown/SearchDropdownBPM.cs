@@ -3,7 +3,6 @@ using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Select.Search.Dropdown;
 
@@ -28,7 +27,7 @@ public partial class SearchDropdownBPM : Container
         });
     }
 
-    private partial class TextBox : BasicTextBox
+    private partial class TextBox : FluXisTextBox
     {
         private readonly SearchFilters filters;
         private int bpm;

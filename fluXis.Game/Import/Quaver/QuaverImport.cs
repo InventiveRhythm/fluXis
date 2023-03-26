@@ -85,7 +85,7 @@ public class QuaverImport : MapImporter
             }
             catch (Exception e)
             {
-                Notifications.Post("Error while importing Quaver map");
+                Notifications.PostError("Error while importing Quaver map");
                 Logger.Error(e, "Error while importing Quaver map");
             }
         });

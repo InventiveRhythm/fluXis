@@ -14,9 +14,12 @@ public partial class Notification : Container
 {
     public float Lifetime { get; set; } = 5000;
 
+    public virtual string SampleAppearing => "UI/Notifications/in.mp3";
+
     public event Func<bool>? OnUserClick;
 
     public new Container Content;
+    public new Container Background;
 
     private readonly Container animationContainer;
 
@@ -39,6 +42,10 @@ public partial class Notification : Container
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background2
+                    },
+                    Background = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both
                     },
                     new Container
                     {

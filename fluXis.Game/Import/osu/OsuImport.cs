@@ -62,7 +62,7 @@ public class OsuImport : MapImporter
             }
             catch (Exception e)
             {
-                Notifications.Post("Error while importing osu! map");
+                Notifications.PostError("Error while importing osu! map");
                 Logger.Error(e, "Error while importing osu! map");
             }
         });

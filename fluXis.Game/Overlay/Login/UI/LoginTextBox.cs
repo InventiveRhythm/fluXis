@@ -1,13 +1,12 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Login.UI;
 
-public partial class LoginTextBox : BasicTextBox
+public partial class LoginTextBox : FluXisTextBox
 {
     protected override Color4 SelectionColour => FluXisColors.Accent2;
 

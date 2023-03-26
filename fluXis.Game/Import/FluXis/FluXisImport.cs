@@ -132,7 +132,7 @@ public class FluXisImport : MapImporter
             }
             catch (Exception e)
             {
-                Notifications.Post("Failed to import mapset");
+                Notifications.PostError("Failed to import mapset");
                 Logger.Error(e, "Failed to import mapset");
             }
         });

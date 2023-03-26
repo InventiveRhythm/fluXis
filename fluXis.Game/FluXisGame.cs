@@ -107,7 +107,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         catch (Exception e)
         {
             Logger.Error(e, "Error while importing mapset");
-            Notifications.Post("Error while importing mapset");
+            Notifications.PostError("Error while importing mapset");
         }
     }
 

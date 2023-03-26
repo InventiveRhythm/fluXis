@@ -2,7 +2,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
@@ -64,7 +63,7 @@ public partial class SetupTextBox : Container
         };
     }
 
-    private partial class TextBox : BasicTextBox
+    private partial class TextBox : FluXisTextBox
     {
         protected override Color4 SelectionColour => FluXisColors.Accent2;
 

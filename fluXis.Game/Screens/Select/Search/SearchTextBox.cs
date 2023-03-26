@@ -1,12 +1,11 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Search;
 
-public partial class SearchTextBox : BasicTextBox
+public partial class SearchTextBox : FluXisTextBox
 {
     private readonly SearchBar search;
 

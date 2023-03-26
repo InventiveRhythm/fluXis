@@ -5,7 +5,6 @@ using fluXis.Game.Map;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
@@ -90,7 +89,7 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
             });
         }
 
-        private partial class TextBox : BasicTextBox
+        private partial class TextBox : FluXisTextBox
         {
             protected override Color4 SelectionColour => FluXisColors.Accent2;
 

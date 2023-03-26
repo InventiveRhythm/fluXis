@@ -63,8 +63,8 @@ public partial class SmallMenuButton : Container
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        sampleClick = samples.Get("UI/accept.ogg");
-        sampleHover = samples.Get("UI/scroll.ogg");
+        sampleClick = samples.Get("UI/accept.mp3");
+        sampleHover = samples.Get("UI/scroll.mp3");
     }
 
     protected override bool OnHover(HoverEvent e)
