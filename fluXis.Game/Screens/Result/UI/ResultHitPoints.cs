@@ -35,11 +35,25 @@ public partial class ResultHitPoints : Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding(10),
-                Child = hitPoints = new Container
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    hitPoints = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                Height = 2,
+                                Width = 3,
+                                RelativeSizeAxes = Axes.X,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                            }
+                        }
+                    }
                 }
             }
         });

@@ -81,7 +81,7 @@ public partial class JudgementDisplay : GameplayHUDElement
 
         if (showEarlyLate.Value && judgement != Scoring.Judgement.Flawless && judgement != Scoring.Judgement.Miss)
         {
-            bool early = stat.Difference < 0;
+            bool early = stat.Difference > 0;
             textEarlyLate.Text = early ? "Early" : "Late";
             textEarlyLate.Colour = early ? Colour4.FromHex("#37cbfb") : Colour4.FromHex("#fb9d37");
 
