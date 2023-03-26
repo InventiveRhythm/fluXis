@@ -90,6 +90,7 @@ public class Fluxel
                     EventType.Register => handleListener<APIRegisterResponse>,
                     EventType.MultiplayerCreateLobby => handleListener<int>,
                     EventType.MultiplayerJoinLobby => handleListener<APIMultiplayerLobby>,
+                    EventType.MultiplayerLobbyUpdate => handleListener<APIMultiplayerLobby>,
                     _ => () => { }
                 };
                 // execute handler
@@ -165,4 +166,5 @@ public enum EventType
 
     MultiplayerCreateLobby = 20,
     MultiplayerJoinLobby = 21,
+    MultiplayerLobbyUpdate = 22,
 }
