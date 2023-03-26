@@ -10,6 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Textures\Backgrounds" />
-    <Folder Include="Tracks" />
+    <Folder Include="Tracks\Gameplay" />
   </ItemGroup>
 </Project>

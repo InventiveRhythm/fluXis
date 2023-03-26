@@ -1,18 +1,26 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Input;
+using fluXis.Game.Screens.Gameplay.Overlay.Fail;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Overlay;
 
-public partial class FailOverlay : Container
+public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
+    public GameplayScreen Screen { get; set; }
+
     private readonly StripePattern pattern;
     private readonly SpriteText text;
     private readonly Box wedgeLeft;
     private readonly Box wedgeRight;
+    private readonly FailResults results;
 
     public FailOverlay()
     {
@@ -49,6 +57,10 @@ public partial class FailOverlay : Container
                 Font = new FontUsage("Quicksand", 100, "Bold"),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
+            },
+            results = new FailResults
+            {
+                FailOverlay = this
             }
         };
     }
@@ -57,9 +69,23 @@ public partial class FailOverlay : Container
     {
         this.FadeIn(200);
         pattern.SpeedTo(new Vector2(-50), 2000, Easing.OutQuint);
-        text.ScaleTo(1.1f, 6000, Easing.OutQuint);
+        text.ScaleTo(1.1f, 4000, Easing.OutQuint).Delay(2000).FadeOut(200).OnComplete(_ => results.Show());
 
         wedgeLeft.MoveToX(0, 2000, Easing.OutQuint);
         wedgeRight.MoveToX(0, 2000, Easing.OutQuint);
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisKeybind.Back:
+                Screen.Exit();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 }

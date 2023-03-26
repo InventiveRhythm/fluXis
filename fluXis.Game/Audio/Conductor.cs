@@ -28,6 +28,7 @@ public partial class Conductor : Container
 
     private static readonly BindableNumber<double> bind_speed = new BindableDouble(1);
     private static Conductor instance;
+    private static ITrackStore filesStore;
     private static ITrackStore trackStore;
     private static Storage storage;
     private static Bindable<float> globalOffset => instance?.config?.GetBindable<float>(FluXisSetting.GlobalOffset);
@@ -107,12 +108,13 @@ public partial class Conductor : Container
     public static List<TimingPointInfo> TimingPoints = new();
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager audioManager, Storage storage)
+    private void load(AudioManager audioManager, Storage storage, ITrackStore trackStore)
     {
         Conductor.storage = storage;
+        Conductor.trackStore = trackStore;
 
         instance = this;
-        trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
+        filesStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
         Add(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
     }
 
@@ -146,7 +148,7 @@ public partial class Conductor : Container
     {
         StopTrack();
 
-        Track = trackStore.Get(info.MapSet.GetFile(info.Metadata.Audio)?.GetPath()) ?? trackStore.GetVirtual();
+        Track = filesStore.Get(info.MapSet.GetFile(info.Metadata.Audio)?.GetPath()) ?? filesStore.GetVirtual();
         Track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
 
         Track.Seek(time);
@@ -155,6 +157,20 @@ public partial class Conductor : Container
             Track.Start();
 
         TimingPoints = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(info.Hash)))?.TimingPoints ?? new List<TimingPointInfo>();
+    }
+
+    /// <summary>
+    /// Start playing a track from a path in the resources track store.
+    /// </summary>
+    /// <param name="path">The map to play the track of</param>
+    public static void PlayTrack(string path)
+    {
+        StopTrack();
+
+        Track = trackStore.Get(path) ?? trackStore.GetVirtual();
+        Track.Start();
+
+        TimingPoints = new List<TimingPointInfo>();
     }
 
     /// <summary>

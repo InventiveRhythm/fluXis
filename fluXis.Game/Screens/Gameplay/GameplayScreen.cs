@@ -51,6 +51,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     private bool restarting;
 
     public BindableBool IsPaused { get; } = new();
+    public float DeathTime { get; private set; }
 
     public GameplayInput Input;
     public Performance Performance;
@@ -162,7 +163,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         AddInternal(new FlashOverlay(MapEvents.FlashEvents));
 
-        AddInternal(failOverlay = new FailOverlay());
+        AddInternal(failOverlay = new FailOverlay { Screen = this });
         AddInternal(fcOverlay = new FullComboOverlay());
 
         AddInternal(new PauseMenu(this));
@@ -214,8 +215,14 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public void Die()
     {
         Playfield.Manager.Dead = true;
+        DeathTime = Conductor.CurrentTime;
         failOverlay.Show();
-        Conductor.SetSpeed(0f, 2000, Easing.OutQuart).OnComplete(_ => this.Exit());
+        Conductor.SetSpeed(0f, 2000, Easing.OutQuart).OnComplete(_ =>
+        {
+            Conductor.PlayTrack("Gameplay/DeathLoop.mp3");
+            Conductor.SetLoop(0);
+            Conductor.LowPassFilter.CutoffTo(0, 0, Easing.None);
+        });
     }
 
     public void End()
@@ -254,6 +261,13 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         cursorOverlay.ShowCursor = true;
 
         int time = Playfield.Manager.Dead ? 1400 : 500;
+
+        if (Playfield.Manager.Dead)
+        {
+            Conductor.PlayTrack(RealmMap, true, DeathTime);
+            Conductor.SetSpeed(0, 0, Easing.None);
+            Conductor.LowPassFilter.CutoffTo(0, 0, Easing.None);
+        }
 
         Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, time, Easing.None);
         Conductor.SetSpeed(1, time, Easing.None);
