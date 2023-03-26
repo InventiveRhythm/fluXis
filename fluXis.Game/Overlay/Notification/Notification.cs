@@ -15,6 +15,7 @@ public partial class Notification : Container
     public float Lifetime { get; set; } = 5000;
 
     public virtual string SampleAppearing => "UI/Notifications/in.mp3";
+    public virtual string SampleDisappearing => "UI/Notifications/out.mp3";
 
     public event Func<bool>? OnUserClick;
 

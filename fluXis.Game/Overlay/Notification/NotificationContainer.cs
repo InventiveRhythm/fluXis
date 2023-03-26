@@ -44,7 +44,11 @@ public partial class NotificationContainer : FillFlowContainer<Notification>
         notifications.Where(x => x.Lifetime <= 0).ForEach(n =>
         {
             n.PopOut().OnComplete(_ => Remove(n, true));
-            Schedule(() => notifications.Remove(n));
+            Schedule(() =>
+            {
+                notifications.Remove(n);
+                samples.Get(n.SampleDisappearing)?.Play();
+            });
         });
     }
 }
