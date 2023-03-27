@@ -245,7 +245,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public void RestartMap()
     {
         restarting = true;
-        Restart.Play();
+        Restart?.Play();
         this.Push(new GameplayScreen(RealmMap));
     }
 
