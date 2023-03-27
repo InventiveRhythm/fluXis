@@ -43,6 +43,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(InputKey.Right, FluXisKeybind.NextGroup),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), FluXisKeybind.ToggleSettings),
         new KeyBinding(InputKey.Delete, FluXisKeybind.Delete),
+        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.BackSpace), FluXisKeybind.Delete),
 
         getBinding(FluXisKeybind.Key4k1, InputKey.A),
         getBinding(FluXisKeybind.Key4k2, InputKey.S),
