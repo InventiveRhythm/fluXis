@@ -20,7 +20,7 @@ public partial class Notification : Container
     public event Func<bool>? OnUserClick;
 
     public new Container Content;
-    public new Container Background;
+    public Container Background;
 
     private readonly Container animationContainer;
 
