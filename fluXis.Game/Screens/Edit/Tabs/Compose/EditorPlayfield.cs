@@ -21,10 +21,11 @@ public partial class EditorPlayfield : Container
 {
     public const int COLUMN_WIDTH = 80;
     public const int HITPOSITION_Y = 100;
+    public const int SELECTION_FADE = 200;
 
     public float Zoom { get; set; } = 2;
     public int Snap { get; set; } = 4;
-    public EditorTool Tool { get; set; } = EditorTool.Long;
+    public EditorTool Tool { get; set; } = EditorTool.Select;
 
     public ComposeTab Tab { get; }
     public RealmMap Map => Tab.Screen.Map;
@@ -36,6 +37,16 @@ public partial class EditorPlayfield : Container
     public Container<EditorTimingLine> TimingLines { get; }
     public List<EditorTimingLine> FutureTimingLines { get; } = new();
 
+    public Container PlayfieldContainer { get; }
+    public Container SelectionContainer { get; }
+
+    public Vector2 SelectionStart { get; set; }
+    public Vector2 SelectionNow { get; set; }
+    public float SelectionStartTime { get; set; }
+    public float SelectionStartLane { get; set; }
+    public bool Selecting { get; set; }
+
+    private bool notePlacable;
     private readonly EditorHitObject ghostNote;
     private bool isDragging;
 
@@ -43,41 +54,90 @@ public partial class EditorPlayfield : Container
     {
         Tab = tab;
 
-        Width = COLUMN_WIDTH * Map.KeyCount;
-        RelativeSizeAxes = Axes.Y;
-        Anchor = Anchor.TopCentre;
-        Origin = Anchor.TopCentre;
+        RelativeSizeAxes = Axes.Both;
 
-        // background
-        Add(new Box
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Colour = FluXisColors.Background
-        });
-
-        // borders
-        AddRange(new Drawable[]
-        {
-            new Box
+            PlayfieldContainer = new Container
             {
-                Width = 4,
+                Width = COLUMN_WIDTH * Map.KeyCount,
                 RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopRight
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
+                Children = new Drawable[]
+                {
+                    new Box // background
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background
+                    },
+                    new Box // border left
+                    {
+                        Width = 4,
+                        RelativeSizeAxes = Axes.Y,
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopRight
+                    },
+                    new Box // border right
+                    {
+                        Width = 4,
+                        RelativeSizeAxes = Axes.Y,
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopLeft
+                    },
+                    getColumnDividers(),
+                    new Box // hit position line
+                    {
+                        Height = 3,
+                        RelativeSizeAxes = Axes.X,
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Y = -HITPOSITION_Y
+                    },
+                    TimingLines = new Container<EditorTimingLine>
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0
+                    },
+                    HitObjects = new Container<EditorHitObject>
+                    {
+                        RelativeSizeAxes = Axes.Both
+                    },
+                    ghostNote = new EditorHitObject(this)
+                    {
+                        Alpha = 0.5f,
+                        Info = new HitObjectInfo()
+                    }
+                }
             },
-            new Box
+            SelectionContainer = new Container
             {
-                Width = 4,
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopLeft
+                BorderColour = Colour4.White,
+                BorderThickness = 2,
+                Masking = true,
+                Alpha = 0,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0.2f
+                }
             }
-        });
+        };
 
-        // column dividers
+        loadTimingLines();
+        loadHitObjects();
+    }
+
+    private Container getColumnDividers()
+    {
+        var dividers = new Container
+        {
+            RelativeSizeAxes = Axes.Both
+        };
+
         for (int i = 0; i < Map.KeyCount - 1; i++)
         {
-            Add(new Box
+            dividers.Add(new Box
             {
                 Width = 1,
                 RelativeSizeAxes = Axes.Y,
@@ -87,27 +147,7 @@ public partial class EditorPlayfield : Container
             });
         }
 
-        // hit position line
-        Add(new Box
-        {
-            Height = 3,
-            RelativeSizeAxes = Axes.X,
-            Anchor = Anchor.BottomLeft,
-            Origin = Anchor.BottomLeft,
-            Y = -HITPOSITION_Y
-        });
-
-        Add(TimingLines = new Container<EditorTimingLine> { RelativeSizeAxes = Axes.Both });
-        Add(HitObjects = new Container<EditorHitObject> { RelativeSizeAxes = Axes.Both });
-
-        Add(ghostNote = new EditorHitObject(this)
-        {
-            Alpha = 0.5f,
-            Info = new HitObjectInfo()
-        });
-
-        loadTimingLines();
-        loadHitObjects();
+        return dividers;
     }
 
     private void loadHitObjects()
@@ -131,14 +171,17 @@ public partial class EditorPlayfield : Container
             float increase = point.Signature * point.MsPerBeat / (4 * Snap);
             float position = point.Time;
 
+            int j = 0;
+
             while (position < target)
             {
                 FutureTimingLines.Add(new EditorTimingLine(this)
                 {
                     Time = position,
-                    Colour = getSnapColor(i % Snap, i)
+                    Colour = getSnapColor(j % Snap, j)
                 });
                 position += increase;
+                j++;
             }
         }
     }
@@ -152,18 +195,35 @@ public partial class EditorPlayfield : Container
 
     protected override bool OnHover(HoverEvent e)
     {
+        TimingLines.FadeIn(100);
         return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        TimingLines.FadeOut(100);
     }
 
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
-        if (Tool == EditorTool.Long && isDragging)
+        switch (Tool)
         {
-            float holdTime = getTimeFromMouse(ToLocalSpace(e.MousePosition)) - ghostNote.Info.Time;
-            if (holdTime < 0) holdTime = 0;
-            ghostNote.Info.HoldTime = holdTime;
+            case EditorTool.Long when isDragging:
+            {
+                float holdTime = getTimeFromMouseSnapped(PlayfieldContainer.ToLocalSpace(e.MousePosition)) - ghostNote.Info.Time;
+                if (holdTime < 0) holdTime = 0;
+                ghostNote.Info.HoldTime = holdTime;
+                break;
+            }
+
+            case EditorTool.Select when Selecting:
+                SelectionNow = e.MousePosition;
+                break;
+
+            default:
+                updateGhostNote(e.MousePosition);
+                break;
         }
-        else updateGhostNote(ToLocalSpace(e.MousePosition));
 
         return base.OnMouseMove(e);
     }
@@ -176,11 +236,19 @@ public partial class EditorPlayfield : Container
                 switch (Tool)
                 {
                     case EditorTool.Select:
+                        SelectionStart = e.MousePosition;
+                        SelectionStartTime = getTimeFromMouse(e.MousePosition);
+                        SelectionStartLane = getLaneFromMouse(PlayfieldContainer.ToLocalSpace(e.MousePosition));
+                        SelectionContainer.FadeIn(SELECTION_FADE);
+                        SelectionNow = e.MousePosition;
+                        Selecting = true;
                         break;
 
                     case EditorTool.Single:
                         var hitObject = GetHitObjectAt(ghostNote.Info.Time, ghostNote.Info.Lane);
                         if (hitObject != null) return true;
+
+                        if (!notePlacable) return true;
 
                         HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
                         MapInfo.HitObjects.Add(ghostNote.Info.Copy());
@@ -196,7 +264,7 @@ public partial class EditorPlayfield : Container
 
                 return true;
 
-            case MouseButton.Right:
+            case MouseButton.Right when Tool is EditorTool.Single or EditorTool.Long:
             {
                 var hitObject = GetHitObjectAt(ghostNote.Info.Time, ghostNote.Info.Lane);
 
@@ -218,30 +286,67 @@ public partial class EditorPlayfield : Container
     {
         if (e.Button == MouseButton.Left)
         {
-            if (Tool == EditorTool.Long && isDragging)
+            switch (Tool)
             {
-                isDragging = false;
+                case EditorTool.Long when isDragging:
+                    isDragging = false;
 
-                HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
-                MapInfo.HitObjects.Add(ghostNote.Info);
+                    if (!notePlacable) return;
 
-                ghostNote.Info.HoldTime = 0; // reset hold time
+                    HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
+                    MapInfo.HitObjects.Add(ghostNote.Info);
+
+                    ghostNote.Info.HoldTime = 0; // reset hold time
+                    break;
+
+                case EditorTool.Select:
+                    Selecting = false;
+                    SelectionContainer.FadeOut(SELECTION_FADE);
+                    selectHitObjects();
+                    break;
             }
         }
     }
 
-    private void updateGhostNote(Vector2 mouse)
+    private void updateSelection()
     {
-        ghostNote.Info.Lane = (int)(mouse.X / COLUMN_WIDTH) + 1;
-        ghostNote.Info.Time = getTimeFromMouse(mouse);
+        var width = Math.Abs(SelectionNow.X - SelectionStart.X);
+        float timeEnd = getYFromTime(getTimeFromMouse(SelectionNow));
+
+        SelectionContainer.Width = width;
+        SelectionContainer.Height = Math.Abs(timeEnd - getYFromTime(SelectionStartTime));
+        SelectionContainer.X = Math.Min(SelectionStart.X, SelectionNow.X);
+        SelectionContainer.Y = Math.Min(getYFromTime(SelectionStartTime), timeEnd);
     }
 
-    private float getTimeFromMouse(Vector2 mouse)
+    private void selectHitObjects()
     {
-        float hitY = DrawHeight - 60 - HITPOSITION_Y;
-        float mouseHitYDelta = hitY - mouse.Y + 10;
-        return SnapTime(Conductor.CurrentTime + mouseHitYDelta);
+        // umm
     }
+
+    private void updateGhostNote(Vector2 mouse)
+    {
+        var localMouse = PlayfieldContainer.ToLocalSpace(mouse);
+        int lane = getLaneFromMouse(localMouse);
+
+        if (lane < 1 || lane > Map.KeyCount || Tool is EditorTool.Select)
+        {
+            ghostNote.FadeOut(100);
+            notePlacable = false;
+            return;
+        }
+
+        ghostNote.Info.Lane = lane;
+        ghostNote.Info.Time = getTimeFromMouseSnapped(localMouse);
+        ghostNote.FadeTo(0.5f, 100);
+        notePlacable = true;
+    }
+
+    private float getTimeFromMouse(Vector2 mouse) => Conductor.CurrentTime + (DrawHeight - 60 - HITPOSITION_Y - mouse.Y);
+    private float getTimeFromMouseSnapped(Vector2 mouse) => SnapTime(getTimeFromMouse(mouse));
+    private int getLaneFromMouse(Vector2 mouse) => (int)(mouse.X / COLUMN_WIDTH) + 1;
+
+    private float getYFromTime(float time) => DrawHeight - 60 - HITPOSITION_Y - (time - Conductor.CurrentTime);
 
     public EditorHitObject GetHitObjectAt(float time, int lane)
     {
@@ -275,6 +380,7 @@ public partial class EditorPlayfield : Container
     {
         updateHitObjects();
         updateTimingLines();
+        updateSelection();
 
         base.Update();
     }
@@ -339,26 +445,21 @@ public partial class EditorPlayfield : Container
             case 6:
             case 12:
                 if (val % 3 == 0) return Colour4.Red;
-                if (val == 0) return Colour4.White;
 
-                return Colour4.Purple;
+                return val == 0 ? Colour4.White : Colour4.Purple;
 
             case 8:
             case 16:
                 if (val == 0) return Colour4.White;
                 if ((i - 1) % 2 == 0) return Colour4.Gold;
-                if (i % 4 == 0) return Colour4.Red;
 
-                return Colour4.FromHex("#0085ff");
+                return i % 4 == 0 ? Colour4.Red : Colour4.FromHex("#0085ff");
 
             default:
-                if (val == 0)
-                {
-                    Logger.Log($"Unknown snap value: {Snap}", LoggingTarget.Runtime, LogLevel.Important);
-                    return Colour4.White;
-                }
+                if (val != 0) return Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7");
 
-                return Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7");
+                Logger.Log($"Unknown snap value: {Snap}", LoggingTarget.Runtime, LogLevel.Important);
+                return Colour4.White;
         }
     }
 }
