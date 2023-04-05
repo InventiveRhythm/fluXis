@@ -18,6 +18,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.ShowEarlyLate, false);
         SetDefault(FluXisSetting.BackgroundPulse, false);
         SetDefault(FluXisSetting.HitErrorScale, 1f, 0.5f, 1.2f, 0.01f);
+        SetDefault(FluXisSetting.LaneSwitchAlerts, true);
 
         SetDefault(FluXisSetting.BackgroundDim, 0.25f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.BackgroundBlur, 0f, 0f, 1f, 0.01f);
@@ -39,6 +40,7 @@ public enum FluXisSetting
     ShowEarlyLate,
     BackgroundPulse,
     HitErrorScale,
+    LaneSwitchAlerts,
 
     // Graphics
     BackgroundDim,

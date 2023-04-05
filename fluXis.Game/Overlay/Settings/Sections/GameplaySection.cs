@@ -17,6 +17,7 @@ public partial class GameplaySection : SettingsSection
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.HideFlawless), "Hide Flawless Judgement"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.ShowEarlyLate), "Show Early/Late"));
         Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.BackgroundPulse), "Background Pulse"));
+        Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.LaneSwitchAlerts), "Lane Switch Alerts"));
         Add(new SettingsSlider<float>(config.GetBindable<float>(FluXisSetting.HitErrorScale), "Hit Error Bar Scale", "", true));
     }
 }

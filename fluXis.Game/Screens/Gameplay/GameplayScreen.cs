@@ -158,7 +158,8 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                         Text = "mapped by {value}"
                     }
                 }
-            }
+            },
+            new LaneSwitchAlert { Playfield = Playfield }
         };
 
         AddInternal(new FlashOverlay(MapEvents.FlashEvents));
