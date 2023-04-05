@@ -46,6 +46,8 @@ public partial class EditorPlayfield : Container
     public float SelectionStartLane { get; set; }
     public bool Selecting { get; set; }
 
+    public List<EditorHitObject> SelectedHitObjects { get; } = new();
+
     private bool notePlacable;
     private readonly EditorHitObject ghostNote;
     private bool isDragging;
@@ -321,7 +323,35 @@ public partial class EditorPlayfield : Container
 
     private void selectHitObjects()
     {
-        // umm
+        SelectedHitObjects.ForEach(h => h.UpdateSelection(false));
+        SelectedHitObjects.Clear();
+
+        var selectionEnd = PlayfieldContainer.ToLocalSpace(SelectionNow);
+        var timeEnd = getTimeFromMouseSnapped(selectionEnd);
+        var laneEnd = getLaneFromMouse(selectionEnd);
+
+        bool laneReversed = laneEnd < SelectionStartLane;
+        bool timeReversed = timeEnd < SelectionStartTime;
+
+        Logger.Log($"Selecting from {SelectionStartTime} to {timeEnd} and from {SelectionStartLane} to {laneEnd}");
+
+        foreach (var hitObject in MapInfo.HitObjects)
+        {
+            bool inLane = hitObject.Lane >= SelectionStartLane && hitObject.Lane <= laneEnd;
+            bool inTime = hitObject.Time >= SelectionStartTime && hitObject.Time <= timeEnd;
+
+            if (laneReversed) inLane = hitObject.Lane <= SelectionStartLane && hitObject.Lane >= laneEnd;
+            if (timeReversed) inTime = hitObject.Time <= SelectionStartTime && hitObject.Time >= timeEnd;
+
+            if (inLane && inTime)
+            {
+                var editorHitObject = GetHitObjectAt(hitObject.Time, hitObject.Lane);
+                if (editorHitObject == null) continue;
+
+                editorHitObject.UpdateSelection(true);
+                SelectedHitObjects.Add(editorHitObject);
+            }
+        }
     }
 
     private void updateGhostNote(Vector2 mouse)
