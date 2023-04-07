@@ -15,6 +15,8 @@ namespace fluXis.Game.Screens.Select.Info;
 
 public partial class SelectMapInfo : FillFlowContainer
 {
+    public SelectScreen Screen { get; set; }
+
     public ScoreList ScoreList;
 
     private BackgroundStack backgroundStack;
@@ -177,7 +179,10 @@ public partial class SelectMapInfo : FillFlowContainer
                 {
                     Name = "Scores",
                     RelativeSizeAxes = Axes.Both,
-                    Child = ScoreList = new ScoreList()
+                    Child = ScoreList = new ScoreList
+                    {
+                        MapInfo = this
+                    }
                 }
             }
         };

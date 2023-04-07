@@ -76,7 +76,8 @@ public partial class MenuButton : Container
                 Font = FluXisFont.Default(),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.TopLeft,
-                Margin = new MarginPadding { Left = 50 }
+                Margin = new MarginPadding { Left = 50 },
+                Colour = FluXisColors.Text2
             }
         };
     }

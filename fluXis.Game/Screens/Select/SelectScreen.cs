@@ -66,7 +66,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
         AddInternal(MapList = new MapList());
         AddInternal(SearchBar = new SearchBar(this));
-        AddInternal(SelectMapInfo = new SelectMapInfo());
+        AddInternal(SelectMapInfo = new SelectMapInfo { Screen = this });
         AddInternal(Footer = new SelectFooter(this));
 
         AddInternal(new Container

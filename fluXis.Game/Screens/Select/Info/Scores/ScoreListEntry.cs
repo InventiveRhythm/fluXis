@@ -1,16 +1,34 @@
+using System.Linq;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
+using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Scoring;
+using fluXis.Game.Screens.Result;
 using fluXis.Game.Utils;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
+using osu.Framework.Logging;
+using osu.Framework.Platform;
+using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
 public partial class ScoreListEntry : Container
 {
+    [Resolved]
+    private MapStore mapStore { get; set; }
+
+    [Resolved]
+    private Storage storage { get; set; }
+
+    public ScoreList ScoreList { get; set; }
+
     private readonly RealmScore score;
     private readonly SpriteText timeText;
 
@@ -115,5 +133,39 @@ public partial class ScoreListEntry : Container
     {
         timeText.Text = TimeUtils.Ago(score.Date);
         base.Update();
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        RealmMap map = mapStore.CurrentMapSet.Maps.FirstOrDefault(m => m.ID == score.MapID);
+
+        if (map == null)
+        {
+            Logger.Log("RealmMap is null", LoggingTarget.Runtime, LogLevel.Error);
+            return false;
+        }
+
+        MapInfo mapInfo = MapUtils.LoadFromPath(storage.GetFullPath($"files/{PathUtils.HashToPath(map.Hash)}"));
+
+        if (mapInfo == null)
+        {
+            Logger.Log("MapInfo is null", LoggingTarget.Runtime, LogLevel.Error);
+            return false;
+        }
+
+        Performance performance = new Performance(mapInfo, map.OnlineID, map.Hash);
+
+        // find a better way to do this
+        for (int i = 0; i < score.Judgements.Flawless; i++) performance.AddJudgement(Judgement.Flawless);
+        for (int i = 0; i < score.Judgements.Perfect; i++) performance.AddJudgement(Judgement.Perfect);
+        for (int i = 0; i < score.Judgements.Great; i++) performance.AddJudgement(Judgement.Great);
+        for (int i = 0; i < score.Judgements.Alright; i++) performance.AddJudgement(Judgement.Alright);
+        for (int i = 0; i < score.Judgements.Okay; i++) performance.AddJudgement(Judgement.Okay);
+        for (int i = 0; i < score.Judgements.Miss; i++) performance.AddJudgement(Judgement.Miss);
+        for (int i = 0; i < score.MaxCombo; i++) performance.IncCombo();
+
+        ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, false, false));
+
+        return true;
     }
 }

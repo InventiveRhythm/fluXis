@@ -16,6 +16,8 @@ public partial class ScoreList : Container
     [Resolved]
     private FluXisRealm realm { get; set; }
 
+    public SelectMapInfo MapInfo { get; set; }
+
     private RealmMap map;
 
     private readonly SpriteText noScoresText;
@@ -74,7 +76,7 @@ public partial class ScoreList : Container
         if (score.MapID != map.ID)
             return;
 
-        var entry = new ScoreListEntry(score, index);
+        var entry = new ScoreListEntry(score, index) { ScoreList = this };
         entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children.Last().Y + scrollContainer.ScrollContent.Children.Last().Height + 5 : 0;
         scrollContainer.ScrollContent.Add(entry);
     }

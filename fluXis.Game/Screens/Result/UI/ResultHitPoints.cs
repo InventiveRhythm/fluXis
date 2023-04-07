@@ -4,6 +4,7 @@ using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
@@ -29,7 +30,7 @@ public partial class ResultHitPoints : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface
+                Colour = ColourInfo.GradientVertical(FluXisColors.Surface.Opacity(.4f), FluXisColors.Surface.Opacity(.6f))
             },
             new Container
             {
