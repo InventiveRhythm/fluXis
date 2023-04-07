@@ -57,15 +57,13 @@ public partial class VolumeCategory : Container
                 {
                     text = new SpriteText
                     {
-                        Font = new FontUsage("Quicksand", 20, "Bold"),
-                        Y = -2
+                        Font = FluXisFont.Default()
                     },
                     percentText = new SpriteText
                     {
-                        Font = new FontUsage("Quicksand", 20, "Bold"),
+                        Font = FluXisFont.Default(),
                         Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight,
-                        Y = -2
+                        Origin = Anchor.TopRight
                     },
                     new CircularContainer
                     {

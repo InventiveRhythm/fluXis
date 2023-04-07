@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -23,7 +24,7 @@ public partial class ComboCounter : GameplayHUDElement
 
         Add(text = new SpriteText
         {
-            Font = new FontUsage("Quicksand", 64f, "SemiBold", false, true),
+            Font = FluXisFont.Default(64, true),
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Alpha = 0

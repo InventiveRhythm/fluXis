@@ -54,18 +54,17 @@ public partial class MapDifficultyEntry : Container
                 Text = map.Difficulty,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Y = -1,
                 Margin = new MarginPadding { Left = 10 },
-                Font = new FontUsage("Quicksand", 22, "SemiBold")
+                Font = FluXisFont.Default(22)
             },
             difficultyMapper = new SpriteText
             {
                 Text = $"mapped by {map.Metadata.Mapper}",
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Y = -1,
                 Margin = new MarginPadding { Left = 10 },
-                Font = new FontUsage("Quicksand", 22)
+                Font = FluXisFont.Default(22),
+                Colour = FluXisColors.Text2
             }
         };
 

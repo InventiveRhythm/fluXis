@@ -58,16 +58,15 @@ public partial class SelectMapInfo : FillFlowContainer
                     titleText = new SpriteText
                     {
                         Text = "Title",
-                        Font = new FontUsage("Quicksand", 60, "Bold"),
+                        Font = FluXisFont.Default(60),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.BottomLeft,
-                        X = 20,
-                        Y = 10
+                        X = 20
                     },
                     artistText = new SpriteText
                     {
                         Text = "Artist",
-                        Font = new FontUsage("Quicksand", 32, "Bold"),
+                        Font = FluXisFont.Default(32),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.TopLeft,
                         X = 20
@@ -106,23 +105,22 @@ public partial class SelectMapInfo : FillFlowContainer
                                         Direction = FillDirection.Horizontal,
                                         AutoSizeAxes = Axes.Both,
                                         Spacing = new Vector2(4, 0),
-                                        Y = -5,
                                         Children = new Drawable[]
                                         {
                                             difficultyText = new SpriteText
                                             {
                                                 Text = "diffname",
-                                                Font = new FontUsage("Quicksand", 22, "Bold")
+                                                Font = FluXisFont.Default(22)
                                             },
                                             new SpriteText
                                             {
                                                 Text = "mapped by",
-                                                Font = new FontUsage("Quicksand", 22)
+                                                Font = FluXisFont.Default(22)
                                             },
                                             mapperText = new SpriteText
                                             {
                                                 Text = "mapper",
-                                                Font = new FontUsage("Quicksand", 22)
+                                                Font = FluXisFont.Default(22)
                                             }
                                         }
                                     },
@@ -147,18 +145,17 @@ public partial class SelectMapInfo : FillFlowContainer
                                                 AutoSizeAxes = Axes.Both,
                                                 Spacing = new Vector2(10, 0),
                                                 Padding = new MarginPadding { Bottom = 2, Top = 3, Horizontal = 10 },
-                                                Y = -5,
                                                 Children = new Drawable[]
                                                 {
                                                     bpmText = new SpriteText
                                                     {
                                                         Text = "BPM",
-                                                        Font = new FontUsage("Quicksand", 22, "Bold")
+                                                        Font = FluXisFont.Default(22)
                                                     },
                                                     lengthText = new SpriteText
                                                     {
                                                         Text = "Length",
-                                                        Font = new FontUsage("Quicksand", 22, "Bold")
+                                                        Font = FluXisFont.Default(22)
                                                     }
                                                 }
                                             }

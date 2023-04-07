@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -37,14 +38,14 @@ public partial class JudgementDisplay : GameplayHUDElement
         {
             text = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 48f, "Bold"),
+                Font = FluXisFont.Default(48),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Blending = BlendingParameters.Additive
             },
             textEarlyLate = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 24f, "Bold"),
+                Font = FluXisFont.Default(24),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Blending = BlendingParameters.Additive,

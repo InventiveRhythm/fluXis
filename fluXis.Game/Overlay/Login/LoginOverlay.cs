@@ -90,7 +90,7 @@ public partial class LoginOverlay : Container
                 Text = "",
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Font = new FontUsage("Quicksand", 30, "SemiBold"),
+                Font = FluXisFont.Default(30),
                 Alpha = 0
             }
         });

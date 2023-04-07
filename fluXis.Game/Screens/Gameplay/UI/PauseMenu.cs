@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -41,13 +42,13 @@ public partial class PauseMenu : CompositeDrawable
             new SpriteText
             {
                 Text = "Paused",
-                Font = new FontUsage("Quicksand", 100, "Bold"),
+                Font = FluXisFont.Default(100),
                 Margin = new MarginPadding { Left = 100, Top = 100 }
             },
             new SpriteText
             {
                 Text = "What do you want to do?",
-                Font = new FontUsage("Quicksand", 48, "Bold"),
+                Font = FluXisFont.Default(48),
                 Margin = new MarginPadding { Left = 100, Top = 180 },
                 Colour = Colour4.Gray
             },
@@ -143,15 +144,16 @@ public partial class PauseMenu : CompositeDrawable
                 new SpriteText
                 {
                     Text = Text,
-                    Font = new FontUsage("Quicksand", 48, "Bold"),
+                    Font = FluXisFont.Default(48),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.BottomLeft,
-                    Margin = new MarginPadding { Left = 90 }
+                    Margin = new MarginPadding { Left = 90 },
+                    Y = 10
                 },
                 new SpriteText
                 {
                     Text = Description,
-                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Font = FluXisFont.Default(32),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.TopLeft,
                     Margin = new MarginPadding { Left = 90 },

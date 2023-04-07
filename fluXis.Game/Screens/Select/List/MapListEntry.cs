@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -153,15 +154,14 @@ public partial class MapListEntry : Container
                     {
                         new SpriteText
                         {
-                            Font = new FontUsage("Quicksand", 32f, "Bold"),
+                            Font = FluXisFont.Default(32),
                             Text = mapset.Metadata.Title,
                             Anchor = Anchor.TopLeft,
-                            Origin = Anchor.TopLeft,
-                            Y = -2
+                            Origin = Anchor.TopLeft
                         },
                         new SpriteText
                         {
-                            Font = new FontUsage("Quicksand", 28f, "SemiBold"),
+                            Font = FluXisFont.Default(28),
                             Text = mapset.Metadata.Artist,
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,

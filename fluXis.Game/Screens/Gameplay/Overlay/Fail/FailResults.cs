@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -37,13 +38,13 @@ public partial class FailResults : Container
         {
             title = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 32, "Bold"),
+                Font = FluXisFont.Default(32),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
             subtitle = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 24, "Bold"),
+                Font = FluXisFont.Default(24),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Margin = new MarginPadding { Top = 28 }
@@ -51,7 +52,7 @@ public partial class FailResults : Container
             new SpriteText
             {
                 Text = "- FAILED -",
-                Font = new FontUsage("Quicksand", 24, "Bold"),
+                Font = FluXisFont.Default(24),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Margin = new MarginPadding { Top = 50 },
@@ -75,19 +76,19 @@ public partial class FailResults : Container
                             new Container
                             {
                                 AutoSizeAxes = Axes.Y,
-                                Width = 200,
+                                Width = 250,
                                 Children = new Drawable[]
                                 {
                                     new SpriteText
                                     {
                                         Text = "Score",
-                                        Font = new FontUsage("Quicksand", 32, "Bold"),
+                                        Font = FluXisFont.Default(32),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre
                                     },
                                     scoreText = new SpriteText
                                     {
-                                        Font = new FontUsage("Quicksand", 64, "Bold"),
+                                        Font = FluXisFont.Default(64),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Margin = new MarginPadding { Top = 28 }
@@ -97,19 +98,19 @@ public partial class FailResults : Container
                             new Container
                             {
                                 AutoSizeAxes = Axes.Y,
-                                Width = 200,
+                                Width = 250,
                                 Children = new Drawable[]
                                 {
                                     new SpriteText
                                     {
                                         Text = "Accuracy",
-                                        Font = new FontUsage("Quicksand", 32, "Bold"),
+                                        Font = FluXisFont.Default(32),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre
                                     },
                                     accuracyText = new SpriteText
                                     {
-                                        Font = new FontUsage("Quicksand", 64, "Bold"),
+                                        Font = FluXisFont.Default(64),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Margin = new MarginPadding { Top = 28 }
@@ -148,7 +149,7 @@ public partial class FailResults : Container
                     progressText = new SpriteText
                     {
                         Text = "",
-                        Font = new FontUsage("Quicksand", 32, "Bold"),
+                        Font = FluXisFont.Default(32),
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre
                     },
@@ -246,11 +247,11 @@ public partial class FailResults : Container
             {
                 name = new SpriteText
                 {
-                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Font = FluXisFont.Default(32),
                 },
                 countText = new SpriteText
                 {
-                    Font = new FontUsage("Quicksand", 32, "SemiBold")
+                    Font = FluXisFont.Default(32)
                 }
             };
         }

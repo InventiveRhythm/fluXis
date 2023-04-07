@@ -83,7 +83,7 @@ public partial class EditorToolbar : Container
                 new SpriteText
                 {
                     Text = text,
-                    Font = new FontUsage("Quicksand", 20, "Bold"),
+                    Font = FluXisFont.Default(20),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Padding = new MarginPadding { Horizontal = 10 }

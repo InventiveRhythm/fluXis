@@ -38,7 +38,7 @@ public partial class AccuracyDisplay : GameplayHUDElement
             Children = new Drawable[]
             {
                 drawableGrade = new DrawableGrade { Size = 32 },
-                accuracyText = new SpriteText { Font = new FontUsage("Quicksand", 32f, "SemiBold", false, true) }
+                accuracyText = new SpriteText { Font = FluXisFont.Default(32, true) }
             }
         });
     }

@@ -32,7 +32,7 @@ public partial class FullComboOverlay : Container
             },
             text = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 100, "Bold"),
+                Font = FluXisFont.Default(100),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }

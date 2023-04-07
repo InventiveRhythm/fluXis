@@ -68,11 +68,10 @@ public partial class Cursor : Container
                 },
                 tooltipText = new SpriteText
                 {
-                    Font = new FontUsage("Quicksand", 20, "Bold"),
+                    Font = FluXisFont.Default(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Margin = new MarginPadding { Horizontal = 10 },
-                    Y = -2
+                    Margin = new MarginPadding { Horizontal = 10 }
                 }
             }
         });

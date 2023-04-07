@@ -60,13 +60,13 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
             timeText = new SpriteText
             {
                 Text = TimeUtils.Format(VelocityInfo.Time),
-                Font = new FontUsage("Quicksand", 24, "Bold", false, true),
+                Font = FluXisFont.Default(24),
                 Width = 100
             },
             multiplierText = new SpriteText
             {
                 Text = VelocityInfo.Multiplier + "x",
-                Font = new FontUsage("Quicksand", 24, "Bold")
+                Font = FluXisFont.Default(24)
             }
         };
     }

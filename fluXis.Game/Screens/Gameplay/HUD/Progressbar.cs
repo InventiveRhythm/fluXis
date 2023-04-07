@@ -1,4 +1,5 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -58,14 +59,14 @@ public partial class Progressbar : GameplayHUDElement
                 Origin = Anchor.TopLeft,
                 Y = 10,
                 X = 10,
-                Font = new FontUsage("Quicksand", 32f, "Bold")
+                Font = FluXisFont.Default(32)
             },
             percentText = new SpriteText
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Y = 10,
-                Font = new FontUsage("Quicksand", 32f, "Bold")
+                Font = FluXisFont.Default(32)
             },
             timeLeftText = new SpriteText
             {
@@ -73,7 +74,7 @@ public partial class Progressbar : GameplayHUDElement
                 Origin = Anchor.TopRight,
                 Y = 10,
                 X = -10,
-                Font = new FontUsage("Quicksand", 32f, "Bold")
+                Font = FluXisFont.Default(32)
             }
         };
     }

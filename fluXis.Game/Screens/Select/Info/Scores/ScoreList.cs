@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
+using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -29,7 +30,7 @@ public partial class ScoreList : Container
             noScoresText = new SpriteText
             {
                 Text = "No scores yet!",
-                Font = new FontUsage("Quicksand", 32, "Bold"),
+                Font = FluXisFont.Default(32),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Alpha = 0

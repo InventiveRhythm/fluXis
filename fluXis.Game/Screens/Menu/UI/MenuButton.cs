@@ -65,19 +65,18 @@ public partial class MenuButton : Container
             },
             text = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 30, "Bold"),
+                Font = FluXisFont.Default(30),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Left = 50 },
-                Y = 6
+                Y = 8
             },
             description = new SpriteText
             {
-                Font = new FontUsage("Quicksand"),
+                Font = FluXisFont.Default(),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.TopLeft,
-                Margin = new MarginPadding { Left = 50 },
-                Y = -1
+                Margin = new MarginPadding { Left = 50 }
             }
         };
     }

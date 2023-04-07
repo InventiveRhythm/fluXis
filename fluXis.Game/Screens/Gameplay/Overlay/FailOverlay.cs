@@ -54,7 +54,7 @@ public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
             text = new SpriteText
             {
                 Text = "FAILED",
-                Font = new FontUsage("Quicksand", 100, "Bold"),
+                Font = FluXisFont.Default(100),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },

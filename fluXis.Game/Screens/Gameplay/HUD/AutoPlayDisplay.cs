@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -25,7 +26,7 @@ public partial class AutoPlayDisplay : GameplayHUDElement
 
         Add(text = new SpriteText
         {
-            Font = new FontUsage("Quicksand", 32f, "SemiBold"),
+            Font = FluXisFont.Default(32),
             Anchor = Anchor.TopCentre,
             Origin = Anchor.TopCentre,
             Text = "AutoPlay",

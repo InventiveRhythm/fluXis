@@ -80,14 +80,13 @@ public partial class MenuScreen : Screen
                     new SpriteText
                     {
                         Text = "fluXis",
-                        Font = new FontUsage("Quicksand", 100, "Bold"),
-                        Y = -20
+                        Font = FluXisFont.Default(100)
                     },
                     new SpriteText
                     {
                         Text = "A free and community-driven rhythm game",
-                        Font = new FontUsage("Quicksand", 32),
-                        Margin = new MarginPadding { Top = 60 }
+                        Font = FluXisFont.Default(32),
+                        Margin = new MarginPadding { Top = 80 }
                     },
                     new Container
                     {

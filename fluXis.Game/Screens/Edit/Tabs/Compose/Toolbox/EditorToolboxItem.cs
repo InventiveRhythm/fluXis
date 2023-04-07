@@ -63,8 +63,7 @@ public partial class EditorToolboxItem : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 74 },
-                Font = new FontUsage("Quicksand", 32, "Bold"),
-                Y = -2
+                Font = FluXisFont.Default(32)
             }
         };
     }

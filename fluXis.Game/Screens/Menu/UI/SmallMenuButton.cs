@@ -54,8 +54,7 @@ public partial class SmallMenuButton : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 40 },
-                Font = new FontUsage("Quicksand", 20, "Bold"),
-                Y = -2
+                Font = FluXisFont.Default()
             }
         };
     }

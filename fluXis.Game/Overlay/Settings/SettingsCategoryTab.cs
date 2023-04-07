@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -44,10 +45,9 @@ public partial class SettingsCategoryTab : Container
                 new SpriteText
                 {
                     Text = section.Title,
-                    Font = new FontUsage("Quicksand", 24, "Bold"),
+                    Font = FluXisFont.Default(24),
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Margin = new MarginPadding { Top = -3 }
+                    Origin = Anchor.CentreLeft
                 }
             }
         });

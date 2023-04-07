@@ -24,18 +24,17 @@ public partial class SettingsSlider<T> : SettingsItem
             new SpriteText
             {
                 Text = label,
-                Font = new FontUsage("Quicksand", 24, "Bold"),
+                Font = FluXisFont.Default(24),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
             valueLabel = new SpriteText
             {
                 Text = valLabel,
-                Font = new FontUsage("Quicksand", 24, "Bold"),
+                Font = FluXisFont.Default(24),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Margin = new MarginPadding { Right = 410 },
-                Y = -2
+                Margin = new MarginPadding { Right = 410 }
             },
             new Slider(bindable, valueLabel, displayAsPercentage, step)
         });

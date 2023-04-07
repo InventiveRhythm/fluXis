@@ -18,8 +18,7 @@ public partial class SearchDropdownBPM : Container
             new SpriteText
             {
                 Text = "BPM",
-                Font = new FontUsage("Quicksand", 24, "Bold"),
-                Y = -2,
+                Font = FluXisFont.Default(24),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
             },
@@ -46,7 +45,7 @@ public partial class SearchDropdownBPM : Container
             BackgroundFocused = FluXisColors.Surface2;
             PlaceholderText = "0";
             Placeholder.Colour = Colour4.Gray;
-            Placeholder.Font = new FontUsage("Quicksand", 24, "Bold");
+            Placeholder.Font = FluXisFont.Default(24);
         }
 
         protected override void OnUserTextAdded(string added) => update();
@@ -85,7 +84,7 @@ public partial class SearchDropdownBPM : Container
             Child = new SpriteText
             {
                 Text = c.ToString(),
-                Font = new FontUsage("Quicksand", 24, "Bold")
+                Font = FluXisFont.Default(24)
             }
         };
     }

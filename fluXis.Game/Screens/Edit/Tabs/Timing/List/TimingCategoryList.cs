@@ -44,7 +44,7 @@ public partial class TimingCategoryList<T> : Container
                         new SpriteText
                         {
                             Text = title,
-                            Font = new FontUsage("Quicksand", 32, "Bold"),
+                            Font = FluXisFont.Default(32),
                             Margin = new MarginPadding { Bottom = 10, Left = 10 }
                         },
                         flow = new FillFlowContainer<T>
@@ -141,8 +141,7 @@ public partial class TimingCategoryList<T> : Container
                             new SpriteText
                             {
                                 Text = "Add",
-                                Font = new FontUsage("Quicksand", 24, "Bold"),
-                                Y = -2,
+                                Font = FluXisFont.Default(24),
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
                             }

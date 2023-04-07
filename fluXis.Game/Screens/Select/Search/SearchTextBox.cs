@@ -23,7 +23,7 @@ public partial class SearchTextBox : FluXisTextBox
         BackgroundFocused = FluXisColors.Hover;
         PlaceholderText = "Search...";
         Placeholder.Colour = Colour4.Gray;
-        Placeholder.Font = new FontUsage("Quicksand", 40, "Bold");
+        Placeholder.Font = FluXisFont.Default(40);
     }
 
     protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer
@@ -35,7 +35,7 @@ public partial class SearchTextBox : FluXisTextBox
         Child = new SpriteText
         {
             Text = c.ToString(),
-            Font = new FontUsage("Quicksand", 40, "Bold")
+            Font = FluXisFont.Default(40)
         }
     };
 

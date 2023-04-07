@@ -66,19 +66,19 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
             timeText = new SpriteText
             {
                 Text = TimeUtils.Format(PointInfo.Time),
-                Font = new FontUsage("Quicksand", 24, "Bold", false, true),
+                Font = FluXisFont.Default(24),
                 Width = 100
             },
             bpmText = new SpriteText
             {
                 Text = PointInfo.BPM + "bpm",
-                Font = new FontUsage("Quicksand", 24, "Bold"),
-                Width = 70
+                Font = FluXisFont.Default(24),
+                Width = 80
             },
             signatureText = new SpriteText
             {
                 Text = PointInfo.Signature + "/4",
-                Font = new FontUsage("Quicksand", 24, "Bold")
+                Font = FluXisFont.Default(24)
             }
         };
 

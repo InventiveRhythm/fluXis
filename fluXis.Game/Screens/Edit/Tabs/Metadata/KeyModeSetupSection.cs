@@ -105,7 +105,7 @@ public partial class KeyModeSetupSection : SetupSection
                         new SpriteText
                         {
                             Text = $"{keys} Keys",
-                            Font = new FontUsage("Quicksand", 20, "SemiBold"),
+                            Font = FluXisFont.Default(20),
                             Y = 30,
                             Origin = Anchor.TopCentre,
                             Anchor = Anchor.TopCentre

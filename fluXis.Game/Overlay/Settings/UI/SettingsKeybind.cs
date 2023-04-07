@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
+using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -35,10 +36,9 @@ public partial class SettingsKeybind : SettingsItem
         Add(new SpriteText
         {
             Text = label,
-            Font = new FontUsage("Quicksand", 24, "Bold"),
+            Font = FluXisFont.Default(24),
             Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft,
-            Y = -2
+            Origin = Anchor.CentreLeft
         });
 
         Add(flow = new FillFlowContainer<KeybindContainer>
@@ -183,10 +183,9 @@ public partial class SettingsKeybind : SettingsItem
                     Padding = new MarginPadding { Horizontal = 10 },
                     Child = text = new SpriteText
                     {
-                        Font = new FontUsage("Quicksand", 24, "Bold"),
+                        Font = FluXisFont.Default(24),
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Y = -2
+                        Origin = Anchor.Centre
                     }
                 }
             };

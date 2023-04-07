@@ -37,7 +37,7 @@ public partial class ScoreListEntry : Container
                 {
                     new(GridSizeMode.Absolute, 50),
                     new(),
-                    new(GridSizeMode.Absolute, 100)
+                    new(GridSizeMode.Absolute, 125)
                 },
                 RelativeSizeAxes = Axes.Both,
                 Content = new[]
@@ -47,10 +47,9 @@ public partial class ScoreListEntry : Container
                         new SpriteText
                         {
                             Text = $"#{index}",
-                            Font = new FontUsage("Quicksand", 32, "Bold"),
+                            Font = FluXisFont.Default(32),
                             Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Y = -2
+                            Origin = Anchor.Centre
                         },
                         new Container
                         {
@@ -67,29 +66,27 @@ public partial class ScoreListEntry : Container
                                 new SpriteText
                                 {
                                     Text = Fluxel.GetLoggedInUser()?.Username ?? "Player",
-                                    Font = new FontUsage("Quicksand", 28, "Bold"),
+                                    Font = FluXisFont.Default(28),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
                                     Padding = new MarginPadding { Left = 10 },
-                                    Y = 4
+                                    Y = 5
                                 },
                                 timeText = new SpriteText
                                 {
                                     Text = TimeUtils.Ago(score.Date),
-                                    Font = new FontUsage("Quicksand", 20, "Bold"),
+                                    Font = FluXisFont.Default(),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.TopLeft,
-                                    Padding = new MarginPadding { Left = 10 },
-                                    Y = -1
+                                    Padding = new MarginPadding { Left = 10 }
                                 },
                                 new SpriteText
                                 {
                                     Text = score.Accuracy.ToString("00.00").Replace(",", ".") + "%",
-                                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                                    Font = FluXisFont.Default(32),
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
-                                    Padding = new MarginPadding { Right = 10 },
-                                    Y = -2
+                                    Padding = new MarginPadding { Right = 10 }
                                 }
                             }
                         },
@@ -102,10 +99,9 @@ public partial class ScoreListEntry : Container
                                 new SpriteText
                                 {
                                     Text = score.Score.ToString("0000000"),
-                                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                                    Font = FluXisFont.Default(32),
                                     Anchor = Anchor.CentreRight,
-                                    Origin = Anchor.CentreRight,
-                                    Y = -2
+                                    Origin = Anchor.CentreRight
                                 }
                             }
                         }

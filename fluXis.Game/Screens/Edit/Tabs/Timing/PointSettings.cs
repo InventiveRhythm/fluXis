@@ -74,10 +74,9 @@ public partial class PointSettings : FillFlowContainer
                 new SpriteText
                 {
                     Text = text,
-                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Font = FluXisFont.Default(32),
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Y = -2
+                    Origin = Anchor.CentreLeft
                 },
                 textBox = new TextBox { Text = value }
             });
@@ -107,7 +106,7 @@ public partial class PointSettings : FillFlowContainer
                 Child = new SpriteText
                 {
                     Text = c.ToString(),
-                    Font = new FontUsage("Quicksand", 32, "SemiBold").With(size: CalculatedTextSize)
+                    Font = FluXisFont.Default(CalculatedTextSize)
                 }
             };
 

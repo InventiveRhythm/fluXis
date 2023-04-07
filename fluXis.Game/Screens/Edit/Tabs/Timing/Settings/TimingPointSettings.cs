@@ -66,10 +66,9 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
                 new SpriteText
                 {
                     Text = "Signature",
-                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Font = FluXisFont.Default(32),
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Y = -2
+                    Origin = Anchor.CentreLeft
                 },
                 textBox = new TextBox
                 {
@@ -82,7 +81,7 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
                 new SpriteText
                 {
                     Text = "/4",
-                    Font = new FontUsage("Quicksand", 32, "Bold"),
+                    Font = FluXisFont.Default(32),
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight
                 }
@@ -112,7 +111,7 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
                 Child = new SpriteText
                 {
                     Text = c.ToString(),
-                    Font = new FontUsage("Quicksand", 32, "SemiBold").With(size: CalculatedTextSize)
+                    Font = FluXisFont.Default(CalculatedTextSize)
                 }
             };
 

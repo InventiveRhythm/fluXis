@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,7 +19,7 @@ public partial class SettingsToggle : SettingsItem
         Add(new SpriteText
         {
             Text = label,
-            Font = new FontUsage("Quicksand", 24, "Bold"),
+            Font = FluXisFont.Default(24),
             Anchor = Anchor.CentreLeft,
             Origin = Anchor.CentreLeft
         });

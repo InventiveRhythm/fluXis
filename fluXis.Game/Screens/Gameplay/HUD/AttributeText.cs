@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
@@ -22,7 +23,7 @@ public partial class AttributeText : GameplayHUDElement
     public float FontSize
     {
         get => sprText.Size.Y;
-        set => sprText.Font = new FontUsage("Quicksand", value, "Bold");
+        set => sprText.Font = FluXisFont.Default(value);
     }
 
     private AttributeType attributeType;

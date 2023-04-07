@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
@@ -79,7 +80,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Text = "No maps found!",
-                Font = new FontUsage("Quicksand", 32, "Bold"),
+                Font = FluXisFont.Default(32),
                 Blending = BlendingParameters.Additive,
                 Alpha = 0
             }

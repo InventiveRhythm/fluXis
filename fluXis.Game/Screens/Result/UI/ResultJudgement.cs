@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,13 +20,13 @@ public partial class ResultJudgement : FillFlowContainer
             new SpriteText
             {
                 Text = hitWindow.Key.ToString(),
-                Font = new FontUsage("Quicksand", 24, "Bold"),
+                Font = FluXisFont.Default(24),
                 Colour = hitWindow.Color
             },
             new SpriteText
             {
                 Text = count.ToString(),
-                Font = new FontUsage("Quicksand", 24, "SemiBold")
+                Font = FluXisFont.Default(24)
             }
         });
     }

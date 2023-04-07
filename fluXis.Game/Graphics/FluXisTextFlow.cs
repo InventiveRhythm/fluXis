@@ -13,7 +13,7 @@ public partial class FluXisTextFlow : TextFlowContainer
 
     protected override SpriteText CreateSpriteText() => new()
     {
-        Font = new FontUsage("Quicksand", 20, "Bold"),
+        Font = FluXisFont.Default(),
         Shadow = true
     };
 }

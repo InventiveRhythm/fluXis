@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -55,9 +56,8 @@ public partial class StatusTag : Container
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = colour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White,
-                Font = new FontUsage("Quicksand", 20, "Bold"),
-                Margin = new MarginPadding { Horizontal = 10 },
-                Y = -1
+                Font = FluXisFont.Default(),
+                Margin = new MarginPadding { Horizontal = 10 }
             }
         };
     }

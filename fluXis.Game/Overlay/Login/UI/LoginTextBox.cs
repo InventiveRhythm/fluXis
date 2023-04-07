@@ -26,7 +26,7 @@ public partial class LoginTextBox : FluXisTextBox
         Masking = true;
 
         PlaceholderText = placeholder;
-        Placeholder.Font = new FontUsage("Quicksand", 20, "Bold");
+        Placeholder.Font = FluXisFont.Default();
         Placeholder.Colour = FluXisColors.Accent3;
         Placeholder.Anchor = Anchor.CentreLeft;
         Placeholder.Origin = Anchor.CentreLeft;
@@ -52,7 +52,7 @@ public partial class LoginTextBox : FluXisTextBox
             container.Child = new SpriteText
             {
                 Text = c.ToString(),
-                Font = new FontUsage("Quicksand", CalculatedTextSize, "Bold"),
+                Font = FluXisFont.Default(CalculatedTextSize),
             };
         }
 

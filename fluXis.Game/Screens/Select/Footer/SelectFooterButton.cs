@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -34,8 +35,7 @@ public partial class SelectFooterButton : Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Font = new FontUsage("Quicksand", 24, "Bold"),
-                Y = -2
+                Font = FluXisFont.Default(24)
             }
         });
     }

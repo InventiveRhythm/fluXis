@@ -40,8 +40,7 @@ public partial class LoginButton : Container
                 Text = label,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Y = -2,
-                Font = new FontUsage("Quicksand", 20, "SemiBold")
+                Font = FluXisFont.Default()
             }
         };
     }

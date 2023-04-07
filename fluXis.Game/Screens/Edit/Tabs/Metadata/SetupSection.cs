@@ -23,7 +23,7 @@ public partial class MetadataSectionHeader : SpriteText
     public MetadataSectionHeader(string text)
     {
         Text = text;
-        Font = new FontUsage("Quicksand", 32, "SemiBold");
+        Font = FluXisFont.Default(32);
     }
 }
 
@@ -47,7 +47,7 @@ public partial class SetupTextBox : Container
             new SpriteText
             {
                 Text = name,
-                Font = new FontUsage("Quicksand", 24, "SemiBold"),
+                Font = FluXisFont.Default(24),
                 Margin = new MarginPadding { Top = 5 },
                 Origin = Anchor.TopRight,
                 X = 90
@@ -83,7 +83,7 @@ public partial class SetupTextBox : Container
             Child = new SpriteText
             {
                 Text = c.ToString(),
-                Font = new FontUsage("Quicksand", 24, "SemiBold").With(size: CalculatedTextSize)
+                Font = FluXisFont.Default(CalculatedTextSize)
             }
         };
     }

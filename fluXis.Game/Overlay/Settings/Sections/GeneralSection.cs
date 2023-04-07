@@ -1,4 +1,5 @@
 using System.Reflection;
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -23,14 +24,14 @@ public partial class GeneralSection : SettingsSection
                 new SpriteText
                 {
                     Text = "fluXis",
-                    Font = new FontUsage("Quicksand", 50, "Bold"),
+                    Font = FluXisFont.Default(50),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
                 },
                 new SpriteText
                 {
                     Text = "v" + (version?.ToString(3) ?? "unknown"),
-                    Font = new FontUsage("Quicksand", 20, "Bold"),
+                    Font = FluXisFont.Default(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.TopCentre
                 },

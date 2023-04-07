@@ -38,8 +38,7 @@ public partial class MenuProfile : Container
             username = new SpriteText
             {
                 Text = user?.Username ?? "Not logged in",
-                Font = new FontUsage("Quicksand", 40, "Bold"),
-                Y = -2,
+                Font = FluXisFont.Default(40),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Margin = new MarginPadding { Right = 120 }

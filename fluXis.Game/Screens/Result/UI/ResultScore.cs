@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -34,13 +35,13 @@ public partial class ResultScore : FillFlowContainer
         {
             scoreText = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 80, "Bold"),
+                Font = FluXisFont.Default(80),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
             accuracyText = new SpriteText
             {
-                Font = new FontUsage("Quicksand", 40, "Bold"),
+                Font = FluXisFont.Default(40),
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
@@ -65,12 +66,12 @@ public partial class ResultScore : FillFlowContainer
                 {
                     new SpriteText
                     {
-                        Font = new FontUsage("Quicksand", 24, "Bold"),
+                        Font = FluXisFont.Default(24),
                         Text = "Max Combo"
                     },
                     comboText = new SpriteText
                     {
-                        Font = new FontUsage("Quicksand", 24, "SemiBold"),
+                        Font = FluXisFont.Default(24),
                         Colour = performance.AllFlawless ? HitWindow.FromKey(Judgement.Flawless).Color : performance.FullCombo ? HitWindow.FromKey(Judgement.Great).Color : Color4.White
                     }
                 }
