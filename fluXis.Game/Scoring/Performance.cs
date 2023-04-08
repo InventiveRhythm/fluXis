@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Mods;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Scoring;
@@ -33,7 +34,7 @@ public class Performance
     };
 
     [JsonProperty("score")]
-    public int Score => (int)(NotesRated / Map.MaxCombo * 1000000);
+    public int Score => (int)(NotesRated / Map.MaxCombo * (1000000 * ScoreMultiplier));
 
     [JsonProperty("combo")]
     public int Combo { get; private set; }
@@ -52,6 +53,9 @@ public class Performance
 
     [JsonProperty("maphash")]
     public string MapHash { get; private set; }
+
+    [JsonProperty("mods")]
+    public List<string> ModNames => Mods.Select(m => m.Acronym).ToList();
 
     [JsonIgnore]
     public readonly MapInfo Map;
@@ -77,11 +81,21 @@ public class Performance
     [JsonIgnore]
     public Action<HitStat> OnHitStatAdded;
 
-    public Performance(MapInfo map, int mapid, string hash)
+    [JsonIgnore]
+    public List<IMod> Mods { get; }
+
+    [JsonIgnore]
+    public bool IsRanked => Mods.All(m => m.Rankable);
+
+    [JsonIgnore]
+    public float ScoreMultiplier => 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
+
+    public Performance(MapInfo map, int mapid, string hash, List<IMod> mods = null)
     {
         Map = map;
         MapID = mapid;
         MapHash = hash;
+        Mods = mods ?? new List<IMod>();
 
         Combo = 0;
         MaxCombo = 0;

@@ -78,9 +78,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(InputKey.Left, FluXisKeybind.SeekBackward),
         new KeyBinding(InputKey.Right, FluXisKeybind.SeekForward),
         new KeyBinding(InputKey.F3, FluXisKeybind.ScrollSpeedDecrease),
-        new KeyBinding(InputKey.F4, FluXisKeybind.ScrollSpeedIncrease),
-
-        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.A), FluXisKeybind.ToggleAutoplay)
+        new KeyBinding(InputKey.F4, FluXisKeybind.ScrollSpeedIncrease)
     };
 
     protected override IEnumerable<Drawable> KeyBindingInputQueue
@@ -176,8 +174,5 @@ public enum FluXisKeybind
     SeekBackward,
     SeekForward,
     ScrollSpeedIncrease,
-    ScrollSpeedDecrease,
-
-    // Ingame (Debug)
-    ToggleAutoplay
+    ScrollSpeedDecrease
 }

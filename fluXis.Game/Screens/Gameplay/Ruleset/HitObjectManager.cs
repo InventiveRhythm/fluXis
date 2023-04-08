@@ -31,7 +31,18 @@ public partial class HitObjectManager : CompositeDrawable
     public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
     public bool Dead { get; set; }
-    public HealthMode HealthMode => HealthMode.Normal;
+
+    public HealthMode HealthMode
+    {
+        get
+        {
+            if (Playfield.Screen.Mods.Any(m => m is HardMod)) return HealthMode.Drain;
+            if (Playfield.Screen.Mods.Any(m => m is EasyMod)) return HealthMode.Requirement;
+
+            return HealthMode.Normal;
+        }
+    }
+
     public float Health { get; private set; }
     public float HealthDrainRate { get; private set; }
 
@@ -115,7 +126,7 @@ public partial class HitObjectManager : CompositeDrawable
         }
 
         Health = Math.Clamp(Health, 0, 100);
-        if (Health == 0 && !Dead && HealthMode != HealthMode.Requirement)
+        if (Health == 0 && !Dead && HealthMode != HealthMode.Requirement && !Playfield.Screen.Mods.Any(m => m is NoFailMod))
             Playfield.Screen.Die();
 
         base.Update();
@@ -133,8 +144,6 @@ public partial class HitObjectManager : CompositeDrawable
 
     private void updateAutoPlay()
     {
-        Playfield.Screen.CanSubmitScore = false;
-
         bool[] pressed = new bool[Map.KeyCount];
 
         List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Conductor.CurrentTime && h.Exists).ToList();
@@ -263,6 +272,12 @@ public partial class HitObjectManager : CompositeDrawable
             HealthDrainRate -= hitWindow.DrainRate;
         else
             Health += hitWindow.Health;
+
+        if (hitWindow.Key == Judgement.Miss && Playfield.Screen.Mods.Any(m => m is FragileMod))
+            Playfield.Screen.Die();
+
+        if (hitWindow.Key != Judgement.Flawless && Playfield.Screen.Mods.Any(m => m is FlawlessMod))
+            Playfield.Screen.Die();
     }
 
     public void LoadMap(MapInfo map)

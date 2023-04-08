@@ -60,7 +60,7 @@ public partial class SelectFooter : Container
                             new SelectFooterButton
                             {
                                 Text = "Mods",
-                                Action = () => Notifications.Post("This is still in development\nCome back later!")
+                                Action = () => Screen.ModSelector.IsOpen.Toggle()
                             },
                             new SelectFooterButton
                             {

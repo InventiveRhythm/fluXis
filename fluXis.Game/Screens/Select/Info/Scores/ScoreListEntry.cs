@@ -164,7 +164,7 @@ public partial class ScoreListEntry : Container
         for (int i = 0; i < score.Judgements.Miss; i++) performance.AddJudgement(Judgement.Miss);
         for (int i = 0; i < score.MaxCombo; i++) performance.IncCombo();
 
-        ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, false, false));
+        ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, false));
 
         return true;
     }

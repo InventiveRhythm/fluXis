@@ -58,7 +58,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public MapInfo Map;
     public RealmMap RealmMap;
     public MapEvents MapEvents;
-    public List<IMod> Mods = new();
+    public List<IMod> Mods;
 
     public Playfield Playfield { get; private set; }
     public Container HUD { get; private set; }
@@ -72,11 +72,10 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public Sample Combobreak;
     public Sample Restart;
 
-    public bool CanSubmitScore { get; set; } = true;
-
-    public GameplayScreen(RealmMap realmMap)
+    public GameplayScreen(RealmMap realmMap, List<IMod> mods)
     {
         RealmMap = realmMap;
+        Mods = mods;
     }
 
     [BackgroundDependencyLoader]
@@ -97,7 +96,7 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         loadMapEvents(storage);
 
         Input = new GameplayInput(this, Map.KeyCount);
-        Performance = new Performance(Map, RealmMap.OnlineID, RealmMap.Hash);
+        Performance = new Performance(Map, RealmMap.OnlineID, RealmMap.Hash, Mods);
 
         HitSound = samples.Get("Gameplay/hitsound.mp3");
         Combobreak = samples.Get("Gameplay/combobreak.mp3");
@@ -238,16 +237,16 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         if (Performance.FullCombo || Performance.AllFlawless)
         {
             fcOverlay.Show(Performance.AllFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
-            this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore)));
+            this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance)));
         }
-        else this.Push(new ResultsScreen(RealmMap, Map, Performance, CanSubmitScore));
+        else this.Push(new ResultsScreen(RealmMap, Map, Performance));
     }
 
     public void RestartMap()
     {
         restarting = true;
         Restart?.Play();
-        this.Push(new GameplayScreen(RealmMap));
+        this.Push(new GameplayScreen(RealmMap, Mods));
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -316,11 +315,6 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     {
         switch (e.Action)
         {
-            case FluXisKeybind.ToggleAutoplay:
-                if (Playfield.Manager.AutoPlay) Mods.Remove(Mods.First(m => m is AutoPlayMod));
-                else Mods.Add(new AutoPlayMod());
-                return true;
-
             case FluXisKeybind.Restart:
                 RestartMap();
                 return true;

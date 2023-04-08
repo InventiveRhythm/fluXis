@@ -11,6 +11,7 @@ using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.Footer;
 using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
+using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Screens.Select.Search;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -40,6 +41,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public SelectMapInfo SelectMapInfo;
     public SearchBar SearchBar;
     public SelectFooter Footer;
+    public ModSelector ModSelector;
 
     public Sample MenuAccept;
     public Sample MenuBack;
@@ -68,6 +70,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         AddInternal(SearchBar = new SearchBar(this));
         AddInternal(SelectMapInfo = new SelectMapInfo { Screen = this });
         AddInternal(Footer = new SelectFooter(this));
+        AddInternal(ModSelector = new ModSelector());
 
         AddInternal(new Container
         {
@@ -169,7 +172,7 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         Backgrounds.AddBackgroundFromMap(MapInfo.Value);
         Backgrounds.SwipeAnimation();
 
-        this.Push(new GameplayScreen(MapInfo.Value));
+        this.Push(new GameplayScreen(MapInfo.Value, ModSelector.SelectedMods));
     }
 
     private void changeSelection(int by = 0)
@@ -317,6 +320,12 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 return true;
 
             case FluXisKeybind.Back:
+                if (ModSelector.IsOpen.Value)
+                {
+                    ModSelector.IsOpen.Value = false;
+                    return true;
+                }
+
                 MenuBack.Play();
                 this.Exit();
                 return true;
