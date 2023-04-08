@@ -228,6 +228,7 @@ public partial class HitObjectManager : CompositeDrawable
     private void hit(HitObject hitObject, bool isHoldEnd)
     {
         float diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.CurrentTime : hitObject.Data.Time - Conductor.CurrentTime;
+        diff = AutoPlay ? 0 : diff;
         hitObject.GotHit = true;
 
         judmentDisplay(hitObject, diff);
@@ -248,7 +249,7 @@ public partial class HitObjectManager : CompositeDrawable
         if (Performance.Combo >= 5)
             Playfield.Screen.Combobreak.Play();
 
-        judmentDisplay(hitObject, 0, true);
+        judmentDisplay(hitObject, 0, !AutoPlay);
         Performance.ResetCombo();
 
         if (hitObject.Data.IsLongNote()) return;
