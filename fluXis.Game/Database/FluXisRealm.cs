@@ -9,6 +9,12 @@ namespace fluXis.Game.Database;
 
 public class FluXisRealm : IDisposable
 {
+    /// <summary>
+    /// 2 - fixed a bug where multiple keybinds could be created for the same action
+    /// 3 - add mods to RealmScore
+    /// </summary>
+    private const int schema_version = 3;
+
     private Realm updateRealm;
 
     public Realm Realm
@@ -26,7 +32,7 @@ public class FluXisRealm : IDisposable
 
     private RealmConfiguration config => new(storage.GetFullPath("fluxis.realm"))
     {
-        SchemaVersion = 2,
+        SchemaVersion = schema_version,
         MigrationCallback = (migration, oldSchemaVersion) =>
         {
             // from version 1 to 2
@@ -48,6 +54,8 @@ public class FluXisRealm : IDisposable
 
                 foreach (var keybind in toRemove) migration.NewRealm.Remove(keybind);
             }
+
+            // 2 to 3 doesn't need any because it has a default value
         }
     };
 

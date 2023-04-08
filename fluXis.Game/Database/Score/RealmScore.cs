@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using JetBrains.Annotations;
 using Realms;
@@ -21,6 +22,8 @@ public class RealmScore : RealmObject
     public int MaxCombo { get; set; }
 
     public RealmJudgements Judgements { get; set; }
+
+    public IList<string> Mods { get; } = new List<string>();
 
     public Guid MapID { get; set; }
 

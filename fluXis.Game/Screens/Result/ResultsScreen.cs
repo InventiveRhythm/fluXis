@@ -55,6 +55,9 @@ public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                 Judgements = new RealmJudgements(performance.Judgements)
             };
 
+            foreach (var mod in performance.Mods)
+                score.Mods.Add(mod.Acronym);
+
             OnlineScores.UploadScore(performance, res => Logger.Log(res.Message));
         }
     }
