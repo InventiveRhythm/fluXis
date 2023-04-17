@@ -37,14 +37,14 @@ public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
 
     private readonly bool showHitPoints;
 
-    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool showHitPoints = true)
+    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool showHitPoints = true, bool saveScore = true)
     {
         this.map = map;
         this.mapInfo = mapInfo;
         this.performance = performance;
         this.showHitPoints = showHitPoints;
 
-        if (performance.IsRanked)
+        if (performance.IsRanked && saveScore)
         {
             score = new RealmScore(map)
             {
