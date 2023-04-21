@@ -19,7 +19,7 @@ public partial class MenuProfile : Container
         Origin = Anchor.TopRight;
         AutoSizeAxes = Axes.Both;
 
-        APIUser user = Fluxel.GetLoggedInUser();
+        APIUserShort user = Fluxel.LoggedInUser;
 
         InternalChildren = new Drawable[]
         {
@@ -48,7 +48,7 @@ public partial class MenuProfile : Container
         Fluxel.OnUserLoggedIn += updateUser;
     }
 
-    private void updateUser(APIUser user)
+    private void updateUser(APIUserShort user)
     {
         if (user == null) return;
 

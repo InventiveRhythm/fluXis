@@ -7,7 +7,6 @@ using System.Threading;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Overlay.Notification;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Logging;
@@ -18,12 +17,28 @@ public class Fluxel
 {
     internal static HttpClient Http = new();
     private static ClientWebSocket connection;
-    private static APIUser loggedInUser;
+
+    private static int retryCount;
+    private static bool reconnecting;
+    private const int max_retries = 5;
 
     private static readonly List<string> packet_queue = new();
 
     public static string Token;
-    public static Action<APIUser> OnUserLoggedIn;
+    public static Action<APIUserShort> OnUserLoggedIn;
+
+    private static APIUserShort loggedInUser;
+
+    public static APIUserShort LoggedInUser
+    {
+        get => loggedInUser;
+        set
+        {
+            loggedInUser = value;
+            OnUserLoggedIn?.Invoke(loggedInUser);
+            Logger.Log($"Logged in as {value.Username}", LoggingTarget.Network);
+        }
+    }
 
     public static NotificationOverlay Notifications;
 
@@ -33,7 +48,8 @@ public class Fluxel
     {
         try
         {
-            Notifications.Post("Connecting to server...");
+            Notifications.Post(reconnecting ? $"Reconnecting to server... (attempt {retryCount}/{max_retries})" : "Connecting to server...");
+
             connection = new ClientWebSocket();
             await connection.ConnectAsync(new Uri(APIConstants.WebsocketUrl), CancellationToken.None);
 
@@ -44,19 +60,36 @@ public class Fluxel
             // send queued packets
             foreach (var packet in packet_queue)
                 Send(packet);
+
+            reconnecting = false;
         }
         catch (Exception ex)
         {
             Notifications.PostError("Failed to connect to server!");
             Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
+
+            reconnect();
         }
+    }
+
+    private static void reconnect()
+    {
+        reconnecting = true;
+
+        if (retryCount < max_retries)
+        {
+            retryCount++;
+            Connect();
+        }
+        else
+            Notifications.PostError("Failed to connect to server! Please try again later.");
     }
 
     private static async void receive()
     {
-        try
+        while (connection.State == WebSocketState.Open)
         {
-            while (connection.State == WebSocketState.Open)
+            try
             {
                 // receive data
                 byte[] buffer = new byte[2048];
@@ -86,7 +119,7 @@ public class Fluxel
                 Action handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
                 {
                     EventType.Token => handleListener<string>,
-                    EventType.Login => handleListener<APIUser>,
+                    EventType.Login => handleListener<APIUserShort>,
                     EventType.Register => handleListener<APIRegisterResponse>,
                     EventType.MultiplayerCreateLobby => handleListener<int>,
                     EventType.MultiplayerJoinLobby => handleListener<APIMultiplayerLobby>,
@@ -96,14 +129,15 @@ public class Fluxel
                 // execute handler
                 handler();
             }
-        }
-        catch (Exception e)
-        {
-            Notifications.PostError("Something went wrong while receiving data from server!");
-            Logger.Error(e, "Something went wrong!", LoggingTarget.Network);
+            catch (Exception e)
+            {
+                Notifications.PostError("Something went wrong while receiving data from server!");
+                Logger.Error(e, "Something went wrong!", LoggingTarget.Network);
+            }
         }
 
         Notifications.PostError("Disconnected from server!");
+        reconnect();
     }
 
     public static void Send(string message)
@@ -134,19 +168,6 @@ public class Fluxel
     {
         response_listeners.Remove(id, out var listeners);
         listeners?.Clear();
-    }
-
-    public static void SetLoggedInUser(APIUser user)
-    {
-        OnUserLoggedIn?.Invoke(user);
-        loggedInUser = user;
-        Logger.Log($"Logged in as {user.Username}", LoggingTarget.Network);
-    }
-
-    [CanBeNull]
-    public static APIUser GetLoggedInUser()
-    {
-        return loggedInUser;
     }
 
     public static void Reset()

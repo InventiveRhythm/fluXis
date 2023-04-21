@@ -34,7 +34,7 @@ public class OnlineScores
             HitStats = performance.HitStats,
             MapID = performance.MapID,
             MapHash = performance.MapHash,
-            PlayerID = Fluxel.Fluxel.GetLoggedInUser()?.ID ?? -1
+            PlayerID = Fluxel.Fluxel.LoggedInUser?.ID ?? -1
         };
 
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, APIConstants.APIUrl + "/score");

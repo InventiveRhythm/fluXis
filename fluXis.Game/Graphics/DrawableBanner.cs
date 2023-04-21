@@ -1,5 +1,4 @@
 using System.Threading;
-using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -17,7 +16,7 @@ public partial class DrawableBanner : Sprite
 
     public DrawableBanner(APIUserShort user)
     {
-        this.user = user;
+        this.user = user ?? APIUserShort.Dummy;
         Alpha = 0;
         FillMode = FillMode.Fill;
     }
@@ -26,7 +25,7 @@ public partial class DrawableBanner : Sprite
     private async void load(TextureStore textures)
     {
         this.textures = textures;
-        Texture = await textures.GetAsync($"{APIConstants.APIUrl}/assets/banner/{user?.ID ?? -1}", cancellationToken.Token);
+        Texture = await textures.GetAsync(user.BannerUrl, cancellationToken.Token);
     }
 
     protected override void LoadAsyncComplete()
@@ -35,12 +34,12 @@ public partial class DrawableBanner : Sprite
         base.LoadAsyncComplete();
     }
 
-    public async void UpdateUser(APIUserShort user)
+    public async void UpdateUser(APIUserShort newUser)
     {
         cancellationToken.Cancel();
         cancellationToken = new CancellationTokenSource();
 
-        this.user = user;
-        Texture = await textures.GetAsync($"{APIConstants.APIUrl}/assets/banner/{user?.ID ?? -1}", cancellationToken.Token);
+        user = newUser ?? APIUserShort.Dummy;
+        Texture = await textures.GetAsync(user.BannerUrl, cancellationToken.Token);
     }
 }

@@ -83,7 +83,7 @@ public partial class ScoreListEntry : Container
                                 },
                                 new SpriteText
                                 {
-                                    Text = Fluxel.GetLoggedInUser()?.Username ?? "Player",
+                                    Text = Fluxel.LoggedInUser?.Username ?? "Player",
                                     Font = FluXisFont.Default(28),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,

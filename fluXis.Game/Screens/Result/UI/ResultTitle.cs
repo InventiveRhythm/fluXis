@@ -16,7 +16,7 @@ public partial class ResultTitle : Container
         AutoSizeAxes = Axes.Y;
         RelativeSizeAxes = Axes.X;
 
-        APIUser user = Fluxel.GetLoggedInUser();
+        APIUserShort user = Fluxel.LoggedInUser;
 
         InternalChild = new GridContainer
         {

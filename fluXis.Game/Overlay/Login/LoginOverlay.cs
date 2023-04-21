@@ -96,7 +96,7 @@ public partial class LoginOverlay : Container
         });
 
         Fluxel.RegisterListener<string>(EventType.Token, onAuth);
-        Fluxel.RegisterListener<APIUser>(EventType.Login, onLogin);
+        Fluxel.RegisterListener<APIUserShort>(EventType.Login, onLogin);
         Fluxel.RegisterListener<APIRegisterResponse>(EventType.Register, onRegister);
     }
 
@@ -170,12 +170,12 @@ public partial class LoginOverlay : Container
         setLoadingText("Logging in...", () => Fluxel.SendPacket(new LoginPacket(tokenBind.Value)));
     }
 
-    private void onLogin(FluxelResponse<APIUser> response)
+    private void onLogin(FluxelResponse<APIUserShort> response)
     {
         if (response.Status == 200)
         {
             LoggedIn = true;
-            Fluxel.SetLoggedInUser(response.Data);
+            Fluxel.LoggedInUser = response.Data;
             setLoadingText("Logged in!", () => this.FadeOut(200));
         }
         else setLoadingText(response.Message, () => switchToLogin(null));
@@ -202,7 +202,7 @@ public partial class LoginOverlay : Container
         if (response.Status == 200)
         {
             LoggedIn = true;
-            Fluxel.SetLoggedInUser(response.Data.User);
+            Fluxel.LoggedInUser = response.Data.User;
             Fluxel.Token = response.Data.Token;
             tokenBind.Value = response.Data.Token;
             setLoadingText("Registered!", () => this.FadeOut(200));

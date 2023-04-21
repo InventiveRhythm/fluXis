@@ -84,7 +84,7 @@ public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background2
                     },
-                    new DrawableBanner(Fluxel.GetLoggedInUser())
+                    new DrawableBanner(Fluxel.LoggedInUser)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,

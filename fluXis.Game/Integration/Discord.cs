@@ -5,7 +5,7 @@ using fluXis.Game.Online.Fluxel;
 
 namespace fluXis.Game.Integration;
 
-public class Discord
+public abstract class Discord
 {
     private static DiscordRpcClient client;
 
@@ -31,11 +31,11 @@ public class Discord
             LargeImageText = "fluXis"
         };
 
-        APIUser user = Fluxel.GetLoggedInUser();
+        APIUserShort user = Fluxel.LoggedInUser;
 
         if (user != null)
         {
-            assets.SmallImageKey = "https://api.fluxis.foxes4life.net/assets/avatar/" + user.ID;
+            assets.SmallImageKey = user.AvatarUrl;
             assets.SmallImageText = user.Username;
         }
 
