@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using osu.Framework.Allocation;
@@ -19,7 +20,6 @@ public partial class MenuVisualizer : Container
 
     private const int circle_count = 64;
 
-    private float amplitude;
     private bool loaded;
     private Bindable<bool> visualizerEnabled;
 
@@ -71,10 +71,10 @@ public partial class MenuVisualizer : Container
 
     protected override void Update()
     {
-        updateAmplitude();
-
         foreach (var child in Children)
         {
+            float amplitude = Conductor.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+
             var circle = (DotCircle)child;
             float move = amplitude * .2f * circle.RandomSpeed;
             move *= (float)Time.Elapsed;
@@ -93,29 +93,6 @@ public partial class MenuVisualizer : Container
         }
 
         base.Update();
-    }
-
-    private void updateAmplitude()
-    {
-        float[] span = Conductor.Track?.CurrentAmplitudes.FrequencyAmplitudes.Span.ToArray() ?? new float[256];
-
-        float newAmplitude = 0;
-
-        for (var i = 0; i < span.Length; i++)
-        {
-            if (i is >= start_index and <= end_index)
-                newAmplitude += span[i];
-        }
-
-        newAmplitude /= end_index - start_index;
-
-        // smooth out the amplitude (less smoothing for amplitude increase, more for decrease)
-        float delta = newAmplitude - amplitude;
-        float interpolation = delta < 0
-            ? (float)Math.Pow(.01, Time.Elapsed / 1000f)
-            : (float)Math.Pow(.1, Time.Elapsed / 1000f);
-
-        amplitude += delta * interpolation;
     }
 
     private partial class DotCircle : CircularContainer

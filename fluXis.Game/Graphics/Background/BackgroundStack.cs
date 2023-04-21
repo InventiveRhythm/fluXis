@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
@@ -15,6 +16,8 @@ namespace fluXis.Game.Graphics.Background;
 
 public partial class BackgroundStack : CompositeDrawable
 {
+    private FluXisConfig config;
+
     private readonly List<Background> scheduledBackgrounds = new();
     private readonly Container backgroundContainer;
     private readonly ParallaxContainer parallaxContainer;
@@ -49,6 +52,7 @@ public partial class BackgroundStack : CompositeDrawable
     public BackgroundStack()
     {
         RelativeSizeAxes = Axes.Both;
+        Anchor = Origin = Anchor.Centre;
 
         InternalChildren = new Drawable[]
         {
@@ -88,15 +92,7 @@ public partial class BackgroundStack : CompositeDrawable
     {
         backgroundDimBindable = config.GetBindable<float>(FluXisSetting.BackgroundDim);
         backgroundBlurBindable = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
-
-        Conductor.OnBeat += _ =>
-        {
-            if (config.Get<bool>(FluXisSetting.BackgroundPulse) && !isZooming)
-            {
-                backgroundContainer.ScaleTo(zoom + .005f)
-                                   .ScaleTo(zoom, Conductor.BeatTime, Easing.Out);
-            }
-        };
+        this.config = config;
     }
 
     protected override void LoadComplete()
@@ -134,6 +130,14 @@ public partial class BackgroundStack : CompositeDrawable
             else
                 break;
         }
+
+        if (config.Get<bool>(FluXisSetting.BackgroundPulse))
+        {
+            var amplitude = Conductor.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+            Scale = new Vector2(1 + amplitude * .02f);
+        }
+        else if (Scale.X != 1)
+            Scale = new Vector2(1);
 
         base.Update();
     }

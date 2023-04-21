@@ -105,6 +105,8 @@ public partial class Conductor : Container
     /// </summary>
     public static float BeatTime => instance.stepTime * 4;
 
+    public static float[] Amplitudes { get; private set; } = new float[256];
+
     public static List<TimingPointInfo> TimingPoints = new();
 
     [BackgroundDependencyLoader]
@@ -136,6 +138,26 @@ public partial class Conductor : Container
             CurrentTime += (float)Time.Elapsed;
 
         updateStep();
+        updateAmplitudes();
+    }
+
+    private void updateAmplitudes()
+    {
+        if (!IsPlaying)
+            return;
+
+        float[] span = Track?.CurrentAmplitudes.FrequencyAmplitudes.Span.ToArray() ?? new float[256];
+
+        for (var i = 0; i < span.Length; i++)
+        {
+            float newAmplitude = span[i];
+            float delta = newAmplitude - Amplitudes[i];
+            float interpolation = delta < 0
+                ? (float)Time.Elapsed / 100f
+                : (float)Math.Pow(.1f, Time.Elapsed / 1000f);
+
+            Amplitudes[i] += delta * interpolation;
+        }
     }
 
     /// <summary>
