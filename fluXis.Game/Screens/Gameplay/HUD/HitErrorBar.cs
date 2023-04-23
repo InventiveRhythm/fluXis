@@ -18,6 +18,7 @@ public partial class HitErrorBar : GameplayHUDElement
 
     private readonly SpriteIcon icon;
     private readonly Container hits;
+    private readonly CircularContainer average;
 
     public HitErrorBar(GameplayScreen screen)
         : base(screen)
@@ -46,8 +47,8 @@ public partial class HitErrorBar : GameplayHUDElement
                 Margin = new MarginPadding { Top = 20 },
                 Height = 5,
                 RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
                 CornerRadius = 2.5f,
                 Masking = true,
                 Children = new Drawable[]
@@ -61,10 +62,22 @@ public partial class HitErrorBar : GameplayHUDElement
             },
             hits = new Container
             {
-                Margin = new MarginPadding { Top = 20 },
+                Margin = new MarginPadding { Top = 22.5f },
                 RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre
+            },
+            average = new CircularContainer
+            {
+                Size = new Vector2(7, 7),
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
+                Margin = new MarginPadding { Top = 30 },
+                Masking = true,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both
+                }
             }
         };
 
@@ -96,11 +109,9 @@ public partial class HitErrorBar : GameplayHUDElement
         scaleBind = config.GetBindable<float>(FluXisSetting.HitErrorScale);
     }
 
-    protected override void Update()
+    protected override void LoadComplete()
     {
-        // why do bindables not work properly??
-        Scale = new Vector2(scaleBind.Value);
-        base.Update();
+        scaleBind.BindValueChanged(e => Scale = new Vector2(e.NewValue), true);
     }
 
     public void AddHit(HitStat stat)
@@ -129,5 +140,16 @@ public partial class HitErrorBar : GameplayHUDElement
            .ScaleTo(1f, 200, Easing.OutQuint)
            .Then()
            .FadeOut(300);
+
+        updateAverage();
+    }
+
+    private void updateAverage()
+    {
+        float avg = Screen.Performance.HitStats.Average(h => h.Difference);
+        HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(avg));
+
+        average.MoveToX(avg, 100, Easing.OutQuint);
+        average.Colour = hitWindow.Color;
     }
 }
