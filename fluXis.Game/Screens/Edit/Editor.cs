@@ -13,7 +13,7 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit;
 
-public partial class Editor : Screen, IKeyBindingHandler<FluXisKeybind>
+public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public RealmMap Map;
     public MapInfo OriginalMapInfo;

@@ -22,8 +22,10 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Result;
 
-public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
+    public override float Zoom => 1.2f;
+
     [Resolved]
     private FluXisRealm realm { get; set; }
 
@@ -140,9 +142,6 @@ public partial class ResultsScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             .FadeOut()
             .ScaleTo(1f, 250, Easing.OutQuint)
             .FadeIn(250, Easing.OutQuint);
-
-        backgrounds.Zoom = 1.2f;
-        backgrounds.ParallaxStrength = 10;
 
         base.OnEntering(e);
     }

@@ -25,8 +25,10 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Menu;
 
-public partial class MenuScreen : Screen
+public partial class MenuScreen : FluXisScreen
 {
+    public override float Zoom => 1f;
+
     [Resolved]
     private MapStore maps { get; set; }
 
@@ -44,6 +46,11 @@ public partial class MenuScreen : Screen
 
     private Box blackBox;
     private Container content;
+
+    private Container textContainer;
+    private Container buttonContainer;
+    private FillFlowContainer linkContainer;
+    private MenuProfile profile;
 
     private MenuButton playButton;
 
@@ -77,18 +84,25 @@ public partial class MenuScreen : Screen
                 Padding = new MarginPadding(40),
                 Children = new Drawable[]
                 {
-                    new SpriteText
+                    textContainer = new Container
                     {
-                        Text = "fluXis",
-                        Font = FluXisFont.Default(100)
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new[]
+                        {
+                            new SpriteText
+                            {
+                                Text = "fluXis",
+                                Font = FluXisFont.Default(100)
+                            },
+                            new SpriteText
+                            {
+                                Text = "A free and community-driven rhythm game",
+                                Font = FluXisFont.Default(32),
+                                Margin = new MarginPadding { Top = 80 }
+                            },
+                        }
                     },
-                    new SpriteText
-                    {
-                        Text = "A free and community-driven rhythm game",
-                        Font = FluXisFont.Default(32),
-                        Margin = new MarginPadding { Top = 80 }
-                    },
-                    new Container
+                    buttonContainer = new Container
                     {
                         AutoSizeAxes = Axes.Both,
                         Anchor = Anchor.BottomLeft,
@@ -144,7 +158,7 @@ public partial class MenuScreen : Screen
                             }
                         }
                     },
-                    new FillFlowContainer
+                    linkContainer = new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,
                         Anchor = Anchor.BottomRight,
@@ -173,7 +187,7 @@ public partial class MenuScreen : Screen
                             }
                         }
                     },
-                    new MenuProfile()
+                    profile = new MenuProfile()
                 }
             },
             blackBox = new Box
@@ -196,22 +210,37 @@ public partial class MenuScreen : Screen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.FadeInFromZero(100);
+        this.FadeInFromZero(200);
+
+        textContainer.MoveToX(-200).MoveToX(0, 400, Easing.OutQuint);
+        buttonContainer.MoveToX(-200).MoveToX(0, 400, Easing.OutQuint);
+        linkContainer.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
+        profile.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
+
         base.OnEntering(e);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        this.FadeOut(100);
-        content.ScaleTo(1.1f, 400, Easing.OutQuint);
+        this.FadeOut(200);
+
+        textContainer.MoveToX(-200, 400, Easing.OutQuint);
+        buttonContainer.MoveToX(-200, 400, Easing.OutQuint);
+        linkContainer.MoveToX(200, 400, Easing.OutQuint);
+        profile.MoveToX(200, 400, Easing.OutQuint);
+
         base.OnSuspending(e);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        this.FadeIn(100);
-        content.ScaleTo(1f, 400, Easing.OutQuint);
-        backgrounds.Zoom = 1;
+        this.FadeIn(200);
+
+        textContainer.MoveToX(0, 400, Easing.OutQuint);
+        buttonContainer.MoveToX(0, 400, Easing.OutQuint);
+        linkContainer.MoveToX(0, 400, Easing.OutQuint);
+        profile.MoveToX(0, 400, Easing.OutQuint);
+
         base.OnResuming(e);
     }
 

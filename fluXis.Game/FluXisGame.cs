@@ -10,6 +10,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Volume;
+using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -18,7 +19,6 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
-using osu.Framework.Screens;
 
 namespace fluXis.Game;
 
@@ -26,7 +26,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 {
     private static Action exitAction;
 
-    private ScreenStack screenStack;
+    private FluXisScreenStack screenStack;
 
     private Storage storage;
 
@@ -45,7 +45,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         {
             new Conductor(),
             BackgroundStack,
-            screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both },
+            screenStack = new FluXisScreenStack(),
             Settings,
             LoginOverlay,
             new VolumeOverlay(),

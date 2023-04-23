@@ -35,8 +35,10 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Gameplay;
 
-public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
+    public override float ParallaxStrength => 0f;
+
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
 
@@ -283,9 +285,6 @@ public partial class GameplayScreen : Screen, IKeyBindingHandler<FluXisKeybind>
             .ScaleTo(1f, 750, Easing.OutQuint)
             .Delay(250)
             .FadeIn(250);
-
-        backgrounds.Zoom = 1f;
-        backgrounds.ParallaxStrength = 0;
 
         base.OnEntering(e);
     }

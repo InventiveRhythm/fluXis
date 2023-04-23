@@ -28,8 +28,10 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select;
 
-public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
+    public override float Zoom => 1.1f;
+
     [Resolved]
     private MapStore mapStore { get; set; }
 
@@ -239,8 +241,6 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public override void OnResuming(ScreenTransitionEvent e)
     {
         this.FadeIn(200);
-        Backgrounds.Zoom = 1.1f;
-        Backgrounds.ParallaxStrength = 10;
 
         MapList.MoveToX(0, 500, Easing.OutQuint);
         SearchBar.MoveToY(0, 500, Easing.OutQuint);
@@ -258,8 +258,6 @@ public partial class SelectScreen : Screen, IKeyBindingHandler<FluXisKeybind>
     public override void OnEntering(ScreenTransitionEvent e)
     {
         this.FadeInFromZero(200);
-        Backgrounds.Zoom = 1.1f;
-        Backgrounds.ParallaxStrength = 10;
 
         MapList.MoveToX(-200)
                .MoveToX(0, 500, Easing.OutQuint);
