@@ -130,5 +130,8 @@ public partial class ResultHitPoints : Container
                 }
             };
         }
+
+        // required for tooltip
+        protected override bool OnHover(HoverEvent e) => true;
     }
 }
