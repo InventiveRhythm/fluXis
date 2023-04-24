@@ -91,6 +91,9 @@ public class MapInfo
 
     public TimingPointInfo GetTimingPoint(float time)
     {
+        if (TimingPoints.Count == 0)
+            return new TimingPointInfo { BPM = 60, Time = 0 };
+
         TimingPointInfo timingPoint = null;
 
         foreach (var tp in TimingPoints)

@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs;
+using fluXis.Game.Screens.Edit.Timeline;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -23,6 +24,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private int currentTab;
 
     private ComposeTab composeTab;
+    private EditorBottomBar bottomBar;
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
@@ -42,7 +44,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         {
             tabs = new Container
             {
-                Padding = new MarginPadding(10) { Top = 50 },
+                Padding = new MarginPadding(10) { Top = 50, Bottom = 60 },
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
@@ -51,9 +53,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     new TimingTab(this) { OnTimingPointChanged = composeTab.OnTimingPointChanged }
                 }
             },
-            new EditorToolbar(this)
+            new EditorToolbar(this),
+            bottomBar = new EditorBottomBar { Editor = this }
         };
+    }
 
+    protected override void LoadComplete()
+    {
         ChangeTab(0);
     }
 

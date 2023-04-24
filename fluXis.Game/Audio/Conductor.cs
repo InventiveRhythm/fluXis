@@ -40,7 +40,7 @@ public partial class Conductor : Container
     /// <summary>
     /// Current time of the track in milliseconds.
     /// </summary>
-    public static float CurrentTime;
+    public static float CurrentTime { get; private set; }
 
     /// <summary>
     /// Offset of the track in milliseconds.
@@ -98,16 +98,22 @@ public partial class Conductor : Container
     /// <summary>
     /// The time between each step in milliseconds.
     /// </summary>
-    public static float StepTime => instance.stepTime;
+    public static float StepTime => instance.stepTime * Speed;
 
     /// <summary>
     /// The time between each beat in milliseconds.
     /// </summary>
-    public static float BeatTime => instance.stepTime * 4;
+    public static float BeatTime => StepTime * 4;
 
     public static float[] Amplitudes { get; private set; } = new float[256];
 
     public static List<TimingPointInfo> TimingPoints = new();
+
+    private float time
+    {
+        get => CurrentTime;
+        set => Track?.Seek(value);
+    }
 
     [BackgroundDependencyLoader]
     private void load(AudioManager audioManager, Storage storage, ITrackStore trackStore)
@@ -199,9 +205,22 @@ public partial class Conductor : Container
     /// Seeks the track to the specified time.
     /// </summary>
     /// <param name="time">The time to seek to.</param>
-    public static void Seek(float time)
+    /// <param name="duration">The duration of the transform.</param>
+    /// <param name="ease">The easing of the transform.</param>
+    public static void Seek(float time, float duration = 0, Easing ease = Easing.None)
     {
-        Track?.Seek(time);
+        if (time < 0)
+        {
+            Track?.Stop();
+            Track?.Seek(0);
+            CurrentTime = time;
+            return;
+        }
+
+        if (!IsPlaying)
+            instance.TransformTo(nameof(time), time, duration, ease);
+        else
+            Track?.Seek(time);
     }
 
     /// <summary>

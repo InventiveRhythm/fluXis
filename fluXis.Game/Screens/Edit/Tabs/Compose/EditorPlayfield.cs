@@ -169,7 +169,7 @@ public partial class EditorPlayfield : Container
             if (point.HideLines || point.Signature == 0)
                 continue;
 
-            float target = i + 1 < MapInfo.TimingPoints.Count ? MapInfo.TimingPoints[i + 1].Time : MapInfo.EndTime;
+            float target = i + 1 < MapInfo.TimingPoints.Count ? MapInfo.TimingPoints[i + 1].Time : Conductor.Length;
             float increase = point.Signature * point.MsPerBeat / (4 * Snap);
             float position = point.Time;
 

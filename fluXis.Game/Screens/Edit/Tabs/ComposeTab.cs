@@ -61,7 +61,10 @@ public partial class ComposeTab : EditorTab
 
     protected override bool OnScroll(ScrollEvent e)
     {
-        Conductor.Seek(Conductor.CurrentTime - e.ScrollDelta.Y * 1000);
+        float time = Conductor.BeatTime / playfield.Snap;
+        time = Conductor.CurrentTime + e.ScrollDelta.Y * time;
+        time = playfield.SnapTime(time + 10); // +10 to avoid rounding errors
+        Conductor.Seek(time, 200, Easing.OutQuint);
 
         return base.OnScroll(e);
     }

@@ -176,7 +176,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     protected override void LoadComplete()
     {
         Conductor.PlayTrack(RealmMap);
-        Conductor.CurrentTime = -2000 + Conductor.Offset;
+        Conductor.Seek(-2000 + Conductor.Offset);
         Conductor.TimingPoints = Map.TimingPoints;
         Conductor.SetSpeed(1, 0);
         backgrounds.SetVideoBackground(RealmMap, Map);
