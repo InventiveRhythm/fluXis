@@ -157,7 +157,9 @@ public partial class MapListEntry : Container
                             Font = FluXisFont.Default(32),
                             Text = mapset.Metadata.Title,
                             Anchor = Anchor.TopLeft,
-                            Origin = Anchor.TopLeft
+                            Origin = Anchor.TopLeft,
+                            Width = 800,
+                            Truncate = true
                         },
                         new SpriteText
                         {
@@ -165,7 +167,9 @@ public partial class MapListEntry : Container
                             Text = mapset.Metadata.Artist,
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
-                            Y = 24
+                            Y = 24,
+                            Width = 800,
+                            Truncate = true
                         },
                         new StatusTag(mapset)
                     }
