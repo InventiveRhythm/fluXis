@@ -1,4 +1,3 @@
-using System.Threading;
 using fluXis.Game.Online.API;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,8 +11,6 @@ public partial class DrawableAvatar : Sprite
     private APIUserShort user;
     private TextureStore textures;
 
-    private CancellationTokenSource cancellationToken = new();
-
     public DrawableAvatar(APIUserShort user)
     {
         this.user = user ?? APIUserShort.Dummy;
@@ -21,24 +18,20 @@ public partial class DrawableAvatar : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private async void load(TextureStore textures)
+    private void load(TextureStore textures)
     {
         this.textures = textures;
-        Texture = await textures.GetAsync(user.AvatarUrl, cancellationToken.Token);
+        Texture = textures.Get(user.AvatarUrl);
     }
 
-    protected override void LoadAsyncComplete()
+    protected override void LoadComplete()
     {
         this.FadeInFromZero(200);
-        base.LoadAsyncComplete();
     }
 
-    public async void UpdateUser(APIUserShort newUser)
+    public void UpdateUser(APIUserShort newUser)
     {
-        cancellationToken.Cancel();
-        cancellationToken = new CancellationTokenSource();
-
         user = newUser ?? APIUserShort.Dummy;
-        Texture = await textures.GetAsync(user.AvatarUrl, cancellationToken.Token);
+        Texture = textures.Get(user.AvatarUrl);
     }
 }

@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Overlay.Toolbar;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
@@ -9,6 +10,9 @@ public partial class FluXisScreenStack : ScreenStack
 {
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
+
+    [Resolved]
+    private Toolbar toolbar { get; set; }
 
     public FluXisScreenStack()
     {
@@ -23,6 +27,7 @@ public partial class FluXisScreenStack : ScreenStack
         {
             backgrounds.Zoom = fluXisScreen.Zoom;
             backgrounds.ParallaxStrength = fluXisScreen.ParallaxStrength;
+            toolbar.ShowToolbar.Value = fluXisScreen.ShowToolbar;
         }
         else
         {
@@ -37,6 +42,7 @@ public partial class FluXisScreenStack : ScreenStack
         {
             backgrounds.Zoom = fluXisScreen.Zoom;
             backgrounds.ParallaxStrength = fluXisScreen.ParallaxStrength;
+            toolbar.ShowToolbar.Value = fluXisScreen.ShowToolbar;
         }
         else
         {

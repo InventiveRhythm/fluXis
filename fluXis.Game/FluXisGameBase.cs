@@ -3,10 +3,12 @@ using fluXis.Game.Database;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
+using fluXis.Game.Screens;
 using fluXis.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -36,6 +38,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     public SettingsMenu Settings;
     public NotificationOverlay Notifications;
     public LoginOverlay LoginOverlay;
+    public Toolbar Toolbar;
+    public FluXisScreenStack ScreenStack;
 
     protected FluXisGameBase()
     {
@@ -56,6 +60,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Settings = new SettingsMenu());
         dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(LoginOverlay = new LoginOverlay());
+        dependencies.Cache(Toolbar = new Toolbar());
+        dependencies.Cache(ScreenStack = new FluXisScreenStack());
 
         FluXisKeybindContainer keybinds;
 

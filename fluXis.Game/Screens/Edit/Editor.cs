@@ -16,6 +16,8 @@ namespace fluXis.Game.Screens.Edit;
 
 public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
+    public override bool ShowToolbar => false;
+
     public RealmMap Map;
     public MapInfo OriginalMapInfo;
     public MapInfo MapInfo;

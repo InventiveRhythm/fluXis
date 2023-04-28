@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -96,11 +97,13 @@ public partial class EditorTimeline : Container
         return true;
     }
 
-    protected override void OnDrag(DragEvent e) => seekToMousePosition(e.MousePosition);
+    protected override void OnDrag(DragEvent e) => seekToMousePosition(e.MousePosition, true);
 
-    private void seekToMousePosition(Vector2 position)
+    private void seekToMousePosition(Vector2 position, bool instant = false)
     {
-        Conductor.Seek((position.X - 10) / line.DrawWidth * Conductor.Length, 400, Easing.OutQuint);
+        float progress = (position.X - 10) / line.DrawWidth;
+        progress = Math.Clamp(progress, 0, 1);
+        Conductor.Seek(progress * Conductor.Length, instant ? 0 : 400, Easing.OutQuint);
     }
 
     protected override void Update()

@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -69,5 +70,7 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
                 Font = FluXisFont.Default(24)
             }
         };
+
+        public override PointSettings CreatePointSettings() => new ScrollVelocitySettings(VelocityInfo);
     }
 }

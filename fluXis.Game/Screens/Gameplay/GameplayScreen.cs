@@ -38,6 +38,7 @@ namespace fluXis.Game.Screens.Gameplay;
 public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override float ParallaxStrength => 0f;
+    public override bool ShowToolbar => false;
 
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }

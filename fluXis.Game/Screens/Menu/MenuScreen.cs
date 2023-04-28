@@ -187,7 +187,7 @@ public partial class MenuScreen : FluXisScreen
                             }
                         }
                     },
-                    profile = new MenuProfile()
+                    // profile = new MenuProfile()
                 }
             },
             blackBox = new Box
@@ -215,7 +215,7 @@ public partial class MenuScreen : FluXisScreen
         textContainer.MoveToX(-200).MoveToX(0, 400, Easing.OutQuint);
         buttonContainer.MoveToX(-200).MoveToX(0, 400, Easing.OutQuint);
         linkContainer.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
-        profile.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
+        // profile.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
 
         base.OnEntering(e);
     }
@@ -227,7 +227,7 @@ public partial class MenuScreen : FluXisScreen
         textContainer.MoveToX(-200, 400, Easing.OutQuint);
         buttonContainer.MoveToX(-200, 400, Easing.OutQuint);
         linkContainer.MoveToX(200, 400, Easing.OutQuint);
-        profile.MoveToX(200, 400, Easing.OutQuint);
+        // profile.MoveToX(200, 400, Easing.OutQuint);
 
         base.OnSuspending(e);
     }
@@ -239,7 +239,7 @@ public partial class MenuScreen : FluXisScreen
         textContainer.MoveToX(0, 400, Easing.OutQuint);
         buttonContainer.MoveToX(0, 400, Easing.OutQuint);
         linkContainer.MoveToX(0, 400, Easing.OutQuint);
-        profile.MoveToX(0, 400, Easing.OutQuint);
+        // profile.MoveToX(0, 400, Easing.OutQuint);
 
         base.OnResuming(e);
     }

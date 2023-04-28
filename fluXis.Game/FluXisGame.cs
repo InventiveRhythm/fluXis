@@ -10,10 +10,10 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Volume;
-using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -26,7 +26,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 {
     private static Action exitAction;
 
-    private FluXisScreenStack screenStack;
+    private Container screenContainer;
 
     private Storage storage;
 
@@ -45,9 +45,18 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         {
             new Conductor(),
             BackgroundStack,
-            screenStack = new FluXisScreenStack(),
-            Settings,
-            LoginOverlay,
+            screenContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Top = Toolbar.Height },
+                Children = new Drawable[]
+                {
+                    ScreenStack,
+                    Settings,
+                    LoginOverlay,
+                }
+            },
+            Toolbar,
             new VolumeOverlay(),
             Notifications,
             CursorOverlay
@@ -58,7 +67,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     {
         base.LoadComplete();
 
-        screenStack.Push(new MenuScreen());
+        var screen = new MenuScreen();
+        ScreenStack.Push(screen);
+        Toolbar.MenuScreen = screen;
+        Toolbar.ScreenStack = ScreenStack;
+
         Fluxel.Notifications = Notifications;
         Fluxel.Connect();
     }
@@ -124,4 +137,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
+    protected override void Update()
+    {
+        screenContainer.Padding = new MarginPadding { Top = Toolbar.Height + Toolbar.Y };
+    }
 }
