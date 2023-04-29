@@ -8,6 +8,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Compose.HitObjects;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Lines;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
@@ -39,6 +40,7 @@ public partial class EditorPlayfield : Container
 
     public Container PlayfieldContainer { get; }
     public Container SelectionContainer { get; }
+    public WaveformGraph Waveform { get; set; }
 
     public Vector2 SelectionStart { get; set; }
     public Vector2 SelectionNow { get; set; }
@@ -87,6 +89,17 @@ public partial class EditorPlayfield : Container
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopLeft
                     },
+                    Waveform = new WaveformGraph
+                    {
+                        Height = COLUMN_WIDTH * Map.KeyCount,
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomLeft,
+                        Rotation = -90,
+                        BaseColour = FluXisColors.Accent2,
+                        LowColour = FluXisColors.Accent,
+                        MidColour = FluXisColors.Accent3,
+                        HighColour = FluXisColors.Accent4
+                    },
                     getColumnDividers(),
                     new Box // hit position line
                     {
@@ -128,6 +141,8 @@ public partial class EditorPlayfield : Container
 
         loadTimingLines();
         loadHitObjects();
+
+        Waveform.Waveform = Conductor.Waveform;
     }
 
     private Container getColumnDividers()
@@ -411,6 +426,9 @@ public partial class EditorPlayfield : Container
         updateHitObjects();
         updateTimingLines();
         updateSelection();
+
+        Waveform.Width = .5f * (Conductor.Length * Zoom);
+        Waveform.Y = -HITPOSITION_Y - .5f * (-Conductor.CurrentTime * Zoom);
 
         base.Update();
     }
