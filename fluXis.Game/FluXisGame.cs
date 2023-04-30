@@ -52,11 +52,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                 Children = new Drawable[]
                 {
                     ScreenStack,
-                    Settings,
-                    LoginOverlay,
                 }
             },
             Toolbar,
+            LoginOverlay,
+            ProfileOverlay,
+            Settings,
             new VolumeOverlay(),
             Notifications,
             CursorOverlay

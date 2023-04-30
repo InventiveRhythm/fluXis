@@ -15,6 +15,7 @@ public partial class DrawableAvatar : Sprite
     {
         this.user = user ?? APIUserShort.Dummy;
         Alpha = 0;
+        FillMode = FillMode.Fill;
     }
 
     [BackgroundDependencyLoader]

@@ -14,8 +14,8 @@ public class UserCache
 
     public static APIUser GetUser(int id)
     {
-        if (users.ContainsKey(id))
-            return users[id];
+        if (users.TryGetValue(id, out var u))
+            return u;
 
         APIUser user = loadUser(id) ?? APIUser.DummyUser(id);
         users.Add(id, user);

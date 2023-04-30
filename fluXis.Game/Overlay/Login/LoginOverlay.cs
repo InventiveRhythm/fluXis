@@ -63,7 +63,7 @@ public partial class LoginOverlay : Container
                     },
                     new LoginButton("Play Offline")
                     {
-                        Action = _ => this.FadeOut(200)
+                        Action = _ => Hide()
                     }
                 }
             },
@@ -104,7 +104,6 @@ public partial class LoginOverlay : Container
     private void load(FluXisConfig config)
     {
         tokenBind = config.GetBindable<string>(FluXisSetting.Token);
-
         if (!string.IsNullOrEmpty(tokenBind?.Value)) sendLogin();
     }
 
@@ -176,7 +175,7 @@ public partial class LoginOverlay : Container
         {
             LoggedIn = true;
             Fluxel.LoggedInUser = response.Data;
-            setLoadingText("Logged in!", () => this.FadeOut(200));
+            setLoadingText("Logged in!", Hide);
         }
         else setLoadingText(response.Message, () => switchToLogin(null));
     }
@@ -205,7 +204,7 @@ public partial class LoginOverlay : Container
             Fluxel.LoggedInUser = response.Data.User;
             Fluxel.Token = response.Data.Token;
             tokenBind.Value = response.Data.Token;
-            setLoadingText("Registered!", () => this.FadeOut(200));
+            setLoadingText("Registered!", Hide);
         }
         else setLoadingText(response.Message, () => switchToRegister(null));
     }
@@ -220,6 +219,16 @@ public partial class LoginOverlay : Container
                                   .Then(400).FadeIn()
                                   .OnComplete(_ => onComplete?.Invoke());
                    });
+    }
+
+    public override void Show()
+    {
+        this.ScaleTo(1f, 400).FadeIn(200);
+    }
+
+    public override void Hide()
+    {
+        this.ScaleTo(0.9f, 400).FadeOut(200);
     }
 
     private partial class LoginContent : FillFlowContainer

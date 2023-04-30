@@ -7,6 +7,7 @@ using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Resources;
@@ -40,6 +41,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public LoginOverlay LoginOverlay;
     public Toolbar Toolbar;
     public FluXisScreenStack ScreenStack;
+    public ProfileOverlay ProfileOverlay;
 
     protected FluXisGameBase()
     {
@@ -62,6 +64,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(LoginOverlay = new LoginOverlay());
         dependencies.Cache(Toolbar = new Toolbar());
         dependencies.Cache(ScreenStack = new FluXisScreenStack());
+        dependencies.Cache(ProfileOverlay = new ProfileOverlay());
 
         FluXisKeybindContainer keybinds;
 

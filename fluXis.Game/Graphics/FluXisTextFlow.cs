@@ -6,6 +6,9 @@ namespace fluXis.Game.Graphics;
 
 public partial class FluXisTextFlow : TextFlowContainer
 {
+    public int FontSize { get; set; } = 20;
+    public bool Shadow { get; set; } = true;
+
     public FluXisTextFlow(Action<SpriteText> defaultCreationParameters = null)
         : base(defaultCreationParameters)
     {
@@ -13,7 +16,7 @@ public partial class FluXisTextFlow : TextFlowContainer
 
     protected override SpriteText CreateSpriteText() => new()
     {
-        Font = FluXisFont.Default(),
-        Shadow = true
+        Font = FluXisFont.Default(FontSize),
+        Shadow = Shadow
     };
 }
