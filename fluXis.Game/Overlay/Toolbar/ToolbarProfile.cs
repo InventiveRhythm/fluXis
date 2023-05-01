@@ -69,6 +69,9 @@ public partial class ToolbarProfile : Container
                 Child = avatarContainer = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
+                    Scale = new Vector2(1.1f),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     Shear = new Vector2(-0.15f, 0)
                 }
             }
