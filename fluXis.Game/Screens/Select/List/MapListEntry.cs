@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
@@ -19,6 +21,18 @@ public partial class MapListEntry : Container
     public readonly RealmMapSet MapSet;
 
     public bool Selected => Equals(Screen.MapSet.Value, MapSet);
+
+    public List<RealmMap> Maps
+    {
+        get
+        {
+            var diffs = MapSet.Maps.ToList();
+
+            // sorting by nps until we have a proper difficulty system
+            diffs.Sort((a, b) => a.Filters.NotesPerSecond.CompareTo(b.Filters.NotesPerSecond));
+            return diffs;
+        }
+    }
 
     private MapListEntryHeader header;
     private Container difficultyContainer;
@@ -56,7 +70,7 @@ public partial class MapListEntry : Container
             }
         };
 
-        foreach (var map in MapSet.Maps)
+        foreach (var map in Maps)
         {
             difficultyFlow.Add(new MapDifficultyEntry(this, map));
         }

@@ -28,9 +28,7 @@ public class RealmMap : RealmObject
 
     public int OnlineID { get; set; } = -1;
     public string Hash { get; set; } = string.Empty;
-    public float Length { get; set; }
-    public float BPMMin { get; set; }
-    public float BPMMax { get; set; }
+    public RealmMapFilters Filters { get; set; } = null!;
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
 

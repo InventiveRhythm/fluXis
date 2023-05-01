@@ -75,6 +75,7 @@ public static class RealmObjectUtils
         c.CreateMap<RealmFile, RealmFile>();
         c.CreateMap<RealmScore, RealmScore>();
         c.CreateMap<RealmJudgements, RealmJudgements>();
+        c.CreateMap<RealmMapFilters, RealmMapFilters>();
     }
 
     public static T Detach<T>(this T realmObject) where T : RealmObjectBase

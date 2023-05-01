@@ -1,7 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using fluXis.Game.Database.Input;
+using fluXis.Game.Database.Maps;
+using fluXis.Game.Map;
+using fluXis.Game.Utils;
 using osu.Framework.Development;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
 
@@ -13,8 +20,9 @@ public class FluXisRealm : IDisposable
     /// 2 - fixed a bug where multiple keybinds could be created for the same action
     /// 3 - add mods to RealmScore
     /// 4 - add Cover to RealmMapSet
+    /// 5 - add RealmMapFilters
     /// </summary>
-    private const int schema_version = 4;
+    private const int schema_version = 5;
 
     private Realm updateRealm;
 
@@ -34,11 +42,20 @@ public class FluXisRealm : IDisposable
     private RealmConfiguration config => new(storage.GetFullPath("fluxis.realm"))
     {
         SchemaVersion = schema_version,
-        MigrationCallback = (migration, oldSchemaVersion) =>
+        MigrationCallback = onMigrate
+    };
+
+    private void onMigrate(Migration migration, ulong oldSchemaVersion)
+    {
+        for (ulong i = oldSchemaVersion + 1; i <= schema_version; i++)
+            migrateTo(migration, i);
+    }
+
+    private void migrateTo(Migration migration, ulong targetSchemaVersion)
+    {
+        switch (targetSchemaVersion)
         {
-            // from version 1 to 2
-            if (oldSchemaVersion < 2)
-            {
+            case 2:
                 Dictionary<string, RealmKeybind> keys = new Dictionary<string, RealmKeybind>();
                 List<RealmKeybind> toRemove = new List<RealmKeybind>();
 
@@ -54,12 +71,47 @@ public class FluXisRealm : IDisposable
                 }
 
                 foreach (var keybind in toRemove) migration.NewRealm.Remove(keybind);
-            }
+                break;
 
-            // 2 to 3 doesn't need any because it has a default value
-            // same for 3 to 4
+            case 3 or 4:
+                break; // nothing to do here
+
+            case 5:
+                var newMaps = migration.NewRealm.All<RealmMap>().ToList();
+
+                for (var i = 0; i < newMaps.Count; i++)
+                {
+                    var newMap = newMaps[i];
+
+                    string path = storage.GetFullPath("files/" + PathUtils.HashToPath(newMap.Hash));
+
+                    MapInfo map = MapUtils.LoadFromPath(path);
+
+                    if (map == null)
+                    {
+                        Logger.Log($"[RealmMigration 4 -> 5] Map file not found: {path}??? Something definitely went wrong here.");
+                        continue;
+                    }
+
+                    MapEvents events = new MapEvents();
+
+                    if (!string.IsNullOrEmpty(map.EffectFile))
+                    {
+                        RealmFile effectFile = newMap.MapSet.GetFile(map.EffectFile);
+                        string effectPath = storage.GetFullPath("files/" + PathUtils.HashToPath(effectFile.Hash));
+                        string content = File.ReadAllText(effectPath);
+                        events.Load(content);
+                    }
+
+                    newMap.Filters = MapUtils.GetMapFilters(map, events);
+                }
+
+                break;
         }
-    };
+    }
+
+    // from realm extensions
+    private static string getMappedOrOriginalName(MemberInfo member) => member.GetCustomAttribute<MapToAttribute>()?.Mapping ?? member.Name;
 
     public FluXisRealm(Storage storage)
     {

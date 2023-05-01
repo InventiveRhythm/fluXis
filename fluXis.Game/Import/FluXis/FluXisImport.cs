@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -95,13 +97,20 @@ public class FluXisImport : MapImporter
                             MapSet = mapSet,
                             Hash = hash,
                             KeyCount = keys,
-                            Length = length,
-                            BPMMin = bpmMin,
-                            BPMMax = bpmMax,
                             Rating = 0,
                             Status = MapStatus
                         };
 
+                        MapEvents events = new MapEvents();
+                        var effectFileEntry = archive.Entries.FirstOrDefault(e => e.FullName == mapInfo.EffectFile);
+
+                        if (effectFileEntry != null)
+                        {
+                            string content = new StreamReader(effectFileEntry.Open()).ReadToEnd();
+                            events.Load(content);
+                        }
+
+                        map.Filters = MapUtils.GetMapFilters(mapInfo, events);
                         maps.Add(map);
                     }
                 }

@@ -144,7 +144,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             return;
 
         RealmMap map = set.Maps.First();
-        MapInfo.Value = map;
+        MapInfo.Value = lookup[set].Maps.First();
 
         if (!Equals(mapStore.CurrentMapSet, set) || !Conductor.IsPlaying)
             Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
@@ -197,7 +197,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         if (!Maps.Contains(MapInfo.Value.MapSet)) return;
 
-        int current = MapSet.Value.Maps.IndexOf(MapInfo.Value);
+        var listEntry = lookup[MapInfo.Value.MapSet];
+
+        int current = listEntry.Maps.IndexOf(MapInfo.Value);
         current += by;
 
         if (current < 0)
@@ -207,13 +209,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             return;
         }
 
-        if (current >= MapSet.Value.Maps.Count)
+        if (current >= listEntry.Maps.Count)
         {
             changeSelection(1);
             return;
         }
 
-        MapInfo.Value = MapSet.Value.Maps[current];
+        MapInfo.Value = listEntry.Maps[current];
     }
 
     private void deleteMap()

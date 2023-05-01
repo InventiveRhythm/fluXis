@@ -44,9 +44,6 @@ public partial class TestResultsScreen : FluXisTestScene
                     Status = 0,
                     OnlineID = 0,
                     Hash = null,
-                    Length = 0,
-                    BPMMin = 0,
-                    BPMMax = 0,
                     KeyCount = 0,
                     Rating = 0
                 };

@@ -26,6 +26,8 @@ public partial class SelectMapInfo : FillFlowContainer
     private SpriteText mapperText;
     private SpriteText bpmText;
     private SpriteText lengthText;
+    private SpriteText npsText;
+    private SpriteText lnpText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -143,21 +145,53 @@ public partial class SelectMapInfo : FillFlowContainer
                                             },
                                             new FillFlowContainer
                                             {
-                                                Direction = FillDirection.Horizontal,
+                                                Direction = FillDirection.Vertical,
                                                 AutoSizeAxes = Axes.Both,
-                                                Spacing = new Vector2(10, 0),
+                                                Spacing = new Vector2(0, 0),
                                                 Padding = new MarginPadding { Bottom = 2, Top = 3, Horizontal = 10 },
                                                 Children = new Drawable[]
                                                 {
-                                                    bpmText = new SpriteText
+                                                    new FillFlowContainer
                                                     {
-                                                        Text = "BPM",
-                                                        Font = FluXisFont.Default(22)
+                                                        Direction = FillDirection.Horizontal,
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Spacing = new Vector2(10, 0),
+                                                        Anchor = Anchor.TopRight,
+                                                        Origin = Anchor.TopRight,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            bpmText = new SpriteText
+                                                            {
+                                                                Text = "BPM",
+                                                                Font = FluXisFont.Default(22)
+                                                            },
+                                                            lengthText = new SpriteText
+                                                            {
+                                                                Text = "Length",
+                                                                Font = FluXisFont.Default(22)
+                                                            }
+                                                        }
                                                     },
-                                                    lengthText = new SpriteText
+                                                    new FillFlowContainer
                                                     {
-                                                        Text = "Length",
-                                                        Font = FluXisFont.Default(22)
+                                                        Direction = FillDirection.Horizontal,
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Spacing = new Vector2(10, 0),
+                                                        Anchor = Anchor.TopRight,
+                                                        Origin = Anchor.TopRight,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            npsText = new SpriteText
+                                                            {
+                                                                Text = "NPS",
+                                                                Font = FluXisFont.Default(22)
+                                                            },
+                                                            lnpText = new SpriteText
+                                                            {
+                                                                Text = "LN%",
+                                                                Font = FluXisFont.Default(22)
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -203,8 +237,11 @@ public partial class SelectMapInfo : FillFlowContainer
         artistText.Text = map.Metadata.Artist;
         difficultyText.Text = map.Difficulty;
         mapperText.Text = map.Metadata.Mapper;
-        lengthText.Text = "Length " + TimeUtils.Format(map.Length, false);
-        bpmText.Text = map.BPMMin == map.BPMMax ? $"BPM {map.BPMMin}" : $"BPM {map.BPMMin}-{map.BPMMax}";
+
+        lengthText.Text = "Length " + TimeUtils.Format(map.Filters.Length, false);
+        bpmText.Text = map.Filters.BPMMin == map.Filters.BPMMax ? $"BPM {map.Filters.BPMMin}" : $"BPM {map.Filters.BPMMin}-{map.Filters.BPMMax}";
+        npsText.Text = $"NPS {map.Filters.NotesPerSecond:F}".Replace(",", ".");
+        lnpText.Text = $"LN% {map.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
     }
 
     private void OnBeat(int beat)
