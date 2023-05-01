@@ -12,6 +12,7 @@ public class RealmMapSet : RealmObject
     public Guid ID { get; set; }
 
     public int OnlineID { get; set; } = -1;
+    public string Cover { get; set; } = "cover.png";
     public IList<RealmMap> Maps { get; } = null!;
     public IList<RealmFile> Files { get; } = null!;
 
@@ -31,18 +32,8 @@ public class RealmMapSet : RealmObject
 
     public string GetBackground()
     {
-        string background = Metadata.Background;
-        string hash = string.Empty;
-
-        Files?.ToList().ForEach(file =>
-        {
-            if (file.Name == background)
-                hash = file.Hash;
-        });
-
-        if (string.IsNullOrEmpty(hash)) return string.Empty;
-
-        return hash[..1] + "/" + hash.Substring(1, 1) + "/" + hash;
+        RealmFile file = GetFile(Metadata.Background);
+        return file == null ? string.Empty : file.GetPath();
     }
 
     public RealmFile GetFile(string name)

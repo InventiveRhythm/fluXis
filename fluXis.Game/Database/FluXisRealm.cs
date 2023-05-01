@@ -12,8 +12,9 @@ public class FluXisRealm : IDisposable
     /// <summary>
     /// 2 - fixed a bug where multiple keybinds could be created for the same action
     /// 3 - add mods to RealmScore
+    /// 4 - add Cover to RealmMapSet
     /// </summary>
-    private const int schema_version = 3;
+    private const int schema_version = 4;
 
     private Realm updateRealm;
 
@@ -56,6 +57,7 @@ public class FluXisRealm : IDisposable
             }
 
             // 2 to 3 doesn't need any because it has a default value
+            // same for 3 to 4
         }
     };
 

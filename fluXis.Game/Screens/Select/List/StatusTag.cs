@@ -2,8 +2,10 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
@@ -14,8 +16,6 @@ public partial class StatusTag : Container
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.CentreRight;
         Origin = Anchor.CentreRight;
-        CornerRadius = 5;
-        Masking = true;
 
         RealmMap map = set.Maps[0];
 
@@ -34,10 +34,26 @@ public partial class StatusTag : Container
 
         Children = new Drawable[]
         {
-            new Box
+            new Container
             {
-                Colour = colour,
-                RelativeSizeAxes = Axes.Both
+                RelativeSizeAxes = Axes.Both,
+                Shear = new Vector2(.1f, 0),
+                Masking = true,
+                CornerRadius = 5,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = colour
+                },
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Colour4.Black.Opacity(0.2f),
+                    Radius = 5,
+                    Offset = new Vector2(0, 1)
+                }
             },
             new SpriteText
             {
@@ -57,7 +73,7 @@ public partial class StatusTag : Container
                 Origin = Anchor.Centre,
                 Colour = colour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White,
                 Font = FluXisFont.Default(),
-                Margin = new MarginPadding { Horizontal = 10 }
+                Margin = new MarginPadding { Horizontal = 8 }
             }
         };
     }

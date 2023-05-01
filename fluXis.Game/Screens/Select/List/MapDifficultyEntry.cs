@@ -3,11 +3,10 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using Realms;
+using osuTK;
+using Box = osu.Framework.Graphics.Shapes.Box;
 
 namespace fluXis.Game.Screens.Select.List;
 
@@ -16,10 +15,8 @@ public partial class MapDifficultyEntry : Container
     private readonly MapListEntry mapListEntry;
     private readonly RealmMap map;
 
-    private SpriteText difficultyName;
-    private SpriteText difficultyMapper;
-    private Container backgroundContainer;
-    private DiffKeyCount keyCount;
+    private Box wedge;
+    private Box wedge2;
 
     public MapDifficultyEntry(MapListEntry parentEntry, RealmMap map)
     {
@@ -37,52 +34,103 @@ public partial class MapDifficultyEntry : Container
 
         InternalChildren = new Drawable[]
         {
-            keyCount = new DiffKeyCount(map.KeyCount),
-            backgroundContainer = new Container
+            new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Masking = true,
-                CornerRadius = 5,
-                Child = new Box
+                Colour = FluXisColors.GetKeyColor(map.KeyCount)
+            },
+            new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding(2),
+                Child = new GridContainer
                 {
+                    ColumnDimensions = new Dimension[]
+                    {
+                        new(),
+                        new(GridSizeMode.Absolute, 40)
+                    },
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background
+                    Content = new[]
+                    {
+                        new Drawable[]
+                        {
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Children = new Drawable[]
+                                {
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        CornerRadius = 5,
+                                        Masking = true,
+                                        Child = new Box
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Colour = FluXisColors.Background
+                                        },
+                                    },
+                                    wedge2 = new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Y,
+                                        Width = 30,
+                                        Colour = FluXisColors.GetKeyColor(map.KeyCount).Darken(.2f),
+                                        Anchor = Anchor.CentreRight,
+                                        Origin = Anchor.CentreLeft,
+                                        Shear = new Vector2(-.1f, 0)
+                                    },
+                                    wedge = new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Y,
+                                        Width = 45,
+                                        Colour = FluXisColors.GetKeyColor(map.KeyCount),
+                                        Anchor = Anchor.CentreRight,
+                                        Origin = Anchor.CentreLeft,
+                                        Shear = new Vector2(.15f, 0)
+                                    },
+                                    new FillFlowContainer
+                                    {
+                                        Direction = FillDirection.Horizontal,
+                                        RelativeSizeAxes = Axes.Both,
+                                        Spacing = new Vector2(3),
+                                        Padding = new MarginPadding { Left = 10 },
+                                        Children = new Drawable[]
+                                        {
+                                            new SpriteText
+                                            {
+                                                Text = map.Difficulty,
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                Font = FluXisFont.Default(22)
+                                            },
+                                            new SpriteText
+                                            {
+                                                Text = $"mapped by {map.Metadata.Mapper}",
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                Font = FluXisFont.Default(22),
+                                                Colour = FluXisColors.Text2
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            new SpriteText
+                            {
+                                Text = $"{map.KeyCount}K",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Font = FluXisFont.Default(),
+                                Colour = FluXisColors.GetKeyColor(map.KeyCount).ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White
+                            }
+                        }
+                    }
                 }
-            },
-            difficultyName = new SpriteText
-            {
-                Text = map.Difficulty,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 10 },
-                Font = FluXisFont.Default(22)
-            },
-            difficultyMapper = new SpriteText
-            {
-                Text = $"mapped by {map.Metadata.Mapper}",
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 10 },
-                Font = FluXisFont.Default(22),
-                Colour = FluXisColors.Text2
             }
         };
 
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Glow,
-            Colour = keyCount.Colour,
-            Radius = 5
-        };
-
         mapListEntry.Screen.MapInfo.BindValueChanged(e => updateSelected(e.NewValue));
-    }
-
-    protected override void LoadComplete()
-    {
-        difficultyMapper.X = difficultyName.DrawWidth + 3;
-        backgroundContainer.Width = (backgroundContainer.RelativeToAbsoluteFactor.X - 40) / backgroundContainer.RelativeToAbsoluteFactor.X;
-        base.LoadComplete();
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -92,8 +140,20 @@ public partial class MapDifficultyEntry : Container
         else
             mapListEntry.Screen.MapInfo.Value = map;
 
-        return base.OnClick(e);
+        return true;
     }
 
-    private void updateSelected(ISettableManagedAccessor newMap) => FadeEdgeEffectTo(keyCount.KeyColour.Opacity(Equals(newMap, map) ? 1f : 0f), 200, Easing.OutQuint);
+    private void updateSelected(RealmMap newMap)
+    {
+        if (Equals(newMap, map))
+        {
+            wedge.MoveToX(-40, 100, Easing.OutQuint);
+            wedge2.MoveToX(-42, 170, Easing.OutQuint);
+        }
+        else
+        {
+            wedge.MoveToX(0, 100, Easing.InQuint);
+            wedge2.MoveToX(0, 160, Easing.InQuint);
+        }
+    }
 }

@@ -56,6 +56,18 @@ public class FluXisColors
         };
     }
 
+    public static Colour4 GetKeyColor(int keyCount)
+    {
+        return keyCount switch
+        {
+            4 => Colour4.FromHex("#62bafe"),
+            5 => Colour4.FromHex("#61f984"),
+            6 => Colour4.FromHex("#e3bb45"),
+            7 => Colour4.FromHex("#ec3b8d"),
+            _ => Colour4.White
+        };
+    }
+
     public static Colour4 GetLaneColor(int lane, int keyCount)
     {
         return keyCount switch

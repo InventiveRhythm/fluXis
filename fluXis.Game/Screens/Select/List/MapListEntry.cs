@@ -1,9 +1,11 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Cover;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -41,7 +43,7 @@ public partial class MapListEntry : Container
             {
                 Masking = true,
                 RelativeSizeAxes = Axes.X,
-                Y = 75,
+                Y = 80,
                 Height = 10,
                 Padding = new MarginPadding(5),
                 Child = difficultyFlow = new FillFlowContainer<MapDifficultyEntry>
@@ -70,14 +72,12 @@ public partial class MapListEntry : Container
 
     private void select()
     {
-        header.SetDim(.2f);
         difficultyContainer.FadeIn()
                            .ResizeHeightTo(difficultyFlow.Height + 10, 300, Easing.OutQuint);
     }
 
     private void deselect()
     {
-        header.SetDim(.4f);
         difficultyContainer.ResizeHeightTo(0, 300, Easing.OutQuint)
                            .Then().FadeOut();
     }
@@ -115,6 +115,7 @@ public partial class MapListEntry : Container
         private readonly RealmMapSet mapset;
         private Box dim;
         private DelayedLoadWrapper backgroundWrapper;
+        private DelayedLoadWrapper coverWrapper;
 
         public MapListEntryHeader(MapListEntry parent, RealmMapSet mapset)
         {
@@ -126,7 +127,7 @@ public partial class MapListEntry : Container
         private void load()
         {
             RelativeSizeAxes = Axes.X;
-            Height = 75;
+            Height = 80;
             CornerRadius = 10;
             Margin = new MarginPadding { Bottom = 5 };
             Masking = true;
@@ -152,24 +153,47 @@ public partial class MapListEntry : Container
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
+                        coverWrapper = new DelayedLoadWrapper(() => new Container
+                        {
+                            Size = new Vector2(60),
+                            Masking = true,
+                            CornerRadius = 10,
+                            Child = new DrawableCover(mapset)
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre
+                            },
+                            EdgeEffect = new EdgeEffectParameters
+                            {
+                                Type = EdgeEffectType.Shadow,
+                                Colour = Colour4.Black.Opacity(.2f),
+                                Radius = 5,
+                                Offset = new Vector2(0, 1)
+                            }
+                        }, 100),
                         new SpriteText
                         {
                             Font = FluXisFont.Default(32),
                             Text = mapset.Metadata.Title,
-                            Anchor = Anchor.TopLeft,
-                            Origin = Anchor.TopLeft,
-                            Width = 800,
-                            Truncate = true
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.BottomLeft,
+                            Y = 5,
+                            Width = 740,
+                            Truncate = true,
+                            Margin = new MarginPadding { Left = 70 },
+                            Shadow = true
                         },
                         new SpriteText
                         {
-                            Font = FluXisFont.Default(28),
+                            Font = FluXisFont.Default(24),
                             Text = mapset.Metadata.Artist,
-                            Anchor = Anchor.TopLeft,
+                            Anchor = Anchor.CentreLeft,
                             Origin = Anchor.TopLeft,
-                            Y = 24,
-                            Width = 800,
-                            Truncate = true
+                            Width = 740,
+                            Truncate = true,
+                            Margin = new MarginPadding { Left = 70 },
+                            Shadow = true
                         },
                         new StatusTag(mapset)
                     }
@@ -177,23 +201,18 @@ public partial class MapListEntry : Container
             };
 
             backgroundWrapper.DelayedLoadComplete += drawable => drawable.FadeInFromZero(200);
+            coverWrapper.DelayedLoadComplete += drawable => drawable.FadeInFromZero(200);
         }
 
         protected override bool OnHover(HoverEvent e)
         {
-            dim.FadeTo(parent.Selected ? .1f : .3f, 100);
-            return base.OnHover(e);
+            dim.FadeTo(.2f, 50);
+            return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            dim.FadeTo(parent.Selected ? .2f : .4f, 300);
-            base.OnHoverLost(e);
-        }
-
-        public void SetDim(float alpha)
-        {
-            dim.FadeTo(alpha, 100);
+            dim.FadeTo(.4f, 200);
         }
     }
 }
