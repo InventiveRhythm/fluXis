@@ -92,7 +92,7 @@ public class QuaverMap
             {
                 var split = b.Note.ToLower().Split(':');
 
-                if (split[0] == "laneswitch" && split.Length == 2)
+                if (split[0] == "laneswitch" && split.Length >= 2)
                 {
                     if (int.TryParse(split[1], out var lane))
                     {
