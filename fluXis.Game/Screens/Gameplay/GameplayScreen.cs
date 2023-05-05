@@ -111,6 +111,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         InternalChildren = new Drawable[]
         {
             Input,
+            new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             Playfield = new Playfield(this),
             HUD = new Container
             {
@@ -161,10 +162,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                     }
                 }
             },
-            new LaneSwitchAlert { Playfield = Playfield }
+            new LaneSwitchAlert { Playfield = Playfield },
+            new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList())
         };
-
-        AddInternal(new FlashOverlay(MapEvents.FlashEvents));
 
         AddInternal(failOverlay = new FailOverlay { Screen = this });
         AddInternal(fcOverlay = new FullComboOverlay());

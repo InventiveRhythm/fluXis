@@ -25,16 +25,18 @@ public partial class FlashOverlay : Container
         });
     }
 
-    public void Flash(float fadeInTime, float holdTime, float fadeOutTime)
-    {
-        flash.FadeIn(fadeInTime).Then().Delay(holdTime).FadeOut(fadeOutTime);
-    }
-
     protected override void Update()
     {
         while (flashes.Count > 0 && flashes[0].Time <= Conductor.CurrentTime)
         {
-            Flash(flashes[0].FadeInTime, flashes[0].HoldTime, flashes[0].FadeOutTime);
+            var flashEvent = flashes[0];
+
+            flash.FadeColour(flashEvent.StartColor);
+            flash.FadeTo(flashEvent.StartOpacity);
+
+            flash.FadeColour(flashEvent.EndColor, flashEvent.Duration, flashEvent.Easing);
+            flash.FadeTo(flashEvent.EndOpacity, flashEvent.Duration, flashEvent.Easing);
+
             flashes.RemoveAt(0);
         }
     }

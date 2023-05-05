@@ -91,6 +91,7 @@ public class QuaverMap
             foreach (var b in Bookmarks)
             {
                 var split = b.Note.ToLower().Split(':');
+                var split2 = b.Note.Split(':');
 
                 if (split[0] == "laneswitch" && split.Length >= 2)
                 {
@@ -105,13 +106,8 @@ public class QuaverMap
                         Logger.Log("Invalid lane switch event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
                 }
 
-                if (split[0] == "flash" && split.Length == 4)
-                {
-                    if (int.TryParse(split[1], out var fadeIn) && int.TryParse(split[2], out var hold) && int.TryParse(split[3], out var fadeOut))
-                        effectFile += $"Flash({b.StartTime},{fadeIn},{hold},{fadeOut}){Environment.NewLine}";
-                    else
-                        Logger.Log("Invalid flash event: " + b.Note, LoggingTarget.Runtime, LogLevel.Error);
-                }
+                if (split[0] == "flash" && split.Length == 8)
+                    effectFile += $"Flash({b.StartTime},{split[1]},{split[2]},{split2[3]},{split[4]},{split[5]},{split[6]},{split[7]}){Environment.NewLine}";
             }
         }
 

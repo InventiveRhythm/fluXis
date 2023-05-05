@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using fluXis.Game.Map.Events;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map;
 
@@ -40,12 +42,26 @@ public class MapEvents
                 }
 
                 case "Flash":
+                    if (args.Length < 8) continue;
+
+                    float duration = float.Parse(args[1]);
+                    bool inBackground = args[2] == "true";
+                    Easing easing = (Easing)Enum.Parse(typeof(Easing), args[3]);
+                    Colour4 startColor = Colour4.FromHex(args[4]);
+                    float startOpacity = float.Parse(args[5], CultureInfo.InvariantCulture);
+                    Colour4 endColor = Colour4.FromHex(args[6]);
+                    float endOpacity = float.Parse(args[7], CultureInfo.InvariantCulture);
+
                     FlashEvents.Add(new FlashEvent
                     {
                         Time = float.Parse(args[0]),
-                        FadeInTime = float.Parse(args[1]),
-                        HoldTime = float.Parse(args[2]),
-                        FadeOutTime = float.Parse(args[3])
+                        Duration = duration,
+                        InBackground = inBackground,
+                        Easing = easing,
+                        StartColor = startColor,
+                        StartOpacity = startOpacity,
+                        EndColor = endColor,
+                        EndOpacity = endOpacity
                     });
                     break;
             }
