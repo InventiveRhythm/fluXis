@@ -6,12 +6,23 @@ namespace fluXis.Game.Overlay.Notification;
 
 public partial class SimpleNotification : Notification
 {
-    public string Text { get; set; }
+    public string Text
+    {
+        get => text;
+        set
+        {
+            text = value;
+            if (textFlow != null) textFlow.Text = text;
+        }
+    }
+
+    private string text;
+    private FluXisTextFlow textFlow;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Content.Add(new FluXisTextFlow
+        Content.Add(textFlow = new FluXisTextFlow
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,

@@ -5,6 +5,8 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Utils;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 
@@ -83,22 +85,33 @@ public class MapStore
         return MapSets[rnd.Next(MapSets.Count)];
     }
 
-    public void Export(RealmMapSet set)
+    public void Export(RealmMapSet set, LoadingNotification notification)
     {
-        string folder = storage.GetFullPath("export");
-        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-        string path = Path.Combine(folder, $"{set.Metadata.Title} - {set.Metadata.Artist}.fms");
-        ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
-
-        foreach (var file in set.Files)
+        try
         {
-            var entry = archive.CreateEntry(file.Name);
-            using var stream = entry.Open();
-            using var fileStream = files.GetStream(file.GetPath());
-            fileStream.CopyTo(stream);
-        }
+            string folder = storage.GetFullPath("export");
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-        archive.Dispose();
+            string path = Path.Combine(folder, $"{set.Metadata.Title} - {set.Metadata.Artist}.fms");
+            if (File.Exists(path)) File.Delete(path);
+            ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
+
+            foreach (var file in set.Files)
+            {
+                var entry = archive.CreateEntry(file.Name);
+                using var stream = entry.Open();
+                using var fileStream = files.GetStream(file.GetPath());
+                fileStream.CopyTo(stream);
+            }
+
+            archive.Dispose();
+            notification.State = LoadingState.Loaded;
+            PathUtils.OpenFolder(folder);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Could not export map");
+            notification.State = LoadingState.Failed;
+        }
     }
 }

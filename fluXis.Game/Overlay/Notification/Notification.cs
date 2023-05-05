@@ -81,8 +81,6 @@ public partial class Notification : Container
     protected override void Update()
     {
         Lifetime -= (float)Clock.ElapsedFrameTime;
-
-        base.Update();
     }
 
     protected override bool OnClick(ClickEvent e)

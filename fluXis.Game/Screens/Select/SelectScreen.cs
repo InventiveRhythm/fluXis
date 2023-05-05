@@ -7,6 +7,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.Footer;
 using fluXis.Game.Screens.Select.Info;
@@ -34,6 +35,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     [Resolved]
     private MapStore mapStore { get; set; }
+
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
 
     public BackgroundStack Backgrounds;
     public Bindable<RealmMapSet> MapSet = new();
@@ -342,7 +346,18 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
-        if (e.Key == Key.F1) mapStore.Export(MapSet.Value);
+        if (e.Key == Key.F1)
+        {
+            LoadingNotification notification = new LoadingNotification
+            {
+                TextLoading = $"Exporting mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}...",
+                TextSuccess = $"Exported mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
+                TextFailure = $"Failed to export mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
+            };
+
+            notifications.AddNotification(notification);
+            mapStore.Export(MapSet.Value, notification);
+        }
 
         return base.OnKeyDown(e);
     }
