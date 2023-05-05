@@ -162,7 +162,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         MenuScroll.Play();
         Backgrounds.AddBackgroundFromMap(map);
         SelectMapInfo.ChangeMap(map);
-        MapList.ScrollTo(lookup[MapSet.Value]);
+        ScheduleAfterChildren(() => MapList.ScrollTo(lookup[MapSet.Value]));
     }
 
     public void Accept()
