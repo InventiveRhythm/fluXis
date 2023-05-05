@@ -60,18 +60,7 @@ public class MapStore
                 r.Remove(map);
 
             foreach (var file in mapSetToDelete.Files)
-            {
-                try
-                {
-                    files.Delete(file.GetPath());
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, $"Could not delete file {file.GetPath()}");
-                }
-
                 r.Remove(file);
-            }
 
             r.Remove(mapSetToDelete);
 
