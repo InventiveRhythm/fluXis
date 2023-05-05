@@ -32,6 +32,7 @@ public partial class Toolbar : Container
     {
         RelativeSizeAxes = Axes.X;
         Height = 50;
+        Y = -50;
         Padding = new MarginPadding { Vertical = 5, Horizontal = 10 };
 
         Children = new Drawable[]

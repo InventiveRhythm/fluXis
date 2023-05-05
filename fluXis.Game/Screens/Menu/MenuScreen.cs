@@ -5,6 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
@@ -43,6 +44,9 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private NotificationOverlay notifications { get; set; }
+
+    [Resolved]
+    private LoginOverlay login { get; set; }
 
     private Box blackBox;
     private Container content;
@@ -197,6 +201,8 @@ public partial class MenuScreen : FluXisScreen
                 Alpha = 0
             }
         };
+
+        Schedule(() => login.Show());
 
         maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
     }

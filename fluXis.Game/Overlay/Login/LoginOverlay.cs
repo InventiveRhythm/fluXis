@@ -39,6 +39,8 @@ public partial class LoginOverlay : Container
         Height = 180;
         CornerRadius = 10;
         Masking = true;
+        Alpha = 0;
+        Scale = new Vector2(0.9f);
 
         AddRange(new Drawable[]
         {

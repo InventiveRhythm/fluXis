@@ -10,7 +10,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Volume;
-using fluXis.Game.Screens.Menu;
+using fluXis.Game.Screens.Intro;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -68,9 +68,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     {
         base.LoadComplete();
 
-        var screen = new MenuScreen();
-        ScreenStack.Push(screen);
-        Toolbar.MenuScreen = screen;
+        ScreenStack.Push(new IntroScreen());
         Toolbar.ScreenStack = ScreenStack;
 
         Fluxel.Notifications = Notifications;

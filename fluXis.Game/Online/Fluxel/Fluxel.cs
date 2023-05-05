@@ -48,14 +48,17 @@ public class Fluxel
     {
         try
         {
-            Notifications.Post(reconnecting ? $"Reconnecting to server... (attempt {retryCount}/{max_retries})" : "Connecting to server...");
+            if (reconnecting)
+                Notifications.Post($"Reconnecting to server... (attempt {retryCount}/{max_retries})");
 
             connection = new ClientWebSocket();
             await connection.ConnectAsync(new Uri(APIConstants.WebsocketUrl), CancellationToken.None);
 
             // create thread
             receive();
-            Notifications.Post("Connected to server!");
+
+            if (reconnecting)
+                Notifications.Post("Reconnected to server!");
 
             // send queued packets
             foreach (var packet in packet_queue)
