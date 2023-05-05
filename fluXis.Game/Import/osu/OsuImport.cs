@@ -25,13 +25,20 @@ public class OsuImport : MapImporter
     {
         return new Task(() =>
         {
+            var notification = new LoadingNotification
+            {
+                TextLoading = "Importing osu! map...",
+                TextSuccess = "Imported osu! map!",
+                TextFailure = "Failed to import osu! map!"
+            };
+
+            Notifications.AddNotification(notification);
+
             try
             {
                 Logger.Log("Importing osu! map: " + path);
 
                 string folder = Path.GetFileNameWithoutExtension(path);
-
-                Notifications.Post("Importing osu! map...");
 
                 ZipArchive osz = ZipFile.OpenRead(path);
 
@@ -39,8 +46,11 @@ public class OsuImport : MapImporter
                 {
                     if (entry.FullName.EndsWith(".osu"))
                     {
-                        string json = JsonConvert.SerializeObject(parseOsuMap(entry).ToMapInfo());
+                        OsuMap map = parseOsuMap(entry);
+                        string json = JsonConvert.SerializeObject(map.ToMapInfo());
                         WriteFile(json, folder + "/" + entry.FullName + ".fsc");
+
+                        notification.TextSuccess = $"Imported osu! map: {map.Artist} - {map.Title}";
                     }
                     else
                         CopyFile(entry, folder);
@@ -57,12 +67,16 @@ public class OsuImport : MapImporter
                 fms.Dispose();
                 Directory.Delete(Path.Combine(Storage.GetFullPath("import"), folder), true);
 
-                var import = new FluXisImport(Realm, MapStore, Storage, Notifications) { MapStatus = -4 };
+                var import = new FluXisImport(Realm, MapStore, Storage, Notifications)
+                {
+                    MapStatus = -4,
+                    Notification = notification
+                };
                 import.Import(Path.Combine(Storage.GetFullPath("import"), folder + ".fms")).Start();
             }
             catch (Exception e)
             {
-                Notifications.PostError("Error while importing osu! map");
+                notification.State = LoadingState.Failed;
                 Logger.Error(e, "Error while importing osu! map");
             }
         });

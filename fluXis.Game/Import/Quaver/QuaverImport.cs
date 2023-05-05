@@ -26,12 +26,19 @@ public class QuaverImport : MapImporter
     {
         return new Task(() =>
         {
+            var notification = new LoadingNotification
+            {
+                TextLoading = "Importing Quaver map...",
+                TextSuccess = "Imported Quaver map!",
+                TextFailure = "Failed to import Quaver map!"
+            };
+
+            Notifications.AddNotification(notification);
+
             try
             {
                 Logger.Log("Importing Quaver map: " + path);
                 string fileName = Path.GetFileNameWithoutExtension(path);
-
-                Notifications.Post("Importing Quaver map...");
 
                 ZipArchive qp = ZipFile.OpenRead(path);
 
@@ -44,6 +51,8 @@ public class QuaverImport : MapImporter
                         QuaverMap quaverMap = parseQuaverMap(entry);
                         MapInfo map = quaverMap.ToMapInfo();
                         mapInfos.Add(map);
+
+                        notification.TextSuccess = $"Imported Quaver map: {map.Metadata.Artist} - {map.Metadata.Title}";
 
                         string effect = quaverMap.GetEffects();
                         Logger.Log(effect);
@@ -79,13 +88,14 @@ public class QuaverImport : MapImporter
 
                 var import = new FluXisImport(Realm, MapStore, Storage, Notifications)
                 {
-                    MapStatus = -3
+                    MapStatus = -3,
+                    Notification = notification
                 };
                 import.Import(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms")).Start();
             }
             catch (Exception e)
             {
-                Notifications.PostError("Error while importing Quaver map");
+                notification.State = LoadingState.Failed;
                 Logger.Error(e, "Error while importing Quaver map");
             }
         });

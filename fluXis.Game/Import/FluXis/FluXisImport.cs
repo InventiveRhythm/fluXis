@@ -22,6 +22,8 @@ public class FluXisImport : MapImporter
      */
     public int MapStatus { get; set; } = -2;
 
+    public LoadingNotification Notification { get; set; }
+
     public FluXisImport(FluXisRealm realm, MapStore mapStore, Storage storage, NotificationOverlay notifications)
         : base(realm, mapStore, storage, notifications)
     {
@@ -31,11 +33,21 @@ public class FluXisImport : MapImporter
     {
         return new Task(() =>
         {
+            if (Notification == null)
+            {
+                Notification = new LoadingNotification
+                {
+                    TextLoading = "Importing mapset...",
+                    TextSuccess = "Imported mapset!",
+                    TextFailure = "Failed to import mapset!"
+                };
+
+                Notifications.AddNotification(Notification);
+            }
+
             try
             {
                 Logger.Log($"Loading mapset from {path}");
-
-                Notifications.Post("Importing mapset...");
 
                 ZipArchive archive = ZipFile.OpenRead(path);
 
@@ -138,10 +150,12 @@ public class FluXisImport : MapImporter
                         catch { Logger.Log($"Failed to delete {path}"); }
                     });
                 }
+
+                Notification.State = LoadingState.Loaded;
             }
             catch (Exception e)
             {
-                Notifications.PostError("Failed to import mapset");
+                Notification.State = LoadingState.Failed;
                 Logger.Error(e, "Failed to import mapset");
             }
         });
