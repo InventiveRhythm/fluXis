@@ -110,7 +110,7 @@ public partial class HitObjectManager : CompositeDrawable
 
         foreach (var laneSwitchEvent in Playfield.Screen.MapEvents.LaneSwitchEvents)
         {
-            if (laneSwitchEvent.Time <= CurrentTime)
+            if (laneSwitchEvent.Time <= Conductor.CurrentTime)
             {
                 CurrentKeyCount = laneSwitchEvent.Count;
                 CurrentLaneSwitchEvent = laneSwitchEvent;
