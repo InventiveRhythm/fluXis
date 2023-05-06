@@ -50,7 +50,10 @@ public class RealmMap : RealmObject
 
     public static RealmMap CreateNew()
     {
-        RealmMap map = new RealmMap();
+        RealmMap map = new RealmMap
+        {
+            Metadata = new RealmMapMetadata()
+        };
         RealmMapSet set = new RealmMapSet(new List<RealmMap> { map });
         map.MapSet = set;
         return map;

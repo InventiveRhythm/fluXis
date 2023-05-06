@@ -11,10 +11,11 @@ namespace fluXis.Game.Screens.Edit.Tabs;
 
 public partial class ComposeTab : EditorTab
 {
-    public Action OnTimingPointChanged => () =>
-    {
-        playfield.RedrawLines();
-    };
+    [Resolved]
+    private EditorClock clock { get; set; }
+
+    [Resolved]
+    private EditorValues values { get; set; }
 
     private EditorPlayfield playfield;
     private EditorToolbox toolbox;
@@ -48,10 +49,10 @@ public partial class ComposeTab : EditorTab
     {
         if (e.Key == Key.Space)
         {
-            if (Conductor.IsPlaying)
-                Conductor.PauseTrack();
+            if (clock.IsRunning)
+                clock.Stop();
             else
-                Conductor.ResumeTrack();
+                clock.Start();
 
             return true;
         }
@@ -61,11 +62,15 @@ public partial class ComposeTab : EditorTab
 
     protected override bool OnScroll(ScrollEvent e)
     {
-        float time = Conductor.BeatTime / playfield.Snap;
-        time = Conductor.CurrentTime + e.ScrollDelta.Y * time;
-        time = playfield.SnapTime(time + 10); // +10 to avoid rounding errors
-        Conductor.Seek(time, 200, Easing.OutQuint);
+        int delta = e.ScrollDelta.Y > 0 ? 1 : -1;
 
-        return base.OnScroll(e);
+        if (e.ControlPressed)
+        {
+            values.Zoom += delta * .1f;
+            values.Zoom = Math.Clamp(values.Zoom, .5f, 5f);
+            return true;
+        }
+
+        return false;
     }
 }

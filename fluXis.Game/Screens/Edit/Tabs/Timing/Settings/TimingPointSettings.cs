@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -11,6 +12,9 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
 public partial class TimingPointSettings : PointSettings<TimingPointInfo>
 {
+    [Resolved]
+    private EditorChangeHandler changeHandler { get; set; }
+
     public PointSettingsTextBox BPMTextBox { get; }
 
     private readonly SignatureTextBoxContainer signatureTextBox;
@@ -19,25 +23,21 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
         : base(point)
     {
         Add(BPMTextBox = new PointSettingsTextBox("BPM", point.BPM.ToString(CultureInfo.InvariantCulture)));
-        Add(signatureTextBox = new SignatureTextBoxContainer
+        Add(signatureTextBox = new SignatureTextBoxContainer(OnTextChanged)
         {
-            Text = point.Signature.ToString(),
-            OnTextChanged = OnTextChanged
+            Text = point.Signature.ToString()
         });
     }
 
     public override void OnTextChanged()
     {
-        if (float.TryParse(TimeTextBox.Text, out var time))
-            Point.Time = time;
-
         if (float.TryParse(BPMTextBox.Text, out var bpm))
             Point.BPM = bpm;
 
         if (int.TryParse(signatureTextBox.Text, out var signature))
             Point.Signature = signature;
 
-        Tab.OnTimingPointChanged();
+        changeHandler.OnTimingPointChanged();
     }
 
     private partial class SignatureTextBoxContainer : Container
@@ -50,13 +50,7 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
             set => textBox.Text = value;
         }
 
-        public Action OnTextChanged
-        {
-            get => textBox.OnTextChanged;
-            set => textBox.OnTextChanged = value;
-        }
-
-        public SignatureTextBoxContainer()
+        public SignatureTextBoxContainer(Action onChange)
         {
             RelativeSizeAxes = Axes.X;
             Height = 40;
@@ -70,7 +64,7 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft
                 },
-                textBox = new TextBox
+                textBox = new TextBox(onChange)
                 {
                     RelativeSizeAxes = Axes.Y,
                     Width = 70,
@@ -92,10 +86,11 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
         {
             protected override Color4 SelectionColour => FluXisColors.Accent2;
 
-            public Action OnTextChanged { get; set; }
+            private readonly Action onChange;
 
-            public TextBox()
+            public TextBox(Action onChange)
             {
+                this.onChange = onChange;
                 RelativeSizeAxes = Axes.Y;
                 Anchor = Anchor.CentreRight;
                 Origin = Anchor.CentreRight;
@@ -115,8 +110,8 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
                 }
             };
 
-            protected override void OnUserTextAdded(string added) => OnTextChanged.Invoke();
-            protected override void OnUserTextRemoved(string removed) => OnTextChanged.Invoke();
+            protected override void OnUserTextAdded(string added) => onChange();
+            protected override void OnUserTextRemoved(string removed) => onChange();
         }
     }
 }

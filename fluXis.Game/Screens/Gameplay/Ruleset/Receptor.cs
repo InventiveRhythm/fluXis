@@ -1,4 +1,5 @@
 ﻿using fluXis.Game.Graphics;
+using fluXis.Game.Map.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -119,7 +120,7 @@ public partial class Receptor : CompositeDrawable
             visible = true;
         else
         {
-            bool[][] mode = switchVisibility[Playfield.Map.KeyCount - 5];
+            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Playfield.Map.KeyCount - 5];
             bool[] current = mode[currentKeyCount - 4];
             visible = current[id];
         }
@@ -134,25 +135,4 @@ public partial class Receptor : CompositeDrawable
             this.ResizeWidthTo(visible ? SIZE.X : 0, duration, Easing.OutQuint);
         }
     }
-
-    // all stuff for lane switching
-    // theres definitely a better way to do this
-    private readonly bool[][][] switchVisibility =
-    {
-        new[] // 5k
-        {
-            new[] { true, true, false, true, true } // 4k
-        },
-        new[] // 6k
-        {
-            new[] { false, true, true, true, true, false }, // 4k
-            new[] { true, true, true, false, true, true } // 5k
-        },
-        new[] // 7k
-        {
-            new[] { false, true, true, false, true, true, false }, // 4k
-            new[] { false, true, true, true, true, true, false }, // 5k
-            new[] { true, true, true, false, true, true, true } // 6k
-        }
-    };
 }

@@ -57,7 +57,7 @@ public partial class Conductor : Container
     /// </summary>
     public static float Speed
     {
-        get => instance.untweenedSpeed;
+        get => instance?.untweenedSpeed ?? 1;
         set => SetSpeed(value);
     }
 

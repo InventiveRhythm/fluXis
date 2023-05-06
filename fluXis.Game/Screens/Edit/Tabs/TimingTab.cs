@@ -1,4 +1,3 @@
-using System;
 using fluXis.Game.Graphics;
 using fluXis.Game.Screens.Edit.Tabs.Timing;
 using fluXis.Game.Screens.Edit.Tabs.Timing.List;
@@ -11,8 +10,6 @@ namespace fluXis.Game.Screens.Edit.Tabs;
 public partial class TimingTab : EditorTab
 {
     private readonly BasicScrollContainer pointSettingsContainer;
-
-    public Action OnTimingPointChanged;
 
     public TimingTab(Editor screen)
         : base(screen)

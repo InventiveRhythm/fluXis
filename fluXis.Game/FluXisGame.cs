@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using fluXis.Game.Audio;
 using fluXis.Game.Import.FluXis;
 using fluXis.Game.Import.osu;
 using fluXis.Game.Import.Quaver;
@@ -43,7 +42,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         // A screen stack and sample screen has been provided for convenience, but you can replace it if you don't want to use screens.
         Children = new Drawable[]
         {
-            new Conductor(),
+            Conductor,
             BackgroundStack,
             screenContainer = new Container
             {

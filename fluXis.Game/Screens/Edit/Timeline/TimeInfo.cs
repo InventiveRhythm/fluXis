@@ -1,4 +1,3 @@
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -10,6 +9,9 @@ namespace fluXis.Game.Screens.Edit.Timeline;
 
 public partial class TimeInfo : Container
 {
+    [Resolved]
+    private EditorClock clock { get; set; }
+
     public EditorBottomBar BottomBar { get; set; }
 
     private SpriteText timeText;
@@ -42,7 +44,7 @@ public partial class TimeInfo : Container
 
     protected override void Update()
     {
-        timeText.Text = TimeUtils.Format(Conductor.CurrentTime);
-        bpmText.Text = $"{BottomBar.Editor.MapInfo.GetTimingPoint(Conductor.CurrentTime)?.BPM} BPM";
+        timeText.Text = TimeUtils.Format(clock.CurrentTime);
+        bpmText.Text = $"{BottomBar.Editor.MapInfo.GetTimingPoint((float)clock.CurrentTime)?.BPM} BPM";
     }
 }

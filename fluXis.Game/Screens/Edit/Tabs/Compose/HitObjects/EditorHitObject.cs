@@ -1,6 +1,6 @@
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -9,11 +9,25 @@ namespace fluXis.Game.Screens.Edit.Tabs.Compose.HitObjects;
 
 public partial class EditorHitObject : Container
 {
+    [Resolved]
+    private EditorClock clock { get; set; }
+
+    [Resolved]
+    private EditorValues values { get; set; }
+
     public EditorPlayfield Playfield { get; }
 
     public HitObjectInfo Info { get; set; }
 
-    public bool IsOnScreen => Conductor.CurrentTime <= Info.HoldEndTime && Conductor.CurrentTime >= Info.Time - 3000 / Playfield.Zoom;
+    public bool IsOnScreen
+    {
+        get
+        {
+            if (clock == null) return true;
+
+            return clock.CurrentTime <= Info.HoldEndTime && clock.CurrentTime >= Info.Time - 3000 / values.Zoom;
+        }
+    }
 
     private readonly Box note;
     private readonly Box holdBody;
@@ -75,17 +89,17 @@ public partial class EditorHitObject : Container
     protected override void Update()
     {
         X = (Info.Lane - 1) * EditorPlayfield.COLUMN_WIDTH;
-        Y = -EditorPlayfield.HITPOSITION_Y - .5f * ((Info.Time - Conductor.CurrentTime) * Playfield.Zoom);
+        Y = -EditorPlayfield.HITPOSITION_Y - .5f * ((Info.Time - (float)clock.CurrentTime) * values.Zoom);
 
         if (Info.IsLongNote())
         {
-            if (Info.Time < Conductor.CurrentTime)
+            if (Info.Time < clock.CurrentTime)
             {
                 Y = -EditorPlayfield.HITPOSITION_Y;
-                holdBody.Height = .5f * ((Info.HoldEndTime - Conductor.CurrentTime) * Playfield.Zoom);
+                holdBody.Height = .5f * ((Info.HoldEndTime - (float)clock.CurrentTime) * values.Zoom);
             }
             else
-                holdBody.Height = .5f * ((Info.HoldEndTime - Info.Time) * Playfield.Zoom);
+                holdBody.Height = .5f * ((Info.HoldEndTime - Info.Time) * values.Zoom);
         }
         else holdBody.Height = 0;
 

@@ -1,5 +1,4 @@
 using System;
-using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,6 +11,9 @@ namespace fluXis.Game.Screens.Edit.Timeline;
 
 public partial class EditorTimeline : Container
 {
+    [Resolved]
+    private EditorClock clock { get; set; }
+
     public EditorBottomBar BottomBar { get; set; }
 
     private CircularContainer currentTimeIndicator;
@@ -70,7 +72,7 @@ public partial class EditorTimeline : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 RelativePositionAxes = Axes.X,
-                X = timingPoint.Time / Conductor.Length,
+                X = timingPoint.Time == 0 ? 0 : timingPoint.Time / clock.TrackLength,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both
@@ -97,17 +99,18 @@ public partial class EditorTimeline : Container
         return true;
     }
 
-    protected override void OnDrag(DragEvent e) => seekToMousePosition(e.MousePosition, true);
+    protected override void OnDrag(DragEvent e) => seekToMousePosition(e.MousePosition);
 
-    private void seekToMousePosition(Vector2 position, bool instant = false)
+    private void seekToMousePosition(Vector2 position)
     {
-        float progress = (position.X - 10) / line.DrawWidth;
-        progress = Math.Clamp(progress, 0, 1);
-        Conductor.Seek(progress * Conductor.Length, instant ? 0 : 400, Easing.OutQuint);
+        float x = Math.Clamp(position.X, 0, DrawWidth);
+        float progress = x / DrawWidth;
+        float time = progress * clock.TrackLength;
+        clock.SeekSmoothly(time);
     }
 
     protected override void Update()
     {
-        currentTimeIndicator.X = Conductor.CurrentTime / Conductor.Length;
+        currentTimeIndicator.X = (float)(clock.CurrentTime / clock.TrackLength);
     }
 }

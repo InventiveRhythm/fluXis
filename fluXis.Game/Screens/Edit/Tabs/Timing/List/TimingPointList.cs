@@ -27,8 +27,6 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
             Signature = 4
         }));
 
-        TimingTab.OnTimingPointChanged();
-
         base.OnAdd();
     }
 

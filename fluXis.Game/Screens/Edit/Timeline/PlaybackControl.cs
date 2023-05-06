@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -15,6 +14,9 @@ namespace fluXis.Game.Screens.Edit.Timeline;
 
 public partial class PlaybackControl : Container
 {
+    [Resolved]
+    private EditorClock clock { get; set; }
+
     private static readonly float[] playback_speeds = { .25f, .5f, .75f, 1f };
 
     public EditorBottomBar BottomBar { get; set; }
@@ -65,13 +67,13 @@ public partial class PlaybackControl : Container
             switch (e.Key)
             {
                 case Key.Minus or Key.KeypadMinus:
-                    int index = Array.IndexOf(playback_speeds, getClosetPlaybackSpeed(Conductor.Speed));
-                    Conductor.Speed = index == 0 ? playback_speeds[0] : playback_speeds[index - 1];
+                    int index = Array.IndexOf(playback_speeds, getClosetPlaybackSpeed(clock.Rate));
+                    clock.Rate = index == 0 ? playback_speeds[0] : playback_speeds[index - 1];
                     return true;
 
                 case Key.Plus or Key.KeypadPlus:
-                    index = Array.IndexOf(playback_speeds, getClosetPlaybackSpeed(Conductor.Speed));
-                    Conductor.Speed = index == playback_speeds.Length - 1 ? playback_speeds[^1] : playback_speeds[index + 1];
+                    index = Array.IndexOf(playback_speeds, getClosetPlaybackSpeed(clock.Rate));
+                    clock.Rate = index == playback_speeds.Length - 1 ? playback_speeds[^1] : playback_speeds[index + 1];
                     return true;
             }
         }
@@ -79,10 +81,13 @@ public partial class PlaybackControl : Container
         return false;
     }
 
-    private float getClosetPlaybackSpeed(float speed) => playback_speeds.Aggregate((x, y) => Math.Abs(x - speed) < Math.Abs(y - speed) ? x : y);
+    private float getClosetPlaybackSpeed(double speed) => playback_speeds.Aggregate((x, y) => Math.Abs(x - speed) < Math.Abs(y - speed) ? x : y);
 
     private partial class PlayButton : Container
     {
+        [Resolved]
+        private EditorClock clock { get; set; }
+
         private SpriteIcon icon;
         private Box background;
 
@@ -143,22 +148,25 @@ public partial class PlaybackControl : Container
 
             background.FadeTo(.4f).FadeTo(.2f, 200);
 
-            if (Conductor.IsPlaying)
-                Conductor.PauseTrack();
+            if (clock.IsRunning)
+                clock.Stop();
             else
-                Conductor.ResumeTrack();
+                clock.Start();
 
             return true;
         }
 
         protected override void Update()
         {
-            icon.Icon = Conductor.IsPlaying ? FontAwesome.Solid.Pause : FontAwesome.Solid.Play;
+            icon.Icon = clock.IsRunning ? FontAwesome.Solid.Pause : FontAwesome.Solid.Play;
         }
     }
 
     private partial class PlaybackSpeedText : SpriteText
     {
+        [Resolved]
+        private EditorClock clock { get; set; }
+
         public float Speed
         {
             get => speed;
@@ -180,12 +188,12 @@ public partial class PlaybackControl : Container
 
         protected override void Update()
         {
-            Colour = Conductor.Speed == Speed ? FluXisColors.Text : FluXisColors.Text2;
+            Colour = clock.Rate == Speed ? FluXisColors.Text : FluXisColors.Text2;
         }
 
         protected override bool OnClick(ClickEvent e)
         {
-            Conductor.Speed = Speed;
+            clock.Rate = Speed;
             return base.OnClick(e);
         }
     }

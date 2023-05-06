@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Graphics.Background;
@@ -31,6 +32,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected override Container<Drawable> Content => content;
     private Container content;
 
+    public Conductor Conductor;
     public FluXisRealm Realm;
     public MapStore MapStore;
     public FluXisConfig Config;
@@ -65,6 +67,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Toolbar = new Toolbar());
         dependencies.Cache(ScreenStack = new FluXisScreenStack());
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
+        dependencies.Cache(Conductor = new Conductor());
 
         FluXisKeybindContainer keybinds;
 

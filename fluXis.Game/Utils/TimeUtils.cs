@@ -4,7 +4,7 @@ namespace fluXis.Game.Utils;
 
 public class TimeUtils
 {
-    public static string Format(float time, bool showMs = true)
+    public static string Format(double time, bool showMs = true)
     {
         time /= 1000f;
 

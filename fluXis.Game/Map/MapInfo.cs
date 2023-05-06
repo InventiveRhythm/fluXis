@@ -54,6 +54,9 @@ public class MapInfo
         HitObjects = new List<HitObjectInfo>();
         TimingPoints = new List<TimingPointInfo>();
         ScrollVelocities = new List<ScrollVelocityInfo>();
+
+        // Add default timing point so it doesn't crash
+        TimingPoints.Add(new TimingPointInfo { BPM = 60, Time = 0 });
     }
 
     public bool Validate()

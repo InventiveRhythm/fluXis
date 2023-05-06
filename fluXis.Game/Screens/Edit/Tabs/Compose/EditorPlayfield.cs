@@ -1,18 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Compose.HitObjects;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Lines;
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
+using osu.Framework.Platform;
 using osuTK;
 using osuTK.Input;
 
@@ -20,11 +25,19 @@ namespace fluXis.Game.Screens.Edit.Tabs.Compose;
 
 public partial class EditorPlayfield : Container
 {
+    [Resolved]
+    private EditorClock clock { get; set; }
+
+    [Resolved]
+    private Storage storage { get; set; }
+
+    [Resolved]
+    private EditorValues values { get; set; }
+
     public const int COLUMN_WIDTH = 80;
     public const int HITPOSITION_Y = 100;
     public const int SELECTION_FADE = 200;
 
-    public float Zoom { get; set; } = 2;
     public int Snap { get; set; } = 4;
     public EditorTool Tool { get; set; } = EditorTool.Select;
 
@@ -32,15 +45,17 @@ public partial class EditorPlayfield : Container
     public RealmMap Map => Tab.Screen.Map;
     public MapInfo MapInfo => Tab.Screen.MapInfo;
 
-    public Container<EditorHitObject> HitObjects { get; }
+    public Container<EditorHitObject> HitObjects { get; set; }
     public List<EditorHitObject> FutureHitObjects { get; } = new();
 
-    public Container<EditorTimingLine> TimingLines { get; }
+    public Container<EditorTimingLine> TimingLines { get; set; }
     public List<EditorTimingLine> FutureTimingLines { get; } = new();
 
-    public Container PlayfieldContainer { get; }
-    public Container SelectionContainer { get; }
+    public Container PlayfieldContainer { get; set; }
+    public Container SelectionContainer { get; set; }
     public WaveformGraph Waveform { get; set; }
+    public Container LaneSwitchContainer { get; set; }
+    public Container EffectContainer { get; set; }
 
     public Vector2 SelectionStart { get; set; }
     public Vector2 SelectionNow { get; set; }
@@ -51,13 +66,17 @@ public partial class EditorPlayfield : Container
     public List<EditorHitObject> SelectedHitObjects { get; } = new();
 
     private bool notePlacable;
-    private readonly EditorHitObject ghostNote;
+    private EditorHitObject ghostNote;
     private bool isDragging;
 
     public EditorPlayfield(ComposeTab tab)
     {
         Tab = tab;
+    }
 
+    [BackgroundDependencyLoader]
+    private void load(Bindable<Waveform> waveform)
+    {
         RelativeSizeAxes = Axes.Both;
 
         InternalChildren = new Drawable[]
@@ -122,6 +141,20 @@ public partial class EditorPlayfield : Container
                     {
                         Alpha = 0.5f,
                         Info = new HitObjectInfo()
+                    },
+                    LaneSwitchContainer = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Y = -HITPOSITION_Y,
+                    },
+                    EffectContainer = new Container
+                    {
+                        AutoSizeAxes = Axes.X,
+                        RelativeSizeAxes = Axes.Y,
+                        Y = -HITPOSITION_Y,
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomLeft,
+                        Margin = new MarginPadding { Left = 10 },
                     }
                 }
             },
@@ -141,8 +174,12 @@ public partial class EditorPlayfield : Container
 
         loadTimingLines();
         loadHitObjects();
+        loadEvents();
 
-        Waveform.Waveform = Conductor.Waveform;
+        waveform.BindValueChanged(w =>
+        {
+            Waveform.Waveform = w.NewValue;
+        }, true);
     }
 
     private Container getColumnDividers()
@@ -184,7 +221,7 @@ public partial class EditorPlayfield : Container
             if (point.HideLines || point.Signature == 0)
                 continue;
 
-            float target = i + 1 < MapInfo.TimingPoints.Count ? MapInfo.TimingPoints[i + 1].Time : Conductor.Length;
+            float target = i + 1 < MapInfo.TimingPoints.Count ? MapInfo.TimingPoints[i + 1].Time : clock.TrackLength;
             float increase = point.Signature * point.MsPerBeat / (4 * Snap);
             float position = point.Time;
 
@@ -201,6 +238,22 @@ public partial class EditorPlayfield : Container
                 j++;
             }
         }
+    }
+
+    private void loadEvents()
+    {
+        var events = new MapEvents();
+        var path = Map.MapSet.GetFile(MapInfo.EffectFile)?.GetPath();
+        if (path == null) return;
+
+        var fullPath = storage.GetFullPath($"files/{path}");
+        events.Load(File.ReadAllText(fullPath));
+
+        foreach (var flashEvent in events.FlashEvents)
+            EffectContainer.Add(new EditorFlashEvent { FlashEvent = flashEvent });
+
+        foreach (var laneSwitch in events.LaneSwitchEvents)
+            LaneSwitchContainer.Add(new EditorLaneSwitchEvent { Event = laneSwitch, Events = events.LaneSwitchEvents, Map = Map });
     }
 
     public void RedrawLines()
@@ -387,11 +440,11 @@ public partial class EditorPlayfield : Container
         notePlacable = true;
     }
 
-    private float getTimeFromMouse(Vector2 mouse) => Conductor.CurrentTime + (DrawHeight - 60 - HITPOSITION_Y - mouse.Y);
+    private float getTimeFromMouse(Vector2 mouse) => (float)clock.CurrentTime + (DrawHeight - 60 - HITPOSITION_Y - mouse.Y);
     private float getTimeFromMouseSnapped(Vector2 mouse) => SnapTime(getTimeFromMouse(mouse));
     private int getLaneFromMouse(Vector2 mouse) => (int)(mouse.X / COLUMN_WIDTH) + 1;
 
-    private float getYFromTime(float time) => DrawHeight - 60 - HITPOSITION_Y - (time - Conductor.CurrentTime);
+    private float getYFromTime(float time) => DrawHeight - 60 - HITPOSITION_Y - (time - (float)clock.CurrentTime);
 
     public EditorHitObject GetHitObjectAt(float time, int lane)
     {
@@ -410,13 +463,34 @@ public partial class EditorPlayfield : Container
         float t = tp.Time;
         float increase = tp.Signature * tp.MsPerBeat / (4 * Snap);
 
-        while (true)
+        if (time < t)
         {
-            float next = t + increase;
-            if (next > time) break;
+            while (true)
+            {
+                float next = t - increase;
 
-            t = next;
+                if (next < time)
+                {
+                    t = next;
+                    break;
+                }
+
+                t = next;
+            }
         }
+        else
+        {
+            while (true)
+            {
+                float next = t + increase;
+                if (next > time) break;
+
+                t = next;
+            }
+        }
+
+        if (t < 0) t = 0;
+        if (t > clock.TrackLength) t = clock.TrackLength;
 
         return t;
     }
@@ -427,8 +501,11 @@ public partial class EditorPlayfield : Container
         updateTimingLines();
         updateSelection();
 
-        Waveform.Width = .5f * (Conductor.Length * Zoom);
-        Waveform.Y = -HITPOSITION_Y - .5f * (-Conductor.CurrentTime * Zoom);
+        float songLengthInPixels = .5f * (clock.TrackLength * values.Zoom);
+        float songTimeInPixels = -HITPOSITION_Y - .5f * (-(float)clock.CurrentTime * values.Zoom);
+
+        Waveform.Width = songLengthInPixels;
+        Waveform.Y = songTimeInPixels;
 
         base.Update();
     }

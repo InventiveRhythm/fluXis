@@ -1,10 +1,14 @@
 using System.Globalization;
 using fluXis.Game.Map;
+using osu.Framework.Allocation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
 public partial class ScrollVelocitySettings : PointSettings<ScrollVelocityInfo>
 {
+    [Resolved]
+    private EditorChangeHandler changeHandler { get; set; }
+
     public PointSettingsTextBox MultiplierTextBox { get; }
 
     public ScrollVelocitySettings(ScrollVelocityInfo point)
@@ -21,6 +25,6 @@ public partial class ScrollVelocitySettings : PointSettings<ScrollVelocityInfo>
         if (float.TryParse(MultiplierTextBox.Text, out var multiplier))
             Point.Multiplier = multiplier;
 
-        // Tab.OnScrollVelocityChanged();
+        // changeHandler.OnScrollVelocityChanged();
     }
 }

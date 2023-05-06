@@ -19,6 +19,13 @@ public partial class PointSettings<T> : PointSettings
     {
         Point = point;
         TimeTextBox.Text = point.Time.ToString(CultureInfo.InvariantCulture);
+        TimeTextBox.OnTextChanged += OnTextChanged;
+    }
+
+    public virtual void OnTextChanged()
+    {
+        if (float.TryParse(TimeTextBox.Text, out var time))
+            Point.Time = time;
     }
 }
 
@@ -36,16 +43,6 @@ public partial class PointSettings : FillFlowContainer
         Spacing = new Vector2(0, 10);
 
         Add(TimeTextBox = new PointSettingsTextBox("Time", ""));
-    }
-
-    public virtual void OnTextChanged() { }
-
-    public override void Add(Drawable drawable)
-    {
-        if (drawable is PointSettingsTextBox textBox)
-            textBox.OnTextChanged += OnTextChanged;
-
-        base.Add(drawable);
     }
 
     public partial class PointSettingsTextBox : Container
