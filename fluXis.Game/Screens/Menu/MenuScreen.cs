@@ -95,13 +95,16 @@ public partial class MenuScreen : FluXisScreen
                             new SpriteText
                             {
                                 Text = "fluXis",
-                                Font = FluXisFont.Default(100)
+                                Font = FluXisFont.Default(100),
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0, 0.04f)
                             },
                             new SpriteText
                             {
                                 Text = "A free and community-driven rhythm game",
                                 Font = FluXisFont.Default(32),
-                                Margin = new MarginPadding { Top = 80 }
+                                Margin = new MarginPadding { Top = 80 },
+                                Shadow = true
                             },
                         }
                     },

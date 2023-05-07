@@ -32,7 +32,8 @@ public partial class MenuIconButton : Container, IHasTooltip
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,
-            Origin = Anchor.Centre
+            Origin = Anchor.Centre,
+            Shadow = true
         };
     }
 

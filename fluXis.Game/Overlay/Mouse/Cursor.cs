@@ -2,10 +2,12 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osuTK;
 
 namespace fluXis.Game.Overlay.Mouse;
 
@@ -21,7 +23,7 @@ public partial class Cursor : Container
     {
         set
         {
-            if (value == "")
+            if (value == "" && tooltipText.Text != "")
             {
                 tooltipContainer.FadeOut(200);
             }
@@ -59,6 +61,13 @@ public partial class Cursor : Container
             Y = 20,
             CornerRadius = 5,
             Masking = true,
+            EdgeEffect = new EdgeEffectParameters
+            {
+                Type = EdgeEffectType.Shadow,
+                Colour = Colour4.Black.Opacity(.2f),
+                Radius = 5,
+                Offset = new Vector2(0, 1)
+            },
             Children = new Drawable[]
             {
                 new Box
@@ -71,7 +80,8 @@ public partial class Cursor : Container
                     Font = FluXisFont.Default(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Margin = new MarginPadding { Horizontal = 10 }
+                    Margin = new MarginPadding { Horizontal = 5, Vertical = 2 },
+                    Shadow = true
                 }
             }
         });
@@ -82,7 +92,7 @@ public partial class Cursor : Container
         Quad tooltipScreenSpace = ToScreenSpace(tooltipContainer.DrawRectangle);
 
         if (tooltipScreenSpace.BottomRight.X > overlay.DrawWidth - 40)
-            tooltipContainer.X = overlay.DrawWidth - tooltipScreenSpace.BottomRight.X - 30;
+            tooltipContainer.X = overlay.DrawWidth - tooltipScreenSpace.BottomRight.X - 10;
         else
             tooltipContainer.X = 30;
 
@@ -90,8 +100,6 @@ public partial class Cursor : Container
             tooltipContainer.Y = overlay.DrawHeight - tooltipScreenSpace.BottomRight.Y - 20;
         else
             tooltipContainer.Y = 20;
-
-        base.Update();
     }
 
     public override void Show()

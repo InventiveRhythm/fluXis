@@ -7,6 +7,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
@@ -47,6 +48,13 @@ public partial class Toolbar : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background2
+                },
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Colour4.Black.Opacity(0.2f),
+                    Radius = 5,
+                    Offset = new Vector2(0, 1)
                 }
             },
             new Container

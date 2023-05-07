@@ -14,11 +14,13 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace fluXis.Game.Screens.Result;
 
@@ -79,6 +81,13 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                 Origin = Anchor.Centre,
                 CornerRadius = 10,
                 Masking = true,
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Colour4.Black.Opacity(.2f),
+                    Radius = 5,
+                    Offset = new Vector2(0, 2)
+                },
                 Children = new Drawable[]
                 {
                     new Box

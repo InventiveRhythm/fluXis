@@ -48,7 +48,8 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
         return text = new SpriteText
         {
             Font = FluXisFont.Default(16),
-            Margin = new MarginPadding { Vertical = 2, Horizontal = 5 }
+            Margin = new MarginPadding { Vertical = 2, Horizontal = 5 },
+            Shadow = true
         };
     }
 }

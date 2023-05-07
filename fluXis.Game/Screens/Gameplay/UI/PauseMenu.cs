@@ -43,14 +43,16 @@ public partial class PauseMenu : CompositeDrawable
             {
                 Text = "Paused",
                 Font = FluXisFont.Default(100),
-                Margin = new MarginPadding { Left = 100, Top = 100 }
+                Margin = new MarginPadding { Left = 100, Top = 100 },
+                Shadow = true
             },
             new SpriteText
             {
                 Text = "What do you want to do?",
                 Font = FluXisFont.Default(48),
                 Margin = new MarginPadding { Left = 100, Top = 180 },
-                Colour = Colour4.Gray
+                Colour = Colour4.Gray,
+                Shadow = true
             },
             new FillFlowContainer
             {
@@ -139,7 +141,8 @@ public partial class PauseMenu : CompositeDrawable
                     Icon = Icon,
                     Size = new Vector2(80),
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft
+                    Origin = Anchor.CentreLeft,
+                    Shadow = true
                 },
                 new SpriteText
                 {
@@ -148,7 +151,8 @@ public partial class PauseMenu : CompositeDrawable
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.BottomLeft,
                     Margin = new MarginPadding { Left = 90 },
-                    Y = 10
+                    Y = 10,
+                    Shadow = true
                 },
                 new SpriteText
                 {
@@ -157,7 +161,8 @@ public partial class PauseMenu : CompositeDrawable
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.TopLeft,
                     Margin = new MarginPadding { Left = 90 },
-                    Colour = Colour4.Gray
+                    Colour = Colour4.Gray,
+                    Shadow = true
                 }
             };
         }

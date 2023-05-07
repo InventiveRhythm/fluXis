@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -29,6 +30,13 @@ public partial class SmallMenuButton : Container
         Height = 40;
         CornerRadius = 5;
         Masking = true;
+        EdgeEffect = new EdgeEffectParameters
+        {
+            Type = EdgeEffectType.Shadow,
+            Colour = Colour4.Black.Opacity(.2f),
+            Radius = 5,
+            Offset = new Vector2(0, 1)
+        };
 
         Children = new Drawable[]
         {
@@ -47,14 +55,16 @@ public partial class SmallMenuButton : Container
                 Size = new Vector2(20),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 10 }
+                Margin = new MarginPadding { Left = 10 },
+                Shadow = true
             },
             text = new SpriteText
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 40 },
-                Font = FluXisFont.Default()
+                Font = FluXisFont.Default(),
+                Shadow = true
             }
         };
     }
