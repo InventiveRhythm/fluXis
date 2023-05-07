@@ -14,7 +14,6 @@ using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.Profile;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Select;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -135,12 +134,7 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Edit",
                                 Description = "Create your own maps",
                                 Icon = FontAwesome.Solid.Pen,
-                                Action = () =>
-                                {
-                                    RealmMap map = maps.CurrentMapSet.Maps.First();
-                                    MapInfo mapInfo = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(map.Hash)));
-                                    this.Push(new Editor(map, mapInfo));
-                                },
+                                Action = () => this.Push(new Editor()),
                                 Width = 340,
                                 Margin = new MarginPadding { Top = 80, Left = 360 }
                             },

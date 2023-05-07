@@ -4,6 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Context;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -72,28 +73,37 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         Filters.OnChange += UpdateSearch;
 
-        AddInternal(MapList = new MapList());
-        AddInternal(SearchBar = new SearchBar(this));
-        AddInternal(SelectMapInfo = new SelectMapInfo { Screen = this });
-        AddInternal(Footer = new SelectFooter(this));
-        AddInternal(ModSelector = new ModSelector());
-
-        AddInternal(new Container
+        InternalChildren = new Drawable[]
         {
-            Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft,
-            RelativeSizeAxes = Axes.Both,
-            Width = .5f,
-            Child = noMapsText = new SpriteText
+            new FluXisContextMenuContainer
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Text = "No maps found!",
-                Font = FluXisFont.Default(32),
-                Blending = BlendingParameters.Additive,
-                Alpha = 0
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                RelativeSizeAxes = Axes.Both,
+                Width = .5f,
+                Child = MapList = new MapList()
+            },
+            SearchBar = new SearchBar(this),
+            SelectMapInfo = new SelectMapInfo { Screen = this },
+            Footer = new SelectFooter(this),
+            ModSelector = new ModSelector(),
+            new Container
+            {
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                RelativeSizeAxes = Axes.Both,
+                Width = .5f,
+                Child = noMapsText = new SpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Text = "No maps found!",
+                    Font = FluXisFont.Default(32),
+                    Blending = BlendingParameters.Additive,
+                    Alpha = 0
+                }
             }
-        });
+        };
 
         loadMapSets();
 
@@ -222,16 +232,21 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         MapInfo.Value = listEntry.Maps[current];
     }
 
-    private void deleteMap()
+    public void DeleteMapSet(RealmMapSet set)
     {
-        if (MapSet == null)
+        if (set == null)
             return;
 
-        mapStore.DeleteMapSet(MapSet.Value);
-        MapList.Remove(lookup[MapSet.Value], false);
-        Maps.Remove(MapSet.Value);
-        lookup.Remove(MapSet.Value);
-        changeSelection(1);
+        mapStore.DeleteMapSet(set);
+        MapList.Remove(lookup[set], false);
+        Maps.Remove(set);
+        lookup.Remove(set);
+
+        if (Equals(set, MapSet.Value))
+            changeSelection(1);
+
+        if (Maps.Count == 0)
+            noMapsText.FadeIn(500);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -256,7 +271,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         Discord.Update("Selecting a map", "", "songselect");
 
         if (MapInfo.Value != null)
+        {
             Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
+
+            if (!Conductor.IsPlaying)
+                Conductor.ResumeTrack();
+        }
 
         SelectMapInfo.ScoreList.Refresh();
     }
@@ -332,10 +352,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
                 MenuBack.Play();
                 this.Exit();
-                return true;
-
-            case FluXisKeybind.Delete:
-                deleteMap();
                 return true;
         }
 

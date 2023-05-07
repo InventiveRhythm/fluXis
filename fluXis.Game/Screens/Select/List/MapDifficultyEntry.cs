@@ -1,17 +1,68 @@
+using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Screens.Edit;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
+using osu.Framework.Platform;
+using osu.Framework.Screens;
 using osuTK;
 using Box = osu.Framework.Graphics.Shapes.Box;
 
 namespace fluXis.Game.Screens.Select.List;
 
-public partial class MapDifficultyEntry : Container
+public partial class MapDifficultyEntry : Container, IHasContextMenu
 {
+    public MenuItem[] ContextMenuItems
+    {
+        get
+        {
+            List<MenuItem> items = new()
+            {
+                new FluXisMenuItem("Play", MenuItemType.Highlighted, () =>
+                {
+                    var screen = mapListEntry.Screen;
+
+                    screen.MapSet.Value = map.MapSet; // failsafe
+                    screen.MapInfo.Value = map;
+                    screen.Accept();
+                }),
+                new FluXisMenuItem("Edit", MenuItemType.Normal, () =>
+                {
+                    var screen = mapListEntry.Screen;
+
+                    screen.MapSet.Value = map.MapSet;
+                    screen.MapInfo.Value = map;
+
+                    var path = storage.GetFullPath($"files/{PathUtils.HashToPath(map.Hash)}");
+                    var loadedMap = MapUtils.LoadFromPath(path);
+
+                    if (loadedMap == null)
+                    {
+                        Logger.Log($"Could not load map file for {map.Hash}", LoggingTarget.Runtime, LogLevel.Error);
+                        return;
+                    }
+
+                    var editor = new Editor(map, loadedMap);
+                    screen.Push(editor);
+                })
+            };
+
+            return items.ToArray();
+        }
+    }
+
+    [Resolved]
+    private Storage storage { get; set; }
+
     private readonly MapListEntry mapListEntry;
     private readonly RealmMap map;
 

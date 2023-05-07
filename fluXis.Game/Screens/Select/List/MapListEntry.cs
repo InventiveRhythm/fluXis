@@ -4,12 +4,15 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Cover;
+using fluXis.Game.Graphics.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -123,8 +126,23 @@ public partial class MapListEntry : Container
         base.LoadComplete();
     }
 
-    private partial class MapListEntryHeader : Container
+    private partial class MapListEntryHeader : Container, IHasContextMenu
     {
+        public MenuItem[] ContextMenuItems
+        {
+            get
+            {
+                List<MenuItem> items = new();
+
+                if (!Equals(parent.Screen.MapSet.Value, mapset))
+                    items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => parent.Screen.MapSet.Value = mapset));
+
+                items.Add(new FluXisMenuItem("Delete", MenuItemType.Dangerous, () => parent.Screen.DeleteMapSet(mapset)));
+
+                return items.ToArray();
+            }
+        }
+
         private readonly MapListEntry parent;
         private readonly RealmMapSet mapset;
         private Box dim;

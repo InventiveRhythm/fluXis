@@ -15,19 +15,20 @@ namespace fluXis.Game.Screens.Select.List;
 public partial class MapList : BasicScrollContainer<MapListEntry>
 {
     private bool isDragging;
-    private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Right;
+    private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Middle;
 
     protected override bool IsDragging => base.IsDragging || isDragging;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.CentreLeft;
-        Origin = Anchor.CentreLeft;
-        RelativeSizeAxes = Axes.Both;
-        Width = .5f;
         Masking = false;
-        Padding = new MarginPadding(10) { Left = 20, Vertical = 60 };
+        RelativeSizeAxes = Axes.Both;
+        Padding = new MarginPadding(10)
+        {
+            Left = 20,
+            Vertical = 60
+        };
     }
 
     protected override void Update()
@@ -67,7 +68,7 @@ public partial class MapList : BasicScrollContainer<MapListEntry>
             ScrollTo(max - DisplayableContent);
     }
 
-    private void rightMouseScroll(UIEvent e)
+    private void mouseScroll(UIEvent e)
     {
         float contentSize = Content.DrawSize[ScrollDim] - DrawSize[ScrollDim] + Padding.Top + Padding.Bottom;
         ScrollTo(ToLocalSpace(e.ScreenSpaceMousePosition)[ScrollDim] / DrawSize[ScrollDim] * contentSize, true, 0.02);
@@ -86,7 +87,7 @@ public partial class MapList : BasicScrollContainer<MapListEntry>
     {
         if (shouldDrag(e))
         {
-            rightMouseScroll(e);
+            mouseScroll(e);
             isDragging = true;
             return true;
         }
@@ -109,7 +110,7 @@ public partial class MapList : BasicScrollContainer<MapListEntry>
     {
         if (isDragging)
         {
-            rightMouseScroll(e);
+            mouseScroll(e);
             return true;
         }
 

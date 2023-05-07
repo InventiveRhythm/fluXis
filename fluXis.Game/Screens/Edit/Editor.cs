@@ -148,6 +148,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
         this.FadeOut(100);
         clock.Stop();
+        Conductor.Seek((float)clock.CurrentTime);
         return false;
     }
 
