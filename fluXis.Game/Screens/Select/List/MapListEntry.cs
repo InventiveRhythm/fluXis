@@ -137,6 +137,7 @@ public partial class MapListEntry : Container
                 if (!Equals(parent.Screen.MapSet.Value, mapset))
                     items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => parent.Screen.MapSet.Value = mapset));
 
+                items.Add(new FluXisMenuItem("Export", MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)));
                 items.Add(new FluXisMenuItem("Delete", MenuItemType.Dangerous, () => parent.Screen.DeleteMapSet(mapset)));
 
                 return items.ToArray();

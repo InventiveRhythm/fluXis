@@ -249,6 +249,22 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             noMapsText.FadeIn(500);
     }
 
+    public void ExportMapSet(RealmMapSet set)
+    {
+        if (set == null)
+            return;
+
+        LoadingNotification notification = new LoadingNotification
+        {
+            TextLoading = $"Exporting mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}...",
+            TextSuccess = $"Exported mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
+            TextFailure = $"Failed to export mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
+        };
+
+        notifications.AddNotification(notification);
+        mapStore.Export(MapSet.Value, notification);
+    }
+
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         this.FadeOut(200);
@@ -362,20 +378,22 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
-        if (e.Key == Key.F1)
+        switch (e.Key)
         {
-            LoadingNotification notification = new LoadingNotification
-            {
-                TextLoading = $"Exporting mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}...",
-                TextSuccess = $"Exported mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
-                TextFailure = $"Failed to export mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
-            };
+            case Key.F1:
+                ModSelector.IsOpen.Toggle();
+                return true;
 
-            notifications.AddNotification(notification);
-            mapStore.Export(MapSet.Value, notification);
+            case Key.F2:
+                RandomMap();
+                return true;
+
+            case Key.F3:
+                Footer.OpenSettings();
+                return true;
         }
 
-        return base.OnKeyDown(e);
+        return false;
     }
 
     public void UpdateSearch()

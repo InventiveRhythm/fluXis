@@ -70,7 +70,7 @@ public partial class SelectFooter : Container
                             new SelectFooterButton
                             {
                                 Text = "Options",
-                                Action = () => Notifications.Post("This is still in development\nCome back later!")
+                                Action = OpenSettings
                             }
                         }
                     },
@@ -93,6 +93,11 @@ public partial class SelectFooter : Container
                 }
             }
         };
+    }
+
+    public void OpenSettings()
+    {
+        Notifications.Post("This is still in development\nCome back later!");
     }
 
     protected override bool OnClick(ClickEvent e) => true; // Prevents the click from going through to the map list
