@@ -17,5 +17,7 @@ public partial class InputSection : SettingsSection
         Add(new SettingsKeybind("Gameplay Layout (5 Keys)", new[] { FluXisKeybind.Key5k1, FluXisKeybind.Key5k2, FluXisKeybind.Key5k3, FluXisKeybind.Key5k4, FluXisKeybind.Key5k5 }));
         Add(new SettingsKeybind("Gameplay Layout (6 Keys)", new[] { FluXisKeybind.Key6k1, FluXisKeybind.Key6k2, FluXisKeybind.Key6k3, FluXisKeybind.Key6k4, FluXisKeybind.Key6k5, FluXisKeybind.Key6k6 }));
         Add(new SettingsKeybind("Gameplay Layout (7 Keys)", new[] { FluXisKeybind.Key7k1, FluXisKeybind.Key7k2, FluXisKeybind.Key7k3, FluXisKeybind.Key7k4, FluXisKeybind.Key7k5, FluXisKeybind.Key7k6, FluXisKeybind.Key7k7 }));
+        Add(new SettingsKeybind("Quick Restart", new[] { FluXisKeybind.Restart }));
+        Add(new SettingsKeybind("Quick Exit", new[] { FluXisKeybind.Exit }));
     }
 }

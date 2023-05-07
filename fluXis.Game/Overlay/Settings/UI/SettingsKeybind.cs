@@ -109,6 +109,39 @@ public partial class SettingsKeybind : SettingsItem
         base.Update();
     }
 
+    // WHY IS THERE 2 DIFFERENT KEY SYSTEMS
+    private InputKey fromEvent(Key key)
+    {
+        switch (key)
+        {
+            case Key.ControlLeft:
+            case Key.ControlRight:
+                return InputKey.Control;
+
+            case Key.ShiftLeft:
+            case Key.ShiftRight:
+                return InputKey.Shift;
+
+            case Key.AltLeft:
+            case Key.AltRight:
+                return InputKey.Alt;
+
+            case Key.WinLeft:
+            case Key.WinRight:
+                return InputKey.Super;
+
+            default:
+                try
+                {
+                    return (InputKey)Enum.Parse(typeof(InputKey), key.ToString());
+                }
+                catch
+                {
+                    return InputKey.None;
+                }
+        }
+    }
+
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         if (e.Repeat || Index == -1 || !HasFocus) return false;
@@ -116,9 +149,9 @@ public partial class SettingsKeybind : SettingsItem
         if (Index < keybinds.Length)
         {
             var keybind = keybinds[Index];
-            var key = e.Key;
+            var iKey = fromEvent(e.Key);
 
-            if (key == Key.Escape)
+            if (iKey == InputKey.Escape)
             {
                 Index = -1;
                 return false;
@@ -133,22 +166,22 @@ public partial class SettingsKeybind : SettingsItem
                     bind = new RealmKeybind
                     {
                         Action = keybind.ToString(),
-                        Key = key.ToString()
+                        Key = iKey.ToString()
                     };
 
                     r.Add(bind);
                 }
-                else bind.Key = key.ToString();
+                else bind.Key = iKey.ToString();
             });
 
             container.Reload();
 
-            flow.Children.ElementAt(Index).Keybind = key.ToString();
+            flow.Children.ElementAt(Index).Keybind = iKey.ToString();
             Index++;
         }
         else Index = -1;
 
-        return base.OnKeyDown(e);
+        return false;
     }
 
     private partial class KeybindContainer : Container

@@ -319,6 +319,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 RestartMap();
                 return true;
 
+            case FluXisKeybind.Exit:
+                this.Exit();
+                return true;
+
             case FluXisKeybind.Pause:
                 if (Playfield.Manager.Dead) return false;
 

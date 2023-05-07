@@ -72,8 +72,8 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         getBinding(FluXisKeybind.Key7k7, InputKey.L),
 
         new KeyBinding(InputKey.Space, FluXisKeybind.Skip),
-        new KeyBinding(InputKey.Shift, FluXisKeybind.Restart),
-        new KeyBinding(InputKey.Control, FluXisKeybind.Exit),
+        getBinding(FluXisKeybind.Restart, InputKey.Shift),
+        getBinding(FluXisKeybind.Exit, InputKey.Control),
         new KeyBinding(InputKey.Escape, FluXisKeybind.Pause),
         new KeyBinding(InputKey.Left, FluXisKeybind.SeekBackward),
         new KeyBinding(InputKey.Right, FluXisKeybind.SeekForward),
