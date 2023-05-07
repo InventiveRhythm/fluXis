@@ -256,13 +256,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         LoadingNotification notification = new LoadingNotification
         {
-            TextLoading = $"Exporting mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}...",
-            TextSuccess = $"Exported mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
-            TextFailure = $"Failed to export mapset {MapSet.Value.Metadata.Artist} - {MapSet.Value.Metadata.Title}!",
+            TextLoading = $"Exporting mapset {set.Metadata.Artist} - {set.Metadata.Title}...",
+            TextSuccess = $"Exported mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
+            TextFailure = $"Failed to export mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
         };
 
         notifications.AddNotification(notification);
-        mapStore.Export(MapSet.Value, notification);
+        mapStore.Export(set, notification);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
