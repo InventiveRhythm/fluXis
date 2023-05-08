@@ -1,4 +1,3 @@
-using System.Reflection;
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,8 +12,6 @@ public partial class GeneralSection : SettingsSection
 
     public GeneralSection()
     {
-        var version = Assembly.GetEntryAssembly()?.GetName().Version;
-
         Add(new Container
         {
             Height = 510,
@@ -30,7 +27,7 @@ public partial class GeneralSection : SettingsSection
                 },
                 new SpriteText
                 {
-                    Text = "v" + (version?.ToString(3) ?? "unknown"),
+                    Text = FluXisGameBase.VersionString,
                     Font = FluXisFont.Default(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.TopCentre

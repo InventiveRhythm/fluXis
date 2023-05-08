@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,31 +13,33 @@ namespace fluXis.Game.Overlay.Settings.UI;
 public partial class SettingsSlider<T> : SettingsItem
     where T : struct, IComparable<T>, IConvertible, IEquatable<T>
 {
-    public Bindable<T> Bindable { get; }
+    public Bindable<T> Bindable { get; init; }
+    public string ValueLabel { get; init; } = "{value}";
+    public bool DisplayAsPercentage { get; init; } = false;
+    public float Step { get; init; } = .01f;
 
-    public SettingsSlider(Bindable<T> bindable, string label, string valLabel = "{value}", bool displayAsPercentage = false, float step = .01f)
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        Bindable = bindable;
-
         SpriteText valueLabel;
         AddRange(new Drawable[]
         {
             new SpriteText
             {
-                Text = label,
+                Text = Label,
                 Font = FluXisFont.Default(24),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
             valueLabel = new SpriteText
             {
-                Text = valLabel,
+                Text = ValueLabel,
                 Font = FluXisFont.Default(24),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Margin = new MarginPadding { Right = 410 }
             },
-            new Slider(bindable, valueLabel, displayAsPercentage, step)
+            new Slider(Bindable, valueLabel, DisplayAsPercentage, Step)
         });
     }
 
@@ -57,7 +60,7 @@ public partial class SettingsSlider<T> : SettingsItem
             this.displayAsPercentage = displayAsPercentage;
             originalText = valueLabel.Text.ToString();
 
-            RelativeSizeAxes = Axes.Y;
+            Height = 20;
             Width = 400;
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;

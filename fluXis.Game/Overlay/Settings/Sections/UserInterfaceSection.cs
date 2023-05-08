@@ -13,6 +13,13 @@ public partial class UserInterfaceSection : SettingsSection
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
-        Add(new SettingsToggle(config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer), "Main Menu Visualizer"));
+        AddRange(new SettingsItem[]
+        {
+            new SettingsToggle
+            {
+                Label = "Main Menu Visualizer",
+                Bindable = config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer)
+            }
+        });
     }
 }

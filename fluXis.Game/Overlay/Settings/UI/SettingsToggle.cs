@@ -1,8 +1,7 @@
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
@@ -10,62 +9,37 @@ namespace fluXis.Game.Overlay.Settings.UI;
 
 public partial class SettingsToggle : SettingsItem
 {
-    public Bindable<bool> Bindable { get; }
+    public Bindable<bool> Bindable { get; init; } = new();
 
-    public SettingsToggle(Bindable<bool> bindable, string label)
+    private SpriteIcon icon;
+
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        Bindable = bindable;
-
-        Add(new SpriteText
+        AddRange(new Drawable[]
         {
-            Text = label,
-            Font = FluXisFont.Default(24),
-            Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft
+            new SpriteText
+            {
+                Text = Label,
+                Font = FluXisFont.Default(24),
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft
+            },
+            icon = new SpriteIcon
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Size = new(25),
+                Icon = FontAwesome.Solid.Check
+            }
         });
 
-        Add(new Checkbox(bindable));
+        Bindable.BindValueChanged(e => icon.FadeTo(e.NewValue ? 1 : 0.4f), true);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
         Bindable.Value = !Bindable.Value;
         return true;
-    }
-
-    public partial class Checkbox : CircularContainer
-    {
-        public Bindable<bool> Bindable { get; }
-
-        private readonly Box box;
-
-        public Checkbox(Bindable<bool> bindable)
-        {
-            Bindable = bindable;
-
-            RelativeSizeAxes = Axes.Y;
-            Width = 20;
-            Anchor = Anchor.CentreRight;
-            Origin = Anchor.CentreRight;
-            Masking = true;
-            BorderColour = Colour4.White;
-            BorderThickness = 2;
-
-            AddRange(new Drawable[]
-            {
-                box = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.White
-                }
-            });
-
-            Bindable.BindValueChanged(_ => updateState(), true);
-        }
-
-        private void updateState()
-        {
-            box.FadeTo(Bindable.Value ? 1 : .1f, 100);
-        }
     }
 }

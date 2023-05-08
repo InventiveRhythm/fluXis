@@ -11,8 +11,6 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
-using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
@@ -34,15 +32,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     public bool Sex = true;
 
     [BackgroundDependencyLoader]
-    private void load(Storage storage, FrameworkConfigManager frameworkConfig)
+    private void load(Storage storage)
     {
         this.storage = storage;
-
-        Bindable<RendererType> renderer = frameworkConfig.GetBindable<RendererType>(FrameworkSetting.Renderer);
-
-        // "new renderer improves performance" my ass
-        if (renderer.Value != RendererType.OpenGL)
-            renderer.Value = RendererType.OpenGL;
 
         Discord.Init();
 

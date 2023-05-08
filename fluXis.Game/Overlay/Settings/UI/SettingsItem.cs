@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -5,30 +6,40 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Overlay.Settings.UI;
 
-public partial class SettingsItem : CircularContainer
+public partial class SettingsItem : Container
 {
-    private readonly Box background;
+    private Box background;
+    private Container backgroundContainer;
 
-    protected override Container Content { get; }
+    public string Label { get; init; } = string.Empty;
 
-    public SettingsItem()
+    protected override Container<Drawable> Content { get; } = new Container
+    {
+        RelativeSizeAxes = Axes.Both,
+        Padding = new MarginPadding { Horizontal = 20 }
+    };
+
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Masking = true;
         Height = 60;
 
-        AddInternal(Content = new Container
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Padding = new MarginPadding(20)
-        });
-
-        AddInternal(background = new Box
-        {
-            RelativeSizeAxes = Axes.Both,
-            Colour = Colour4.White,
-            Alpha = 0
-        });
+            backgroundContainer = new Container
+            {
+                Masking = true,
+                RelativeSizeAxes = Axes.Both,
+                Child = background = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.White,
+                    Alpha = 0
+                }
+            },
+            Content
+        };
     }
 
     public override void Add(Drawable drawable)
@@ -46,5 +57,14 @@ public partial class SettingsItem : CircularContainer
     protected override void OnHoverLost(HoverLostEvent e)
     {
         background.FadeTo(0, 200);
+    }
+
+    protected override void Update()
+    {
+        float halfHeight = DrawHeight / 2;
+        if (halfHeight > 30) halfHeight = 30;
+
+        if (backgroundContainer.CornerRadius != halfHeight)
+            backgroundContainer.CornerRadius = halfHeight;
     }
 }
