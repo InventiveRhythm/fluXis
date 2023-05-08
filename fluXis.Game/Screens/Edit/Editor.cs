@@ -17,6 +17,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit;
 
@@ -46,6 +47,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         Map = realmMap ?? RealmMap.CreateNew();
         OriginalMapInfo = map ?? new MapInfo(new MapMetadata());
         MapInfo = OriginalMapInfo.Clone();
+        MapInfo.KeyCount = Map.KeyCount;
 
         Conductor.ResetLoop();
         Conductor.PauseTrack(); // the editor clock will handle this
@@ -106,6 +108,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         ChangeTab(0);
     }
 
+    public void SortEverything()
+    {
+        MapInfo.HitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
+        MapInfo.TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
+        MapInfo.ScrollVelocities.Sort((a, b) => a.Time.CompareTo(b.Time));
+    }
+
     public void ChangeTab(int to)
     {
         currentTab = to;
@@ -120,6 +129,33 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             Drawable tab = tabs.Children[i];
             tab.FadeTo(i == currentTab ? 1 : 0);
         }
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.ControlPressed)
+        {
+            switch (e.Key)
+            {
+                case Key.Number1:
+                    ChangeTab(0);
+                    return true;
+
+                case Key.Number2:
+                    ChangeTab(1);
+                    return true;
+
+                case Key.Number3:
+                    ChangeTab(2);
+                    return true;
+
+                case Key.S:
+                    // changeHandler.Save();
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)

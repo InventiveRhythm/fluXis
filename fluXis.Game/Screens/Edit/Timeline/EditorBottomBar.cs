@@ -3,6 +3,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.Timeline;
 
@@ -37,7 +38,8 @@ public partial class EditorBottomBar : Container
                     {
                         new(GridSizeMode.Absolute, 200),
                         new(),
-                        new(GridSizeMode.Absolute, 200)
+                        new(GridSizeMode.Absolute, 200),
+                        new(GridSizeMode.Absolute, 100)
                     },
                     Content = new[]
                     {
@@ -45,7 +47,15 @@ public partial class EditorBottomBar : Container
                         {
                             new TimeInfo { BottomBar = this },
                             new EditorTimeline { BottomBar = this },
-                            new PlaybackControl { BottomBar = this }
+                            new PlaybackControl { BottomBar = this },
+                            new EditorPlayTestButton
+                            {
+                                Action = () =>
+                                {
+                                    Editor.SortEverything();
+                                    Editor.Push(new EditorPlaytestScreen(Editor.Map, Editor.MapInfo));
+                                }
+                            }
                         }
                     }
                 }

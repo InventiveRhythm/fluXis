@@ -320,8 +320,9 @@ public partial class EditorPlayfield : Container
 
                         if (!notePlacable) return true;
 
-                        HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
-                        MapInfo.HitObjects.Add(ghostNote.Info.Copy());
+                        var copy = ghostNote.Info.Copy();
+                        HitObjects.Add(new EditorHitObject(this) { Info = copy });
+                        MapInfo.HitObjects.Add(copy);
                         break;
 
                     case EditorTool.Long:
@@ -363,8 +364,9 @@ public partial class EditorPlayfield : Container
 
                     if (!notePlacable) return;
 
-                    HitObjects.Add(new EditorHitObject(this) { Info = ghostNote.Info.Copy() });
-                    MapInfo.HitObjects.Add(ghostNote.Info);
+                    var copy = ghostNote.Info.Copy();
+                    HitObjects.Add(new EditorHitObject(this) { Info = copy });
+                    MapInfo.HitObjects.Add(copy);
 
                     ghostNote.Info.HoldTime = 0; // reset hold time
                     break;

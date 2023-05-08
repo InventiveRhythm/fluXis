@@ -49,6 +49,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     [Resolved]
     private NotificationOverlay notifications { get; set; }
 
+    [Resolved]
+    private Storage storage { get; set; }
+
     private bool starting = true;
     private bool ended;
     private bool restarting;
@@ -82,21 +85,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples, FluXisConfig config, Storage storage)
+    private void load(ISampleStore samples, FluXisConfig config)
     {
         this.config = config;
 
-        Map = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(RealmMap.Hash)));
-
-        // map is null or invalid, leave
-        if (Map == null || !Map.Validate())
-        {
-            notifications.PostError("The map you tried to play not valid.");
-            this.Exit();
-            return;
-        }
-
-        loadMapEvents(storage);
+        Map = LoadMap();
+        MapEvents = LoadMapEvents();
+        getKeyCountFromEvents();
 
         Input = new GameplayInput(this, Map.KeyCount);
         Performance = new Performance(Map, RealmMap.OnlineID, RealmMap.Hash, Mods);
@@ -185,6 +180,21 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         base.LoadComplete();
     }
 
+    public virtual MapInfo LoadMap()
+    {
+        var map = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(RealmMap.Hash)));
+
+        // map is null or invalid, leave
+        if (map == null || !map.Validate())
+        {
+            notifications.PostError("The map you tried to play not valid.");
+            this.Exit();
+            return null;
+        }
+
+        return map;
+    }
+
     protected override void Update()
     {
         if (Conductor.CurrentTime >= 0 && starting)
@@ -200,11 +210,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             {
                 if (Playfield.Manager.Health < 70)
                     Die();
-                else
+                else if (!ended)
+                {
+                    ended = true;
                     End();
+                }
             }
-            else
+            else if (!ended)
             {
+                ended = true;
                 End();
             }
         }
@@ -215,7 +229,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         base.Update();
     }
 
-    public void Die()
+    public virtual void Die()
     {
         Playfield.Manager.Dead = true;
         DeathTime = Conductor.CurrentTime;
@@ -228,15 +242,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         });
     }
 
-    public void End()
+    public virtual void End()
     {
-        if (ended)
-            return;
-
-        ended = true;
-
-        cursorOverlay.ShowCursor = true;
-
         if (Performance.FullCombo || Performance.AllFlawless)
         {
             fcOverlay.Show(Performance.AllFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
@@ -245,7 +252,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         else this.Push(new ResultsScreen(RealmMap, Map, Performance));
     }
 
-    public void RestartMap()
+    public virtual void RestartMap()
     {
         restarting = true;
         Restart?.Play();
@@ -354,7 +361,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         // nothing to do here...
     }
 
-    private void loadMapEvents(Storage storage)
+    public virtual MapEvents LoadMapEvents()
     {
         var mapEvents = new MapEvents();
 
@@ -363,7 +370,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             if (!string.IsNullOrEmpty(Map.EffectFile))
             {
                 var effectFile = RealmMap.MapSet.GetFile(Map.EffectFile);
-                if (effectFile == null) return;
+                if (effectFile == null) return mapEvents;
 
                 string content = File.ReadAllText(storage.GetFullPath("files/" + effectFile.GetPath()));
                 mapEvents.Load(content);
@@ -374,8 +381,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             Logger.Error(e, "Error loading map events");
         }
 
-        MapEvents = mapEvents;
+        return mapEvents;
+    }
 
+    private void getKeyCountFromEvents()
+    {
         foreach (var switchEvent in MapEvents.LaneSwitchEvents)
         {
             if (Map.InitialKeyCount == 0)
