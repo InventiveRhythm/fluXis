@@ -47,7 +47,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public FluXisScreenStack ScreenStack;
     public ProfileOverlay ProfileOverlay;
 
-    public static string VersionString => isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}";
+    public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
     private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;
     private static bool isDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 

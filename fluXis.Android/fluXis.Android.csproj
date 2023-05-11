@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-android</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>fluXis.Android</RootNamespace>
+    <AssemblyName>fluXis.Android</AssemblyName>
+    <UseMauiEssentials>true</UseMauiEssentials>
+    <EnableLLVM>false</EnableLLVM>
+    <Version>0.0.0</Version>
+    <ApplicationVersion Condition=" '$(ApplicationVersion)' == '' ">1</ApplicationVersion>
+    <ApplicationDisplayVersion Condition=" '$(ApplicationDisplayVersion)' == '' ">$(Version)</ApplicationDisplayVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
+    <PackageReference Include="ppy.osu.Framework.Android" Version="2023.506.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+</Project>
