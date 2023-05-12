@@ -40,15 +40,13 @@ public partial class JudgementDisplay : GameplayHUDElement
             {
                 Font = FluXisFont.Default(48),
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Blending = BlendingParameters.Additive
+                Origin = Anchor.Centre
             },
             textEarlyLate = new SpriteText
             {
                 Font = FluXisFont.Default(24),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Blending = BlendingParameters.Additive,
                 Margin = new MarginPadding { Top = 48 },
             }
         };
