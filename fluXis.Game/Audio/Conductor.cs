@@ -91,11 +91,6 @@ public partial class Conductor : Container
     public static Track Track { get; private set; }
 
     /// <summary>
-    /// The current Waveform of the track.
-    /// </summary>
-    public static Waveform Waveform { get; private set; }
-
-    /// <summary>
     /// A callback that is invoked every beat.
     /// </summary>
     public static Action<int> OnBeat;
@@ -186,8 +181,6 @@ public partial class Conductor : Container
         Track = filesStore.Get(path) ?? filesStore.GetVirtual();
         Track.AddAdjustment(AdjustableProperty.Frequency, bind_speed);
         Track.Seek(time);
-
-        Waveform = new Waveform(filesStore.GetStream(path));
 
         if (start)
             Track.Start();
