@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
@@ -20,12 +19,17 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
     public override void OnAdd()
     {
-        AddEntry(new TimingPointEntry(new TimingPointInfo
+        var point = new TimingPointInfo
         {
-            Time = Conductor.CurrentTime,
+            Time = (float)EditorClock.CurrentTime,
             BPM = 120,
             Signature = 4
-        }));
+        };
+
+        AddEntry(new TimingPointEntry(point));
+        EditorValues.MapInfo.TimingPoints.Add(point);
+
+        ChangeHandler.OnTimingPointAdded();
 
         base.OnAdd();
     }

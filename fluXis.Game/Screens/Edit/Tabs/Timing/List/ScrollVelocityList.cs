@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
@@ -20,11 +19,14 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
 
     public override void OnAdd()
     {
-        AddEntry(new ScrollVelocityEntry(new ScrollVelocityInfo
+        var point = new ScrollVelocityInfo
         {
-            Time = Conductor.CurrentTime,
+            Time = (float)EditorClock.CurrentTime,
             Multiplier = 1.0f
-        }));
+        };
+
+        AddEntry(new ScrollVelocityEntry(point));
+        EditorValues.MapInfo.ScrollVelocities.Add(point);
 
         base.OnAdd();
     }

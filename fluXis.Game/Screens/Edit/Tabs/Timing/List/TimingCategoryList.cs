@@ -15,6 +15,15 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 public partial class TimingCategoryList<T> : Container
     where T : TimingCategoryList<T>.ListEntry
 {
+    [Resolved]
+    public EditorChangeHandler ChangeHandler { get; private set; }
+
+    [Resolved]
+    public EditorValues EditorValues { get; private set; }
+
+    [Resolved]
+    public EditorClock EditorClock { get; private set; }
+
     private readonly FillFlowContainer<T> flow;
     public readonly TimingTab TimingTab;
 

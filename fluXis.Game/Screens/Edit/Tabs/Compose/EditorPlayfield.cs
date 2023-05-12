@@ -34,6 +34,9 @@ public partial class EditorPlayfield : Container
     [Resolved]
     private EditorValues values { get; set; }
 
+    [Resolved]
+    private EditorChangeHandler changeHandler { get; set; }
+
     public const int COLUMN_WIDTH = 80;
     public const int HITPOSITION_Y = 100;
     public const int SELECTION_FADE = 200;
@@ -180,6 +183,10 @@ public partial class EditorPlayfield : Container
         {
             Waveform.Waveform = w.NewValue;
         }, true);
+
+        changeHandler.OnTimingPointAdded += RedrawLines;
+        changeHandler.OnTimingPointRemoved += RedrawLines;
+        changeHandler.OnTimingPointChanged += RedrawLines;
     }
 
     private Container getColumnDividers()

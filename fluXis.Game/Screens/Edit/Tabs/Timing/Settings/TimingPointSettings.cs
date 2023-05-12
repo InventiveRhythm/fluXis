@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,27 +16,59 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
     [Resolved]
     private EditorChangeHandler changeHandler { get; set; }
 
-    public PointSettingsTextBox BPMTextBox { get; }
-
-    private readonly SignatureTextBoxContainer signatureTextBox;
+    private BasicPointSettingsField bpmField;
+    private BasicPointSettingsField signatureField;
 
     public TimingPointSettings(TimingPointInfo point)
         : base(point)
     {
-        Add(BPMTextBox = new PointSettingsTextBox("BPM", point.BPM.ToString(CultureInfo.InvariantCulture)));
-        Add(signatureTextBox = new SignatureTextBoxContainer(OnTextChanged)
-        {
-            Text = point.Signature.ToString()
-        });
     }
 
-    public override void OnTextChanged()
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        if (float.TryParse(BPMTextBox.Text, out var bpm))
-            Point.BPM = bpm;
+        AddRange(new Drawable[]
+        {
+            bpmField = new BasicPointSettingsField
+            {
+                Label = "BPM",
+                Text = Point.BPM.ToString(CultureInfo.InvariantCulture),
+                OnTextChanged = saveChanges
+            },
+            signatureField = new BasicPointSettingsField
+            {
+                Label = "Signature",
+                Text = Point.Signature.ToString(),
+                OnTextChanged = saveChanges
+            }
+        });
 
-        if (int.TryParse(signatureTextBox.Text, out var signature))
-            Point.Signature = signature;
+        TimeField.OnTextChanged = saveChanges;
+    }
+
+    private void saveChanges()
+    {
+        if (!float.TryParse(TimeField.Text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var time) || time < 0)
+        {
+            TimeField.TextBox.NotifyError();
+            return;
+        }
+
+        if (!float.TryParse(bpmField.Text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var bpm) || bpm <= 0)
+        {
+            bpmField.TextBox.NotifyError();
+            return;
+        }
+
+        if (!int.TryParse(signatureField.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var signature) || signature <= 0)
+        {
+            signatureField.TextBox.NotifyError();
+            return;
+        }
+
+        Point.Time = time;
+        Point.BPM = bpm;
+        Point.Signature = signature;
 
         changeHandler.OnTimingPointChanged();
     }
