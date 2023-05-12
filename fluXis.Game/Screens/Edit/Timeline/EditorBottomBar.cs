@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,6 +10,9 @@ namespace fluXis.Game.Screens.Edit.Timeline;
 
 public partial class EditorBottomBar : Container
 {
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
+
     public Editor Editor { get; set; }
 
     [BackgroundDependencyLoader]
@@ -52,6 +56,24 @@ public partial class EditorBottomBar : Container
                             {
                                 Action = () =>
                                 {
+                                    if (Editor.Map == null)
+                                    {
+                                        notifications.PostError("There is no map...? how");
+                                        return;
+                                    }
+
+                                    if (Editor.MapInfo?.HitObjects == null || Editor.MapInfo.HitObjects.Count == 0)
+                                    {
+                                        notifications.PostError("This map has no hitobjects!");
+                                        return;
+                                    }
+
+                                    if (Editor.MapInfo?.TimingPoints == null || Editor.MapInfo.TimingPoints.Count == 0)
+                                    {
+                                        notifications.PostError("This map has no timing points!");
+                                        return;
+                                    }
+
                                     Editor.SortEverything();
                                     Editor.Push(new EditorPlaytestScreen(Editor.Map, Editor.MapInfo));
                                 }
