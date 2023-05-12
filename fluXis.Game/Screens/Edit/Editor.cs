@@ -4,7 +4,10 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
+using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Screens.Edit.Timeline;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -12,6 +15,7 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
@@ -25,6 +29,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override bool ShowToolbar => false;
 
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
+
     public RealmMap Map;
     public MapInfo OriginalMapInfo;
     public MapInfo MapInfo;
@@ -32,13 +39,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private Container tabs;
     private int currentTab;
 
-    private ComposeTab composeTab;
-    private EditorBottomBar bottomBar;
-
     private EditorClock clock;
-    private Bindable<Waveform> waveform = new();
-    private EditorChangeHandler changeHandler = new();
-    private EditorValues values = new();
+    private Bindable<Waveform> waveform;
+    private EditorChangeHandler changeHandler;
+    private EditorValues values;
 
     private DependencyContainer dependencies;
 
@@ -58,13 +62,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
         backgrounds.AddBackgroundFromMap(Map);
 
+        dependencies.CacheAs(waveform = new Bindable<Waveform>());
+        dependencies.CacheAs(changeHandler = new EditorChangeHandler());
+        dependencies.CacheAs(values = new EditorValues());
+
         clock = new EditorClock(MapInfo);
         clock.ChangeSource(loadMapTrack(audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")))));
         dependencies.CacheAs(clock);
-
-        dependencies.CacheAs(waveform);
-        dependencies.CacheAs(changeHandler);
-        dependencies.CacheAs(values);
 
         InternalChildren = new Drawable[]
         {
@@ -76,12 +80,88 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 Children = new Drawable[]
                 {
                     new SetupTab(this),
-                    composeTab = new ComposeTab(this),
+                    new ComposeTab(this),
                     new TimingTab(this)
                 }
             },
-            new EditorToolbar(this),
-            bottomBar = new EditorBottomBar { Editor = this }
+            new EditorMenuBar
+            {
+                Items = new MenuItem[]
+                {
+                    new("File")
+                    {
+                        Items = new MenuItem[]
+                        {
+                            new("Save", Save),
+                            new("Export", Export),
+                            new("Exit", TryExit)
+                        }
+                    },
+                    new("Edit")
+                    {
+                        Items = new MenuItem[]
+                        {
+                            new("Undo", SendWipNotification),
+                            new("Redo", SendWipNotification),
+                            new("Cut", SendWipNotification),
+                            new("Copy", SendWipNotification),
+                            new("Paste", SendWipNotification),
+                            new("Delete", SendWipNotification),
+                            new("Select all", SendWipNotification)
+                        }
+                    },
+                    new("View")
+                    {
+                        Items = new MenuItem[]
+                        {
+                            new("Waveform opacity")
+                            {
+                                Items = new MenuItem[]
+                                {
+                                    new("0%", () => values.WaveformOpacity.Value = 0),
+                                    new("25%", () => values.WaveformOpacity.Value = 0.25f),
+                                    new("50%", () => values.WaveformOpacity.Value = 0.5f),
+                                    new("75%", () => values.WaveformOpacity.Value = 0.75f),
+                                    new("100%", () => values.WaveformOpacity.Value = 1)
+                                }
+                            }
+                        }
+                    },
+                    new("Timing")
+                    {
+                        Items = new MenuItem[]
+                        {
+                            new("Set preview point to current time", () =>
+                            {
+                                MapInfo.Metadata.PreviewTime = (int)clock.CurrentTime;
+                                Map.Metadata.PreviewTime = (int)clock.CurrentTime;
+                            })
+                        }
+                    }
+                }
+            },
+            new EditorTabSwitcher
+            {
+                Children = new EditorTabSwitcherButton[]
+                {
+                    new()
+                    {
+                        Text = "Setup",
+                        Action = () => ChangeTab(0)
+                    },
+                    new()
+                    {
+                        Text = "Compose",
+                        Action = () => ChangeTab(1)
+                    },
+                    new()
+                    {
+                        Text = "Timing",
+                        Action = () => ChangeTab(2)
+                    }
+                }
+            },
+            new EditorBottomBar { Editor = this }
         };
     }
 
@@ -189,4 +269,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    public void Save() => SendWipNotification();
+    public void Export() => SendWipNotification();
+    public void TryExit() => this.Exit(); // TODO: unsaved changes check
+    public void SendWipNotification() => notifications.Post("This is still in development\nCome back later!");
 }

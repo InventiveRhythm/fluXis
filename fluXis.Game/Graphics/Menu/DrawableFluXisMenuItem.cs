@@ -7,6 +7,8 @@ namespace fluXis.Game.Graphics.Menu;
 
 public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterface.Menu.DrawableMenuItem
 {
+    protected virtual float TextSize => 16;
+
     private SpriteText text;
 
     public DrawableFluXisMenuItem(MenuItem item)
@@ -47,7 +49,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
     {
         return text = new SpriteText
         {
-            Font = FluXisFont.Default(16),
+            Font = FluXisFont.Default(TextSize),
             Margin = new MarginPadding { Vertical = 2, Horizontal = 5 },
             Shadow = true
         };
