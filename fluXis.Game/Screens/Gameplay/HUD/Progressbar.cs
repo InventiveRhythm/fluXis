@@ -88,6 +88,9 @@ public partial class Progressbar : GameplayHUDElement
         float percent = (float)currentTime / totalTime;
         if (percent < 0) percent = 0;
 
+        if (Screen.Map.StartTime == Screen.Map.EndTime)
+            percent = 1;
+
         bar.Width = percent;
         percentText.Text = $"{(int)(percent * 100)}%";
         currentTimeText.Text = TimeUtils.Format(currentTime, false);

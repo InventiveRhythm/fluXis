@@ -7,6 +7,8 @@ public class PathUtils
 {
     public static string HashToPath(string hash)
     {
+        if (hash.Length < 3) return hash;
+
         return hash[..1] + "/" + hash[..2] + "/" + hash;
     }
 
