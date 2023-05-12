@@ -464,6 +464,7 @@ public partial class EditorPlayfield : Container
         var tp = MapInfo.GetTimingPoint(time);
         float t = tp.Time;
         float increase = tp.Signature * tp.MsPerBeat / (4 * Snap);
+        if (increase == 0) return time; // no snapping, the game will just freeze because it loops infinitely
 
         if (time < t)
         {
