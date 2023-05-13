@@ -1,9 +1,13 @@
 using fluXis.Game.Map;
+using osu.Framework.Allocation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
 public partial class MetadataSetupSection : SetupSection
 {
+    [Resolved]
+    private EditorValues values { get; set; }
+
     private readonly SetupTextBox titleTextBox;
     private readonly SetupTextBox artistTextBox;
     private readonly SetupTextBox mapperTextBox;
@@ -27,18 +31,22 @@ public partial class MetadataSetupSection : SetupSection
         difficultyTextBox.Text = metadata.Difficulty;
         sourceTextBox.Text = metadata.Source;
         tagsTextBox.Text = metadata.Tags;
+
+        titleTextBox.OnTextChanged = updateMetadata;
+        artistTextBox.OnTextChanged = updateMetadata;
+        mapperTextBox.OnTextChanged = updateMetadata;
+        difficultyTextBox.OnTextChanged = updateMetadata;
+        sourceTextBox.OnTextChanged = updateMetadata;
+        tagsTextBox.OnTextChanged = updateMetadata;
     }
 
-    public MapMetadata GetMetadata()
+    private void updateMetadata()
     {
-        return new MapMetadata
-        {
-            Title = titleTextBox.Text,
-            Artist = artistTextBox.Text,
-            Mapper = mapperTextBox.Text,
-            Difficulty = difficultyTextBox.Text,
-            Source = sourceTextBox.Text,
-            Tags = tagsTextBox.Text
-        };
+        values.MapInfo.Metadata.Title = titleTextBox.Text;
+        values.MapInfo.Metadata.Artist = artistTextBox.Text;
+        values.MapInfo.Metadata.Mapper = mapperTextBox.Text;
+        values.MapInfo.Metadata.Difficulty = difficultyTextBox.Text;
+        values.MapInfo.Metadata.Source = sourceTextBox.Text;
+        values.MapInfo.Metadata.Tags = tagsTextBox.Text;
     }
 }

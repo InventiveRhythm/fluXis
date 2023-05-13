@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -35,6 +36,8 @@ public partial class SetupTextBox : Container
         get => textBox.Text;
         set => textBox.Text = value;
     }
+
+    public Action OnTextChanged { set => textBox.OnTextChanged = value; }
 
     public SetupTextBox(string name)
     {

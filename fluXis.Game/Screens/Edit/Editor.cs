@@ -345,6 +345,20 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 r.Remove(existingMap.Filters);
                 existingMap.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
 
+                r.Remove(existingMap.Metadata);
+                existingMap.Difficulty = MapInfo.Metadata.Difficulty;
+                existingMap.Metadata = new RealmMapMetadata
+                {
+                    Title = MapInfo.Metadata.Title,
+                    Artist = MapInfo.Metadata.Artist,
+                    Mapper = MapInfo.Metadata.Mapper,
+                    Source = MapInfo.Metadata.Source,
+                    Tags = MapInfo.Metadata.Tags,
+                    Background = MapInfo.BackgroundFile,
+                    Audio = MapInfo.AudioFile,
+                    PreviewTime = MapInfo.Metadata.PreviewTime,
+                };
+
                 mapStore.UpdateMapSet(Map.MapSet, set.Detach());
             }
             else
@@ -360,8 +374,20 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
                 Map.Hash = hash;
                 Map.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
-                r.Add(set);
+                Map.Difficulty = MapInfo.Metadata.Difficulty;
+                Map.Metadata = new RealmMapMetadata
+                {
+                    Title = MapInfo.Metadata.Title,
+                    Artist = MapInfo.Metadata.Artist,
+                    Mapper = MapInfo.Metadata.Mapper,
+                    Source = MapInfo.Metadata.Source,
+                    Tags = MapInfo.Metadata.Tags,
+                    Background = MapInfo.BackgroundFile,
+                    Audio = MapInfo.AudioFile,
+                    PreviewTime = MapInfo.Metadata.PreviewTime,
+                };
 
+                r.Add(set);
                 mapStore.AddMapSet(set.Detach());
             }
         });
