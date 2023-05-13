@@ -29,6 +29,13 @@ public partial class FluXisGameDesktop : FluXisGame
         ExitAction = host.Exit;
     }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        if (OperatingSystem.IsWindows())
+            LoadComponentAsync(new WindowsUpdateManager());
+    }
+
     private void onDragDrop(IEnumerable<string> paths)
     {
         try

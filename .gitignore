@@ -3,3 +3,6 @@ obj
 .vs
 .vscode
 .idea
+*.nupkg
+Releases
+create-squirrel.bat
