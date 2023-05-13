@@ -15,6 +15,11 @@ namespace fluXis.Game;
 
 public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybind>
 {
+    public static readonly string[] AUDIO_EXTENSIONS = { ".mp3", ".wav", ".ogg" };
+    public static readonly string[] MAP_EXTENSIONS = { ".fms", ".osz", ".qp" };
+    public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
+    public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
+
     protected static Action ExitAction;
 
     private Container screenContainer;

@@ -18,6 +18,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -47,6 +48,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     [Resolved]
     private MapStore mapStore { get; set; }
 
+    [Resolved]
+    private BackgroundStack backgrounds { get; set; }
+
+    private ITrackStore trackStore { get; set; }
+
     public RealmMap Map;
     public MapInfo OriginalMapInfo;
     public MapInfo MapInfo;
@@ -73,22 +79,24 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     }
 
     [BackgroundDependencyLoader]
-    private void load(BackgroundStack backgrounds, AudioManager audioManager, Storage storage)
+    private void load(AudioManager audioManager, Storage storage)
     {
         backgrounds.AddBackgroundFromMap(Map);
+        trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
 
         dependencies.CacheAs(waveform = new Bindable<Waveform>());
         dependencies.CacheAs(changeHandler = new EditorChangeHandler());
         dependencies.CacheAs(values = new EditorValues());
 
         values.MapInfo = MapInfo;
+        values.Editor = this;
 
         changeHandler.OnTimingPointAdded += () => Logger.Log("Timing point added");
         changeHandler.OnTimingPointRemoved += () => Logger.Log("Timing point removed");
         changeHandler.OnTimingPointChanged += () => Logger.Log("Timing point changed");
 
         clock = new EditorClock(MapInfo);
-        clock.ChangeSource(loadMapTrack(audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")))));
+        clock.ChangeSource(loadMapTrack());
         dependencies.CacheAs(clock);
 
         InternalChildren = new Drawable[]
@@ -186,7 +194,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         };
     }
 
-    private Track loadMapTrack(ITrackStore trackStore)
+    private Track loadMapTrack()
     {
         string path = Map.MapSet?.GetFile(Map.Metadata?.Audio)?.GetPath();
 
@@ -398,4 +406,74 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     public void Export() => SendWipNotification();
     public void TryExit() => this.Exit(); // TODO: unsaved changes check
     public void SendWipNotification() => notifications.Post("This is still in development\nCome back later!");
+
+    public void SetAudio(FileInfo file)
+    {
+        if (file == null)
+            return;
+
+        copyFile(file);
+        MapInfo.AudioFile = file.Name;
+        Map.Metadata.Audio = file.Name;
+        clock.ChangeSource(loadMapTrack());
+    }
+
+    public void SetBackground(FileInfo file)
+    {
+        if (file == null)
+            return;
+
+        copyFile(file);
+        MapInfo.BackgroundFile = file.Name;
+        Map.Metadata.Background = file.Name;
+        backgrounds.AddBackgroundFromMap(Map);
+    }
+
+    public void SetVideo(FileInfo file)
+    {
+        if (file == null)
+            return;
+
+        copyFile(file);
+        MapInfo.VideoFile = file.Name;
+    }
+
+    private void copyFile(FileInfo file)
+    {
+        Stream s = file.OpenRead();
+        string hash = MapUtils.GetHash(s);
+        string path = storage.GetFullPath($"files/{PathUtils.HashToPath(hash)}");
+
+        if (!File.Exists(path))
+        {
+            string dir = Path.GetDirectoryName(path);
+
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            File.Copy(file.FullName, path);
+        }
+
+        if (Map.MapSet.Files.Any(f => f.Hash == hash))
+            return;
+
+        bool found = false;
+
+        Map.MapSet.Files.ForEach(f =>
+        {
+            if (f.Name == file.Name)
+            {
+                found = true;
+                f.Hash = hash;
+            }
+        });
+
+        if (found) return;
+
+        Map.MapSet.Files.Add(new RealmFile
+        {
+            Hash = hash,
+            Name = file.Name
+        });
+    }
 }

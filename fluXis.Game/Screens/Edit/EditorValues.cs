@@ -8,4 +8,5 @@ public class EditorValues
     public float Zoom = 2f;
     public Bindable<float> WaveformOpacity = new(1f);
     public MapInfo MapInfo;
+    public Editor Editor;
 }
