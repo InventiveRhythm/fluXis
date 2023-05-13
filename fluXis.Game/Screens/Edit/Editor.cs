@@ -416,6 +416,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         MapInfo.AudioFile = file.Name;
         Map.Metadata.Audio = file.Name;
         clock.ChangeSource(loadMapTrack());
+        changeHandler.OnTimingPointAdded.Invoke();
     }
 
     public void SetBackground(FileInfo file)
