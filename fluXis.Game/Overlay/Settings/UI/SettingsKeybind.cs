@@ -181,7 +181,7 @@ public partial class SettingsKeybind : SettingsItem
         }
         else Index = -1;
 
-        return false;
+        return true;
     }
 
     private partial class KeybindContainer : Container
