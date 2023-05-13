@@ -90,6 +90,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         this.config = config;
 
         Map = LoadMap();
+
+        if (Map == null)
+        {
+            Logger.Log("Failed to load map", LoggingTarget.Runtime, LogLevel.Error);
+            this.Exit();
+            return;
+        }
+
         Map.Sort();
         MapEvents = LoadMapEvents();
         getKeyCountFromEvents();
