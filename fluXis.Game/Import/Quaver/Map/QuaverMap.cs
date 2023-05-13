@@ -40,8 +40,6 @@ public class QuaverMap
 
         var mapInfo = new MapInfo(metadata)
         {
-            ID = "",
-            MD5 = "",
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
             HitObjects = new List<HitObjectInfo>(),

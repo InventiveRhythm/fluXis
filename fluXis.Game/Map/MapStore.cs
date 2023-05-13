@@ -23,6 +23,7 @@ public class MapStore
     public RealmMapSet CurrentMapSet;
 
     public Action<RealmMapSet> MapSetAdded;
+    public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
 
     public MapStore(Storage storage, FluXisRealm realm)
     {
@@ -47,6 +48,16 @@ public class MapStore
     {
         MapSets.Add(mapSet);
         MapSetAdded?.Invoke(mapSet);
+    }
+
+    public void UpdateMapSet(RealmMapSet oldMapSet, RealmMapSet newMapSet)
+    {
+        MapSets.Remove(oldMapSet);
+        MapSets.Add(newMapSet);
+        MapSetUpdated?.Invoke(oldMapSet, newMapSet);
+
+        if (Equals(CurrentMapSet, oldMapSet))
+            CurrentMapSet = newMapSet;
     }
 
     public void DeleteMapSet(RealmMapSet mapSet)

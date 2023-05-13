@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using JetBrains.Annotations;
@@ -82,4 +84,6 @@ public class MapUtils
 
         return (float)seconds.Average(x => x.Value);
     }
+
+    public static string GetHash(string input) => BitConverter.ToString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(input))).Replace("-", "").ToLower();
 }

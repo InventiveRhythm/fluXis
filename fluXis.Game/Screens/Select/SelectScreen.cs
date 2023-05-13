@@ -133,6 +133,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             MapSet.Value = mapStore.CurrentMapSet;
 
         mapStore.MapSetAdded += addMapSet;
+        mapStore.MapSetUpdated += replaceMapSet;
     }
 
     private void addMapSet(RealmMapSet set)
@@ -149,6 +150,20 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             MapSet.Value = set;
 
             noMapsText.FadeOut(200);
+        });
+    }
+
+    private void replaceMapSet(RealmMapSet oldSet, RealmMapSet newSet)
+    {
+        Schedule(() =>
+        {
+            mapStore.DeleteMapSet(oldSet);
+            MapList.Remove(lookup[oldSet], false);
+            Maps.Remove(oldSet);
+            lookup.Remove(oldSet);
+            changeSelection(1);
+            addMapSet(newSet);
+            Schedule(() => { Schedule(() => selectMapSet(newSet)); }); // <- this looks stupid and probably is, but it works
         });
     }
 
@@ -330,6 +345,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         Footer.MoveToY(50, 500, Easing.OutQuint);
 
         mapStore.MapSetAdded -= addMapSet;
+        mapStore.MapSetUpdated -= replaceMapSet;
         Conductor.ResetLoop();
 
         return base.OnExiting(e);

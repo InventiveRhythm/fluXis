@@ -6,12 +6,10 @@ namespace fluXis.Game.Map;
 
 public class MapInfo
 {
-    public string ID { get; set; }
-    public string MD5 { get; set; }
-    public string AudioFile { get; set; }
-    public string BackgroundFile { get; set; }
-    public string VideoFile { get; set; }
-    public string EffectFile { get; set; }
+    public string AudioFile { get; set; } = string.Empty;
+    public string BackgroundFile { get; set; } = string.Empty;
+    public string VideoFile { get; set; } = string.Empty;
+    public string EffectFile { get; set; } = string.Empty;
     public MapMetadata Metadata { get; set; }
     public List<HitObjectInfo> HitObjects;
     public List<TimingPointInfo> TimingPoints;
@@ -49,7 +47,6 @@ public class MapInfo
 
     public MapInfo(MapMetadata metadata)
     {
-        ID = "";
         Metadata = metadata;
         HitObjects = new List<HitObjectInfo>();
         TimingPoints = new List<TimingPointInfo>();
@@ -114,8 +111,6 @@ public class MapInfo
     {
         return new MapInfo(Metadata)
         {
-            ID = ID,
-            MD5 = MD5,
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
             VideoFile = VideoFile,

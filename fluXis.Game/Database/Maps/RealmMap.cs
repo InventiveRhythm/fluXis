@@ -52,7 +52,8 @@ public class RealmMap : RealmObject
     {
         RealmMap map = new RealmMap
         {
-            Metadata = new RealmMapMetadata()
+            Metadata = new RealmMapMetadata(),
+            ID = Guid.NewGuid()
         };
         RealmMapSet set = new RealmMapSet(new List<RealmMap> { map });
         map.MapSet = set;

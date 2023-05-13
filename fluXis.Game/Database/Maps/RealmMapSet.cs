@@ -41,8 +41,18 @@ public class RealmMapSet : RealmObject
         return Files.FirstOrDefault(setFile => setFile.Name == name);
     }
 
+    public RealmFile GetFileFromHash(string hash)
+    {
+        return Files.FirstOrDefault(setFile => setFile.Hash == hash);
+    }
+
     public override string ToString()
     {
         return ID.ToString();
+    }
+
+    public void SetStatus(int status)
+    {
+        foreach (RealmMap map in Maps) map.Status = status;
     }
 }

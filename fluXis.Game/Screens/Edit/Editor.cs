@@ -1,5 +1,8 @@
+using System;
 using System.IO;
+using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
@@ -9,6 +12,8 @@ using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Screens.Edit.Timeline;
+using fluXis.Game.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -32,6 +37,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     [Resolved]
     private NotificationOverlay notifications { get; set; }
+
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private Storage storage { get; set; }
+
+    [Resolved]
+    private MapStore mapStore { get; set; }
 
     public RealmMap Map;
     public MapInfo OriginalMapInfo;
@@ -237,7 +251,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     return true;
 
                 case Key.S:
-                    // changeHandler.Save();
+                    Save();
                     return true;
             }
         }
@@ -277,7 +291,84 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
-    public void Save() => SendWipNotification();
+    public void Save()
+    {
+        if (Map == null)
+            return;
+
+        if (MapInfo.HitObjects.Count == 0)
+        {
+            notifications.PostError("Map has no hit objects!");
+            return;
+        }
+
+        if (MapInfo.TimingPoints.Count == 0)
+        {
+            notifications.PostError("Map has no timing points!");
+            return;
+        }
+
+        MapInfo.Sort();
+
+        // get map as json
+        string json = JsonConvert.SerializeObject(MapInfo);
+        string hash = MapUtils.GetHash(json);
+
+        // write to file
+        string path = storage.GetFullPath($"files/{PathUtils.HashToPath(hash)}");
+        string dir = Path.GetDirectoryName(path);
+
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+
+        File.WriteAllText(path, json);
+
+        // update realm
+        realm.RunWrite(r =>
+        {
+            var existingMap = r.All<RealmMap>().FirstOrDefault(m => m.ID == Map.ID);
+
+            if (existingMap != null)
+            {
+                var set = existingMap.MapSet;
+                set.SetStatus(-2);
+                var prevFile = existingMap.MapSet.GetFileFromHash(existingMap.Hash);
+
+                if (prevFile == null)
+                {
+                    notifications.PostError("Failed to find previous map file!");
+                    return;
+                }
+
+                prevFile.Hash = hash;
+                existingMap.Hash = hash;
+                r.Remove(existingMap.Filters);
+                existingMap.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
+
+                mapStore.UpdateMapSet(Map.MapSet, set.Detach());
+            }
+            else
+            {
+                var time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+                var set = Map.MapSet;
+                set.Files.Add(new RealmFile
+                {
+                    Hash = hash,
+                    Name = $"{time}.fsc",
+                });
+
+                Map.Hash = hash;
+                Map.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
+                r.Add(set);
+
+                mapStore.AddMapSet(set.Detach());
+            }
+        });
+
+        notifications.Post("Saved!");
+    }
+
     public void Export() => SendWipNotification();
     public void TryExit() => this.Exit(); // TODO: unsaved changes check
     public void SendWipNotification() => notifications.Post("This is still in development\nCome back later!");

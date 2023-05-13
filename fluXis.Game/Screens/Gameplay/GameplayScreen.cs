@@ -90,6 +90,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         this.config = config;
 
         Map = LoadMap();
+        Map.Sort();
         MapEvents = LoadMapEvents();
         getKeyCountFromEvents();
 
