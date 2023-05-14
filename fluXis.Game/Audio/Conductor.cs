@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
@@ -17,7 +18,6 @@ using osu.Framework.Platform;
 
 namespace fluXis.Game.Audio;
 
-/// <inheritdoc cref="osu.Framework.Graphics.Containers.Container" />
 /// <summary>
 /// A class that handles all music and timing related things.
 /// </summary>
@@ -109,12 +109,6 @@ public partial class Conductor : Container
 
     public static List<TimingPointInfo> TimingPoints = new();
 
-    private float time
-    {
-        get => CurrentTime;
-        set => Track?.Seek(value);
-    }
-
     [BackgroundDependencyLoader]
     private void load(AudioManager audioManager, Storage storage, ITrackStore trackStore)
     {
@@ -134,7 +128,7 @@ public partial class Conductor : Container
 
         if (CurrentTime < 0)
         {
-            CurrentTime += (float)Time.Elapsed;
+            CurrentTime += (float)Time.Elapsed * Speed;
             return;
         }
 
@@ -152,7 +146,7 @@ public partial class Conductor : Container
         if (!IsPlaying)
             return;
 
-        float[] span = Track?.CurrentAmplitudes.FrequencyAmplitudes.Span.ToArray() ?? new float[256];
+        var span = Track == null ? new float[256] : Track.CurrentAmplitudes.FrequencyAmplitudes.Span;
 
         for (var i = 0; i < span.Length; i++)
         {
@@ -185,7 +179,8 @@ public partial class Conductor : Container
         if (start)
             Track.Start();
 
-        TimingPoints = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(info.Hash)))?.TimingPoints ?? new List<TimingPointInfo>();
+        TimingPoints.Clear();
+        new Task(() => TimingPoints = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(info.Hash)))?.TimingPoints ?? new List<TimingPointInfo>()).Start();
     }
 
     /// <summary>
@@ -206,9 +201,7 @@ public partial class Conductor : Container
     /// Seeks the track to the specified time.
     /// </summary>
     /// <param name="time">The time to seek to.</param>
-    /// <param name="duration">The duration of the transform.</param>
-    /// <param name="ease">The easing of the transform.</param>
-    public static void Seek(float time, float duration = 0, Easing ease = Easing.None)
+    public static void Seek(float time)
     {
         if (time < 0)
         {
@@ -218,10 +211,7 @@ public partial class Conductor : Container
             return;
         }
 
-        if (!IsPlaying)
-            instance.TransformTo(nameof(time), time, duration, ease);
-        else
-            Track?.Seek(time);
+        Track?.Seek(time);
     }
 
     /// <summary>
