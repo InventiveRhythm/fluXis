@@ -86,7 +86,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             SearchBar = new SearchBar(this),
             SelectMapInfo = new SelectMapInfo { Screen = this },
             Footer = new SelectFooter(this),
-            ModSelector = new ModSelector(),
             new Container
             {
                 Anchor = Anchor.CentreLeft,
@@ -102,7 +101,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                     Blending = BlendingParameters.Additive,
                     Alpha = 0
                 }
-            }
+            },
+            ModSelector = new ModSelector()
         };
 
         loadMapSets();

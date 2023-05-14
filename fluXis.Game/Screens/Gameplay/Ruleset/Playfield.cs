@@ -41,17 +41,19 @@ public partial class Playfield : CompositeDrawable
 
         TimingLineManager = new TimingLineManager(Manager);
 
-        AddInternal(Stage);
-
         for (int i = 0; i < Map.KeyCount; i++)
         {
             Receptor receptor = new Receptor(this, i);
             Receptors.Add(receptor);
         }
 
-        AddInternal(TimingLineManager);
-        AddInternal(Receptors);
-        AddInternal(Manager);
+        InternalChildren = new Drawable[]
+        {
+            Stage,
+            TimingLineManager,
+            Manager,
+            Receptors
+        };
     }
 
     protected override void LoadComplete()
