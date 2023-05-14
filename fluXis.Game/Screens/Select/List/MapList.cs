@@ -27,7 +27,8 @@ public partial class MapList : BasicScrollContainer<MapListEntry>
         Padding = new MarginPadding(10)
         {
             Left = 20,
-            Vertical = 60
+            Top = 60,
+            Bottom = 10
         };
     }
 

@@ -7,7 +7,7 @@ public static class Program
 {
     public static void Main()
     {
-        using GameHost host = Host.GetSuitableDesktopHost("visual-tests");
+        using GameHost host = Host.GetSuitableDesktopHost("fluXis");
         using var game = new FluXisTestBrowser();
         host.Run(game);
     }

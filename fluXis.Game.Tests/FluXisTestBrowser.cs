@@ -1,5 +1,4 @@
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
 
@@ -14,7 +13,7 @@ public partial class FluXisTestBrowser : FluXisGameBase
         AddRange(new Drawable[]
         {
             new TestBrowser("fluXis"),
-            new CursorContainer()
+            CursorOverlay
         });
     }
 

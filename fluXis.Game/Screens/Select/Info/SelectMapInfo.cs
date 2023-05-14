@@ -9,11 +9,10 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info;
 
-public partial class SelectMapInfo : FillFlowContainer
+public partial class SelectMapInfo : GridContainer
 {
     public SelectScreen Screen { get; set; }
 
@@ -36,163 +35,189 @@ public partial class SelectMapInfo : FillFlowContainer
         Origin = Anchor.CentreRight;
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
-        Padding = new MarginPadding { Vertical = 10, };
+        Padding = new MarginPadding { Vertical = 10 };
         Margin = new MarginPadding { Right = -10 };
-        Direction = FillDirection.Vertical;
-        Spacing = new Vector2(0, 10);
-
-        InternalChildren = new Drawable[]
+        RowDimensions = new Dimension[]
         {
-            new Container
+            new(GridSizeMode.Relative, .4f),
+            new(GridSizeMode.Absolute, 10),
+            new()
+        };
+
+        Content = new[]
+        {
+            new Drawable[]
             {
-                Name = "Metadata",
-                CornerRadius = 10,
-                RelativeSizeAxes = Axes.Both,
-                Height = .25f,
-                Masking = true,
-                Children = new Drawable[]
+                new Container
                 {
-                    backgroundStack = new BackgroundStack(),
-                    new Box
+                    RelativeSizeAxes = Axes.Both,
+                    CornerRadius = 10,
+                    Masking = true,
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = .4f
-                    },
-                    titleText = new SpriteText
-                    {
-                        Text = "Title",
-                        Font = FluXisFont.Default(60),
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.BottomLeft,
-                        X = 20
-                    },
-                    artistText = new SpriteText
-                    {
-                        Text = "Artist",
-                        Font = FluXisFont.Default(32),
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.TopLeft,
-                        X = 20
-                    }
-                }
-            },
-            new Container
-            {
-                Name = "Technical Info",
-                RelativeSizeAxes = Axes.Both,
-                Height = .25f,
-                CornerRadius = 10,
-                Masking = true,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
-                    },
-                    new FillFlowContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Padding = new MarginPadding(10),
-                        Direction = FillDirection.Vertical,
-                        Children = new Drawable[]
+                        new Box
                         {
-                            new Container
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background2
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Padding = new MarginPadding { Bottom = 80 },
+                            Child = new Container
                             {
-                                RelativeSizeAxes = Axes.X,
-                                AutoSizeAxes = Axes.Y,
+                                RelativeSizeAxes = Axes.Both,
+                                CornerRadius = 10,
+                                Masking = true,
                                 Children = new Drawable[]
                                 {
-                                    new FillFlowContainer
+                                    backgroundStack = new BackgroundStack(),
+                                    new Box
                                     {
-                                        Direction = FillDirection.Horizontal,
-                                        AutoSizeAxes = Axes.Both,
-                                        Spacing = new Vector2(4, 0),
-                                        Children = new Drawable[]
-                                        {
-                                            difficultyText = new SpriteText
-                                            {
-                                                Text = "diffname",
-                                                Font = FluXisFont.Default(22)
-                                            },
-                                            new SpriteText
-                                            {
-                                                Text = "mapped by",
-                                                Font = FluXisFont.Default(22)
-                                            },
-                                            mapperText = new SpriteText
-                                            {
-                                                Text = "mapper",
-                                                Font = FluXisFont.Default(22)
-                                            }
-                                        }
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Colour4.Black,
+                                        Alpha = .4f
                                     },
                                     new Container
                                     {
-                                        AutoSizeAxes = Axes.Both,
-                                        CornerRadius = 10,
-                                        Masking = true,
-                                        Anchor = Anchor.TopRight,
-                                        Origin = Anchor.TopRight,
-                                        Margin = new MarginPadding { Right = 10 },
+                                        RelativeSizeAxes = Axes.Both,
+                                        Padding = new MarginPadding(20),
                                         Children = new Drawable[]
                                         {
-                                            new Box
+                                            titleText = new SpriteText
                                             {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Colour = FluXisColors.Background2
+                                                Text = "No Map Selected",
+                                                Font = FluXisFont.Default(60),
+                                                RelativeSizeAxes = Axes.X,
+                                                Truncate = true,
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Y = 10
                                             },
-                                            new FillFlowContainer
+                                            artistText = new SpriteText
                                             {
-                                                Direction = FillDirection.Vertical,
-                                                AutoSizeAxes = Axes.Both,
-                                                Spacing = new Vector2(0, 0),
-                                                Padding = new MarginPadding { Bottom = 2, Top = 3, Horizontal = 10 },
-                                                Children = new Drawable[]
+                                                Text = "Please select a map to view info",
+                                                Font = FluXisFont.Default(32),
+                                                RelativeSizeAxes = Axes.X,
+                                                Truncate = true,
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.TopLeft
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            Height = 80,
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Padding = new MarginPadding { Right = 10 },
+                            Child = new GridContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                ColumnDimensions = new Dimension[]
+                                {
+                                    new(),
+                                    new(),
+                                    new(),
+                                    new()
+                                },
+                                Content = new[]
+                                {
+                                    new Drawable[]
+                                    {
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Children = new Drawable[]
+                                            {
+                                                new SpriteText
                                                 {
-                                                    new FillFlowContainer
-                                                    {
-                                                        Direction = FillDirection.Horizontal,
-                                                        AutoSizeAxes = Axes.Both,
-                                                        Spacing = new Vector2(10, 0),
-                                                        Anchor = Anchor.TopRight,
-                                                        Origin = Anchor.TopRight,
-                                                        Children = new Drawable[]
-                                                        {
-                                                            bpmText = new SpriteText
-                                                            {
-                                                                Text = "BPM",
-                                                                Font = FluXisFont.Default(22)
-                                                            },
-                                                            lengthText = new SpriteText
-                                                            {
-                                                                Text = "Length",
-                                                                Font = FluXisFont.Default(22)
-                                                            }
-                                                        }
-                                                    },
-                                                    new FillFlowContainer
-                                                    {
-                                                        Direction = FillDirection.Horizontal,
-                                                        AutoSizeAxes = Axes.Both,
-                                                        Spacing = new Vector2(10, 0),
-                                                        Anchor = Anchor.TopRight,
-                                                        Origin = Anchor.TopRight,
-                                                        Children = new Drawable[]
-                                                        {
-                                                            npsText = new SpriteText
-                                                            {
-                                                                Text = "NPS",
-                                                                Font = FluXisFont.Default(22)
-                                                            },
-                                                            lnpText = new SpriteText
-                                                            {
-                                                                Text = "LN%",
-                                                                Font = FluXisFont.Default(22)
-                                                            }
-                                                        }
-                                                    }
+                                                    Text = "BPM",
+                                                    Font = FluXisFont.Default(18),
+                                                    Colour = FluXisColors.Text2,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.BottomCentre
+                                                },
+                                                bpmText = new SpriteText
+                                                {
+                                                    Text = "",
+                                                    Font = FluXisFont.Default(24),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.TopCentre,
+                                                    Y = -4
+                                                }
+                                            }
+                                        },
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Children = new Drawable[]
+                                            {
+                                                new SpriteText
+                                                {
+                                                    Text = "Length",
+                                                    Font = FluXisFont.Default(18),
+                                                    Colour = FluXisColors.Text2,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.BottomCentre
+                                                },
+                                                lengthText = new SpriteText
+                                                {
+                                                    Text = "",
+                                                    Font = FluXisFont.Default(24),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.TopCentre,
+                                                    Y = -4
+                                                }
+                                            }
+                                        },
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Children = new Drawable[]
+                                            {
+                                                new SpriteText
+                                                {
+                                                    Text = "NPS",
+                                                    Font = FluXisFont.Default(18),
+                                                    Colour = FluXisColors.Text2,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.BottomCentre
+                                                },
+                                                npsText = new SpriteText
+                                                {
+                                                    Text = "",
+                                                    Font = FluXisFont.Default(24),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.TopCentre,
+                                                    Y = -4
+                                                }
+                                            }
+                                        },
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Children = new Drawable[]
+                                            {
+                                                new SpriteText
+                                                {
+                                                    Text = "LN%",
+                                                    Font = FluXisFont.Default(18),
+                                                    Colour = FluXisColors.Text2,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.BottomCentre
+                                                },
+                                                lnpText = new SpriteText
+                                                {
+                                                    Text = "",
+                                                    Font = FluXisFont.Default(24),
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.TopCentre,
+                                                    Y = -4
                                                 }
                                             }
                                         }
@@ -203,16 +228,13 @@ public partial class SelectMapInfo : FillFlowContainer
                     }
                 }
             },
-            new Container
+            new Drawable[] { }, // Spacer
+            new Drawable[]
             {
-                Name = "Scores Wrapper",
-                RelativeSizeAxes = Axes.Both,
-                Height = .5f,
-                Padding = new MarginPadding { Bottom = 70, Right = 20, },
-                Child = new Container
+                new Container
                 {
-                    Name = "Scores",
                     RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Bottom = 20, Right = 20 },
                     Child = ScoreList = new ScoreList
                     {
                         MapInfo = this
@@ -235,13 +257,13 @@ public partial class SelectMapInfo : FillFlowContainer
         ScoreList.SetMap(map);
         titleText.Text = map.Metadata.Title;
         artistText.Text = map.Metadata.Artist;
-        difficultyText.Text = map.Difficulty;
-        mapperText.Text = map.Metadata.Mapper;
+        // difficultyText.Text = map.Difficulty;
+        // mapperText.Text = map.Metadata.Mapper;
 
-        lengthText.Text = "Length " + TimeUtils.Format(map.Filters.Length, false);
-        bpmText.Text = map.Filters.BPMMin == map.Filters.BPMMax ? $"BPM {map.Filters.BPMMin}" : $"BPM {map.Filters.BPMMin}-{map.Filters.BPMMax}";
-        npsText.Text = $"NPS {map.Filters.NotesPerSecond:F}".Replace(",", ".");
-        lnpText.Text = $"LN% {map.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
+        lengthText.Text = TimeUtils.Format(map.Filters.Length, false);
+        bpmText.Text = map.Filters.BPMMin == map.Filters.BPMMax ? $"{map.Filters.BPMMin}" : $"{map.Filters.BPMMin}-{map.Filters.BPMMax}";
+        npsText.Text = $"{map.Filters.NotesPerSecond:F}".Replace(",", ".");
+        lnpText.Text = $"{map.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
     }
 
     private void OnBeat(int beat)

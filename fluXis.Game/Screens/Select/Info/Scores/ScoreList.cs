@@ -59,7 +59,7 @@ public partial class ScoreList : Container
         this.map = map;
 
         List<RealmScore> scores = new();
-        realm.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
+        realm?.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
         {
             if (s.MapID == map.ID)
                 scores.Add(s);

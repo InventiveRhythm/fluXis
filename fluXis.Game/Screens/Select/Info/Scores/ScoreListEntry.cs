@@ -1,9 +1,11 @@
+using System;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Utils;
@@ -19,8 +21,10 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
-public partial class ScoreListEntry : Container
+public partial class ScoreListEntry : Container, IHasTooltip
 {
+    public string Tooltip => $"{score.Judgements.Flawless} / {score.Judgements.Perfect} / {score.Judgements.Great} / {score.Judgements.Alright} / {score.Judgements.Okay} / {score.Judgements.Miss}";
+
     [Resolved]
     private MapStore mapStore { get; set; }
 
@@ -30,32 +34,48 @@ public partial class ScoreListEntry : Container
     public ScoreList ScoreList { get; set; }
 
     private readonly RealmScore score;
-    private readonly SpriteText timeText;
+    private readonly int rank;
+    private SpriteText timeText;
+    private Container bannerContainer;
+    private Container avatarContainer;
 
     public ScoreListEntry(RealmScore score, int index = -1)
     {
         this.score = score;
+        rank = index;
+    }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         RelativeSizeAxes = Axes.X;
-        Height = 50;
+        Height = 60;
 
         CornerRadius = 10;
         Masking = true;
 
         Children = new Drawable[]
         {
-            new Box
+            bannerContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.Black,
+                        Alpha = 0.25f
+                    }
+                }
             },
             new GridContainer
             {
                 ColumnDimensions = new Dimension[]
                 {
-                    new(GridSizeMode.Absolute, 50),
+                    new(GridSizeMode.Absolute, 60),
                     new(),
-                    new(GridSizeMode.Absolute, 125)
+                    new(GridSizeMode.Absolute, 155)
                 },
                 RelativeSizeAxes = Axes.Both,
                 Content = new[]
@@ -64,8 +84,8 @@ public partial class ScoreListEntry : Container
                     {
                         new SpriteText
                         {
-                            Text = $"#{index}",
-                            Font = FluXisFont.Default(32),
+                            Text = $"#{rank}",
+                            Font = FluXisFont.Default(26),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
                         },
@@ -79,7 +99,17 @@ public partial class ScoreListEntry : Container
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background2
+                                    Colour = Colour4.Black,
+                                    Alpha = 0.25f
+                                },
+                                avatarContainer = new Container
+                                {
+                                    Size = new(50),
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Margin = new MarginPadding(5),
+                                    CornerRadius = 5,
+                                    Masking = true
                                 },
                                 new SpriteText
                                 {
@@ -87,7 +117,7 @@ public partial class ScoreListEntry : Container
                                     Font = FluXisFont.Default(28),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
-                                    Padding = new MarginPadding { Left = 10 },
+                                    Padding = new MarginPadding { Left = 60 },
                                     Y = 5
                                 },
                                 timeText = new SpriteText
@@ -96,14 +126,23 @@ public partial class ScoreListEntry : Container
                                     Font = FluXisFont.Default(),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.TopLeft,
-                                    Padding = new MarginPadding { Left = 10 }
+                                    Padding = new MarginPadding { Left = 60 }
                                 },
                                 new SpriteText
                                 {
                                     Text = score.Accuracy.ToString("00.00").Replace(",", ".") + "%",
-                                    Font = FluXisFont.Default(32),
+                                    Font = FluXisFont.Default(28),
                                     Anchor = Anchor.CentreRight,
-                                    Origin = Anchor.CentreRight,
+                                    Origin = Anchor.BottomRight,
+                                    Padding = new MarginPadding { Right = 10 },
+                                    Y = 5
+                                },
+                                new SpriteText
+                                {
+                                    Text = $"{score.MaxCombo}x",
+                                    Font = FluXisFont.Default(),
+                                    Anchor = Anchor.CentreRight,
+                                    Origin = Anchor.TopRight,
                                     Padding = new MarginPadding { Right = 10 }
                                 }
                             }
@@ -111,13 +150,39 @@ public partial class ScoreListEntry : Container
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding { Left = 10, Right = 10 },
+                            Padding = new MarginPadding { Horizontal = 10 },
                             Children = new Drawable[]
                             {
-                                new SpriteText
+                                new FillFlowContainer
                                 {
-                                    Text = score.Score.ToString("0000000"),
-                                    Font = FluXisFont.Default(32),
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Anchor = Anchor.CentreRight,
+                                    Origin = Anchor.CentreRight,
+                                    Padding = new MarginPadding { Right = 40 },
+                                    Direction = FillDirection.Vertical,
+                                    Children = new Drawable[]
+                                    {
+                                        new SpriteText
+                                        {
+                                            Text = score.Score.ToString("0000000"),
+                                            Font = FluXisFont.Default(22, true),
+                                            Anchor = Anchor.TopRight,
+                                            Origin = Anchor.TopRight
+                                        },
+                                        new SpriteText
+                                        {
+                                            Text = string.Join(" ", score.Mods),
+                                            Font = FluXisFont.Default(18, true),
+                                            Anchor = Anchor.TopRight,
+                                            Origin = Anchor.TopRight
+                                        }
+                                    }
+                                },
+                                new DrawableGrade
+                                {
+                                    Size = 32,
+                                    Grade = Enum.TryParse(score.Grade, out Grade grade) ? grade : Grade.D,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight
                                 }
@@ -127,6 +192,23 @@ public partial class ScoreListEntry : Container
                 }
             }
         };
+
+        LoadComponentAsync(new DrawableBanner(Fluxel.LoggedInUser)
+        {
+            RelativeSizeAxes = Axes.Both,
+            Depth = 1,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        }, bannerContainer.Add);
+
+        LoadComponentAsync(new DrawableAvatar(Fluxel.LoggedInUser)
+        {
+            RelativeSizeAxes = Axes.Both,
+        }, avatarContainer.Add);
+
+        this.MoveToX(100).FadeOut()
+            .Then((rank - 1) * 50)
+            .MoveToX(0, 500, Easing.OutQuint).FadeIn(400);
     }
 
     protected override void Update()
@@ -137,6 +219,8 @@ public partial class ScoreListEntry : Container
 
     protected override bool OnClick(ClickEvent e)
     {
+        if (ScoreList == null) return false;
+
         RealmMap map = mapStore.CurrentMapSet.Maps.FirstOrDefault(m => m.ID == score.MapID);
 
         if (map == null)

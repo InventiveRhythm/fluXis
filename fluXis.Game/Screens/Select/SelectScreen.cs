@@ -76,33 +76,41 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         InternalChildren = new Drawable[]
         {
-            new FluXisContextMenuContainer
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                RelativeSizeAxes = Axes.Both,
-                Width = .5f,
-                Child = MapList = new MapList()
-            },
-            SearchBar = new SearchBar(this),
-            SelectMapInfo = new SelectMapInfo { Screen = this },
-            Footer = new SelectFooter(this),
             new Container
             {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
                 RelativeSizeAxes = Axes.Both,
-                Width = .5f,
-                Child = noMapsText = new SpriteText
+                Padding = new MarginPadding { Bottom = 50 },
+                Children = new Drawable[]
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Text = "No maps found!",
-                    Font = FluXisFont.Default(32),
-                    Blending = BlendingParameters.Additive,
-                    Alpha = 0
+                    new FluXisContextMenuContainer
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        RelativeSizeAxes = Axes.Both,
+                        Width = .5f,
+                        Child = MapList = new MapList()
+                    },
+                    SearchBar = new SearchBar(this),
+                    SelectMapInfo = new SelectMapInfo { Screen = this },
+                    new Container
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        RelativeSizeAxes = Axes.Both,
+                        Width = .5f,
+                        Child = noMapsText = new SpriteText
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Text = "No maps found!",
+                            Font = FluXisFont.Default(32),
+                            Blending = BlendingParameters.Additive,
+                            Alpha = 0
+                        }
+                    },
                 }
             },
+            Footer = new SelectFooter(this),
             ModSelector = new ModSelector()
         };
 

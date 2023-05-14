@@ -16,12 +16,12 @@ public class RealmJudgements : RealmObject
 
     public RealmJudgements(Dictionary<Judgement, int> judgements)
     {
-        Flawless = judgements.ContainsKey(Judgement.Flawless) ? judgements[Judgement.Flawless] : 0;
-        Perfect = judgements.ContainsKey(Judgement.Perfect) ? judgements[Judgement.Perfect] : 0;
-        Great = judgements.ContainsKey(Judgement.Great) ? judgements[Judgement.Great] : 0;
-        Alright = judgements.ContainsKey(Judgement.Alright) ? judgements[Judgement.Alright] : 0;
-        Okay = judgements.ContainsKey(Judgement.Okay) ? judgements[Judgement.Okay] : 0;
-        Miss = judgements.ContainsKey(Judgement.Miss) ? judgements[Judgement.Miss] : 0;
+        Flawless = judgements.TryGetValue(Judgement.Flawless, out var flawless) ? flawless : 0;
+        Perfect = judgements.TryGetValue(Judgement.Perfect, out var perfect) ? perfect : 0;
+        Great = judgements.TryGetValue(Judgement.Great, out var great) ? great : 0;
+        Alright = judgements.TryGetValue(Judgement.Alright, out var alright) ? alright : 0;
+        Okay = judgements.TryGetValue(Judgement.Okay, out var okay) ? okay : 0;
+        Miss = judgements.TryGetValue(Judgement.Miss, out var miss) ? miss : 0;
     }
 
     [UsedImplicitly]
