@@ -329,6 +329,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
     {
+        if (e.Repeat) return false;
+
         switch (e.Action)
         {
             case FluXisKeybind.Restart:
