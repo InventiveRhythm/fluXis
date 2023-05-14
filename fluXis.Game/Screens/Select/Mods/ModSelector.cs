@@ -26,13 +26,18 @@ public partial class ModSelector : Container
 
         InternalChildren = new Drawable[]
         {
-            new Box
+            new ClickableContainer
             {
-                Colour = Colour4.Black,
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0.5f,
+                Action = () => IsOpen.Value = false,
+                Child = new Box
+                {
+                    Colour = Colour4.Black,
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0.5f,
+                }
             },
-            new Container
+            new ClickableContainer // make this clickable so that the mod selector doesn't close when clicking on it
             {
                 Width = 1300,
                 AutoSizeAxes = Axes.Y,
