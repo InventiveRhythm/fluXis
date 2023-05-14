@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -80,7 +81,7 @@ public partial class SettingsSlider<T> : SettingsItem
         {
             valueLabel.Text = displayAsPercentage
                 ? $"{Math.Round(Bindable.Value.ToDouble(null) * 100)}%"
-                : originalText.Replace("{value}", Bindable.Value.ToString()).Replace(",", ".");
+                : originalText.Replace("{value}", Math.Round(Bindable.Value.ToDouble(null), 2).ToString(CultureInfo.InvariantCulture));
 
             if (Bindable is BindableNumber<T> numBind)
             {

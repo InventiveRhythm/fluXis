@@ -153,12 +153,12 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisKeybind.Back or FluXisKeybind.ToggleSettings:
                 Hide();
-                return true;
+                break;
         }
 
-        return false;
+        return true;
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }

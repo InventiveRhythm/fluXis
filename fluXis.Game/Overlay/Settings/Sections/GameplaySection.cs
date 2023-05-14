@@ -19,6 +19,7 @@ public partial class GameplaySection : SettingsSection
             {
                 Label = "Scroll Speed",
                 Bindable = config.GetBindable<float>(FluXisSetting.ScrollSpeed),
+                Step = 0.1f // why is it not able to get it thru the bindable?
             },
             new SettingsToggle
             {

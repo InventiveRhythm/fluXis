@@ -86,11 +86,11 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
+                    keybinds = new FluXisKeybindContainer(this, Realm),
                     content = new Container
                     {
                         RelativeSizeAxes = Axes.Both
-                    },
-                    keybinds = new FluXisKeybindContainer(this, Realm)
+                    }
                 }
             }
         });
