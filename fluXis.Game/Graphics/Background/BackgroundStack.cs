@@ -16,8 +16,6 @@ namespace fluXis.Game.Graphics.Background;
 
 public partial class BackgroundStack : CompositeDrawable
 {
-    private FluXisConfig config;
-
     private readonly List<Background> scheduledBackgrounds = new();
     private readonly Container backgroundContainer;
     private readonly ParallaxContainer parallaxContainer;
@@ -25,20 +23,17 @@ public partial class BackgroundStack : CompositeDrawable
     private readonly Box swipeAnimation;
     private readonly Box backgroundDim;
     private string currentBackground;
-
-    private Bindable<float> backgroundDimBindable;
-    private Bindable<float> backgroundBlurBindable;
-
     private float zoom = 1;
-    private bool isZooming;
+    private float blur;
+
+    private Bindable<bool> backgroundPulse;
 
     public float Zoom
     {
         get => zoom;
         set
         {
-            isZooming = true;
-            backgroundContainer.ScaleTo(value + .05f, 1000, Easing.OutQuint).OnComplete(_ => isZooming = false);
+            backgroundContainer.ScaleTo(value + .05f, 1000, Easing.OutQuint);
             zoom = value;
         }
     }
@@ -90,28 +85,30 @@ public partial class BackgroundStack : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
-        backgroundDimBindable = config.GetBindable<float>(FluXisSetting.BackgroundDim);
-        backgroundBlurBindable = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
-        this.config = config;
+        backgroundPulse = config.GetBindable<bool>(FluXisSetting.BackgroundPulse);
     }
 
-    protected override void LoadComplete()
+    public void SetDim(float alpha, float duration = 200) => backgroundDim.FadeTo(alpha, duration);
+
+    public void SetBlur(float blur, float duration = 200)
     {
-        backgroundDimBindable.BindValueChanged(_ => backgroundDim.Alpha = backgroundDimBindable.Value, true);
+        if (this.blur == blur)
+            return;
 
-        backgroundBlurBindable.BindValueChanged(_ =>
+        this.blur = blur;
+
+        if (backgroundContainer.Last() is Background background) // 🧀 transforming blur is laggy so we just replace the background
         {
-            foreach (var background in backgroundContainer)
+            string texture = background.Texture;
+            Schedule(() =>
             {
-                if (background is Background b)
+                backgroundContainer.Add(new Background(texture)
                 {
-                    if (b.Blur != backgroundBlurBindable.Value)
-                        b.Blur = backgroundBlurBindable.Value;
-                }
-            }
-        }, true);
-
-        base.LoadComplete();
+                    Blur = blur,
+                    Duration = duration
+                });
+            });
+        }
     }
 
     protected override void Update()
@@ -131,7 +128,7 @@ public partial class BackgroundStack : CompositeDrawable
                 break;
         }
 
-        if (config.Get<bool>(FluXisSetting.BackgroundPulse))
+        if (backgroundPulse.Value)
         {
             var amplitude = Conductor.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
             Scale = new Vector2(1 + amplitude * .02f);
@@ -151,7 +148,7 @@ public partial class BackgroundStack : CompositeDrawable
             return;
 
         currentBackground = path;
-        scheduledBackgrounds.Add(new Background(path));
+        scheduledBackgrounds.Add(new Background(path) { Blur = blur });
     }
 
     public void SetVideoBackground(RealmMap map, MapInfo info, int delay = 2000)

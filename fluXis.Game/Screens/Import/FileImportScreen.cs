@@ -20,6 +20,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
     public override float Zoom => 1.4f;
     public override float ParallaxStrength => 3f;
     public override bool ShowToolbar => false;
+    public override float BackgroundBlur => 0.2f;
 
     public Action<FileInfo> OnFileSelected { get; set; }
     public string[] AllowedExtensions { get; set; } = null;

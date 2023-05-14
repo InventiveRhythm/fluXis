@@ -1,4 +1,3 @@
-using fluXis.Game.Configuration;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,7 +9,9 @@ namespace fluXis.Game.Graphics.Background;
 
 public partial class Background : CompositeDrawable
 {
-    private readonly string texture;
+    public readonly string Texture;
+    public float Duration { get; set; } = 300;
+
     private readonly Sprite sprite;
     private readonly BufferedContainer buffer;
 
@@ -22,7 +23,7 @@ public partial class Background : CompositeDrawable
 
     public Background(string path)
     {
-        texture = path;
+        Texture = path;
         RelativeSizeAxes = Axes.Both;
 
         AddInternal(buffer = new BufferedContainer(cachedFrameBuffer: true)
@@ -40,16 +41,15 @@ public partial class Background : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures, BackgroundTextureStore backgrounds, FluXisConfig config)
+    private void load(TextureStore textures, BackgroundTextureStore backgrounds)
     {
-        sprite.Texture = backgrounds.Get(texture) ?? textures.Get(@"Backgrounds/default.png");
-        Blur = config.Get<float>(FluXisSetting.BackgroundBlur);
+        sprite.Texture = backgrounds.Get(Texture) ?? textures.Get(@"Backgrounds/default.png");
         Alpha = 0f;
     }
 
     protected override void LoadComplete()
     {
-        this.FadeInFromZero(300);
+        this.FadeInFromZero(Duration);
         base.LoadComplete();
     }
 }

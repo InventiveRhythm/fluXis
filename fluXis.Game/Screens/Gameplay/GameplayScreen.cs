@@ -186,6 +186,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         Conductor.SetSpeed(1, 0);
         backgrounds.SetVideoBackground(RealmMap, Map);
 
+        backgrounds.SetDim(config.Get<float>(FluXisSetting.BackgroundDim), 600);
+        backgrounds.SetBlur(config.Get<float>(FluXisSetting.BackgroundBlur), 600);
+
         base.LoadComplete();
     }
 

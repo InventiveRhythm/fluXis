@@ -33,6 +33,7 @@ namespace fluXis.Game.Screens.Select;
 public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override float Zoom => 1.1f;
+    public override float BackgroundBlur => 0.25f;
 
     [Resolved]
     private MapStore mapStore { get; set; }

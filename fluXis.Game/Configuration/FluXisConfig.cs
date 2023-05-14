@@ -20,7 +20,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.HitErrorScale, 1f, 0.5f, 1.2f, 0.01f);
         SetDefault(FluXisSetting.LaneSwitchAlerts, true);
 
-        SetDefault(FluXisSetting.BackgroundDim, 0.25f, 0f, 1f, 0.01f);
+        SetDefault(FluXisSetting.BackgroundDim, 0.4f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.BackgroundBlur, 0f, 0f, 1f, 0.01f);
 
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
