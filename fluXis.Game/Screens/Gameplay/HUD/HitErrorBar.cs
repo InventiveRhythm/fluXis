@@ -116,10 +116,10 @@ public partial class HitErrorBar : GameplayHUDElement
 
     public void AddHit(HitStat stat)
     {
-        float time = stat.Difference;
+        float time = -stat.Difference;
         HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(time));
 
-        icon.MoveToX(time, 100, Easing.OutQuint);
+        icon.MoveToX(time, 300, Easing.OutQuint);
 
         CircularContainer hit = new CircularContainer
         {
