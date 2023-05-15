@@ -23,23 +23,18 @@ public partial class SettingsKeybind : SettingsItem
 
     public override bool AcceptsFocus => true;
 
-    private readonly FillFlowContainer<KeybindContainer> flow;
-    private readonly FluXisKeybind[] keybinds;
+    public FluXisKeybind[] Keybinds;
+
+    private FillFlowContainer<KeybindContainer> flow;
     private FluXisKeybindContainer container;
 
     public int Index = -1;
 
-    public SettingsKeybind(string label, FluXisKeybind[] keybinds)
+    [BackgroundDependencyLoader]
+    private void load(FluXisRealm realm, FluXisKeybindContainer container)
     {
-        this.keybinds = keybinds;
-
-        Add(new SpriteText
-        {
-            Text = label,
-            Font = FluXisFont.Default(24),
-            Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft
-        });
+        this.realm = realm;
+        this.container = container;
 
         Add(flow = new FillFlowContainer<KeybindContainer>
         {
@@ -51,13 +46,10 @@ public partial class SettingsKeybind : SettingsItem
         });
     }
 
-    [BackgroundDependencyLoader]
-    private void load(FluXisRealm realm, FluXisKeybindContainer container)
+    protected override void LoadComplete()
     {
-        this.realm = realm;
-        this.container = container;
-
-        foreach (var keybind in keybinds)
+        // we need this here because else the keybinds will be empty on first start
+        foreach (var keybind in Keybinds)
         {
             flow.Add(new KeybindContainer
             {
@@ -146,9 +138,9 @@ public partial class SettingsKeybind : SettingsItem
     {
         if (e.Repeat || Index == -1 || !HasFocus) return false;
 
-        if (Index < keybinds.Length)
+        if (Index < Keybinds.Length)
         {
-            var keybind = keybinds[Index];
+            var keybind = Keybinds[Index];
             var iKey = fromEvent(e.Key);
 
             if (iKey == InputKey.Escape)

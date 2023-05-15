@@ -1,4 +1,3 @@
-using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -18,13 +17,6 @@ public partial class SettingsToggle : SettingsItem
     {
         AddRange(new Drawable[]
         {
-            new SpriteText
-            {
-                Text = Label,
-                Font = FluXisFont.Default(24),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
-            },
             icon = new SpriteIcon
             {
                 Anchor = Anchor.CentreRight,

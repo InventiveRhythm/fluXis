@@ -19,8 +19,6 @@ public partial class SettingsDropdown<T> : SettingsItem
     public Bindable<T> Bindable { get; set; }
     public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
 
-    private SettingsDropdownMenu dropdown;
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -28,21 +26,11 @@ public partial class SettingsDropdown<T> : SettingsItem
         Content.RelativeSizeAxes = Axes.X;
         Content.AutoSizeAxes = Axes.Y;
 
-        Children = new Drawable[]
+        Add(new SettingsDropdownMenu
         {
-            new SpriteText
-            {
-                Text = Label,
-                Font = FluXisFont.Default(24),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
-            },
-            dropdown = new SettingsDropdownMenu
-            {
-                Items = Items,
-                Current = Bindable
-            }
-        };
+            Items = Items,
+            Current = Bindable
+        });
     }
 
     private partial class SettingsDropdownMenu : Dropdown<T>
@@ -53,7 +41,7 @@ public partial class SettingsDropdown<T> : SettingsItem
             Width = 400;
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;
-            Margin = new MarginPadding { Vertical = 15 };
+            Margin = new MarginPadding { Vertical = 5 };
         }
 
         protected override DropdownHeader CreateHeader() => new FluXisDropdownHeader();

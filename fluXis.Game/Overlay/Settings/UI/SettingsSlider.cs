@@ -24,13 +24,6 @@ public partial class SettingsSlider<T> : SettingsItem
     {
         AddRange(new Drawable[]
         {
-            new SpriteText
-            {
-                Text = Label,
-                Font = FluXisFont.Default(24),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
-            },
             valueLabel = new SpriteText
             {
                 Text = ValueLabel,
