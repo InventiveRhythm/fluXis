@@ -25,6 +25,7 @@ public partial class EditorToolboxItem : Container
     public EditorTool Tool { get; init; }
 
     private readonly EditorPlayfield playfield;
+    private EditorTool? currentTool;
 
     private readonly SpriteIcon icon;
     private readonly SpriteText text;
@@ -34,9 +35,9 @@ public partial class EditorToolboxItem : Container
     {
         this.playfield = playfield;
 
-        Height = 64;
+        Height = 48;
         RelativeSizeAxes = Axes.X;
-        CornerRadius = 10;
+        CornerRadius = 5;
         Masking = true;
 
         Children = new Drawable[]
@@ -51,21 +52,40 @@ public partial class EditorToolboxItem : Container
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            icon = new SpriteIcon
+            new FillFlowContainer
             {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.Centre,
-                Size = new Vector2(32),
-                Margin = new MarginPadding { Left = 64 }
-            },
-            text = new SpriteText
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 74 },
-                Font = FluXisFont.Default(32)
+                RelativeSizeAxes = Axes.Both,
+                Direction = FillDirection.Horizontal,
+                Spacing = new Vector2(12, 0),
+                Padding = new MarginPadding(12),
+                Children = new Drawable[]
+                {
+                    icon = new SpriteIcon
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Size = new Vector2(24)
+                    },
+                    text = new SpriteText
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Font = FluXisFont.Default(20)
+                    }
+                }
             }
         };
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (currentTool != playfield.Tool)
+        {
+            currentTool = playfield.Tool;
+            hover.FadeTo(currentTool == Tool ? .1f : 0, 200);
+        }
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -84,6 +104,6 @@ public partial class EditorToolboxItem : Container
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.FadeTo(playfield.Tool == Tool ? .1f : 0, 200);
     }
 }

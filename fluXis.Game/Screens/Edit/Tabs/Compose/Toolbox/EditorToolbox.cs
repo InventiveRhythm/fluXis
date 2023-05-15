@@ -10,13 +10,16 @@ namespace fluXis.Game.Screens.Edit.Tabs.Compose.Toolbox;
 
 public partial class EditorToolbox : Container
 {
+    private const int padding = 5;
+    private const int size_closed = 48 + padding * 2;
+    private const int size_open = 200;
+
     public EditorToolbox(EditorPlayfield playfield)
     {
-        AutoSizeAxes = Axes.Y;
-        Width = 84;
+        RelativeSizeAxes = Axes.Y;
+        Width = size_closed;
         CornerRadius = 10;
         Masking = true;
-        Alpha = 0.5f;
 
         Children = new Drawable[]
         {
@@ -30,8 +33,8 @@ public partial class EditorToolbox : Container
                 AutoSizeAxes = Axes.Y,
                 RelativeSizeAxes = Axes.X,
                 Direction = FillDirection.Vertical,
-                Spacing = new Vector2(0, 10),
-                Padding = new MarginPadding(10),
+                Spacing = new Vector2(0, padding),
+                Padding = new MarginPadding(padding),
                 Children = new Drawable[]
                 {
                     new EditorToolboxItem(playfield)
@@ -59,15 +62,13 @@ public partial class EditorToolbox : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        this.FadeIn(200)
-            .ResizeWidthTo(400, 200, Easing.OutQuint);
+        this.ResizeWidthTo(size_open, 200, Easing.OutQuint);
 
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        this.FadeTo(.5f, 200)
-            .ResizeWidthTo(84, 200, Easing.OutQuint);
+        this.ResizeWidthTo(size_closed, 200, Easing.OutQuint);
     }
 }
