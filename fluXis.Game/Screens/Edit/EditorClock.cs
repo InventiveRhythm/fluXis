@@ -23,6 +23,7 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     public double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => underlying.TimeInfo;
     public double CurrentTime => underlying.CurrentTime;
+    public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
     public IClock Source => underlying.Source;
     public bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
@@ -42,6 +43,8 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     private readonly FramedMapClock underlying;
     private readonly Bindable<Track> track = new();
     private readonly Bindable<double> rate = new(1);
+
+    private bool playbackFinished;
 
     public EditorClock(MapInfo mapInfo)
     {
@@ -88,6 +91,10 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     public void Start()
     {
         ClearTransforms();
+
+        if (playbackFinished)
+            underlying.Seek(0);
+
         underlying.Start();
     }
 
@@ -101,6 +108,65 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         ClearTransforms();
         position = Math.Clamp(position, 0, TrackLength);
         return underlying.Seek(position);
+    }
+
+    public void SeekBackward(double amount) => seek(-1, amount + (IsRunning ? 1.5 : 0));
+    public void SeekForward(double amount) => seek(1, amount);
+
+    private void seek(int direction, double amount)
+    {
+        if (amount <= 0) return;
+
+        double time = CurrentTimeAccurate;
+        var tp = MapInfo.GetTimingPoint((float)time);
+
+        if (direction < 0 && tp.Time == time)
+            tp = MapInfo.GetTimingPoint((float)(time - 1));
+
+        double sAmount = tp.MsPerBeat / 4 * amount;
+        double sTime = time + sAmount * direction;
+
+        if (IsRunning || MapInfo.TimingPoints.Count == 0)
+        {
+            SeekSmoothly(sTime);
+            return;
+        }
+
+        sTime -= tp.Time;
+
+        int closest;
+        if (direction > 0) closest = (int)Math.Floor(sTime / sAmount);
+        else closest = (int)Math.Ceiling(sTime / sAmount);
+
+        sTime = tp.Time + closest * sAmount;
+
+        var nextTimingPoint = MapInfo.TimingPoints.FirstOrDefault(t => t.Time > tp.Time);
+        if (sTime > nextTimingPoint?.Time)
+            sTime = nextTimingPoint.Time;
+
+        if (Precision.AlmostEquals(time, sTime, 0.5f))
+        {
+            closest += direction > 0 ? 1 : -1;
+            sTime = tp.Time + closest * sAmount;
+        }
+
+        if (sTime < tp.Time && !ReferenceEquals(tp, MapInfo.TimingPoints.First()))
+            sTime = tp.Time;
+
+        SeekSmoothly(sTime);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        playbackFinished = CurrentTime >= TrackLength;
+
+        if (playbackFinished)
+        {
+            if (IsRunning) underlying.Stop();
+            if (CurrentTime > TrackLength) underlying.Seek(TrackLength);
+        }
     }
 
     public void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();

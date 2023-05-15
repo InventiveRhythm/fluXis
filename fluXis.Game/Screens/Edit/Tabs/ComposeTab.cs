@@ -60,6 +60,8 @@ public partial class ComposeTab : EditorTab
         return base.OnKeyDown(e);
     }
 
+    private double accumulation;
+
     protected override bool OnScroll(ScrollEvent e)
     {
         int delta = e.ScrollDelta.Y > 0 ? 1 : -1;
@@ -68,9 +70,37 @@ public partial class ComposeTab : EditorTab
         {
             values.Zoom += delta * .1f;
             values.Zoom = Math.Clamp(values.Zoom, .5f, 5f);
-            return true;
+        }
+        else
+        {
+            if (accumulation != 0 && Math.Sign(accumulation) != delta)
+                accumulation = delta * (1 - Math.Abs(accumulation));
+
+            accumulation += e.ScrollDelta.Y;
+
+            while (Math.Abs(accumulation) >= 1)
+            {
+                seek(accumulation > 0 ? 1 : -1);
+                accumulation = accumulation < 0 ? Math.Min(0, accumulation + 1) : Math.Max(0, accumulation - 1);
+            }
         }
 
-        return false;
+        return true;
+    }
+
+    private void seek(int direction)
+    {
+        double amount = 1;
+
+        if (clock.IsRunning)
+        {
+            var tp = values.MapInfo.GetTimingPoint(Conductor.CurrentTime);
+            amount *= 4 * (tp.BPM / 120);
+        }
+
+        if (direction < 1)
+            clock.SeekBackward(amount);
+        else
+            clock.SeekForward(amount);
     }
 }
