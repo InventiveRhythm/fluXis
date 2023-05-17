@@ -60,6 +60,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private Container tabs;
     private int currentTab;
 
+    private EditorMenuBar menuBar;
+    private EditorTabSwitcher tabSwitcher;
+    private EditorBottomBar bottomBar;
+
     private EditorClock clock;
     private Bindable<Waveform> waveform;
     private EditorChangeHandler changeHandler;
@@ -106,6 +110,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             {
                 Padding = new MarginPadding(10) { Top = 50, Bottom = 60 },
                 RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
                     new SetupTab(this),
@@ -113,7 +119,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     new TimingTab(this)
                 }
             },
-            new EditorMenuBar
+            menuBar = new EditorMenuBar
             {
                 Items = new MenuItem[]
                 {
@@ -169,7 +175,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     }
                 }
             },
-            new EditorTabSwitcher
+            tabSwitcher = new EditorTabSwitcher
             {
                 Children = new EditorTabSwitcherButton[]
                 {
@@ -190,7 +196,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     }
                 }
             },
-            new EditorBottomBar { Editor = this }
+            bottomBar = new EditorBottomBar { Editor = this }
         };
     }
 
@@ -283,18 +289,34 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
     }
 
-    public override void OnEntering(ScreenTransitionEvent e)
-    {
-        this.FadeInFromZero(100);
-        base.OnEntering(e);
-    }
-
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOut(100);
+        exitAnimation();
         clock.Stop();
         Conductor.Seek((float)clock.CurrentTime);
         return false;
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e) => enterAnimation();
+    public override void OnResuming(ScreenTransitionEvent e) => enterAnimation();
+    public override void OnSuspending(ScreenTransitionEvent e) => exitAnimation();
+
+    private void exitAnimation()
+    {
+        this.FadeOut(200);
+        menuBar.MoveToY(-menuBar.Height, 300, Easing.OutQuint);
+        tabSwitcher.MoveToY(-menuBar.Height, 300, Easing.OutQuint);
+        bottomBar.MoveToY(bottomBar.Height, 300, Easing.OutQuint);
+        tabs.ScaleTo(.9f, 300, Easing.OutQuint);
+    }
+
+    private void enterAnimation()
+    {
+        this.FadeInFromZero(200);
+        menuBar.MoveToY(0, 300, Easing.OutQuint);
+        tabSwitcher.MoveToY(0, 300, Easing.OutQuint);
+        bottomBar.MoveToY(0, 300, Easing.OutQuint);
+        tabs.ScaleTo(1, 300, Easing.OutQuint);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
