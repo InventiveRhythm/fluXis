@@ -72,6 +72,9 @@ public partial class EditorPlayfield : Container
     private EditorHitObject ghostNote;
     private bool isDragging;
 
+    private Box hitPosLine;
+    private FluXisTextFlow debugText;
+
     public EditorPlayfield(ComposeTab tab)
     {
         Tab = tab;
@@ -123,12 +126,12 @@ public partial class EditorPlayfield : Container
                         HighColour = FluXisColors.Accent4
                     },
                     getColumnDividers(),
-                    new Box // hit position line
+                    hitPosLine = new Box
                     {
                         Height = 3,
                         RelativeSizeAxes = Axes.X,
                         Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
+                        Origin = Anchor.TopLeft,
                         Y = -HITPOSITION_Y
                     },
                     TimingLines = new Container<EditorTimingLine>
@@ -172,6 +175,14 @@ public partial class EditorPlayfield : Container
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0.2f
                 }
+            },
+            debugText = new FluXisTextFlow
+            {
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                TextAnchor = Anchor.TopRight,
+                AutoSizeAxes = Axes.Both,
+                Margin = new MarginPadding { Right = 10, Top = 10 }
             }
         };
 
@@ -283,11 +294,17 @@ public partial class EditorPlayfield : Container
 
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
+        string debug = "";
+        debug += $"Time: {getTimeFromMouse(e.MousePosition)}ms\nLane: {getLaneFromMouse(e.ScreenSpaceMousePosition)}";
+        debug += $"\nMouse Global: {e.MousePosition}";
+
+        debugText.Text = debug;
+
         switch (Tool)
         {
             case EditorTool.Long when isDragging:
             {
-                float holdTime = getTimeFromMouseSnapped(PlayfieldContainer.ToLocalSpace(e.MousePosition)) - ghostNote.Info.Time;
+                float holdTime = getTimeFromMouseSnapped(e.MousePosition) - ghostNote.Info.Time;
                 if (holdTime < 0) holdTime = 0;
                 ghostNote.Info.HoldTime = holdTime;
                 break;
@@ -298,7 +315,7 @@ public partial class EditorPlayfield : Container
                 break;
 
             default:
-                updateGhostNote(e.MousePosition);
+                updateGhostNote(e);
                 break;
         }
 
@@ -315,7 +332,7 @@ public partial class EditorPlayfield : Container
                     case EditorTool.Select:
                         SelectionStart = e.MousePosition;
                         SelectionStartTime = getTimeFromMouse(e.MousePosition);
-                        SelectionStartLane = getLaneFromMouse(PlayfieldContainer.ToLocalSpace(e.MousePosition));
+                        SelectionStartLane = getLaneFromMouse(e.ScreenSpaceMousePosition);
                         SelectionContainer.FadeIn(SELECTION_FADE);
                         SelectionNow = e.MousePosition;
                         Selecting = true;
@@ -403,9 +420,8 @@ public partial class EditorPlayfield : Container
         SelectedHitObjects.ForEach(h => h.UpdateSelection(false));
         SelectedHitObjects.Clear();
 
-        var selectionEnd = PlayfieldContainer.ToLocalSpace(SelectionNow);
-        var timeEnd = getTimeFromMouseSnapped(selectionEnd);
-        var laneEnd = getLaneFromMouse(selectionEnd);
+        var timeEnd = getTimeFromMouseSnapped(SelectionNow);
+        var laneEnd = getLaneFromMouse(SelectionNow);
 
         bool laneReversed = laneEnd < SelectionStartLane;
         bool timeReversed = timeEnd < SelectionStartTime;
@@ -431,10 +447,10 @@ public partial class EditorPlayfield : Container
         }
     }
 
-    private void updateGhostNote(Vector2 mouse)
+    private void updateGhostNote(MouseMoveEvent e)
     {
-        var localMouse = PlayfieldContainer.ToLocalSpace(mouse);
-        int lane = getLaneFromMouse(localMouse);
+        var mouse = e.MousePosition;
+        int lane = getLaneFromMouse(e.ScreenSpaceMousePosition);
 
         if (lane < 1 || lane > Map.KeyCount || Tool is EditorTool.Select)
         {
@@ -444,16 +460,29 @@ public partial class EditorPlayfield : Container
         }
 
         ghostNote.Info.Lane = lane;
-        ghostNote.Info.Time = getTimeFromMouseSnapped(localMouse);
+        ghostNote.Info.Time = getTimeFromMouseSnapped(mouse);
         ghostNote.FadeTo(0.5f, 100);
         notePlacable = true;
     }
 
-    private float getTimeFromMouse(Vector2 mouse) => (float)clock.CurrentTime + (DrawHeight - 60 - HITPOSITION_Y - mouse.Y);
-    private float getTimeFromMouseSnapped(Vector2 mouse) => SnapTime(getTimeFromMouse(mouse));
-    private int getLaneFromMouse(Vector2 mouse) => (int)(mouse.X / COLUMN_WIDTH) + 1;
+    private float getTimeFromMouse(Vector2 mouse)
+    {
+        float distance = DrawHeight - HITPOSITION_Y - mouse.Y;
+        distance *= 2;
+        distance /= values.Zoom;
+        return distance + (float)clock.CurrentTime;
+    }
 
-    private float getYFromTime(float time) => DrawHeight - 60 - HITPOSITION_Y - (time - (float)clock.CurrentTime);
+    private float getTimeFromMouseSnapped(Vector2 mouse) => SnapTime(getTimeFromMouse(mouse));
+
+    private int getLaneFromMouse(Vector2 mouse) // 🍝 i think
+    {
+        float distance = mouse.X - hitPosLine.ScreenSpaceDrawQuad.TopLeft.X;
+        float columnWidth = hitPosLine.ScreenSpaceDrawQuad.Width / Map.KeyCount;
+        return (int)Math.Ceiling(distance / columnWidth);
+    }
+
+    private float getYFromTime(float time) => DrawHeight - HITPOSITION_Y - .5f * ((time - (float)clock.CurrentTime) * values.Zoom);
 
     public EditorHitObject GetHitObjectAt(float time, int lane)
     {
