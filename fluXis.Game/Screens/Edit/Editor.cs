@@ -377,6 +377,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
                 r.Remove(existingMap.Metadata);
                 existingMap.Difficulty = MapInfo.Metadata.Difficulty;
+                existingMap.MapSet.Cover = Map.MapSet.Cover;
                 existingMap.Metadata = new RealmMapMetadata
                 {
                     Title = MapInfo.Metadata.Title,
@@ -386,7 +387,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     Tags = MapInfo.Metadata.Tags,
                     Background = MapInfo.BackgroundFile,
                     Audio = MapInfo.AudioFile,
-                    PreviewTime = MapInfo.Metadata.PreviewTime,
+                    PreviewTime = MapInfo.Metadata.PreviewTime
                 };
 
                 mapStore.UpdateMapSet(Map.MapSet, set.Detach());
@@ -450,6 +451,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         MapInfo.BackgroundFile = file.Name;
         Map.Metadata.Background = file.Name;
         backgrounds.AddBackgroundFromMap(Map);
+    }
+
+    public void SetCover(FileInfo file)
+    {
+        if (file == null)
+            return;
+
+        copyFile(file);
+        Map.MapSet.Cover = file.Name;
     }
 
     public void SetVideo(FileInfo file)

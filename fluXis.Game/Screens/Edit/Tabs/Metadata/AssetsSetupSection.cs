@@ -35,6 +35,12 @@ public partial class AssetsSetupSection : SetupSection
             },
             new AssetsSetupTextBox
             {
+                Label = "Cover",
+                AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                OnFileSelected = file => values.Editor.SetCover(file)
+            },
+            new AssetsSetupTextBox
+            {
                 Label = "Video",
                 AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
                 OnFileSelected = file => values.Editor.SetVideo(file)

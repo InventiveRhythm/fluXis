@@ -166,7 +166,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         Schedule(() =>
         {
-            mapStore.DeleteMapSet(oldSet);
             MapList.Remove(lookup[oldSet], false);
             Maps.Remove(oldSet);
             lookup.Remove(oldSet);
