@@ -1,5 +1,6 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,6 +12,9 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
 public partial class KeyModeSetupSection : SetupSection
 {
+    [Resolved]
+    private EditorValues values { get; set; }
+
     private readonly FillFlowContainer<KeyModeButton> keyModeContainer;
 
     public KeyModeSetupSection(RealmMap map)
@@ -50,6 +54,7 @@ public partial class KeyModeSetupSection : SetupSection
     public void SetKeyMode(int keyMode)
     {
         keyModeContainer.Children.ForEach(b => b.Selected = b.KeyMode == keyMode);
+        values?.Editor.SetKeyMode(keyMode);
     }
 
     private partial class KeyModeButton : Container

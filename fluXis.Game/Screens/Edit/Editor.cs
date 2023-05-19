@@ -430,6 +430,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     public void TryExit() => this.Exit(); // TODO: unsaved changes check
     public void SendWipNotification() => notifications.Post("This is still in development\nCome back later!");
 
+    public void SetKeyMode(int keyMode)
+    {
+        if (keyMode < Map.KeyCount)
+        {
+            // check if can be changed
+        }
+
+        Map.KeyCount = keyMode;
+        MapInfo.KeyCount = keyMode;
+        changeHandler.OnKeyModeChanged.Invoke(keyMode);
+    }
+
     public void SetAudio(FileInfo file)
     {
         if (file == null)

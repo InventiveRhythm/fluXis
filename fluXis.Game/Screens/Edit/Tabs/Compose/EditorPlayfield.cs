@@ -59,6 +59,7 @@ public partial class EditorPlayfield : Container
     public WaveformGraph Waveform { get; set; }
     public Container LaneSwitchContainer { get; set; }
     public Container EffectContainer { get; set; }
+    public Container ColumnDividerContainer { get; set; }
 
     public Vector2 SelectionStart { get; set; }
     public Vector2 SelectionNow { get; set; }
@@ -125,7 +126,7 @@ public partial class EditorPlayfield : Container
                         MidColour = FluXisColors.Accent3,
                         HighColour = FluXisColors.Accent4
                     },
-                    getColumnDividers(),
+                    ColumnDividerContainer = getColumnDividers(),
                     hitPosLine = new Box
                     {
                         Height = 3,
@@ -198,6 +199,7 @@ public partial class EditorPlayfield : Container
         changeHandler.OnTimingPointAdded += RedrawLines;
         changeHandler.OnTimingPointRemoved += RedrawLines;
         changeHandler.OnTimingPointChanged += RedrawLines;
+        changeHandler.OnKeyModeChanged += onKeyModeChanged;
     }
 
     private Container getColumnDividers()
@@ -279,6 +281,18 @@ public partial class EditorPlayfield : Container
         FutureTimingLines.Clear();
         TimingLines.Clear();
         loadTimingLines();
+    }
+
+    private void onKeyModeChanged(int keys)
+    {
+        PlayfieldContainer.Width = COLUMN_WIDTH * keys;
+        Waveform.Height = COLUMN_WIDTH * keys;
+        EffectContainer.Clear();
+        LaneSwitchContainer.Clear();
+        loadEvents();
+
+        ColumnDividerContainer.Clear();
+        ColumnDividerContainer.Add(getColumnDividers());
     }
 
     protected override bool OnHover(HoverEvent e)
