@@ -1,7 +1,11 @@
+using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
@@ -13,6 +17,7 @@ public partial class Playfield : CompositeDrawable
     public HitObjectManager Manager;
     public TimingLineManager TimingLineManager;
     public Stage Stage;
+    public Box HitLine;
 
     public MapInfo Map { get; }
 
@@ -36,6 +41,14 @@ public partial class Playfield : CompositeDrawable
             Direction = FillDirection.Horizontal,
         };
 
+        HitLine = new Box
+        {
+            Anchor = Anchor.BottomCentre,
+            Origin = Anchor.TopCentre,
+            Height = 3,
+            Colour = ColourInfo.GradientHorizontal(FluXisColors.Accent3, FluXisColors.Accent)
+        };
+
         Manager = new HitObjectManager(this);
         Manager.LoadMap(Map);
 
@@ -52,7 +65,8 @@ public partial class Playfield : CompositeDrawable
             Stage,
             TimingLineManager,
             Manager,
-            Receptors
+            Receptors,
+            HitLine
         };
     }
 
@@ -60,5 +74,11 @@ public partial class Playfield : CompositeDrawable
     {
         TimingLineManager.CreateLines(Map);
         base.LoadComplete();
+    }
+
+    protected override void Update()
+    {
+        HitLine.Y = -Receptors.First().HitPosition;
+        HitLine.Width = Stage.Background.Width;
     }
 }

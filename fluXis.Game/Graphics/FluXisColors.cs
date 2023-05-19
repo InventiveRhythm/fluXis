@@ -75,24 +75,24 @@ public class FluXisColors
             4 => lane switch
             {
                 1 or 4 => Accent,
-                _ => Accent3
+                _ => Accent4
             },
             5 => lane switch
             {
                 1 or 5 => Accent,
-                2 or 4 => Accent3,
-                _ => Accent4
+                2 or 4 => Accent4,
+                _ => Accent.Lighten(.4f)
             },
             6 => lane switch
             {
-                1 or 3 or 4 or 6 => Accent3,
+                1 or 3 or 4 or 6 => Accent4,
                 _ => Accent
             },
             7 => lane switch
             {
-                1 or 3 or 5 or 7 => Accent3,
+                1 or 3 or 5 or 7 => Accent4,
                 2 or 6 => Accent,
-                _ => Accent4
+                _ => Accent.Lighten(.4f)
             },
             _ => Colour4.White
         };
