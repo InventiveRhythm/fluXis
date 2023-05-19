@@ -43,6 +43,6 @@ public partial class ParallaxContainer : Container
     {
         float x = (mousepos.X - DrawSize.X / 2) / (DrawSize.X / 2);
         float y = (mousepos.Y - DrawSize.Y / 2) / (DrawSize.Y / 2);
-        return new Vector2(-x * Strength, -y * Strength);
+        return new Vector2(x * Strength, y * Strength);
     }
 }
