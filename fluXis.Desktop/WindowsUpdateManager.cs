@@ -19,6 +19,7 @@ public partial class WindowsUpdateManager : Component
     private async void load()
     {
         var manager = new GithubUpdateManager(@"https://github.com/TeamFluXis/fluXis", false, null, "fluXis");
+        // var manager = new UpdateManager(@"C:\Users\Flux\fluXis_dev", "fluXis");
 
         if (manager.CurrentlyInstalledVersion() is { } version)
             Logger.Log($"Current version: {version}", LoggingTarget.Runtime, LogLevel.Important);
@@ -37,19 +38,26 @@ public partial class WindowsUpdateManager : Component
             return;
         }
 
+        var loading = new LoadingNotification
+        {
+            TextLoading = "Applying update...",
+            TextSuccess = "Update applied. Restarting...",
+            TextFailure = "Update failed. Check logs for more information."
+        };
+
         try
         {
             notifications.Post("An update is available. Downloading...");
             await manager.DownloadReleases(info.ReleasesToApply).ConfigureAwait(false);
-            notifications.Post("Applying update...");
+            notifications.AddNotification(loading);
             await manager.ApplyReleases(info).ConfigureAwait(false);
-            notifications.Post("Updates applied. Restarting...");
-            FluXisGame.ExitGame();
+            loading.State = LoadingState.Loaded;
+            await UpdateManager.RestartAppWhenExited().ContinueWith(_ => FluXisGame.ExitGame());
         }
         catch (Exception e)
         {
             Logger.Error(e, "Update failed.");
-            notifications.Post("Update failed. Check logs for more information.");
+            loading.State = LoadingState.Failed;
             throw;
         }
     }
