@@ -190,10 +190,8 @@ public partial class EditorPlayfield : Container
         loadHitObjects();
         loadEvents();
 
-        waveform.BindValueChanged(w =>
-        {
-            Waveform.Waveform = w.NewValue;
-        }, true);
+        waveform.BindValueChanged(w => Waveform.Waveform = w.NewValue, true);
+        values.WaveformOpacity.BindValueChanged(opacity => Waveform.FadeTo(opacity.NewValue, 200), true);
 
         changeHandler.OnTimingPointAdded += RedrawLines;
         changeHandler.OnTimingPointRemoved += RedrawLines;
