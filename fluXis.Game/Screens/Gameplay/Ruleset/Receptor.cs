@@ -31,7 +31,7 @@ public partial class Receptor : CompositeDrawable
         this.id = id;
         Playfield = playfield;
         currentKeyCount = playfield.Map.InitialKeyCount;
-        color = FluXisColors.GetLaneColor(id + 1, currentKeyCount);
+        color = FluXisColors.GetLaneColor(id + 1, playfield.Map.KeyCount);
     }
 
     [BackgroundDependencyLoader]
