@@ -14,7 +14,4 @@
     <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
     <PackageReference Include="ppy.osu.Framework.Android" Version="2023.506.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
 </Project>
