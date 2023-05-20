@@ -14,7 +14,8 @@ public partial class EditorTimeline : Container
     [Resolved]
     private EditorClock clock { get; set; }
 
-    public EditorBottomBar BottomBar { get; set; }
+    [Resolved]
+    private EditorValues values { get; set; }
 
     private CircularContainer currentTimeIndicator;
     private CircularContainer line;
@@ -62,7 +63,7 @@ public partial class EditorTimeline : Container
             }
         };
 
-        foreach (var timingPoint in BottomBar.Editor.MapInfo.TimingPoints)
+        foreach (var timingPoint in values.Editor.MapInfo.TimingPoints)
         {
             timingPoints.Add(new CircularContainer
             {

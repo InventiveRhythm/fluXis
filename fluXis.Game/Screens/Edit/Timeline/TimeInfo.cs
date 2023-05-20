@@ -12,7 +12,8 @@ public partial class TimeInfo : Container
     [Resolved]
     private EditorClock clock { get; set; }
 
-    public EditorBottomBar BottomBar { get; set; }
+    [Resolved]
+    private EditorValues values { get; set; }
 
     private SpriteText timeText;
     private SpriteText bpmText;
@@ -45,6 +46,6 @@ public partial class TimeInfo : Container
     protected override void Update()
     {
         timeText.Text = TimeUtils.Format(clock.CurrentTime);
-        bpmText.Text = $"{BottomBar.Editor.MapInfo.GetTimingPoint((float)clock.CurrentTime)?.BPM} BPM";
+        bpmText.Text = $"{values.Editor.MapInfo.GetTimingPoint((float)clock.CurrentTime)?.BPM} BPM";
     }
 }

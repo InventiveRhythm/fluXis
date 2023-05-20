@@ -11,12 +11,13 @@ namespace fluXis.Game.Screens.Edit;
 public partial class EditorPlaytestScreen : GameplayScreen
 {
     private readonly MapInfo map;
-    private readonly MapEvents events = new();
+    private readonly MapEvents events;
 
-    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info)
+    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, MapEvents events)
         : base(realmMap, new List<IMod>())
     {
         map = info;
+        this.events = events;
     }
 
     public override MapInfo LoadMap()
@@ -39,7 +40,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
     public override void RestartMap()
     {
         Restart?.Play();
-        this.Push(new EditorPlaytestScreen(RealmMap, map));
+        this.Push(new EditorPlaytestScreen(RealmMap, map, events));
     }
 
     public override void Die()

@@ -94,6 +94,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         values.MapInfo = MapInfo;
         values.Editor = this;
+        loadMapEvents();
 
         changeHandler.OnTimingPointAdded += () => Logger.Log("Timing point added");
         changeHandler.OnTimingPointRemoved += () => Logger.Log("Timing point removed");
@@ -196,7 +197,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     }
                 }
             },
-            bottomBar = new EditorBottomBar { Editor = this }
+            bottomBar = new EditorBottomBar()
         };
     }
 
@@ -216,6 +217,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         waveform.Value = w;
         return trackStore.Get(path) ?? trackStore.GetVirtual(10000);
+    }
+
+    private void loadMapEvents()
+    {
+        var path = Map.MapSet.GetFile(MapInfo.EffectFile)?.GetPath();
+        if (path == null) return;
+
+        var fullPath = storage.GetFullPath($"files/{path}");
+        values.MapEvents.Load(File.ReadAllText(fullPath));
     }
 
     protected override void LoadComplete()

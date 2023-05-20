@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
@@ -262,18 +261,11 @@ public partial class EditorPlayfield : Container
 
     private void loadEvents()
     {
-        var events = new MapEvents();
-        var path = Map.MapSet.GetFile(MapInfo.EffectFile)?.GetPath();
-        if (path == null) return;
-
-        var fullPath = storage.GetFullPath($"files/{path}");
-        events.Load(File.ReadAllText(fullPath));
-
-        foreach (var flashEvent in events.FlashEvents)
+        foreach (var flashEvent in values.MapEvents.FlashEvents)
             EffectContainer.Add(new EditorFlashEvent { FlashEvent = flashEvent });
 
-        foreach (var laneSwitch in events.LaneSwitchEvents)
-            LaneSwitchContainer.Add(new EditorLaneSwitchEvent { Event = laneSwitch, Events = events.LaneSwitchEvents, Map = Map });
+        foreach (var laneSwitch in values.MapEvents.LaneSwitchEvents)
+            LaneSwitchContainer.Add(new EditorLaneSwitchEvent { Event = laneSwitch, Map = Map });
     }
 
     public void RedrawLines()

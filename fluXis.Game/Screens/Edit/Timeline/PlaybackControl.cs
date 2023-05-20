@@ -19,8 +19,6 @@ public partial class PlaybackControl : Container
 
     private static readonly float[] playback_speeds = { .25f, .5f, .75f, 1f };
 
-    public EditorBottomBar BottomBar { get; set; }
-
     private PlayButton playIcon;
 
     [BackgroundDependencyLoader]

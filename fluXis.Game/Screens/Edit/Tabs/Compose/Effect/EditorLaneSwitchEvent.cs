@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Events;
@@ -19,7 +18,6 @@ public partial class EditorLaneSwitchEvent : Container
 
     public RealmMap Map { get; set; }
     public LaneSwitchEvent Event { get; set; }
-    public List<LaneSwitchEvent> Events { get; set; }
 
     private float length;
 
@@ -30,7 +28,7 @@ public partial class EditorLaneSwitchEvent : Container
         Anchor = Anchor.BottomLeft;
         Origin = Anchor.BottomLeft;
 
-        var nextEvent = Events.FirstOrDefault(e => e.Time > Event.Time);
+        var nextEvent = values.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
         if (nextEvent != null)
             length = nextEvent.Time - Event.Time;
         else

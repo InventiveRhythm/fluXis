@@ -13,7 +13,8 @@ public partial class EditorBottomBar : Container
     [Resolved]
     private NotificationOverlay notifications { get; set; }
 
-    public Editor Editor { get; set; }
+    [Resolved]
+    private EditorValues values { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -49,33 +50,33 @@ public partial class EditorBottomBar : Container
                     {
                         new Drawable[]
                         {
-                            new TimeInfo { BottomBar = this },
-                            new EditorTimeline { BottomBar = this },
-                            new PlaybackControl { BottomBar = this },
+                            new TimeInfo(),
+                            new EditorTimeline(),
+                            new PlaybackControl(),
                             new EditorPlayTestButton
                             {
                                 Action = () =>
                                 {
-                                    if (Editor.Map == null)
+                                    if (values.Editor.Map == null)
                                     {
                                         notifications.PostError("There is no map...? how");
                                         return;
                                     }
 
-                                    if (Editor.MapInfo?.HitObjects == null || Editor.MapInfo.HitObjects.Count == 0)
+                                    if (values.Editor.MapInfo?.HitObjects == null || values.Editor.MapInfo.HitObjects.Count == 0)
                                     {
                                         notifications.PostError("This map has no hitobjects!");
                                         return;
                                     }
 
-                                    if (Editor.MapInfo?.TimingPoints == null || Editor.MapInfo.TimingPoints.Count == 0)
+                                    if (values.Editor.MapInfo?.TimingPoints == null || values.Editor.MapInfo.TimingPoints.Count == 0)
                                     {
                                         notifications.PostError("This map has no timing points!");
                                         return;
                                     }
 
-                                    Editor.SortEverything();
-                                    Editor.Push(new EditorPlaytestScreen(Editor.Map, Editor.MapInfo));
+                                    values.Editor.SortEverything();
+                                    values.Editor.Push(new EditorPlaytestScreen(values.Editor.Map, values.MapInfo, values.MapEvents));
                                 }
                             }
                         }
