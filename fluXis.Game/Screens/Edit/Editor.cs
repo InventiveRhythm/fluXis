@@ -5,6 +5,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Context;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
@@ -21,6 +22,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -35,6 +37,7 @@ namespace fluXis.Game.Screens.Edit;
 public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override bool ShowToolbar => false;
+    public override float BackgroundDim => 0.4f;
 
     [Resolved]
     private NotificationOverlay notifications { get; set; }
@@ -107,17 +110,25 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         InternalChildren = new Drawable[]
         {
             clock,
-            tabs = new Container
+            new FluXisContextMenuContainer
             {
-                Padding = new MarginPadding(10) { Top = 50, Bottom = 60 },
                 RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Children = new Drawable[]
+                Child = new PopoverContainer
                 {
-                    new SetupTab(this),
-                    new ComposeTab(this),
-                    new TimingTab(this)
+                    RelativeSizeAxes = Axes.Both,
+                    Child = tabs = new Container
+                    {
+                        Padding = new MarginPadding(10) { Top = 50, Bottom = 60 },
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Children = new Drawable[]
+                        {
+                            new SetupTab(this),
+                            new ComposeTab(this),
+                            new TimingTab(this)
+                        }
+                    }
                 }
             },
             menuBar = new EditorMenuBar
@@ -238,6 +249,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         MapInfo.HitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
         MapInfo.TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
         MapInfo.ScrollVelocities.Sort((a, b) => a.Time.CompareTo(b.Time));
+        values.MapEvents.FlashEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        values.MapEvents.LaneSwitchEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public void ChangeTab(int to)
@@ -350,6 +363,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         MapInfo.Sort();
 
+        string effects = values.MapEvents.Save();
+        var effectsHash = MapUtils.GetHash(effects);
+        var effectsPath = storage.GetFullPath($"files/{PathUtils.HashToPath(effectsHash)}");
+        var effectsDir = Path.GetDirectoryName(effectsPath);
+
+        if (!Directory.Exists(effectsDir))
+            Directory.CreateDirectory(effectsDir);
+
+        File.WriteAllText(effectsPath, effects);
+        MapInfo.EffectFile = string.IsNullOrEmpty(MapInfo.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : MapInfo.EffectFile;
+
         // get map as json
         string json = JsonConvert.SerializeObject(MapInfo);
         string hash = MapUtils.GetHash(json);
@@ -380,10 +404,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     return;
                 }
 
+                foreach (var file in Map.MapSet.Files)
+                {
+                    if (set.Files.Any(f => f.Hash == file.Hash))
+                        continue;
+
+                    set.Files.Add(file);
+                }
+
                 prevFile.Hash = hash;
                 existingMap.Hash = hash;
                 r.Remove(existingMap.Filters);
-                existingMap.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
+                existingMap.Filters = MapUtils.GetMapFilters(MapInfo, values.MapEvents);
 
                 r.Remove(existingMap.Metadata);
                 existingMap.Difficulty = MapInfo.Metadata.Difficulty;
@@ -399,6 +431,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     Audio = MapInfo.AudioFile,
                     PreviewTime = MapInfo.Metadata.PreviewTime
                 };
+
+                var effectsFile = set.GetFile(MapInfo.EffectFile);
+
+                if (effectsFile == null)
+                {
+                    set.Files.Add(new RealmFile
+                    {
+                        Hash = effectsHash,
+                        Name = MapInfo.EffectFile,
+                    });
+                }
+                else
+                    effectsFile.Hash = effectsHash;
 
                 mapStore.UpdateMapSet(Map.MapSet, set.Detach());
             }

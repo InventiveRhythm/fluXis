@@ -57,7 +57,7 @@ public partial class EditorPlayfield : Container
     public Container SelectionContainer { get; set; }
     public WaveformGraph Waveform { get; set; }
     public Container LaneSwitchContainer { get; set; }
-    public Container EffectContainer { get; set; }
+    public EditorEffectContainer EffectContainer { get; set; }
     public Container ColumnDividerContainer { get; set; }
 
     public Vector2 SelectionStart { get; set; }
@@ -153,15 +153,7 @@ public partial class EditorPlayfield : Container
                         RelativeSizeAxes = Axes.Both,
                         Y = -HITPOSITION_Y,
                     },
-                    EffectContainer = new Container
-                    {
-                        AutoSizeAxes = Axes.X,
-                        RelativeSizeAxes = Axes.Y,
-                        Y = -HITPOSITION_Y,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomLeft,
-                        Margin = new MarginPadding { Left = 10 },
-                    }
+                    EffectContainer = new EditorEffectContainer()
                 }
             },
             SelectionContainer = new Container
@@ -260,7 +252,7 @@ public partial class EditorPlayfield : Container
     private void loadEvents()
     {
         foreach (var flashEvent in values.MapEvents.FlashEvents)
-            EffectContainer.Add(new EditorFlashEvent { FlashEvent = flashEvent });
+            EffectContainer.AddFlash(flashEvent);
 
         foreach (var laneSwitch in values.MapEvents.LaneSwitchEvents)
             LaneSwitchContainer.Add(new EditorLaneSwitchEvent { Event = laneSwitch, Map = Map });

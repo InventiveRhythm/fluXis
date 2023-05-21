@@ -28,6 +28,8 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     public bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
 
+    public double BeatTime { get; private set; }
+
     double IAdjustableClock.Rate
     {
         get => underlying.Rate;
@@ -167,6 +169,9 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
             if (IsRunning) underlying.Stop();
             if (CurrentTime > TrackLength) underlying.Seek(TrackLength);
         }
+
+        var tp = MapInfo.GetTimingPoint((float)CurrentTime);
+        BeatTime = tp.MsPerBeat;
     }
 
     public void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();

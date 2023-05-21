@@ -23,4 +23,6 @@ public class LaneSwitchEvent : TimedObject
             new[] { true, true, true, false, true, true, true } // 6k
         }
     };
+
+    public override string ToString() => $"LaneSwitch({Time},{Count},{Speed})";
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Map;
 
@@ -30,12 +31,14 @@ public class MapEvents
                 {
                     var laneSwitch = new LaneSwitchEvent
                     {
-                        Time = float.Parse(args[0]),
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
                         Count = int.Parse(args[1])
                     };
 
+                    Logger.Log($"LaneSwitch: {laneSwitch.Time} {laneSwitch.Count}");
+
                     if (args.Length > 2)
-                        laneSwitch.Speed = float.Parse(args[2]);
+                        laneSwitch.Speed = float.Parse(args[2], CultureInfo.InvariantCulture);
 
                     LaneSwitchEvents.Add(laneSwitch);
                     break;
@@ -44,7 +47,7 @@ public class MapEvents
                 case "Flash":
                     if (args.Length < 8) continue;
 
-                    float duration = float.Parse(args[1]);
+                    float duration = float.Parse(args[1], CultureInfo.InvariantCulture);
                     bool inBackground = args[2] == "true";
                     Easing easing = (Easing)Enum.Parse(typeof(Easing), args[3]);
                     Colour4 startColor = Colour4.FromHex(args[4]);
@@ -54,7 +57,7 @@ public class MapEvents
 
                     FlashEvents.Add(new FlashEvent
                     {
-                        Time = float.Parse(args[0]),
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
                         Duration = duration,
                         InBackground = inBackground,
                         Easing = easing,
@@ -66,5 +69,13 @@ public class MapEvents
                     break;
             }
         }
+    }
+
+    public string Save()
+    {
+        var content = string.Empty;
+        foreach (var laneSwitch in LaneSwitchEvents) content += laneSwitch + Environment.NewLine;
+        foreach (var flash in FlashEvents) content += flash + Environment.NewLine;
+        return content;
     }
 }
