@@ -8,6 +8,7 @@ using fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Compose.HitObjects;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Lines;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -68,6 +69,8 @@ public partial class EditorPlayfield : Container
 
     public List<EditorHitObject> SelectedHitObjects { get; } = new();
 
+    public Sample HitSound;
+
     private bool notePlacable;
     private EditorHitObject ghostNote;
     private bool isDragging;
@@ -81,9 +84,11 @@ public partial class EditorPlayfield : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load(Bindable<Waveform> waveform)
+    private void load(Bindable<Waveform> waveform, ISampleStore samples)
     {
         RelativeSizeAxes = Axes.Both;
+
+        HitSound = samples.Get("Gameplay/hitsound");
 
         InternalChildren = new Drawable[]
         {
@@ -561,6 +566,9 @@ public partial class EditorPlayfield : Container
         {
             HitObjects.Remove(hitObject, false);
             FutureHitObjects.Add(hitObject);
+
+            if (clock.IsRunning && hitObject.Info.Time < clock.CurrentTime)
+                HitSound?.Play();
         }
     }
 
