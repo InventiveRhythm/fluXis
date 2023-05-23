@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
@@ -33,6 +34,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected override Container<Drawable> Content => content;
     private Container content;
+    private int exceptionCount;
 
     public Conductor Conductor;
     public FluXisRealm Realm;
@@ -105,6 +107,21 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, @"Fonts/Quicksand/Quicksand-Bold");
         AddFont(Resources, @"Fonts/Renogare/Renogare");
         AddFont(Resources, @"Fonts/Grade/Grade");
+    }
+
+    public override void SetHost(GameHost host)
+    {
+        base.SetHost(host);
+
+        host.ExceptionThrown += e =>
+        {
+            exceptionCount++;
+            Task.Delay(1000).ContinueWith(_ => exceptionCount--);
+
+            Notifications.PostError($"An unhandled error occurred!\n{e.GetType().Name}:\n{e.Message}", 10000);
+
+            return exceptionCount <= 1;
+        };
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

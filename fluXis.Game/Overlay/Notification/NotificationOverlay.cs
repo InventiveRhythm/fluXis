@@ -19,5 +19,5 @@ public partial class NotificationOverlay : Container
     public void AddNotification(Notification notification) => Schedule(() => notificationContainer.AddNotification(notification));
 
     public void Post(string text) => AddNotification(new SimpleNotification { Text = text });
-    public void PostError(string text) => AddNotification(new ErrorNotification { Text = text });
+    public void PostError(string text, float time = 5000) => AddNotification(new ErrorNotification { Text = text, Lifetime = time });
 }
