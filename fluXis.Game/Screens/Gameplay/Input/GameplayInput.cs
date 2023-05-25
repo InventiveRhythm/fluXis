@@ -109,14 +109,18 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         }
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e) => PressKey(e.Action);
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) => ReleaseKey(e.Action);
+
+    public bool PressKey(FluXisKeybind key)
     {
         if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return false;
 
         for (int i = 0; i < keys.Length; i++)
         {
-            if (e.Action == keys[i])
+            if (key == keys[i])
             {
                 pressedStatus[i] = true;
                 return true;
@@ -126,17 +130,15 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
+    public void ReleaseKey(FluXisKeybind key)
     {
         if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return;
 
         for (int i = 0; i < keys.Length; i++)
         {
-            if (e.Action == keys[i])
-            {
+            if (key == keys[i])
                 pressedStatus[i] = false;
-            }
         }
     }
 }

@@ -167,13 +167,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 }
             },
             new LaneSwitchAlert { Playfield = Playfield },
-            new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList())
+            new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
+            failOverlay = new FailOverlay { Screen = this },
+            fcOverlay = new FullComboOverlay(),
+            new GameplayTouchInput { Screen = this },
+            new PauseMenu(this)
         };
-
-        AddInternal(failOverlay = new FailOverlay { Screen = this });
-        AddInternal(fcOverlay = new FullComboOverlay());
-
-        AddInternal(new PauseMenu(this));
 
         Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
     }
