@@ -25,6 +25,7 @@ public class FluXisColors
     public static Colour4 Text = Colour4.FromHex("#ffffff");
     public static Colour4 Text2 = Colour4.FromHex("#c8c8c8");
     public static Colour4 TextDisabled = Colour4.FromHex("#646464");
+    public static Colour4 TextDark = Colour4.FromHex("#1a1a20");
 
     public static Colour4 RoleAdmin = Colour4.FromHex("#f7b373");
     public static Colour4 RoleMod = Colour4.FromHex("#73d173");
@@ -38,20 +39,21 @@ public class FluXisColors
     public static Colour4 SocialTwitch = Colour4.FromHex("#6441a5");
     public static Colour4 SocialDiscord = Colour4.FromHex("#7289da");
 
-    public static Colour4 GetRoleColor(string role)
+    public static bool IsBright(Colour4 color)
     {
-        if (string.IsNullOrEmpty(role))
-            return RoleUser;
+        var hsl = color.ToHSL();
+        return hsl.Z > .5f;
+    }
 
-        return role.ToLower() switch
+    public static Colour4 GetRoleColor(int role)
+    {
+        return role switch
         {
-            "admin" => RoleAdmin,
-            "moderator" => RoleMod,
-            "mod" => RoleMod,
-            "purifier" => RolePurifier,
-            "featured" => RoleFeatured,
-            "user" => RoleUser,
-            "bot" => RoleBot,
+            1 => RoleFeatured,
+            2 => RolePurifier,
+            3 => RoleMod,
+            4 => RoleAdmin,
+            5 => RoleBot,
             _ => RoleUser
         };
     }

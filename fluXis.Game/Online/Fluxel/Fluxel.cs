@@ -13,7 +13,7 @@ using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.Fluxel;
 
-public class Fluxel
+public static class Fluxel
 {
     internal static HttpClient Http = new();
     private static ClientWebSocket connection;
@@ -24,8 +24,8 @@ public class Fluxel
 
     private static readonly List<string> packet_queue = new();
 
-    public static string Token;
-    public static Action<APIUserShort> OnUserLoggedIn;
+    public static string Token { get; set; }
+    public static Action<APIUserShort> OnUserLoggedIn { get; set; }
 
     private static APIUserShort loggedInUser;
 
@@ -179,6 +179,12 @@ public class Fluxel
         Token = null;
         response_listeners.Clear();
         packet_queue.Clear();
+    }
+
+    public static void Close()
+    {
+        if (connection is { State: WebSocketState.Open })
+            connection?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
     }
 }
 

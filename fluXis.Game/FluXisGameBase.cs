@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
@@ -77,6 +79,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.Cache(Conductor = new Conductor());
 
+        Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
+
         FluXisKeybindContainer keybinds;
 
         base.Content.Add(new SafeAreaContainer
@@ -119,9 +123,14 @@ public partial class FluXisGameBase : osu.Framework.Game
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
             Notifications.PostError($"An unhandled error occurred!\n{e.GetType().Name}:\n{e.Message}", 10000);
-
             return exceptionCount <= 1;
         };
+    }
+
+    protected override bool OnExiting()
+    {
+        Fluxel.Close();
+        return base.OnExiting();
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

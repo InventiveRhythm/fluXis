@@ -71,7 +71,7 @@ public partial class StatusTag : Container
                 },
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = colour.ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White,
+                Colour = FluXisColors.IsBright(colour) ? FluXisColors.TextDark : Colour4.White,
                 Font = FluXisFont.Default(),
                 Margin = new MarginPadding { Horizontal = 8 }
             }

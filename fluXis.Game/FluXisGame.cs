@@ -72,6 +72,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     public static void ExitGame()
     {
         ExitAction?.Invoke();
+        Fluxel.Close();
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)

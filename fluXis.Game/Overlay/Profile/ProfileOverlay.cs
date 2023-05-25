@@ -149,7 +149,7 @@ public partial class ProfileOverlay : Container
                                                             },
                                                             role = new SpriteText
                                                             {
-                                                                Text = user.Role,
+                                                                Text = APIUser.GetRole(user.Role),
                                                                 Font = FluXisFont.Default(25),
                                                                 Margin = new MarginPadding { Horizontal = 5, Vertical = 1 }
                                                             }
@@ -212,8 +212,16 @@ public partial class ProfileOverlay : Container
 
             if (username != null) username.Text = user.Username;
             if (aboutMe != null) aboutMe.AboutMe = user.AboutMe;
-            if (role != null) role.Text = user.Role;
-            if (roleBackground != null) roleBackground.Colour = FluXisColors.GetRoleColor(user.Role);
+
+            var roleColor = FluXisColors.GetRoleColor(user.Role);
+
+            if (role != null)
+            {
+                role.Text = APIUser.GetRole(user.Role);
+                role.Colour = FluXisColors.IsBright(roleColor) ? FluXisColors.TextDark : Colour4.White;
+            }
+
+            if (roleBackground != null) roleBackground.Colour = roleColor;
 
             banner?.UpdateUser(user);
             avatar?.UpdateUser(user);

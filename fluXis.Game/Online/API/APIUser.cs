@@ -7,7 +7,7 @@ public class APIUser : APIUserShort
     public string AboutMe;
 
     [JsonProperty("role")]
-    public string Role;
+    public int Role;
 
     [JsonProperty("social")]
     public APIUserSocials Socials;
@@ -19,6 +19,19 @@ public class APIUser : APIUserShort
             ID = id,
             Username = username,
             AboutMe = ""
+        };
+    }
+
+    public static string GetRole(int role)
+    {
+        return role switch
+        {
+            1 => "Featured Artist",
+            2 => "Purifier",
+            3 => "Moderator",
+            4 => "Admin",
+            5 => "Bot",
+            _ => "User"
         };
     }
 
