@@ -1,17 +1,22 @@
 using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
+using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class JudgementDisplay : GameplayHUDElement
 {
+    [Resolved]
+    private LightController lightController { get; set; }
+
     public JudgementDisplay(GameplayScreen screen)
         : base(screen)
     {
@@ -77,6 +82,9 @@ public partial class JudgementDisplay : GameplayHUDElement
             .ScaleTo(scale, 1000, Easing.OutQuint)
             .FadeOutFromOne(500)
             .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint);
+
+        lightController.FadeColour(hitWindow.Color)
+                       .FadeColour(Color4.Black, 400);
 
         if (showEarlyLate.Value && judgement != Scoring.Judgement.Flawless && judgement != Scoring.Judgement.Miss)
         {

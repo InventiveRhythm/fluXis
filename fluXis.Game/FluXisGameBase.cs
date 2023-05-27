@@ -7,6 +7,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
+using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Toolbar;
@@ -50,10 +51,13 @@ public partial class FluXisGameBase : osu.Framework.Game
     public Toolbar Toolbar;
     public FluXisScreenStack ScreenStack;
     public ProfileOverlay ProfileOverlay;
+    public LightController LightController;
 
     public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
     private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;
     private static bool isDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
+
+    public virtual LightController CreateLightController() => new();
 
     protected FluXisGameBase()
     {
@@ -78,6 +82,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ScreenStack = new FluXisScreenStack());
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.Cache(Conductor = new Conductor());
+        dependencies.CacheAs(LightController = CreateLightController());
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -93,6 +98,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 Children = new Drawable[]
                 {
                     keybinds = new FluXisKeybindContainer(this, Realm),
+                    LightController,
                     content = new Container
                     {
                         RelativeSizeAxes = Axes.Both

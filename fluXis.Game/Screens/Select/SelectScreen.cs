@@ -41,6 +41,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     [Resolved]
     private NotificationOverlay notifications { get; set; }
 
+    [Resolved]
+    private LightController lightController { get; set; }
+
     public BackgroundStack Backgrounds;
     public Bindable<RealmMapSet> MapSet = new();
     public Bindable<RealmMap> MapInfo = new();
@@ -199,6 +202,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         MenuScroll.Play();
         Backgrounds.AddBackgroundFromMap(map);
         SelectMapInfo.ChangeMap(map);
+        lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
         ScheduleAfterChildren(() => MapList.ScrollTo(lookup[MapSet.Value]));
     }
 
@@ -301,6 +305,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public override void OnResuming(ScreenTransitionEvent e)
     {
         this.FadeIn(200);
+        lightController.FadeColour(FluXisColors.GetKeyColor(MapInfo.Value.KeyCount), 400);
 
         MapList.MoveToX(0, 500, Easing.OutQuint);
         SearchBar.MoveToY(0, 500, Easing.OutQuint);

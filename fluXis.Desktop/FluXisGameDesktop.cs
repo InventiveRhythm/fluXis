@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using fluXis.Desktop.Integration;
 using fluXis.Game;
 using fluXis.Game.Import.FluXis;
 using fluXis.Game.Import.osu;
 using fluXis.Game.Import.Quaver;
+using fluXis.Game.Integration;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
 using osu.Framework.Logging;
@@ -64,4 +66,6 @@ public partial class FluXisGameDesktop : FluXisGame
             Notifications.PostError("Error while importing mapset");
         }
     }
+
+    public override LightController CreateLightController() => new OpenRGBController();
 }
