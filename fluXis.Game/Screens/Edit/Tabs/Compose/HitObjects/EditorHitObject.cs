@@ -1,5 +1,6 @@
 using fluXis.Game.Map;
-using OpenTabletDriver.Plugin.DependencyInjection;
+using fluXis.Game.Skinning.Default.Gameplay;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -30,14 +31,19 @@ public partial class EditorHitObject : Container
 
     public bool PlayedHitSound { get; set; }
 
-    private readonly Box note;
-    private readonly Box holdBody;
-    private readonly Container outline;
+    private DefaultHitObjectPiece notePiece;
+    private DefaultHitObjectBody holdBody;
+    private DefaultHitObjectEnd holdEnd;
+    private Container outline;
 
     public EditorHitObject(EditorPlayfield playfield)
     {
         Playfield = playfield;
+    }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         Width = EditorPlayfield.COLUMN_WIDTH;
         AutoSizeAxes = Axes.Y;
         Anchor = Anchor.BottomLeft;
@@ -45,22 +51,9 @@ public partial class EditorHitObject : Container
 
         InternalChildren = new Drawable[]
         {
-            note = new Box
-            {
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Height = 20
-            },
-            holdBody = new Box
-            {
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Width = .9f,
-                Height = 0,
-                Y = -20
-            },
+            notePiece = new DefaultHitObjectPiece(),
+            holdBody = new DefaultHitObjectBody(),
+            holdEnd = new DefaultHitObjectEnd(),
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -85,6 +78,18 @@ public partial class EditorHitObject : Container
                 }
             }
         };
+
+        UpdateColors();
+    }
+
+    protected override void LoadComplete()
+    {
+        notePiece.Height /= 2;
+        notePiece.CornerRadius = 5;
+        holdEnd.Height /= 2;
+        holdEnd.CornerRadius = 5;
+
+        base.LoadComplete();
     }
 
     protected override void Update()
@@ -95,8 +100,20 @@ public partial class EditorHitObject : Container
         if (Info.Time >= clock.CurrentTime) PlayedHitSound = false;
 
         if (Info.IsLongNote())
+        {
             holdBody.Height = .5f * (Info.HoldTime * values.Zoom);
-        else holdBody.Height = 0;
+            holdBody.Y = -notePiece.Height / 2;
+            holdEnd.Y = -.5f * (Info.HoldTime * values.Zoom);
+            holdBody.Alpha = 1;
+            holdEnd.Alpha = 1;
+        }
+        else
+        {
+            holdBody.Height = 0;
+            holdEnd.Y = notePiece.Y;
+            holdBody.Alpha = 0;
+            holdEnd.Alpha = 0;
+        }
 
         outline.Width = DrawWidth + 20;
         outline.Height = DrawHeight + 20;
@@ -107,5 +124,12 @@ public partial class EditorHitObject : Container
     public void UpdateSelection(bool selected)
     {
         outline.FadeTo(selected ? 1 : 0, 200);
+    }
+
+    public void UpdateColors()
+    {
+        notePiece.UpdateColor(Info.Lane, Playfield.Map.KeyCount);
+        holdBody.UpdateColor(Info.Lane, Playfield.Map.KeyCount);
+        holdEnd.UpdateColor(Info.Lane, Playfield.Map.KeyCount);
     }
 }

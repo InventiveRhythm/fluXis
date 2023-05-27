@@ -11,6 +11,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
@@ -87,6 +88,7 @@ public partial class EditorPlayfield : Container
     private void load(Bindable<Waveform> waveform, ISampleStore samples)
     {
         RelativeSizeAxes = Axes.Both;
+        Masking = true;
 
         HitSound = samples.Get("Gameplay/hitsound");
 
@@ -125,10 +127,10 @@ public partial class EditorPlayfield : Container
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomLeft,
                         Rotation = -90,
-                        BaseColour = FluXisColors.Accent2,
-                        LowColour = FluXisColors.Accent,
-                        MidColour = FluXisColors.Accent3,
-                        HighColour = FluXisColors.Accent4
+                        BaseColour = FluXisColors.Accent.Lighten(.2f),
+                        LowColour = FluXisColors.Accent.Lighten(.2f),
+                        MidColour = FluXisColors.Accent.Lighten(.2f),
+                        HighColour = FluXisColors.Accent.Lighten(.2f)
                     },
                     ColumnDividerContainer = getColumnDividers(),
                     hitPosLine = new Box
@@ -280,6 +282,9 @@ public partial class EditorPlayfield : Container
 
         ColumnDividerContainer.Clear();
         ColumnDividerContainer.Add(getColumnDividers());
+
+        HitObjects.ForEach(h => h.UpdateColors());
+        FutureHitObjects.ForEach(h => h.UpdateColors());
     }
 
     protected override bool OnHover(HoverEvent e)

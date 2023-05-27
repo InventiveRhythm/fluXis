@@ -1,12 +1,9 @@
 using fluXis.Game.Audio;
-using fluXis.Game.Graphics;
 using fluXis.Game.Map;
+using fluXis.Game.Skinning.Default.Gameplay;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Textures;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
@@ -19,9 +16,9 @@ public partial class HitObject : CompositeDrawable
 
     private readonly HitObjectManager manager;
 
-    private Drawable notePiece;
-    private Drawable holdBodyPiece;
-    private Drawable holdEndPiece;
+    private DefaultHitObjectPiece notePiece;
+    private DefaultHitObjectBody holdBodyPiece;
+    private DefaultHitObjectEnd holdEndPiece;
 
     public bool Hitable;
     public bool Releasable;
@@ -40,64 +37,27 @@ public partial class HitObject : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures)
+    private void load()
     {
         Size = Receptor.SIZE;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
 
-        Colour4 color = FluXisColors.GetLaneColor(Data.Lane, manager.Map.KeyCount);
-
-        InternalChildren = new[]
+        InternalChildren = new Drawable[]
         {
-            holdEndPiece = new Container
-            {
-                CornerRadius = 10,
-                Masking = true,
-                Height = 42,
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = color.Darken(.4f)
-                },
-                Alpha = 0
-            },
-            holdBodyPiece = new Container
-            {
-                RelativeSizeAxes = Axes.X,
-                Width = 0.9f,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = ColourInfo.GradientVertical(color.Darken(.4f), color)
-                },
-                Alpha = 0
-            },
-            notePiece = new Container
-            {
-                CornerRadius = 10,
-                Masking = true,
-                Height = 42,
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = color
-                }
-            }
+            holdEndPiece = new DefaultHitObjectEnd(),
+            holdBodyPiece = new DefaultHitObjectBody(),
+            notePiece = new DefaultHitObjectPiece()
         };
 
-        if (Data.IsLongNote())
+        notePiece.UpdateColor(Data.Lane, manager.Map.KeyCount);
+        holdBodyPiece.UpdateColor(Data.Lane, manager.Map.KeyCount);
+        holdEndPiece.UpdateColor(Data.Lane, manager.Map.KeyCount);
+
+        if (!Data.IsLongNote())
         {
-            holdBodyPiece.Alpha = 1;
-            holdEndPiece.Alpha = 1;
+            holdBodyPiece.Alpha = 0;
+            holdEndPiece.Alpha = 0;
         }
     }
 
