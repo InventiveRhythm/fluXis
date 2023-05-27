@@ -1,4 +1,3 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using osu.Framework.Graphics;
@@ -25,9 +24,11 @@ public partial class EditorHitObject : Container
         {
             if (clock == null) return true;
 
-            return clock.CurrentTime <= Info.HoldEndTime && clock.CurrentTime >= Info.Time - 3000 / values.Zoom;
+            return clock.CurrentTime - Info.HoldEndTime <= 2000 && clock.CurrentTime >= Info.Time - 3000 / values.Zoom;
         }
     }
+
+    public bool PlayedHitSound { get; set; }
 
     private readonly Box note;
     private readonly Box holdBody;
@@ -72,7 +73,7 @@ public partial class EditorHitObject : Container
                         Origin = Anchor.Centre,
                         CornerRadius = 5,
                         BorderThickness = 6,
-                        BorderColour = FluXisColors.Accent3,
+                        BorderColour = Colour4.Yellow,
                         Alpha = 0,
                         Child = new Box
                         {
@@ -91,16 +92,10 @@ public partial class EditorHitObject : Container
         X = (Info.Lane - 1) * EditorPlayfield.COLUMN_WIDTH;
         Y = -EditorPlayfield.HITPOSITION_Y - .5f * ((Info.Time - (float)clock.CurrentTime) * values.Zoom);
 
+        if (Info.Time >= clock.CurrentTime) PlayedHitSound = false;
+
         if (Info.IsLongNote())
-        {
-            if (Info.Time < clock.CurrentTime)
-            {
-                Y = -EditorPlayfield.HITPOSITION_Y;
-                holdBody.Height = .5f * ((Info.HoldEndTime - (float)clock.CurrentTime) * values.Zoom);
-            }
-            else
-                holdBody.Height = .5f * ((Info.HoldEndTime - Info.Time) * values.Zoom);
-        }
+            holdBody.Height = .5f * (Info.HoldTime * values.Zoom);
         else holdBody.Height = 0;
 
         outline.Width = DrawWidth + 20;

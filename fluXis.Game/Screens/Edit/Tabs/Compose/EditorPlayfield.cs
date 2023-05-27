@@ -566,9 +566,14 @@ public partial class EditorPlayfield : Container
         {
             HitObjects.Remove(hitObject, false);
             FutureHitObjects.Add(hitObject);
+        }
 
-            if (clock.IsRunning && hitObject.Info.Time < clock.CurrentTime)
-                HitSound?.Play();
+        foreach (var hitObject in HitObjects.Where(h => !h.PlayedHitSound))
+        {
+            if (!clock.IsRunning || !(hitObject.Info.Time <= clock.CurrentTime)) continue;
+
+            HitSound?.Play();
+            hitObject.PlayedHitSound = true;
         }
     }
 
