@@ -14,7 +14,7 @@ public partial class LoginButton : Container
 
     public Action<LoginButton> Action;
 
-    public LoginButton(string label)
+    public LoginButton(string label, bool secondary = false)
     {
         Height = 30;
         Width = 125;
@@ -28,7 +28,7 @@ public partial class LoginButton : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Accent2
+                Colour = secondary ? FluXisColors.Accent : FluXisColors.Accent2
             },
             hover = new Box
             {

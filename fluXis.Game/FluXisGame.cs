@@ -45,8 +45,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                     ScreenStack,
                 }
             },
-            Toolbar,
             LoginOverlay,
+            Toolbar,
+            RegisterOverlay,
             ProfileOverlay,
             Settings,
             new VolumeOverlay(),

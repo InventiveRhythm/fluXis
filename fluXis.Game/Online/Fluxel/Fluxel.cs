@@ -40,6 +40,8 @@ public static class Fluxel
         }
     }
 
+    public static bool IsConnected => connection.State == WebSocketState.Open;
+
     public static NotificationOverlay Notifications;
 
     private static readonly ConcurrentDictionary<EventType, List<Action<object>>> response_listeners = new();

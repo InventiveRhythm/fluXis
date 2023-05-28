@@ -20,16 +20,8 @@ public partial class LoginTextBox : FluXisTextBox
         Width = 260;
         Anchor = Anchor.TopCentre;
         Origin = Anchor.TopCentre;
-        BackgroundUnfocused = FluXisColors.Surface;
-        BackgroundFocused = FluXisColors.Surface2;
-        CornerRadius = 5;
-        Masking = true;
 
         PlaceholderText = placeholder;
-        Placeholder.Font = FluXisFont.Default();
-        Placeholder.Colour = FluXisColors.Accent3;
-        Placeholder.Anchor = Anchor.CentreLeft;
-        Placeholder.Origin = Anchor.CentreLeft;
     }
 
     protected override Drawable GetDrawableCharacter(char c)

@@ -5,6 +5,8 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Account;
 using fluXis.Game.Overlay.Login.UI;
+using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Register;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -12,142 +14,141 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Login;
 
 public partial class LoginOverlay : Container
 {
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
+
+    [Resolved]
+    private RegisterOverlay register { get; set; }
+
     private Bindable<string> tokenBind;
 
-    public bool LoggedIn { get; set; }
+    private LoginContent loginContainer;
+    private SpriteText loadingText;
 
-    private readonly LoginContent loginContainer;
-    private readonly LoginContent registerContainer;
-    private readonly SpriteText loadingText;
+    private LoginTextBox username;
+    private LoginTextBox password;
 
-    private readonly LoginTextBox usernameLoginTextBox;
-    private readonly LoginTextBox passwordLoginTextBox;
-
-    private readonly LoginTextBox usernameRegisterTextBox;
-    private readonly LoginTextBox passwordRegisterTextBox;
-    private readonly LoginTextBox confirmPasswordRegisterTextBox;
-
-    public LoginOverlay()
-    {
-        Anchor = Origin = Anchor.Centre;
-        Width = 300;
-        Height = 180;
-        CornerRadius = 10;
-        Masking = true;
-        Alpha = 0;
-        Scale = new Vector2(0.9f);
-
-        AddRange(new Drawable[]
-        {
-            new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
-            },
-            loginContainer = new LoginContent
-            {
-                Children = new Drawable[]
-                {
-                    usernameLoginTextBox = new LoginTextBox(false, "Username"),
-                    passwordLoginTextBox = new LoginTextBox(true, "Password"),
-                    new LoginButton("Create new...")
-                    {
-                        Action = switchToRegister
-                    },
-                    new LoginButton("Login!")
-                    {
-                        Action = login
-                    },
-                    new LoginButton("Play Offline")
-                    {
-                        Action = _ => Hide()
-                    }
-                }
-            },
-            registerContainer = new LoginContent
-            {
-                Alpha = 0,
-                Children = new Drawable[]
-                {
-                    usernameRegisterTextBox = new LoginTextBox(false, "Username"),
-                    passwordRegisterTextBox = new LoginTextBox(true, "Password"),
-                    confirmPasswordRegisterTextBox = new LoginTextBox(true, "Confirm Password"),
-                    new LoginButton("Back to Login...")
-                    {
-                        Action = switchToLogin
-                    },
-                    new LoginButton("Create!")
-                    {
-                        Action = register
-                    }
-                }
-            },
-            loadingText = new SpriteText
-            {
-                Text = "",
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Font = FluXisFont.Default(30),
-                Alpha = 0
-            }
-        });
-
-        Fluxel.RegisterListener<string>(EventType.Token, onAuth);
-        Fluxel.RegisterListener<APIUserShort>(EventType.Login, onLogin);
-        Fluxel.RegisterListener<APIRegisterResponse>(EventType.Register, onRegister);
-    }
+    private ClickableContainer content;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
+        RelativeSizeAxes = Axes.Both;
+        Alpha = 0;
+
+        InternalChildren = new Drawable[]
+        {
+            new ClickableContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Action = Hide,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Color4.Black,
+                    Alpha = 0.5f
+                }
+            },
+            content = new ClickableContainer
+            {
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                Margin = new MarginPadding { Top = 30, Right = 80 },
+                Width = 300,
+                Height = 180,
+                CornerRadius = 10,
+                Masking = true,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2
+                    },
+                    loginContainer = new LoginContent
+                    {
+                        Padding = new MarginPadding { Top = 30 },
+                        Children = new Drawable[]
+                        {
+                            username = new LoginTextBox(false, "Username")
+                            {
+                                TabbableContentContainer = loginContainer
+                            },
+                            password = new LoginTextBox(true, "Password")
+                            {
+                                TabbableContentContainer = loginContainer
+                            },
+                            new LoginButton("Create new...", true)
+                            {
+                                Action = _ =>
+                                {
+                                    Hide();
+                                    register.Show();
+                                }
+                            },
+                            new LoginButton("Login!") { Action = login }
+                        }
+                    },
+                    loadingText = new SpriteText
+                    {
+                        Text = "",
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Font = FluXisFont.Default(24)
+                    }
+                }
+            }
+        };
+
+        Fluxel.RegisterListener<string>(EventType.Token, onAuth);
+        Fluxel.RegisterListener<APIUserShort>(EventType.Login, onLogin);
+
         tokenBind = config.GetBindable<string>(FluXisSetting.Token);
         if (!string.IsNullOrEmpty(tokenBind?.Value)) sendLogin();
     }
 
-    private void switchToRegister(LoginButton button)
+    private void switchToLogin()
     {
-        loadingText.FadeOut(200);
-        loginContainer.FadeOut(200)
-                      .OnComplete(_ =>
-                      {
-                          this.ResizeHeightTo(190, 200, Easing.OutQuint)
-                              .ResizeWidthTo(300, 200, Easing.OutQuint)
-                              .OnComplete(_ => registerContainer.FadeIn(200));
-                      });
-    }
-
-    private void switchToLogin(LoginButton button)
-    {
-        loadingText.FadeOut(200);
-        registerContainer.FadeOut(200)
-                         .OnComplete(_ =>
-                         {
-                             this.ResizeHeightTo(180, 200, Easing.OutQuint)
-                                 .ResizeWidthTo(300, 200, Easing.OutQuint)
-                                 .OnComplete(_ => loginContainer.FadeIn(200));
-                         });
+        loadingText.FadeOut(200)
+                   .OnComplete(_ => loginContainer.FadeIn(200));
     }
 
     private void switchToLoading()
     {
         loginContainer.FadeOut(200);
-        registerContainer.FadeOut(200).OnComplete(_ =>
-        {
-            this.ResizeHeightTo(100, 200, Easing.OutQuint)
-                .ResizeWidthTo(450, 200, Easing.OutQuint);
-        });
     }
 
     private void login(LoginButton button)
     {
+        if (string.IsNullOrEmpty(username.Text))
+        {
+            username.NotifyError();
+            return;
+        }
+
+        if (string.IsNullOrEmpty(password.Text))
+        {
+            password.NotifyError();
+            return;
+        }
+
         switchToLoading();
-        loadingText.Text = "Logging in...";
-        loadingText.FadeIn(200).OnComplete(_ => Fluxel.SendPacket(new AuthPacket(usernameLoginTextBox.Text, passwordLoginTextBox.Text)));
+
+        if (Fluxel.IsConnected)
+        {
+            loadingText.Text = "Logging in...";
+            loadingText.FadeIn(200).OnComplete(_ => Fluxel.SendPacket(new AuthPacket(username.Text, password.Text)));
+        }
+        else
+        {
+            setLoadingText("Not connected to any server!", switchToLogin);
+        }
     }
 
     private void onAuth(FluxelResponse<string> response)
@@ -160,7 +161,7 @@ public partial class LoginOverlay : Container
             if (tokenBind != null)
                 tokenBind.Value = response.Data;
         }
-        else setLoadingText(response.Message, () => switchToLogin(null));
+        else setLoadingText(response.Message, switchToLogin);
     }
 
     private void sendLogin()
@@ -175,40 +176,22 @@ public partial class LoginOverlay : Container
     {
         if (response.Status == 200)
         {
-            LoggedIn = true;
             Fluxel.LoggedInUser = response.Data;
             setLoadingText("Logged in!", Hide);
         }
-        else setLoadingText(response.Message, () => switchToLogin(null));
-    }
-
-    private void register(LoginButton button)
-    {
-        switchToLoading();
-        loadingText.Text = "Registering...";
-        loadingText.FadeIn(200).OnComplete(_ =>
-        {
-            if (passwordRegisterTextBox.Text != confirmPasswordRegisterTextBox.Text)
-            {
-                setLoadingText("Passwords don't match!", () => switchToRegister(null));
-                return;
-            }
-
-            Fluxel.SendPacket(new RegisterPacket(usernameRegisterTextBox.Text, passwordRegisterTextBox.Text));
-        });
+        else setLoadingText(response.Message, switchToLogin);
     }
 
     private void onRegister(FluxelResponse<APIRegisterResponse> response)
     {
         if (response.Status == 200)
         {
-            LoggedIn = true;
             Fluxel.LoggedInUser = response.Data.User;
             Fluxel.Token = response.Data.Token;
             tokenBind.Value = response.Data.Token;
             setLoadingText("Registered!", Hide);
         }
-        else setLoadingText(response.Message, () => switchToRegister(null));
+        else setLoadingText(response.Message, () => { });
     }
 
     private void setLoadingText(string text, Action onComplete)
@@ -225,12 +208,14 @@ public partial class LoginOverlay : Container
 
     public override void Show()
     {
-        this.ScaleTo(1f, 400).FadeIn(200);
+        this.FadeIn(200);
+        content.ResizeHeightTo(160, 400, Easing.OutQuint);
     }
 
     public override void Hide()
     {
-        this.ScaleTo(0.9f, 400).FadeOut(200);
+        this.FadeOut(200);
+        content.ResizeHeightTo(0, 200, Easing.InQuint);
     }
 
     private partial class LoginContent : FillFlowContainer
@@ -239,10 +224,8 @@ public partial class LoginOverlay : Container
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
-            Padding = new MarginPadding(20);
+            Padding = new MarginPadding(20) { Top = 40 };
             Spacing = new Vector2(10, 10);
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
         }
     }
 }

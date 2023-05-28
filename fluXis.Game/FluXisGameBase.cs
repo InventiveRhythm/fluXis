@@ -15,6 +15,7 @@ using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Profile;
+using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Skinning;
@@ -49,6 +50,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public SettingsMenu Settings;
     public NotificationOverlay Notifications;
     public LoginOverlay LoginOverlay;
+    public RegisterOverlay RegisterOverlay;
     public Toolbar Toolbar;
     public FluXisScreenStack ScreenStack;
     public ProfileOverlay ProfileOverlay;
@@ -81,6 +83,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Settings = new SettingsMenu());
         dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(LoginOverlay = new LoginOverlay());
+        dependencies.CacheAs(RegisterOverlay = new RegisterOverlay());
         dependencies.Cache(Toolbar = new Toolbar());
         dependencies.Cache(ScreenStack = new FluXisScreenStack());
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());

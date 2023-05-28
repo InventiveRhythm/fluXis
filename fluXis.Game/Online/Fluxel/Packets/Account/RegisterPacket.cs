@@ -10,10 +10,11 @@ public class RegisterPacket : Packet
     [JsonProperty("password")]
     public string Password;
 
-    public RegisterPacket(string username, string password)
+    [JsonProperty("email")]
+    public string Email;
+
+    public RegisterPacket()
         : base(2)
     {
-        Username = username;
-        Password = password;
     }
 }

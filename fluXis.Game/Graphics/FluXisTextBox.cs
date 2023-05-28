@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
+using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics;
@@ -14,6 +15,7 @@ public partial class FluXisTextBox : BasicTextBox
 {
     protected override Color4 SelectionColour => FluXisColors.Accent2;
 
+    public bool IsPassword { get; set; }
     public Action OnTextChanged;
 
     private List<Sample> textAdded;
@@ -28,6 +30,10 @@ public partial class FluXisTextBox : BasicTextBox
         BackgroundUnfocused = FluXisColors.Surface;
         BackgroundFocused = FluXisColors.Hover;
         BackgroundCommit = FluXisColors.Click;
+        Placeholder.Font = FluXisFont.Default();
+        Placeholder.Colour = FluXisColors.Text2;
+        Placeholder.Anchor = Anchor.CentreLeft;
+        Placeholder.Origin = Anchor.CentreLeft;
 
         textAdded = new List<Sample>(3);
 
@@ -59,19 +65,53 @@ public partial class FluXisTextBox : BasicTextBox
         base.NotifyInputError();
     }
 
-    protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer
+    protected override Drawable GetDrawableCharacter(char c)
     {
-        AutoSizeAxes = Axes.Both,
-        Child = new SpriteText
+        var container = new FallingDownContainer
         {
-            Text = c.ToString(),
-            Font = FluXisFont.Default(CalculatedTextSize)
+            Anchor = Anchor.CentreLeft,
+            Origin = Anchor.CentreLeft
+        };
+
+        if (IsPassword)
+        {
+            container.Height = CalculatedTextSize;
+            container.Width = CalculatedTextSize / 2;
+            container.Child = new PasswordCharacter(CalculatedTextSize);
         }
-    };
+        else
+        {
+            container.AutoSizeAxes = Axes.Both;
+            container.Child = new SpriteText
+            {
+                Text = c.ToString(),
+                Font = FluXisFont.Default(CalculatedTextSize),
+            };
+        }
+
+        return container;
+    }
 
     protected override void OnUserTextRemoved(string removed)
     {
         base.OnUserTextRemoved(removed);
         OnTextChanged?.Invoke();
+    }
+
+    private partial class PasswordCharacter : TicTac
+    {
+        public PasswordCharacter(float size)
+            : base(size)
+        {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            Size = new Vector2(size / 2);
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            this.ScaleTo(0).ScaleTo(1, 100);
+        }
     }
 }
