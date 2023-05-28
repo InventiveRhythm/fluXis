@@ -11,7 +11,6 @@ using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
-using fluXis.Game.Screens.Menu.UI.Profile;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
@@ -47,13 +46,15 @@ public partial class MenuScreen : FluXisScreen
     [Resolved]
     private LoginOverlay login { get; set; }
 
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
     private Box blackBox;
     private Container content;
 
     private Container textContainer;
     private Container buttonContainer;
     private FillFlowContainer linkContainer;
-    private MenuProfile profile;
 
     private MenuButton playButton;
 
@@ -153,7 +154,7 @@ public partial class MenuScreen : FluXisScreen
                             {
                                 Text = "Exit",
                                 Icon = FontAwesome.Solid.Times,
-                                Action = exit,
+                                Action = game.Exit,
                                 Width = 340,
                                 Margin = new MarginPadding { Top = 160, Left = 360 }
                             }
@@ -187,8 +188,7 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Website"
                             }
                         }
-                    },
-                    // profile = new MenuProfile()
+                    }
                 }
             },
             blackBox = new Box
@@ -202,13 +202,6 @@ public partial class MenuScreen : FluXisScreen
         Schedule(() => login.Show());
 
         maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
-    }
-
-    private void exit()
-    {
-        cursorOverlay.ShowCursor = false;
-        Conductor.FadeOut(2000);
-        blackBox.FadeTo(1, 2000).OnComplete(_ => FluXisGame.ExitGame());
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

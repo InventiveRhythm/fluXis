@@ -69,6 +69,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
         InitFonts();
 
+        dependencies.CacheAs(this);
         dependencies.CacheAs(Config = new FluXisConfig(storage));
         dependencies.Cache(Realm = new FluXisRealm(storage));
         dependencies.Cache(MapStore = new MapStore(storage, Realm));
@@ -117,6 +118,12 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, @"Fonts/Quicksand/Quicksand-Bold");
         AddFont(Resources, @"Fonts/Renogare/Renogare");
         AddFont(Resources, @"Fonts/Grade/Grade");
+    }
+
+    public new virtual void Exit()
+    {
+        Fluxel.Close();
+        base.Exit();
     }
 
     public override void SetHost(GameHost host)

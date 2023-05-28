@@ -15,6 +15,9 @@ public partial class WindowsUpdateManager : Component
     [Resolved]
     private NotificationOverlay notifications { get; set; }
 
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
     [BackgroundDependencyLoader]
     private async void load()
     {
@@ -52,7 +55,7 @@ public partial class WindowsUpdateManager : Component
             notifications.AddNotification(loading);
             await manager.ApplyReleases(info).ConfigureAwait(false);
             loading.State = LoadingState.Loaded;
-            await UpdateManager.RestartAppWhenExited().ContinueWith(_ => FluXisGame.ExitGame());
+            await UpdateManager.RestartAppWhenExited().ContinueWith(_ => game.Exit());
         }
         catch (Exception e)
         {

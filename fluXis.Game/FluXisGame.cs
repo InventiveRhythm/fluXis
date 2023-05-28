@@ -1,4 +1,4 @@
-﻿using System;
+﻿using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
@@ -7,9 +7,10 @@ using fluXis.Game.Screens.Intro;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Platform;
 
 namespace fluXis.Game;
 
@@ -20,19 +21,15 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
 
-    protected static Action ExitAction;
-
     private Container screenContainer;
-
-    private Storage storage;
+    private Container exitContainer;
+    private SpriteText seeyaText;
 
     public bool Sex = true;
 
     [BackgroundDependencyLoader]
-    private void load(Storage storage)
+    private void load()
     {
-        this.storage = storage;
-
         Discord.Init();
 
         Children = new Drawable[]
@@ -54,7 +51,27 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             Settings,
             new VolumeOverlay(),
             Notifications,
-            CursorOverlay
+            CursorOverlay,
+            exitContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.Black
+                    },
+                    seeyaText = new SpriteText
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Text = "See you next time!",
+                        Font = FluXisFont.Default(32)
+                    }
+                }
+            }
         };
     }
 
@@ -67,12 +84,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
         Fluxel.Notifications = Notifications;
         Fluxel.Connect();
-    }
-
-    public static void ExitGame()
-    {
-        ExitAction?.Invoke();
-        Fluxel.Close();
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
@@ -92,5 +103,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     protected override void Update()
     {
         screenContainer.Padding = new MarginPadding { Top = Toolbar.Height + Toolbar.Y };
+    }
+
+    public override void Exit()
+    {
+        CursorOverlay.ShowCursor = false;
+        Toolbar.ShowToolbar.Value = false;
+        fluXis.Game.Audio.Conductor.FadeOut(1500);
+        exitContainer.FadeIn(1000).OnComplete(_ => seeyaText.FadeOut(1000).OnComplete(_ => base.Exit()));
     }
 }

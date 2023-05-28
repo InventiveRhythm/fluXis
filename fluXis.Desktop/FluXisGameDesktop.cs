@@ -28,7 +28,6 @@ public partial class FluXisGameDesktop : FluXisGame
         window.ConfineMouseMode.Value = ConfineMouseMode.Never;
         window.CursorState = CursorState.Hidden;
         window.DragDrop += f => onDragDrop(new[] { f });
-        ExitAction = host.Exit;
     }
 
     [BackgroundDependencyLoader]
