@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -12,9 +13,15 @@ public partial class SettingsToggle : SettingsItem
 
     private SpriteIcon icon;
 
+    private Sample toggleOn;
+    private Sample toggleOff;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        toggleOn = samples.Get(@"UI/toggle-on");
+        toggleOff = samples.Get(@"UI/toggle-off");
+
         AddRange(new Drawable[]
         {
             icon = new SpriteIcon
@@ -32,6 +39,12 @@ public partial class SettingsToggle : SettingsItem
     protected override bool OnClick(ClickEvent e)
     {
         Bindable.Value = !Bindable.Value;
+
+        if (Bindable.Value)
+            toggleOn?.Play();
+        else
+            toggleOff?.Play();
+
         return true;
     }
 }
