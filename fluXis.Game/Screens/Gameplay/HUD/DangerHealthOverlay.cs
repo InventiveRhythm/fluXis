@@ -18,7 +18,6 @@ public partial class DangerHealthOverlay : GameplayHUDElement
         : base(screen)
     {
         RelativeSizeAxes = Axes.Both;
-        health = screen.Playfield.Manager.Health;
 
         AddRangeInternal(new Drawable[]
         {
@@ -38,6 +37,11 @@ public partial class DangerHealthOverlay : GameplayHUDElement
                 Alpha = 0
             }
         });
+    }
+
+    protected override void LoadComplete()
+    {
+        health = Screen.Playfield.Manager.Health;
     }
 
     protected override void Update()

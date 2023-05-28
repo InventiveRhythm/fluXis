@@ -10,8 +10,8 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class HealthBar : GameplayHUDElement
 {
-    private readonly HitObjectManager manager;
-    private float health;
+    private HitObjectManager manager => Screen.Playfield.Manager;
+    private float health = 0;
     private readonly Box background;
     private readonly Box bar;
 
@@ -21,9 +21,6 @@ public partial class HealthBar : GameplayHUDElement
     public HealthBar(GameplayScreen screen)
         : base(screen)
     {
-        manager = screen.Playfield.Manager;
-        health = 0;
-
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
         CornerRadius = 10;

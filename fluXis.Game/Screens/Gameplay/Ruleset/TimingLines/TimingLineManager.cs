@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Map;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -51,6 +52,12 @@ public partial class TimingLineManager : CompositeDrawable
             futureTimingLines.RemoveAt(0);
             timingLines.Add(line);
             AddInternal(line);
+        }
+
+        foreach (var line in timingLines.Where(t => t.Y > DrawHeight).ToArray())
+        {
+            timingLines.Remove(line);
+            RemoveInternal(line, true);
         }
 
         Width = HitObjectManager.Playfield.Stage.Width;
