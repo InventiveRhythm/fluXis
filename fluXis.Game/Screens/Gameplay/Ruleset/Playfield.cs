@@ -1,7 +1,8 @@
-using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
+using fluXis.Game.Skinning;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -12,6 +13,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class Playfield : CompositeDrawable
 {
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
     public FillFlowContainer<Receptor> Receptors;
     public GameplayScreen Screen;
     public HitObjectManager Manager;
@@ -25,7 +29,11 @@ public partial class Playfield : CompositeDrawable
     {
         Screen = screen;
         Map = screen.Map;
+    }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         RelativeSizeAxes = Axes.Both;
         Size = new Vector2(1, 1);
         Anchor = Anchor.Centre;
@@ -46,6 +54,7 @@ public partial class Playfield : CompositeDrawable
             Anchor = Anchor.BottomCentre,
             Origin = Anchor.TopCentre,
             Height = 3,
+            Y = -skinManager.CurrentSkin.HitPosition,
             Colour = ColourInfo.GradientHorizontal(FluXisColors.Accent3, FluXisColors.Accent)
         };
 
@@ -78,7 +87,6 @@ public partial class Playfield : CompositeDrawable
 
     protected override void Update()
     {
-        HitLine.Y = -Receptors.First().HitPosition;
-        HitLine.Width = Stage.Background.Width;
+        HitLine.Width = Stage.Width;
     }
 }

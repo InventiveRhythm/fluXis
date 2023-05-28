@@ -17,6 +17,7 @@ using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
+using fluXis.Game.Skinning;
 using fluXis.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -52,6 +53,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public FluXisScreenStack ScreenStack;
     public ProfileOverlay ProfileOverlay;
     public LightController LightController;
+    public SkinManager SkinManager;
 
     public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
     private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;
@@ -84,6 +86,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.Cache(Conductor = new Conductor());
         dependencies.CacheAs(LightController = CreateLightController());
+        dependencies.Cache(SkinManager = new SkinManager());
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 

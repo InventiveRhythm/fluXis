@@ -53,7 +53,7 @@ public partial class TimingLineManager : CompositeDrawable
             AddInternal(line);
         }
 
-        Width = HitObjectManager.Playfield.Stage.Background.Width;
+        Width = HitObjectManager.Playfield.Stage.Width;
         base.Update();
     }
 }

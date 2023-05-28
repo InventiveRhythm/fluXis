@@ -51,7 +51,7 @@ public partial class HealthBar : GameplayHUDElement
 
     protected override void Update()
     {
-        X = Screen.Playfield.Stage.Background.Width / 2 + 40;
+        X = Screen.Playfield.Stage.Width / 2 + 40;
 
         if (manager.Health != health)
             this.TransformTo(nameof(health), manager.Health, 300, Easing.OutQuint);

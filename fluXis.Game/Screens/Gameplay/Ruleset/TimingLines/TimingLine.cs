@@ -1,3 +1,4 @@
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -6,6 +7,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 
 public partial class TimingLine : Box
 {
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
     private readonly TimingLineManager manager;
     public float ScrollVelocityTime { get; }
 
@@ -29,7 +33,7 @@ public partial class TimingLine : Box
     {
         float delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
         var receptor = manager.HitObjectManager.Playfield.Receptors[0];
-        float hitY = receptor.Y - receptor.HitPosition;
+        float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
         Y = hitY - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
 
         base.Update();

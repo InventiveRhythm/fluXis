@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Map;
-using fluXis.Game.Skinning.Default.Gameplay;
+using fluXis.Game.Skinning;
+using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,6 +11,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class HitObject : CompositeDrawable
 {
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
     public HitObjectInfo Data;
     public readonly float ScrollVelocityTime;
     public readonly float ScrollVelocityEndTime;
@@ -39,7 +43,6 @@ public partial class HitObject : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = Receptor.SIZE;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
 
@@ -94,7 +97,7 @@ public partial class HitObject : CompositeDrawable
         X = receptor.X;
         Width = receptor.Width;
 
-        float hitY = receptor.Y - receptor.HitPosition;
+        float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
         notePiece.Y = hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);
 
         if (IsBeingHeld) notePiece.Y = hitY;

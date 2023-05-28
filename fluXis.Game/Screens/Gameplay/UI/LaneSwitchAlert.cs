@@ -70,8 +70,8 @@ public partial class LaneSwitchAlert : Container
 
     protected override void Update()
     {
-        leftContainer.X = -Playfield.Stage.Background.Width / 2 - 100;
-        rightContainer.X = Playfield.Stage.Background.Width / 2 + 100;
+        leftContainer.X = -Playfield.Stage.Width / 2 - 100;
+        rightContainer.X = Playfield.Stage.Width / 2 + 100;
 
         if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts))
             return;

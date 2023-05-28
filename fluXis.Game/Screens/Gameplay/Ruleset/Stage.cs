@@ -1,19 +1,17 @@
-using fluXis.Game.Graphics;
-using fluXis.Game.Map;
+using fluXis.Game.Skinning;
+using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class Stage : Container
 {
-    private const int lane_margin = 0;
+    [Resolved]
+    private SkinManager skinManager { get; set; }
 
-    public Box Background;
-    public Container BorderLeft;
-    public Container BorderRight;
+    private const int lane_margin = 0;
 
     private readonly Playfield playfield;
 
@@ -27,73 +25,32 @@ public partial class Stage : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.Both;
+        RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        Width = skinManager.CurrentSkin.ColumnWidth * playfield.Map.InitialKeyCount + lane_margin * 2;
 
-        MapInfo map = playfield.Map;
-        currentKeyCount = map.InitialKeyCount;
+        currentKeyCount = playfield.Map.InitialKeyCount;
 
         AddRangeInternal(new Drawable[]
         {
-            Background = new Box
+            new DefaultStageBackground
             {
-                RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = Colour4.Black,
-                Alpha = 0.5f,
-                Width = Receptor.SIZE.X * map.InitialKeyCount + lane_margin * 2
+                RelativeSizeAxes = Axes.Both
             },
-            BorderLeft = new Container
+            new DefaultStageBorderLeft
             {
-                AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
-                X = -(Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin),
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopRight,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Y,
-                        Width = 5,
-                        Margin = new MarginPadding { Left = 2 },
-                        Colour = FluXisColors.Surface
-                    },
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Y,
-                        Width = 2,
-                        Alpha = .5f,
-                        Colour = FluXisColors.Accent3
-                    }
-                }
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopRight
             },
-            BorderRight = new Container
+            new DefaultStageBorderRight
             {
-                AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
-                X = Receptor.SIZE.X * (map.InitialKeyCount / 2f) + lane_margin,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomLeft,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Y,
-                        Width = 5,
-                        Colour = FluXisColors.Surface
-                    },
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Y,
-                        Width = 2,
-                        Margin = new MarginPadding { Left = 5 },
-                        Alpha = .5f,
-                        Colour = FluXisColors.Accent
-                    }
-                }
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopLeft
             }
         });
     }
@@ -104,11 +61,7 @@ public partial class Stage : Container
         {
             var currentEvent = playfield.Manager.CurrentLaneSwitchEvent;
             currentKeyCount = currentEvent.Count;
-            Background.ResizeWidthTo(Receptor.SIZE.X * currentKeyCount + lane_margin * 2, currentEvent.Speed, Easing.OutQuint);
-            BorderLeft.MoveToX(-(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin), currentEvent.Speed, Easing.OutQuint);
-            BorderRight.MoveToX(Receptor.SIZE.X * (currentKeyCount / 2f) + lane_margin, currentEvent.Speed, Easing.OutQuint);
+            this.ResizeWidthTo(skinManager.CurrentSkin.ColumnWidth * currentKeyCount + lane_margin * 2, currentEvent.Speed, Easing.OutQuint);
         }
-
-        base.Update();
     }
 }

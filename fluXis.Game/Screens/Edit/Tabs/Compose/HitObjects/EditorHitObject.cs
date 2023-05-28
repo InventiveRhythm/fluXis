@@ -1,5 +1,5 @@
 using fluXis.Game.Map;
-using fluXis.Game.Skinning.Default.Gameplay;
+using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

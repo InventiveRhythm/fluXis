@@ -4,9 +4,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Skinning.Default.Gameplay;
+namespace fluXis.Game.Skinning.Default.HitObject;
 
-public partial class DefaultHitObjectEnd : Container
+public partial class DefaultHitObjectPiece : Container
 {
     private Box box;
 
@@ -25,5 +25,5 @@ public partial class DefaultHitObjectEnd : Container
         };
     }
 
-    public void UpdateColor(int lane, int keyCount) => box.Colour = FluXisColors.GetLaneColor(lane, keyCount).Darken(.4f);
+    public void UpdateColor(int lane, int keyCount) => box.Colour = FluXisColors.GetLaneColor(lane, keyCount);
 }

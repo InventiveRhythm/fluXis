@@ -1,5 +1,6 @@
 ﻿using fluXis.Game.Graphics;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -11,8 +12,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class Receptor : CompositeDrawable
 {
-    public static readonly Vector2 SIZE = new(114, 114);
-    public readonly float HitPosition = 130;
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
     public Playfield Playfield;
 
     private readonly int id;
@@ -39,7 +41,7 @@ public partial class Receptor : CompositeDrawable
     {
         Origin = Anchor.BottomCentre;
         Anchor = Anchor.BottomCentre;
-        Width = SIZE.X;
+        Width = skinManager.CurrentSkin.ColumnWidth;
         RelativeSizeAxes = Axes.Y;
         Masking = true;
 
@@ -48,7 +50,7 @@ public partial class Receptor : CompositeDrawable
             new Container
             {
                 RelativeSizeAxes = Axes.X,
-                Height = HitPosition,
+                Height = skinManager.CurrentSkin.HitPosition,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 Children = new Drawable[]
@@ -80,7 +82,7 @@ public partial class Receptor : CompositeDrawable
             hitLighting = new Box
             {
                 Colour = ColourInfo.GradientVertical(color.Opacity(0), color),
-                Margin = new MarginPadding { Bottom = HitPosition },
+                Margin = new MarginPadding { Bottom = skinManager.CurrentSkin.HitPosition },
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,
@@ -127,12 +129,12 @@ public partial class Receptor : CompositeDrawable
 
         if (instant)
         {
-            this.ResizeWidthTo(visible ? SIZE.X : 0);
+            this.ResizeWidthTo(visible ? skinManager.CurrentSkin.ColumnWidth : 0);
         }
         else
         {
             float duration = Playfield.Manager.CurrentLaneSwitchEvent?.Speed ?? 200;
-            this.ResizeWidthTo(visible ? SIZE.X : 0, duration, Easing.OutQuint);
+            this.ResizeWidthTo(visible ? skinManager.CurrentSkin.ColumnWidth : 0, duration, Easing.OutQuint);
         }
     }
 }
