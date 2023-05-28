@@ -41,6 +41,9 @@ public partial class WindowsUpdateManager : Component
             return;
         }
 
+        notifications.Post("There is an update available, check the GitHub releases page to download it.");
+        return;
+
         var loading = new LoadingNotification
         {
             TextLoading = "Applying update...",
