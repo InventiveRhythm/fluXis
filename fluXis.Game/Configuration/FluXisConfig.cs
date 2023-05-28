@@ -24,6 +24,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.BackgroundBlur, 0f, 0f, 1f, 0.01f);
 
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
+        SetDefault(FluXisSetting.SkipIntro, false);
 
         SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
         SetDefault(FluXisSetting.HitSoundVolume, 1d, 0d, 1d, 0.01d);
@@ -48,6 +49,7 @@ public enum FluXisSetting
 
     // UI
     MainMenuVisualizer,
+    SkipIntro,
 
     // Audio
     GlobalOffset,

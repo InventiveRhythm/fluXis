@@ -19,6 +19,11 @@ public partial class UserInterfaceSection : SettingsSection
             {
                 Label = "Main Menu Visualizer",
                 Bindable = config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer)
+            },
+            new SettingsToggle
+            {
+                Label = "Skip Intro",
+                Bindable = config.GetBindable<bool>(FluXisSetting.SkipIntro)
             }
         });
     }

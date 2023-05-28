@@ -140,11 +140,7 @@ public partial class Toolbar : Container
                 }
             }
         };
-    }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
         ShowToolbar.BindValueChanged(OnShowToolbarChanged, true);
     }
 

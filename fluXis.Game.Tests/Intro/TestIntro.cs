@@ -10,6 +10,6 @@ public partial class TestIntro : FluXisTestScene
         var stack = new FluXisScreenStack();
         Add(stack);
 
-        AddStep("Play Intro", () => stack.Push(new IntroScreen(true)));
+        AddStep("Play Intro", () => stack.Push(new IntroScreen()));
     }
 }
