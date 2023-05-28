@@ -81,6 +81,7 @@ public partial class TimingCategoryList<T> : Container
     public void AddEntry(T item)
     {
         item.TimingTab = TimingTab;
+        item.List = this;
         flow.Add(item);
     }
 
@@ -101,6 +102,8 @@ public partial class TimingCategoryList<T> : Container
     }
 
     public virtual void Sort() { }
+
+    public virtual void Remove(T entry) => flow.Remove(entry, true);
 
     private partial class AddButton : CircularContainer
     {
@@ -199,6 +202,7 @@ public partial class TimingCategoryList<T> : Container
     public partial class ListEntry : Container
     {
         public TimingTab TimingTab;
+        public TimingCategoryList<T> List;
 
         public ListEntry()
         {
