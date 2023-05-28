@@ -34,7 +34,16 @@ public class Performance
     };
 
     [JsonProperty("score")]
-    public int Score => (int)(NotesRated / Map.MaxCombo * (1000000 * ScoreMultiplier));
+    public int Score
+    {
+        get
+        {
+            var maxScore = (int)(1000000 * ScoreMultiplier);
+            var accBased = (int)(NotesRated / Map.MaxCombo * (maxScore * .9f));
+            var comboBased = (int)(MaxCombo / (float)Map.MaxCombo * (maxScore * .1f));
+            return accBased + comboBased;
+        }
+    }
 
     [JsonProperty("combo")]
     public int Combo { get; private set; }
