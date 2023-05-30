@@ -10,6 +10,8 @@ public partial class SettingsItem : Container
 {
     public string Label { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
+    public int LabelSize { get; init; } = 24;
+    public int DescriptionSize { get; init; } = 18;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -19,12 +21,30 @@ public partial class SettingsItem : Container
 
         InternalChildren = new Drawable[]
         {
-            new SpriteText
+            new FillFlowContainer
             {
-                Text = Label,
-                Font = FluXisFont.Default(24),
+                AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
+                Origin = Anchor.CentreLeft,
+                Direction = FillDirection.Vertical,
+                Children = new Drawable[]
+                {
+                    new SpriteText
+                    {
+                        Text = Label,
+                        Font = FluXisFont.Default(LabelSize),
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopLeft
+                    },
+                    new SpriteText
+                    {
+                        Text = Description,
+                        Colour = FluXisColors.Text2,
+                        Font = FluXisFont.Default(DescriptionSize),
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopLeft
+                    },
+                }
             }
         };
     }
