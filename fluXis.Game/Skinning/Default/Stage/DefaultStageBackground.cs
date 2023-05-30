@@ -11,5 +11,8 @@ public partial class DefaultStageBackground : Box
     {
         Colour = Colour4.Black;
         Alpha = 0.5f;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+        RelativeSizeAxes = Axes.Both;
     }
 }

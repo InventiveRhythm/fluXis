@@ -106,6 +106,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 {
                     keybinds = new FluXisKeybindContainer(this, Realm),
                     LightController,
+                    SkinManager,
                     content = new Container
                     {
                         RelativeSizeAxes = Axes.Both

@@ -1,12 +1,9 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
@@ -21,7 +18,7 @@ public partial class Playfield : CompositeDrawable
     public HitObjectManager Manager;
     public TimingLineManager TimingLineManager;
     public Stage Stage;
-    public Box HitLine;
+    public Drawable HitLine;
 
     public MapInfo Map { get; }
 
@@ -49,14 +46,8 @@ public partial class Playfield : CompositeDrawable
             Direction = FillDirection.Horizontal,
         };
 
-        HitLine = new Box
-        {
-            Anchor = Anchor.BottomCentre,
-            Origin = Anchor.TopCentre,
-            Height = 3,
-            Y = -skinManager.CurrentSkin.HitPosition,
-            Colour = ColourInfo.GradientHorizontal(FluXisColors.Accent3, FluXisColors.Accent)
-        };
+        HitLine = skinManager.GetHitLine();
+        HitLine.Y = -skinManager.CurrentSkin.HitPosition;
 
         Manager = new HitObjectManager(this);
         Manager.LoadMap(Map);
@@ -69,7 +60,7 @@ public partial class Playfield : CompositeDrawable
             Receptors.Add(receptor);
         }
 
-        InternalChildren = new Drawable[]
+        InternalChildren = new[]
         {
             Stage,
             TimingLineManager,

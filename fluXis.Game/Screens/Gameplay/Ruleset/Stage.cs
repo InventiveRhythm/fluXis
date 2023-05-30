@@ -1,5 +1,4 @@
 using fluXis.Game.Skinning;
-using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -32,26 +31,11 @@ public partial class Stage : Container
 
         currentKeyCount = playfield.Map.InitialKeyCount;
 
-        AddRangeInternal(new Drawable[]
+        AddRangeInternal(new[]
         {
-            new DefaultStageBackground
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both
-            },
-            new DefaultStageBorderLeft
-            {
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopRight
-            },
-            new DefaultStageBorderRight
-            {
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopLeft
-            }
+            skinManager.GetStageBackground(),
+            skinManager.GetStageBorder(false),
+            skinManager.GetStageBorder(true)
         });
     }
 

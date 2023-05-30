@@ -13,7 +13,4 @@
     <PackageReference Include="Realm" Version="10.20.0" />
     <PackageReference Include="YamlDotNet" Version="5.1.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Skinning\Default\Receptor\" />
-  </ItemGroup>
 </Project>

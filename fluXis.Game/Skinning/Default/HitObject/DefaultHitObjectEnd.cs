@@ -1,5 +1,4 @@
 using fluXis.Game.Graphics;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -8,10 +7,9 @@ namespace fluXis.Game.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectEnd : Container
 {
-    private Box box;
+    private readonly Box box;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    public DefaultHitObjectEnd()
     {
         CornerRadius = 10;
         Masking = true;

@@ -12,6 +12,7 @@ public partial class DefaultStageBorderRight : Container
     private void load()
     {
         AutoSizeAxes = Axes.X;
+        RelativeSizeAxes = Axes.Y;
 
         Children = new Drawable[]
         {

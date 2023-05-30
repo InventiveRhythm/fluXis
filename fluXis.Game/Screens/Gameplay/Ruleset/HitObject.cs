@@ -1,7 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Map;
 using fluXis.Game.Skinning;
-using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,9 +19,9 @@ public partial class HitObject : CompositeDrawable
 
     private readonly HitObjectManager manager;
 
-    private DefaultHitObjectPiece notePiece;
-    private DefaultHitObjectBody holdBodyPiece;
-    private DefaultHitObjectEnd holdEndPiece;
+    private Drawable notePiece;
+    private Drawable holdBodyPiece;
+    private Drawable holdEndPiece;
 
     public bool Hitable;
     public bool Releasable;
@@ -46,16 +45,12 @@ public partial class HitObject : CompositeDrawable
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
 
-        InternalChildren = new Drawable[]
+        InternalChildren = new[]
         {
-            holdEndPiece = new DefaultHitObjectEnd(),
-            holdBodyPiece = new DefaultHitObjectBody(),
-            notePiece = new DefaultHitObjectPiece()
+            holdBodyPiece = skinManager.GetLongNoteBody(Data.Lane, manager.Map.KeyCount),
+            holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.Map.KeyCount),
+            notePiece = skinManager.GetHitObject(Data.Lane, manager.Map.KeyCount)
         };
-
-        notePiece.UpdateColor(Data.Lane, manager.Map.KeyCount);
-        holdBodyPiece.UpdateColor(Data.Lane, manager.Map.KeyCount);
-        holdEndPiece.UpdateColor(Data.Lane, manager.Map.KeyCount);
 
         if (!Data.IsLongNote())
         {
