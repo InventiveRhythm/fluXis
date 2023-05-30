@@ -9,6 +9,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Compose.HitObjects;
 
 public partial class EditorHitObject : Container
 {
+    public override bool HandlePositionalInput => true;
+
     [Resolved]
     private EditorClock clock { get; set; }
 
@@ -16,7 +18,6 @@ public partial class EditorHitObject : Container
     private EditorValues values { get; set; }
 
     public EditorPlayfield Playfield { get; }
-
     public HitObjectInfo Info { get; set; }
 
     public bool IsOnScreen

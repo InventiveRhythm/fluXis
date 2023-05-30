@@ -65,7 +65,7 @@ public partial class EditorPlayfield : Container
     public Vector2 SelectionStart { get; set; }
     public Vector2 SelectionNow { get; set; }
     public float SelectionStartTime { get; set; }
-    public float SelectionStartLane { get; set; }
+    public int SelectionStartLane { get; set; }
     public bool Selecting { get; set; }
 
     public List<EditorHitObject> SelectedHitObjects { get; } = new();
@@ -320,6 +320,33 @@ public partial class EditorPlayfield : Container
                 SelectionNow = e.MousePosition;
                 break;
 
+            case EditorTool.Select when isDragging:
+                var time = getTimeFromMouseSnapped(e.MousePosition);
+                var lane = getLaneFromMouse(e.ScreenSpaceMousePosition);
+                var delta = time - SnapTime(SelectionStartTime);
+                var deltaLane = lane - SelectionStartLane;
+
+                var minLane = SelectedHitObjects.Min(h => h.Info.Lane);
+                var maxLane = SelectedHitObjects.Max(h => h.Info.Lane);
+
+                if (minLane + deltaLane < 1 || maxLane + deltaLane > Map.KeyCount)
+                    deltaLane = 0;
+
+                if (Math.Abs(delta) >= 1)
+                    SelectionStartTime = time;
+
+                if (Math.Abs(deltaLane) >= 1)
+                    SelectionStartLane = lane;
+
+                foreach (var hitObject in SelectedHitObjects)
+                {
+                    hitObject.Info.Time += delta;
+                    hitObject.Info.Time = SnapTime(hitObject.Info.Time);
+                    hitObject.Info.Lane += deltaLane;
+                }
+
+                break;
+
             default:
                 updateGhostNote(e);
                 break;
@@ -336,6 +363,15 @@ public partial class EditorPlayfield : Container
                 switch (Tool)
                 {
                     case EditorTool.Select:
+                        if (SelectedHitObjects.Any(h => h.IsHovered))
+                        {
+                            SelectionStart = e.MousePosition;
+                            SelectionStartTime = getTimeFromMouse(e.MousePosition);
+                            SelectionStartLane = getLaneFromMouse(e.ScreenSpaceMousePosition);
+                            isDragging = true;
+                            break;
+                        }
+
                         SelectionStart = e.MousePosition;
                         SelectionStartTime = getTimeFromMouse(e.MousePosition);
                         SelectionStartLane = getLaneFromMouse(e.ScreenSpaceMousePosition);
@@ -402,9 +438,18 @@ public partial class EditorPlayfield : Container
                     break;
 
                 case EditorTool.Select:
-                    Selecting = false;
-                    SelectionContainer.FadeOut(SELECTION_FADE);
-                    selectHitObjects();
+                    if (Selecting)
+                    {
+                        Selecting = false;
+                        SelectionContainer.FadeOut(SELECTION_FADE);
+                        selectHitObjects();
+                    }
+
+                    if (isDragging)
+                    {
+                        isDragging = false;
+                    }
+
                     break;
             }
         }
