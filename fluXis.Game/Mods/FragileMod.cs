@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -10,5 +11,5 @@ public class FragileMod : IMod
     public IconUsage Icon => FontAwesome.Solid.GlassMartini;
     public float ScoreMultiplier => 1f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "FL", "HD", "AP", "EZ", "NF" };
+    public IEnumerable<string> IncompatibleMods => new[] { "FL", "AP", "NF" };
 }

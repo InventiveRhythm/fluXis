@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -10,5 +11,5 @@ public class NoFailMod : IMod
     public IconUsage Icon => FontAwesome.Solid.ShieldAlt;
     public float ScoreMultiplier => 0.5f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "EZ", "AP", "HD", "FR", "FL" };
+    public IEnumerable<string> IncompatibleMods => new[] { "EZ", "AP", "HD", "FR", "FL" };
 }

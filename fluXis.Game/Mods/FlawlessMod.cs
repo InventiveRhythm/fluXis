@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -10,5 +11,5 @@ public class FlawlessMod : IMod
     public IconUsage Icon => FontAwesome.Solid.ThumbsUp;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "NF", "HD", "EZ", "AP", "FR" };
+    public IEnumerable<string> IncompatibleMods => new[] { "NF", "AP", "FR" };
 }

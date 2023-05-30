@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -11,5 +12,5 @@ public interface IMod
 
     float ScoreMultiplier { get; }
     bool Rankable { get; }
-    string[] IncompatibleMods { get; }
+    IEnumerable<string> IncompatibleMods { get; }
 }

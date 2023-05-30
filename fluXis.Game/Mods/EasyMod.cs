@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -10,5 +11,5 @@ public class EasyMod : IMod
     public IconUsage Icon => FontAwesome.Solid.CandyCane;
     public float ScoreMultiplier => 0.7f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "NF", "HD", "FR", "FL", "AP" };
+    public IEnumerable<string> IncompatibleMods => new[] { "HD", "NF" };
 }

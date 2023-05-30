@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -10,5 +11,5 @@ public class AutoPlayMod : IMod
     public IconUsage Icon => FontAwesome.Solid.Plane;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => false;
-    public string[] IncompatibleMods => new[] { "NF", "FR", "FL", "EZ" };
+    public IEnumerable<string> IncompatibleMods => new[] { "NF", "FR", "FL" };
 }

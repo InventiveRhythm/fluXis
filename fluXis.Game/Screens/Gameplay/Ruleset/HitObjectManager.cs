@@ -289,16 +289,17 @@ public partial class HitObjectManager : CompositeDrawable
 
         foreach (var hit in map.HitObjects)
         {
+            if (Playfield.Screen.Mods.Any(m => m is NoLnMod))
+                hit.HoldTime = 0;
+
             HitObject hitObject = new HitObject(this, hit);
             FutureHitObjects.Add(hitObject);
         }
-
-        // Conductor.Offset = map.HitObjects[0].Time - map.TimingPoints[0].Time;
     }
 
     private void initScrollVelocityMarks()
     {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
+        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || Playfield.Screen.Mods.Any(m => m is NoSvMod))
             return;
 
         ScrollVelocityInfo first = Map.ScrollVelocities[0];
@@ -318,7 +319,7 @@ public partial class HitObjectManager : CompositeDrawable
 
     public float PositionFromTime(float time, int index = -1)
     {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
+        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || Playfield.Screen.Mods.Any(m => m is NoSvMod))
             return time;
 
         if (index == -1)

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Mods;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -16,19 +17,26 @@ public partial class ModSelector : Container
 {
     public BindableBool IsOpen = new();
 
-    private readonly FillFlowContainer<ModEntry> mods;
-    private readonly SpriteText multiplierText;
+    private FillFlowContainer<ModCategory> mods;
+    private SpriteText maxScoreText;
+    private float scoreMultiplier = 1;
 
-    public ModSelector()
+    private List<ModEntry> selected = new();
+
+    private ClickableContainer background;
+    private ClickableContainer content;
+
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
-            new ClickableContainer
+            background = new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
+                Alpha = 0,
                 Action = () => IsOpen.Value = false,
                 Child = new Box
                 {
@@ -37,57 +45,140 @@ public partial class ModSelector : Container
                     Alpha = 0.5f,
                 }
             },
-            new ClickableContainer // make this clickable so that the mod selector doesn't close when clicking on it
+            content = new ClickableContainer
             {
-                Width = 1300,
-                AutoSizeAxes = Axes.Y,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                CornerRadius = 10,
-                Masking = true,
-                Children = new Drawable[]
+                RelativeSizeAxes = Axes.Both,
+                RelativePositionAxes = Axes.X,
+                X = 0.5f,
+                Width = 0.5f,
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Padding = new MarginPadding(20),
+                Child = new Container
                 {
-                    new Box
+                    RelativeSizeAxes = Axes.Both,
+                    CornerRadius = 10,
+                    Masking = true,
+                    Children = new Drawable[]
                     {
-                        Colour = FluXisColors.Background2,
-                        RelativeSizeAxes = Axes.Both,
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Padding = new MarginPadding(20),
-                        Children = new Drawable[]
+                        new Box
                         {
-                            new SpriteText
+                            Colour = FluXisColors.Background2,
+                            RelativeSizeAxes = Axes.Both,
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Padding = new MarginPadding { Vertical = 20, Horizontal = 10 },
+                            Child = new GridContainer
                             {
-                                Text = "Gameplay Modifiers",
-                                Font = FluXisFont.Default(40),
-                                Y = -10
-                            },
-                            new SpriteText
-                            {
-                                Text = "Make the game harder or easier for yourself.",
-                                Font = FluXisFont.Default(),
-                                Margin = new MarginPadding { Top = 25 },
-                                Colour = FluXisColors.Text2
-                            },
-                            multiplierText = new SpriteText
-                            {
-                                Text = "Score Multiplier: 1.00x",
-                                Font = FluXisFont.Default(),
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.CentreRight,
-                                Margin = new MarginPadding { Top = 30 },
-                                Colour = FluXisColors.Text2
-                            },
-                            mods = new FillFlowContainer<ModEntry>
-                            {
-                                Direction = FillDirection.Full,
-                                RelativeSizeAxes = Axes.X,
-                                AutoSizeAxes = Axes.Y,
-                                Spacing = new Vector2(10),
-                                Margin = new MarginPadding { Top = 50 }
+                                RelativeSizeAxes = Axes.Both,
+                                ColumnDimensions = new Dimension[] { new() },
+                                RowDimensions = new Dimension[]
+                                {
+                                    new(GridSizeMode.AutoSize),
+                                    new(GridSizeMode.Absolute, 10),
+                                    new()
+                                },
+                                Content = new[]
+                                {
+                                    new Drawable[]
+                                    {
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Padding = new MarginPadding { Horizontal = 10 },
+                                            Children = new Drawable[]
+                                            {
+                                                new SpriteText
+                                                {
+                                                    Text = "Gameplay Modifiers",
+                                                    Font = FluXisFont.Default(40),
+                                                    Y = -10
+                                                },
+                                                new SpriteText
+                                                {
+                                                    Text = "Make the game harder or easier for yourself.",
+                                                    Font = FluXisFont.Default(),
+                                                    Margin = new MarginPadding { Top = 25 },
+                                                    Colour = FluXisColors.Text2
+                                                },
+                                                maxScoreText = new SpriteText
+                                                {
+                                                    Font = FluXisFont.Default(),
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight,
+                                                    Colour = FluXisColors.Text2
+                                                }
+                                            }
+                                        }
+                                    },
+                                    new[] { Empty() },
+                                    new Drawable[]
+                                    {
+                                        new BasicScrollContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Masking = true,
+                                            ScrollbarVisible = false,
+                                            Child = mods = new FillFlowContainer<ModCategory>
+                                            {
+                                                Direction = FillDirection.Full,
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                Spacing = new Vector2(0, 10),
+                                                Children = new ModCategory[]
+                                                {
+                                                    new()
+                                                    {
+                                                        Label = "Difficulty Decrease",
+                                                        HexColour = "#b2ff66",
+                                                        Selector = this,
+                                                        Mods = new IMod[]
+                                                        {
+                                                            new EasyMod(),
+                                                            new NoFailMod()
+                                                        }
+                                                    },
+                                                    new()
+                                                    {
+                                                        Label = "Difficulty Increase",
+                                                        HexColour = "#ff6666",
+                                                        Selector = this,
+                                                        Mods = new IMod[]
+                                                        {
+                                                            new HardMod(),
+                                                            new FragileMod(),
+                                                            new FlawlessMod()
+                                                        }
+                                                    },
+                                                    new()
+                                                    {
+                                                        Label = "Automation",
+                                                        HexColour = "#66b3ff",
+                                                        Selector = this,
+                                                        Mods = new IMod[]
+                                                        {
+                                                            new AutoPlayMod(),
+                                                        }
+                                                    },
+                                                    new()
+                                                    {
+                                                        Label = "Miscellaneous",
+                                                        HexColour = "#8866ff",
+                                                        Selector = this,
+                                                        Mods = new IMod[]
+                                                        {
+                                                            new NoSvMod(),
+                                                            new NoLnMod()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -96,45 +187,50 @@ public partial class ModSelector : Container
         };
 
         IsOpen.BindValueChanged(_ => updateVisibility());
-
-        addMod(new EasyMod());
-        addMod(new HardMod());
-        addMod(new NoFailMod());
-        addMod(new AutoPlayMod());
-        addMod(new FragileMod());
-        addMod(new FlawlessMod());
     }
 
-    public void OnModSelected(ModEntry mod)
+    public void Select(ModEntry mod)
     {
-        foreach (var modIncompatibleMod in mod.Mod.IncompatibleMods)
+        foreach (var selectedMod in selected)
         {
-            var incompatibleMod = mods.Children.FirstOrDefault(m => m.Mod.Acronym == modIncompatibleMod);
-            incompatibleMod?.Deselect();
+            if (mod.Mod.IncompatibleMods.Contains(selectedMod.Mod.Acronym) || selectedMod.Mod.IncompatibleMods.Contains(mod.Mod.Acronym))
+            {
+                selectedMod.Selected = false;
+                selectedMod.UpdateSelected();
+
+                Schedule(() => selected.Remove(selectedMod));
+            }
         }
 
+        selected.Add(mod);
         updateTotalMultiplier();
     }
 
-    public void OnModDeselected(ModEntry mod) => updateTotalMultiplier();
+    public void Deselect(ModEntry mod)
+    {
+        selected.Remove(mod);
+        updateTotalMultiplier();
+    }
 
     private void updateTotalMultiplier()
     {
-        multiplierText.Text = $"Score Multiplier: {1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f):0.00}x";
+        this.TransformTo(nameof(scoreMultiplier), 1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f), 400, Easing.OutQuint);
     }
 
-    public List<IMod> SelectedMods => mods.Children.Where(mod => mod.Selected).Select(mod => mod.Mod).ToList();
+    public List<IMod> SelectedMods => selected.Select(mod => mod.Mod).ToList();
 
-    private void addMod(IMod mod)
+    private void updateVisibility()
     {
-        mods.Add(new ModEntry(mod) { ParentSelector = this });
+        background.FadeTo(IsOpen.Value ? 1 : 0, 400);
+        content.MoveToX(IsOpen.Value ? 0 : .5f, 800, Easing.OutQuint);
     }
 
-    private void updateVisibility() => this.FadeTo(IsOpen.Value ? 1 : 0, 200);
+    protected override void Update()
+    {
+        maxScoreText.Text = $"Max Score: {(int)(scoreMultiplier * 100)}%";
+    }
 
-    // stop mouse events from going through
-    protected override bool OnHover(HoverEvent e) => true;
-    protected override bool OnClick(ClickEvent e) => true;
-    protected override bool OnDragStart(DragStartEvent e) => true;
-    protected override bool OnScroll(ScrollEvent e) => true;
+    protected override bool OnHover(HoverEvent e) => IsOpen.Value;
+    protected override bool OnDragStart(DragStartEvent e) => IsOpen.Value;
+    protected override bool OnScroll(ScrollEvent e) => IsOpen.Value;
 }
