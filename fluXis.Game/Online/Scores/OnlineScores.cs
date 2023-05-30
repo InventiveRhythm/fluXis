@@ -4,6 +4,7 @@ using System.Net.Http;
 using fluXis.Game.Online.API;
 using fluXis.Game.Scoring;
 using Newtonsoft.Json;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.Scores;
 
@@ -24,12 +25,12 @@ public class OnlineScores
             MaxCombo = performance.MaxCombo,
             Judgements = new Dictionary<string, int>
             {
-                { "flawless", performance.Judgements.ContainsKey(Judgement.Flawless) ? performance.Judgements[Judgement.Flawless] : 0 },
-                { "perfect", performance.Judgements.ContainsKey(Judgement.Perfect) ? performance.Judgements[Judgement.Perfect] : 0 },
-                { "great", performance.Judgements.ContainsKey(Judgement.Great) ? performance.Judgements[Judgement.Great] : 0 },
-                { "alright", performance.Judgements.ContainsKey(Judgement.Alright) ? performance.Judgements[Judgement.Alright] : 0 },
-                { "okay", performance.Judgements.ContainsKey(Judgement.Okay) ? performance.Judgements[Judgement.Okay] : 0 },
-                { "miss", performance.Judgements.ContainsKey(Judgement.Miss) ? performance.Judgements[Judgement.Miss] : 0 }
+                { "flawless", performance.Judgements.TryGetValue(Judgement.Flawless, out var flawless) ? flawless : 0 },
+                { "perfect", performance.Judgements.TryGetValue(Judgement.Perfect, out var perfect) ? perfect : 0 },
+                { "great", performance.Judgements.TryGetValue(Judgement.Great, out var great) ? great : 0 },
+                { "alright", performance.Judgements.TryGetValue(Judgement.Alright, out var alright) ? alright : 0 },
+                { "okay", performance.Judgements.TryGetValue(Judgement.Okay, out var okay) ? okay : 0 },
+                { "miss", performance.Judgements.TryGetValue(Judgement.Miss, out var miss) ? miss : 0 }
             },
             HitStats = performance.HitStats,
             MapID = performance.MapID,
@@ -37,11 +38,11 @@ public class OnlineScores
             PlayerID = Fluxel.Fluxel.LoggedInUser?.ID ?? -1
         };
 
-        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, APIConstants.APIUrl + "/score");
-        request.Headers.Add("Authorization", Fluxel.Fluxel.Token);
-        request.Content = new StringContent(JsonConvert.SerializeObject(score));
-        var res = await Fluxel.Fluxel.Http.SendAsync(request);
-        var response = await res.Content.ReadAsStringAsync();
-        callback(JsonConvert.DeserializeObject<APIResponse<dynamic>>(response));
+        var req = new WebRequest($"{APIConstants.APIUrl}/score");
+        req.AddHeader("Authorization", Fluxel.Fluxel.Token);
+        req.Method = HttpMethod.Post;
+        req.AddRaw(JsonConvert.SerializeObject(score));
+        await req.PerformAsync();
+        callback(JsonConvert.DeserializeObject<APIResponse<dynamic>>(req.GetResponseString()));
     }
 }

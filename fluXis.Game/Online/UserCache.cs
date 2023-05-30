@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
 using fluXis.Game.Online.API;
 using Newtonsoft.Json;
+using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online;
@@ -17,20 +16,24 @@ public class UserCache
         if (users.TryGetValue(id, out var u))
             return u;
 
-        APIUser user = loadUser(id) ?? APIUser.DummyUser(id);
+        APIUser user = fetchUser(id) ?? APIUser.DummyUser(id);
         users.Add(id, user);
         return user;
     }
 
-    private static APIUser loadUser(int id)
+    private static APIUser fetchUser(int id)
     {
         try
         {
-            var res = Fluxel.Fluxel.Http.Send(new HttpRequestMessage(HttpMethod.Get, $"{APIConstants.APIUrl}/user/{id}"));
-            var data = new StreamReader(res.Content.ReadAsStream()).ReadToEnd();
-            APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(data);
+            var req = new WebRequest($"{APIConstants.APIUrl}/user/{id}");
+            req.AllowInsecureRequests = true;
+            req.Perform();
+            APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(req.GetResponseString());
 
-            return user.Status == 200 ? user.Data : null;
+            if (user.Status == 200) return user.Data;
+
+            Logger.Log($"Failed to load user from API: {user.Message}", LoggingTarget.Network, LogLevel.Error);
+            return null;
         }
         catch (Exception e)
         {
