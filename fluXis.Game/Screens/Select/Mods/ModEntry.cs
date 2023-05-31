@@ -107,8 +107,8 @@ public partial class ModEntry : Container, IHasTooltip
 
         UpdateSelected();
 
-        if (Selected) Selector.Select(this);
-        else Selector.Deselect(this);
+        if (Selected) Selector.Select(Mod);
+        else Selector.Deselect(Mod);
 
         return base.OnClick(e);
     }

@@ -360,6 +360,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         mapStore.MapSetAdded -= addMapSet;
         mapStore.MapSetUpdated -= replaceMapSet;
         Conductor.ResetLoop();
+        Conductor.SetSpeed(1f);
 
         return base.OnExiting(e);
     }

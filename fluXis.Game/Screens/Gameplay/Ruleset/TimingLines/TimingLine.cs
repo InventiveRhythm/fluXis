@@ -34,7 +34,7 @@ public partial class TimingLine : Box
         float delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
         var receptor = manager.HitObjectManager.Playfield.Receptors[0];
         float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
-        Y = hitY - 0.5f * (delta * manager.HitObjectManager.ScrollSpeed);
+        Y = hitY - 0.5f * (delta * (manager.HitObjectManager.ScrollSpeed / manager.HitObjectManager.Playfield.Screen.Rate));
 
         base.Update();
     }

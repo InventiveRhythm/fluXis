@@ -92,14 +92,16 @@ public partial class HitObject : CompositeDrawable
         X = receptor.X;
         Width = receptor.Width;
 
+        var scrollSpeed = manager.ScrollSpeed / manager.Playfield.Screen.Rate;
+
         float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
-        notePiece.Y = hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * manager.ScrollSpeed);
+        notePiece.Y = hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * scrollSpeed);
 
         if (IsBeingHeld) notePiece.Y = hitY;
 
         if (Data.IsLongNote())
         {
-            var endY = hitY - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * manager.ScrollSpeed);
+            var endY = hitY - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * scrollSpeed);
 
             var height = notePiece.Y - endY;
             holdBodyPiece.Size = new Vector2(holdBodyPiece.Width, height);

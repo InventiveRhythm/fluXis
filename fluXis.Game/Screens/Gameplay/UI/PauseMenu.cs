@@ -100,7 +100,7 @@ public partial class PauseMenu : CompositeDrawable
 
     public override void Hide()
     {
-        Conductor.SetSpeed(1);
+        Conductor.SetSpeed(Screen.Rate);
         this.FadeOut(200);
         cursorOverlay.ShowCursor = false;
     }

@@ -78,10 +78,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public Sample Combobreak;
     public Sample Restart;
 
+    public float Rate { get; }
+
     public GameplayScreen(RealmMap realmMap, List<IMod> mods)
     {
         RealmMap = realmMap;
         Mods = mods;
+
+        Rate = ((RateMod)Mods.Find(m => m is RateMod))?.Rate ?? 1f;
     }
 
     [BackgroundDependencyLoader]
@@ -182,8 +186,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         Conductor.PlayTrack(RealmMap);
         Conductor.Seek(-2000 + Conductor.Offset);
         Conductor.TimingPoints = Map.TimingPoints;
-        Conductor.SetSpeed(1, 0);
         backgrounds.SetVideoBackground(RealmMap, Map);
+
+        Conductor.SetSpeed(Rate, 0);
 
         backgrounds.SetDim(config.Get<float>(FluXisSetting.BackgroundDim), 600);
         backgrounds.SetBlur(config.Get<float>(FluXisSetting.BackgroundBlur), 600);
@@ -291,7 +296,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         }
 
         Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, time, Easing.None);
-        Conductor.SetSpeed(1, time, Easing.None);
+        Conductor.SetSpeed(Rate, time, Easing.None);
         backgrounds.StopVideo();
 
         return base.OnExiting(e);

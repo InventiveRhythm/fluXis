@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
@@ -17,11 +18,12 @@ public partial class ModSelector : Container
 {
     public BindableBool IsOpen = new();
 
-    private FillFlowContainer<ModCategory> mods;
     private SpriteText maxScoreText;
     private float scoreMultiplier = 1;
 
-    private List<ModEntry> selected = new();
+    private readonly Dictionary<IMod, ModEntry> mappings = new();
+
+    public List<IMod> SelectedMods { get; } = new();
 
     private ClickableContainer background;
     private ClickableContainer content;
@@ -122,56 +124,73 @@ public partial class ModSelector : Container
                                             RelativeSizeAxes = Axes.Both,
                                             Masking = true,
                                             ScrollbarVisible = false,
-                                            Child = mods = new FillFlowContainer<ModCategory>
+                                            Child = new FillFlowContainer
                                             {
-                                                Direction = FillDirection.Full,
                                                 RelativeSizeAxes = Axes.X,
                                                 AutoSizeAxes = Axes.Y,
-                                                Spacing = new Vector2(0, 10),
-                                                Children = new ModCategory[]
+                                                Direction = FillDirection.Vertical,
+                                                Children = new Drawable[]
                                                 {
-                                                    new()
+                                                    new Container
                                                     {
-                                                        Label = "Difficulty Decrease",
-                                                        HexColour = "#b2ff66",
-                                                        Selector = this,
-                                                        Mods = new IMod[]
-                                                        {
-                                                            new EasyMod(),
-                                                            new NoFailMod()
-                                                        }
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Padding = new MarginPadding { Horizontal = 5 },
+                                                        Margin = new MarginPadding { Bottom = 10 },
+                                                        Child = new ModSelectRate { Selector = this }
                                                     },
-                                                    new()
+                                                    new FillFlowContainer<ModCategory>
                                                     {
-                                                        Label = "Difficulty Increase",
-                                                        HexColour = "#ff6666",
-                                                        Selector = this,
-                                                        Mods = new IMod[]
+                                                        Direction = FillDirection.Full,
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Spacing = new Vector2(0, 10),
+                                                        Children = new ModCategory[]
                                                         {
-                                                            new HardMod(),
-                                                            new FragileMod(),
-                                                            new FlawlessMod()
-                                                        }
-                                                    },
-                                                    new()
-                                                    {
-                                                        Label = "Automation",
-                                                        HexColour = "#66b3ff",
-                                                        Selector = this,
-                                                        Mods = new IMod[]
-                                                        {
-                                                            new AutoPlayMod(),
-                                                        }
-                                                    },
-                                                    new()
-                                                    {
-                                                        Label = "Miscellaneous",
-                                                        HexColour = "#8866ff",
-                                                        Selector = this,
-                                                        Mods = new IMod[]
-                                                        {
-                                                            new NoSvMod(),
-                                                            new NoLnMod()
+                                                            new()
+                                                            {
+                                                                Label = "Difficulty Decrease",
+                                                                HexColour = "#b2ff66",
+                                                                Selector = this,
+                                                                Mods = new IMod[]
+                                                                {
+                                                                    new EasyMod(),
+                                                                    new NoFailMod()
+                                                                }
+                                                            },
+                                                            new()
+                                                            {
+                                                                Label = "Difficulty Increase",
+                                                                HexColour = "#ff6666",
+                                                                Selector = this,
+                                                                Mods = new IMod[]
+                                                                {
+                                                                    new HardMod(),
+                                                                    new FragileMod(),
+                                                                    new FlawlessMod()
+                                                                }
+                                                            },
+                                                            new()
+                                                            {
+                                                                Label = "Automation",
+                                                                HexColour = "#66b3ff",
+                                                                Selector = this,
+                                                                Mods = new IMod[]
+                                                                {
+                                                                    new AutoPlayMod(),
+                                                                }
+                                                            },
+                                                            new()
+                                                            {
+                                                                Label = "Miscellaneous",
+                                                                HexColour = "#8866ff",
+                                                                Selector = this,
+                                                                Mods = new IMod[]
+                                                                {
+                                                                    new NoSvMod(),
+                                                                    new NoLnMod()
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -189,35 +208,40 @@ public partial class ModSelector : Container
         IsOpen.BindValueChanged(_ => updateVisibility());
     }
 
-    public void Select(ModEntry mod)
+    public void AddMapping(IMod mod, ModEntry entry)
     {
-        foreach (var selectedMod in selected)
-        {
-            if (mod.Mod.IncompatibleMods.Contains(selectedMod.Mod.Acronym) || selectedMod.Mod.IncompatibleMods.Contains(mod.Mod.Acronym))
-            {
-                selectedMod.Selected = false;
-                selectedMod.UpdateSelected();
+        mappings.Add(mod, entry);
+    }
 
-                Schedule(() => selected.Remove(selectedMod));
+    public void Select(IMod mod)
+    {
+        foreach (var selectedMod in SelectedMods)
+        {
+            if (mod.IncompatibleMods.Contains(selectedMod.Acronym) || selectedMod.IncompatibleMods.Contains(mod.Acronym))
+            {
+                var entry = mappings[selectedMod];
+
+                if (entry != null)
+                {
+                    entry.Selected = false;
+                    entry.UpdateSelected();
+
+                    Schedule(() => SelectedMods.Remove(selectedMod));
+                }
             }
         }
 
-        selected.Add(mod);
-        updateTotalMultiplier();
+        SelectedMods.Add(mod);
+        UpdateTotalMultiplier();
     }
 
-    public void Deselect(ModEntry mod)
+    public void Deselect(IMod mod)
     {
-        selected.Remove(mod);
-        updateTotalMultiplier();
+        SelectedMods.Remove(mod);
+        UpdateTotalMultiplier();
     }
 
-    private void updateTotalMultiplier()
-    {
-        this.TransformTo(nameof(scoreMultiplier), 1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f), 400, Easing.OutQuint);
-    }
-
-    public List<IMod> SelectedMods => selected.Select(mod => mod.Mod).ToList();
+    public void UpdateTotalMultiplier() => this.TransformTo(nameof(scoreMultiplier), 1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f), 400, Easing.OutQuint);
 
     private void updateVisibility()
     {
@@ -227,7 +251,7 @@ public partial class ModSelector : Container
 
     protected override void Update()
     {
-        maxScoreText.Text = $"Max Score: {(int)(scoreMultiplier * 100)}%";
+        maxScoreText.Text = $"Max Score: {(int)Math.Round(scoreMultiplier * 100)}%";
     }
 
     protected override bool OnHover(HoverEvent e) => IsOpen.Value;

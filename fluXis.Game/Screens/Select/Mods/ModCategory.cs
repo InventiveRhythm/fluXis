@@ -13,9 +13,9 @@ public partial class ModCategory : Container
 {
     public ModSelector Selector { get; set; }
 
-    public string Label { get; set; }
-    public string HexColour { get; set; }
-    public IMod[] Mods { get; set; }
+    public string Label { get; init; }
+    public string HexColour { get; init; }
+    public IMod[] Mods { get; init; }
 
     private FillFlowContainer mods;
 
@@ -88,12 +88,15 @@ public partial class ModCategory : Container
 
         foreach (var mod in Mods)
         {
-            mods.Add(new ModEntry
+            var modEntry = new ModEntry
             {
                 Mod = mod,
                 HexColour = HexColour,
                 Selector = Selector
-            });
+            };
+
+            mods.Add(modEntry);
+            Selector.AddMapping(mod, modEntry);
         }
     }
 }
