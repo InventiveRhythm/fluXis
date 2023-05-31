@@ -48,16 +48,16 @@ public class OsuMap
     {
         MapInfo mapInfo = new(new MapMetadata
         {
-            Title = Title.Trim(),
-            Artist = Artist.Trim(),
-            Mapper = Creator.Trim(),
-            Difficulty = Version.Trim(),
-            Source = Source.Trim(),
-            Tags = Tags.Trim(),
+            Title = Title?.Trim() ?? "",
+            Artist = Artist?.Trim() ?? "",
+            Mapper = Creator?.Trim() ?? "",
+            Difficulty = Version?.Trim() ?? "",
+            Source = Source?.Trim() ?? "",
+            Tags = Tags?.Trim() ?? "",
             PreviewTime = PreviewTime
         })
         {
-            AudioFile = AudioFilename.Trim(),
+            AudioFile = AudioFilename.Trim() ?? "",
             BackgroundFile = "",
             HitObjects = new List<HitObjectInfo>(),
             TimingPoints = new List<TimingPointInfo>(),
