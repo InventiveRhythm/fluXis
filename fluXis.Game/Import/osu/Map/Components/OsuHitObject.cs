@@ -15,6 +15,8 @@ public class OsuHitObject
         float holdTime = 0;
         if (EndTime > 0) holdTime = EndTime - StartTime;
 
+        if (holdTime < 0) holdTime = 0;
+
         return new HitObjectInfo
         {
             Lane = key + 1,
