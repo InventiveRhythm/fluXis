@@ -48,6 +48,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             LoginOverlay,
             Toolbar,
             RegisterOverlay,
+            ChatOverlay,
             ProfileOverlay,
             Settings,
             new VolumeOverlay(),

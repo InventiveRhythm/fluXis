@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json;
@@ -46,6 +47,8 @@ public static class Fluxel
 
     public static async void Connect()
     {
+        Logger.Log("Connecting to server...", LoggingTarget.Network);
+
         try
         {
             if (reconnecting)
@@ -90,6 +93,8 @@ public static class Fluxel
 
     private static async void receive()
     {
+        Logger.Log("Listening for packets...", LoggingTarget.Network);
+
         while (connection.State == WebSocketState.Open)
         {
             try
@@ -124,6 +129,7 @@ public static class Fluxel
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUserShort>,
                     EventType.Register => handleListener<APIRegisterResponse>,
+                    EventType.ChatMessage => handleListener<ChatMessage>,
                     EventType.MultiplayerCreateLobby => handleListener<int>,
                     EventType.MultiplayerJoinLobby => handleListener<APIMultiplayerLobby>,
                     EventType.MultiplayerLobbyUpdate => handleListener<APIMultiplayerLobby>,
@@ -193,6 +199,8 @@ public enum EventType
     Token = 0,
     Login = 1,
     Register = 2,
+
+    ChatMessage = 10,
 
     MultiplayerCreateLobby = 20,
     MultiplayerJoinLobby = 21,

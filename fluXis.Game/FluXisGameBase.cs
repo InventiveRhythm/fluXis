@@ -11,6 +11,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
@@ -51,6 +52,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public SettingsMenu Settings;
     public NotificationOverlay Notifications;
     public LoginOverlay LoginOverlay;
+    public ChatOverlay ChatOverlay;
     public RegisterOverlay RegisterOverlay;
     public Toolbar Toolbar;
     public FluXisScreenStack ScreenStack;
@@ -86,6 +88,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Settings = new SettingsMenu());
         dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(LoginOverlay = new LoginOverlay());
+        dependencies.Cache(ChatOverlay = new ChatOverlay());
         dependencies.CacheAs(RegisterOverlay = new RegisterOverlay());
         dependencies.Cache(Toolbar = new Toolbar());
         dependencies.Cache(ScreenStack = new FluXisScreenStack());

@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
@@ -19,6 +20,9 @@ public partial class Toolbar : Container
 {
     [Resolved]
     private SettingsMenu settings { get; set; }
+
+    [Resolved]
+    private ChatOverlay chat { get; set; }
 
     public FluXisScreenStack ScreenStack { get; set; }
     public MenuScreen MenuScreen { get; set; }
@@ -97,6 +101,12 @@ public partial class Toolbar : Container
                                 Action = () => settings.ToggleVisibility()
                             },
                             new ToolbarSeperator(),
+                            new ToolbarButton
+                            {
+                                Name = "Chat",
+                                Icon = FontAwesome.Solid.Comment,
+                                Action = chat.Show
+                            },
                             new ToolbarButton
                             {
                                 Name = "Ranking",

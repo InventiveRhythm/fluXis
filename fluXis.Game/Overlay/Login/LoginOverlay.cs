@@ -196,14 +196,16 @@ public partial class LoginOverlay : Container
 
     private void setLoadingText(string text, Action onComplete)
     {
-        loadingText.FadeOut(200)
-                   .OnComplete(_ =>
-                   {
-                       loadingText.Text = text;
-                       loadingText.FadeIn(200)
-                                  .Then(400).FadeIn()
-                                  .OnComplete(_ => onComplete?.Invoke());
-                   });
+        Schedule(() =>
+        {
+            loadingText.FadeOut(200).OnComplete(_ =>
+            {
+                loadingText.Text = text;
+                loadingText.FadeIn(200)
+                           .Then(400).FadeIn()
+                           .OnComplete(_ => onComplete?.Invoke());
+            });
+        });
     }
 
     public override void Show()
