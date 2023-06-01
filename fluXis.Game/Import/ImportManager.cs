@@ -38,6 +38,7 @@ public partial class ImportManager : Component
     {
         loadFromAppDomain();
         loadFromRunFolder();
+        loadFromPlugins();
     }
 
     public void Import(string path)
@@ -147,19 +148,45 @@ public partial class ImportManager : Component
 
     private void loadFromRunFolder()
     {
-        try
-        {
-            string[] files = Directory.GetFiles(RuntimeInfo.StartupDirectory, $"{lib_prefix}.*.dll");
+        string[] files = Directory.GetFiles(RuntimeInfo.StartupDirectory, $"{lib_prefix}.*.dll");
 
-            foreach (var file in files)
+        foreach (var file in files)
+        {
+            try
             {
                 var assembly = Assembly.LoadFrom(file);
                 loadSingle(assembly);
             }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to load importer {file} from directory from AppDomain!");
+            }
         }
-        catch (Exception e)
+    }
+
+    private void loadFromPlugins()
+    {
+        var plugins = storage.GetFullPath("plugins");
+
+        if (!Directory.Exists(plugins))
         {
-            Logger.Error(e, $"Failed to load importers from directory {RuntimeInfo.StartupDirectory}");
+            Logger.Log($"Plugins directory {plugins} does not exist. Creating...");
+            Directory.CreateDirectory(plugins);
+        }
+
+        string[] files = Directory.GetFiles(plugins, $"{lib_prefix}.*.dll");
+
+        foreach (var file in files)
+        {
+            try
+            {
+                var assembly = Assembly.LoadFrom(file);
+                loadSingle(assembly);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to load importer {file} from plugins!");
+            }
         }
     }
 
