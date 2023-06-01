@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
@@ -6,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 using osuTK.Graphics;
 
@@ -15,8 +15,10 @@ namespace fluXis.Game.Overlay.Chat;
 public partial class ChatOverlay : Container
 {
     private FluXisTextBox textBox;
-    private FillFlowContainer flow;
+    private FillFlowContainer<DrawableChatMessage> flow;
     private BasicScrollContainer scroll;
+
+    private Container content;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -37,9 +39,11 @@ public partial class ChatOverlay : Container
                     Alpha = 0.5f
                 }
             },
-            new Container
+            content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
+                RelativePositionAxes = Axes.Both,
+                Y = 0.5f,
                 Height = 0.4f,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
@@ -71,7 +75,7 @@ public partial class ChatOverlay : Container
                                     {
                                         ScrollbarVisible = false,
                                         RelativeSizeAxes = Axes.Both,
-                                        Child = flow = new FillFlowContainer
+                                        Child = flow = new FillFlowContainer<DrawableChatMessage>
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
@@ -113,15 +117,27 @@ public partial class ChatOverlay : Container
         {
             Schedule(() =>
             {
-                var text = new SpriteText
-                {
-                    Text = $"{response.Data.Sender.Username} - {response.Data.Content}",
-                    Font = FluXisFont.Default(28)
-                };
+                var last = flow.LastOrDefault();
 
-                flow.Add(text);
+                if (last != null && last.Message.Sender.Username == response.Data.Sender.Username)
+                    last.AddMessage(response.Data);
+                else
+                    flow.Add(new DrawableChatMessage { Message = response.Data });
+
                 ScheduleAfterChildren(() => scroll.ScrollToEnd());
             });
         });
+    }
+
+    public override void Hide()
+    {
+        this.FadeOut(200);
+        content.MoveToY(0.5f, 400, Easing.OutQuint);
+    }
+
+    public override void Show()
+    {
+        this.FadeIn(200);
+        content.MoveToY(0, 400, Easing.OutQuint);
     }
 }
