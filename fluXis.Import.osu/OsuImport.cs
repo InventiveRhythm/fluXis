@@ -13,6 +13,8 @@ namespace fluXis.Import.osu;
 public class OsuImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".osz" };
+    public override string Name => "osu!mania";
+    public override string Color => "#e7659f";
 
     public override void Import(string path)
     {
@@ -60,7 +62,7 @@ public class OsuImport : MapImporter
 
             var import = new FluXisImport
             {
-                MapStatus = -4,
+                MapStatus = ID,
                 Notification = notification,
                 Realm = Realm,
                 MapStore = MapStore,

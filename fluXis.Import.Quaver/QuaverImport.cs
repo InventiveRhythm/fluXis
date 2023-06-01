@@ -15,6 +15,8 @@ namespace fluXis.Import.Quaver;
 public class QuaverImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".qp" };
+    public override string Name => "Quaver";
+    public override string Color => "#0cb2d8";
 
     public override void Import(string path)
     {
@@ -80,7 +82,7 @@ public class QuaverImport : MapImporter
 
             var import = new FluXisImport
             {
-                MapStatus = -3,
+                MapStatus = ID,
                 Notification = notification,
                 Realm = Realm,
                 MapStore = MapStore,

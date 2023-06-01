@@ -12,6 +12,17 @@ namespace fluXis.Game.Import;
 public class MapImporter
 {
     public virtual string[] FileExtensions { get; } = Array.Empty<string>();
+    public virtual string Name => "Unknown";
+    public virtual string Color => "#000000";
+
+    /// <summary>
+    /// ID of the importer in the database.
+    /// <para/>
+    /// Assign this to FluXisImport.MapStatus!
+    /// <para/>
+    /// DO NOT SET THIS MANUALLY ELSE IT WILL BREAK SONGSELECT.
+    /// </summary>
+    public int ID { get; set; }
 
     public FluXisRealm Realm { get; set; }
     public MapStore MapStore { get; set; }

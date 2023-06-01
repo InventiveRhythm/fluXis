@@ -11,6 +11,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
+using Realms;
 
 namespace fluXis.Game.Import;
 
@@ -89,6 +90,36 @@ public partial class ImportManager : Component
                 }
 
                 Logger.Log($"Loaded importer {importer.GetType().Name} ({string.Join(", ", importer.FileExtensions)})");
+
+                if (importer is not FluXisImport)
+                {
+                    realm.RunWrite(r =>
+                    {
+                        var existing = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == importer.Name);
+
+                        if (existing == null)
+                        {
+                            var id = getNewId(r);
+
+                            r.Add(new ImporterInfo
+                            {
+                                Name = importer.Name,
+                                Color = importer.Color,
+                                Id = id
+                            });
+
+                            importer.ID = id;
+                            Logger.Log($"Assigned id {id} to importer {importer.Name}");
+                        }
+                        else
+                        {
+                            existing.Color = existing.Color;
+                            importer.ID = existing.Id;
+                            Logger.Log($"Importer {importer.Name} has id {existing.Id}");
+                        }
+                    });
+                }
+
                 importers.Add(importer);
             }
         }
@@ -130,5 +161,18 @@ public partial class ImportManager : Component
         {
             Logger.Error(e, $"Failed to load importers from directory {RuntimeInfo.StartupDirectory}");
         }
+    }
+
+    private int getNewId(Realm realm)
+    {
+        var highest = 99;
+
+        foreach (var importer in realm.All<ImporterInfo>())
+        {
+            if (importer.Id > highest)
+                highest = importer.Id;
+        }
+
+        return highest + 1;
     }
 }

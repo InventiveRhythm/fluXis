@@ -33,7 +33,31 @@ public class MapStore
 
         Logger.Log("Loading maps...");
 
-        realm.Run(r => loadMapSets(r.All<RealmMapSet>()));
+        realm.RunWrite(r =>
+        {
+            var mapSets = r.All<RealmMapSet>();
+
+            // migration stuffs
+            foreach (var set in mapSets)
+            {
+                foreach (var map in set.Maps)
+                {
+                    if (map.Status == -3)
+                    {
+                        var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == "Quaver");
+                        if (info != null) map.Status = info.Id;
+                    }
+
+                    if (map.Status == -4)
+                    {
+                        var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == "osu!mania");
+                        if (info != null) map.Status = info.Id;
+                    }
+                }
+            }
+
+            loadMapSets(mapSets);
+        });
     }
 
     private void loadMapSets(IEnumerable<RealmMapSet> sets)

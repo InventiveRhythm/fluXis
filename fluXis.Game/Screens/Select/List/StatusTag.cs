@@ -1,17 +1,29 @@
+using System.Linq;
+using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
 public partial class StatusTag : Container
 {
+    private readonly RealmMapSet set;
+
     public StatusTag(RealmMapSet set)
+    {
+        this.set = set;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(FluXisRealm realm)
     {
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.CentreRight;
@@ -21,8 +33,6 @@ public partial class StatusTag : Container
 
         Colour4 colour = map.Status switch
         {
-            -4 => Colour4.FromHex("#e7659f"),
-            -3 => Colour4.FromHex("#0cb2d8"),
             -2 => Colour4.FromHex("#8fffc8"),
             -1 => Colour4.FromHex("#888888"),
             0 => Colour4.FromHex("#888888"),
@@ -31,6 +41,32 @@ public partial class StatusTag : Container
             3 => Colour4.FromHex("#55b2ff"),
             _ => Colour4.Black
         };
+
+        string text = map.Status switch
+        {
+            -2 => "LOCAL",
+            -1 => "UNSUBMITTED", // blacklisted, but we show it as "unsubmitted"
+            0 => "UNSUBMITTED",
+            1 => "PENDING",
+            2 => "IMPURE",
+            3 => "PURE",
+            _ => "UNKNOWN"
+        };
+
+        if (map.Status >= 100)
+        {
+            realm.Run(r =>
+            {
+                var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == map.Status);
+
+                if (info != null)
+                {
+                    colour = Colour4.FromHex(info.Color);
+                    text = info.Name;
+                }
+                else Logger.Log($"ImporterInfo with id {map.Status} not found!", level: LogLevel.Error);
+            });
+        }
 
         Children = new Drawable[]
         {
@@ -57,18 +93,7 @@ public partial class StatusTag : Container
             },
             new SpriteText
             {
-                Text = map.Status switch
-                {
-                    -4 => "osu!mania",
-                    -3 => "QUAVER",
-                    -2 => "LOCAL",
-                    -1 => "UNSUBMITTED", // blacklisted, but we show it as "unsubmitted"
-                    0 => "UNSUBMITTED",
-                    1 => "PENDING",
-                    2 => "IMPURE",
-                    3 => "PURE",
-                    _ => "UNKNOWN"
-                },
+                Text = text,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = FluXisColors.IsBright(colour) ? FluXisColors.TextDark : Colour4.White,
