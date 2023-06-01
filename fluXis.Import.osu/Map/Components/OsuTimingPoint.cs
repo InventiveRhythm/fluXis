@@ -1,7 +1,7 @@
 using System;
 using fluXis.Game.Map;
 
-namespace fluXis.Game.Import.osu.Map.Components;
+namespace fluXis.Import.osu.Map.Components;
 
 public class OsuTimingPoint
 {

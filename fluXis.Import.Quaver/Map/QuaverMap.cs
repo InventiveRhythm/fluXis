@@ -5,7 +5,7 @@ using fluXis.Game.Import.Quaver.Map.Structs;
 using fluXis.Game.Map;
 using osu.Framework.Logging;
 
-namespace fluXis.Game.Import.Quaver.Map;
+namespace fluXis.Import.Quaver.Map;
 
 [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
 public class QuaverMap

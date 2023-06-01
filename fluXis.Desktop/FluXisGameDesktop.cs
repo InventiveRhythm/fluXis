@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using fluXis.Desktop.Integration;
 using fluXis.Game;
-using fluXis.Game.Import.FluXis;
-using fluXis.Game.Import.osu;
-using fluXis.Game.Import.Quaver;
 using fluXis.Game.Integration;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 
 namespace fluXis.Desktop;
@@ -37,34 +33,7 @@ public partial class FluXisGameDesktop : FluXisGame
             LoadComponentAsync(new WindowsUpdateManager());
     }
 
-    private void onDragDrop(IEnumerable<string> paths)
-    {
-        try
-        {
-            foreach (var path in paths)
-            {
-                switch (Path.GetExtension(path))
-                {
-                    case ".fms":
-                        new FluXisImport(Realm, MapStore, storage, Notifications).Import(path).Start();
-                        break;
-
-                    case ".qp":
-                        new QuaverImport(Realm, MapStore, storage, Notifications).Import(path).Start();
-                        break;
-
-                    case ".osz":
-                        new OsuImport(Realm, MapStore, storage, Notifications).Import(path).Start();
-                        break;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, "Error while importing mapset");
-            Notifications.PostError("Error while importing mapset");
-        }
-    }
+    private void onDragDrop(IEnumerable<string> paths) => ImportManager.ImportMultiple(paths.ToArray());
 
     public override LightController CreateLightController() => new OpenRGBController();
 }

@@ -6,6 +6,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -56,6 +57,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public ProfileOverlay ProfileOverlay;
     public LightController LightController;
     public SkinManager SkinManager;
+    public ImportManager ImportManager;
 
     public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
     private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;
@@ -90,6 +92,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Conductor = new Conductor());
         dependencies.CacheAs(LightController = CreateLightController());
         dependencies.Cache(SkinManager = new SkinManager());
+        LoadComponentAsync(ImportManager = new ImportManager(), dependencies.Cache);
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 

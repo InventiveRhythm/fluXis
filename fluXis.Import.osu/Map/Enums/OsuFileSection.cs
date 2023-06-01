@@ -1,4 +1,4 @@
-namespace fluXis.Game.Import.osu.Map.Enums;
+namespace fluXis.Import.osu.Map.Enums;
 
 public enum OsuFileSection
 {

@@ -3,8 +3,10 @@
     "path": "fluXis.sln",
     "projects": [
       "fluXis.Desktop\\fluXis.Desktop.csproj",
-      "fluXis.Game\\fluXis.Game.csproj",
       "fluXis.Game.Tests\\fluXis.Game.Tests.csproj",
+      "fluXis.Game\\fluXis.Game.csproj",
+      "fluXis.Import.osu\\fluXis.Import.osu.csproj",
+      "fluXis.Import.Quaver\\fluXis.Import.Quaver.csproj",
       "fluXis.Resources\\fluXis.Resources.csproj"
     ]
   }

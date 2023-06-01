@@ -91,7 +91,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                             },
                             importButton = new Button
                             {
-                                Text = "Import",
+                                Text = "ImportMultiple",
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
                                 Action = () =>

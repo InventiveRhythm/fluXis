@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using fluXis.Game.Import.osu.Map.Components;
+using fluXis.Import.osu.Map.Components;
 using fluXis.Game.Map;
 
-namespace fluXis.Game.Import.osu.Map;
+namespace fluXis.Import.osu.Map;
 
 public class OsuMap
 {

@@ -11,18 +11,14 @@ namespace fluXis.Game.Import;
 
 public class MapImporter
 {
+    public virtual string[] FileExtensions { get; } = Array.Empty<string>();
+
     public FluXisRealm Realm { get; set; }
     public MapStore MapStore { get; set; }
     public Storage Storage { get; set; }
     public NotificationOverlay Notifications { get; set; }
 
-    public MapImporter(FluXisRealm realm, MapStore mapStore, Storage storage, NotificationOverlay notifications)
-    {
-        Realm = realm;
-        MapStore = mapStore;
-        Storage = storage;
-        Notifications = notifications;
-    }
+    public virtual void Import(string path) => throw new NotImplementedException();
 
     public static string GetHash(ZipArchiveEntry entry)
     {

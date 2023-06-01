@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Globalization;
-using fluXis.Game.Import.osu.Map.Components;
-using fluXis.Game.Import.osu.Map.Enums;
+using fluXis.Import.osu.Map.Components;
+using fluXis.Import.osu.Map.Enums;
 
-namespace fluXis.Game.Import.osu.Map;
+namespace fluXis.Import.osu.Map;
 
 public class OsuParser
 {
