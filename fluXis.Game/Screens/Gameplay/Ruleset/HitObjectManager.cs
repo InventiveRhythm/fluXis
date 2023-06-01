@@ -232,6 +232,7 @@ public partial class HitObjectManager : CompositeDrawable
     {
         double diff = isHoldEnd ? hitObject.Data.HoldEndTime - clock.CurrentTime : hitObject.Data.Time - clock.CurrentTime;
         diff = AutoPlay ? 0 : diff;
+        diff /= clock.Rate;
         hitObject.GotHit = true;
 
         judmentDisplay(hitObject, diff);
