@@ -44,6 +44,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     [Resolved]
     private LightController lightController { get; set; }
 
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public BackgroundStack Backgrounds;
     public Bindable<RealmMapSet> MapSet = new();
     public Bindable<RealmMap> MapInfo = new();
@@ -186,11 +189,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         RealmMap map = set.Maps.First();
         MapInfo.Value = lookup[set].Maps.First();
 
-        if (!Equals(mapStore.CurrentMapSet, set) || !Conductor.IsPlaying)
-            Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
+        if (!Equals(mapStore.CurrentMapSet, set) || !clock.IsRunning)
+            clock.LoadMap(map, true, true);
 
-        Conductor.SetLoop(map.Metadata.PreviewTime);
-
+        clock.RestartPoint = map.Metadata.PreviewTime;
         mapStore.CurrentMapSet = set;
     }
 
@@ -316,10 +318,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         if (MapInfo.Value != null)
         {
-            Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
+            clock.RestartPoint = MapInfo.Value.Metadata.PreviewTime;
 
-            if (!Conductor.IsPlaying)
-                Conductor.ResumeTrack();
+            if (!clock.IsRunning)
+                clock.Start();
         }
 
         SelectMapInfo.ScoreList.Refresh();
@@ -344,13 +346,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         Discord.Update("Selecting a map", "", "songselect");
 
         if (MapInfo.Value != null)
-            Conductor.SetLoop(MapInfo.Value.Metadata.PreviewTime);
+            clock.RestartPoint = MapInfo.Value.Metadata.PreviewTime;
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         this.FadeOut(200);
-        Conductor.SetLoop(0);
+        clock.Looping = false;
 
         MapList.MoveToX(-200, 500, Easing.OutQuint);
         SearchBar.MoveToY(-200, 500, Easing.OutQuint);
@@ -359,8 +361,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         mapStore.MapSetAdded -= addMapSet;
         mapStore.MapSetUpdated -= replaceMapSet;
-        Conductor.ResetLoop();
-        Conductor.SetSpeed(1f);
+        clock.RateTo(1f);
 
         return base.OnExiting(e);
     }

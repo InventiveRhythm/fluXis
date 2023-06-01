@@ -14,6 +14,9 @@ namespace fluXis.Game.Screens.Menu.UI.Visualizer;
 
 public partial class MenuVisualizer : Container
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     // between 60 and 240
     private const int start_index = 1; // 78
     private const int end_index = 3; // 234
@@ -73,7 +76,7 @@ public partial class MenuVisualizer : Container
     {
         foreach (var child in Children)
         {
-            float amplitude = Conductor.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+            float amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
 
             var circle = (DotCircle)child;
             float move = amplitude * .2f * circle.RandomSpeed;

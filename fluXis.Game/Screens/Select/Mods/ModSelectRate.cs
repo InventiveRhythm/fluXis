@@ -15,6 +15,9 @@ namespace fluXis.Game.Screens.Select.Mods;
 
 public partial class ModSelectRate : Container
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public ModSelector Selector { get; set; }
 
     private BindableFloat rateBindable;
@@ -138,7 +141,7 @@ public partial class ModSelectRate : Container
                 Selector.Select(mod);
 
             mod.Rate = rate;
-            Conductor.SetSpeed(rate);
+            clock.RateTo(rate);
             Selector.UpdateTotalMultiplier();
 
             rateText.Text = $"{Math.Round(rate, 1).ToString(CultureInfo.InvariantCulture)}x";

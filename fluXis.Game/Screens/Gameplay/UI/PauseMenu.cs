@@ -18,6 +18,9 @@ public partial class PauseMenu : CompositeDrawable
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
 
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public GameplayScreen Screen;
 
     public PauseMenu(GameplayScreen screen)
@@ -100,14 +103,14 @@ public partial class PauseMenu : CompositeDrawable
 
     public override void Hide()
     {
-        Conductor.SetSpeed(Screen.Rate);
+        clock.RateTo(Screen.Rate);
         this.FadeOut(200);
         cursorOverlay.ShowCursor = false;
     }
 
     public override void Show()
     {
-        Conductor.SetSpeed(0);
+        clock.RateTo(0);
         this.FadeIn(200);
         cursorOverlay.ShowCursor = true;
     }

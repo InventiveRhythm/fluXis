@@ -11,6 +11,9 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class Progressbar : GameplayHUDElement
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public Progressbar(GameplayScreen screen)
         : base(screen)
     {
@@ -81,9 +84,9 @@ public partial class Progressbar : GameplayHUDElement
 
     protected override void Update()
     {
-        float speed = Conductor.Speed == 0 ? 1 : Conductor.Speed;
-        int currentTime = (int)((Conductor.CurrentTime - Screen.Map.StartTime) / speed);
-        int timeLeft = (int)((Screen.Map.EndTime - Conductor.CurrentTime) / speed);
+        double speed = clock.Rate == 0 ? 1 : clock.Rate;
+        int currentTime = (int)((clock.CurrentTime - Screen.Map.StartTime) / speed);
+        int timeLeft = (int)((Screen.Map.EndTime - clock.CurrentTime) / speed);
         int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / speed);
         float percent = (float)currentTime / totalTime;
         if (percent < 0) percent = 0;

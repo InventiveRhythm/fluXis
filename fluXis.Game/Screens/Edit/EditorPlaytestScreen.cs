@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -33,7 +32,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
     public override bool OnExiting(ScreenExitEvent e)
     {
         base.OnExiting(e);
-        Conductor.PauseTrack();
+        AudioClock.Stop();
         return false;
     }
 
@@ -46,13 +45,13 @@ public partial class EditorPlaytestScreen : GameplayScreen
     public override void Die()
     {
         Playfield.Manager.Dead = true;
-        Conductor.PauseTrack();
+        AudioClock.Stop();
         this.Exit();
     }
 
     public override void End()
     {
-        Conductor.PauseTrack();
+        AudioClock.Stop();
         this.Exit();
     }
 }

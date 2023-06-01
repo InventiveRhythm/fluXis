@@ -1,18 +1,17 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Map;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Transforms;
 using osu.Framework.Timing;
 using osu.Framework.Utils;
 
 namespace fluXis.Game.Screens.Edit;
 
-public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjustableClock, ISourceChangeableClock
+public partial class EditorClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
 {
     public IBindable<Track> Track => track;
     public float TrackLength => (float)(track.Value?.Length ?? 10000);
@@ -22,29 +21,16 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     public double ElapsedFrameTime => underlying.ElapsedFrameTime;
     public double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => underlying.TimeInfo;
-    public double CurrentTime => underlying.CurrentTime;
+    public override double CurrentTime => underlying.CurrentTime;
     public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
     public IClock Source => underlying.Source;
-    public bool IsRunning => underlying.IsRunning;
+    public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
 
     public double BeatTime { get; private set; }
 
-    double IAdjustableClock.Rate
-    {
-        get => underlying.Rate;
-        set => underlying.Rate = value;
-    }
-
-    public double Rate
-    {
-        get => rate.Value;
-        set => rate.Value = value;
-    }
-
     private readonly FramedMapClock underlying;
     private readonly Bindable<Track> track = new();
-    private readonly Bindable<double> rate = new(1);
 
     private bool playbackFinished;
 
@@ -84,13 +70,13 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         return position;
     }
 
-    public void Reset()
+    public override void Reset()
     {
         ClearTransforms();
         underlying.Reset();
     }
 
-    public void Start()
+    public override void Start()
     {
         ClearTransforms();
 
@@ -100,12 +86,12 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         underlying.Start();
     }
 
-    public void Stop()
+    public override void Stop()
     {
         underlying.Stop();
     }
 
-    public bool Seek(double position)
+    public override bool Seek(double position)
     {
         ClearTransforms();
         position = Math.Clamp(position, 0, TrackLength);
@@ -174,14 +160,14 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         BeatTime = tp.MsPerBeat;
     }
 
-    public void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();
+    public override void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();
 
     public void ProcessFrame() { }
 
     public void ChangeSource(IClock source)
     {
         track.Value = source as Track;
-        Track.Value.AddAdjustment(AdjustableProperty.Frequency, rate);
+        Track.Value.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
     }
 
@@ -191,22 +177,5 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     {
         get => underlying.CurrentTime;
         set => underlying.Seek(value);
-    }
-
-    private class TimeTransform : Transform<double, EditorClock>
-    {
-        public override string TargetMember => nameof(currentTime);
-
-        protected override void Apply(EditorClock clock, double time) => clock.currentTime = valueAt(time);
-
-        private double valueAt(double time)
-        {
-            if (time < StartTime) return StartValue;
-            if (time >= EndTime) return EndValue;
-
-            return Interpolation.ValueAt(time, StartValue, EndValue, StartTime, EndTime, Easing);
-        }
-
-        protected override void ReadIntoStartValue(EditorClock clock) => StartValue = clock.currentTime;
     }
 }

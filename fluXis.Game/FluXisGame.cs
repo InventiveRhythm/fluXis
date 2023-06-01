@@ -34,7 +34,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
         Children = new Drawable[]
         {
-            Conductor,
+            AudioClock,
             BackgroundStack,
             screenContainer = new Container
             {
@@ -110,7 +110,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     {
         CursorOverlay.ShowCursor = false;
         Toolbar.ShowToolbar.Value = false;
-        fluXis.Game.Audio.Conductor.FadeOut(1500);
+        AudioClock.FadeOut(1500);
         exitContainer.FadeIn(1000).OnComplete(_ => seeyaText.FadeOut(1000).OnComplete(_ => base.Exit()));
     }
 }

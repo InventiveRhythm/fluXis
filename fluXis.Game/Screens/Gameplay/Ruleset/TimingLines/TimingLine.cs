@@ -11,9 +11,9 @@ public partial class TimingLine : Box
     private SkinManager skinManager { get; set; }
 
     private readonly TimingLineManager manager;
-    public float ScrollVelocityTime { get; }
+    public double ScrollVelocityTime { get; }
 
-    public TimingLine(TimingLineManager manager, float time)
+    public TimingLine(TimingLineManager manager, double time)
     {
         this.manager = manager;
         ScrollVelocityTime = time;
@@ -31,10 +31,10 @@ public partial class TimingLine : Box
 
     protected override void Update()
     {
-        float delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
+        double delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
         var receptor = manager.HitObjectManager.Playfield.Receptors[0];
         float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
-        Y = hitY - 0.5f * (delta * (manager.HitObjectManager.ScrollSpeed / manager.HitObjectManager.Playfield.Screen.Rate));
+        Y = (float)(hitY - 0.5f * (delta * (manager.HitObjectManager.ScrollSpeed / manager.HitObjectManager.Playfield.Screen.Rate)));
 
         base.Update();
     }

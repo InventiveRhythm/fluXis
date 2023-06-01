@@ -52,6 +52,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     [Resolved]
     private Storage storage { get; set; }
 
+    [Resolved]
+    public AudioClock AudioClock { get; set; }
+
     private bool starting = true;
     private bool ended;
     private bool restarting;
@@ -178,17 +181,16 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             new PauseMenu(this)
         };
 
-        Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - Conductor.CurrentTime) / 1000));
+        Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - AudioClock.CurrentTime) / 1000));
     }
 
     protected override void LoadComplete()
     {
-        Conductor.PlayTrack(RealmMap);
-        Conductor.Seek(-2000 + Conductor.Offset);
-        Conductor.TimingPoints = Map.TimingPoints;
+        AudioClock.LoadMap(RealmMap, true);
+        AudioClock.Seek(-2000);
         backgrounds.SetVideoBackground(RealmMap, Map);
 
-        Conductor.SetSpeed(Rate, 0);
+        AudioClock.RateTo(Rate, 0);
 
         backgrounds.SetDim(config.Get<float>(FluXisSetting.BackgroundDim), 600);
         backgrounds.SetBlur(config.Get<float>(FluXisSetting.BackgroundBlur), 600);
@@ -213,10 +215,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     protected override void Update()
     {
-        if (Conductor.CurrentTime >= 0 && starting)
+        if (AudioClock.CurrentTime >= 0 && starting)
         {
             starting = false;
-            Conductor.ResumeTrack();
             cursorOverlay.ShowCursor = false;
         }
 
@@ -248,13 +249,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public virtual void Die()
     {
         Playfield.Manager.Dead = true;
-        DeathTime = Conductor.CurrentTime;
+        DeathTime = (float)AudioClock.CurrentTime;
         failOverlay.Show();
-        Conductor.SetSpeed(0f, 2000, Easing.OutQuart).OnComplete(_ =>
+        AudioClock.RateTo(0f, 2000, Easing.OutQuart).OnComplete(_ =>
         {
-            Conductor.PlayTrack("Gameplay/DeathLoop.mp3");
-            Conductor.SetLoop(0);
-            Conductor.LowPassFilter.CutoffTo(0, 0, Easing.None);
+            AudioClock.PlayTrack("Gameplay/DeathLoop.mp3");
+            AudioClock.RestartPoint = 0;
+            AudioClock.Looping = true;
+            AudioClock.RateTo(1f, 0);
+            AudioClock.LowPassFilter.CutoffTo(0, 0, Easing.None);
         });
     }
 
@@ -290,13 +293,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         if (Playfield.Manager.Dead)
         {
-            Conductor.PlayTrack(RealmMap, true, DeathTime);
-            Conductor.SetSpeed(0, 0, Easing.None);
-            Conductor.LowPassFilter.CutoffTo(0, 0, Easing.None);
+            AudioClock.LoadMap(RealmMap, true);
+            AudioClock.Seek(DeathTime);
+            AudioClock.Rate = 0;
+            AudioClock.LowPassFilter.CutoffTo(0, 0, Easing.None);
         }
 
-        Conductor.LowPassFilter.CutoffTo(LowPassFilter.MAX, time, Easing.None);
-        Conductor.SetSpeed(Rate, time, Easing.None);
+        AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, time, Easing.None);
+        AudioClock.RateTo(Rate, time);
         backgrounds.StopVideo();
 
         return base.OnExiting(e);
@@ -358,8 +362,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 return true;
 
             case FluXisKeybind.Skip:
-                if (Map.StartTime - Conductor.CurrentTime > 2000)
-                    Conductor.Seek(Map.StartTime - 2000);
+                if (Map.StartTime - AudioClock.CurrentTime > 2000)
+                    AudioClock.Seek(Map.StartTime - 2000);
                 return true;
 
             case FluXisKeybind.ScrollSpeedIncrease:

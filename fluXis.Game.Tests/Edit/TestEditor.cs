@@ -1,4 +1,3 @@
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Screens.Edit;
 using osu.Framework.Allocation;
@@ -11,9 +10,6 @@ public partial class TestEditor : FluXisTestScene
 {
     [Resolved]
     private BackgroundStack backgroundStack { get; set; }
-
-    [Resolved]
-    private Conductor Conductor { get; set; }
 
     private ScreenStack screenStack { get; set; }
     private Editor editor { get; set; }
@@ -31,7 +27,6 @@ public partial class TestEditor : FluXisTestScene
     {
         Add(backgroundStack);
         Add(screenStack);
-        Add(Conductor);
 
         editor = new Editor();
         screenStack.Push(editor);

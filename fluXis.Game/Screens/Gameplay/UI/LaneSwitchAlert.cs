@@ -15,6 +15,9 @@ public partial class LaneSwitchAlert : Container
     [Resolved]
     private FluXisConfig config { get; set; }
 
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public Playfield Playfield { get; set; }
 
     private LaneSwitchEvent currentEvent;
@@ -80,9 +83,9 @@ public partial class LaneSwitchAlert : Container
             currentEvent = Playfield.Manager.CurrentLaneSwitchEvent;
         else
         {
-            var nextEvent = Playfield.Screen.MapEvents.LaneSwitchEvents.Find(e => e.Time > Conductor.CurrentTime);
+            var nextEvent = Playfield.Screen.MapEvents.LaneSwitchEvents.Find(e => e.Time > clock.CurrentTime);
 
-            if (nextEvent == null || nextEvent.Time - Conductor.CurrentTime > Conductor.BeatTime)
+            if (nextEvent == null || nextEvent.Time - clock.CurrentTime > clock.BeatTime)
                 return;
 
             if (currentEvent.Count < nextEvent.Count)
@@ -93,11 +96,11 @@ public partial class LaneSwitchAlert : Container
                 rightIcon.X = 0;
                 rightIcon.Rotation = 0;
 
-                leftIcon.FadeIn(Conductor.BeatTime / 2).Then().FadeOut(Conductor.BeatTime / 2);
-                leftIcon.MoveToX(-100, Conductor.BeatTime, Easing.OutQuint);
+                leftIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
+                leftIcon.MoveToX(-100, clock.BeatTime, Easing.OutQuint);
 
-                rightIcon.FadeIn(Conductor.BeatTime / 2).Then().FadeOut(Conductor.BeatTime / 2);
-                rightIcon.MoveToX(100, Conductor.BeatTime, Easing.OutQuint);
+                rightIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
+                rightIcon.MoveToX(100, clock.BeatTime, Easing.OutQuint);
             }
             else if (currentEvent.Count > nextEvent.Count)
             {
@@ -106,11 +109,11 @@ public partial class LaneSwitchAlert : Container
                 rightIcon.X = 100;
                 rightIcon.Rotation = 180;
 
-                leftIcon.FadeIn(Conductor.BeatTime / 2).Then().FadeOut(Conductor.BeatTime / 2);
-                leftIcon.MoveToX(0, Conductor.BeatTime, Easing.OutQuint);
+                leftIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
+                leftIcon.MoveToX(0, clock.BeatTime, Easing.OutQuint);
 
-                rightIcon.FadeIn(Conductor.BeatTime / 2).Then().FadeOut(Conductor.BeatTime / 2);
-                rightIcon.MoveToX(0, Conductor.BeatTime, Easing.OutQuint);
+                rightIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
+                rightIcon.MoveToX(0, clock.BeatTime, Easing.OutQuint);
             }
 
             currentEvent = nextEvent;

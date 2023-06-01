@@ -89,7 +89,7 @@ public class MapInfo
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
-    public TimingPointInfo GetTimingPoint(float time)
+    public TimingPointInfo GetTimingPoint(double time)
     {
         if (TimingPoints.Count == 0)
             return new TimingPointInfo { BPM = 60, Time = 0 };

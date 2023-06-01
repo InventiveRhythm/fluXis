@@ -14,6 +14,9 @@ namespace fluXis.Game.Screens.Select.Info;
 
 public partial class SelectMapInfo : GridContainer
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public SelectScreen Screen { get; set; }
 
     public ScoreList ScoreList;
@@ -21,8 +24,6 @@ public partial class SelectMapInfo : GridContainer
     private BackgroundStack backgroundStack;
     private SpriteText titleText;
     private SpriteText artistText;
-    private SpriteText difficultyText;
-    private SpriteText mapperText;
     private SpriteText bpmText;
     private SpriteText lengthText;
     private SpriteText npsText;
@@ -246,7 +247,7 @@ public partial class SelectMapInfo : GridContainer
 
     protected override void LoadComplete()
     {
-        Conductor.OnBeat += OnBeat;
+        clock.OnBeat += OnBeat;
 
         base.LoadComplete();
     }
@@ -268,12 +269,12 @@ public partial class SelectMapInfo : GridContainer
 
     private void OnBeat(int beat)
     {
-        bpmText.FadeIn().FadeTo(.6f, Conductor.BeatTime);
+        bpmText.FadeIn().FadeTo(.6f, clock.BeatTime);
     }
 
     protected override void Dispose(bool isDisposing)
     {
-        Conductor.OnBeat -= OnBeat;
+        clock.OnBeat -= OnBeat;
         base.Dispose(isDisposing);
     }
 

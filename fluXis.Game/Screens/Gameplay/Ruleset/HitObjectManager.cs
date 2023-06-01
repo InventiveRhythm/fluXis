@@ -18,6 +18,9 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class HitObjectManager : CompositeDrawable
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value;
     public Playfield Playfield { get; }
@@ -26,7 +29,7 @@ public partial class HitObjectManager : CompositeDrawable
     public List<HitObject> FutureHitObjects { get; } = new();
     public List<HitObject> HitObjects { get; } = new();
 
-    public float CurrentTime { get; private set; }
+    public double CurrentTime { get; private set; }
     public int CurrentKeyCount { get; private set; }
     public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
@@ -110,14 +113,14 @@ public partial class HitObjectManager : CompositeDrawable
 
         foreach (var laneSwitchEvent in Playfield.Screen.MapEvents.LaneSwitchEvents)
         {
-            if (laneSwitchEvent.Time <= Conductor.CurrentTime)
+            if (laneSwitchEvent.Time <= clock.CurrentTime)
             {
                 CurrentKeyCount = laneSwitchEvent.Count;
                 CurrentLaneSwitchEvent = laneSwitchEvent;
             }
         }
 
-        if (!Playfield.Screen.IsPaused.Value && HitObjects.Count > 0 && HitObjects[0].Data.Time - 4000 < Conductor.CurrentTime && HealthMode == HealthMode.Drain)
+        if (!Playfield.Screen.IsPaused.Value && HitObjects.Count > 0 && HitObjects[0].Data.Time - 4000 < clock.CurrentTime && HealthMode == HealthMode.Drain)
         {
             HealthDrainRate = Math.Max(HealthDrainRate, -1f);
 
@@ -136,17 +139,17 @@ public partial class HitObjectManager : CompositeDrawable
     {
         int curSv = 0;
 
-        while (Map.ScrollVelocities != null && curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= Conductor.CurrentTime)
+        while (Map.ScrollVelocities != null && curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= clock.CurrentTime)
             curSv++;
 
-        CurrentTime = PositionFromTime(Conductor.CurrentTime, curSv);
+        CurrentTime = PositionFromTime(clock.CurrentTime, curSv);
     }
 
     private void updateAutoPlay()
     {
         bool[] pressed = new bool[Map.KeyCount];
 
-        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Conductor.CurrentTime && h.Exists).ToList();
+        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= clock.CurrentTime && h.Exists).ToList();
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
@@ -160,7 +163,7 @@ public partial class HitObjectManager : CompositeDrawable
             hitObject.IsBeingHeld = true;
             pressed[hitObject.Data.Lane - 1] = true;
 
-            if (hitObject.Data.HoldEndTime <= Conductor.CurrentTime)
+            if (hitObject.Data.HoldEndTime <= clock.CurrentTime)
                 hit(hitObject, true);
         }
 
@@ -227,7 +230,7 @@ public partial class HitObjectManager : CompositeDrawable
 
     private void hit(HitObject hitObject, bool isHoldEnd)
     {
-        float diff = isHoldEnd ? hitObject.Data.HoldEndTime - Conductor.CurrentTime : hitObject.Data.Time - Conductor.CurrentTime;
+        double diff = isHoldEnd ? hitObject.Data.HoldEndTime - clock.CurrentTime : hitObject.Data.Time - clock.CurrentTime;
         diff = AutoPlay ? 0 : diff;
         hitObject.GotHit = true;
 
@@ -259,14 +262,14 @@ public partial class HitObjectManager : CompositeDrawable
         RemoveInternal(hitObject, true);
     }
 
-    private void judmentDisplay(HitObject hitObject, float difference, bool missed = false)
+    private void judmentDisplay(HitObject hitObject, double difference, bool missed = false)
     {
-        HitWindow hitWindow = missed ? HitWindow.FromKey(Judgement.Miss) : HitWindow.FromTiming(Math.Abs(difference));
+        HitWindow hitWindow = missed ? HitWindow.FromKey(Judgement.Miss) : HitWindow.FromTiming((float)Math.Abs(difference));
 
         if (Dead)
             return;
 
-        Performance.AddHitStat(new HitStat(hitObject.Data.Time, difference, hitWindow.Key));
+        Performance.AddHitStat(new HitStat(hitObject.Data.Time, (float)difference, hitWindow.Key));
         Performance.AddJudgement(hitWindow.Key);
 
         if (HealthMode == HealthMode.Drain)
@@ -317,7 +320,7 @@ public partial class HitObjectManager : CompositeDrawable
         }
     }
 
-    public float PositionFromTime(float time, int index = -1)
+    public double PositionFromTime(double time, int index = -1)
     {
         if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || Playfield.Screen.Mods.Any(m => m is NoSvMod))
             return time;
@@ -336,7 +339,7 @@ public partial class HitObjectManager : CompositeDrawable
 
         ScrollVelocityInfo prev = Map.ScrollVelocities[index - 1];
 
-        float position = ScrollVelocityMarks[index - 1];
+        double position = ScrollVelocityMarks[index - 1];
         position += (time - prev.Time) * prev.Multiplier;
         return position;
     }

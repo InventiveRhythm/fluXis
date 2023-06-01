@@ -13,9 +13,12 @@ public partial class HitObject : CompositeDrawable
     [Resolved]
     private SkinManager skinManager { get; set; }
 
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     public HitObjectInfo Data;
-    public readonly float ScrollVelocityTime;
-    public readonly float ScrollVelocityEndTime;
+    public readonly double ScrollVelocityTime;
+    public readonly double ScrollVelocityEndTime;
 
     private readonly HitObjectManager manager;
 
@@ -81,9 +84,9 @@ public partial class HitObject : CompositeDrawable
 
     protected override void Update()
     {
-        Missed = (Conductor.CurrentTime - Data.Time > 150 && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Conductor.CurrentTime - Data.HoldEndTime > 150);
-        Hitable = Conductor.CurrentTime - Data.Time > -150 && !Missed;
-        Releasable = Data.IsLongNote() && Conductor.CurrentTime - Data.HoldEndTime > -150 && !Missed;
+        Missed = (clock.CurrentTime - Data.Time > 150 && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && clock.CurrentTime - Data.HoldEndTime > 150);
+        Hitable = clock.CurrentTime - Data.Time > -150 && !Missed;
+        Releasable = Data.IsLongNote() && clock.CurrentTime - Data.HoldEndTime > -150 && !Missed;
 
         if (!Exists) return;
 
@@ -95,7 +98,7 @@ public partial class HitObject : CompositeDrawable
         var scrollSpeed = manager.ScrollSpeed / manager.Playfield.Screen.Rate;
 
         float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
-        notePiece.Y = hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * scrollSpeed);
+        notePiece.Y = (float)(hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * scrollSpeed));
 
         if (IsBeingHeld) notePiece.Y = hitY;
 
@@ -104,10 +107,10 @@ public partial class HitObject : CompositeDrawable
             var endY = hitY - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * scrollSpeed);
 
             var height = notePiece.Y - endY;
-            holdBodyPiece.Size = new Vector2(holdBodyPiece.Width, height);
+            holdBodyPiece.Size = new Vector2(holdBodyPiece.Width, (float)height);
             holdBodyPiece.Y = notePiece.Y - notePiece.Height / 2;
 
-            holdEndPiece.Y = endY;
+            holdEndPiece.Y = (float)endY;
         }
 
         IsBeingHeld = false;

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
@@ -6,12 +7,19 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Video;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Graphics.Background;
 
 public partial class BackgroundVideo : CompositeDrawable
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
+    [Resolved]
+    private Storage storage { get; set; }
+
     public RealmMap Map { get; set; }
     public MapInfo Info { get; set; }
 
@@ -19,19 +27,12 @@ public partial class BackgroundVideo : CompositeDrawable
     public bool IsPlaying { get; private set; }
 
     private Video video;
-    private Storage storage;
 
     public override bool RemoveWhenNotAlive => false;
 
     public BackgroundVideo()
     {
         RelativeSizeAxes = Axes.Both;
-    }
-
-    [BackgroundDependencyLoader]
-    private void load(Storage storage)
-    {
-        storage = this.storage = storage.GetStorageForDirectory("files");
     }
 
     public void LoadVideo()
@@ -44,7 +45,7 @@ public partial class BackgroundVideo : CompositeDrawable
 
         try
         {
-            string path = storage.GetFullPath(file.GetPath());
+            string path = storage.GetFullPath($"files/{file.GetPath()}");
             Stream stream = File.OpenRead(path);
 
             InternalChild = video = new Video(stream, false)
@@ -62,7 +63,10 @@ public partial class BackgroundVideo : CompositeDrawable
                 IsPlaying = true;
             }, Delay);
         }
-        catch { }
+        catch (Exception e)
+        {
+            Logger.Error(e, $"Failed to load video: {file.GetPath()}");
+        }
     }
 
     protected override void Update()
@@ -71,14 +75,14 @@ public partial class BackgroundVideo : CompositeDrawable
 
         if (video == null) return;
 
-        if (Conductor.CurrentTime > video.Duration)
+        if (clock.CurrentTime > video.Duration)
         {
             video.FadeOut(500);
             return;
         }
 
         if (IsPlaying)
-            video.PlaybackPosition = Conductor.CurrentTime;
+            video.PlaybackPosition = clock.CurrentTime;
     }
 
     public void Stop()

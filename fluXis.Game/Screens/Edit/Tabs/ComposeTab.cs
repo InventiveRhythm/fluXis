@@ -1,5 +1,4 @@
 using System;
-using fluXis.Game.Audio;
 using fluXis.Game.Screens.Edit.Tabs.Compose;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Toolbox;
 using osu.Framework.Allocation;
@@ -33,16 +32,6 @@ public partial class ComposeTab : EditorTab
             playfield = new EditorPlayfield(this),
             toolbox = new EditorToolbox(playfield)
         };
-    }
-
-    protected override void Update()
-    {
-        if (Conductor.CurrentTime > Conductor.Length)
-            Conductor.Seek(Conductor.Length);
-        if (Conductor.CurrentTime < 0)
-            Conductor.Seek(0);
-
-        base.Update();
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
@@ -94,7 +83,7 @@ public partial class ComposeTab : EditorTab
 
         if (clock.IsRunning)
         {
-            var tp = values.MapInfo.GetTimingPoint(Conductor.CurrentTime);
+            var tp = values.MapInfo.GetTimingPoint(clock.CurrentTime);
             amount *= 4 * (tp.BPM / 120);
         }
 

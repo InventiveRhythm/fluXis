@@ -16,6 +16,9 @@ namespace fluXis.Game.Graphics.Background;
 
 public partial class BackgroundStack : CompositeDrawable
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     private readonly List<Background> scheduledBackgrounds = new();
     private readonly Container backgroundContainer;
     private readonly ParallaxContainer parallaxContainer;
@@ -130,7 +133,7 @@ public partial class BackgroundStack : CompositeDrawable
 
         if (backgroundPulse.Value)
         {
-            var amplitude = Conductor.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+            var amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
             Scale = new Vector2(1 + amplitude * .02f);
         }
         else if (Scale.X != 1)

@@ -1,5 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Scoring;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
@@ -8,6 +9,9 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class DangerHealthOverlay : GameplayHUDElement
 {
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     private readonly Box glow;
     private readonly Box darken;
     private float health;
@@ -70,13 +74,13 @@ public partial class DangerHealthOverlay : GameplayHUDElement
             darken.Alpha = 1 - multiplier;
             glow.Alpha = 1 - multiplier;
 
-            Conductor.LowPassFilter.Cutoff = (int)(LowPassFilter.MAX * multiplier);
+            clock.LowPassFilter.Cutoff = (int)(LowPassFilter.MAX * multiplier);
         }
         else
         {
             darken.Alpha = 0;
             glow.Alpha = 0;
-            Conductor.LowPassFilter.Cutoff = LowPassFilter.MAX;
+            clock.LowPassFilter.Cutoff = LowPassFilter.MAX;
         }
     }
 }

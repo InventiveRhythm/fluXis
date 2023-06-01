@@ -42,7 +42,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private Container content;
     private int exceptionCount;
 
-    public Conductor Conductor;
+    public AudioClock AudioClock;
     public FluXisRealm Realm;
     public MapStore MapStore;
     public FluXisConfig Config;
@@ -76,6 +76,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         InitFonts();
 
         dependencies.CacheAs(this);
+        dependencies.Cache(AudioClock = new AudioClock());
         dependencies.CacheAs(Config = new FluXisConfig(storage));
         dependencies.Cache(Realm = new FluXisRealm(storage));
         dependencies.Cache(MapStore = new MapStore(storage, Realm));
@@ -89,7 +90,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Toolbar = new Toolbar());
         dependencies.Cache(ScreenStack = new FluXisScreenStack());
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
-        dependencies.Cache(Conductor = new Conductor());
         dependencies.CacheAs(LightController = CreateLightController());
         dependencies.Cache(SkinManager = new SkinManager());
         LoadComponentAsync(ImportManager = new ImportManager(), dependencies.Cache);

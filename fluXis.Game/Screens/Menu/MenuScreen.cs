@@ -49,6 +49,9 @@ public partial class MenuScreen : FluXisScreen
     [Resolved]
     private FluXisGameBase game { get; set; }
 
+    [Resolved]
+    private AudioClock clock { get; set; }
+
     private Box blackBox;
     private Container content;
 
@@ -67,7 +70,7 @@ public partial class MenuScreen : FluXisScreen
             maps.CurrentMapSet = maps.GetRandom();
 
             RealmMap map = maps.CurrentMapSet.Maps.First();
-            Conductor.PlayTrack(map, true, map.Metadata.PreviewTime);
+            clock.LoadMap(map, true, true);
         }
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
@@ -242,7 +245,7 @@ public partial class MenuScreen : FluXisScreen
 
     protected override void Update()
     {
-        if (Conductor.HasFinished)
+        if (clock.Finished)
         {
             int index = maps.MapSets.IndexOf(maps.CurrentMapSet);
 
@@ -256,7 +259,7 @@ public partial class MenuScreen : FluXisScreen
 
             maps.CurrentMapSet = mapSet;
             backgrounds.AddBackgroundFromMap(map);
-            Conductor.PlayTrack(map, true);
+            clock.LoadMap(map, true);
         }
 
         base.Update();
