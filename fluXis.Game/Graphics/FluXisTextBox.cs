@@ -20,6 +20,7 @@ public partial class FluXisTextBox : BasicTextBox
 
     private List<Sample> textAdded;
     private Sample accept;
+    private Sample delete;
     private Sample error;
 
     [BackgroundDependencyLoader]
@@ -41,6 +42,7 @@ public partial class FluXisTextBox : BasicTextBox
             textAdded.Add(samples.Get($@"UI/Keyboard/tap-{i + 1}"));
 
         accept = samples.Get(@"UI/Keyboard/confirm");
+        delete = samples.Get(@"UI/Keyboard/delete");
         error = samples.Get(@"UI/Keyboard/error");
     }
 
@@ -95,6 +97,7 @@ public partial class FluXisTextBox : BasicTextBox
     protected override void OnUserTextRemoved(string removed)
     {
         base.OnUserTextRemoved(removed);
+        delete?.Play();
         OnTextChanged?.Invoke();
     }
 
