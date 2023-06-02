@@ -1,5 +1,7 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,14 +15,19 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
 {
     public Bindable<T> Bindable { get; init; }
     public float Step { get; init; }
+    public bool PlaySample { get; init; } = true;
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
     private BasicSliderBar<T> sliderBar;
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
 
+    private Sample valueChange;
+    private Bindable<double> valueChangePitch;
+    private bool firstPlay = true;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
         Height = 20;
 
@@ -63,6 +70,9 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
                 Action = () => changeValue(1)
             }
         };
+
+        valueChange = samples.Get("UI/slider-scroll");
+        valueChange?.AddAdjustment(AdjustableProperty.Frequency, valueChangePitch = new BindableDouble(1f));
     }
 
     protected override void LoadComplete()
@@ -85,6 +95,13 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
 
         leftIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MinValue) > 0;
         rightIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MaxValue) < 0;
+
+        if (valueChange != null && PlaySample && !firstPlay)
+        {
+            valueChangePitch.Value = 1f + percent * .4f;
+            valueChange.Play();
+        }
+        else firstPlay = false;
     }
 
     private void changeValue(int by)
