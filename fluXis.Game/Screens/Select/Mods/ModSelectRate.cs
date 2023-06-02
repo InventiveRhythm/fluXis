@@ -33,7 +33,7 @@ public partial class ModSelectRate : Container
         {
             MinValue = 0.5f,
             MaxValue = 3f,
-            Precision = 0.1f
+            Precision = 0.05f
         };
 
         mod = new RateMod();
@@ -119,7 +119,21 @@ public partial class ModSelectRate : Container
                                     Bindable = rateBindable,
                                     RelativeSizeAxes = Axes.X,
                                     Step = rateBindable.Precision,
-                                    Margin = new MarginPadding { Top = 35, Bottom = 5 },
+                                    Margin = new MarginPadding { Top = 35 },
+                                },
+                                new Container
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    Height = 30,
+                                    Padding = new MarginPadding { Horizontal = 20 },
+                                    Margin = new MarginPadding { Top = 57 },
+                                    Children = new SliderTickMark[]
+                                    {
+                                        new() { Value = 0.5f },
+                                        new() { Value = 1 },
+                                        new() { Value = 2 },
+                                        new() { Value = 3 }
+                                    }
                                 }
                             }
                         }
@@ -144,10 +158,44 @@ public partial class ModSelectRate : Container
             clock.RateTo(rate);
             Selector.UpdateTotalMultiplier();
 
-            rateText.Text = $"{Math.Round(rate, 1).ToString(CultureInfo.InvariantCulture)}x";
+            rateText.Text = $"{Math.Round(rate, 2).ToString(CultureInfo.InvariantCulture)}x";
 
             int multiplier = (int)Math.Round(mod.ScoreMultiplier * 100) - 100;
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
         }, true);
+    }
+
+    private partial class SliderTickMark : Container
+    {
+        public float Value { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            AutoSizeAxes = Axes.Both;
+            RelativePositionAxes = Axes.Both;
+            X = (Value - 0.5f) / 2.5f;
+            Origin = Anchor.TopCentre;
+
+            InternalChildren = new Drawable[]
+            {
+                new CircularContainer
+                {
+                    Size = new(3),
+                    Masking = true,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Child = new Box { RelativeSizeAxes = Axes.Both }
+                },
+                new SpriteText
+                {
+                    Text = $"{Value.ToString(CultureInfo.InvariantCulture)}x",
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Font = FluXisFont.Default(16),
+                    Margin = new MarginPadding { Top = 5 }
+                }
+            };
+        }
     }
 }
