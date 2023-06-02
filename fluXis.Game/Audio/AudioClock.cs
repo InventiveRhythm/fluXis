@@ -127,6 +127,8 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         return underlying.Seek(position);
     }
 
+    public override bool SeekForce(double position) => underlying.Seek(position);
+
     public void SeekSmoothly(double time)
     {
         if (IsRunning)

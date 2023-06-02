@@ -13,9 +13,10 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
     public abstract void Start();
     public abstract void Stop();
     public abstract bool Seek(double position);
+    public abstract bool SeekForce(double position);
     public abstract void ResetSpeedAdjustments();
     double IAdjustableClock.Rate { get; set; }
-    double IClock.Rate { get; }
+    double IClock.Rate => Rate;
     public abstract bool IsRunning { get; }
 
     public double Rate

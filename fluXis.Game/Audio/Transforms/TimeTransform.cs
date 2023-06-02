@@ -7,7 +7,7 @@ public class TimeTransform : Transform<double, TransformableClock>
 {
     public override string TargetMember => "CurrentTime";
 
-    protected override void Apply(TransformableClock clock, double time) => clock.Seek(valueAt(time));
+    protected override void Apply(TransformableClock clock, double time) => clock.SeekForce(valueAt(time));
 
     private double valueAt(double time)
     {

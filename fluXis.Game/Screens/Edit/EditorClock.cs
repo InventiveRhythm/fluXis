@@ -48,10 +48,12 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
 
     public void SeekSmoothly(double time)
     {
+        time = Math.Clamp(time, 0, TrackLength);
+
         if (IsRunning)
             Seek(time);
         else
-            transformTimeTo(time, 300, Easing.OutQuint);
+            TimeTo(time, 300, Easing.OutQuint);
     }
 
     public double Snap(double position)
@@ -97,6 +99,8 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         position = Math.Clamp(position, 0, TrackLength);
         return underlying.Seek(position);
     }
+
+    public override bool SeekForce(double position) => underlying.Seek(position);
 
     public void SeekBackward(double amount) => seek(-1, amount + (IsRunning ? 1.5 : 0));
     public void SeekForward(double amount) => seek(1, amount);
@@ -169,13 +173,5 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         track.Value = source as Track;
         Track.Value.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
-    }
-
-    private void transformTimeTo(double time, double duration, Easing easing) => this.TransformTo(this.PopulateTransform(new TimeTransform(), Math.Clamp(time, 0, TrackLength), duration, easing));
-
-    private double currentTime
-    {
-        get => underlying.CurrentTime;
-        set => underlying.Seek(value);
     }
 }
