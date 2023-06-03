@@ -58,10 +58,10 @@ public partial class SocialChip : Container
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft
                     },
-                    new SpriteText
+                    new FluXisSpriteText
                     {
                         Text = Username,
-                        Font = FluXisFont.Default(23),
+                        FontSize = 24,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft
                     }

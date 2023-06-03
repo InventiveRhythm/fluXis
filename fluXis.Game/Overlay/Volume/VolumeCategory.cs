@@ -3,7 +3,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Volume;
@@ -26,8 +25,8 @@ public partial class VolumeCategory : Container
         }
     }
 
-    private readonly SpriteText text;
-    private readonly SpriteText percentText;
+    private readonly FluXisSpriteText text;
+    private readonly FluXisSpriteText percentText;
     private readonly Box background;
     private readonly Box progressBackground;
     private readonly Box progress;
@@ -55,13 +54,9 @@ public partial class VolumeCategory : Container
                 Padding = new MarginPadding(5),
                 Children = new Drawable[]
                 {
-                    text = new SpriteText
+                    text = new FluXisSpriteText(),
+                    percentText = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default()
-                    },
-                    percentText = new SpriteText
-                    {
-                        Font = FluXisFont.Default(),
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight
                     },

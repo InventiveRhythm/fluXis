@@ -28,7 +28,7 @@ public partial class EditorToolboxItem : Container
     private EditorTool? currentTool;
 
     private readonly SpriteIcon icon;
-    private readonly SpriteText text;
+    private readonly FluXisSpriteText text;
     private readonly Box hover;
 
     public EditorToolboxItem(EditorPlayfield playfield)
@@ -66,11 +66,10 @@ public partial class EditorToolboxItem : Container
                         Origin = Anchor.CentreLeft,
                         Size = new Vector2(24)
                     },
-                    text = new SpriteText
+                    text = new FluXisSpriteText
                     {
                         Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Font = FluXisFont.Default(20)
+                        Origin = Anchor.CentreLeft
                     }
                 }
             }

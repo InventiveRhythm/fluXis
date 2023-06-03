@@ -160,7 +160,7 @@ public partial class PlaybackControl : Container
         }
     }
 
-    private partial class PlaybackSpeedText : SpriteText
+    private partial class PlaybackSpeedText : FluXisSpriteText
     {
         [Resolved]
         private EditorClock clock { get; set; }
@@ -181,7 +181,7 @@ public partial class PlaybackControl : Container
         private void load()
         {
             Anchor = Origin = Anchor.Centre;
-            Font = FluXisFont.Default(16);
+            FontSize = 16;
         }
 
         protected override void Update()

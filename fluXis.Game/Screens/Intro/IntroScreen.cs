@@ -5,7 +5,6 @@ using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -40,10 +39,10 @@ public partial class IntroScreen : FluXisScreen
                 Origin = Anchor.Centre,
                 Scale = new Vector2(0.9f),
                 Alpha = 0f,
-                Child = new SpriteText
+                Child = new FluXisSpriteText
                 {
                     Text = "fluXis",
-                    Font = FluXisFont.Default(100),
+                    FontSize = 100,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 }
@@ -58,10 +57,10 @@ public partial class IntroScreen : FluXisScreen
                 Alpha = 0f,
                 Children = new Drawable[]
                 {
-                    new SpriteText
+                    new FluXisSpriteText
                     {
                         Text = "Epilepsy warning!",
-                        Font = FluXisFont.Default(60),
+                        FontSize = 60,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         Margin = new MarginPadding { Bottom = 20 }

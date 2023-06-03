@@ -9,7 +9,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -183,7 +182,7 @@ public partial class SettingsKeybind : SettingsItem
 
         public BindableBool IsCurrent { get; } = new();
 
-        private readonly SpriteText text;
+        private readonly FluXisSpriteText text;
         private readonly Box box;
 
         public KeybindContainer()
@@ -206,9 +205,9 @@ public partial class SettingsKeybind : SettingsItem
                     RelativeSizeAxes = Axes.Y,
                     AutoSizeAxes = Axes.X,
                     Padding = new MarginPadding { Horizontal = 10 },
-                    Child = text = new SpriteText
+                    Child = text = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(24),
+                        FontSize = 24,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     }

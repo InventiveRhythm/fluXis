@@ -8,7 +8,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -18,7 +17,7 @@ public partial class ModSelector : Container
 {
     public BindableBool IsOpen = new();
 
-    private SpriteText maxScoreText;
+    private FluXisSpriteText maxScoreText;
     private float scoreMultiplier = 1;
 
     private readonly Dictionary<IMod, ModEntry> mappings = new();
@@ -93,22 +92,20 @@ public partial class ModSelector : Container
                                             Padding = new MarginPadding { Horizontal = 10 },
                                             Children = new Drawable[]
                                             {
-                                                new SpriteText
+                                                new FluXisSpriteText
                                                 {
                                                     Text = "Gameplay Modifiers",
-                                                    Font = FluXisFont.Default(40),
+                                                    FontSize = 40,
                                                     Y = -10
                                                 },
-                                                new SpriteText
+                                                new FluXisSpriteText
                                                 {
                                                     Text = "Make the game harder or easier for yourself.",
-                                                    Font = FluXisFont.Default(),
                                                     Margin = new MarginPadding { Top = 25 },
                                                     Colour = FluXisColors.Text2
                                                 },
-                                                maxScoreText = new SpriteText
+                                                maxScoreText = new FluXisSpriteText
                                                 {
-                                                    Font = FluXisFont.Default(),
                                                     Anchor = Anchor.CentreRight,
                                                     Origin = Anchor.CentreRight,
                                                     Colour = FluXisColors.Text2

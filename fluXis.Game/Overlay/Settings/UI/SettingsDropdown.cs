@@ -49,7 +49,7 @@ public partial class SettingsDropdown<T> : SettingsItem
 
         private partial class FluXisDropdownHeader : DropdownHeader
         {
-            private readonly SpriteText label;
+            private readonly FluXisSpriteText label;
 
             protected override LocalisableString Label
             {
@@ -66,10 +66,9 @@ public partial class SettingsDropdown<T> : SettingsItem
 
                 Children = new Drawable[]
                 {
-                    label = new SpriteText
+                    label = new FluXisSpriteText
                     {
-                        AlwaysPresent = true,
-                        Font = FluXisFont.Default()
+                        AlwaysPresent = true
                     },
                     new SpriteIcon
                     {
@@ -133,7 +132,7 @@ public partial class SettingsDropdown<T> : SettingsItem
 
             private partial class DrawableFluXisDropdownMenuItem : DrawableDropdownMenuItem
             {
-                private SpriteText text;
+                private FluXisSpriteText text;
 
                 public DrawableFluXisDropdownMenuItem(MenuItem item)
                     : base(item)
@@ -146,9 +145,9 @@ public partial class SettingsDropdown<T> : SettingsItem
 
                 protected override Drawable CreateContent()
                 {
-                    return text = new SpriteText
+                    return text = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(16),
+                        FontSize = 16,
                         Margin = new MarginPadding { Vertical = 2, Horizontal = 5 },
                         Shadow = true
                     };

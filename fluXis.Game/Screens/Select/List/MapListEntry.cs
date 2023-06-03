@@ -11,7 +11,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -205,9 +204,9 @@ public partial class MapListEntry : Container
                                 Offset = new Vector2(0, 1)
                             }
                         }, 100),
-                        new SpriteText
+                        new FluXisSpriteText
                         {
-                            Font = FluXisFont.Default(32),
+                            FontSize = 32,
                             Text = mapset.Metadata.Title,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.BottomLeft,
@@ -217,9 +216,9 @@ public partial class MapListEntry : Container
                             Margin = new MarginPadding { Left = 70 },
                             Shadow = true
                         },
-                        new SpriteText
+                        new FluXisSpriteText
                         {
-                            Font = FluXisFont.Default(24),
+                            FontSize = 24,
                             Text = mapset.Metadata.Artist,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.TopLeft,

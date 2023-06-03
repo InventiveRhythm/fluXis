@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Register;
@@ -71,19 +70,18 @@ public partial class RegisterOverlay : Container
                         Origin = Anchor.Centre,
                         Children = new Drawable[]
                         {
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Registration",
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
-                                Font = FluXisFont.Default(40)
+                                FontSize = 40
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Enter the world of fluXis!",
                                 Anchor = Anchor.TopCentre,
-                                Origin = Anchor.TopCentre,
-                                Font = FluXisFont.Default()
+                                Origin = Anchor.TopCentre
                             },
                             new Container
                             {
@@ -119,13 +117,13 @@ public partial class RegisterOverlay : Container
                                 Origin = Anchor.TopLeft,
                                 PlaceholderText = "Username"
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Your public name everyone will know you by.",
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
                                 RelativeSizeAxes = Axes.X,
-                                Font = FluXisFont.Default(14),
+                                FontSize = 14,
                                 Margin = new MarginPadding { Left = 5 }
                             },
                             new Container
@@ -140,13 +138,13 @@ public partial class RegisterOverlay : Container
                                 Origin = Anchor.TopLeft,
                                 PlaceholderText = "Email"
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Used for account verification or when you forget your password. No one will see this.",
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
                                 RelativeSizeAxes = Axes.X,
-                                Font = FluXisFont.Default(14),
+                                FontSize = 14,
                                 Margin = new MarginPadding { Left = 5 }
                             },
                             new Container
@@ -162,13 +160,13 @@ public partial class RegisterOverlay : Container
                                 PlaceholderText = "Password",
                                 IsPassword = true
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Must be at least 8 characters long. Choose something unique and hard to guess.",
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
                                 RelativeSizeAxes = Axes.X,
-                                Font = FluXisFont.Default(14),
+                                FontSize = 14,
                                 Margin = new MarginPadding { Left = 5 }
                             },
                             new Container

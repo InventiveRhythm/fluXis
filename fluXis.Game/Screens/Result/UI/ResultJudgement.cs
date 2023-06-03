@@ -2,7 +2,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Result.UI;
@@ -17,16 +16,16 @@ public partial class ResultJudgement : FillFlowContainer
 
         AddRange(new Drawable[]
         {
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = hitWindow.Key.ToString(),
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Colour = hitWindow.Color
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = count.ToString(),
-                Font = FluXisFont.Default(24)
+                FontSize = 24
             }
         });
     }

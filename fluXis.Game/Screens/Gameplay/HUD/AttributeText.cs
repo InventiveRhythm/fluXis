@@ -1,12 +1,11 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class AttributeText : GameplayHUDElement
 {
-    private readonly SpriteText sprText;
+    private readonly FluXisSpriteText sprText;
 
     private string text = string.Empty;
 
@@ -22,8 +21,8 @@ public partial class AttributeText : GameplayHUDElement
 
     public float FontSize
     {
-        get => sprText.Size.Y;
-        set => sprText.Font = FluXisFont.Default(value);
+        get => sprText.FontSize;
+        set => sprText.FontSize = value;
     }
 
     private AttributeType attributeType;
@@ -43,7 +42,7 @@ public partial class AttributeText : GameplayHUDElement
     {
         AutoSizeAxes = Axes.Both;
 
-        Add(sprText = new SpriteText());
+        Add(sprText = new FluXisSpriteText());
 
         //default values
         FontSize = 32;

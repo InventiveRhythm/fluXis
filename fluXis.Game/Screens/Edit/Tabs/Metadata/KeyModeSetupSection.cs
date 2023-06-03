@@ -5,7 +5,6 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
@@ -107,10 +106,9 @@ public partial class KeyModeSetupSection : SetupSection
                             Origin = Anchor.TopCentre,
                             Anchor = Anchor.TopCentre
                         },
-                        new SpriteText
+                        new FluXisSpriteText
                         {
                             Text = $"{keys} Keys",
-                            Font = FluXisFont.Default(20),
                             Y = 30,
                             Origin = Anchor.TopCentre,
                             Anchor = Anchor.TopCentre

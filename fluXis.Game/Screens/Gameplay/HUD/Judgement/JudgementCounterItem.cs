@@ -1,9 +1,9 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
 
@@ -16,7 +16,7 @@ public partial class JudgementCounterItem : Container
     private int count;
 
     private Box background;
-    private SpriteText text;
+    private FluXisSpriteText text;
 
     public JudgementCounterItem(Performance performance, Scoring.Judgement judgement)
     {
@@ -40,9 +40,10 @@ public partial class JudgementCounterItem : Container
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
-                Font = new FontUsage("Grade", 24),
+                Font = FluXisFont.YoureGone,
+                FontSize = 24,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = hitWindow.Color
@@ -58,13 +59,13 @@ public partial class JudgementCounterItem : Container
             {
                 count = performance.Judgements[judgement];
                 lightUp();
-                text.Font = new FontUsage("Grade", count switch
+                text.FontSize = count switch
                 {
                     > 0 and < 100 => 24,
                     > 99 and < 1000 => 20,
                     > 999 and < 10000 => 16,
                     _ => 12 // > 9999
-                });
+                };
             }
 
             text.Text = count.ToString();

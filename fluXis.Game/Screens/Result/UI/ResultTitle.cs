@@ -4,7 +4,6 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Result.UI;
@@ -42,26 +41,26 @@ public partial class ResultTitle : Container
                         Width = 500,
                         Children = new Drawable[]
                         {
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = map.Metadata.Title,
-                                Font = FluXisFont.Default(40),
+                                FontSize = 40,
                                 RelativeSizeAxes = Axes.X,
                                 Truncate = true
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = map.Metadata.Artist,
-                                Font = FluXisFont.Default(26),
+                                FontSize = 26,
                                 Colour = FluXisColors.Text2,
                                 Truncate = true,
                                 RelativeSizeAxes = Axes.X,
                                 Margin = new MarginPadding { Top = 35 }
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = $"[{map.Difficulty}] mapped by {map.Metadata.Mapper}",
-                                Font = FluXisFont.Default(22),
+                                FontSize = 22,
                                 Colour = FluXisColors.Text2,
                                 Truncate = true,
                                 RelativeSizeAxes = Axes.X,
@@ -85,18 +84,18 @@ public partial class ResultTitle : Container
                                 AutoSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    new SpriteText
+                                    new FluXisSpriteText
                                     {
                                         Text = "Played by",
-                                        Font = FluXisFont.Default(16),
+                                        FontSize = 16,
                                         Colour = FluXisColors.Text2,
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.BottomRight
                                     },
-                                    new SpriteText
+                                    new FluXisSpriteText
                                     {
                                         Text = user?.Username ?? "Guest",
-                                        Font = FluXisFont.Default(22),
+                                        FontSize = 22,
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.TopRight
                                     }

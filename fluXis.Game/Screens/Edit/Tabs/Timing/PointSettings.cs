@@ -1,6 +1,6 @@
-using System.Globalization;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
+using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -21,7 +21,7 @@ public partial class PointSettings<T> : PointSettings
         Add(TimeField = new BasicPointSettingsField
         {
             Label = "Time",
-            Text = Point.Time.ToString(CultureInfo.InvariantCulture)
+            Text = Point.Time.ToStringInvariant()
         });
     }
 }

@@ -8,7 +8,6 @@ using fluXis.Game.Utils;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
@@ -60,9 +59,9 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
         public readonly TimingPointInfo PointInfo;
 
-        private SpriteText timeText;
-        private SpriteText bpmText;
-        private SpriteText signatureText;
+        private FluXisSpriteText timeText;
+        private FluXisSpriteText bpmText;
+        private FluXisSpriteText signatureText;
 
         public TimingPointEntry(TimingPointInfo pointInfo)
         {
@@ -79,22 +78,22 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
         public override Drawable[] CreateContent() => new Drawable[]
         {
-            timeText = new SpriteText
+            timeText = new FluXisSpriteText
             {
                 Text = TimeUtils.Format(PointInfo.Time),
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Width = 100
             },
-            bpmText = new SpriteText
+            bpmText = new FluXisSpriteText
             {
                 Text = PointInfo.BPM + "bpm",
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Width = 80
             },
-            signatureText = new SpriteText
+            signatureText = new FluXisSpriteText
             {
                 Text = PointInfo.Signature + "/4",
-                Font = FluXisFont.Default(24)
+                FontSize = 24
             }
         };
 

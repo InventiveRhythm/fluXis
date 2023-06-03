@@ -26,9 +26,9 @@ public partial class ModEntry : Container, IHasTooltip
     private Box background;
     private Box hoverBox;
     private SpriteIcon icon;
-    private SpriteText name;
-    private SpriteText description;
-    private SpriteText scoreMultiplier;
+    private FluXisSpriteText name;
+    private FluXisSpriteText description;
+    private FluXisSpriteText scoreMultiplier;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -67,9 +67,8 @@ public partial class ModEntry : Container, IHasTooltip
                         Shadow = true,
                         Icon = Mod.Icon
                     },
-                    name = new SpriteText
+                    name = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(),
                         Text = Mod.Name,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.BottomLeft,
@@ -77,9 +76,9 @@ public partial class ModEntry : Container, IHasTooltip
                         X = 35,
                         Y = 4
                     },
-                    description = new SpriteText
+                    description = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(14),
+                        FontSize = 14,
                         Text = Mod.Description,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.TopLeft,
@@ -87,9 +86,8 @@ public partial class ModEntry : Container, IHasTooltip
                         Shadow = true,
                         X = 35
                     },
-                    scoreMultiplier = new SpriteText
+                    scoreMultiplier = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(),
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
                         Text = $"{multiplierText}%"

@@ -2,7 +2,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 using osuTK.Graphics;
 
@@ -11,9 +10,9 @@ namespace fluXis.Game.Screens.Result.UI;
 public partial class ResultScore : FillFlowContainer
 {
     private readonly Performance performance;
-    private readonly SpriteText scoreText;
-    private readonly SpriteText accuracyText;
-    private readonly SpriteText comboText;
+    private readonly FluXisSpriteText scoreText;
+    private readonly FluXisSpriteText accuracyText;
+    private readonly FluXisSpriteText comboText;
 
     private int score = 0;
     private float accuracy = 0;
@@ -33,15 +32,15 @@ public partial class ResultScore : FillFlowContainer
 
         AddRange(new Drawable[]
         {
-            scoreText = new SpriteText
+            scoreText = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(80),
+                FontSize = 80,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
-            accuracyText = new SpriteText
+            accuracyText = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(40),
+                FontSize = 40,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
@@ -64,14 +63,14 @@ public partial class ResultScore : FillFlowContainer
                 Margin = new MarginPadding { Top = 15 },
                 Children = new[]
                 {
-                    new SpriteText
+                    new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(24),
+                        FontSize = 24,
                         Text = "Max Combo"
                     },
-                    comboText = new SpriteText
+                    comboText = new FluXisSpriteText
                     {
-                        Font = FluXisFont.Default(24),
+                        FontSize = 24,
                         Colour = performance.AllFlawless ? HitWindow.FromKey(Judgement.Flawless).Color : performance.FullCombo ? HitWindow.FromKey(Judgement.Great).Color : Color4.White
                     }
                 }

@@ -6,7 +6,6 @@ using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 using osuTK.Graphics;
 
@@ -23,8 +22,8 @@ public partial class JudgementDisplay : GameplayHUDElement
         screen.Performance.OnHitStatAdded += PopUp;
     }
 
-    private SpriteText text;
-    private SpriteText textEarlyLate;
+    private FluXisSpriteText text;
+    private FluXisSpriteText textEarlyLate;
     private Bindable<bool> hideFlawless;
     private Bindable<bool> showEarlyLate;
 
@@ -41,15 +40,15 @@ public partial class JudgementDisplay : GameplayHUDElement
 
         InternalChildren = new Drawable[]
         {
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(48),
+                FontSize = 48,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            textEarlyLate = new SpriteText
+            textEarlyLate = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Margin = new MarginPadding { Top = 48 },

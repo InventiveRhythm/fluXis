@@ -1,4 +1,4 @@
-using System.Globalization;
+using fluXis.Game.Utils;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
@@ -17,5 +17,5 @@ public class FlashEvent : TimedObject
     public Color4 EndColor { get; set; }
     public float EndOpacity { get; set; }
 
-    public override string ToString() => $"Flash({Time.ToString(CultureInfo.InvariantCulture)},{Duration.ToString(CultureInfo.InvariantCulture)},{InBackground.ToString()},{Easing.ToString()},{StartColor.ToHex()},{StartOpacity.ToString(CultureInfo.InvariantCulture)},{EndColor.ToHex()},{EndOpacity.ToString(CultureInfo.InvariantCulture)})";
+    public override string ToString() => $"Flash({Time.ToStringInvariant()},{Duration.ToStringInvariant()},{InBackground.ToString()},{Easing.ToString()},{StartColor.ToHex()},{StartOpacity.ToStringInvariant()},{EndColor.ToHex()},{EndOpacity.ToStringInvariant()})";
 }

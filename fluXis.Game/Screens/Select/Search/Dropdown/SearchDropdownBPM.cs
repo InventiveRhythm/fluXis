@@ -2,7 +2,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Select.Search.Dropdown;
 
@@ -15,10 +14,10 @@ public partial class SearchDropdownBPM : Container
 
         AddRange(new Drawable[]
         {
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = "BPM",
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
             },
@@ -45,7 +44,7 @@ public partial class SearchDropdownBPM : Container
             BackgroundFocused = FluXisColors.Surface2;
             PlaceholderText = "0";
             Placeholder.Colour = Colour4.Gray;
-            Placeholder.Font = FluXisFont.Default(24);
+            Placeholder.Font = FluXisSpriteText.GetFont(size: 24);
         }
 
         protected override void OnUserTextAdded(string added) => update();
@@ -81,10 +80,10 @@ public partial class SearchDropdownBPM : Container
             AutoSizeAxes = Axes.X,
             Anchor = Anchor.CentreLeft,
             Origin = Anchor.CentreLeft,
-            Child = new SpriteText
+            Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                Font = FluXisFont.Default(24)
+                FontSize = 24
             }
         };
     }

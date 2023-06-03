@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Profile;
 
@@ -34,10 +33,10 @@ public partial class ProfileSection : Container
                 Padding = new MarginPadding(10),
                 Children = new[]
                 {
-                    new SpriteText
+                    new FluXisSpriteText
                     {
                         Text = Title,
-                        Font = FluXisFont.Default(45),
+                        FontSize = 45,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre
                     },
@@ -49,10 +48,10 @@ public partial class ProfileSection : Container
 
     public virtual Drawable CreateContent()
     {
-        return new SpriteText
+        return new FluXisSpriteText
         {
             Text = "Nothing here yet...",
-            Font = FluXisFont.Default(23),
+            FontSize = 24,
             Colour = FluXisColors.Text2,
             Anchor = Anchor.TopCentre,
             Origin = Anchor.TopCentre

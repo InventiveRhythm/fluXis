@@ -3,7 +3,6 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI.Profile;
@@ -11,7 +10,7 @@ namespace fluXis.Game.Screens.Menu.UI.Profile;
 public partial class MenuProfile : Container
 {
     private readonly DrawableAvatar avatar;
-    private readonly SpriteText username;
+    private readonly FluXisSpriteText username;
 
     public MenuProfile()
     {
@@ -35,10 +34,10 @@ public partial class MenuProfile : Container
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight
             },
-            username = new SpriteText
+            username = new FluXisSpriteText
             {
                 Text = user?.Username ?? "Not logged in",
-                Font = FluXisFont.Default(40),
+                FontSize = 40,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Margin = new MarginPadding { Right = 120 }

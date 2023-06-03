@@ -3,13 +3,12 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
 public partial class ToolbarClock : Container
 {
-    private SpriteText clockText;
+    private FluXisSpriteText clockText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -18,11 +17,10 @@ public partial class ToolbarClock : Container
         Width = 100;
         Padding = new MarginPadding { Horizontal = 10 };
 
-        Add(clockText = new SpriteText
+        Add(clockText = new FluXisSpriteText
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Font = FluXisFont.Default(),
             Text = "00:00:00"
         });
     }

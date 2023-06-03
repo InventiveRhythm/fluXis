@@ -1,6 +1,7 @@
 using System.Globalization;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -26,7 +27,7 @@ public partial class ScrollVelocitySettings : PointSettings<ScrollVelocityInfo>
             multiplierField = new BasicPointSettingsField
             {
                 Label = "Multiplier",
-                Text = Point.Multiplier.ToString(CultureInfo.InvariantCulture),
+                Text = Point.Multiplier.ToStringInvariant(),
                 OnTextChanged = saveChanges
             }
         });

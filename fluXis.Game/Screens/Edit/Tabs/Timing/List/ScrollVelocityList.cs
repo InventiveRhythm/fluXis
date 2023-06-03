@@ -5,7 +5,6 @@ using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 
@@ -43,8 +42,8 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
     {
         public readonly ScrollVelocityInfo VelocityInfo;
 
-        private SpriteText timeText;
-        private SpriteText multiplierText;
+        private FluXisSpriteText timeText;
+        private FluXisSpriteText multiplierText;
 
         public ScrollVelocityEntry(ScrollVelocityInfo velocityInfo)
         {
@@ -60,16 +59,16 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
 
         public override Drawable[] CreateContent() => new Drawable[]
         {
-            timeText = new SpriteText
+            timeText = new FluXisSpriteText
             {
                 Text = TimeUtils.Format(VelocityInfo.Time),
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Width = 100
             },
-            multiplierText = new SpriteText
+            multiplierText = new FluXisSpriteText
             {
                 Text = VelocityInfo.Multiplier + "x",
-                Font = FluXisFont.Default(24)
+                FontSize = 24
             }
         };
 

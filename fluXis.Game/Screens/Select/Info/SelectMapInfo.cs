@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Select.Info;
 
@@ -22,12 +21,12 @@ public partial class SelectMapInfo : GridContainer
     public ScoreList ScoreList;
 
     private BackgroundStack backgroundStack;
-    private SpriteText titleText;
-    private SpriteText artistText;
-    private SpriteText bpmText;
-    private SpriteText lengthText;
-    private SpriteText npsText;
-    private SpriteText lnpText;
+    private FluXisSpriteText titleText;
+    private FluXisSpriteText artistText;
+    private FluXisSpriteText bpmText;
+    private FluXisSpriteText lengthText;
+    private FluXisSpriteText npsText;
+    private FluXisSpriteText lnpText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -85,20 +84,20 @@ public partial class SelectMapInfo : GridContainer
                                         Padding = new MarginPadding(20),
                                         Children = new Drawable[]
                                         {
-                                            titleText = new SpriteText
+                                            titleText = new FluXisSpriteText
                                             {
                                                 Text = "No Map Selected",
-                                                Font = FluXisFont.Default(60),
+                                                FontSize = 60,
                                                 RelativeSizeAxes = Axes.X,
                                                 Truncate = true,
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.BottomLeft,
                                                 Y = 10
                                             },
-                                            artistText = new SpriteText
+                                            artistText = new FluXisSpriteText
                                             {
                                                 Text = "Please select a map to view info",
-                                                Font = FluXisFont.Default(32),
+                                                FontSize = 32,
                                                 RelativeSizeAxes = Axes.X,
                                                 Truncate = true,
                                                 Anchor = Anchor.CentreLeft,
@@ -135,18 +134,18 @@ public partial class SelectMapInfo : GridContainer
                                             RelativeSizeAxes = Axes.Both,
                                             Children = new Drawable[]
                                             {
-                                                new SpriteText
+                                                new FluXisSpriteText
                                                 {
                                                     Text = "BPM",
-                                                    Font = FluXisFont.Default(18),
+                                                    FontSize = 18,
                                                     Colour = FluXisColors.Text2,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.BottomCentre
                                                 },
-                                                bpmText = new SpriteText
+                                                bpmText = new FluXisSpriteText
                                                 {
                                                     Text = "",
-                                                    Font = FluXisFont.Default(24),
+                                                    FontSize = 24,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.TopCentre,
                                                     Y = -4
@@ -158,18 +157,18 @@ public partial class SelectMapInfo : GridContainer
                                             RelativeSizeAxes = Axes.Both,
                                             Children = new Drawable[]
                                             {
-                                                new SpriteText
+                                                new FluXisSpriteText
                                                 {
                                                     Text = "Length",
-                                                    Font = FluXisFont.Default(18),
+                                                    FontSize = 18,
                                                     Colour = FluXisColors.Text2,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.BottomCentre
                                                 },
-                                                lengthText = new SpriteText
+                                                lengthText = new FluXisSpriteText
                                                 {
                                                     Text = "",
-                                                    Font = FluXisFont.Default(24),
+                                                    FontSize = 24,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.TopCentre,
                                                     Y = -4
@@ -181,18 +180,18 @@ public partial class SelectMapInfo : GridContainer
                                             RelativeSizeAxes = Axes.Both,
                                             Children = new Drawable[]
                                             {
-                                                new SpriteText
+                                                new FluXisSpriteText
                                                 {
                                                     Text = "NPS",
-                                                    Font = FluXisFont.Default(18),
+                                                    FontSize = 18,
                                                     Colour = FluXisColors.Text2,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.BottomCentre
                                                 },
-                                                npsText = new SpriteText
+                                                npsText = new FluXisSpriteText
                                                 {
                                                     Text = "",
-                                                    Font = FluXisFont.Default(24),
+                                                    FontSize = 24,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.TopCentre,
                                                     Y = -4
@@ -204,18 +203,18 @@ public partial class SelectMapInfo : GridContainer
                                             RelativeSizeAxes = Axes.Both,
                                             Children = new Drawable[]
                                             {
-                                                new SpriteText
+                                                new FluXisSpriteText
                                                 {
                                                     Text = "LN%",
-                                                    Font = FluXisFont.Default(18),
+                                                    FontSize = 18,
                                                     Colour = FluXisColors.Text2,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.BottomCentre
                                                 },
-                                                lnpText = new SpriteText
+                                                lnpText = new FluXisSpriteText
                                                 {
                                                     Text = "",
-                                                    Font = FluXisFont.Default(24),
+                                                    FontSize = 24,
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.TopCentre,
                                                     Y = -4

@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.Timeline;
@@ -24,10 +23,9 @@ public partial class EditorPlayTestButton : ClickableContainer
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = "Test!",
-                Font = FluXisFont.Default(),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }

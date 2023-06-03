@@ -50,10 +50,10 @@ public partial class TimingCategoryList<T> : Container
                     ScrollbarVisible = false,
                     Children = new Drawable[]
                     {
-                        new SpriteText
+                        new FluXisSpriteText
                         {
                             Text = title,
-                            Font = FluXisFont.Default(32),
+                            FontSize = 32,
                             Margin = new MarginPadding { Bottom = 10, Left = 10 }
                         },
                         flow = new FillFlowContainer<T>
@@ -150,10 +150,10 @@ public partial class TimingCategoryList<T> : Container
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Add",
-                                Font = FluXisFont.Default(24),
+                                FontSize = 24,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
                             }

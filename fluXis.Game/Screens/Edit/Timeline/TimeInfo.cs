@@ -3,7 +3,6 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Edit.Timeline;
 
@@ -15,8 +14,8 @@ public partial class TimeInfo : Container
     [Resolved]
     private EditorValues values { get; set; }
 
-    private SpriteText timeText;
-    private SpriteText bpmText;
+    private FluXisSpriteText timeText;
+    private FluXisSpriteText bpmText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -26,16 +25,16 @@ public partial class TimeInfo : Container
 
         Children = new Drawable[]
         {
-            timeText = new SpriteText
+            timeText = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(28, true),
+                FontSize = 28,
+                FixedWidth = true,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Bottom = -5 }
             },
-            bpmText = new SpriteText
+            bpmText = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.TopLeft,
                 Colour = FluXisColors.Text2

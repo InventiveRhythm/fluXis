@@ -3,7 +3,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Overlay.Login.UI;
@@ -35,12 +34,11 @@ public partial class LoginButton : Container
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = label,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Font = FluXisFont.Default()
+                Origin = Anchor.Centre
             }
         };
     }

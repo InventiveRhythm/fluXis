@@ -5,7 +5,6 @@ using fluXis.Game.Overlay.Profile;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Chat;
@@ -56,15 +55,15 @@ public partial class DrawableChatMessage : Container
                         Spacing = new Vector2(5),
                         Children = new Drawable[]
                         {
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = Message.Sender.Username,
-                                Font = FluXisFont.Default(22)
+                                FontSize = 22
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = DateTimeOffset.FromUnixTimeMilliseconds(Message.Timestamp).ToString("HH:mm"),
-                                Font = FluXisFont.Default(18),
+                                FontSize = 18,
                                 Colour = FluXisColors.Text2,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
@@ -85,10 +84,10 @@ public partial class DrawableChatMessage : Container
 
     public void AddMessage(ChatMessage message)
     {
-        flow.Add(new SpriteText
+        flow.Add(new FluXisSpriteText
         {
             Text = message.Content,
-            Font = FluXisFont.Default(18),
+            FontSize = 18,
             Margin = new MarginPadding { Bottom = 5 }
         });
     }

@@ -13,7 +13,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -35,7 +34,7 @@ public partial class ScoreListEntry : Container, IHasTooltip
 
     private readonly RealmScore score;
     private readonly int rank;
-    private SpriteText timeText;
+    private FluXisSpriteText timeText;
     private Container bannerContainer;
     private Container avatarContainer;
 
@@ -82,10 +81,10 @@ public partial class ScoreListEntry : Container, IHasTooltip
                 {
                     new Drawable[]
                     {
-                        new SpriteText
+                        new FluXisSpriteText
                         {
                             Text = $"#{rank}",
-                            Font = FluXisFont.Default(26),
+                            FontSize = 26,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
                         },
@@ -111,36 +110,34 @@ public partial class ScoreListEntry : Container, IHasTooltip
                                     CornerRadius = 5,
                                     Masking = true
                                 },
-                                new SpriteText
+                                new FluXisSpriteText
                                 {
                                     Text = Fluxel.LoggedInUser?.Username ?? "Player",
-                                    Font = FluXisFont.Default(28),
+                                    FontSize = 28,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
                                     Padding = new MarginPadding { Left = 60 },
                                     Y = 5
                                 },
-                                timeText = new SpriteText
+                                timeText = new FluXisSpriteText
                                 {
                                     Text = TimeUtils.Ago(score.Date),
-                                    Font = FluXisFont.Default(),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.TopLeft,
                                     Padding = new MarginPadding { Left = 60 }
                                 },
-                                new SpriteText
+                                new FluXisSpriteText
                                 {
                                     Text = score.Accuracy.ToString("00.00").Replace(",", ".") + "%",
-                                    Font = FluXisFont.Default(28),
+                                    FontSize = 28,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.BottomRight,
                                     Padding = new MarginPadding { Right = 10 },
                                     Y = 5
                                 },
-                                new SpriteText
+                                new FluXisSpriteText
                                 {
                                     Text = $"{score.MaxCombo}x",
-                                    Font = FluXisFont.Default(),
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.TopRight,
                                     Padding = new MarginPadding { Right = 10 }
@@ -163,17 +160,19 @@ public partial class ScoreListEntry : Container, IHasTooltip
                                     Direction = FillDirection.Vertical,
                                     Children = new Drawable[]
                                     {
-                                        new SpriteText
+                                        new FluXisSpriteText
                                         {
                                             Text = score.Score.ToString("0000000"),
-                                            Font = FluXisFont.Default(22, true),
+                                            FontSize = 22,
+                                            FixedWidth = true,
                                             Anchor = Anchor.TopRight,
                                             Origin = Anchor.TopRight
                                         },
-                                        new SpriteText
+                                        new FluXisSpriteText
                                         {
                                             Text = string.Join(" ", score.Mods),
-                                            Font = FluXisFont.Default(18, true),
+                                            FixedWidth = true,
+                                            FontSize = 18,
                                             Anchor = Anchor.TopRight,
                                             Origin = Anchor.TopRight
                                         }

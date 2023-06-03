@@ -1,6 +1,5 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 using osuTK.Graphics;
 
@@ -41,10 +40,10 @@ public partial class LoginTextBox : FluXisTextBox
         else
         {
             container.AutoSizeAxes = Axes.Both;
-            container.Child = new SpriteText
+            container.Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                Font = FluXisFont.Default(CalculatedTextSize),
+                FontSize = CalculatedTextSize,
             };
         }
 

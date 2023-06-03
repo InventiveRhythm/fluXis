@@ -1,6 +1,5 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Search;
@@ -23,7 +22,7 @@ public partial class SearchTextBox : FluXisTextBox
         BackgroundFocused = FluXisColors.Hover;
         PlaceholderText = "Search...";
         Placeholder.Colour = Colour4.Gray;
-        Placeholder.Font = FluXisFont.Default(40);
+        Placeholder.Font = FluXisSpriteText.GetFont(size: 40);
     }
 
     protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer
@@ -32,10 +31,10 @@ public partial class SearchTextBox : FluXisTextBox
         AutoSizeAxes = Axes.X,
         Anchor = Anchor.CentreLeft,
         Origin = Anchor.CentreLeft,
-        Child = new SpriteText
+        Child = new FluXisSpriteText
         {
             Text = c.ToString(),
-            Font = FluXisFont.Default(40)
+            FontSize = 40
         }
     };
 

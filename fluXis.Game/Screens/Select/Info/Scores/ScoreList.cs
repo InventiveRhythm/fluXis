@@ -7,7 +7,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
@@ -20,7 +19,7 @@ public partial class ScoreList : Container
 
     private RealmMap map;
 
-    private readonly SpriteText noScoresText;
+    private readonly FluXisSpriteText noScoresText;
     private readonly BasicScrollContainer scrollContainer;
 
     public ScoreList()
@@ -29,10 +28,10 @@ public partial class ScoreList : Container
 
         InternalChildren = new Drawable[]
         {
-            noScoresText = new SpriteText
+            noScoresText = new FluXisSpriteText
             {
                 Text = "No scores yet!",
-                Font = FluXisFont.Default(32),
+                FontSize = 32,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Alpha = 0

@@ -3,7 +3,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit;
@@ -80,10 +79,9 @@ public partial class EditorToolbar : Container
                     Colour = Colour4.White,
                     Alpha = 0
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = text,
-                    Font = FluXisFont.Default(20),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Padding = new MarginPadding { Horizontal = 10 }

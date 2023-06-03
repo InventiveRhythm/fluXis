@@ -12,7 +12,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 using osuTK.Graphics;
 
@@ -29,7 +28,7 @@ public partial class LoginOverlay : Container
     private Bindable<string> tokenBind;
 
     private LoginContent loginContainer;
-    private SpriteText loadingText;
+    private FluXisSpriteText loadingText;
 
     private LoginTextBox username;
     private LoginTextBox password;
@@ -95,12 +94,12 @@ public partial class LoginOverlay : Container
                             new LoginButton("Login!") { Action = login }
                         }
                     },
-                    loadingText = new SpriteText
+                    loadingText = new FluXisSpriteText
                     {
                         Text = "",
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Font = FluXisFont.Default(24)
+                        FontSize = 24
                     }
                 }
             }

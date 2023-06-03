@@ -1,0 +1,7 @@
+M:System.Single.ToString(System.String,System.IFormatProvider);Use .ToStringInvariant() for better code clarity.
+M:System.Double.ToString(System.String,System.IFormatProvider);Use .ToStringInvariant() for better code clarity.
+M:System.Single.ToString(System.IFormatProvider);Use .ToStringInvariant() for better code clarity.
+M:System.Double.ToString(System.IFormatProvider);Use .ToStringInvariant() for better code clarity.
+M:System.Single.ToString();Use .ToStringInvariant() for better code clarity.
+M:System.Double.ToString();Use .ToStringInvariant() for better code clarity.
+M:osu.Framework.Graphics.Sprites.SpriteText.#ctor;Use FluXisSpriteText.

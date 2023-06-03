@@ -3,10 +3,10 @@ using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
@@ -32,7 +32,7 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
             bpmField = new BasicPointSettingsField
             {
                 Label = "BPM",
-                Text = Point.BPM.ToString(CultureInfo.InvariantCulture),
+                Text = Point.BPM.ToStringInvariant(),
                 OnTextChanged = saveChanges
             },
             signatureField = new BasicPointSettingsField
@@ -90,10 +90,10 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
 
             AddRangeInternal(new Drawable[]
             {
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = "Signature",
-                    Font = FluXisFont.Default(32),
+                    FontSize = 32,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft
                 },
@@ -105,10 +105,10 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
                     Origin = Anchor.CentreRight,
                     Margin = new MarginPadding { Right = 35 }
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = "/4",
-                    Font = FluXisFont.Default(32),
+                    FontSize = 32,
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight
                 }
@@ -136,10 +136,10 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
             protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer
             {
                 AutoSizeAxes = Axes.Both,
-                Child = new SpriteText
+                Child = new FluXisSpriteText
                 {
                     Text = c.ToString(),
-                    Font = FluXisFont.Default(CalculatedTextSize)
+                    FontSize = CalculatedTextSize
                 }
             };
 

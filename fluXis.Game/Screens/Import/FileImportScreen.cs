@@ -7,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -26,7 +25,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
     public string[] AllowedExtensions { get; set; } = null;
 
     private FileSelect fileSelect;
-    private SpriteText selectedFileText;
+    private FluXisSpriteText selectedFileText;
     private GridContainer grid;
     private Button importButton;
 
@@ -83,11 +82,11 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                                 Origin = Anchor.CentreLeft,
                                 Action = this.Exit
                             },
-                            selectedFileText = new SpriteText
+                            selectedFileText = new FluXisSpriteText
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Font = FluXisFont.Default(24)
+                                FontSize = 24
                             },
                             importButton = new Button
                             {
@@ -154,12 +153,12 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Text = Text,
-                    Font = FluXisFont.Default(24)
+                    FontSize = 24
                 }
             };
 

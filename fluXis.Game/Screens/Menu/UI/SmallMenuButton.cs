@@ -20,7 +20,7 @@ public partial class SmallMenuButton : Container
 
     private readonly Box hover;
     private readonly SpriteIcon icon;
-    private readonly SpriteText text;
+    private readonly FluXisSpriteText text;
 
     private Sample sampleClick;
     private Sample sampleHover;
@@ -58,12 +58,11 @@ public partial class SmallMenuButton : Container
                 Margin = new MarginPadding { Left = 10 },
                 Shadow = true
             },
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 40 },
-                Font = FluXisFont.Default(),
                 Shadow = true
             }
         };

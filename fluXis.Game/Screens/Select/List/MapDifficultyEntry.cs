@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -148,31 +147,30 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                         Padding = new MarginPadding { Left = 10 },
                                         Children = new Drawable[]
                                         {
-                                            new SpriteText
+                                            new FluXisSpriteText
                                             {
                                                 Text = map.Difficulty,
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.CentreLeft,
-                                                Font = FluXisFont.Default(22)
+                                                FontSize = 22
                                             },
-                                            new SpriteText
+                                            new FluXisSpriteText
                                             {
                                                 Text = $"mapped by {map.Metadata.Mapper}",
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.CentreLeft,
-                                                Font = FluXisFont.Default(22),
+                                                FontSize = 22,
                                                 Colour = FluXisColors.Text2
                                             }
                                         }
                                     }
                                 }
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = $"{map.KeyCount}K",
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Font = FluXisFont.Default(),
                                 Colour = FluXisColors.GetKeyColor(map.KeyCount).ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White
                             }
                         }

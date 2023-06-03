@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.TabSwitcher;
@@ -29,10 +28,10 @@ public partial class EditorTabSwitcherButton : ClickableContainer
                 Colour = Colour4.White,
                 Alpha = 0
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = Text,
-                Font = FluXisFont.Default(22),
+                FontSize = 22,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Padding = new MarginPadding { Horizontal = 15 }

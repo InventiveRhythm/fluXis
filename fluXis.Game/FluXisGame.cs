@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 
@@ -23,7 +22,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
     private Container screenContainer;
     private Container exitContainer;
-    private SpriteText seeyaText;
+    private FluXisSpriteText seeyaText;
 
     public bool Sex = true;
 
@@ -65,12 +64,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                         RelativeSizeAxes = Axes.Both,
                         Colour = Colour4.Black
                     },
-                    seeyaText = new SpriteText
+                    seeyaText = new FluXisSpriteText
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Text = "See you next time!",
-                        Font = FluXisFont.Default(32)
+                        FontSize = 32
                     }
                 }
             }

@@ -3,7 +3,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Select.Footer;
@@ -14,7 +13,7 @@ public partial class SelectFooterButton : Container
 
     public Action Action { get; set; }
 
-    private readonly SpriteText text;
+    private readonly FluXisSpriteText text;
     private readonly Box box;
 
     public SelectFooterButton()
@@ -31,11 +30,11 @@ public partial class SelectFooterButton : Container
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Font = FluXisFont.Default(24)
+                FontSize = 24
             }
         });
     }

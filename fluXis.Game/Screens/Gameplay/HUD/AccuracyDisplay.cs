@@ -3,13 +3,12 @@ using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class AccuracyDisplay : GameplayHUDElement
 {
-    private SpriteText accuracyText;
+    private FluXisSpriteText accuracyText;
     private float displayedAccuracy;
     private float lastAccuracy;
 
@@ -38,7 +37,7 @@ public partial class AccuracyDisplay : GameplayHUDElement
             Children = new Drawable[]
             {
                 drawableGrade = new DrawableGrade { Size = 32 },
-                accuracyText = new SpriteText { Font = FluXisFont.Default(32, true) }
+                accuracyText = new FluXisSpriteText { FontSize = 32, FixedWidth = true }
             }
         });
     }

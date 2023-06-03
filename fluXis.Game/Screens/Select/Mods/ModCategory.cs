@@ -4,7 +4,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Mods;
@@ -45,13 +44,13 @@ public partial class ModCategory : Container
                     RelativeSizeAxes = Axes.X,
                     Height = 30,
                     Padding = new MarginPadding { Vertical = 2, Horizontal = 10 },
-                    Child = new SpriteText
+                    Child = new FluXisSpriteText
                     {
                         Text = Label,
                         Colour = FluXisColors.TextDark,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Font = FluXisFont.Default(22),
+                        FontSize = 22
                     }
                 },
                 new Container

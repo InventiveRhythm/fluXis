@@ -2,14 +2,13 @@ using System;
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
 
 public partial class BasicPointSettingsField : Container
 {
     public readonly FluXisTextBox TextBox;
-    private readonly SpriteText labelText;
+    private readonly FluXisSpriteText labelText;
 
     public string Label { set => labelText.Text = value; }
 
@@ -35,11 +34,11 @@ public partial class BasicPointSettingsField : Container
 
         Children = new Drawable[]
         {
-            labelText = new SpriteText
+            labelText = new FluXisSpriteText
             {
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Font = FluXisFont.Default(32)
+                FontSize = 32
             },
             TextBox = new FluXisTextBox
             {

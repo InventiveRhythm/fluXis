@@ -2,7 +2,6 @@ using System;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Graphics;
 
@@ -78,10 +77,11 @@ public partial class DrawableGrade : Container
 
     private void drawSingleLetter(string letter, Colour4 color)
     {
-        Add(new SpriteText
+        Add(new FluXisSpriteText
         {
             Text = letter,
-            Font = new FontUsage("Grade", Height),
+            Font = FluXisFont.YoureGone,
+            FontSize = Height,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Colour = color
@@ -92,19 +92,21 @@ public partial class DrawableGrade : Container
     {
         AddRange(new Drawable[]
         {
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = letter,
-                Font = new FontUsage("Grade", Height),
+                Font = FluXisFont.YoureGone,
+                FontSize = Height,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Margin = new MarginPadding { Left = 10 },
                 Colour = color.Darken(.4f)
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = letter,
-                Font = new FontUsage("Grade", Height),
+                Font = FluXisFont.YoureGone,
+                FontSize = Height,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Margin = new MarginPadding { Right = 10 },

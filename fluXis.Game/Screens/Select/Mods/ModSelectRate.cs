@@ -1,15 +1,14 @@
 using System;
-using System.Globalization;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Slider;
 using fluXis.Game.Mods;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Select.Mods;
 
@@ -23,8 +22,8 @@ public partial class ModSelectRate : Container
     private BindableFloat rateBindable;
     private RateMod mod;
 
-    private SpriteText rateText;
-    private SpriteText multiplierText;
+    private FluXisSpriteText rateText;
+    private FluXisSpriteText multiplierText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -54,13 +53,13 @@ public partial class ModSelectRate : Container
                 RelativeSizeAxes = Axes.X,
                 Height = 30,
                 Padding = new MarginPadding { Vertical = 2, Horizontal = 10 },
-                Child = new SpriteText
+                Child = new FluXisSpriteText
                 {
                     Text = "Rate",
                     Colour = FluXisColors.TextDark,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    Font = FluXisFont.Default(22),
+                    FontSize = 22,
                 }
             },
             new Container
@@ -100,17 +99,17 @@ public partial class ModSelectRate : Container
                                     Padding = new MarginPadding { Vertical = 2, Horizontal = 10 },
                                     Children = new Drawable[]
                                     {
-                                        rateText = new SpriteText
+                                        rateText = new FluXisSpriteText
                                         {
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
-                                            Font = FluXisFont.Default(22),
+                                            FontSize = 22,
                                         },
-                                        multiplierText = new SpriteText
+                                        multiplierText = new FluXisSpriteText
                                         {
                                             Anchor = Anchor.CentreRight,
                                             Origin = Anchor.CentreRight,
-                                            Font = FluXisFont.Default(22)
+                                            FontSize = 22
                                         }
                                     }
                                 },
@@ -158,7 +157,7 @@ public partial class ModSelectRate : Container
             clock.RateTo(rate);
             Selector.UpdateTotalMultiplier();
 
-            rateText.Text = $"{Math.Round(rate, 2).ToString(CultureInfo.InvariantCulture)}x";
+            rateText.Text = $"{Math.Round(rate, 2).ToStringInvariant()}x";
 
             int multiplier = (int)Math.Round(mod.ScoreMultiplier * 100) - 100;
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
@@ -187,12 +186,12 @@ public partial class ModSelectRate : Container
                     Origin = Anchor.TopCentre,
                     Child = new Box { RelativeSizeAxes = Axes.Both }
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
-                    Text = $"{Value.ToString(CultureInfo.InvariantCulture)}x",
+                    Text = $"{Value.ToStringInvariant()}x",
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-                    Font = FluXisFont.Default(16),
+                    FontSize = 16,
                     Margin = new MarginPadding { Top = 5 }
                 }
             };

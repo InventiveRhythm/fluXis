@@ -16,7 +16,7 @@ public partial class Cursor : Container
     private readonly GlobalCursorOverlay overlay;
 
     private Sprite clickSprite;
-    private SpriteText tooltipText;
+    private FluXisSpriteText tooltipText;
     private Container tooltipContainer;
 
     public string TooltipText
@@ -75,9 +75,8 @@ public partial class Cursor : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Surface
                 },
-                tooltipText = new SpriteText
+                tooltipText = new FluXisSpriteText
                 {
-                    Font = FluXisFont.Default(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Margin = new MarginPadding { Horizontal = 5, Vertical = 2 },

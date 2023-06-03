@@ -21,7 +21,6 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -65,7 +64,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     public SearchFilters Filters = new();
 
-    private SpriteText noMapsText;
+    private FluXisSpriteText noMapsText;
 
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
@@ -104,12 +103,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Both,
                         Width = .5f,
-                        Child = noMapsText = new SpriteText
+                        Child = noMapsText = new FluXisSpriteText
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Text = "No maps found!",
-                            Font = FluXisFont.Default(32),
+                            FontSize = 32,
                             Blending = BlendingParameters.Additive,
                             Alpha = 0
                         }

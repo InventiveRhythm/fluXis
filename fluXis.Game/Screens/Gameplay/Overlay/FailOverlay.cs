@@ -4,7 +4,6 @@ using fluXis.Game.Screens.Gameplay.Overlay.Fail;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -17,7 +16,7 @@ public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
     public GameplayScreen Screen { get; set; }
 
     private readonly StripePattern pattern;
-    private readonly SpriteText text;
+    private readonly FluXisSpriteText text;
     private readonly Box wedgeLeft;
     private readonly Box wedgeRight;
     private readonly FailResults results;
@@ -51,10 +50,10 @@ public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
             {
                 Speed = new Vector2(-300)
             },
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
                 Text = "FAILED",
-                Font = FluXisFont.Default(100),
+                FontSize = 100,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },

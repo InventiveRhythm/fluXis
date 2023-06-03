@@ -130,7 +130,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, @"Fonts/Quicksand/Quicksand-SemiBold");
         AddFont(Resources, @"Fonts/Quicksand/Quicksand-Bold");
         AddFont(Resources, @"Fonts/Renogare/Renogare");
-        AddFont(Resources, @"Fonts/Grade/Grade");
+        AddFont(Resources, @"Fonts/YoureGone/YoureGone");
     }
 
     public new virtual void Exit()

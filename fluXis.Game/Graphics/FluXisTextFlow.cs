@@ -14,9 +14,9 @@ public partial class FluXisTextFlow : TextFlowContainer
     {
     }
 
-    protected override SpriteText CreateSpriteText() => new()
+    protected override FluXisSpriteText CreateSpriteText() => new()
     {
-        Font = FluXisFont.Default(FontSize),
+        FontSize = FontSize,
         Shadow = Shadow
     };
 }

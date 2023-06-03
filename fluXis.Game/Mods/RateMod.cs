@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using fluXis.Game.Utils;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -13,7 +13,7 @@ public class RateMod : IMod
     public bool Rankable => true;
     public IEnumerable<string> IncompatibleMods => Array.Empty<string>();
 
-    public string Acronym => $"{Rate.ToString(CultureInfo.InvariantCulture)}x";
+    public string Acronym => $"{Rate.ToStringInvariant()}x";
     public float ScoreMultiplier => 1f + (Rate - 1f) * 0.4f;
     public float Rate { get; set; } = 1f;
 }

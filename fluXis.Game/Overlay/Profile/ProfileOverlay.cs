@@ -6,7 +6,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Logging;
 using osuTK;
 using osuTK.Graphics;
@@ -24,9 +23,9 @@ public partial class ProfileOverlay : Container
 
     private DrawableBanner banner;
     private DrawableAvatar avatar;
-    private SpriteText username;
+    private FluXisSpriteText username;
     private Box roleBackground;
-    private SpriteText role;
+    private FluXisSpriteText role;
     private FillFlowContainer<SocialChip> socialContainer;
     private AboutMeProfileSection aboutMe;
 
@@ -130,10 +129,10 @@ public partial class ProfileOverlay : Container
                                                 Direction = FillDirection.Vertical,
                                                 Children = new Drawable[]
                                                 {
-                                                    username = new SpriteText
+                                                    username = new FluXisSpriteText
                                                     {
                                                         Text = user.Username,
-                                                        Font = FluXisFont.Default(45)
+                                                        FontSize = 45
                                                     },
                                                     new Container
                                                     {
@@ -147,10 +146,10 @@ public partial class ProfileOverlay : Container
                                                                 RelativeSizeAxes = Axes.Both,
                                                                 Colour = FluXisColors.GetRoleColor(user.Role)
                                                             },
-                                                            role = new SpriteText
+                                                            role = new FluXisSpriteText
                                                             {
                                                                 Text = APIUser.GetRole(user.Role),
-                                                                Font = FluXisFont.Default(25),
+                                                                FontSize = 25,
                                                                 Margin = new MarginPadding { Horizontal = 5, Vertical = 1 }
                                                             }
                                                         }

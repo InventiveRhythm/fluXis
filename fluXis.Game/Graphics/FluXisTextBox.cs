@@ -4,7 +4,6 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
 using osuTK;
@@ -36,7 +35,7 @@ public partial class FluXisTextBox : BasicTextBox
         BackgroundUnfocused = FluXisColors.Surface;
         BackgroundFocused = FluXisColors.Hover;
         BackgroundCommit = FluXisColors.Click;
-        Placeholder.Font = FluXisFont.Default();
+        Placeholder.Font = FluXisSpriteText.GetFont();
         Placeholder.Colour = FluXisColors.Text2;
         Placeholder.Anchor = Anchor.CentreLeft;
         Placeholder.Origin = Anchor.CentreLeft;
@@ -120,10 +119,10 @@ public partial class FluXisTextBox : BasicTextBox
         else
         {
             container.AutoSizeAxes = Axes.Both;
-            container.Child = new SpriteText
+            container.Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                Font = FluXisFont.Default(CalculatedTextSize),
+                FontSize = CalculatedTextSize,
             };
         }
 

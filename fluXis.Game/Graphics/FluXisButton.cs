@@ -2,7 +2,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Graphics;
@@ -36,10 +35,10 @@ public partial class FluXisButton : ClickableContainer
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Child = new SpriteText
+                    Child = new FluXisSpriteText
                     {
                         Text = Text,
-                        Font = FluXisFont.Default(FontSize),
+                        FontSize = FontSize,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     }

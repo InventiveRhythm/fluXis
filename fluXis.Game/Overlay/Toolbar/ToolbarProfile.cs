@@ -7,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -23,7 +22,7 @@ public partial class ToolbarProfile : Container
 
     private Container avatarContainer;
     private DrawableAvatar avatar;
-    private SpriteText username;
+    private FluXisSpriteText username;
     private Box background;
 
     [BackgroundDependencyLoader]
@@ -49,12 +48,11 @@ public partial class ToolbarProfile : Container
                     Alpha = 0
                 }
             },
-            username = new SpriteText
+            username = new FluXisSpriteText
             {
                 Text = user?.Username ?? "Not logged in",
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Font = FluXisFont.Default(),
                 Margin = new MarginPadding { Right = 45, Left = 10 }
             },
             new Container

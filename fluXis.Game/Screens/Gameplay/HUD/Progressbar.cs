@@ -5,7 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
@@ -20,9 +19,9 @@ public partial class Progressbar : GameplayHUDElement
     }
 
     private Box bar;
-    private SpriteText currentTimeText;
-    private SpriteText percentText;
-    private SpriteText timeLeftText;
+    private FluXisSpriteText currentTimeText;
+    private FluXisSpriteText percentText;
+    private FluXisSpriteText timeLeftText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -56,28 +55,28 @@ public partial class Progressbar : GameplayHUDElement
                     }
                 }
             },
-            currentTimeText = new SpriteText
+            currentTimeText = new FluXisSpriteText
             {
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopLeft,
                 Y = 10,
                 X = 10,
-                Font = FluXisFont.Default(32)
+                FontSize = 32
             },
-            percentText = new SpriteText
+            percentText = new FluXisSpriteText
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Y = 10,
-                Font = FluXisFont.Default(32)
+                FontSize = 32
             },
-            timeLeftText = new SpriteText
+            timeLeftText = new FluXisSpriteText
             {
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight,
                 Y = 10,
                 X = -10,
-                Font = FluXisFont.Default(32)
+                FontSize = 32
             }
         };
     }

@@ -1,7 +1,6 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
@@ -12,7 +11,7 @@ public partial class ComboCounter : GameplayHUDElement
     {
     }
 
-    private SpriteText text;
+    private FluXisSpriteText text;
     private int lastCombo;
 
     [BackgroundDependencyLoader]
@@ -22,9 +21,10 @@ public partial class ComboCounter : GameplayHUDElement
         Origin = Anchor.BottomCentre;
         Height = 64;
 
-        Add(text = new SpriteText
+        Add(text = new FluXisSpriteText
         {
-            Font = FluXisFont.Default(64, true),
+            FontSize = 64,
+            FixedWidth = true,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Alpha = 0

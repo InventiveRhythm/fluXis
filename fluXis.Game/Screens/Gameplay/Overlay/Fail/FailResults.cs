@@ -3,7 +3,6 @@ using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Overlay.Fail;
@@ -12,12 +11,12 @@ public partial class FailResults : Container
 {
     public FailOverlay FailOverlay { get; set; }
 
-    private readonly SpriteText title; // title - artist
-    private readonly SpriteText subtitle; // difficulty - mapper
-    private readonly SpriteText scoreText;
-    private readonly SpriteText accuracyText;
+    private readonly FluXisSpriteText title; // title - artist
+    private readonly FluXisSpriteText subtitle; // difficulty - mapper
+    private readonly FluXisSpriteText scoreText;
+    private readonly FluXisSpriteText accuracyText;
     private readonly Box progressBar;
-    private readonly SpriteText progressText;
+    private readonly FluXisSpriteText progressText;
     private readonly FillFlowContainer<FailResultsJudgement> judgements;
 
     private float progress;
@@ -36,23 +35,23 @@ public partial class FailResults : Container
 
         InternalChildren = new Drawable[]
         {
-            title = new SpriteText
+            title = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(32),
+                FontSize = 32,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
-            subtitle = new SpriteText
+            subtitle = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Margin = new MarginPadding { Top = 28 }
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = "- FAILED -",
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Margin = new MarginPadding { Top = 50 },
@@ -79,16 +78,16 @@ public partial class FailResults : Container
                                 Width = 250,
                                 Children = new Drawable[]
                                 {
-                                    new SpriteText
+                                    new FluXisSpriteText
                                     {
                                         Text = "Score",
-                                        Font = FluXisFont.Default(32),
+                                        FontSize = 32,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre
                                     },
-                                    scoreText = new SpriteText
+                                    scoreText = new FluXisSpriteText
                                     {
-                                        Font = FluXisFont.Default(64),
+                                        FontSize = 64,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Margin = new MarginPadding { Top = 28 }
@@ -101,16 +100,16 @@ public partial class FailResults : Container
                                 Width = 250,
                                 Children = new Drawable[]
                                 {
-                                    new SpriteText
+                                    new FluXisSpriteText
                                     {
                                         Text = "Accuracy",
-                                        Font = FluXisFont.Default(32),
+                                        FontSize = 32,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre
                                     },
-                                    accuracyText = new SpriteText
+                                    accuracyText = new FluXisSpriteText
                                     {
-                                        Font = FluXisFont.Default(64),
+                                        FontSize = 64,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Margin = new MarginPadding { Top = 28 }
@@ -146,10 +145,10 @@ public partial class FailResults : Container
                 Origin = Anchor.BottomLeft,
                 Children = new Drawable[]
                 {
-                    progressText = new SpriteText
+                    progressText = new FluXisSpriteText
                     {
                         Text = "",
-                        Font = FluXisFont.Default(32),
+                        FontSize = 32,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre
                     },
@@ -215,8 +214,8 @@ public partial class FailResults : Container
 
     private partial class FailResultsJudgement : FillFlowContainer
     {
-        private readonly SpriteText name;
-        private readonly SpriteText countText;
+        private readonly FluXisSpriteText name;
+        private readonly FluXisSpriteText countText;
         private int count = 0;
 
         private HitWindow hitWindow;
@@ -245,13 +244,13 @@ public partial class FailResults : Container
 
             InternalChildren = new Drawable[]
             {
-                name = new SpriteText
+                name = new FluXisSpriteText
                 {
-                    Font = FluXisFont.Default(32),
+                    FontSize = 32,
                 },
-                countText = new SpriteText
+                countText = new FluXisSpriteText
                 {
-                    Font = FluXisFont.Default(32)
+                    FontSize = 32
                 }
             };
         }

@@ -2,7 +2,6 @@ using System;
 using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
@@ -18,12 +17,12 @@ public partial class SetupSection : FillFlowContainer
     }
 }
 
-public partial class MetadataSectionHeader : SpriteText
+public partial class MetadataSectionHeader : FluXisSpriteText
 {
     public MetadataSectionHeader(string text)
     {
         Text = text;
-        Font = FluXisFont.Default(32);
+        FontSize = 32;
     }
 }
 
@@ -46,10 +45,10 @@ public partial class SetupTextBox : Container
 
         Children = new Drawable[]
         {
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = name,
-                Font = FluXisFont.Default(24),
+                FontSize = 24,
                 Margin = new MarginPadding { Top = 5 },
                 Origin = Anchor.TopRight,
                 X = 90

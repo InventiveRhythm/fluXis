@@ -2,7 +2,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.UI;
 
@@ -29,18 +28,18 @@ public partial class SettingsItem : Container
                 Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
-                    new SpriteText
+                    new FluXisSpriteText
                     {
                         Text = Label,
-                        Font = FluXisFont.Default(LabelSize),
+                        FontSize = LabelSize,
                         Anchor = Anchor.TopLeft,
                         Origin = Anchor.TopLeft
                     },
-                    new SpriteText
+                    new FluXisSpriteText
                     {
                         Text = Description,
                         Colour = FluXisColors.Text2,
-                        Font = FluXisFont.Default(DescriptionSize),
+                        FontSize = DescriptionSize,
                         Anchor = Anchor.TopLeft,
                         Origin = Anchor.TopLeft
                     },

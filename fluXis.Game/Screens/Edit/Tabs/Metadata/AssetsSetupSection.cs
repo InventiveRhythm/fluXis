@@ -6,7 +6,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
@@ -65,10 +64,10 @@ public partial class AssetsSetupSection : SetupSection
 
             Children = new Drawable[]
             {
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = Label,
-                    Font = FluXisFont.Default(24),
+                    FontSize = 24,
                     Margin = new MarginPadding { Top = 5 },
                     Origin = Anchor.TopRight,
                     X = 140
@@ -90,10 +89,9 @@ public partial class AssetsSetupSection : SetupSection
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = FluXisColors.Surface
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "Click to select file",
-                                Font = FluXisFont.Default(),
                                 Colour = FluXisColors.Text2,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,

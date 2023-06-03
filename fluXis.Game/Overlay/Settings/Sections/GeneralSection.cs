@@ -18,17 +18,16 @@ public partial class GeneralSection : SettingsSection
             RelativeSizeAxes = Axes.X,
             Children = new Drawable[]
             {
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = "fluXis",
-                    Font = FluXisFont.Default(50),
+                    FontSize = 50,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = FluXisGameBase.VersionString,
-                    Font = FluXisFont.Default(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.TopCentre
                 },

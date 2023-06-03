@@ -6,7 +6,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Logging;
 using osuTK;
@@ -91,13 +90,12 @@ public partial class StatusTag : Container
                     Offset = new Vector2(0, 1)
                 }
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = text,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = FluXisColors.IsBright(colour) ? FluXisColors.TextDark : Colour4.White,
-                Font = FluXisFont.Default(),
                 Margin = new MarginPadding { Horizontal = 8 }
             }
         };

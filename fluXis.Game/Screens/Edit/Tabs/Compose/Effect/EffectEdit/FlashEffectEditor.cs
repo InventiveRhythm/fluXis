@@ -2,11 +2,11 @@ using System;
 using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect.EffectEdit;
@@ -34,7 +34,7 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "Time",
-                    Text = FlashEvent.Time.ToString(CultureInfo.InvariantCulture),
+                    Text = FlashEvent.Time.ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
@@ -46,7 +46,7 @@ public partial class FlashEffectEditor : FluXisPopover
                 new BeatsTextBox
                 {
                     LabelText = "Duration",
-                    Text = (FlashEvent.Duration / beatLength).ToString(CultureInfo.InvariantCulture),
+                    Text = (FlashEvent.Duration / beatLength).ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
@@ -85,7 +85,7 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "Start Opacity",
-                    Text = FlashEvent.StartOpacity.ToString(CultureInfo.InvariantCulture),
+                    Text = FlashEvent.StartOpacity.ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
@@ -129,7 +129,7 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "End Opacity",
-                    Text = FlashEvent.EndOpacity.ToString(CultureInfo.InvariantCulture),
+                    Text = FlashEvent.EndOpacity.ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
@@ -163,12 +163,11 @@ public partial class FlashEffectEditor : FluXisPopover
 
             Children = new Drawable[]
             {
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = LabelText,
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Font = FluXisFont.Default()
+                    Origin = Anchor.CentreLeft
                 },
                 textBox = new FluXisTextBox
                 {
@@ -199,12 +198,11 @@ public partial class FlashEffectEditor : FluXisPopover
 
             Children = new Drawable[]
             {
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = LabelText,
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Font = FluXisFont.Default()
+                    Origin = Anchor.CentreLeft
                 },
                 new GridContainer
                 {
@@ -227,12 +225,12 @@ public partial class FlashEffectEditor : FluXisPopover
                                 Text = Text,
                                 OnTextChanged = () => OnTextChanged?.Invoke(textBox)
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "beat(s)",
                                 Anchor = Anchor.BottomRight,
                                 Origin = Anchor.BottomRight,
-                                Font = FluXisFont.Default(12)
+                                FontSize = 12
                             }
                         }
                     }

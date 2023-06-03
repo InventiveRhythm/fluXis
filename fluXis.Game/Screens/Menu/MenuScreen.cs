@@ -96,17 +96,17 @@ public partial class MenuScreen : FluXisScreen
                         RelativeSizeAxes = Axes.Both,
                         Children = new[]
                         {
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "fluXis",
-                                Font = FluXisFont.Default(100),
+                                FontSize = 100,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0, 0.04f)
                             },
-                            new SpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "A free and community-driven rhythm game",
-                                Font = FluXisFont.Default(32),
+                                FontSize = 32,
                                 Margin = new MarginPadding { Top = 80 },
                                 Shadow = true
                             },

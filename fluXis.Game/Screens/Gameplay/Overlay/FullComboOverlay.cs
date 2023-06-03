@@ -3,7 +3,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Overlay;
@@ -11,7 +10,7 @@ namespace fluXis.Game.Screens.Gameplay.Overlay;
 public partial class FullComboOverlay : Container
 {
     private readonly StripePattern pattern;
-    private readonly SpriteText text;
+    private readonly FluXisSpriteText text;
 
     public FullComboOverlay()
     {
@@ -30,9 +29,9 @@ public partial class FullComboOverlay : Container
             {
                 Speed = new Vector2(-300)
             },
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(100),
+                FontSize = 100,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }

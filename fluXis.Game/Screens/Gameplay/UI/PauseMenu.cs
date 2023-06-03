@@ -42,17 +42,17 @@ public partial class PauseMenu : CompositeDrawable
                 Colour = Colour4.Black,
                 Alpha = 0.4f
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = "Paused",
-                Font = FluXisFont.Default(100),
+                FontSize = 100,
                 Margin = new MarginPadding { Left = 100, Top = 100 },
                 Shadow = true
             },
-            new SpriteText
+            new FluXisSpriteText
             {
                 Text = "What do you want to do?",
-                Font = FluXisFont.Default(48),
+                FontSize = 48,
                 Margin = new MarginPadding { Left = 100, Top = 180 },
                 Colour = Colour4.Gray,
                 Shadow = true
@@ -147,20 +147,20 @@ public partial class PauseMenu : CompositeDrawable
                     Origin = Anchor.CentreLeft,
                     Shadow = true
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = Text,
-                    Font = FluXisFont.Default(48),
+                    FontSize = 48,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.BottomLeft,
                     Margin = new MarginPadding { Left = 90 },
                     Y = 10,
                     Shadow = true
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = Description,
-                    Font = FluXisFont.Default(32),
+                    FontSize = 32,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.TopLeft,
                     Margin = new MarginPadding { Left = 90 },

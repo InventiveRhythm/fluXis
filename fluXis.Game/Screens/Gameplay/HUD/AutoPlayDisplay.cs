@@ -2,7 +2,6 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
@@ -13,7 +12,7 @@ public partial class AutoPlayDisplay : GameplayHUDElement
     {
     }
 
-    private SpriteText text;
+    private FluXisSpriteText text;
     private readonly Bindable<bool> autoPlay = new();
 
     [BackgroundDependencyLoader]
@@ -24,9 +23,9 @@ public partial class AutoPlayDisplay : GameplayHUDElement
         Y = 80;
         Height = 64;
 
-        Add(text = new SpriteText
+        Add(text = new FluXisSpriteText
         {
-            Font = FluXisFont.Default(32),
+            FontSize = 32,
             Anchor = Anchor.TopCentre,
             Origin = Anchor.TopCentre,
             Text = "AutoPlay",

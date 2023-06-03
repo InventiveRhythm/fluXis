@@ -33,8 +33,8 @@ public partial class MenuButton : Container
 
     private readonly Box hover;
     private readonly SpriteIcon icon;
-    private readonly SpriteText text;
-    private readonly SpriteText description;
+    private readonly FluXisSpriteText text;
+    private readonly FluXisSpriteText description;
 
     private Sample sampleClick;
     private Sample sampleHover;
@@ -72,18 +72,17 @@ public partial class MenuButton : Container
                 Margin = new MarginPadding { Left = 10 },
                 Shadow = true
             },
-            text = new SpriteText
+            text = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(30),
+                FontSize = 30,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Left = 50 },
                 Y = 8,
                 Shadow = true
             },
-            description = new SpriteText
+            description = new FluXisSpriteText
             {
-                Font = FluXisFont.Default(),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.TopLeft,
                 Margin = new MarginPadding { Left = 50 },

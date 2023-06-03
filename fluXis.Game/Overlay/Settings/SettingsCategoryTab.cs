@@ -42,10 +42,10 @@ public partial class SettingsCategoryTab : Container
                     Origin = Anchor.CentreLeft,
                     Margin = new MarginPadding { Horizontal = 5 }
                 },
-                new SpriteText
+                new FluXisSpriteText
                 {
                     Text = section.Title,
-                    Font = FluXisFont.Default(24),
+                    FontSize = 24,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft
                 }
