@@ -193,11 +193,18 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     #region Amplitude Stuff
 
     public float[] Amplitudes { get; private set; } = new float[256];
+    private double lastAmplitudeUpdate;
+    private const int amplitude_update_fps = 120;
 
     private void updateAmplitudes()
     {
         if (!IsRunning)
             return;
+
+        if (Time.Current - lastAmplitudeUpdate < 1000f / amplitude_update_fps)
+            return;
+
+        lastAmplitudeUpdate = Time.Current;
 
         var span = Track.Value == null ? new float[256] : Track.Value.CurrentAmplitudes.FrequencyAmplitudes.Span;
 
