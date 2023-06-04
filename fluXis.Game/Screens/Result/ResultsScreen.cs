@@ -125,7 +125,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
         Discord.Update("Viewing Results", "", "results");
 
-        if (score != null)
+        if (score != null && !map.MapSet.Managed)
             realm.RunWrite(r => r.Add(score));
 
         // Logger.Log(JsonConvert.SerializeObject(performance, Formatting.None));

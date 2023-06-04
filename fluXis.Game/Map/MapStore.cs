@@ -86,6 +86,12 @@ public class MapStore
 
     public void DeleteMapSet(RealmMapSet mapSet)
     {
+        if (mapSet.Managed)
+        {
+            // notifications.Post("Cannot delete a managed mapset!");
+            return;
+        }
+
         realm.RunWrite(r =>
         {
             RealmMapSet mapSetToDelete = r.Find<RealmMapSet>(mapSet.ID);

@@ -7,6 +7,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
@@ -68,6 +69,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public RealmMap RealmMap;
     public MapEvents MapEvents;
     public List<IMod> Mods;
+    public MapPackage MapPackage;
 
     public Playfield Playfield { get; private set; }
     public Container HUD { get; private set; }
@@ -92,11 +94,32 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples, FluXisConfig config)
+    private void load(ISampleStore samples, FluXisConfig config, ImportManager importManager)
     {
         this.config = config;
 
-        Map = LoadMap();
+        if (RealmMap.MapSet.Managed)
+        {
+            var package = importManager.GetMapPackage(RealmMap);
+
+            if (package != null)
+            {
+                Map = package.MapInfo;
+                MapEvents = package.MapEvents;
+
+                if (!Map.Validate())
+                {
+                    notifications.PostError("The map you tried to play not valid.");
+                    this.Exit();
+                    return;
+                }
+            }
+        }
+        else
+        {
+            Map = LoadMap();
+            if (Map != null) MapEvents = LoadMapEvents();
+        }
 
         if (Map == null)
         {
@@ -106,7 +129,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         }
 
         Map.Sort();
-        MapEvents = LoadMapEvents();
         getKeyCountFromEvents();
 
         Input = new GameplayInput(this, Map.KeyCount);

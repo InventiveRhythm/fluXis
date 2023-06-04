@@ -78,15 +78,19 @@ public partial class FluXisGameBase : osu.Framework.Game
         InitFonts();
 
         dependencies.CacheAs(this);
-        dependencies.Cache(AudioClock = new AudioClock());
         dependencies.CacheAs(Config = new FluXisConfig(storage));
         dependencies.Cache(Realm = new FluXisRealm(storage));
+        dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(MapStore = new MapStore(storage, Realm));
+
+        LoadComponent(ImportManager = new ImportManager());
+        dependencies.Cache(ImportManager);
+
+        dependencies.Cache(AudioClock = new AudioClock());
         dependencies.Cache(new BackgroundTextureStore(Host, storage));
         dependencies.Cache(BackgroundStack = new BackgroundStack());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
         dependencies.Cache(Settings = new SettingsMenu());
-        dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(LoginOverlay = new LoginOverlay());
         dependencies.Cache(ChatOverlay = new ChatOverlay());
         dependencies.CacheAs(RegisterOverlay = new RegisterOverlay());
@@ -95,7 +99,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.CacheAs(LightController = CreateLightController());
         dependencies.Cache(SkinManager = new SkinManager());
-        LoadComponentAsync(ImportManager = new ImportManager(), dependencies.Cache);
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 

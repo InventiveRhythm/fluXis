@@ -102,10 +102,9 @@ public partial class BackgroundStack : CompositeDrawable
 
         if (backgroundContainer.Last() is Background background) // 🧀 transforming blur is laggy so we just replace the background
         {
-            string texture = background.Texture;
             Schedule(() =>
             {
-                backgroundContainer.Add(new Background(texture)
+                backgroundContainer.Add(new Background(background.Map)
                 {
                     Blur = blur,
                     Duration = duration
@@ -126,7 +125,7 @@ public partial class BackgroundStack : CompositeDrawable
         while (backgroundContainer.Children.Count > 1)
         {
             if (backgroundContainer.Children[1].Alpha == 1)
-                backgroundContainer.Remove(backgroundContainer.Children[0], false);
+                backgroundContainer.Remove(backgroundContainer.Children[0], true);
             else
                 break;
         }
@@ -145,13 +144,18 @@ public partial class BackgroundStack : CompositeDrawable
     public void AddBackgroundFromMap(RealmMap map)
     {
         RealmFile file = map?.MapSet?.GetFile(map.Metadata?.Background);
-        string path = file?.GetPath() ?? "";
 
-        if (path == currentBackground)
-            return;
+        if (map != null)
+        {
+            string path = file?.GetPath() ?? map.Hash;
 
-        currentBackground = path;
-        scheduledBackgrounds.Add(new Background(path) { Blur = blur });
+            if (path == currentBackground)
+                return;
+
+            currentBackground = path;
+        }
+
+        scheduledBackgrounds.Add(new Background(map) { Blur = blur });
     }
 
     public void SetVideoBackground(RealmMap map, MapInfo info, int delay = 2000)

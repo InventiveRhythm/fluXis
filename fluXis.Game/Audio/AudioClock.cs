@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Import;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
@@ -24,6 +25,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     [Resolved]
     private ITrackStore trackStore { get; set; }
+
+    [Resolved]
+    private ImportManager importManager { get; set; }
 
     private ITrackStore realmTrackStore { get; set; }
     private Storage realmStorage { get; set; }
@@ -84,8 +88,20 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     {
         Stop();
 
-        string path = info.MapSet.GetFile(info.Metadata.Audio)?.GetPath();
-        ChangeSource(realmTrackStore.Get(path) ?? realmTrackStore.GetVirtual());
+        Track newTrack;
+
+        if (info.MapSet.Managed)
+        {
+            string path = importManager.GetAsset(info, ImportedAssetType.Audio);
+            newTrack = importManager.GetTrackStore(info.Status)?.Get(path);
+        }
+        else
+        {
+            string path = info.MapSet.GetFile(info.Metadata.Audio)?.GetPath();
+            newTrack = realmTrackStore.Get(path);
+        }
+
+        ChangeSource(newTrack ?? realmTrackStore.GetVirtual());
 
         Seek(usePreview ? info.Metadata.PreviewTime : 0);
 

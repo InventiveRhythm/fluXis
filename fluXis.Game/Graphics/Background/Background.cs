@@ -1,7 +1,7 @@
+using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osuTK;
 
@@ -9,10 +9,10 @@ namespace fluXis.Game.Graphics.Background;
 
 public partial class Background : CompositeDrawable
 {
-    public readonly string Texture;
+    public RealmMap Map => sprite.Map;
     public float Duration { get; set; } = 300;
 
-    private readonly Sprite sprite;
+    private readonly MapBackground sprite;
     private readonly BufferedContainer buffer;
 
     public float Blur
@@ -21,16 +21,15 @@ public partial class Background : CompositeDrawable
         set => buffer.BlurSigma = new Vector2(value * 25);
     }
 
-    public Background(string path)
+    public Background(RealmMap map)
     {
-        Texture = path;
         RelativeSizeAxes = Axes.Both;
 
         AddInternal(buffer = new BufferedContainer(cachedFrameBuffer: true)
         {
             RelativeSizeAxes = Axes.Both,
             RedrawOnScale = false,
-            Child = sprite = new Sprite
+            Child = sprite = new MapBackground(map)
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -43,7 +42,6 @@ public partial class Background : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load(TextureStore textures, BackgroundTextureStore backgrounds)
     {
-        sprite.Texture = backgrounds.Get(Texture) ?? textures.Get(@"Backgrounds/default.png");
         Alpha = 0f;
     }
 

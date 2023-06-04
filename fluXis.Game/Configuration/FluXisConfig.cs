@@ -13,6 +13,8 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
     protected override void InitialiseDefaults()
     {
+        SetDefault(FluXisSetting.ImportOtherGames, false);
+
         SetDefault(FluXisSetting.ScrollSpeed, 2f, 1f, 10f, 0.1f);
         SetDefault(FluXisSetting.HideFlawless, false);
         SetDefault(FluXisSetting.ShowEarlyLate, false);
@@ -35,6 +37,8 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
 public enum FluXisSetting
 {
+    ImportOtherGames,
+
     // Gameplay
     ScrollSpeed,
     HideFlawless,

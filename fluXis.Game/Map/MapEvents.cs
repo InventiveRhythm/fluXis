@@ -12,7 +12,7 @@ public class MapEvents
     public List<LaneSwitchEvent> LaneSwitchEvents = new();
     public List<FlashEvent> FlashEvents = new();
 
-    public void Load(string content)
+    public MapEvents Load(string content)
     {
         var lines = content.Split(Environment.NewLine);
 
@@ -69,6 +69,8 @@ public class MapEvents
                     break;
             }
         }
+
+        return this;
     }
 
     public string Save()

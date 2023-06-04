@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Platform;
@@ -14,6 +16,7 @@ public class MapImporter
     public virtual string[] FileExtensions { get; } = Array.Empty<string>();
     public virtual string Name => "Unknown";
     public virtual string Color => "#000000";
+    public virtual string StoragePath => "";
 
     /// <summary>
     /// ID of the importer in the database.
@@ -30,6 +33,10 @@ public class MapImporter
     public NotificationOverlay Notifications { get; set; }
 
     public virtual void Import(string path) => throw new NotImplementedException();
+
+    public virtual List<RealmMapSet> GetMaps() => new();
+    public virtual string GetAsset(RealmMap map, ImportedAssetType type) => "";
+    public virtual MapPackage GetMapPackage(RealmMap map) => new();
 
     public static string GetHash(ZipArchiveEntry entry)
     {

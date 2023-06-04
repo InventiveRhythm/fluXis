@@ -67,6 +67,7 @@ public partial class ScoreList : Container
         scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
         scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
 
+        noScoresText.Text = map.MapSet.Managed ? "Scores are not available for this map!" : "No scores yet!";
         noScoresText.FadeTo(scrollContainer.ScrollContent.Children.Count == 0 ? 1 : 0, 200);
     }
 

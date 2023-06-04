@@ -1,27 +1,50 @@
-using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Import;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Graphics.Background;
 
 public partial class MapBackground : Sprite
 {
-    private readonly RealmMap map;
+    [Resolved(CanBeNull = true)]
+    private ImportManager importManager { get; set; }
+
+    public readonly RealmMap Map;
 
     public MapBackground(RealmMap map)
     {
-        this.map = map;
+        Map = map;
     }
 
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgrounds, TextureStore textures)
     {
-        if (map == null)
+        if (Map == null)
             return;
 
-        RealmFile background = map.MapSet.GetFile(map.Metadata.Background);
-        Texture = backgrounds.Get($"{background?.GetPath()}") ?? textures.Get("Backgrounds/default.png");
+        Texture tex = null;
+
+        if (Map.MapSet.Managed)
+        {
+            if (importManager == null)
+            {
+                Logger.Log("ImportManager is null!", LoggingTarget.Runtime, LogLevel.Error);
+                return;
+            }
+
+            var store = importManager.GetTextureStore(Map.Status);
+
+            if (store != null)
+            {
+                string path = importManager.GetAsset(Map, ImportedAssetType.Background);
+                if (path != null) tex = store.Get(path);
+            }
+        }
+        else tex = backgrounds.Get(Map.MapSet.GetFile(Map.Metadata.Background)?.GetPath());
+
+        Texture = tex ?? textures.Get("Backgrounds/default.png");
     }
 }

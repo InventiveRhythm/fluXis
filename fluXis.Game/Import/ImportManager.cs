@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
+using JetBrains.Annotations;
 using osu.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
@@ -31,14 +38,70 @@ public partial class ImportManager : Component
     [Resolved]
     private NotificationOverlay notifications { get; set; }
 
+    [Resolved]
+    private AudioManager audio { get; set; }
+
     private List<MapImporter> importers { get; } = new();
+    private Dictionary<int, Storage> storages { get; } = new();
+    private Dictionary<int, ITextureStore> textureStores { get; } = new();
+    private Dictionary<int, ITrackStore> trackStores { get; } = new();
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(GameHost host, FluXisConfig config)
     {
         loadFromAppDomain();
         loadFromRunFolder();
         loadFromPlugins();
+
+        if (!config.Get<bool>(FluXisSetting.ImportOtherGames)) return;
+
+        foreach (var importer in importers)
+        {
+            var maps = importer.GetMaps();
+            foreach (var map in maps) mapStore.AddMapSet(map);
+
+            if (!string.IsNullOrEmpty(importer.StoragePath))
+            {
+                var storageFor = new NativeStorage(importer.StoragePath);
+                Logger.Log(storageFor.GetFullPath("."));
+                storages.Add(importer.ID, storageFor);
+
+                var resourceStore = new StorageBackedResourceStore(storageFor);
+                textureStores.Add(importer.ID, new TextureStore(host.Renderer, host.CreateTextureLoaderStore(resourceStore)));
+                trackStores.Add(importer.ID, audio.GetTrackStore(resourceStore));
+            }
+        }
+    }
+
+    [CanBeNull]
+    public Storage GetStorage(int id)
+    {
+        if (storages.TryGetValue(id, out var s)) return s;
+
+        return null;
+    }
+
+    [CanBeNull]
+    public ITextureStore GetTextureStore(int id)
+    {
+        if (textureStores.TryGetValue(id, out var s)) return s;
+
+        return null;
+    }
+
+    [CanBeNull]
+    public ITrackStore GetTrackStore(int id)
+    {
+        if (trackStores.TryGetValue(id, out var s)) return s;
+
+        return null;
+    }
+
+    [CanBeNull]
+    public MapPackage GetMapPackage(RealmMap map)
+    {
+        var importer = importers.FirstOrDefault(i => i.ID == map.Status);
+        return importer?.GetMapPackage(map);
     }
 
     public void Import(string path)
@@ -53,11 +116,6 @@ public partial class ImportManager : Component
                 return;
             }
 
-            importer.Realm = realm;
-            importer.MapStore = mapStore;
-            importer.Storage = storage;
-            importer.Notifications = notifications;
-
             importer.Import(path);
         }
         catch (Exception e)
@@ -70,6 +128,15 @@ public partial class ImportManager : Component
     public void ImportMultiple(string[] paths)
     {
         foreach (var path in paths) Import(path);
+    }
+
+    public string GetAsset(RealmMap map, ImportedAssetType type)
+    {
+        var importer = importers.FirstOrDefault(i => i.ID == map.Status);
+
+        if (importer == null) return "";
+
+        return importer.GetAsset(map, type);
     }
 
     private void loadSingle(Assembly assembly)
@@ -121,6 +188,10 @@ public partial class ImportManager : Component
                     });
                 }
 
+                importer.Realm = realm;
+                importer.MapStore = mapStore;
+                importer.Storage = storage;
+                importer.Notifications = notifications;
                 importers.Add(importer);
             }
         }
@@ -202,4 +273,11 @@ public partial class ImportManager : Component
 
         return highest + 1;
     }
+}
+
+public enum ImportedAssetType
+{
+    Background,
+    Cover,
+    Audio
 }

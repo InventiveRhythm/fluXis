@@ -18,6 +18,12 @@ public class RealmMapSet : RealmObject
 
     public RealmMapMetadata Metadata => Maps.FirstOrDefault()?.Metadata ?? new RealmMapMetadata();
 
+    [Ignored]
+    public bool Managed { get; set; } = false;
+
+    [Ignored]
+    public string Path { get; set; } = string.Empty;
+
     public RealmMapSet([CanBeNull] List<RealmMap> maps = null, [CanBeNull] List<RealmFile> files = null)
     {
         ID = Guid.NewGuid();
