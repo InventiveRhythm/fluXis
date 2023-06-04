@@ -83,10 +83,9 @@ public partial class Progressbar : GameplayHUDElement
 
     protected override void Update()
     {
-        double speed = clock.Rate == 0 ? 1 : clock.Rate;
-        int currentTime = (int)((clock.CurrentTime - Screen.Map.StartTime) / speed);
-        int timeLeft = (int)((Screen.Map.EndTime - clock.CurrentTime) / speed);
-        int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / speed);
+        int currentTime = (int)((clock.CurrentTime - Screen.Map.StartTime) / Screen.Rate);
+        int timeLeft = (int)((Screen.Map.EndTime - clock.CurrentTime) / Screen.Rate);
+        int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / Screen.Rate);
         float percent = (float)currentTime / totalTime;
         if (percent < 0) percent = 0;
 
