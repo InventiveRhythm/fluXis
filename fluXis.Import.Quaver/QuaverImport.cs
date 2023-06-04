@@ -233,8 +233,6 @@ public class QuaverImport : MapImporter
 
             reader.Close();
 
-            Logger.Log(JsonConvert.SerializeObject(maps));
-
             foreach (var mapSet in maps)
             {
                 var mapSetMaps = mapSet.Value;
