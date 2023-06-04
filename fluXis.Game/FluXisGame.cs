@@ -68,7 +68,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Text = "See you next time!",
+                        Text = "Goodbye!",
                         FontSize = 32
                     }
                 }
