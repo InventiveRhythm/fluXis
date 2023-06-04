@@ -76,6 +76,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     private FailOverlay failOverlay;
     private FullComboOverlay fcOverlay;
+    private QuickActionOverlay quickActionOverlay;
 
     private FluXisConfig config;
 
@@ -199,6 +200,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
             failOverlay = new FailOverlay { Screen = this },
             fcOverlay = new FullComboOverlay(),
+            quickActionOverlay = new QuickActionOverlay(),
             new GameplayTouchInput { Screen = this },
             new PauseMenu(this)
         };
@@ -367,11 +369,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         switch (e.Action)
         {
             case FluXisKeybind.Restart:
-                RestartMap();
+                quickActionOverlay.OnConfirm = RestartMap;
+                quickActionOverlay.IsHolding = true;
                 return true;
 
             case FluXisKeybind.Exit:
-                this.Exit();
+                quickActionOverlay.OnConfirm = this.Exit;
+                quickActionOverlay.IsHolding = true;
                 return true;
 
             case FluXisKeybind.Pause:
@@ -402,7 +406,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
     {
-        // nothing to do here...
+        if (e.Action is FluXisKeybind.Restart or FluXisKeybind.Exit)
+            quickActionOverlay.IsHolding = false;
     }
 
     public virtual MapEvents LoadMapEvents()

@@ -24,6 +24,12 @@ public partial class UserInterfaceSection : SettingsSection
             {
                 Label = "Skip Intro",
                 Bindable = config.GetBindable<bool>(FluXisSetting.SkipIntro)
+            },
+            new SettingsSlider<float>
+            {
+                Label = "Hold to Confirm Duration",
+                Description = "How long to hold a button to confirm an action.",
+                Bindable = config.GetBindable<float>(FluXisSetting.HoldToConfirm)
             }
         });
     }
