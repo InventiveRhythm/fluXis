@@ -171,8 +171,7 @@ public class QuaverImport : MapImporter
             SQLiteCommand command = new SQLiteCommand("SELECT * FROM Map", connection);
             SQLiteDataReader reader = command.ExecuteReader();
 
-            Dictionary<int, List<RealmMap>> maps = new();
-            Dictionary<int, string> mapSetPaths = new();
+            Dictionary<string, List<RealmMap>> maps = new();
 
             while (reader.Read())
             {
@@ -228,17 +227,16 @@ public class QuaverImport : MapImporter
                     Rating = 0
                 };
 
-                if (!maps.ContainsKey(mapsetId)) maps.Add(mapsetId, new List<RealmMap>());
-                maps[mapsetId].Add(map);
-
-                mapSetPaths.TryAdd(mapsetId, directoryName);
+                if (!maps.ContainsKey(directoryName)) maps.Add(directoryName, new List<RealmMap>());
+                maps[directoryName].Add(map);
             }
 
             reader.Close();
 
+            Logger.Log(JsonConvert.SerializeObject(maps));
+
             foreach (var mapSet in maps)
             {
-                var mapSetPath = mapSetPaths[mapSet.Key];
                 var mapSetMaps = mapSet.Value;
 
                 var mapSetRealm = new RealmMapSet(mapSetMaps)
@@ -247,7 +245,7 @@ public class QuaverImport : MapImporter
                     OnlineID = 0,
                     Cover = "",
                     Managed = true,
-                    Path = mapSetPath
+                    Path = mapSet.Key
                 };
 
                 foreach (var map in mapSetMaps)
