@@ -61,8 +61,11 @@ public partial class MenuScreen : FluXisScreen
 
     private MenuButton playButton;
 
+    private FluXisSpriteText titleText;
+    private FluXisSpriteText artistText;
+
     [BackgroundDependencyLoader]
-    private void load(Storage storage, GameHost host)
+    private void load(GameHost host)
     {
         // load a random map
         if (maps.MapSets.Count > 0)
@@ -71,6 +74,7 @@ public partial class MenuScreen : FluXisScreen
 
             RealmMap map = maps.CurrentMapSet.Maps.First();
             clock.LoadMap(map, true, true);
+            Schedule(songChanged);
         }
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
@@ -110,6 +114,31 @@ public partial class MenuScreen : FluXisScreen
                                 Margin = new MarginPadding { Top = 80 },
                                 Shadow = true
                             },
+                        }
+                    },
+                    new FillFlowContainer()
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Vertical,
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopRight,
+                        Children = new Drawable[]
+                        {
+                            titleText = new FluXisSpriteText
+                            {
+                                FontSize = 32,
+                                Shadow = true,
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight
+                            },
+                            artistText = new FluXisSpriteText
+                            {
+                                FontSize = 22,
+                                Colour = FluXisColors.Text2,
+                                Shadow = true,
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight
+                            }
                         }
                     },
                     buttonContainer = new Container
@@ -260,8 +289,21 @@ public partial class MenuScreen : FluXisScreen
             maps.CurrentMapSet = mapSet;
             backgrounds.AddBackgroundFromMap(map);
             clock.LoadMap(map, true);
+            songChanged();
         }
 
         base.Update();
+    }
+
+    private void songChanged()
+    {
+        titleText.Text = maps.CurrentMapSet.Metadata.Title;
+        artistText.Text = maps.CurrentMapSet.Metadata.Artist;
+
+        titleText.FadeInFromZero(400).MoveToX(200).MoveToX(0, 800, Easing.OutCirc)
+                 .Then(2000).FadeOut(400);
+
+        artistText.FadeInFromZero(400).MoveToX(200).MoveToX(0, 800, Easing.OutCirc)
+                  .Then(2000).FadeOut(400);
     }
 }
