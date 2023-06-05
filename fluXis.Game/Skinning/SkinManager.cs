@@ -212,4 +212,23 @@ public partial class SkinManager : Component
 
         return new DefaultHitLine();
     }
+
+    public Drawable GetLaneCover(bool bottom)
+    {
+        var path = $"{SkinFolder}/Stage/lane-cover-{(bottom ? "bottom" : "top")}.png";
+
+        if (skinStorage?.Exists(path) ?? false)
+        {
+            return new SkinnableSprite
+            {
+                Texture = skinTextures.Get(path),
+                Anchor = bottom ? Anchor.BottomCentre : Anchor.TopCentre,
+                Origin = bottom ? Anchor.BottomCentre : Anchor.TopCentre,
+                RelativeSizeAxes = Axes.X,
+                Width = 1
+            };
+        }
+
+        return bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();
+    }
 }

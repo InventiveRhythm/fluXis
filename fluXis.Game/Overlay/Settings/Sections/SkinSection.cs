@@ -25,7 +25,19 @@ public partial class SkinSection : SettingsSection
                 Label = "Hit Error Bar Scale",
                 Bindable = config.GetBindable<float>(FluXisSetting.HitErrorScale),
                 DisplayAsPercentage = true
-            }
+            },
+            new SettingsSlider<float>
+            {
+                Label = "Top Lane Cover",
+                Bindable = config.GetBindable<float>(FluXisSetting.LaneCoverTop),
+                DisplayAsPercentage = true
+            },
+            new SettingsSlider<float>
+            {
+                Label = "Bottom Lane Cover",
+                Bindable = config.GetBindable<float>(FluXisSetting.LaneCoverBottom),
+                DisplayAsPercentage = true
+            },
         });
     }
 }

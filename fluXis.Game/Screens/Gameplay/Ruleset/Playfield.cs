@@ -1,7 +1,9 @@
+using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -20,6 +22,13 @@ public partial class Playfield : CompositeDrawable
     public Stage Stage;
     public Drawable HitLine;
 
+    private Container laneCovers;
+    private Drawable topCover;
+    private Drawable bottomCover;
+
+    private Bindable<float> topCoverHeight;
+    private Bindable<float> bottomCoverHeight;
+
     public MapInfo Map { get; }
 
     public Playfield(GameplayScreen screen)
@@ -29,7 +38,7 @@ public partial class Playfield : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
         RelativeSizeAxes = Axes.Both;
         Size = new Vector2(1, 1);
@@ -60,13 +69,29 @@ public partial class Playfield : CompositeDrawable
             Receptors.Add(receptor);
         }
 
+        laneCovers = new Container
+        {
+            RelativeSizeAxes = Axes.Y,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Children = new[]
+            {
+                topCover = skinManager.GetLaneCover(false),
+                bottomCover = skinManager.GetLaneCover(true)
+            }
+        };
+
+        topCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverTop);
+        bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
+
         InternalChildren = new[]
         {
             Stage,
             TimingLineManager,
             Manager,
             Receptors,
-            HitLine
+            HitLine,
+            laneCovers
         };
     }
 
@@ -79,5 +104,9 @@ public partial class Playfield : CompositeDrawable
     protected override void Update()
     {
         HitLine.Width = Stage.Width;
+        laneCovers.Width = Stage.Width;
+
+        topCover.Y = (topCoverHeight.Value - 1f) / 2f;
+        bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
     }
 }

@@ -15,6 +15,9 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
     {
         SetDefault(FluXisSetting.ImportOtherGames, false);
 
+        SetDefault(FluXisSetting.LaneCoverTop, 0f, 0f, 1f, 0.01f);
+        SetDefault(FluXisSetting.LaneCoverBottom, 0f, 0f, 1f, 0.01f);
+
         SetDefault(FluXisSetting.ScrollSpeed, 2f, 1f, 10f, 0.1f);
         SetDefault(FluXisSetting.HideFlawless, false);
         SetDefault(FluXisSetting.ShowEarlyLate, false);
@@ -39,6 +42,10 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 public enum FluXisSetting
 {
     ImportOtherGames,
+
+    // Skin
+    LaneCoverTop,
+    LaneCoverBottom,
 
     // Gameplay
     ScrollSpeed,
