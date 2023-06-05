@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
@@ -23,6 +24,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Framework.Utils;
 using osuTK.Input;
@@ -65,6 +67,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public SearchFilters Filters = new();
 
     private FluXisSpriteText noMapsText;
+    private LoadingIcon loadingIcon;
 
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
@@ -93,7 +96,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Both,
                         Width = .5f,
-                        Child = MapList = new MapList()
+                        Child = MapList = new MapList { Alpha = 0 }
                     },
                     SearchBar = new SearchBar(this),
                     SelectMapInfo = new SelectMapInfo { Screen = this },
@@ -103,14 +106,22 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Both,
                         Width = .5f,
-                        Child = noMapsText = new FluXisSpriteText
+                        Children = new Drawable[]
                         {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Text = "No maps found!",
-                            FontSize = 32,
-                            Blending = BlendingParameters.Additive,
-                            Alpha = 0
+                            noMapsText = new FluXisSpriteText
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Text = "No maps found!",
+                                FontSize = 32,
+                                Blending = BlendingParameters.Additive,
+                                Alpha = 0
+                            },
+                            loadingIcon = new LoadingIcon
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre
+                            }
                         }
                     },
                 }
@@ -118,8 +129,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             Footer = new SelectFooter(this),
             ModSelector = new ModSelector()
         };
-
-        loadMapSets();
 
         MapSet.ValueChanged += e => selectMapSet(e.NewValue);
         MapInfo.ValueChanged += e => selectMap(e.NewValue);
@@ -132,7 +141,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         foreach (RealmMapSet set in sets)
         {
             MapListEntry entry = new(this, set);
-            MapList.AddMap(entry);
+            LoadComponent(entry);
+            Schedule(() => MapList.AddMap(entry));
             Maps.Add(set);
             lookup[set] = entry;
         }
@@ -143,11 +153,24 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     protected override void LoadComplete()
     {
-        if (Maps.Count > 0)
-            MapSet.Value = mapStore.CurrentMapSet;
-
         mapStore.MapSetAdded += addMapSet;
         mapStore.MapSetUpdated += replaceMapSet;
+
+        Task.Run(() =>
+        {
+            Logger.Log("Loading sets...", LoggingTarget.Runtime, LogLevel.Debug);
+
+            loadMapSets();
+
+            Schedule(() =>
+            {
+                if (Maps.Count > 0)
+                    MapSet.Value = mapStore.CurrentMapSet;
+
+                MapList.FadeIn(500);
+                loadingIcon.FadeOut(500);
+            });
+        });
     }
 
     private void addMapSet(RealmMapSet set)

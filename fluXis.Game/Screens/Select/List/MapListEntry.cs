@@ -239,7 +239,7 @@ public partial class MapListEntry : Container
         protected override bool OnHover(HoverEvent e)
         {
             dim.FadeTo(.2f, 50);
-            return true;
+            return false;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)

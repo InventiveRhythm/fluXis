@@ -110,6 +110,14 @@ public partial class MapList : BasicScrollContainer
         return base.OnMouseMove(e);
     }
 
+    protected override bool OnHover(HoverEvent e) => true;
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        var selected = Content.Children.FirstOrDefault(c => c.Selected);
+        if (selected != null) ScrollTo(selected);
+    }
+
     protected override ScrollbarContainer CreateScrollbar(Direction direction) => new MapListScrollbar(direction);
 
     protected partial class MapListScrollbar : ScrollbarContainer
