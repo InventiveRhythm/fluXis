@@ -12,12 +12,15 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select.List;
 
-public partial class MapList : BasicScrollContainer<MapListEntry>
+public partial class MapList : BasicScrollContainer
 {
     private bool isDragging;
     private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Middle;
 
     protected override bool IsDragging => base.IsDragging || isDragging;
+    public new FillFlowContainer<MapListEntry> Content => flow;
+
+    private FillFlowContainer<MapListEntry> flow;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -30,29 +33,18 @@ public partial class MapList : BasicScrollContainer<MapListEntry>
             Top = 60,
             Bottom = 10
         };
+
+        Child = flow = new FillFlowContainer<MapListEntry>
+        {
+            AutoSizeAxes = Axes.Y,
+            RelativeSizeAxes = Axes.X,
+            Direction = FillDirection.Vertical
+        };
     }
 
-    protected override void Update()
+    public void AddMap(MapListEntry entry)
     {
-        for (var i = 0; i < Content.Children.Count; i++)
-        {
-            var child = Content.Children[i];
-
-            int prevIndex = i - 1;
-
-            if (i > 0)
-            {
-                while (Content.Children[prevIndex].Alpha == 0 && prevIndex > 0)
-                    prevIndex--;
-            }
-
-            if (i > 0 && Content.Children[prevIndex].Alpha != 0)
-                child.Y = Content.Children[prevIndex].Y + Content.Children[prevIndex].Height + 5;
-            else
-                child.Y = 0;
-        }
-
-        base.Update();
+        Content.Add(entry);
     }
 
     public void ScrollTo(MapListEntry entry)

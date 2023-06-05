@@ -165,13 +165,13 @@ public partial class MapListEntry : Container
             Masking = true;
             Children = new Drawable[]
             {
-                backgroundWrapper = new DelayedLoadWrapper(() => new MapBackground(mapset.Maps[0])
+                backgroundWrapper = new DelayedLoadUnloadWrapper(() => new MapBackground(mapset.Maps[0])
                 {
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fill,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
-                }, 100),
+                }, 100, 200),
                 dim = new Box
                 {
                     Name = "Background Dim",
@@ -185,7 +185,7 @@ public partial class MapListEntry : Container
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        coverWrapper = new DelayedLoadWrapper(() => new Container
+                        coverWrapper = new DelayedLoadUnloadWrapper(() => new Container
                         {
                             Size = new Vector2(60),
                             Masking = true,
@@ -203,7 +203,7 @@ public partial class MapListEntry : Container
                                 Radius = 5,
                                 Offset = new Vector2(0, 1)
                             }
-                        }, 100),
+                        }, 100, 200),
                         new FluXisSpriteText
                         {
                             FontSize = 32,

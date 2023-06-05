@@ -132,7 +132,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         foreach (RealmMapSet set in sets)
         {
             MapListEntry entry = new(this, set);
-            MapList.Add(entry);
+            MapList.AddMap(entry);
             Maps.Add(set);
             lookup[set] = entry;
         }
@@ -430,7 +430,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         Maps.Clear();
 
-        foreach (var child in MapList.Children)
+        foreach (var child in MapList.Content.Children)
         {
             bool matches = child.MapSet.Maps.Aggregate(false, (current, map) => current | Filters.Matches(map));
 
