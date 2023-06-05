@@ -14,6 +14,8 @@ public partial class FluXisScreenStack : ScreenStack
     [Resolved]
     private Toolbar toolbar { get; set; }
 
+    public bool AllowMusicControl => CurrentScreen is FluXisScreen { AllowMusicControl: true };
+
     public FluXisScreenStack()
     {
         RelativeSizeAxes = Axes.Both;

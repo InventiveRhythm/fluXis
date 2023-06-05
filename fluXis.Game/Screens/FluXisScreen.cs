@@ -9,4 +9,5 @@ public partial class FluXisScreen : Screen
     public virtual bool ShowToolbar => true;
     public virtual float BackgroundDim => 0.25f;
     public virtual float BackgroundBlur => 0f;
+    public virtual bool AllowMusicControl => true;
 }

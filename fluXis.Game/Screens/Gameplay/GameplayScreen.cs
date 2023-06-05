@@ -40,6 +40,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 {
     public override float ParallaxStrength => 0f;
     public override bool ShowToolbar => false;
+    public override bool AllowMusicControl => false;
 
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
@@ -378,7 +379,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 quickActionOverlay.IsHolding = true;
                 return true;
 
-            case FluXisKeybind.Pause:
+            case FluXisKeybind.GameplayPause:
                 if (Playfield.Manager.Dead) return false;
 
                 if (!Mods.Any(m => m is PausedMod))

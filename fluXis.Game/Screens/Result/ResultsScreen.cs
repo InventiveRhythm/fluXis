@@ -27,6 +27,7 @@ namespace fluXis.Game.Screens.Result;
 public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override float Zoom => 1.2f;
+    public override bool AllowMusicControl => false;
 
     [Resolved]
     private FluXisRealm realm { get; set; }

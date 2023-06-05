@@ -96,6 +96,25 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                 return true;
         }
 
+        if (ScreenStack.AllowMusicControl)
+        {
+            switch (e.Action)
+            {
+                case FluXisKeybind.MusicPause:
+                    if (AudioClock.IsRunning) AudioClock.Stop();
+                    else AudioClock.Start();
+                    return true;
+
+                case FluXisKeybind.MusicPrevious:
+                    PreviousSong();
+                    return true;
+
+                case FluXisKeybind.MusicNext:
+                    NextSong();
+                    return true;
+            }
+        }
+
         return false;
     }
 

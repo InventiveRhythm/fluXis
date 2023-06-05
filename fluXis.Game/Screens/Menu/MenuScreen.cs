@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
@@ -236,6 +235,11 @@ public partial class MenuScreen : FluXisScreen
         maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
     }
 
+    protected override void LoadComplete()
+    {
+        game.OnSongChanged += songChanged;
+    }
+
     public override void OnEntering(ScreenTransitionEvent e)
     {
         this.FadeInFromZero(200);
@@ -274,23 +278,7 @@ public partial class MenuScreen : FluXisScreen
 
     protected override void Update()
     {
-        if (clock.Finished)
-        {
-            int index = maps.MapSets.IndexOf(maps.CurrentMapSet);
-
-            int random = index;
-
-            while (random == index)
-                random = new Random().Next(0, maps.MapSets.Count);
-
-            RealmMapSet mapSet = maps.MapSets[random];
-            RealmMap map = mapSet.Maps.First();
-
-            maps.CurrentMapSet = mapSet;
-            backgrounds.AddBackgroundFromMap(map);
-            clock.LoadMap(map, true);
-            songChanged();
-        }
+        if (clock.Finished) game.NextSong();
 
         base.Update();
     }

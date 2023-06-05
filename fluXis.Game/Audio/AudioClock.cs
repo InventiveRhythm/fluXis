@@ -214,22 +214,22 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     private void updateAmplitudes()
     {
-        if (!IsRunning)
-            return;
-
         if (Time.Current - lastAmplitudeUpdate < 1000f / amplitude_update_fps)
             return;
 
         lastAmplitudeUpdate = Time.Current;
 
-        var span = Track.Value == null ? new float[256] : Track.Value.CurrentAmplitudes.FrequencyAmplitudes.Span;
+        ReadOnlySpan<float> span = new float[256];
+
+        if (Track != null && IsRunning)
+            span = Track.Value.CurrentAmplitudes.FrequencyAmplitudes.Span;
 
         for (var i = 0; i < span.Length; i++)
         {
             float newAmplitude = span[i];
             float delta = newAmplitude - Amplitudes[i];
             float interpolation = delta < 0
-                ? (float)Time.Elapsed / 100f
+                ? (float)Time.Elapsed / 30f
                 : (float)Math.Pow(.1f, Time.Elapsed / 1000f);
 
             Amplitudes[i] += delta * interpolation;

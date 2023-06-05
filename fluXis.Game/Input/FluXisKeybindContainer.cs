@@ -44,6 +44,9 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), FluXisKeybind.ToggleSettings),
         new KeyBinding(InputKey.Delete, FluXisKeybind.Delete),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.BackSpace), FluXisKeybind.Delete),
+        new KeyBinding(InputKey.F5, FluXisKeybind.MusicPrevious),
+        new KeyBinding(InputKey.F6, FluXisKeybind.MusicPause),
+        new KeyBinding(InputKey.F7, FluXisKeybind.MusicNext),
 
         getBinding(FluXisKeybind.Key4k1, InputKey.A),
         getBinding(FluXisKeybind.Key4k2, InputKey.S),
@@ -74,7 +77,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(InputKey.Space, FluXisKeybind.Skip),
         getBinding(FluXisKeybind.Restart, InputKey.Shift),
         getBinding(FluXisKeybind.Exit, InputKey.Control),
-        new KeyBinding(InputKey.Escape, FluXisKeybind.Pause),
+        new KeyBinding(InputKey.Escape, FluXisKeybind.GameplayPause),
         new KeyBinding(InputKey.Left, FluXisKeybind.SeekBackward),
         new KeyBinding(InputKey.Right, FluXisKeybind.SeekForward),
         new KeyBinding(InputKey.F3, FluXisKeybind.ScrollSpeedDecrease),
@@ -135,6 +138,9 @@ public enum FluXisKeybind
     NextGroup,
     ToggleSettings,
     Delete,
+    MusicPrevious,
+    MusicPause,
+    MusicNext,
 
     // 4k
     Key4k1,
@@ -170,7 +176,7 @@ public enum FluXisKeybind
     Skip,
     Restart,
     Exit,
-    Pause,
+    GameplayPause,
     SeekBackward,
     SeekForward,
     ScrollSpeedIncrease,

@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Import;
@@ -60,6 +62,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     public LightController LightController;
     public SkinManager SkinManager;
     public ImportManager ImportManager;
+
+    public Action OnSongChanged;
 
     public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
     private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;
@@ -160,6 +164,29 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         Fluxel.Close();
         return base.OnExiting();
+    }
+
+    public void NextSong() => changeSong(1);
+    public void PreviousSong() => changeSong(-1);
+
+    private void changeSong(int change)
+    {
+        int index = MapStore.MapSets.IndexOf(MapStore.CurrentMapSet);
+
+        index += change;
+
+        if (index >= MapStore.MapSets.Count)
+            index = 0;
+        else if (index < 0)
+            index = MapStore.MapSets.Count - 1;
+
+        RealmMapSet mapSet = MapStore.MapSets[index];
+        RealmMap map = mapSet.Maps.First();
+
+        MapStore.CurrentMapSet = mapSet;
+        BackgroundStack.AddBackgroundFromMap(map);
+        AudioClock.LoadMap(map, true);
+        OnSongChanged?.Invoke();
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

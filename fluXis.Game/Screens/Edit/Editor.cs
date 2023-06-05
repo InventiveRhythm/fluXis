@@ -38,6 +38,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override bool ShowToolbar => false;
     public override float BackgroundDim => 0.4f;
+    public override bool AllowMusicControl => false;
 
     [Resolved]
     private NotificationOverlay notifications { get; set; }
