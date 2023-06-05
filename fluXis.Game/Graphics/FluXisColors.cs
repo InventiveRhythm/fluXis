@@ -62,10 +62,16 @@ public class FluXisColors
     {
         return keyCount switch
         {
+            1 => Colour4.FromHex("#333346"),
+            2 => Colour4.FromHex("#a53541"),
+            3 => Colour4.FromHex("#ff7a5a"),
             4 => Colour4.FromHex("#62bafe"),
             5 => Colour4.FromHex("#61f984"),
             6 => Colour4.FromHex("#e3bb45"),
             7 => Colour4.FromHex("#ec3b8d"),
+            8 => Colour4.FromHex("#7ae9e9"),
+            9 => Colour4.FromHex("#f7c5bb"),
+            10 => Colour4.FromHex("#8c4451"),
             _ => Colour4.White
         };
     }
@@ -74,6 +80,13 @@ public class FluXisColors
     {
         return keyCount switch
         {
+            1 => Accent.Lighten(.4f),
+            2 => Accent4,
+            3 => lane switch
+            {
+                1 or 3 => Accent4,
+                _ => Accent.Lighten(.4f)
+            },
             4 => lane switch
             {
                 1 or 4 => Accent,
@@ -95,6 +108,23 @@ public class FluXisColors
                 1 or 3 or 5 or 7 => Accent4,
                 2 or 6 => Accent,
                 _ => Accent.Lighten(.4f)
+            },
+            8 => lane switch
+            {
+                1 or 3 or 6 or 8 => Accent,
+                _ => Accent4
+            },
+            9 => lane switch
+            {
+                1 or 3 or 7 or 9 => Accent,
+                2 or 4 or 6 or 8 => Accent4,
+                _ => Accent.Lighten(.4f)
+            },
+            10 => lane switch
+            {
+                1 or 10 => Accent.Lighten(.4f),
+                3 or 5 or 6 or 8 => Accent4,
+                _ => Accent
             },
             _ => Colour4.White
         };

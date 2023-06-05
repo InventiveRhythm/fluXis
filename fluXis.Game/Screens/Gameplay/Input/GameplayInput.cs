@@ -8,6 +8,24 @@ namespace fluXis.Game.Screens.Gameplay.Input;
 
 public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
 {
+    private static readonly FluXisKeybind[] keys1 =
+    {
+        FluXisKeybind.Key1k1
+    };
+
+    private static readonly FluXisKeybind[] keys2 =
+    {
+        FluXisKeybind.Key2k1,
+        FluXisKeybind.Key2k2
+    };
+
+    private static readonly FluXisKeybind[] keys3 =
+    {
+        FluXisKeybind.Key3k1,
+        FluXisKeybind.Key3k2,
+        FluXisKeybind.Key3k3
+    };
+
     private static readonly FluXisKeybind[] keys4 =
     {
         FluXisKeybind.Key4k1,
@@ -46,6 +64,45 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         FluXisKeybind.Key7k7
     };
 
+    private static readonly FluXisKeybind[] keys8 =
+    {
+        FluXisKeybind.Key8k1,
+        FluXisKeybind.Key8k2,
+        FluXisKeybind.Key8k3,
+        FluXisKeybind.Key8k4,
+        FluXisKeybind.Key8k5,
+        FluXisKeybind.Key8k6,
+        FluXisKeybind.Key8k7,
+        FluXisKeybind.Key8k8
+    };
+
+    private static readonly FluXisKeybind[] keys9 =
+    {
+        FluXisKeybind.Key9k1,
+        FluXisKeybind.Key9k2,
+        FluXisKeybind.Key9k3,
+        FluXisKeybind.Key9k4,
+        FluXisKeybind.Key9k5,
+        FluXisKeybind.Key9k6,
+        FluXisKeybind.Key9k7,
+        FluXisKeybind.Key9k8,
+        FluXisKeybind.Key9k9
+    };
+
+    private static readonly FluXisKeybind[] keys10 =
+    {
+        FluXisKeybind.Key10k1,
+        FluXisKeybind.Key10k2,
+        FluXisKeybind.Key10k3,
+        FluXisKeybind.Key10k4,
+        FluXisKeybind.Key10k5,
+        FluXisKeybind.Key10k6,
+        FluXisKeybind.Key10k7,
+        FluXisKeybind.Key10k8,
+        FluXisKeybind.Key10k9,
+        FluXisKeybind.Key10k10
+    };
+
     private readonly FluXisKeybind[] keys;
 
     private readonly bool[] pressedStatus;
@@ -59,28 +116,25 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
     {
         this.screen = screen;
 
-        int keyCount = mode switch
+        keys = mode switch
         {
-            4 => 4,
-            5 => 5,
-            6 => 6,
-            7 => 7,
-            _ => 4
-        };
-
-        keys = keyCount switch
-        {
+            1 => keys1,
+            2 => keys2,
+            3 => keys3,
             4 => keys4,
             5 => keys5,
             6 => keys6,
             7 => keys7,
+            8 => keys8,
+            9 => keys9,
+            10 => keys10,
             _ => throw new ArgumentOutOfRangeException() // Should never happen lmao
         };
 
-        pressedStatus = new bool[keyCount];
-        JustPressed = new bool[keyCount];
-        Pressed = new bool[keyCount];
-        JustReleased = new bool[keyCount];
+        pressedStatus = new bool[mode];
+        JustPressed = new bool[mode];
+        Pressed = new bool[mode];
+        JustReleased = new bool[mode];
     }
 
     protected override void Update()

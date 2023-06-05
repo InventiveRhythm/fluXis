@@ -79,7 +79,7 @@ public class MapInfo
             if (timingPoint.Signature < 0) { }
         }
 
-        return KeyCount is > 3 and < 8;
+        return KeyCount is > 0 and < 11;
     }
 
     public void Sort()

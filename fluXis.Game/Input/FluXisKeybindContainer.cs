@@ -48,16 +48,25 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         new KeyBinding(InputKey.F6, FluXisKeybind.MusicPause),
         new KeyBinding(InputKey.F7, FluXisKeybind.MusicNext),
 
-        getBinding(FluXisKeybind.Key4k1, InputKey.A),
-        getBinding(FluXisKeybind.Key4k2, InputKey.S),
-        getBinding(FluXisKeybind.Key4k3, InputKey.K),
-        getBinding(FluXisKeybind.Key4k4, InputKey.L),
+        getBinding(FluXisKeybind.Key1k1, InputKey.Space),
 
-        getBinding(FluXisKeybind.Key5k1, InputKey.A),
-        getBinding(FluXisKeybind.Key5k2, InputKey.S),
+        getBinding(FluXisKeybind.Key2k1, InputKey.D),
+        getBinding(FluXisKeybind.Key2k2, InputKey.J),
+
+        getBinding(FluXisKeybind.Key3k1, InputKey.D),
+        getBinding(FluXisKeybind.Key3k2, InputKey.Space),
+        getBinding(FluXisKeybind.Key3k3, InputKey.J),
+
+        getBinding(FluXisKeybind.Key4k1, InputKey.S),
+        getBinding(FluXisKeybind.Key4k2, InputKey.D),
+        getBinding(FluXisKeybind.Key4k3, InputKey.J),
+        getBinding(FluXisKeybind.Key4k4, InputKey.K),
+
+        getBinding(FluXisKeybind.Key5k1, InputKey.S),
+        getBinding(FluXisKeybind.Key5k2, InputKey.D),
         getBinding(FluXisKeybind.Key5k3, InputKey.Space),
-        getBinding(FluXisKeybind.Key5k4, InputKey.K),
-        getBinding(FluXisKeybind.Key5k5, InputKey.L),
+        getBinding(FluXisKeybind.Key5k4, InputKey.J),
+        getBinding(FluXisKeybind.Key5k5, InputKey.K),
 
         getBinding(FluXisKeybind.Key6k1, InputKey.A),
         getBinding(FluXisKeybind.Key6k2, InputKey.S),
@@ -73,6 +82,36 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         getBinding(FluXisKeybind.Key7k5, InputKey.J),
         getBinding(FluXisKeybind.Key7k6, InputKey.K),
         getBinding(FluXisKeybind.Key7k7, InputKey.L),
+
+        getBinding(FluXisKeybind.Key8k1, InputKey.A),
+        getBinding(FluXisKeybind.Key8k2, InputKey.S),
+        getBinding(FluXisKeybind.Key8k3, InputKey.D),
+        getBinding(FluXisKeybind.Key8k4, InputKey.F),
+        getBinding(FluXisKeybind.Key8k5, InputKey.H),
+        getBinding(FluXisKeybind.Key8k6, InputKey.J),
+        getBinding(FluXisKeybind.Key8k7, InputKey.K),
+        getBinding(FluXisKeybind.Key8k8, InputKey.L),
+
+        getBinding(FluXisKeybind.Key9k1, InputKey.A),
+        getBinding(FluXisKeybind.Key9k2, InputKey.S),
+        getBinding(FluXisKeybind.Key9k3, InputKey.D),
+        getBinding(FluXisKeybind.Key9k4, InputKey.F),
+        getBinding(FluXisKeybind.Key9k5, InputKey.Space),
+        getBinding(FluXisKeybind.Key9k6, InputKey.H),
+        getBinding(FluXisKeybind.Key9k7, InputKey.J),
+        getBinding(FluXisKeybind.Key9k8, InputKey.K),
+        getBinding(FluXisKeybind.Key9k9, InputKey.L),
+
+        getBinding(FluXisKeybind.Key10k1, InputKey.A),
+        getBinding(FluXisKeybind.Key10k2, InputKey.S),
+        getBinding(FluXisKeybind.Key10k3, InputKey.D),
+        getBinding(FluXisKeybind.Key10k4, InputKey.F),
+        getBinding(FluXisKeybind.Key10k5, InputKey.V),
+        getBinding(FluXisKeybind.Key10k6, InputKey.B),
+        getBinding(FluXisKeybind.Key10k7, InputKey.H),
+        getBinding(FluXisKeybind.Key10k8, InputKey.J),
+        getBinding(FluXisKeybind.Key10k9, InputKey.K),
+        getBinding(FluXisKeybind.Key10k10, InputKey.L),
 
         new KeyBinding(InputKey.Space, FluXisKeybind.Skip),
         getBinding(FluXisKeybind.Restart, InputKey.Shift),
@@ -142,6 +181,18 @@ public enum FluXisKeybind
     MusicPause,
     MusicNext,
 
+    // 1k
+    Key1k1,
+
+    // 2k
+    Key2k1,
+    Key2k2,
+
+    // 3k
+    Key3k1,
+    Key3k2,
+    Key3k3,
+
     // 4k
     Key4k1,
     Key4k2,
@@ -171,6 +222,39 @@ public enum FluXisKeybind
     Key7k5,
     Key7k6,
     Key7k7,
+
+    // 8k
+    Key8k1,
+    Key8k2,
+    Key8k3,
+    Key8k4,
+    Key8k5,
+    Key8k6,
+    Key8k7,
+    Key8k8,
+
+    // 9k
+    Key9k1,
+    Key9k2,
+    Key9k3,
+    Key9k4,
+    Key9k5,
+    Key9k6,
+    Key9k7,
+    Key9k8,
+    Key9k9,
+
+    // 10k
+    Key10k1,
+    Key10k2,
+    Key10k3,
+    Key10k4,
+    Key10k5,
+    Key10k6,
+    Key10k7,
+    Key10k8,
+    Key10k9,
+    Key10k10,
 
     // Ingame
     Skip,
