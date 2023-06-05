@@ -1,5 +1,6 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Graphics;
@@ -22,6 +23,7 @@ public partial class ResultTitle : Container
             ColumnDimensions = new[]
             {
                 new Dimension(GridSizeMode.AutoSize),
+                new Dimension(GridSizeMode.AutoSize),
                 new Dimension(),
                 new Dimension(GridSizeMode.AutoSize)
             },
@@ -33,12 +35,23 @@ public partial class ResultTitle : Container
             RelativeSizeAxes = Axes.X,
             Content = new[]
             {
-                new Drawable[]
+                new[]
                 {
+                    new Container
+                    {
+                        Size = new Vector2(80),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Margin = new MarginPadding { Right = 10 },
+                        CornerRadius = 10,
+                        Masking = true,
+                        Child = new DrawableCover(map.MapSet) { RelativeSizeAxes = Axes.Both }
+                    },
                     new Container
                     {
                         AutoSizeAxes = Axes.Y,
                         Width = 500,
+                        Y = -2,
                         Children = new Drawable[]
                         {
                             new FluXisSpriteText
@@ -55,7 +68,7 @@ public partial class ResultTitle : Container
                                 Colour = FluXisColors.Text2,
                                 Truncate = true,
                                 RelativeSizeAxes = Axes.X,
-                                Margin = new MarginPadding { Top = 35 }
+                                Margin = new MarginPadding { Top = 33 }
                             },
                             new FluXisSpriteText
                             {
@@ -64,11 +77,11 @@ public partial class ResultTitle : Container
                                 Colour = FluXisColors.Text2,
                                 Truncate = true,
                                 RelativeSizeAxes = Axes.X,
-                                Margin = new MarginPadding { Top = 60 }
+                                Margin = new MarginPadding { Top = 58 }
                             }
                         }
                     },
-                    new Container(),
+                    Empty(),
                     new Container
                     {
                         AutoSizeAxes = Axes.Both,
