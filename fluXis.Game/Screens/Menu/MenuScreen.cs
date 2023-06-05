@@ -8,6 +8,7 @@ using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
+using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
@@ -162,7 +163,11 @@ public partial class MenuScreen : FluXisScreen
                                 Icon = FontAwesome.Solid.Download,
                                 Width = 340,
                                 Margin = new MarginPadding { Top = 80 },
-                                Action = () => notifications.Post("Coming soon!\nThis feature is not yet implemented.")
+                                Action = () =>
+                                {
+                                    clock.Stop();
+                                    this.Push(new Bluescreen());
+                                }
                             },
                             new MenuButton
                             {
