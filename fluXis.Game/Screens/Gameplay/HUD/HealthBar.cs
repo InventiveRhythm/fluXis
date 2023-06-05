@@ -18,6 +18,8 @@ public partial class HealthBar : GameplayHUDElement
     private readonly ColourInfo drainGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#40aef8"), Colour4.FromHex("#751010"));
     private float drainRate;
 
+    private readonly ColourInfo normalGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#ff5555"), Colour4.White);
+
     public HealthBar(GameplayScreen screen)
         : base(screen)
     {
@@ -63,13 +65,6 @@ public partial class HealthBar : GameplayHUDElement
                 background.Colour = reqColour;
                 break;
 
-            case HealthMode.Normal:
-                float intensity = health / 100;
-                Colour4 colour = Colour4.FromHSL(0, .7f * (1 - intensity), 1);
-                bar.Colour = colour;
-                background.Colour = colour;
-                break;
-
             case HealthMode.Drain:
                 //smoothen the drain rate to avoid flickering
                 drainRate += (manager.HealthDrainRate - drainRate) / 5 * ((float)Clock.ElapsedFrameTime / 1000);
@@ -81,8 +76,10 @@ public partial class HealthBar : GameplayHUDElement
                 break;
 
             default:
-                bar.Colour = Colour4.White;
-                background.Colour = Colour4.White;
+                float intensity = health / 100f;
+                Colour4 colour = normalGradient.Interpolate(new Vector2(intensity, 0));
+                bar.Colour = colour;
+                background.Colour = colour;
                 break;
         }
 
