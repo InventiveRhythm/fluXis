@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using fluXis.Game.Configuration;
 using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
 using fluXis.Game.Skinning.Default.Stage;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -17,8 +21,13 @@ namespace fluXis.Game.Skinning;
 
 public partial class SkinManager : Component
 {
+    [Resolved]
+    private FluXisConfig config { get; set; }
+
     public Skin CurrentSkin { get; private set; }
-    public string SkinFolder { get; private set; } = "Custom";
+    public string SkinFolder { get; private set; } = "Default";
+
+    private Bindable<string> skinName;
 
     private LargeTextureStore skinTextures;
     private Storage skinStorage;
@@ -28,24 +37,51 @@ public partial class SkinManager : Component
         CurrentSkin = new Skin();
     }
 
+    public IEnumerable<string> GetSkinNames()
+    {
+        string[] skinNames = { "Default" };
+        skinNames = skinNames.Concat(skinStorage.GetDirectories("")).ToArray();
+        return skinNames;
+    }
+
     [BackgroundDependencyLoader]
     private void load(GameHost host, Storage storage)
     {
         skinStorage = storage.GetStorageForDirectory("skins");
         skinTextures = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(new StorageBackedResourceStore(skinStorage)));
+        skinName = config.GetBindable<string>(FluXisSetting.SkinName);
+    }
 
+    protected override void Update()
+    {
+        if (skinName.Value != SkinFolder) // i dont know why normal bindables dont work
+        {
+            SkinFolder = skinName.Value;
+            loadConfig();
+        }
+    }
+
+    private void loadConfig()
+    {
         try
         {
-            if (skinStorage.Exists("Custom/skin.json"))
+            if (skinStorage.Exists($"{SkinFolder}/skin.json"))
             {
-                var stream = skinStorage.GetStream("Custom/skin.json");
+                var stream = skinStorage.GetStream($"{SkinFolder}/skin.json");
                 var reader = new StreamReader(stream);
                 var json = reader.ReadToEnd();
                 CurrentSkin = JsonConvert.DeserializeObject<Skin>(json);
+                Logger.Log("Loaded skin.json", LoggingTarget.Information);
+            }
+            else
+            {
+                Logger.Log("No skin.json found, using default skin", LoggingTarget.Information);
+                CurrentSkin = new Skin();
             }
         }
         catch (Exception e)
         {
+            CurrentSkin = new Skin();
             Logger.Error(e, "Failed to load skin");
         }
     }

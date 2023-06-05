@@ -1,5 +1,6 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 
@@ -11,10 +12,16 @@ public partial class SkinSection : SettingsSection
     public override string Title => "Skin";
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load(FluXisConfig config, SkinManager skinManager)
     {
         AddRange(new SettingsItem[]
         {
+            new SettingsDropdown<string>
+            {
+                Label = "Skin",
+                Bindable = config.GetBindable<string>(FluXisSetting.SkinName),
+                Items = skinManager.GetSkinNames()
+            },
             new SettingsToggle
             {
                 Label = "Hide Flawless Judgement",

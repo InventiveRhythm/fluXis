@@ -15,6 +15,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
     {
         SetDefault(FluXisSetting.ImportOtherGames, false);
 
+        SetDefault(FluXisSetting.SkinName, "Default");
         SetDefault(FluXisSetting.LaneCoverTop, 0f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.LaneCoverBottom, 0f, 0f, 1f, 0.01f);
 
@@ -44,6 +45,7 @@ public enum FluXisSetting
     ImportOtherGames,
 
     // Skin
+    SkinName,
     LaneCoverTop,
     LaneCoverBottom,
 
