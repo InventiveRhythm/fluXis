@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio.Transforms;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
 using fluXis.Game.Map;
@@ -42,7 +43,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     public double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => underlying.TimeInfo;
 
-    public override double CurrentTime => underlying.CurrentTime;
+    public override double CurrentTime => underlying.CurrentTime + offset.Value;
     public IClock Source => underlying.Source;
     public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
@@ -69,6 +70,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     private readonly FramedMapClock underlying;
     private readonly Bindable<Track> track = new();
+    private Bindable<float> offset;
 
     public AudioClock()
     {
@@ -77,11 +79,12 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     }
 
     [BackgroundDependencyLoader]
-    private void load(Storage storage)
+    private void load(Storage storage, FluXisConfig config)
     {
         realmStorage = storage.GetStorageForDirectory("files");
         realmTrackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(realmStorage));
         AddInternal(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
+        offset = config.GetBindable<float>(FluXisSetting.GlobalOffset);
     }
 
     public void LoadMap(RealmMap info, bool start = false, bool usePreview = false)
