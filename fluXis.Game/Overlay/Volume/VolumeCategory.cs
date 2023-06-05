@@ -3,12 +3,15 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Volume;
 
 public partial class VolumeCategory : Container
 {
+    public VolumeOverlay VolumeOverlay { get; set; }
+
     public string Text
     {
         get => text.Text.ToString();
@@ -97,5 +100,11 @@ public partial class VolumeCategory : Container
     public void UpdateSelected(bool newValue)
     {
         background.FadeTo(newValue ? 0.1f : 0, 100);
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        VolumeOverlay.SelectCategory(this);
+        return true;
     }
 }

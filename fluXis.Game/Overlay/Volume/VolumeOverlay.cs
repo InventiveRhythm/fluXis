@@ -3,11 +3,14 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Graphics;
 using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Volume;
@@ -44,6 +47,13 @@ public partial class VolumeOverlay : Container
             X = -400,
             CornerRadius = 10,
             Masking = true,
+            EdgeEffect = new EdgeEffectParameters
+            {
+                Type = EdgeEffectType.Shadow,
+                Colour = Color4.Black.Opacity(.4f),
+                Radius = 10,
+                Offset = new Vector2(0, 1)
+            },
             Children = new Drawable[]
             {
                 new Box
@@ -63,21 +73,25 @@ public partial class VolumeOverlay : Container
                         new VolumeCategory
                         {
                             Text = "Master",
+                            VolumeOverlay = this,
                             Bindable = audioManager.Volume
                         },
                         new VolumeCategory
                         {
                             Text = "Music",
+                            VolumeOverlay = this,
                             Bindable = audioManager.VolumeTrack
                         },
                         new VolumeCategory
                         {
                             Text = "Effects",
+                            VolumeOverlay = this,
                             Bindable = audioManager.VolumeSample
                         },
                         new VolumeCategory
                         {
                             Text = "Hitsounds",
+                            VolumeOverlay = this,
                             Bindable = config.GetBindable<double>(FluXisSetting.HitSoundVolume)
                         }
                     }
@@ -149,6 +163,13 @@ public partial class VolumeOverlay : Container
             category.UpdateSelected(category == categories.Children[index]);
     }
 
+    public void SelectCategory(VolumeCategory cat)
+    {
+        timeInactive = 0;
+        int delta = categories.IndexOf(cat) - index;
+        changeCategory(delta);
+    }
+
     protected override void Update()
     {
         timeInactive += (int)Clock.ElapsedFrameTime;
@@ -161,7 +182,10 @@ public partial class VolumeOverlay : Container
             return;
 
         if (e.NewValue)
+        {
             content.MoveToX(0, 500, Easing.OutQuint);
+            changeCategory(-index);
+        }
         else
             content.MoveToX(-400, 500, Easing.InQuint);
     }

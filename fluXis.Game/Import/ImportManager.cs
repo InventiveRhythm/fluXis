@@ -67,7 +67,7 @@ public partial class ImportManager : Component
                 storages.Add(importer.ID, storageFor);
 
                 var resourceStore = new StorageBackedResourceStore(storageFor);
-                textureStores.Add(importer.ID, new TextureStore(host.Renderer, host.CreateTextureLoaderStore(resourceStore)));
+                textureStores.Add(importer.ID, new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(resourceStore)));
                 trackStores.Add(importer.ID, audio.GetTrackStore(resourceStore));
             }
         }
