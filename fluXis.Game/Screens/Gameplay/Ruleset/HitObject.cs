@@ -84,11 +84,11 @@ public partial class HitObject : CompositeDrawable
 
     protected override void Update()
     {
-        var missTime = 150 / clock.Rate;
+        var missTime = 150 * clock.Rate;
 
         Missed = (clock.CurrentTime - Data.Time > missTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && clock.CurrentTime - Data.HoldEndTime > missTime);
         Hitable = clock.CurrentTime - Data.Time > -missTime && !Missed;
-        Releasable = Data.IsLongNote() && clock.CurrentTime - Data.HoldEndTime > -150 && !Missed;
+        Releasable = Data.IsLongNote() && clock.CurrentTime - Data.HoldEndTime > -missTime && !Missed;
 
         if (!Exists) return;
 
