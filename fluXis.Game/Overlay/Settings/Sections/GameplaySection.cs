@@ -1,6 +1,6 @@
-using fluXis.Game.Configuration;
-using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Overlay.Settings.Sections.Gameplay;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections;
@@ -11,26 +11,19 @@ public partial class GameplaySection : SettingsSection
     public override string Title => "Gameplay";
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
-        AddRange(new SettingsItem[]
+        AddRange(new Drawable[]
         {
-            new SettingsSlider<float>
-            {
-                Label = "Scroll Speed",
-                Bindable = config.GetBindable<float>(FluXisSetting.ScrollSpeed),
-                Step = 0.1f // why is it not able to get it thru the bindable?
-            },
-            new SettingsToggle
-            {
-                Label = "Show Early/Late",
-                Bindable = config.GetBindable<bool>(FluXisSetting.ShowEarlyLate)
-            },
-            new SettingsToggle
-            {
-                Label = "Lane Switch Alerts",
-                Bindable = config.GetBindable<bool>(FluXisSetting.LaneSwitchAlerts)
-            }
+            new GameplayGeneralSection(),
+            Divider,
+            new GameplayScrollSpeedSection(),
+            Divider,
+            new GameplayBackgroundSection(),
+            Divider,
+            new GameplayEffectsSection(),
+            Divider,
+            new GameplayHudSection()
         });
     }
 }

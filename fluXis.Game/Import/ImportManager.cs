@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
@@ -41,29 +41,32 @@ public partial class ImportManager : Component
     [Resolved]
     private AudioManager audio { get; set; }
 
+    private List<ImportPlugin> plugins { get; } = new();
+    public IEnumerable<ImportPlugin> Plugins => plugins.ToImmutableArray();
+
     private List<MapImporter> importers { get; } = new();
     private Dictionary<int, Storage> storages { get; } = new();
     private Dictionary<int, ITextureStore> textureStores { get; } = new();
     private Dictionary<int, ITrackStore> trackStores { get; } = new();
 
     [BackgroundDependencyLoader]
-    private void load(GameHost host, FluXisConfig config)
+    private void load(GameHost host)
     {
         loadFromAppDomain();
         loadFromRunFolder();
         loadFromPlugins();
 
-        if (!config.Get<bool>(FluXisSetting.ImportOtherGames)) return;
-
         foreach (var importer in importers)
         {
+            var shouldImport = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == importer.ID)?.AutoImport ?? false);
+            if (!shouldImport || !importer.SupportsAutoImport) continue;
+
             var maps = importer.GetMaps();
             foreach (var map in maps) mapStore.AddMapSet(map);
 
             if (!string.IsNullOrEmpty(importer.StoragePath))
             {
                 var storageFor = new NativeStorage(importer.StoragePath);
-                Logger.Log(storageFor.GetFullPath("."));
                 storages.Add(importer.ID, storageFor);
 
                 var resourceStore = new StorageBackedResourceStore(storageFor);
@@ -185,6 +188,15 @@ public partial class ImportManager : Component
                             importer.ID = existing.Id;
                             Logger.Log($"Importer {importer.Name} has id {existing.Id}");
                         }
+                    });
+
+                    plugins.Add(new ImportPlugin
+                    {
+                        Name = importer.Name,
+                        Author = importer.Author,
+                        Version = importer.Version,
+                        HasAutoImport = importer.SupportsAutoImport,
+                        ImporterId = importer.ID
                     });
                 }
 

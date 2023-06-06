@@ -19,6 +19,9 @@ public class QuaverImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".qp" };
     public override string Name => "Quaver";
+    public override string Author => "Flustix";
+    public override Version Version => new(1, 0, 0);
+    public override bool SupportsAutoImport => true;
     public override string Color => "#0cb2d8";
     public override string StoragePath => quaverPath;
 

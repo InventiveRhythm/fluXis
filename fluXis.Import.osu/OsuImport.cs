@@ -14,6 +14,8 @@ public class OsuImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".osz" };
     public override string Name => "osu!mania";
+    public override string Author => "Flustix";
+    public override Version Version => new(1, 0, 0);
     public override string Color => "#e7659f";
 
     public override void Import(string path)

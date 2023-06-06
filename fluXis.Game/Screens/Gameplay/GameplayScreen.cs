@@ -80,6 +80,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     private QuickActionOverlay quickActionOverlay;
 
     private FluXisConfig config;
+    private Bindable<HudVisibility> hudVisibility;
+
+    private bool hudVisible = true;
 
     public Sample HitSound;
     public Sample Combobreak;
@@ -99,6 +102,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     private void load(ISampleStore samples, FluXisConfig config, ImportManager importManager)
     {
         this.config = config;
+        hudVisibility = config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
 
         if (RealmMap.MapSet.Managed)
         {
@@ -267,6 +271,26 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         // normal bindings dont work for some reason
         HitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
+
+        var hudWasVisible = hudVisible;
+
+        switch (hudVisibility.Value)
+        {
+            case HudVisibility.Hidden:
+                hudVisible = false;
+                break;
+
+            case HudVisibility.ShowDuringBreaks:
+                hudVisible = Playfield.Manager.Break;
+                break;
+
+            default:
+                hudVisible = true;
+                break;
+        }
+
+        if (hudVisible != hudWasVisible)
+            HUD.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
 
         base.Update();
     }

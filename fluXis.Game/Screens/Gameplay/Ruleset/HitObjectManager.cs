@@ -52,8 +52,10 @@ public partial class HitObjectManager : CompositeDrawable
     public List<float> ScrollVelocityMarks { get; } = new();
 
     public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
-
     public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
+
+    public bool Break => HitObjects.Count == 0 || TimeUntilNextHitObject >= 2000;
+    public double TimeUntilNextHitObject => HitObjects.Count > 0 ? HitObjects[0].Data.Time - clock.CurrentTime : 0;
 
     public HitObjectManager(Playfield playfield)
     {
@@ -120,7 +122,7 @@ public partial class HitObjectManager : CompositeDrawable
             }
         }
 
-        if (!Playfield.Screen.IsPaused.Value && HitObjects.Count > 0 && HitObjects[0].Data.Time - 4000 < clock.CurrentTime && HealthMode == HealthMode.Drain)
+        if (!Playfield.Screen.IsPaused.Value && !Break && HealthMode == HealthMode.Drain)
         {
             HealthDrainRate = Math.Max(HealthDrainRate, -1f);
 

@@ -9,14 +9,14 @@ public partial class SettingsItem : Container
 {
     public string Label { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
-    public int LabelSize { get; init; } = 24;
-    public int DescriptionSize { get; init; } = 18;
+    public bool Enabled { get; init; } = true;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.X;
         Height = 40;
+        Alpha = Enabled ? 1 : 0.5f;
 
         InternalChildren = new Drawable[]
         {
@@ -31,7 +31,7 @@ public partial class SettingsItem : Container
                     new FluXisSpriteText
                     {
                         Text = Label,
-                        FontSize = LabelSize,
+                        FontSize = 24,
                         Anchor = Anchor.TopLeft,
                         Origin = Anchor.TopLeft
                     },
@@ -39,10 +39,10 @@ public partial class SettingsItem : Container
                     {
                         Text = Description,
                         Colour = FluXisColors.Text2,
-                        FontSize = DescriptionSize,
+                        FontSize = 16,
                         Anchor = Anchor.TopLeft,
                         Origin = Anchor.TopLeft
-                    },
+                    }
                 }
             }
         };

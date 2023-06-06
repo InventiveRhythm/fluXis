@@ -87,12 +87,15 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         });
 
         createSection(new GeneralSection());
-        createSection(new SkinSection());
-        createSection(new GameplaySection());
+        createSection(new AppearanceSection());
         createSection(new InputSection());
-        createSection(new AudioSection());
         createSection(new UserInterfaceSection());
+        createSection(new GameplaySection());
+        createSection(new AudioSection());
         createSection(new GraphicsSection());
+        createSection(new PluginsSection());
+        createSection(new MaintenanceSection());
+        createSection(new DebugSection());
     }
 
     private void createSection(SettingsSection section)

@@ -1,6 +1,6 @@
-using fluXis.Game.Configuration;
-using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Overlay.Settings.Sections.UserInterface;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections;
@@ -8,29 +8,18 @@ namespace fluXis.Game.Overlay.Settings.Sections;
 public partial class UserInterfaceSection : SettingsSection
 {
     public override IconUsage Icon => FontAwesome.Solid.LayerGroup;
-    public override string Title => "UI";
+    public override string Title => "User Interface";
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
-        AddRange(new SettingsItem[]
+        AddRange(new Drawable[]
         {
-            new SettingsToggle
-            {
-                Label = "Main Menu Visualizer",
-                Bindable = config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer)
-            },
-            new SettingsToggle
-            {
-                Label = "Skip Intro",
-                Bindable = config.GetBindable<bool>(FluXisSetting.SkipIntro)
-            },
-            new SettingsSlider<float>
-            {
-                Label = "Hold to Confirm Duration",
-                Description = "How long to hold a button to confirm an action.",
-                Bindable = config.GetBindable<float>(FluXisSetting.HoldToConfirm)
-            }
+            new UserInterfaceGeneralSection(),
+            Divider,
+            new UserInterfaceMainMenuSection(),
+            Divider,
+            new UserInterfaceSongSelectSection(),
         });
     }
 }

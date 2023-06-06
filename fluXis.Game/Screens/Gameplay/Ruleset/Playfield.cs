@@ -6,11 +6,10 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
-public partial class Playfield : CompositeDrawable
+public partial class Playfield : Container
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
@@ -28,6 +27,9 @@ public partial class Playfield : CompositeDrawable
 
     private Bindable<float> topCoverHeight;
     private Bindable<float> bottomCoverHeight;
+    private Bindable<ScrollDirection> scrollDirection;
+
+    public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
     public MapInfo Map { get; }
 
@@ -41,9 +43,12 @@ public partial class Playfield : CompositeDrawable
     private void load(FluXisConfig config)
     {
         RelativeSizeAxes = Axes.Both;
-        Size = new Vector2(1, 1);
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+
+        topCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverTop);
+        bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
+        scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
 
         Stage = new Stage(this);
         Receptors = new FillFlowContainer<Receptor>
@@ -80,9 +85,6 @@ public partial class Playfield : CompositeDrawable
                 bottomCover = skinManager.GetLaneCover(true)
             }
         };
-
-        topCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverTop);
-        bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
 
         InternalChildren = new[]
         {

@@ -1,0 +1,50 @@
+using fluXis.Game.Configuration;
+using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Skinning;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics;
+
+namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
+
+public partial class AppearanceSkinSection : SettingsSubSection
+{
+    public override string Title => "Skin";
+
+    [BackgroundDependencyLoader]
+    private void load(SkinManager skinManager)
+    {
+        AddRange(new Drawable[]
+        {
+            new SettingsDropdown<string>
+            {
+                Label = "Current Skin",
+                Bindable = Config.GetBindable<string>(FluXisSetting.SkinName),
+                Items = skinManager.GetSkinNames()
+            },
+            new SettingsButton
+            {
+                Label = "Open Skin editor",
+                Enabled = false,
+                ButtonText = "Open"
+            },
+            new SettingsButton
+            {
+                Label = "Open Skin folder",
+                Enabled = false,
+                ButtonText = "Open"
+            },
+            new SettingsButton
+            {
+                Label = "Export Skin",
+                Enabled = false,
+                ButtonText = "Export"
+            },
+            new SettingsButton
+            {
+                Label = "Delete Skin",
+                Enabled = false,
+                ButtonText = "Delete"
+            }
+        });
+    }
+}

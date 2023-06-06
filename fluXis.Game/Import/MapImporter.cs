@@ -15,6 +15,9 @@ public class MapImporter
 {
     public virtual string[] FileExtensions { get; } = Array.Empty<string>();
     public virtual string Name => "Unknown";
+    public virtual string Author => "Unknown";
+    public virtual Version Version => new(0, 0, 0);
+    public virtual bool SupportsAutoImport => false;
     public virtual string Color => "#000000";
     public virtual string StoragePath => "";
 

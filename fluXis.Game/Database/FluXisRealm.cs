@@ -21,8 +21,9 @@ public class FluXisRealm : IDisposable
     /// 3 - add mods to RealmScore
     /// 4 - add Cover to RealmMapSet
     /// 5 - add RealmMapFilters
+    /// 6 - add AutoImport to ImporterInfo
     /// </summary>
-    private const int schema_version = 5;
+    private const int schema_version = 6;
 
     private Realm updateRealm;
 
