@@ -26,7 +26,7 @@ public partial class HitObjectManager : CompositeDrawable
     public Playfield Playfield { get; }
     public Performance Performance { get; }
     public MapInfo Map { get; set; }
-    public List<HitObject> FutureHitObjects { get; } = new();
+    public List<HitObjectInfo> FutureHitObjects { get; } = new();
     public List<HitObject> HitObjects { get; } = new();
 
     public double CurrentTime { get; private set; }
@@ -54,8 +54,19 @@ public partial class HitObjectManager : CompositeDrawable
     public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
     public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
 
-    public bool Break => HitObjects.Count == 0 || TimeUntilNextHitObject >= 2000;
-    public double TimeUntilNextHitObject => HitObjects.Count > 0 ? HitObjects[0].Data.Time - clock.CurrentTime : 0;
+    public bool Break => TimeUntilNextHitObject >= 2000;
+    public double TimeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - clock.CurrentTime;
+
+    private HitObjectInfo nextHitObject
+    {
+        get
+        {
+            if (HitObjects.Count > 0)
+                return HitObjects[0].Data;
+
+            return FutureHitObjects.Count > 0 ? FutureHitObjects[0] : null;
+        }
+    }
 
     public HitObjectManager(Playfield playfield)
     {
@@ -82,9 +93,9 @@ public partial class HitObjectManager : CompositeDrawable
         else
             updateInput();
 
-        while (FutureHitObjects is { Count: > 0 } && FutureHitObjects[0].ScrollVelocityTime <= CurrentTime + 2000 * ScrollSpeed)
+        while (FutureHitObjects is { Count: > 0 } && FutureHitObjects[0].Time <= clock.CurrentTime + 2000 / ScrollSpeed)
         {
-            HitObject hitObject = FutureHitObjects[0];
+            HitObject hitObject = new HitObject(this, FutureHitObjects[0]);
             FutureHitObjects.RemoveAt(0);
             HitObjects.Add(hitObject);
             AddInternal(hitObject);
@@ -241,8 +252,7 @@ public partial class HitObjectManager : CompositeDrawable
 
         Performance.IncCombo();
 
-        if (hitObject.Data.IsLongNote() && !isHoldEnd) { }
-        else
+        if (!hitObject.Data.IsLongNote() || isHoldEnd)
         {
             hitObject.Kill();
             HitObjects.Remove(hitObject);
@@ -298,8 +308,7 @@ public partial class HitObjectManager : CompositeDrawable
             if (Playfield.Screen.Mods.Any(m => m is NoLnMod))
                 hit.HoldTime = 0;
 
-            HitObject hitObject = new HitObject(this, hit);
-            FutureHitObjects.Add(hitObject);
+            FutureHitObjects.Add(hit);
         }
     }
 
