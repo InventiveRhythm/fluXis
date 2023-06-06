@@ -148,6 +148,7 @@ public partial class MapListEntry : Container
         private Box dim;
         private DelayedLoadWrapper backgroundWrapper;
         private DelayedLoadWrapper coverWrapper;
+        private DelayedLoadWrapper textWrapper;
 
         public MapListEntryHeader(MapListEntry parent, RealmMapSet mapset)
         {
@@ -179,7 +180,7 @@ public partial class MapListEntry : Container
                     Colour = Colour4.Black,
                     Alpha = .4f
                 },
-                new Container
+                textWrapper = new DelayedLoadUnloadWrapper(() => new Container
                 {
                     Padding = new MarginPadding(10),
                     RelativeSizeAxes = Axes.Both,
@@ -229,11 +230,15 @@ public partial class MapListEntry : Container
                         },
                         new StatusTag(mapset)
                     }
-                }
+                }, 100, 200)
             };
 
-            backgroundWrapper.DelayedLoadComplete += drawable => drawable.FadeInFromZero(200);
-            coverWrapper.DelayedLoadComplete += drawable => drawable.FadeInFromZero(200);
+            backgroundWrapper.DelayedLoadComplete += background => background.FadeInFromZero(200);
+            textWrapper.DelayedLoadComplete += text =>
+            {
+                text.FadeInFromZero(200);
+                coverWrapper.DelayedLoadComplete += cover => cover.FadeInFromZero(200);
+            };
         }
 
         protected override bool OnHover(HoverEvent e)

@@ -2,47 +2,52 @@ using fluXis.Game.Database.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
 using osuTK;
 
 namespace fluXis.Game.Graphics.Background;
 
 public partial class Background : CompositeDrawable
 {
-    public RealmMap Map => sprite.Map;
+    public RealmMap Map => map;
     public float Duration { get; set; } = 300;
 
-    private readonly MapBackground sprite;
-    private readonly BufferedContainer buffer;
+    private RealmMap map { get; }
 
-    public float Blur
-    {
-        get => buffer.BlurSigma.X / 25;
-        set => buffer.BlurSigma = new Vector2(value * 25);
-    }
+    private MapBackground sprite;
+    private BufferedContainer buffer;
+
+    public float Blur { get; init; }
 
     public Background(RealmMap map)
     {
         RelativeSizeAxes = Axes.Both;
-
-        AddInternal(buffer = new BufferedContainer(cachedFrameBuffer: true)
-        {
-            RelativeSizeAxes = Axes.Both,
-            RedrawOnScale = false,
-            Child = sprite = new MapBackground(map)
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                FillMode = FillMode.Fill
-            }
-        });
+        this.map = map;
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures, BackgroundTextureStore backgrounds)
+    private void load()
     {
         Alpha = 0f;
+
+        sprite = new MapBackground(map)
+        {
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            FillMode = FillMode.Fill
+        };
+
+        if (Blur > 0)
+        {
+            AddInternal(buffer = new BufferedContainer(cachedFrameBuffer: true)
+            {
+                RelativeSizeAxes = Axes.Both,
+                BlurSigma = new Vector2(Blur),
+                RedrawOnScale = false,
+                Child = sprite
+            });
+        }
+        else AddInternal(sprite);
     }
 
     protected override void LoadComplete()
