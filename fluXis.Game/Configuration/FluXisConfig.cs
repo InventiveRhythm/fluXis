@@ -48,6 +48,9 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
         SetDefault(FluXisSetting.HitSoundVolume, 1d, 0d, 1d, 0.01d);
 
+        // Graphics
+        SetDefault(FluXisSetting.ShowFps, false);
+
         // Account
         SetDefault(FluXisSetting.Token, string.Empty);
     }
@@ -89,6 +92,9 @@ public enum FluXisSetting
     // Audio
     HitSoundVolume,
     GlobalOffset,
+
+    // Graphics
+    ShowFps,
 
     // Account
     Token

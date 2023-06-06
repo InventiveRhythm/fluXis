@@ -2,6 +2,7 @@
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
 using osu.Framework.Allocation;
@@ -52,6 +53,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             Settings,
             new VolumeOverlay(),
             Notifications,
+            new FpsOverlay(),
             CursorOverlay,
             exitContainer = new Container
             {

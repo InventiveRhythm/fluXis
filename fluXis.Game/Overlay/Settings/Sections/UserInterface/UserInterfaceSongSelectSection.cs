@@ -17,7 +17,6 @@ public partial class UserInterfaceSongSelectSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Blur Background",
-                Enabled = false,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SongSelectBlur)
             }
         });

@@ -29,7 +29,6 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Parallax",
-                Enabled = false,
                 Description = "Enable the parallax effect on backgrounds and such.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.Parallax)
             }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
@@ -34,7 +35,8 @@ namespace fluXis.Game.Screens.Select;
 public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override float Zoom => 1.1f;
-    public override float BackgroundBlur => 0.25f;
+    public override float BackgroundBlur => songSelectBlur.Value ? 0.25f : 0;
+    public override bool ApplyValuesAfterLoad => true;
 
     [Resolved]
     private MapStore mapStore { get; set; }
@@ -51,6 +53,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public BackgroundStack Backgrounds;
     public Bindable<RealmMapSet> MapSet = new();
     public Bindable<RealmMap> MapInfo = new();
+    public readonly List<RealmMapSet> Maps = new();
+    public SearchFilters Filters = new();
 
     public MapList MapList;
     public SelectMapInfo SelectMapInfo;
@@ -62,17 +66,15 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public Sample MenuBack;
     public Sample MenuScroll;
 
-    public readonly List<RealmMapSet> Maps = new();
-
-    public SearchFilters Filters = new();
-
     private FluXisSpriteText noMapsText;
     private LoadingIcon loadingIcon;
 
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
+    private Bindable<bool> songSelectBlur;
+
     [BackgroundDependencyLoader]
-    private void load(BackgroundStack background, ISampleStore samples)
+    private void load(BackgroundStack background, ISampleStore samples, FluXisConfig config)
     {
         Backgrounds = background;
 
@@ -81,6 +83,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         MenuScroll = samples.Get("UI/scroll.mp3");
 
         Filters.OnChange += UpdateSearch;
+        songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
 
         InternalChildren = new Drawable[]
         {
@@ -319,6 +322,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         this.FadeOut(200);
+        songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
         MapList.MoveToX(-200, 500, Easing.OutQuint);
         SearchBar.MoveToY(-200, 500, Easing.OutQuint);
@@ -330,6 +334,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         this.FadeIn(200);
         lightController.FadeColour(FluXisColors.GetKeyColor(MapInfo.Value.KeyCount), 400);
+        songSelectBlur.ValueChanged += updateBackgroundBlur;
 
         MapList.MoveToX(0, 500, Easing.OutQuint);
         SearchBar.MoveToY(0, 500, Easing.OutQuint);
@@ -352,6 +357,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public override void OnEntering(ScreenTransitionEvent e)
     {
         this.FadeInFromZero(200);
+        songSelectBlur.ValueChanged += updateBackgroundBlur;
 
         MapList.MoveToX(-200)
                .MoveToX(0, 500, Easing.OutQuint);
@@ -383,6 +389,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         mapStore.MapSetAdded -= addMapSet;
         mapStore.MapSetUpdated -= replaceMapSet;
+        songSelectBlur.ValueChanged -= updateBackgroundBlur;
         clock.RateTo(1f);
 
         return base.OnExiting(e);
@@ -478,5 +485,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             return;
 
         MapSet.Value = Maps[RNG.Next(0, Maps.Count)];
+    }
+
+    private void updateBackgroundBlur(ValueChangedEvent<bool> e)
+    {
+        if (e.NewValue)
+            Backgrounds.SetBlur(BackgroundBlur, 500);
+        else
+            Backgrounds.SetBlur(0, 500);
     }
 }

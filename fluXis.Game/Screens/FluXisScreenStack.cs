@@ -19,19 +19,16 @@ public partial class FluXisScreenStack : ScreenStack
     public FluXisScreenStack()
     {
         RelativeSizeAxes = Axes.Both;
-        ScreenPushed += updateValues;
-        ScreenExited += updateValues;
+        ScreenPushed += updateScreen;
+        ScreenExited += updateScreen;
     }
 
-    private void updateValues(IScreen last, IScreen next)
+    private void updateScreen(IScreen last, IScreen next)
     {
         if (next is FluXisScreen fluXisScreen)
         {
-            backgrounds.Zoom = fluXisScreen.Zoom;
-            backgrounds.ParallaxStrength = fluXisScreen.ParallaxStrength;
-            toolbar.ShowToolbar.Value = fluXisScreen.ShowToolbar;
-            backgrounds.SetBlur(fluXisScreen.BackgroundBlur);
-            backgrounds.SetDim(fluXisScreen.BackgroundDim);
+            if (fluXisScreen.ApplyValuesAfterLoad && !fluXisScreen.IsLoaded) fluXisScreen.OnLoadComplete += _ => updateValues(fluXisScreen);
+            else updateValues(fluXisScreen);
         }
         else
         {
@@ -40,5 +37,14 @@ public partial class FluXisScreenStack : ScreenStack
             backgrounds.SetBlur(0f);
             backgrounds.SetDim(0.25f);
         }
+    }
+
+    private void updateValues(FluXisScreen screen)
+    {
+        backgrounds.Zoom = screen.Zoom;
+        backgrounds.ParallaxStrength = screen.ParallaxStrength;
+        toolbar.ShowToolbar.Value = screen.ShowToolbar;
+        backgrounds.SetBlur(screen.BackgroundBlur);
+        backgrounds.SetDim(screen.BackgroundDim);
     }
 }

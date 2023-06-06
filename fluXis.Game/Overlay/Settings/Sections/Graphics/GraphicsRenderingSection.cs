@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
+using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Platform;
@@ -40,8 +40,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Show FPS",
-                Enabled = false,
-                Bindable = new BindableBool()
+                Bindable = Config.GetBindable<bool>(FluXisSetting.ShowFps)
             }
         });
     }
