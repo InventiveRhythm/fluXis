@@ -7,6 +7,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Context;
 using fluXis.Game.Input;
+using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.MenuBar;
@@ -344,6 +345,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         tabSwitcher.MoveToY(0, 300, Easing.OutQuint);
         bottomBar.MoveToY(0, 300, Easing.OutQuint);
         tabs.ScaleTo(1, 300, Easing.OutQuint);
+
+        Discord.Update("Editing a map", "", "editor");
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

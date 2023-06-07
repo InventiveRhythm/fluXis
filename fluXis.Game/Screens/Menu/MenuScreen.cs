@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
@@ -254,6 +255,8 @@ public partial class MenuScreen : FluXisScreen
         linkContainer.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
         // profile.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
 
+        Discord.Update("In the menus", "Idle", "menu");
+
         base.OnEntering(e);
     }
 
@@ -277,6 +280,8 @@ public partial class MenuScreen : FluXisScreen
         buttonContainer.MoveToX(0, 400, Easing.OutQuint);
         linkContainer.MoveToX(0, 400, Easing.OutQuint);
         // profile.MoveToX(0, 400, Easing.OutQuint);
+
+        Discord.Update("In the menus", "Idle", "menu");
 
         base.OnResuming(e);
     }

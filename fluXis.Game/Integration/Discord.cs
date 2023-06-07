@@ -28,7 +28,7 @@ public abstract class Discord
         Assets assets = new Assets
         {
             LargeImageKey = largeImageKey,
-            LargeImageText = "fluXis"
+            LargeImageText = $"fluXis {FluXisGameBase.VersionString}"
         };
 
         APIUserShort user = Fluxel.LoggedInUser;

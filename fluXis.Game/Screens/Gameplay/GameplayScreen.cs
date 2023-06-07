@@ -209,8 +209,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             new GameplayTouchInput { Screen = this },
             new PauseMenu(this)
         };
-
-        Discord.Update("Playing a map", $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]", "playing", 0, (int)((Map.EndTime - AudioClock.CurrentTime) / 1000));
     }
 
     protected override void LoadComplete()
@@ -224,7 +222,19 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         backgrounds.SetDim(config.Get<float>(FluXisSetting.BackgroundDim), 600);
         backgrounds.SetBlur(config.Get<float>(FluXisSetting.BackgroundBlur), 600);
 
+        IsPaused.BindValueChanged(_ => updateRpc(), true);
+
         base.LoadComplete();
+    }
+
+    private void updateRpc()
+    {
+        string details = $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]";
+
+        if (!IsPaused.Value)
+            Discord.Update("Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
+        else
+            Discord.Update("Paused", details, "playing");
     }
 
     public virtual MapInfo LoadMap()
