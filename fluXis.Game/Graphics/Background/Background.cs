@@ -42,7 +42,7 @@ public partial class Background : CompositeDrawable
             AddInternal(buffer = new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
-                BlurSigma = new Vector2(Blur),
+                BlurSigma = new Vector2(Blur * 25),
                 RedrawOnScale = false,
                 Child = sprite
             });

@@ -81,8 +81,8 @@ public partial class Receptor : CompositeDrawable
             visible = true;
         else
         {
-            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Playfield.Map.KeyCount - 5];
-            bool[] current = mode[currentKeyCount - 4];
+            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Playfield.Map.KeyCount - 2];
+            bool[] current = mode[currentKeyCount - 1];
             visible = current[id];
         }
 
