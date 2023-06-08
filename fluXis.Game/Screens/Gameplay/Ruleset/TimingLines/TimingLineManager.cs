@@ -46,7 +46,7 @@ public partial class TimingLineManager : CompositeDrawable
 
     protected override void Update()
     {
-        while (futureTimingLines is { Count: > 0 } && futureTimingLines[0].ScrollVelocityTime <= HitObjectManager.CurrentTime + 2000 * HitObjectManager.ScrollSpeed)
+        while (futureTimingLines is { Count: > 0 } && futureTimingLines[0].ScrollVelocityTime <= HitObjectManager.CurrentTime + 2000 * HitObjectManager.Playfield.Screen.Rate / HitObjectManager.ScrollSpeed)
         {
             TimingLine line = futureTimingLines[0];
             futureTimingLines.RemoveAt(0);

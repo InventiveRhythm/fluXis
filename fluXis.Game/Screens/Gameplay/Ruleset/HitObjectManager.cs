@@ -93,7 +93,7 @@ public partial class HitObjectManager : CompositeDrawable
         else
             updateInput();
 
-        while (FutureHitObjects is { Count: > 0 } && FutureHitObjects[0].Time <= clock.CurrentTime + 2000 / ScrollSpeed)
+        while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= CurrentTime + 2000 * Playfield.Screen.Rate / ScrollSpeed)
         {
             HitObject hitObject = new HitObject(this, FutureHitObjects[0]);
             FutureHitObjects.RemoveAt(0);
