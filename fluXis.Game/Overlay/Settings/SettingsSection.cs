@@ -19,5 +19,6 @@ public partial class SettingsSection : FillFlowContainer
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(0, 10);
+        Alpha = 0;
     }
 }

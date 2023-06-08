@@ -4,12 +4,14 @@ using fluXis.Game.Input;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Settings.Sections;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Settings;
@@ -19,72 +21,81 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
 
-    public CategorySelector Selector { get; }
-    public Container<SettingsSection> SectionContent { get; }
+    public CategorySelector Selector { get; private set; }
+    public Container<SettingsSection> SectionContent { get; private set; }
 
     private bool visible;
-    private readonly SettingsContent content;
+    private ClickableContainer content;
 
-    public SettingsMenu()
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        Add(new Box
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Colour = Colour4.Black,
-            Alpha = .25f
-        });
-
-        Add(content = new SettingsContent
-        {
-            Width = 1200,
-            Height = 600,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Scale = new Vector2(.95f),
-            CornerRadius = 10,
-            Masking = true,
-            Children = new Drawable[]
+            new ClickableContainer
             {
-                new Box
+                RelativeSizeAxes = Axes.Both,
+                Action = Hide,
+                Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = Colour4.Black,
+                    Alpha = .25f
                 },
-                new GridContainer
+            },
+            content = new ClickableContainer
+            {
+                Width = 1200,
+                Height = 600,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Scale = new Vector2(.95f),
+                Rotation = 2,
+                CornerRadius = 10,
+                Masking = true,
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    RowDimensions = new Dimension[]
+                    new Box
                     {
-                        new(GridSizeMode.AutoSize),
-                        new()
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2
                     },
-                    Content = new[]
+                    new GridContainer
                     {
-                        new Drawable[]
+                        RelativeSizeAxes = Axes.Both,
+                        RowDimensions = new Dimension[]
                         {
-                            Selector = new CategorySelector(this)
+                            new(GridSizeMode.AutoSize),
+                            new()
                         },
-                        new Drawable[]
+                        Content = new[]
                         {
-                            new BasicScrollContainer
+                            new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                ScrollbarVisible = false,
-                                Child = SectionContent = new Container<SettingsSection>
+                                Selector = new CategorySelector { Menu = this }
+                            },
+                            new Drawable[]
+                            {
+                                new BasicScrollContainer
                                 {
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Padding = new MarginPadding { Horizontal = 50, Vertical = 20 }
+                                    RelativeSizeAxes = Axes.Both,
+                                    ScrollbarVisible = false,
+                                    Child = SectionContent = new Container<SettingsSection>
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
+                                        Padding = new MarginPadding { Horizontal = 50, Vertical = 20 }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        });
+        };
 
         createSection(new GeneralSection());
         createSection(new AppearanceSection());
@@ -106,8 +117,8 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
     public void SelectSection(SettingsSection section)
     {
-        SectionContent.Children.ForEach(s => s.Hide());
-        section.Show();
+        SectionContent.Children.ForEach(s => s.FadeOut(200));
+        section.FadeIn(200);
     }
 
     public void ToggleVisibility()
@@ -124,10 +135,10 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     {
         visible = false;
 
-        content.ScaleTo(.95f, 150, Easing.InQuint)
-               .RotateTo(1, 150, Easing.InQuint);
+        content.ScaleTo(.95f, 400, Easing.OutQuint)
+               .RotateTo(2, 400, Easing.OutQuint);
 
-        this.FadeOut(150);
+        this.FadeOut(200);
     }
 
     public override void Show()
@@ -136,19 +147,32 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         cursorOverlay.ShowCursor = true;
 
         content.RotateTo(0)
-               .ScaleTo(1f, 500, Easing.OutElastic);
+               .ScaleTo(1f, 800, Easing.OutElastic);
 
-        this.FadeIn(150);
-    }
-
-    protected override bool OnClick(ClickEvent e)
-    {
-        Hide();
-        return true;
+        this.FadeIn(200);
     }
 
     protected override bool OnHover(HoverEvent e)
     {
+        return true;
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        var keyStr = e.Key.ToString();
+
+        if (keyStr.StartsWith("Number"))
+        {
+            keyStr = keyStr.Replace("Number", "");
+
+            if (!int.TryParse(keyStr, out var num)) return true;
+
+            if (num == 0) num = 10;
+
+            var tab = Selector.Tabs.ElementAtOrDefault(num - 1);
+            Selector.SelectTab(tab);
+        }
+
         return true;
     }
 
@@ -166,119 +190,119 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 
-    private partial class SettingsContent : Container
-    {
-        protected override bool OnClick(ClickEvent e)
-        {
-            return true;
-        }
-    }
-
     public partial class CategorySelector : Container
     {
-        private readonly CircularContainer line;
-        private readonly Container<SettingsCategoryTab> tabs;
+        public SettingsMenu Menu { get; init; }
+
+        private CircularContainer line;
+        public FillFlowContainer<SettingsCategoryTab> Tabs;
 
         private SettingsCategoryTab selectedTab;
 
-        public SettingsMenu Menu { get; }
+        private Sample tabSwitch;
 
-        public CategorySelector(SettingsMenu menu)
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
         {
-            Menu = menu;
+            tabSwitch = samples.Get(@"UI/change-tab");
 
             Height = 50;
             AutoSizeAxes = Axes.X;
             Content.Origin = Content.Anchor = Anchor.TopCentre;
 
-            AddInternal(tabs = new Container<SettingsCategoryTab>
+            InternalChildren = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Y,
-                AutoSizeAxes = Axes.X,
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre
-            });
-
-            AddInternal(new Box
-            {
-                RelativeSizeAxes = Axes.X,
-                Width = 4,
-                Height = 3,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Colour = FluXisColors.Surface2
-            });
-
-            AddInternal(new Container
-            {
-                Height = 5,
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Y = 1,
-                Child = line = new CircularContainer
+                Tabs = new FillFlowContainer<SettingsCategoryTab>
+                {
+                    RelativeSizeAxes = Axes.Y,
+                    AutoSizeAxes = Axes.X,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(10, 0)
+                },
+                new Box
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Width = 4,
+                    Height = 3,
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Colour = FluXisColors.Surface2
+                },
+                new Container
                 {
                     Height = 5,
-                    Anchor = Anchor.BottomLeft,
-                    Origin = Anchor.BottomLeft,
-                    Masking = true,
-                    Child = new Box
+                    RelativeSizeAxes = Axes.X,
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Y = 1,
+                    Child = line = new CircularContainer
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.White
+                        Height = 5,
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Masking = true,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Colour4.White
+                        }
                     }
                 }
-            });
+            };
         }
 
-        protected override void Update()
+        protected override void LoadComplete()
         {
-            for (var i = 0; i < tabs.Children.Count; i++)
-            {
-                var child = tabs.Children[i];
-
-                if (i != 0)
-                {
-                    var prevChild = tabs.Children[i - 1];
-                    child.X = prevChild.X + prevChild.DrawWidth + 10;
-                }
-                else
-                    child.X = 0;
-            }
-
-            if (selectedTab != null)
-                SelectTab(selectedTab);
-
-            base.Update();
+            ScheduleAfterChildren(() => SelectTab());
         }
 
         public void AddTab(SettingsCategoryTab tab)
         {
-            tab.Index = tabs.Children.Count;
-            tabs.Add(tab);
-
-            if (selectedTab == null)
-            {
-                SelectTab(tab);
-            }
+            tab.Index = Tabs.Children.Count;
+            Tabs.Add(tab);
         }
 
         public void SelectTab(SettingsCategoryTab tab = null)
         {
-            tab ??= tabs.Children.First();
+            tab ??= Tabs.Children.First();
 
             // if still null, return
             if (tab == null)
                 return;
 
+            if (selectedTab == tab)
+                return;
+
+            if (selectedTab != null)
+            {
+                int index = Tabs.IndexOf(tab);
+                int previousIndex = Tabs.IndexOf(selectedTab);
+
+                if (previousIndex > index)
+                {
+                    tab.Section.X = -60;
+                    selectedTab.Section.MoveToX(60, 400, Easing.OutQuint);
+                }
+                else if (previousIndex < index)
+                {
+                    tab.Section.X = 60;
+                    selectedTab.Section.MoveToX(-60, 400, Easing.OutQuint);
+                }
+            }
+            else Logger.Log("selectedTab is null", LoggingTarget.Runtime, LogLevel.Error);
+
             selectedTab = tab;
+            tab.Section.MoveToX(0, 400, Easing.OutQuint);
             tab.Select();
             Menu.SelectSection(tab.Section);
+            tabSwitch?.Play();
 
-            line.ResizeWidthTo(tab.TabContent.DrawWidth + 10, 200, Easing.OutQuint)
-                .MoveToX(tab.Index * 60, 200, Easing.OutQuint);
+            line.ResizeWidthTo(tab.TabContent.DrawWidth + 10, 400, Easing.OutQuint)
+                .MoveToX(tab.Index * 60, 400, Easing.OutQuint);
 
-            foreach (var child in tabs.Children)
+            foreach (var child in Tabs.Children)
             {
                 if (child != tab)
                     child.Deselect();

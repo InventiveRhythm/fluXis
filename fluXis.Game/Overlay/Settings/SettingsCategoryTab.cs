@@ -59,7 +59,7 @@ public partial class SettingsCategoryTab : Container
         return true;
     }
 
-    public void Select() => this.ResizeWidthTo(TabContent.DrawWidth + 10, 200, Easing.OutQuint);
+    public void Select() => this.ResizeWidthTo(TabContent.DrawWidth + 10, 400, Easing.OutQuint);
 
-    public void Deselect() => this.ResizeWidthTo(50, 200, Easing.OutQuint);
+    public void Deselect() => this.ResizeWidthTo(50, 400, Easing.OutQuint);
 }
