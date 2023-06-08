@@ -313,10 +313,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             TextLoading = $"Exporting mapset {set.Metadata.Artist} - {set.Metadata.Title}...",
             TextSuccess = $"Exported mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
             TextFailure = $"Failed to export mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
+            ShowProgress = true
         };
 
         notifications.AddNotification(notification);
-        mapStore.Export(set, notification);
+        Task.Run(() => mapStore.Export(set, notification));
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)

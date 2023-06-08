@@ -126,12 +126,17 @@ public class MapStore
             if (File.Exists(path)) File.Delete(path);
             ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
 
+            int max = set.Files.Count;
+            int current = 0;
+
             foreach (var file in set.Files)
             {
                 var entry = archive.CreateEntry(file.Name);
                 using var stream = entry.Open();
                 using var fileStream = files.GetStream(file.GetPath());
                 fileStream.CopyTo(stream);
+                current++;
+                notification.Progress = (float)current / max;
             }
 
             archive.Dispose();

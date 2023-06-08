@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -20,18 +21,21 @@ public partial class LoadingNotification : SimpleNotification
                         Text = TextLoading;
                         background.FadeColour(Colour4.LightBlue, 500);
                         background.FadeTo(.25f, 300).Then().FadeTo(.15f, 300).Loop();
+                        if (ShowProgress) background.ResizeWidthTo(0, 0, Easing.OutQuint);
                         break;
 
                     case LoadingState.Loaded:
                         Text = TextSuccess;
                         background.FadeColour(Colour4.LightGreen, 500);
                         background.FadeTo(.25f, 200);
+                        background.ResizeWidthTo(1, 300, Easing.OutQuint);
                         break;
 
                     case LoadingState.Failed:
                         Text = TextFailure;
                         background.FadeColour(Colour4.Red, 500);
                         background.FadeTo(.25f, 200);
+                        background.ResizeWidthTo(1, 300, Easing.OutQuint);
                         break;
                 }
             });
@@ -44,6 +48,23 @@ public partial class LoadingNotification : SimpleNotification
     public string TextLoading { get; set; } = "Loading...";
     public string TextSuccess { get; set; } = "Loaded!";
     public string TextFailure { get; set; } = "Failed!";
+
+    public float Progress
+    {
+        set
+        {
+            if (value is < 0 or > 1)
+                throw new ArgumentOutOfRangeException(nameof(value), "Value must be between 0 and 1");
+
+            Schedule(() =>
+            {
+                if (State == LoadingState.Loading)
+                    background.ResizeWidthTo(value, 300, Easing.OutQuint);
+            });
+        }
+    }
+
+    public bool ShowProgress { get; set; } = false;
 
     public LoadingNotification()
     {
@@ -66,7 +87,12 @@ public partial class LoadingNotification : SimpleNotification
         };
 
         if (State == LoadingState.Loading)
+        {
             background.FadeTo(.25f, 300).Then().FadeTo(.15f, 300).Loop();
+
+            if (ShowProgress)
+                background.ResizeWidthTo(0, 0, Easing.OutQuint);
+        }
     }
 
     protected override void Update()
