@@ -163,10 +163,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                     new AccuracyDisplay(this),
                     new Progressbar(this),
                     new JudgementDisplay(this),
-                    new AutoPlayDisplay(this),
                     new JudgementCounter(Performance),
                     new HealthBar(this),
-                    new DangerHealthOverlay(this),
                     new HitErrorBar(this),
                     new AttributeText(this)
                     {
@@ -201,6 +199,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                     }
                 }
             },
+            new AutoPlayDisplay(this),
+            new DangerHealthOverlay(this),
             new LaneSwitchAlert { Playfield = Playfield },
             new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
             failOverlay = new FailOverlay { Screen = this },
