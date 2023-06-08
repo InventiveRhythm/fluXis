@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
 using osu.Framework.Development;
@@ -22,8 +23,9 @@ public class FluXisRealm : IDisposable
     /// 4 - add Cover to RealmMapSet
     /// 5 - add RealmMapFilters
     /// 6 - add AutoImport to ImporterInfo
+    /// 7 - Make RealmScore.Mods a string
     /// </summary>
-    private const int schema_version = 6;
+    private const int schema_version = 7;
 
     private Realm updateRealm;
 
@@ -106,6 +108,14 @@ public class FluXisRealm : IDisposable
 
                     newMap.Filters = MapUtils.GetMapFilters(map, events);
                 }
+
+                break;
+
+            case 7:
+                var newScores = migration.NewRealm.All<RealmScore>().ToList();
+
+                foreach (var score in newScores)
+                    score.Mods = string.Empty;
 
                 break;
         }

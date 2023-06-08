@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using JetBrains.Annotations;
 using Realms;
@@ -23,7 +22,7 @@ public class RealmScore : RealmObject
 
     public RealmJudgements Judgements { get; set; }
 
-    public IList<string> Mods { get; } = new List<string>();
+    public string Mods { get; set; } = string.Empty;
 
     public Guid MapID { get; set; }
 

@@ -18,6 +18,7 @@ public partial class TestScoreEntry : FluXisTestScene
             Accuracy = 100,
             MaxCombo = 1000,
             Grade = "X",
+            Mods = "HD,NF",
             Judgements = new RealmJudgements(new Dictionary<Judgement, int>
             {
                 { Judgement.Flawless, 100 },
@@ -28,9 +29,6 @@ public partial class TestScoreEntry : FluXisTestScene
                 { Judgement.Miss, 100 }
             })
         };
-
-        score.Mods.Add("HD");
-        score.Mods.Add("NF");
 
         Add(new Container
         {

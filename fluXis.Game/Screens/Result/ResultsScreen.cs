@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -57,11 +58,9 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                 Grade = performance.Grade.ToString(),
                 Score = performance.Score,
                 MaxCombo = performance.MaxCombo,
-                Judgements = new RealmJudgements(performance.Judgements)
+                Judgements = new RealmJudgements(performance.Judgements),
+                Mods = string.Join(' ', performance.Mods.Select(m => m.Acronym))
             };
-
-            foreach (var mod in performance.Mods)
-                score.Mods.Add(mod.Acronym);
 
             OnlineScores.UploadScore(performance, res => Logger.Log(res.Message));
         }

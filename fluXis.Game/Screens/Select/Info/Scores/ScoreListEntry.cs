@@ -170,8 +170,7 @@ public partial class ScoreListEntry : Container, IHasTooltip
                                         },
                                         new FluXisSpriteText
                                         {
-                                            Text = string.Join(" ", score.Mods),
-                                            FixedWidth = true,
+                                            Text = score.Mods.Replace(",", " "),
                                             FontSize = 18,
                                             Anchor = Anchor.TopRight,
                                             Origin = Anchor.TopRight
