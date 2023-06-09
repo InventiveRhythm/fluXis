@@ -8,7 +8,10 @@ namespace fluXis.Game.Overlay.Toolbar;
 
 public partial class ToolbarClock : Container
 {
-    private FluXisSpriteText clockText;
+    private FluXisSpriteText localTime;
+    private FluXisSpriteText gameTime;
+
+    private double lastTime;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -17,17 +20,33 @@ public partial class ToolbarClock : Container
         Width = 100;
         Padding = new MarginPadding { Horizontal = 10 };
 
-        Add(clockText = new FluXisSpriteText
+        InternalChildren = new Drawable[]
         {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Text = "00:00:00"
-        });
+            localTime = new FluXisSpriteText
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.BottomCentre,
+                Y = 5
+            },
+            gameTime = new FluXisSpriteText
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.TopCentre,
+                FontSize = 14,
+                Colour = FluXisColors.Text2
+            }
+        };
     }
 
     protected override void Update()
     {
-        clockText.Text = DateTime.Now.ToString("HH:mm:ss");
-        base.Update();
+        if (Time.Current - lastTime < 1000)
+            return;
+
+        lastTime = Time.Current;
+
+        var time = Time.Current / 1000;
+        gameTime.Text = $"{time / 360:00}:{time / 60:00}:{time % 60:00}";
+        localTime.Text = DateTime.Now.ToString("HH:mm:ss");
     }
 }
