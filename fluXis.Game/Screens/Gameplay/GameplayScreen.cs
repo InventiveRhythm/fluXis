@@ -113,9 +113,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 Map = package.MapInfo;
                 MapEvents = package.MapEvents;
 
-                if (!Map.Validate())
+                if (!Map.Validate(notifications))
                 {
-                    notifications.PostError("The map you tried to play not valid.");
                     this.Exit();
                     return;
                 }
@@ -242,12 +241,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         var map = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(RealmMap.Hash)));
 
         // map is null or invalid, leave
-        if (map == null || !map.Validate())
-        {
-            notifications.PostError("The map you tried to play not valid.");
-            this.Exit();
-            return null;
-        }
+        if (map == null || !map.Validate(notifications)) return null;
 
         return map;
     }

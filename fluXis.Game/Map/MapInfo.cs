@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map;
@@ -56,12 +57,19 @@ public class MapInfo
         TimingPoints.Add(new TimingPointInfo { BPM = 120, Time = 0, Signature = 4 });
     }
 
-    public bool Validate()
+    public bool Validate(NotificationOverlay notifications = null)
     {
         if (HitObjects.Count == 0)
+        {
+            notifications?.PostError("Map has no hit objects");
             return false;
+        }
+
         if (TimingPoints.Count == 0)
+        {
+            notifications?.PostError("Map has no timing points");
             return false;
+        }
 
         foreach (var hitObject in HitObjects)
         {
@@ -71,15 +79,25 @@ public class MapInfo
         foreach (var timingPoint in TimingPoints)
         {
             if (timingPoint.BPM <= 0)
+            {
+                notifications?.PostError("A timing point has an invalid BPM");
                 return false;
+            }
 
-            if (timingPoint.Time < 0)
+            if (timingPoint.Signature <= 0)
+            {
+                notifications?.PostError("A timing point has an invalid signature");
                 return false;
-
-            if (timingPoint.Signature < 0) { }
+            }
         }
 
-        return KeyCount is > 0 and < 11;
+        if (KeyCount is <= 0 or >= 11)
+        {
+            notifications?.PostError("Map has an invalid key count");
+            return false;
+        }
+
+        return true;
     }
 
     public void Sort()
