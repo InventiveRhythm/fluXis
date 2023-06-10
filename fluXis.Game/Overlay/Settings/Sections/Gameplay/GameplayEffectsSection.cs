@@ -22,7 +22,6 @@ public partial class GameplayEffectsSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Disable Epilepsy Intrusing Effects",
-                Enabled = false,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.DisableEpilepsyIntrusingEffects)
             },
         });

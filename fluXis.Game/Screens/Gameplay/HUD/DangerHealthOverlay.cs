@@ -1,6 +1,8 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
@@ -11,6 +13,8 @@ public partial class DangerHealthOverlay : GameplayHUDElement
 {
     [Resolved]
     private AudioClock clock { get; set; }
+
+    private Bindable<bool> dimOnLowHealth;
 
     private readonly Box glow;
     private readonly Box darken;
@@ -43,9 +47,29 @@ public partial class DangerHealthOverlay : GameplayHUDElement
         });
     }
 
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
+        dimOnLowHealth.BindValueChanged(onDimOnLowHealthChanged, true);
+    }
+
+    private void onDimOnLowHealthChanged(ValueChangedEvent<bool> e)
+    {
+        if (e.NewValue)
+            this.FadeIn(300);
+        else
+            this.FadeOut(300);
+    }
+
     protected override void LoadComplete()
     {
         health = Screen.Playfield.Manager.Health;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        dimOnLowHealth.ValueChanged -= onDimOnLowHealthChanged;
     }
 
     protected override void Update()
@@ -67,7 +91,7 @@ public partial class DangerHealthOverlay : GameplayHUDElement
         if (Screen.Playfield.Manager.Dead)
             return;
 
-        if (health < threshold)
+        if (health < threshold && dimOnLowHealth.Value)
         {
             float multiplier = health / threshold;
 

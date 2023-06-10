@@ -56,7 +56,6 @@ public partial class GameplayGeneralSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Dim and fade playfield to red when health is low",
-                Enabled = false,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.DimAndFade)
             }
         });
