@@ -15,12 +15,14 @@ using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu;
@@ -28,6 +30,17 @@ namespace fluXis.Game.Screens.Menu;
 public partial class MenuScreen : FluXisScreen
 {
     public override float Zoom => 1f;
+    public override float BackgroundDim => pressedStart ? default : 1f;
+    public override bool ShowToolbar => pressedStart;
+
+    public static string[] SplashTexts =
+    {
+        "Literally 1984.",
+        "What do you mean the chart is unreadable?",
+        "*metal pipe sfx*",
+        "Hey you wanna make a guest difficulty for my map?",
+        "It's not a bug, it's a feature!"
+    };
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -53,8 +66,11 @@ public partial class MenuScreen : FluXisScreen
     [Resolved]
     private AudioClock clock { get; set; }
 
-    private Box blackBox;
     private Container content;
+    private FluXisSpriteText fluXisText;
+    private FluXisTextFlow splashText;
+    private FluXisSpriteText pressAnyKeyText;
+    private MenuVisualizer visualizer;
 
     private Container textContainer;
     private Container buttonContainer;
@@ -65,9 +81,14 @@ public partial class MenuScreen : FluXisScreen
     private FluXisSpriteText titleText;
     private FluXisSpriteText artistText;
 
+    private bool pressedStart;
+    private Sample menuStart;
+
     [BackgroundDependencyLoader]
-    private void load(GameHost host)
+    private void load(GameHost host, ISampleStore samples)
     {
+        menuStart = samples.Get("UI/accept");
+
         // load a random map
         if (maps.MapSets.Count > 0)
         {
@@ -84,7 +105,7 @@ public partial class MenuScreen : FluXisScreen
         {
             new ParallaxContainer
             {
-                Child = new MenuVisualizer(),
+                Child = visualizer = new MenuVisualizer(),
                 RelativeSizeAxes = Axes.Both,
                 Strength = 5
             },
@@ -99,25 +120,35 @@ public partial class MenuScreen : FluXisScreen
                     textContainer = new Container
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Children = new[]
+                        Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            fluXisText = new FluXisSpriteText
                             {
                                 Text = "fluXis",
                                 FontSize = 100,
                                 Shadow = true,
                                 ShadowOffset = new Vector2(0, 0.04f)
                             },
-                            new FluXisSpriteText
+                            splashText = new FluXisTextFlow
                             {
-                                Text = "A free and community-driven rhythm game",
                                 FontSize = 32,
+                                RelativeSizeAxes = Axes.X,
                                 Margin = new MarginPadding { Top = 80 },
-                                Shadow = true
+                                Shadow = true,
+                                Alpha = 0,
+                                X = -200,
                             },
+                            pressAnyKeyText = new FluXisSpriteText
+                            {
+                                Text = "Press any key.",
+                                FontSize = 32,
+                                Shadow = true,
+                                Anchor = Anchor.BottomCentre,
+                                Origin = Anchor.BottomCentre
+                            }
                         }
                     },
-                    new FillFlowContainer()
+                    new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,
                         Direction = FillDirection.Vertical,
@@ -147,6 +178,8 @@ public partial class MenuScreen : FluXisScreen
                         AutoSizeAxes = Axes.Both,
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
+                        Alpha = 0,
+                        X = -200,
                         Children = new Drawable[]
                         {
                             playButton = new MenuButton
@@ -204,6 +237,8 @@ public partial class MenuScreen : FluXisScreen
                         Origin = Anchor.BottomRight,
                         Direction = FillDirection.Horizontal,
                         Spacing = new Vector2(10),
+                        Alpha = 0,
+                        X = 200,
                         Children = new Drawable[]
                         {
                             new MenuIconButton
@@ -227,12 +262,6 @@ public partial class MenuScreen : FluXisScreen
                         }
                     }
                 }
-            },
-            blackBox = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black,
-                Alpha = 0
             }
         };
 
@@ -244,53 +273,80 @@ public partial class MenuScreen : FluXisScreen
     protected override void LoadComplete()
     {
         game.OnSongChanged += songChanged;
+
+        pressAnyKeyText.FadeInFromZero(800).Then().FadeOut(800).Loop();
+        backgrounds.SetDim(base.BackgroundDim, 800);
+        visualizer.FadeInFromZero(800);
     }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (!pressedStart)
+        {
+            pressedStart = true;
+            menuStart?.Play();
+
+            fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
+            fluXisText.Delay(600).FadeIn().OnComplete(_ =>
+            {
+                game.Toolbar.ShowToolbar.Value = true;
+                splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
+                showMenu(600);
+            });
+
+            pressAnyKeyText.FadeOut(600).MoveToY(0, 800, Easing.InQuint);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void showMenu(int duration = 400)
+    {
+        textContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+        buttonContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+        linkContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+    }
+
+    private void hideMenu(int duration = 400)
+    {
+        textContainer.MoveToX(-200, duration, Easing.OutQuint);
+        buttonContainer.MoveToX(-200, duration, Easing.OutQuint);
+        linkContainer.MoveToX(200, duration, Easing.OutQuint);
+    }
+
+    private void randomizeSplash() => splashText.Text = SplashTexts[RNG.Next(0, SplashTexts.Length)];
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.FadeInFromZero(200);
-
-        textContainer.MoveToX(-200).MoveToX(0, 400, Easing.OutQuint);
-        buttonContainer.MoveToX(-200).MoveToX(0, 400, Easing.OutQuint);
-        linkContainer.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
-        // profile.MoveToX(200).MoveToX(0, 400, Easing.OutQuint);
-
+        randomizeSplash();
         Discord.Update("In the menus", "Idle", "menu");
-
-        base.OnEntering(e);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         this.FadeOut(200);
-
-        textContainer.MoveToX(-200, 400, Easing.OutQuint);
-        buttonContainer.MoveToX(-200, 400, Easing.OutQuint);
-        linkContainer.MoveToX(200, 400, Easing.OutQuint);
-        // profile.MoveToX(200, 400, Easing.OutQuint);
-
-        base.OnSuspending(e);
+        hideMenu();
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
+        randomizeSplash();
+        showMenu();
         this.FadeIn(200);
-
-        textContainer.MoveToX(0, 400, Easing.OutQuint);
-        buttonContainer.MoveToX(0, 400, Easing.OutQuint);
-        linkContainer.MoveToX(0, 400, Easing.OutQuint);
-        // profile.MoveToX(0, 400, Easing.OutQuint);
-
         Discord.Update("In the menus", "Idle", "menu");
-
-        base.OnResuming(e);
     }
 
     protected override void Update()
     {
         if (clock.Finished) game.NextSong();
 
-        base.Update();
+        if (!pressedStart)
+        {
+            fluXisText.X = content.DrawWidth / 2 - fluXisText.DrawWidth / 2 - 40;
+            fluXisText.Y = content.DrawHeight / 2 - fluXisText.DrawHeight / 2 - 40;
+        }
     }
 
     private void songChanged()

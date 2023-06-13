@@ -17,7 +17,6 @@ public partial class IntroScreen : FluXisScreen
     [Resolved]
     private Toolbar toolbar { get; set; }
 
-    private Container logoContainer;
     private FillFlowContainer epilepsyContainer;
     private bool shouldSkip;
 
@@ -30,50 +29,31 @@ public partial class IntroScreen : FluXisScreen
             return;
         }
 
-        InternalChildren = new Drawable[]
+        InternalChild = epilepsyContainer = new FillFlowContainer
         {
-            logoContainer = new Container
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Vertical,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Scale = new Vector2(0.9f),
+            Children = new Drawable[]
             {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Scale = new Vector2(0.9f),
-                Alpha = 0f,
-                Child = new FluXisSpriteText
+                new FluXisSpriteText
                 {
-                    Text = "fluXis",
-                    FontSize = 100,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
-                }
-            },
-            epilepsyContainer = new FillFlowContainer
-            {
-                AutoSizeAxes = Axes.Both,
-                Direction = FillDirection.Vertical,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Scale = new Vector2(0.9f),
-                Alpha = 0f,
-                Children = new Drawable[]
+                    Text = "Epilepsy warning!",
+                    FontSize = 60,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Margin = new MarginPadding { Bottom = 20 }
+                },
+                new FluXisTextFlow
                 {
-                    new FluXisSpriteText
-                    {
-                        Text = "Epilepsy warning!",
-                        FontSize = 60,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        Margin = new MarginPadding { Bottom = 20 }
-                    },
-                    new FluXisTextFlow
-                    {
-                        Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
-                        FontSize = 30,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        Width = 800,
-                        TextAnchor = Anchor.TopCentre
-                    }
+                    Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
+                    FontSize = 30,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Width = 800,
+                    TextAnchor = Anchor.TopCentre
                 }
             }
         };
@@ -90,13 +70,9 @@ public partial class IntroScreen : FluXisScreen
         const int scale_duration = 700;
         const int fade_duration = 500;
 
-        logoContainer.FadeOut(1000).Then().FadeIn(fade_duration).ScaleTo(1f, scale_duration, Easing.OutQuint).Then(1000).ScaleTo(1.1f, scale_duration, Easing.OutQuint).FadeOut(fade_duration).OnComplete(_ =>
-        {
-            epilepsyContainer.FadeIn(fade_duration).ScaleTo(1f, scale_duration, Easing.OutQuint).Then(6000).ScaleTo(1.1f, scale_duration, Easing.OutQuint).FadeOut(fade_duration).OnComplete(_ =>
-            {
-                continueToMenu();
-            });
-        });
+        epilepsyContainer.FadeInFromZero(fade_duration).ScaleTo(1f, scale_duration, Easing.OutQuint)
+                         .Then(6000).ScaleTo(1.1f, scale_duration, Easing.OutQuint).FadeOut(fade_duration)
+                         .OnComplete(_ => continueToMenu());
     }
 
     private void continueToMenu()
