@@ -148,8 +148,8 @@ public class OsuParser
 
             map.TimingPoints.Add(new OsuTimingPoint
             {
-                Time = int.Parse(split[0]),
-                BeatLength = decimal.Parse(split[1], CultureInfo.InvariantCulture),
+                Time = float.Parse(split[0]),
+                BeatLength = float.Parse(split[1], CultureInfo.InvariantCulture),
                 Meter = int.Parse(split[2]),
                 Inherited = int.Parse(split[6])
             });

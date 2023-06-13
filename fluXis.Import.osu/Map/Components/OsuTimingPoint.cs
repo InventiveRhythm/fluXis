@@ -5,8 +5,8 @@ namespace fluXis.Import.osu.Map.Components;
 
 public class OsuTimingPoint
 {
-    public int Time { get; set; }
-    public decimal BeatLength { get; set; }
+    public float Time { get; set; }
+    public float BeatLength { get; set; }
     public int Meter { get; set; }
     public int Inherited { get; set; }
 
@@ -17,7 +17,7 @@ public class OsuTimingPoint
         return new TimingPointInfo
         {
             Time = Time,
-            BPM = (float)(60000 / BeatLength),
+            BPM = 60000 / BeatLength,
             Signature = Meter
         };
     }
