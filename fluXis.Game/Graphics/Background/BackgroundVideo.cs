@@ -23,7 +23,6 @@ public partial class BackgroundVideo : CompositeDrawable
     public RealmMap Map { get; set; }
     public MapInfo Info { get; set; }
 
-    public int Delay { get; set; } = 2000;
     public bool IsPlaying { get; private set; }
 
     private Video video;
@@ -37,7 +36,15 @@ public partial class BackgroundVideo : CompositeDrawable
 
     public void LoadVideo()
     {
-        if (Info.VideoFile == null) return;
+        if (Info.VideoFile == null)
+        {
+            Schedule(() =>
+            {
+                ClearInternal();
+                video = null;
+            });
+            return;
+        }
 
         var file = Map.MapSet.GetFile(Info.VideoFile);
 
@@ -48,20 +55,16 @@ public partial class BackgroundVideo : CompositeDrawable
             string path = storage.GetFullPath($"files/{file.GetPath()}");
             Stream stream = File.OpenRead(path);
 
-            InternalChild = video = new Video(stream, false)
+            LoadComponent(video = new Video(stream, false)
             {
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fill,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Alpha = 0
-            };
+            });
 
-            Scheduler.AddDelayed(() =>
-            {
-                video.FadeIn(500);
-                IsPlaying = true;
-            }, Delay);
+            Schedule(() => InternalChild = video);
         }
         catch (Exception e)
         {
@@ -73,7 +76,7 @@ public partial class BackgroundVideo : CompositeDrawable
     {
         base.Update();
 
-        if (video == null) return;
+        if (video is not { IsLoaded: true }) return;
 
         if (clock.CurrentTime > video.Duration)
         {
@@ -91,5 +94,13 @@ public partial class BackgroundVideo : CompositeDrawable
 
         IsPlaying = false;
         video.FadeOut(500);
+    }
+
+    public void Start()
+    {
+        if (video == null) return;
+
+        IsPlaying = true;
+        video.FadeIn(500);
     }
 }

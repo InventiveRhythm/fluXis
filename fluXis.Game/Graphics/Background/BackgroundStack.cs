@@ -158,12 +158,16 @@ public partial class BackgroundStack : CompositeDrawable
         scheduledBackgrounds.Add(new Background(map) { Blur = blur });
     }
 
-    public void SetVideoBackground(RealmMap map, MapInfo info, int delay = 2000)
+    public void SetVideoBackground(RealmMap map, MapInfo info)
     {
         backgroundVideo.Map = map;
         backgroundVideo.Info = info;
-        backgroundVideo.Delay = delay;
         backgroundVideo.LoadVideo();
+    }
+
+    public void StartVideo()
+    {
+        backgroundVideo.Start();
     }
 
     public void StopVideo()

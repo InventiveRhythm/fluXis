@@ -52,6 +52,7 @@ public partial class DangerHealthOverlay : GameplayHUDElement
     {
         dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
         dimOnLowHealth.BindValueChanged(onDimOnLowHealthChanged, true);
+        health = Screen.Playfield.Manager.Health;
     }
 
     private void onDimOnLowHealthChanged(ValueChangedEvent<bool> e)
@@ -60,11 +61,6 @@ public partial class DangerHealthOverlay : GameplayHUDElement
             this.FadeIn(300);
         else
             this.FadeOut(300);
-    }
-
-    protected override void LoadComplete()
-    {
-        health = Screen.Playfield.Manager.Health;
     }
 
     protected override void Dispose(bool isDisposing)
@@ -76,7 +72,7 @@ public partial class DangerHealthOverlay : GameplayHUDElement
     {
         base.Update();
 
-        // on normal health, this effect can only be seen at the very end of the song
+        // on easy health, this effect can only be seen at the very end of the song
         if (Screen.Playfield.Manager.HealthMode == HealthMode.Requirement)
             return;
 

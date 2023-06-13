@@ -39,8 +39,11 @@ namespace fluXis.Game.Screens.Gameplay;
 public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 {
     public override float ParallaxStrength => 0f;
+    public override float BackgroundBlur => backgroundBlur?.Value ?? 0f;
+    public override float BackgroundDim => backgroundDim?.Value ?? .4f;
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
+    public override bool ApplyValuesAfterLoad => true;
 
     [Resolved]
     private GlobalCursorOverlay cursorOverlay { get; set; }
@@ -81,6 +84,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     private FluXisConfig config;
     private Bindable<HudVisibility> hudVisibility;
+    private Bindable<float> backgroundDim;
+    private Bindable<float> backgroundBlur;
 
     private bool hudVisible = true;
 
@@ -135,6 +140,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         Map.Sort();
         getKeyCountFromEvents();
+        backgrounds.SetVideoBackground(RealmMap, Map);
 
         Input = new GameplayInput(this, Map.KeyCount);
         Performance = new Performance(Map, RealmMap.OnlineID, RealmMap.Hash, Mods);
@@ -142,6 +148,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         HitSound = samples.Get("Gameplay/hitsound.mp3");
         Combobreak = samples.Get("Gameplay/combobreak.mp3");
         Restart = samples.Get("Gameplay/restart.mp3");
+
+        backgroundBlur = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
+        backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -210,22 +219,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         };
     }
 
-    protected override void LoadComplete()
-    {
-        AudioClock.LoadMap(RealmMap, true);
-        AudioClock.Seek(-2000 * Rate);
-        backgrounds.SetVideoBackground(RealmMap, Map);
-
-        AudioClock.RateTo(Rate, 0);
-
-        backgrounds.SetDim(config.Get<float>(FluXisSetting.BackgroundDim), 600);
-        backgrounds.SetBlur(config.Get<float>(FluXisSetting.BackgroundBlur), 600);
-
-        IsPaused.BindValueChanged(_ => updateRpc(), true);
-
-        base.LoadComplete();
-    }
-
     private void updateRpc()
     {
         string details = $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]";
@@ -251,6 +244,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         if (AudioClock.CurrentTime >= 0 && starting)
         {
             starting = false;
+            backgrounds.StartVideo();
             cursorOverlay.ShowCursor = false;
         }
 
@@ -359,8 +353,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        Alpha = 0;
+        AudioClock.LoadMap(RealmMap, true);
+        AudioClock.Seek(-2000 * Rate);
+        AudioClock.RateTo(Rate, 0);
+
+        IsPaused.BindValueChanged(_ => updateRpc(), true);
+
         this.ScaleTo(1.2f)
+            .FadeOut()
             .ScaleTo(1f, 750, Easing.OutQuint)
             .Delay(250)
             .FadeIn(250);

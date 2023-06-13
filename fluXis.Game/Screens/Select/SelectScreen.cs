@@ -242,7 +242,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         Backgrounds.AddBackgroundFromMap(MapInfo.Value);
         Backgrounds.SwipeAnimation();
 
-        this.Push(new GameplayScreen(MapInfo.Value, ModSelector.SelectedMods));
+        this.Push(new GameplayLoader
+        {
+            Map = MapInfo.Value,
+            Mods = ModSelector.SelectedMods
+        });
     }
 
     private void changeSelection(int by = 0)
