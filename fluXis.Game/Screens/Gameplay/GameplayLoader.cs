@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Cover;
@@ -20,6 +21,9 @@ public partial class GameplayLoader : FluXisScreen
     public override float BackgroundDim => 0.5f;
     public override float BackgroundBlur => 0.5f;
     public override bool AllowMusicControl => false;
+
+    [Resolved]
+    private AudioClock clock { get; set; }
 
     public RealmMap Map { get; set; }
     public List<IMod> Mods { get; set; }
@@ -109,6 +113,7 @@ public partial class GameplayLoader : FluXisScreen
             if (this.IsCurrentScreen())
             {
                 loadingContainer.FadeOut(200);
+                clock.Delay(400).Schedule(() => clock.FadeOut(400));
                 this.Delay(800).Schedule(() => this.Push(screen));
             }
             else screen.Dispose();
@@ -118,12 +123,14 @@ public partial class GameplayLoader : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         this.ScaleTo(.9f).ScaleTo(1, 400, Easing.OutQuint).FadeInFromZero(200);
+        clock.LowPassFilter.CutoffTo(1000, 400, Easing.OutQuint);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         this.FadeIn(800).Then().FadeOut(200);
         content.MoveToY(800, 1200, Easing.InQuint);
+        clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
     }
 
     public override void OnResuming(ScreenTransitionEvent e) => this.Exit();
