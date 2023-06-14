@@ -29,12 +29,23 @@ public static class MenuSplashes
 
     private static void loadFromLocal(Storage storage)
     {
-        if (!storage.Exists("splashes.json")) return;
+        try
+        {
+            if (!storage.Exists("splashes.json")) return;
 
-        var stream = storage.GetStream("splashes.json");
-        using var sr = new StreamReader(stream);
-        var json = sr.ReadToEnd();
-        Splashes = JsonConvert.DeserializeObject<string[]>(json);
+            Logger.Log("Loading splashes from local storage");
+
+            var stream = storage.GetStream("splashes.json");
+            using var sr = new StreamReader(stream);
+            var json = sr.ReadToEnd();
+            Splashes = JsonConvert.DeserializeObject<string[]>(json);
+
+            Logger.Log("Splashes loaded from local storage");
+        }
+        catch
+        {
+            Logger.Log("Failed to load splashes from local storage");
+        }
     }
 
     private static async void loadFromWeb(Storage storage)
@@ -49,15 +60,14 @@ public static class MenuSplashes
 
             Logger.Log("Saving splashes to local storage", LoggingTarget.Network);
 
-            var stream = storage.GetStream("splashes.json", FileAccess.Write);
-            using var sw = new StreamWriter(stream);
-            await sw.WriteAsync(json);
+            var path = storage.GetFullPath("splashes.json");
+            await File.WriteAllTextAsync(path, json);
 
             Logger.Log("Splashes saved to local storage", LoggingTarget.Network);
         }
         catch
         {
-            // ignored
+            Logger.Log("Failed to download splashes from web", LoggingTarget.Network);
         }
     }
 }
