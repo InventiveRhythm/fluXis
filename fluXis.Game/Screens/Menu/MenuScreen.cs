@@ -22,7 +22,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu;
@@ -32,15 +31,6 @@ public partial class MenuScreen : FluXisScreen
     public override float Zoom => 1f;
     public override float BackgroundDim => pressedStart ? default : 1f;
     public override bool ShowToolbar => pressedStart;
-
-    public static string[] SplashTexts =
-    {
-        "Literally 1984.",
-        "What do you mean the chart is unreadable?",
-        "*metal pipe sfx*",
-        "Hey you wanna make a guest difficulty for my map?",
-        "It's not a bug, it's a feature!"
-    };
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -285,6 +275,7 @@ public partial class MenuScreen : FluXisScreen
         {
             pressedStart = true;
             menuStart?.Play();
+            randomizeSplash();
 
             fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
             fluXisText.Delay(600).FadeIn().OnComplete(_ =>
@@ -316,11 +307,10 @@ public partial class MenuScreen : FluXisScreen
         linkContainer.MoveToX(200, duration, Easing.OutQuint);
     }
 
-    private void randomizeSplash() => splashText.Text = SplashTexts[RNG.Next(0, SplashTexts.Length)];
+    private void randomizeSplash() => splashText.Text = MenuSplashes.RandomSplash;
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        randomizeSplash();
         Discord.Update("In the menus", "Idle", "menu");
     }
 

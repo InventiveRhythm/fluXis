@@ -22,6 +22,7 @@ using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
+using fluXis.Game.Screens.Menu;
 using fluXis.Game.Skinning;
 using fluXis.Resources;
 using osu.Framework.Allocation;
@@ -129,6 +130,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         });
 
         dependencies.Cache(keybinds);
+        MenuSplashes.Load(storage);
     }
 
     protected void InitFonts()
