@@ -144,7 +144,6 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     public override void Show()
     {
         visible = true;
-        cursorOverlay.ShowCursor = true;
 
         content.RotateTo(0)
                .ScaleTo(1f, 800, Easing.OutElastic);

@@ -12,7 +12,6 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
@@ -44,9 +43,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
     public override bool ApplyValuesAfterLoad => true;
-
-    [Resolved]
-    private GlobalCursorOverlay cursorOverlay { get; set; }
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
@@ -245,7 +241,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         {
             starting = false;
             backgrounds.StartVideo();
-            cursorOverlay.ShowCursor = false;
         }
 
         if (!starting && Playfield.Manager.IsFinished && !Playfield.Manager.Dead)
@@ -333,7 +328,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public override bool OnExiting(ScreenExitEvent e)
     {
         fadeOut();
-        cursorOverlay.ShowCursor = true;
 
         int time = Playfield.Manager.Dead ? 1400 : 500;
 

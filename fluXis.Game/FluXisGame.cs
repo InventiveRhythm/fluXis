@@ -129,7 +129,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
     public override void Exit()
     {
-        CursorOverlay.ShowCursor = false;
+        CursorOverlay.FadeOut(600);
         Toolbar.ShowToolbar.Value = false;
         AudioClock.FadeOut(1500);
         exitContainer.FadeIn(1000).OnComplete(_ => seeyaText.FadeOut(1000).OnComplete(_ => base.Exit()));

@@ -1,7 +1,6 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
-using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,8 +14,6 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class PauseMenu : CompositeDrawable
 {
-    [Resolved]
-    private GlobalCursorOverlay cursorOverlay { get; set; }
 
     [Resolved]
     private AudioClock clock { get; set; }
@@ -105,14 +102,12 @@ public partial class PauseMenu : CompositeDrawable
     {
         clock.RateTo(Screen.Rate);
         this.FadeOut(200);
-        cursorOverlay.ShowCursor = false;
     }
 
     public override void Show()
     {
         clock.RateTo(0);
         this.FadeIn(200);
-        cursorOverlay.ShowCursor = true;
     }
 
     private partial class PauseButton : Container

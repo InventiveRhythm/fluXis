@@ -10,17 +10,9 @@ public partial class GlobalCursorOverlay : Container
     private readonly Cursor cursor;
 
     private InputManager inputManager;
-
-    public bool ShowCursor
-    {
-        set
-        {
-            if (value)
-                this.FadeIn(200);
-            else
-                this.FadeOut(200);
-        }
-    }
+    private double timeInactive;
+    private bool isHidden;
+    private string tooltipText;
 
     public GlobalCursorOverlay()
     {
@@ -49,14 +41,32 @@ public partial class GlobalCursorOverlay : Container
             }
         }
 
-        cursor.TooltipText = tooltip?.Tooltip ?? "";
+        var newTip = tooltip?.Tooltip ?? "";
 
-        base.Update();
+        if (newTip != tooltipText)
+        {
+            tooltipText = newTip;
+            cursor.TooltipText = tooltipText;
+        }
+
+        timeInactive += Time.Elapsed;
+
+        if (timeInactive > 4000 && !isHidden)
+        {
+            cursor.FadeOut(1200);
+            isHidden = true;
+        }
+        else if (timeInactive < 5000 && isHidden)
+        {
+            cursor.FadeIn(200);
+            isHidden = false;
+        }
     }
 
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
         cursor.Position = e.MousePosition;
+        timeInactive = 0;
         return base.OnMouseMove(e);
     }
 
