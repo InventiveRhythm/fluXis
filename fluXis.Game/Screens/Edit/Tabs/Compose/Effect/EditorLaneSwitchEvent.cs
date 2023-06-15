@@ -37,8 +37,8 @@ public partial class EditorLaneSwitchEvent : Container
         if (Event.Count == Map.KeyCount)
             return; // no need to draw anything
 
-        bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Map.KeyCount - 5];
-        bool[] current = mode[Event.Count - 4];
+        bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Map.KeyCount - 2];
+        bool[] current = mode[Event.Count - 1];
 
         for (int i = 0; i < Map.KeyCount; i++)
         {
