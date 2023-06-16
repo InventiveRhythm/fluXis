@@ -33,11 +33,15 @@ public partial class PauseMenu : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new Box
+            new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black,
-                Alpha = 0.4f
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.Black,
+                    Alpha = 0.4f
+                }
             },
             new FluXisSpriteText
             {

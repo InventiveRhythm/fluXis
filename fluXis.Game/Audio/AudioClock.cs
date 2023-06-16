@@ -90,6 +90,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     public void LoadMap(RealmMap info, bool start = false, bool usePreview = false)
     {
         Stop();
+        track.Value?.Dispose();
 
         Track newTrack;
 

@@ -6,6 +6,7 @@ using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
@@ -32,6 +33,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Gameplay;
 
@@ -62,6 +64,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public BindableBool IsPaused { get; } = new();
     public float DeathTime { get; private set; }
+    public Action<double, double> OnSeek { get; set; }
 
     public GameplayInput Input;
     public Performance Performance;
@@ -69,10 +72,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public RealmMap RealmMap;
     public MapEvents MapEvents;
     public List<IMod> Mods;
-    public MapPackage MapPackage;
 
     public Playfield Playfield { get; private set; }
     public Container HUD { get; private set; }
+
+    private FluXisTextFlow debugText;
+    private static bool showDebug;
 
     private FailOverlay failOverlay;
     private FullComboOverlay fcOverlay;
@@ -211,7 +216,18 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             fcOverlay = new FullComboOverlay(),
             quickActionOverlay = new QuickActionOverlay(),
             new GameplayTouchInput { Screen = this },
-            new PauseMenu(this)
+            new PauseMenu(this),
+            debugText = new FluXisTextFlow
+            {
+                Anchor = Anchor.TopLeft,
+                Origin = Anchor.TopLeft,
+                RelativeSizeAxes = Axes.Both,
+                Margin = new MarginPadding { Top = 100, Left = 20 },
+                FontSize = 20,
+                TextAnchor = Anchor.TopLeft,
+                Text = "debug text",
+                Alpha = showDebug ? 1 : 0
+            }
         };
     }
 
@@ -285,6 +301,19 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         if (hudVisible != hudWasVisible)
             HUD.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
 
+        if (showDebug)
+        {
+            string text = "HitObjects";
+
+            text += $"\n HitObjects: {Playfield.Manager.HitObjects.Count}";
+            text += $"\n Future HitObjects: {Playfield.Manager.FutureHitObjects.Count}";
+            text += "\nTime";
+            text += $"\n Current Time: {AudioClock.CurrentTime}";
+            text += $"\n Current Rate: {Rate}";
+
+            debugText.Text = text;
+        }
+
         base.Update();
     }
 
@@ -298,7 +327,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             AudioClock.PlayTrack("Gameplay/DeathLoop.mp3");
             AudioClock.RestartPoint = 0;
             AudioClock.Looping = true;
-            AudioClock.LowPassFilter.CutoffTo(0, 0, Easing.None);
+            AudioClock.LowPassFilter.CutoffTo(0);
         });
     }
 
@@ -335,10 +364,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         {
             AudioClock.LoadMap(RealmMap, true);
             AudioClock.SeekForce(DeathTime);
-            AudioClock.LowPassFilter.CutoffTo(0, 0, Easing.None);
+            AudioClock.LowPassFilter.CutoffTo(0);
         }
 
-        AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, time, Easing.None);
+        AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, time);
         ScheduleAfterChildren(() => AudioClock.RateTo(Rate, time));
         backgrounds.StopVideo();
 
@@ -383,6 +412,18 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         base.OnResuming(e);
     }
 
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.ControlPressed && e.AltPressed && e.ShiftPressed && e.Key == Key.D)
+        {
+            showDebug = !showDebug;
+            debugText.FadeTo(showDebug ? 1 : 0, 250, Easing.OutQuint);
+            return true;
+        }
+
+        return false;
+    }
+
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
     {
         if (e.Repeat) return false;
@@ -419,6 +460,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
             case FluXisKeybind.ScrollSpeedDecrease:
                 config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
+                return true;
+
+            case FluXisKeybind.SeekBackward:
+                OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime - 5000);
+                return true;
+
+            case FluXisKeybind.SeekForward:
+                OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime + 5000);
                 return true;
         }
 

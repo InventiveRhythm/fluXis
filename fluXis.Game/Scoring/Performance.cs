@@ -46,10 +46,10 @@ public class Performance
     }
 
     [JsonProperty("combo")]
-    public int Combo { get; private set; }
+    public int Combo { get; set; }
 
     [JsonProperty("maxCombo")]
-    public int MaxCombo { get; private set; }
+    public int MaxCombo { get; set; }
 
     [JsonProperty("judgements")]
     public Dictionary<Judgement, int> Judgements { get; }

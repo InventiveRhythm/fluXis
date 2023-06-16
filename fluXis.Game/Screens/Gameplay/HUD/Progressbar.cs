@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
@@ -18,7 +19,7 @@ public partial class Progressbar : GameplayHUDElement
     {
     }
 
-    private Box bar;
+    private Bar bar;
     private FluXisSpriteText currentTimeText;
     private FluXisSpriteText percentText;
     private FluXisSpriteText timeLeftText;
@@ -33,28 +34,7 @@ public partial class Progressbar : GameplayHUDElement
 
         InternalChildren = new Drawable[]
         {
-            new Container
-            {
-                CornerRadius = 5,
-                Masking = true,
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                Height = 10,
-                RelativeSizeAxes = Axes.X,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = .2f,
-                        Blending = BlendingParameters.Additive
-                    },
-                    bar = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both
-                    }
-                }
-            },
+            bar = new Bar { Progressbar = this },
             currentTimeText = new FluXisSpriteText
             {
                 Anchor = Anchor.TopLeft,
@@ -92,11 +72,70 @@ public partial class Progressbar : GameplayHUDElement
         if (Screen.Map.StartTime == Screen.Map.EndTime)
             percent = 1;
 
-        bar.Width = percent;
+        bar.Progress = percent;
         percentText.Text = $"{(int)(percent * 100)}%";
         currentTimeText.Text = TimeUtils.Format(currentTime, false);
         timeLeftText.Text = TimeUtils.Format(timeLeft, false);
 
         base.Update();
+    }
+
+    private partial class Bar : CircularContainer
+    {
+        public float Progress
+        {
+            set
+            {
+                if (value < 0) value = 0;
+                if (value > 1) value = 1;
+
+                bar.ResizeWidthTo(value, 200, Easing.OutQuint);
+            }
+        }
+
+        [Resolved]
+        private AudioClock clock { get; set; }
+
+        public Progressbar Progressbar { get; set; }
+
+        private Box bar;
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Masking = true;
+            Height = 10;
+            RelativeSizeAxes = Axes.X;
+
+            InternalChildren = new[]
+            {
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = .2f,
+                    Blending = BlendingParameters.Additive
+                },
+                bar = new Box
+                {
+                    RelativeSizeAxes = Axes.Both
+                }
+            };
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            var progress = e.MousePosition.X / DrawWidth;
+            if (progress < 0) progress = 0;
+            if (progress > 1) progress = 1;
+
+            var startTime = Progressbar.Screen.Map.StartTime;
+            var endTime = Progressbar.Screen.Map.EndTime;
+            double previousTime = clock.CurrentTime;
+            double newTime = startTime + (endTime - startTime) * progress;
+
+            Progressbar.Screen.OnSeek?.Invoke(previousTime, newTime);
+
+            return true;
+        }
     }
 }

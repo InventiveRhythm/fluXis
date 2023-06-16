@@ -16,7 +16,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
-public partial class HitObjectManager : CompositeDrawable
+public partial class HitObjectManager : Container<HitObject>
 {
     [Resolved]
     private AudioClock clock { get; set; }
@@ -34,6 +34,7 @@ public partial class HitObjectManager : CompositeDrawable
     public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
     public bool Dead { get; set; }
+    public bool SkipNextHitSounds { get; set; }
 
     public HealthMode HealthMode
     {
@@ -56,6 +57,7 @@ public partial class HitObjectManager : CompositeDrawable
 
     public bool Break => TimeUntilNextHitObject >= 2000;
     public double TimeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - clock.CurrentTime;
+    public double MaxHitObjectTime => PositionFromTime(clock.CurrentTime) + 2000 * Playfield.Screen.Rate / ScrollSpeed;
 
     private HitObjectInfo nextHitObject
     {
@@ -82,24 +84,51 @@ public partial class HitObjectManager : CompositeDrawable
         Size = new Vector2(1, 1);
 
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
+        Playfield.Screen.OnSeek += onSeek;
+    }
+
+    private void onSeek(double prevTime, double newTime)
+    {
+        if (!AutoPlay) return;
+
+        newTime = Math.Max(newTime, 0);
+
+        SkipNextHitSounds = true;
+        clock.Seek(newTime);
+
+        if (newTime < prevTime)
+        {
+            var hitObjects = Map.HitObjects.Where(h => h.Time >= newTime && h.Time < prevTime).ToList();
+
+            int count = hitObjects.Sum(h => h.IsLongNote() ? 2 : 1);
+            Performance.Combo -= count;
+            Performance.Judgements[Judgement.Flawless] -= count;
+            Performance.HitStats.RemoveAll(h => h.Time > newTime);
+
+            foreach (var hit in hitObjects)
+                FutureHitObjects.Add(hit);
+
+            FutureHitObjects.RemoveAll(h => h.Time <= newTime);
+            FutureHitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
+        }
     }
 
     protected override void Update()
     {
         updateTime();
 
-        if (AutoPlay)
-            updateAutoPlay();
-        else
-            updateInput();
-
-        while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= CurrentTime + 2000 * Playfield.Screen.Rate / ScrollSpeed)
+        while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= MaxHitObjectTime)
         {
             HitObject hitObject = new HitObject(this, FutureHitObjects[0]);
             FutureHitObjects.RemoveAt(0);
             HitObjects.Add(hitObject);
             AddInternal(hitObject);
         }
+
+        if (AutoPlay)
+            updateAutoPlay();
+        else
+            updateInput();
 
         foreach (var hitObject in HitObjects.Where(h => h.Missed && h.Exists).ToList())
         {
@@ -166,7 +195,9 @@ public partial class HitObjectManager : CompositeDrawable
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
-            Playfield.Screen.HitSound.Play();
+            if (!SkipNextHitSounds)
+                Playfield.Screen.HitSound.Play();
+
             hit(hitObject, false);
             pressed[hitObject.Data.Lane - 1] = true;
         }
@@ -182,6 +213,8 @@ public partial class HitObjectManager : CompositeDrawable
 
         for (var i = 0; i < pressed.Length; i++)
             Playfield.Receptors[i].IsDown = pressed[i];
+
+        SkipNextHitSounds = false;
     }
 
     private void updateInput()
