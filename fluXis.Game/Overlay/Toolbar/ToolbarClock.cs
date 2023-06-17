@@ -45,8 +45,12 @@ public partial class ToolbarClock : Container
 
         lastTime = Time.Current;
 
-        var time = Time.Current / 1000;
-        gameTime.Text = $"{time / 360:00}:{time / 60:00}:{time % 60:00}";
+        var secondsTotal = Time.Current / 1000;
+        int hours = (int)secondsTotal / 3600;
+        int minutes = (int)secondsTotal / 60;
+        int seconds = (int)secondsTotal % 60;
+
+        gameTime.Text = $"{hours:00}:{minutes:00}:{seconds:00}";
         localTime.Text = DateTime.Now.ToString("HH:mm:ss");
     }
 }
