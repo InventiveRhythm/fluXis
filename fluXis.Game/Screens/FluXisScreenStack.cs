@@ -41,6 +41,8 @@ public partial class FluXisScreenStack : ScreenStack
 
     private void updateValues(FluXisScreen screen)
     {
+        if (backgrounds == null || toolbar == null) return;
+
         backgrounds.Zoom = screen.Zoom;
         backgrounds.ParallaxStrength = screen.ParallaxStrength;
         toolbar.ShowToolbar.Value = screen.ShowToolbar;

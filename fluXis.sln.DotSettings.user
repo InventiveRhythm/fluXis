@@ -4,4 +4,5 @@
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/RecentlyUsedProfile/@EntryValue">Built-in: Reformat &amp; Apply Syntax Style</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.11\ref\net6.0\System.Linq.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\Flux\.nuget\packages\ppy.osu.framework\2023.531.0\lib\net6.0\osu.Framework.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
