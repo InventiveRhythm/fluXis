@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
@@ -199,7 +202,7 @@ public partial class TimingCategoryList<T> : Container
         }
     }
 
-    public partial class ListEntry : Container
+    public partial class ListEntry : Container, IHasContextMenu
     {
         public TimingTab TimingTab;
         public TimingCategoryList<T> List;
@@ -238,8 +241,15 @@ public partial class TimingCategoryList<T> : Container
             return true;
         }
 
+        protected virtual void Remove() { }
+
         public virtual Drawable[] CreateContent() => Array.Empty<Drawable>();
 
         public virtual PointSettings CreatePointSettings() => null;
+
+        public MenuItem[] ContextMenuItems => new MenuItem[]
+        {
+            new FluXisMenuItem("Remove", MenuItemType.Dangerous, Remove)
+        };
     }
 }

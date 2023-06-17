@@ -38,6 +38,12 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
         ReplaceEntries(entries);
     }
 
+    public override void Remove(ScrollVelocityEntry entry)
+    {
+        EditorValues.MapInfo.ScrollVelocities.Remove(entry.VelocityInfo);
+        base.Remove(entry);
+    }
+
     public partial class ScrollVelocityEntry : ListEntry
     {
         public readonly ScrollVelocityInfo VelocityInfo;
@@ -73,5 +79,7 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
         };
 
         public override PointSettings CreatePointSettings() => new ScrollVelocitySettings(VelocityInfo);
+
+        protected override void Remove() => List.Remove(this);
     }
 }

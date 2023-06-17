@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Menu;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 
@@ -52,7 +49,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
         base.Remove(entry);
     }
 
-    public partial class TimingPointEntry : ListEntry, IHasContextMenu
+    public partial class TimingPointEntry : ListEntry
     {
         [Resolved]
         private EditorChangeHandler changeHandler { get; set; }
@@ -99,9 +96,6 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
         public override PointSettings CreatePointSettings() => new TimingPointSettings(PointInfo);
 
-        public MenuItem[] ContextMenuItems => new MenuItem[]
-        {
-            new FluXisMenuItem("Remove", MenuItemType.Dangerous, () => List.Remove(this))
-        };
+        protected override void Remove() => List.Remove(this);
     }
 }
