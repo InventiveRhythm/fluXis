@@ -22,6 +22,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.SnapColoring, false);
         SetDefault(FluXisSetting.HideFlawless, false);
         SetDefault(FluXisSetting.ShowEarlyLate, false);
+        SetDefault(FluXisSetting.JudgementSplash, true);
         SetDefault(FluXisSetting.LaneCoverTop, 0f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.LaneCoverBottom, 0f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.DimAndFade, true);
@@ -67,6 +68,7 @@ public enum FluXisSetting
     SnapColoring,
     HideFlawless,
     ShowEarlyLate,
+    JudgementSplash,
     LaneCoverTop,
     LaneCoverBottom,
     DimAndFade,

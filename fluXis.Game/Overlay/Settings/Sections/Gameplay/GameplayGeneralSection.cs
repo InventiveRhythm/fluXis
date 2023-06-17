@@ -41,6 +41,12 @@ public partial class GameplayGeneralSection : SettingsSubSection
                 Description = "Show early/late below the judgement",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.ShowEarlyLate)
             },
+            new SettingsToggle
+            {
+                Label = "Judgement Splash",
+                Description = "Show a splash when a judgement is hit",
+                Bindable = Config.GetBindable<bool>(FluXisSetting.JudgementSplash)
+            },
             new SettingsSlider<float>
             {
                 Label = "Top Lane Cover",

@@ -6,6 +6,9 @@ using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -26,20 +29,40 @@ public partial class JudgementDisplay : GameplayHUDElement
     private FluXisSpriteText textEarlyLate;
     private Bindable<bool> hideFlawless;
     private Bindable<bool> showEarlyLate;
+    private Bindable<bool> judgementSplash;
+
+    private CircularContainer circle;
+    private Splash splash;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         hideFlawless = config.GetBindable<bool>(FluXisSetting.HideFlawless);
         showEarlyLate = config.GetBindable<bool>(FluXisSetting.ShowEarlyLate);
+        judgementSplash = config.GetBindable<bool>(FluXisSetting.JudgementSplash);
 
-        Anchor = Anchor.TopCentre;
+        Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        RelativePositionAxes = Axes.Y;
-        Y = 0.6f;
+        Y = 150;
 
         InternalChildren = new Drawable[]
         {
+            circle = new CircularContainer
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(100),
+                Masking = true,
+                BorderThickness = 5,
+                Alpha = 0,
+                Child = new Box
+                {
+                    AlwaysPresent = true,
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                }
+            },
+            splash = new Splash(),
             text = new FluXisSpriteText
             {
                 FontSize = 48,
@@ -77,10 +100,27 @@ public partial class JudgementDisplay : GameplayHUDElement
         text.Colour = hitWindow.Color;
         text.RotateTo(rotation)
             .ScaleTo(1f)
+            .FadeIn()
             .TransformSpacingTo(new Vector2(0, 0))
             .ScaleTo(scale, 1000, Easing.OutQuint)
-            .FadeOutFromOne(500)
-            .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint);
+            .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
+            .Delay(600).FadeOut(400);
+
+        if (judgementSplash.Value)
+        {
+            circle.BorderColour = hitWindow.Color;
+            circle.FadeInFromZero(200)
+                  .TransformTo(nameof(circle.BorderThickness), 20f)
+                  .TransformTo(nameof(circle.BorderThickness), 0f, 700, Easing.OutQuint)
+                  .ScaleTo(0f)
+                  .ScaleTo(1.4f, 500, Easing.OutQuint);
+
+            if (judgement != Scoring.Judgement.Miss)
+            {
+                splash.Colour = hitWindow.Color;
+                splash.Splat();
+            }
+        }
 
         lightController.FadeColour(hitWindow.Color)
                        .FadeColour(Color4.Black, 400);
@@ -98,5 +138,46 @@ public partial class JudgementDisplay : GameplayHUDElement
                          .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint);
         }
         else textEarlyLate.FadeOut();
+    }
+
+    private partial class Splash : Container<CircularContainer>
+    {
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+
+            for (int i = 0; i < 10; i++)
+            {
+                AddInternal(new CircularContainer
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(20),
+                    Masking = true,
+                    Alpha = 0,
+                    Child = new Box
+                    {
+                        AlwaysPresent = true,
+                        RelativeSizeAxes = Axes.Both
+                    }
+                });
+            }
+        }
+
+        public void Splat()
+        {
+            foreach (var circle in InternalChildren)
+            {
+                var randomVelocity = new Vector2(RNG.NextSingle(-1f, 1f), RNG.NextSingle(-1f, 1f));
+                var randomScale = RNG.NextSingle(0.5f, 1f);
+                var randomSpeed = RNG.NextSingle(200, 800);
+
+                circle.Scale = new Vector2(randomScale);
+                circle.MoveTo(Vector2.Zero).MoveTo(randomVelocity * 80, randomSpeed, Easing.OutQuint);
+                circle.FadeIn().Delay(randomSpeed - 100).FadeOutFromOne(100);
+            }
+        }
     }
 }

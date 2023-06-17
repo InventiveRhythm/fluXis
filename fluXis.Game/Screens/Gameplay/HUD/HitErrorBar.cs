@@ -25,9 +25,9 @@ public partial class HitErrorBar : GameplayHUDElement
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
-        Margin = new MarginPadding { Top = 50 };
         AutoSizeAxes = Axes.Y;
         Width = 280;
+        Y = 50;
 
         screen.Performance.OnHitStatAdded += AddHit;
 
