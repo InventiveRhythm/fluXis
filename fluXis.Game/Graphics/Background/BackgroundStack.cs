@@ -91,6 +91,12 @@ public partial class BackgroundStack : CompositeDrawable
         backgroundPulse = config.GetBindable<bool>(FluXisSetting.BackgroundPulse);
     }
 
+    protected override void LoadComplete()
+    {
+        blur = 0.01f;
+        AddBackgroundFromMap(null);
+    }
+
     public void SetDim(float alpha, float duration = 200) => backgroundDim.FadeTo(alpha, duration);
 
     public void SetBlur(float blur, float duration = 200)
