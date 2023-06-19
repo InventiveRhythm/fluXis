@@ -26,6 +26,7 @@ public partial class SkinManager : Component
 
     public Skin CurrentSkin { get; private set; }
     public string SkinFolder { get; private set; } = "Default";
+    public bool CanChangeSkin { get; set; } = true;
 
     private Bindable<string> skinName;
 
@@ -52,10 +53,30 @@ public partial class SkinManager : Component
         skinName = config.GetBindable<string>(FluXisSetting.SkinName);
     }
 
+    public void UpdateAndSave(Skin newSkin)
+    {
+        CurrentSkin = newSkin;
+
+        var json = JsonConvert.SerializeObject(CurrentSkin, Formatting.Indented);
+        var path = $"{SkinFolder}/skin.json";
+        skinStorage.Delete(path);
+        var stream = skinStorage.GetStream(path, FileAccess.Write);
+        var writer = new StreamWriter(stream);
+        writer.Write(json);
+        writer.Flush();
+        stream.Flush();
+    }
+
     protected override void Update()
     {
         if (skinName.Value != SkinFolder) // i dont know why normal bindables dont work
         {
+            if (!CanChangeSkin)
+            {
+                skinName.Value = SkinFolder;
+                return;
+            }
+
             SkinFolder = skinName.Value;
             loadConfig();
         }

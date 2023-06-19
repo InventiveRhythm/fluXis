@@ -23,6 +23,7 @@ using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
+using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
 using fluXis.Resources;
 using osu.Framework.Allocation;
@@ -166,6 +167,26 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         Fluxel.Close();
         return base.OnExiting();
+    }
+
+    public void OpenSkinEditor()
+    {
+        if (ScreenStack.CurrentScreen is not MenuScreen)
+        {
+            Notifications.Post(ScreenStack.CurrentScreen is SkinEditor
+                ? "You are already in the Skin editor."
+                : "You can only open the Skin editor from the main menu.");
+            return;
+        }
+
+        if (SkinManager.SkinFolder == "Default")
+        {
+            Notifications.Post("You can't edit the Default skin.");
+            return;
+        }
+
+        Settings.Hide();
+        ScreenStack.Push(new SkinEditor());
     }
 
     public void NextSong() => changeSong(1);

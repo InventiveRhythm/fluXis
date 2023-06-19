@@ -96,6 +96,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             case FluXisKeybind.ToggleSettings:
                 Settings.ToggleVisibility();
                 return true;
+
+            case FluXisKeybind.OpenSkinEditor:
+                OpenSkinEditor();
+                return true;
         }
 
         if (ScreenStack.AllowMusicControl)

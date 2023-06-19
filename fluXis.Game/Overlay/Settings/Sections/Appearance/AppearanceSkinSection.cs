@@ -11,7 +11,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
     public override string Title => "Skin";
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skinManager)
+    private void load(SkinManager skinManager, FluXisGameBase gameBase)
     {
         AddRange(new Drawable[]
         {
@@ -24,8 +24,8 @@ public partial class AppearanceSkinSection : SettingsSubSection
             new SettingsButton
             {
                 Label = "Open Skin editor",
-                Enabled = false,
-                ButtonText = "Open"
+                ButtonText = "Open",
+                Action = gameBase.OpenSkinEditor
             },
             new SettingsButton
             {
