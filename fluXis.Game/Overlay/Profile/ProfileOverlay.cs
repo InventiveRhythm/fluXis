@@ -347,7 +347,10 @@ public partial class ProfileOverlay : Container
         [Resolved]
         private NotificationOverlay notifications { get; set; }
 
-        private bool canEdit => Fluxel.LoggedInUser.ID == User.ID;
+        [Resolved]
+        private Fluxel fluxel { get; set; }
+
+        private bool canEdit => fluxel.LoggedInUser.ID == User.ID;
 
         private Container content;
         private SpriteIcon icon;
@@ -400,7 +403,7 @@ public partial class ProfileOverlay : Container
 
                     byte[] data = File.ReadAllBytes(file.FullName);
 
-                    var request = new WebRequest($"{APIConstants.APIUrl}/account/update/avatar");
+                    var request = new WebRequest($"{fluxel.Endpoint.APIUrl}/account/update/avatar");
                     request.AllowInsecureRequests = true;
                     request.AddHeader("Authorization", $"{config.Get<string>(FluXisSetting.Token)}");
                     request.AddFile("avatar", data);
@@ -472,7 +475,10 @@ public partial class ProfileOverlay : Container
         [Resolved]
         private NotificationOverlay notifications { get; set; }
 
-        private bool canEdit => Fluxel.LoggedInUser.ID == User.ID;
+        [Resolved]
+        private Fluxel fluxel { get; set; }
+
+        private bool canEdit => fluxel.LoggedInUser.ID == User.ID;
 
         private Container content;
         private SpriteIcon icon;
@@ -529,7 +535,7 @@ public partial class ProfileOverlay : Container
 
                     byte[] data = File.ReadAllBytes(file.FullName);
 
-                    var request = new WebRequest($"{APIConstants.APIUrl}/account/update/banner");
+                    var request = new WebRequest($"{fluxel.Endpoint.APIUrl}/account/update/banner");
                     request.AllowInsecureRequests = true;
                     request.AddHeader("Authorization", $"{config.Get<string>(FluXisSetting.Token)}");
                     request.AddFile("banner", data);

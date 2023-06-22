@@ -20,6 +20,9 @@ public partial class RegisterOverlay : Container
     [Resolved]
     private FluXisConfig config { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private FillFlowContainer entry;
     private FillFlowContainer form;
     private ClickableContainer loadingOverlay;
@@ -199,14 +202,14 @@ public partial class RegisterOverlay : Container
             }
         };
 
-        Fluxel.RegisterListener<APIRegisterResponse>(EventType.Register, onRegister);
+        fluxel.RegisterListener<APIRegisterResponse>(EventType.Register, onRegister);
     }
 
     private void register()
     {
-        if (!Fluxel.IsConnected)
+        if (fluxel.Status == ConnectionStatus.Online)
         {
-            notifications.PostError("You are not connected to any server.");
+            notifications.PostError("Already logged in!");
             return;
         }
 
@@ -230,7 +233,7 @@ public partial class RegisterOverlay : Container
             return;
         }
 
-        Fluxel.SendPacket(new RegisterPacket
+        fluxel.SendPacketAsync(new RegisterPacket
         {
             Username = username.Text,
             Email = email.Text,
@@ -242,8 +245,8 @@ public partial class RegisterOverlay : Container
     {
         if (response.Status == 200)
         {
-            Fluxel.LoggedInUser = response.Data.User;
-            Fluxel.Token = response.Data.Token;
+            fluxel.LoggedInUser = response.Data.User;
+            // Fluxel.Token = response.Data.Token;
             config.SetValue(FluXisSetting.Token, response.Data.Token);
             Hide();
         }

@@ -8,9 +8,11 @@ namespace fluXis.Game.Integration;
 public abstract class Discord
 {
     private static DiscordRpcClient client;
+    private static Fluxel fluxel;
 
-    public static void Init()
+    public static void Init(Fluxel api)
     {
+        fluxel = api;
         client = new DiscordRpcClient("975141679583604767");
         client.Initialize();
         client.OnReady += (_, _) => Update("In the menus", "Idle", "menu");
@@ -31,11 +33,11 @@ public abstract class Discord
             LargeImageText = $"fluXis {FluXisGameBase.VersionString}"
         };
 
-        APIUserShort user = Fluxel.LoggedInUser;
+        APIUserShort user = fluxel?.LoggedInUser;
 
         if (user != null)
         {
-            assets.SmallImageKey = user.AvatarUrl;
+            assets.SmallImageKey = user.GetAvatarUrl(fluxel.Endpoint);
             assets.SmallImageText = user.Username;
         }
 

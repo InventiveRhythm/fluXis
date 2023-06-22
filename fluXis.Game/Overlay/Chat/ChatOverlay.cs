@@ -14,6 +14,9 @@ namespace fluXis.Game.Overlay.Chat;
 
 public partial class ChatOverlay : Container
 {
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private FluXisTextBox textBox;
     private FillFlowContainer<DrawableChatMessage> flow;
     private BasicScrollContainer scroll;
@@ -104,7 +107,7 @@ public partial class ChatOverlay : Container
     {
         textBox.OnCommit += (sender, _) =>
         {
-            Fluxel.SendPacket(new ChatMessagePacket
+            fluxel.SendPacketAsync(new ChatMessagePacket
             {
                 Channel = "general",
                 Content = sender.Text
@@ -113,7 +116,7 @@ public partial class ChatOverlay : Container
             sender.Text = "";
         };
 
-        Fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
+        fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
         {
             Schedule(() =>
             {

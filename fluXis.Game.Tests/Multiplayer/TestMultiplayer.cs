@@ -3,6 +3,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Notification;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -11,6 +12,9 @@ namespace fluXis.Game.Tests.Multiplayer;
 
 public partial class TestMultiplayer : FluXisTestScene
 {
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private readonly TextFlowContainer textFlow;
     private readonly FillFlowContainer<Container> players;
 
@@ -28,10 +32,10 @@ public partial class TestMultiplayer : FluXisTestScene
 
     public TestMultiplayer()
     {
-        Fluxel.Reset();
-        Fluxel.RegisterListener<int>(EventType.MultiplayerCreateLobby, onLobbyCreate);
-        Fluxel.RegisterListener<APIMultiplayerLobby>(EventType.MultiplayerJoinLobby, onLobbyJoin);
-        Fluxel.RegisterListener<APIMultiplayerLobby>(EventType.MultiplayerLobbyUpdate, onLobbyUpdate);
+        fluxel.Reset();
+        fluxel.RegisterListener<int>(EventType.MultiplayerCreateLobby, onLobbyCreate);
+        fluxel.RegisterListener<APIMultiplayerLobby>(EventType.MultiplayerJoinLobby, onLobbyJoin);
+        fluxel.RegisterListener<APIMultiplayerLobby>(EventType.MultiplayerLobbyUpdate, onLobbyUpdate);
 
         Add(textFlow = new TextFlowContainer
         {
@@ -55,9 +59,6 @@ public partial class TestMultiplayer : FluXisTestScene
         {
             var notifications = new NotificationOverlay();
 
-            Fluxel.Notifications = notifications;
-            Fluxel.Connect();
-
             Add(new LoginOverlay());
             Add(notifications);
         });
@@ -65,7 +66,7 @@ public partial class TestMultiplayer : FluXisTestScene
         AddStep("Create Lobby", () =>
         {
             Text = "Creating Lobby...";
-            Fluxel.SendPacket(new MultiplayerCreateLobbyPacket("Test Lobby", "password", 2));
+            fluxel.SendPacketAsync(new MultiplayerCreateLobbyPacket("Test Lobby", "password", 2));
         });
     }
 
@@ -80,7 +81,7 @@ public partial class TestMultiplayer : FluXisTestScene
 
         Text = $"Created Lobby with ID {response.Data}";
         Text = "Joining Lobby...";
-        Fluxel.SendPacket(new MultiplayerJoinLobbyPacket(response.Data, "password"));
+        fluxel.SendPacketAsync(new MultiplayerJoinLobbyPacket(response.Data, "password"));
     }
 
     private void onLobbyJoin(FluxelResponse<APIMultiplayerLobby> response)

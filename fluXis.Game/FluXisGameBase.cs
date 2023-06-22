@@ -12,6 +12,7 @@ using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Toolbar;
@@ -64,6 +65,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public LightController LightController;
     public SkinManager SkinManager;
     public ImportManager ImportManager;
+    public Fluxel Fluxel;
 
     public Action OnSongChanged;
 
@@ -88,6 +90,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Realm = new FluXisRealm(storage));
         dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(MapStore = new MapStore(storage, Realm));
+        dependencies.Cache(Fluxel = new Fluxel(Config, getApiEndpoint()));
 
         LoadComponent(ImportManager = new ImportManager());
         dependencies.Cache(ImportManager);
@@ -132,6 +135,23 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);
+    }
+
+    private APIEndpointConfig getApiEndpoint()
+    {
+        return Config.Get<bool>(FluXisSetting.UseDebugServer)
+            ? new APIEndpointConfig
+            {
+                APIUrl = "http://localhost:2434",
+                WebsocketUrl = "ws://localhost:2435",
+                WebsiteRootUrl = "https://fluxis.foxes4life.net"
+            }
+            : new APIEndpointConfig
+            {
+                APIUrl = "https://api.fluxis.foxes4life.net",
+                WebsocketUrl = "wss://fluxel.foxes4life.net",
+                WebsiteRootUrl = "https://fluxis.foxes4life.net"
+            };
     }
 
     protected void InitFonts()

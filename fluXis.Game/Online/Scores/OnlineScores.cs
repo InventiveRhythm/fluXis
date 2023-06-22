@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using fluXis.Game.Online.API;
 using fluXis.Game.Scoring;
-using Newtonsoft.Json;
-using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.Scores;
 
 public class OnlineScores
 {
-    public static async void UploadScore(Performance performance, Action<APIResponse<dynamic>> callback)
+    public static void UploadScore(Performance performance, Action<APIResponse<dynamic>> callback)
     {
-        if (Fluxel.Fluxel.Token == null)
+        /*if (Fluxel.Fluxel.Token == null)
         {
             callback(new APIResponse<dynamic>(401, "No token", null));
             return;
@@ -43,6 +39,6 @@ public class OnlineScores
         req.Method = HttpMethod.Post;
         req.AddRaw(JsonConvert.SerializeObject(score));
         await req.PerformAsync();
-        callback(JsonConvert.DeserializeObject<APIResponse<dynamic>>(req.GetResponseString()));
+        callback(JsonConvert.DeserializeObject<APIResponse<dynamic>>(req.GetResponseString()));*/
     }
 }

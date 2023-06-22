@@ -5,6 +5,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notification;
@@ -55,6 +56,9 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private AudioClock clock { get; set; }
+
+    [Resolved]
+    private Fluxel fluxel { get; set; }
 
     private Container content;
     private FluXisSpriteText fluXisText;
@@ -246,7 +250,7 @@ public partial class MenuScreen : FluXisScreen
                             new MenuIconButton
                             {
                                 Icon = FontAwesome.Solid.Globe,
-                                Action = () => host.OpenUrlExternally("https://fluxis.foxes4life.net"),
+                                Action = () => host.OpenUrlExternally(fluxel.Endpoint.WebsiteRootUrl),
                                 Text = "Website"
                             }
                         }
@@ -254,8 +258,6 @@ public partial class MenuScreen : FluXisScreen
                 }
             }
         };
-
-        Schedule(() => login.Show());
 
         maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
     }
@@ -283,6 +285,7 @@ public partial class MenuScreen : FluXisScreen
                 game.Toolbar.ShowToolbar.Value = true;
                 splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
                 showMenu(600);
+                login.Show();
             });
 
             pressAnyKeyText.FadeOut(600).MoveToY(0, 800, Easing.InQuint);

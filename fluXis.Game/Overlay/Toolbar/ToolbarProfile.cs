@@ -20,6 +20,9 @@ public partial class ToolbarProfile : Container
     [Resolved]
     private LoginOverlay loginOverlay { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private Container avatarContainer;
     private DrawableAvatar avatar;
     private FluXisSpriteText username;
@@ -32,7 +35,7 @@ public partial class ToolbarProfile : Container
         AutoSizeAxes = Axes.X;
         Padding = new MarginPadding { Horizontal = 10 };
 
-        APIUserShort user = Fluxel.LoggedInUser;
+        APIUserShort user = fluxel.LoggedInUser;
 
         Children = new Drawable[]
         {
@@ -80,7 +83,7 @@ public partial class ToolbarProfile : Container
             RelativeSizeAxes = Axes.Both,
         }, avatarContainer.Add);
 
-        Fluxel.OnUserLoggedIn += updateUser;
+        fluxel.OnUserLoggedIn += updateUser;
     }
 
     private void updateUser(APIUserShort user)
@@ -93,13 +96,13 @@ public partial class ToolbarProfile : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (Fluxel.LoggedInUser == null)
+        if (fluxel.LoggedInUser == null)
         {
             loginOverlay.Show();
         }
         else
         {
-            profileOverlay.UpdateUser(Fluxel.LoggedInUser.ID);
+            profileOverlay.UpdateUser(fluxel.LoggedInUser.ID);
             profileOverlay.ToggleVisibility();
         }
 

@@ -1,14 +1,10 @@
 using System;
-using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
-using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Account;
 using fluXis.Game.Overlay.Login.UI;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Register;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -25,7 +21,8 @@ public partial class LoginOverlay : Container
     [Resolved]
     private RegisterOverlay register { get; set; }
 
-    private Bindable<string> tokenBind;
+    [Resolved]
+    private Fluxel fluxel { get; set; }
 
     private LoginContent loginContainer;
     private FluXisSpriteText loadingText;
@@ -36,7 +33,7 @@ public partial class LoginOverlay : Container
     private ClickableContainer content;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
@@ -105,11 +102,35 @@ public partial class LoginOverlay : Container
             }
         };
 
-        Fluxel.RegisterListener<string>(EventType.Token, onAuth);
-        Fluxel.RegisterListener<APIUserShort>(EventType.Login, onLogin);
+        fluxel.OnStatusChanged += updateStatus;
+        updateStatus(fluxel.Status);
+    }
 
-        tokenBind = config.GetBindable<string>(FluXisSetting.Token);
-        if (!string.IsNullOrEmpty(tokenBind?.Value)) sendLogin();
+    private void updateStatus(ConnectionStatus status)
+    {
+        Schedule(() =>
+        {
+            switch (status)
+            {
+                case ConnectionStatus.Online:
+                    Hide();
+                    break;
+
+                case ConnectionStatus.Connecting:
+                    switchToLoading();
+                    loadingText.Text = "Logging in...";
+                    loadingText.FadeIn(200);
+                    break;
+
+                case ConnectionStatus.Failing:
+                    setLoadingText("Failed to connect to server...", () => { });
+                    break;
+
+                case ConnectionStatus.Offline:
+                    switchToLogin();
+                    break;
+            }
+        });
     }
 
     private void switchToLogin()
@@ -139,58 +160,10 @@ public partial class LoginOverlay : Container
 
         switchToLoading();
 
-        if (Fluxel.IsConnected)
-        {
-            loadingText.Text = "Logging in...";
-            loadingText.FadeIn(200).OnComplete(_ => Fluxel.SendPacket(new AuthPacket(username.Text, password.Text)));
-        }
+        if (fluxel.Status != ConnectionStatus.Online)
+            fluxel.Login(username.Text, password.Text);
         else
-        {
-            setLoadingText("Not connected to any server!", switchToLogin);
-        }
-    }
-
-    private void onAuth(FluxelResponse<string> response)
-    {
-        if (response.Status == 200)
-        {
-            setLoadingText("Getting user data...", () => Fluxel.SendPacket(new LoginPacket(response.Data)));
-            Fluxel.Token = response.Data;
-
-            if (tokenBind != null)
-                tokenBind.Value = response.Data;
-        }
-        else setLoadingText(response.Message, switchToLogin);
-    }
-
-    private void sendLogin()
-    {
-        switchToLoading();
-        loginContainer.Alpha = 0;
-        Fluxel.Token = tokenBind.Value;
-        setLoadingText("Logging in...", () => Fluxel.SendPacket(new LoginPacket(tokenBind.Value)));
-    }
-
-    private void onLogin(FluxelResponse<APIUserShort> response)
-    {
-        if (response.Status == 200)
-        {
-            Fluxel.LoggedInUser = response.Data;
-            setLoadingText("Logged in!", Hide);
-        }
-        else setLoadingText(response.Message, switchToLogin);
-    }
-
-    private void onRegister(FluxelResponse<APIRegisterResponse> response)
-    {
-        if (response.Status == 200)
-        {
-            Fluxel.LoggedInUser = response.Data.User;
-            Fluxel.Token = response.Data.Token;
-            tokenBind.Value = response.Data.Token;
-            setLoadingText("Registered!", Hide);
-        }
-        else setLoadingText(response.Message, () => { });
+            setLoadingText("You are already logged in???", switchToLogin);
     }
 
     private void setLoadingText(string text, Action onComplete)
@@ -209,6 +182,9 @@ public partial class LoginOverlay : Container
 
     public override void Show()
     {
+        if (fluxel.Status == ConnectionStatus.Online)
+            return;
+
         this.FadeIn(200);
         content.ResizeHeightTo(160, 400, Easing.OutQuint);
     }

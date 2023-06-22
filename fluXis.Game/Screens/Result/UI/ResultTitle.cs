@@ -3,6 +3,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -11,12 +12,20 @@ namespace fluXis.Game.Screens.Result.UI;
 
 public partial class ResultTitle : Container
 {
+    private readonly RealmMap map;
+
     public ResultTitle(RealmMap map)
+    {
+        this.map = map;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(Fluxel fluxel)
     {
         AutoSizeAxes = Axes.Y;
         RelativeSizeAxes = Axes.X;
 
-        APIUserShort user = Fluxel.LoggedInUser;
+        APIUserShort user = fluxel.LoggedInUser;
 
         InternalChild = new GridContainer
         {

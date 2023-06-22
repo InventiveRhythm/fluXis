@@ -10,6 +10,12 @@ namespace fluXis.Game.Online;
 public class UserCache
 {
     private static readonly Dictionary<int, APIUser> users = new();
+    private static Fluxel.Fluxel fluxel;
+
+    public static void Init(Fluxel.Fluxel api)
+    {
+        fluxel = api;
+    }
 
     public static APIUser GetUser(int id)
     {
@@ -25,7 +31,7 @@ public class UserCache
     {
         try
         {
-            var req = new WebRequest($"{APIConstants.APIUrl}/user/{id}");
+            var req = new WebRequest($"{fluxel.Endpoint.APIUrl}/user/{id}");
             req.AllowInsecureRequests = true;
             req.Perform();
             APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(req.GetResponseString());

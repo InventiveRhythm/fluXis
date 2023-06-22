@@ -36,6 +36,9 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
     private readonly Performance performance;
@@ -95,7 +98,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background2
                     },
-                    new DrawableBanner(Fluxel.LoggedInUser)
+                    new DrawableBanner(fluxel.LoggedInUser)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,

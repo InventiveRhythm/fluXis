@@ -12,12 +12,10 @@ namespace fluXis.Game.Tests.Online;
 public partial class TestChat : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(NotificationOverlay notifications, LoginOverlay login)
+    private void load(NotificationOverlay notifications, LoginOverlay login, Fluxel fluxel)
     {
         Add(login);
         Add(notifications);
-        Fluxel.Notifications = notifications;
-        Fluxel.Connect();
 
         var flow = new FillFlowContainer
         {
@@ -26,7 +24,7 @@ public partial class TestChat : FluXisTestScene
 
         Add(flow);
 
-        Fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
+        fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
         {
             Schedule(() =>
                 flow.Add(new SpriteText
@@ -36,7 +34,7 @@ public partial class TestChat : FluXisTestScene
         });
 
         AddStep("Show login", login.Show);
-        AddStep("Send message", () => Fluxel.SendPacket(new ChatMessagePacket
+        AddStep("Send message", () => fluxel.SendPacketAsync(new ChatMessagePacket
         {
             Channel = "general",
             Content = "test"

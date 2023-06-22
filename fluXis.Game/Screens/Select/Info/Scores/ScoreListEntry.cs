@@ -30,6 +30,9 @@ public partial class ScoreListEntry : Container, IHasTooltip
     [Resolved]
     private Storage storage { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     public ScoreList ScoreList { get; set; }
 
     private readonly RealmScore score;
@@ -112,7 +115,7 @@ public partial class ScoreListEntry : Container, IHasTooltip
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = Fluxel.LoggedInUser?.Username ?? "Player",
+                                    Text = fluxel.LoggedInUser?.Username ?? "Player",
                                     FontSize = 28,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
@@ -191,7 +194,7 @@ public partial class ScoreListEntry : Container, IHasTooltip
             }
         };
 
-        LoadComponentAsync(new DrawableBanner(Fluxel.LoggedInUser)
+        LoadComponentAsync(new DrawableBanner(fluxel.LoggedInUser)
         {
             RelativeSizeAxes = Axes.Both,
             Depth = 1,
@@ -199,7 +202,7 @@ public partial class ScoreListEntry : Container, IHasTooltip
             Origin = Anchor.Centre
         }, bannerContainer.Add);
 
-        LoadComponentAsync(new DrawableAvatar(Fluxel.LoggedInUser)
+        LoadComponentAsync(new DrawableAvatar(fluxel.LoggedInUser)
         {
             RelativeSizeAxes = Axes.Both,
         }, avatarContainer.Add);
