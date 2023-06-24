@@ -194,20 +194,28 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     private void replaceMapSet(RealmMapSet oldSet, RealmMapSet newSet)
     {
-        Schedule(() =>
+        void action()
         {
+            if (!lookup.ContainsKey(oldSet))
+            {
+                Schedule(action); // do this in next frame
+                return;
+            }
+
             MapList.Remove(lookup[oldSet], false);
             Maps.Remove(oldSet);
             lookup.Remove(oldSet);
             changeSelection(1);
             addMapSet(newSet);
             Schedule(() => { Schedule(() => selectMapSet(newSet)); }); // <- this looks stupid and probably is, but it works
-        });
+        }
+
+        Schedule(action);
     }
 
     private void selectMapSet(RealmMapSet set)
     {
-        if (set == null)
+        if (set == null || !lookup.ContainsKey(set))
             return;
 
         RealmMap map = set.Maps.First();

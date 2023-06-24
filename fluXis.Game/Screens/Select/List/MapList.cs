@@ -18,9 +18,7 @@ public partial class MapList : BasicScrollContainer
     private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Middle;
 
     protected override bool IsDragging => base.IsDragging || isDragging;
-    public new FillFlowContainer<MapListEntry> Content => flow;
-
-    private FillFlowContainer<MapListEntry> flow;
+    public new FillFlowContainer<MapListEntry> Content { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -34,7 +32,7 @@ public partial class MapList : BasicScrollContainer
             Bottom = 10
         };
 
-        Child = flow = new FillFlowContainer<MapListEntry>
+        Child = Content = new FillFlowContainer<MapListEntry>
         {
             AutoSizeAxes = Axes.Y,
             RelativeSizeAxes = Axes.X,
@@ -45,6 +43,17 @@ public partial class MapList : BasicScrollContainer
     public void AddMap(MapListEntry entry)
     {
         Content.Add(entry);
+    }
+
+    public override bool Remove(Drawable drawable, bool disposeImmediately)
+    {
+        if (drawable is MapListEntry entry)
+        {
+            Content.Remove(entry, true);
+            return true;
+        }
+
+        return base.Remove(drawable, disposeImmediately);
     }
 
     public void ScrollTo(MapListEntry entry)
