@@ -1,4 +1,3 @@
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
@@ -7,8 +6,7 @@ namespace fluXis.Game.Graphics;
 
 public partial class LoadingIcon : SpriteIcon
 {
-    [BackgroundDependencyLoader]
-    private void load()
+    public LoadingIcon()
     {
         Size = new Vector2(100);
         Icon = FontAwesome.Solid.CircleNotch;

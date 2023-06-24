@@ -1,44 +1,45 @@
 using System;
+using System.Linq;
+using System.Net.Http;
+using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
 using fluXis.Game.Scoring;
+using Newtonsoft.Json;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.Scores;
 
 public class OnlineScores
 {
-    public static void UploadScore(Performance performance, Action<APIResponse<dynamic>> callback)
+    public static async void UploadScore(Fluxel.Fluxel fluxel, Performance performance, Action<APIResponse<APIScoreResponse>> callback)
     {
-        /*if (Fluxel.Fluxel.Token == null)
+        if (fluxel.Token == null)
         {
-            callback(new APIResponse<dynamic>(401, "No token", null));
+            callback(new APIResponse<APIScoreResponse>(401, "No token", null));
             return;
         }
 
-        var score = new APIScore
+        var score = new
         {
-            Score = performance.Score,
-            Accuracy = performance.Accuracy,
-            MaxCombo = performance.MaxCombo,
-            Judgements = new Dictionary<string, int>
-            {
-                { "flawless", performance.Judgements.TryGetValue(Judgement.Flawless, out var flawless) ? flawless : 0 },
-                { "perfect", performance.Judgements.TryGetValue(Judgement.Perfect, out var perfect) ? perfect : 0 },
-                { "great", performance.Judgements.TryGetValue(Judgement.Great, out var great) ? great : 0 },
-                { "alright", performance.Judgements.TryGetValue(Judgement.Alright, out var alright) ? alright : 0 },
-                { "okay", performance.Judgements.TryGetValue(Judgement.Okay, out var okay) ? okay : 0 },
-                { "miss", performance.Judgements.TryGetValue(Judgement.Miss, out var miss) ? miss : 0 }
-            },
-            HitStats = performance.HitStats,
-            MapID = performance.MapID,
-            MapHash = performance.MapHash,
-            PlayerID = Fluxel.Fluxel.LoggedInUser?.ID ?? -1
+            hash = performance.MapHash,
+            mods = string.Join(",", performance.Mods.Select(m => m.Acronym)),
+            scrollSpeed = fluxel.Config.Get<float>(FluXisSetting.ScrollSpeed),
+            maxCombo = performance.MaxCombo,
+            flawless = performance.GetJudgementCount(Judgement.Flawless),
+            perfect = performance.GetJudgementCount(Judgement.Perfect),
+            great = performance.GetJudgementCount(Judgement.Great),
+            alright = performance.GetJudgementCount(Judgement.Alright),
+            okay = performance.GetJudgementCount(Judgement.Okay),
+            miss = performance.GetJudgementCount(Judgement.Miss)
         };
 
-        var req = new WebRequest($"{APIConstants.APIUrl}/score");
-        req.AddHeader("Authorization", Fluxel.Fluxel.Token);
+        var req = new WebRequest($"{fluxel.Endpoint.APIUrl}/scores/upload");
+        req.AddHeader("Authorization", fluxel.Token);
+        req.AllowInsecureRequests = true;
         req.Method = HttpMethod.Post;
         req.AddRaw(JsonConvert.SerializeObject(score));
         await req.PerformAsync();
-        callback(JsonConvert.DeserializeObject<APIResponse<dynamic>>(req.GetResponseString()));*/
+
+        callback(JsonConvert.DeserializeObject<APIResponse<APIScoreResponse>>(req.GetResponseString()));
     }
 }

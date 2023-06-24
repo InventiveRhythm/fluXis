@@ -19,7 +19,6 @@ using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -44,14 +43,16 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
     private readonly Performance performance;
     private readonly RealmScore score;
 
-    private readonly bool showHitPoints;
+    private ResultsRatingInfo ratingInfo;
 
-    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool showHitPoints = true, bool saveScore = true)
+    private readonly bool showPlayData;
+
+    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool showPlayData = true, bool saveScore = true)
     {
         this.map = map;
         this.mapInfo = mapInfo;
         this.performance = performance;
-        this.showHitPoints = showHitPoints;
+        this.showPlayData = showPlayData;
 
         if (performance.IsRanked && saveScore)
         {
@@ -64,8 +65,6 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                 Judgements = new RealmJudgements(performance.Judgements),
                 Mods = string.Join(' ', performance.Mods.Select(m => m.Acronym))
             };
-
-            OnlineScores.UploadScore(performance, res => Logger.Log(res.Message));
         }
     }
 
@@ -115,11 +114,12 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         Width = 740,
                         Direction = FillDirection.Vertical,
                         Margin = new MarginPadding(20),
-                        Children = new Drawable[]
+                        Children = new[]
                         {
                             new ResultTitle(map),
                             new ResultScore(performance),
-                            showHitPoints ? new ResultHitPoints(mapInfo, performance) : new Container()
+                            showPlayData ? new ResultHitPoints(mapInfo, performance) : Empty(),
+                            ratingInfo = new ResultsRatingInfo(showPlayData)
                         }
                     }
                 }
@@ -129,9 +129,10 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
         Discord.Update("Viewing Results", "", "results");
 
         if (score != null && !map.MapSet.Managed)
+        {
             realm.RunWrite(r => r.Add(score));
-
-        // Logger.Log(JsonConvert.SerializeObject(performance, Formatting.None));
+            OnlineScores.UploadScore(fluxel, performance, res => ratingInfo.ScoreResponse = res);
+        }
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)

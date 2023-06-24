@@ -18,10 +18,9 @@ namespace fluXis.Game.Online.Fluxel;
 
 public partial class Fluxel : Component
 {
-    private readonly FluXisConfig config;
+    public FluXisConfig Config { get; }
     public APIEndpointConfig Endpoint { get; }
 
-    private string token;
     private string username;
     private string password;
     private double waitTime;
@@ -50,7 +49,7 @@ public partial class Fluxel : Component
 
     public Action<ConnectionStatus> OnStatusChanged { get; set; }
 
-    public bool HasValidCredentials => !string.IsNullOrEmpty(token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
+    public bool HasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
 
     public APIUserShort LoggedInUser
     {
@@ -69,13 +68,14 @@ public partial class Fluxel : Component
     }
 
     public string LastError { get; private set; }
+    public string Token { get; private set; }
 
     public Fluxel(FluXisConfig config, APIEndpointConfig endpoint)
     {
-        this.config = config;
+        this.Config = config;
         Endpoint = endpoint;
 
-        token = config.Get<string>(FluXisSetting.Token);
+        Token = config.Get<string>(FluXisSetting.Token);
 
         var thread = new Thread(loop) { IsBackground = true };
         thread.Start();
@@ -129,10 +129,10 @@ public partial class Fluxel : Component
                 Logger.Log("Logging in...", LoggingTarget.Network);
                 waitTime = 5;
 
-                if (string.IsNullOrEmpty(token))
+                if (string.IsNullOrEmpty(Token))
                     await SendPacket(new AuthPacket(username, password));
                 else
-                    await SendPacket(new LoginPacket(token));
+                    await SendPacket(new LoginPacket(Token));
             }
 
             // ReSharper disable once AsyncVoidLambda
@@ -257,11 +257,11 @@ public partial class Fluxel : Component
     {
         await connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Logout Requested", CancellationToken.None);
         LoggedInUser = null;
-        token = null;
+        Token = null;
         username = null;
         password = null;
 
-        config.GetBindable<string>(FluXisSetting.Token).Value = "";
+        Config.GetBindable<string>(FluXisSetting.Token).Value = "";
     }
 
     public async Task Send(string message)
@@ -313,10 +313,10 @@ public partial class Fluxel : Component
     {
         if (response.Status == 200)
         {
-            token = response.Data;
-            config.GetBindable<string>(FluXisSetting.Token).Value = token;
+            Token = response.Data;
+            Config.GetBindable<string>(FluXisSetting.Token).Value = Token;
             waitTime = 5; // reset wait time for login
-            SendPacketAsync(new LoginPacket(token));
+            SendPacketAsync(new LoginPacket(Token));
         }
         else
         {
@@ -343,8 +343,8 @@ public partial class Fluxel : Component
 
     private void onRegisterResponse(FluxelResponse<APIRegisterResponse> response)
     {
-        token = response.Data.Token;
-        config.GetBindable<string>(FluXisSetting.Token).Value = token;
+        Token = response.Data.Token;
+        Config.GetBindable<string>(FluXisSetting.Token).Value = Token;
         LoggedInUser = response.Data.User;
         registering = false;
         Status = ConnectionStatus.Online;
