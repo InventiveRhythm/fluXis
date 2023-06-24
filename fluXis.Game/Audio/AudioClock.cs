@@ -52,15 +52,24 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public bool Looping
     {
-        get => track.Value.Looping;
-        set => track.Value.Looping = value;
+        get => track.Value?.Looping ?? false;
+        set
+        {
+            if (track.Value == null)
+                return;
+
+            track.Value.Looping = value;
+        }
     }
 
     public double RestartPoint
     {
-        get => track.Value.RestartPoint;
+        get => track.Value?.RestartPoint ?? 0;
         set
         {
+            if (track.Value == null)
+                return;
+
             track.Value.Looping = true;
             track.Value.RestartPoint = value;
         }
@@ -244,9 +253,18 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     #region Volume
 
-    public Bindable<double> VolumeBindable => Track.Value.Volume;
+    public double Volume
+    {
+        get => track.Value?.Volume.Value ?? 0;
+        set
+        {
+            if (track.Value == null) return;
 
-    public void FadeTo(double volume, double duration = 0, Easing easing = Easing.None) => this.TransformBindableTo(VolumeBindable, volume, duration, easing);
+            track.Value.Volume.Value = value;
+        }
+    }
+
+    public void FadeTo(double volume, double duration = 0, Easing easing = Easing.None) => this.TransformTo(nameof(Volume), volume, duration, easing);
     public void FadeIn(double duration = 0, Easing easing = Easing.None) => FadeTo(1, duration, easing);
     public void FadeOut(double duration = 0, Easing easing = Easing.None) => FadeTo(0, duration, easing);
 
