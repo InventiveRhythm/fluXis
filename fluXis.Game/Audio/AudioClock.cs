@@ -143,7 +143,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public override void Start()
     {
-        Schedule(() => ClearTransforms());
+        scheduleTimeTransformRemoval();
         underlying.Start();
     }
 
@@ -151,7 +151,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public override bool Seek(double position)
     {
-        Schedule(() => ClearTransforms());
+        scheduleTimeTransformRemoval();
         position = Math.Min(position, TrackLength);
         return underlying.Seek(position);
     }
@@ -165,6 +165,8 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         else
             TimeTo(time, 300, Easing.OutQuint);
     }
+
+    private void scheduleTimeTransformRemoval() => Schedule(() => Transforms.Where(t => t is TimeTransform).ToList().ForEach(RemoveTransform));
 
     public override void ResetSpeedAdjustments()
     {
