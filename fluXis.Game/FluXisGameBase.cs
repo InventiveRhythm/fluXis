@@ -91,6 +91,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(Notifications = new NotificationOverlay());
         dependencies.Cache(MapStore = new MapStore(storage, Realm));
         dependencies.Cache(Fluxel = new Fluxel(Config, getApiEndpoint()));
+        UserCache.Init(Fluxel);
 
         LoadComponent(ImportManager = new ImportManager());
         dependencies.Cache(ImportManager);

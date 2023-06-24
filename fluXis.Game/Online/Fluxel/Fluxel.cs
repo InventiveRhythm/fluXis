@@ -23,6 +23,7 @@ public partial class Fluxel : Component
 
     private string username;
     private string password;
+    private string email;
     private double waitTime;
     private bool registering;
 
@@ -134,6 +135,21 @@ public partial class Fluxel : Component
                 else
                     await SendPacket(new LoginPacket(Token));
             }
+            else
+            {
+                Logger.Log("Registering...", LoggingTarget.Network);
+                waitTime = 10;
+
+                if (string.IsNullOrEmpty(email))
+                    throw new Exception("Email is required for registration!");
+
+                await SendPacket(new RegisterPacket
+                {
+                    Username = username,
+                    Password = password,
+                    Email = email
+                });
+            }
 
             // ReSharper disable once AsyncVoidLambda
             var task = new Task(async () =>
@@ -239,18 +255,12 @@ public partial class Fluxel : Component
         await SendPacket(new AuthPacket(username, password));
     }
 
-    public async void Register(string username, string password, string email)
+    public void Register(string username, string password, string email)
     {
         this.username = username;
         this.password = password;
+        this.email = email;
         registering = true;
-
-        await SendPacket(new RegisterPacket
-        {
-            Username = username,
-            Password = password,
-            Email = email
-        });
     }
 
     public async void Logout()
@@ -343,6 +353,14 @@ public partial class Fluxel : Component
 
     private void onRegisterResponse(FluxelResponse<APIRegisterResponse> response)
     {
+        if (response.Status != 200)
+        {
+            Logout();
+            LastError = response.Message;
+            Status = ConnectionStatus.Failing;
+            return;
+        }
+
         Token = response.Data.Token;
         Config.GetBindable<string>(FluXisSetting.Token).Value = Token;
         LoggedInUser = response.Data.User;

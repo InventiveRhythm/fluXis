@@ -2,12 +2,12 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Account;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Register;
@@ -191,11 +191,20 @@ public partial class RegisterOverlay : Container
                     {
                         Alpha = 0,
                         RelativeSizeAxes = Axes.Both,
-                        Child = new Box
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Color4.Black,
-                            Alpha = 0
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = Color4.Black,
+                                Alpha = .5f
+                            },
+                            new LoadingIcon
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(50)
+                            }
                         }
                     }
                 }
@@ -203,6 +212,30 @@ public partial class RegisterOverlay : Container
         };
 
         fluxel.RegisterListener<APIRegisterResponse>(EventType.Register, onRegister);
+        fluxel.OnStatusChanged += onStatusChanged;
+    }
+
+    private void onStatusChanged(ConnectionStatus status)
+    {
+        Schedule(() =>
+        {
+            switch (status)
+            {
+                case ConnectionStatus.Online:
+                    loadingOverlay.FadeOut(200);
+                    Hide();
+                    break;
+
+                case ConnectionStatus.Connecting:
+                    loadingOverlay.FadeIn(200);
+                    break;
+
+                case ConnectionStatus.Offline:
+                case ConnectionStatus.Failing:
+                    loadingOverlay.FadeOut(200);
+                    break;
+            }
+        });
     }
 
     private void register()
@@ -212,8 +245,6 @@ public partial class RegisterOverlay : Container
             notifications.PostError("Already logged in!");
             return;
         }
-
-        loadingOverlay.FadeIn(200);
 
         if (string.IsNullOrEmpty(username.Text))
         {
@@ -233,28 +264,12 @@ public partial class RegisterOverlay : Container
             return;
         }
 
-        fluxel.SendPacketAsync(new RegisterPacket
-        {
-            Username = username.Text,
-            Email = email.Text,
-            Password = password.Text
-        });
+        fluxel.Register(username.Text, password.Text, email.Text);
     }
 
     private void onRegister(FluxelResponse<APIRegisterResponse> response)
     {
-        if (response.Status == 200)
-        {
-            fluxel.LoggedInUser = response.Data.User;
-            // Fluxel.Token = response.Data.Token;
-            config.SetValue(FluXisSetting.Token, response.Data.Token);
-            Hide();
-        }
-        else
-        {
-            loadingOverlay.FadeOut(200);
-            notifications.PostError(response.Message);
-        }
+        if (response.Status != 200) notifications.PostError(response.Message);
     }
 
     public override void Show()
