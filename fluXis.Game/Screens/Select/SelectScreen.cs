@@ -150,8 +150,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             lookup[set] = entry;
         }
 
-        if (!sets.Any())
-            noMapsText.FadeIn(500);
+        if (!sets.Any()) Schedule(() => noMapsText.FadeIn(500));
     }
 
     protected override void LoadComplete()
