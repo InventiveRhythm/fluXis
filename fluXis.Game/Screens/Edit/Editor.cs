@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -9,6 +10,7 @@ using fluXis.Game.Graphics.Context;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
@@ -27,6 +29,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.IO.Network;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -59,6 +62,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     [Resolved]
     private AudioClock audioClock { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private ITrackStore trackStore { get; set; }
 
     public RealmMap Map;
@@ -78,6 +84,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private EditorValues values;
 
     private DependencyContainer dependencies;
+    private MenuItem[] fileMenuItems;
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
@@ -142,10 +149,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 {
                     new("File")
                     {
-                        Items = new MenuItem[]
+                        Items = fileMenuItems = new MenuItem[]
                         {
-                            new("Save", Save),
+                            new("Save", () => Save()),
                             new("Export", Export),
+                            new("Upload", uploadSet),
                             new("Exit", TryExit)
                         }
                     },
@@ -351,21 +359,27 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
-    public void Save()
+    public bool Save(bool setStatus = true)
     {
         if (Map == null)
-            return;
+            return false;
+
+        if (Map.Status >= 100)
+        {
+            notifications.PostError("Map is from another game!");
+            return false;
+        }
 
         if (MapInfo.HitObjects.Count == 0)
         {
             notifications.PostError("Map has no hit objects!");
-            return;
+            return false;
         }
 
         if (MapInfo.TimingPoints.Count == 0)
         {
             notifications.PostError("Map has no timing points!");
-            return;
+            return false;
         }
 
         MapInfo.Sort();
@@ -402,7 +416,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             if (existingMap != null)
             {
                 var set = existingMap.MapSet;
-                set.SetStatus(-2);
+                if (setStatus) set.SetStatus(-2);
                 var prevFile = existingMap.MapSet.GetFileFromHash(existingMap.Hash);
 
                 if (prevFile == null)
@@ -486,6 +500,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         });
 
         notifications.Post("Saved!");
+        return true;
     }
 
     public void Export() => SendWipNotification();
@@ -582,5 +597,37 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             Hash = hash,
             Name = file.Name
         });
+    }
+
+    private void uploadSet()
+    {
+        switch (Map.Status)
+        {
+            case >= 100:
+                notifications.PostError("Map is from another game!");
+                return;
+        }
+
+        if (Map.OnlineID != -1)
+        {
+            notifications.PostError("This map is already uploaded!\nUpdating maps is not supported yet.");
+            return;
+        }
+
+        Map.MapSet.SetStatus(0);
+        if (!Save(false)) return;
+
+        var notification = new LoadingNotification();
+        var path = mapStore.Export(Map.MapSet, notification, false);
+        var buffer = File.ReadAllBytes(path);
+
+        var request = new WebRequest($"{fluxel.Endpoint.APIUrl}/maps/upload");
+        request.AllowInsecureRequests = true;
+        request.Method = HttpMethod.Post;
+        request.AddHeader("Authorization", fluxel.Token);
+        request.AddFile("file", buffer);
+        request.Perform();
+
+        Logger.Log($"Upload response: {request.GetResponseString()}", LoggingTarget.Network);
     }
 }

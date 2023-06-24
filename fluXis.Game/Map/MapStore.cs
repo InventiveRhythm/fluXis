@@ -115,7 +115,7 @@ public class MapStore
         return MapSets[rnd.Next(MapSets.Count)];
     }
 
-    public void Export(RealmMapSet set, LoadingNotification notification)
+    public string Export(RealmMapSet set, LoadingNotification notification, bool openFolder = true)
     {
         try
         {
@@ -141,12 +141,14 @@ public class MapStore
 
             archive.Dispose();
             notification.State = LoadingState.Loaded;
-            PathUtils.OpenFolder(folder);
+            if (openFolder) PathUtils.OpenFolder(folder);
+            return path;
         }
         catch (Exception e)
         {
             Logger.Error(e, "Could not export map");
             notification.State = LoadingState.Failed;
+            return "";
         }
     }
 }
