@@ -129,12 +129,17 @@ public class MapStore
             int max = set.Files.Count;
             int current = 0;
 
+            var fileNames = new List<string>();
+
             foreach (var file in set.Files)
             {
+                if ((file.Name.EndsWith(".fsc") && set.Maps.All(m => m.Hash != file.Hash)) || fileNames.Contains(file.Name)) continue;
+
                 var entry = archive.CreateEntry(file.Name);
                 using var stream = entry.Open();
                 using var fileStream = files.GetStream(file.GetPath());
                 fileStream.CopyTo(stream);
+                fileNames.Add(file.Name);
                 current++;
                 notification.Progress = (float)current / max;
             }

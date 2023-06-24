@@ -102,7 +102,7 @@ public class MapInfo
 
     public void Sort()
     {
-        HitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
+        HitObjects.Sort((a, b) => a.Time == b.Time ? a.Lane.CompareTo(b.Lane) : a.Time.CompareTo(b.Time));
         TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }

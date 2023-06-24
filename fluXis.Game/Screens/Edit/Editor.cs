@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +11,7 @@ using fluXis.Game.Graphics.Context;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.MenuBar;
@@ -84,7 +86,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private EditorValues values;
 
     private DependencyContainer dependencies;
-    private MenuItem[] fileMenuItems;
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
@@ -149,7 +150,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 {
                     new("File")
                     {
-                        Items = fileMenuItems = new MenuItem[]
+                        Items = new MenuItem[]
                         {
                             new("Save", () => Save()),
                             new("Export", Export),
@@ -399,6 +400,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         string json = JsonConvert.SerializeObject(MapInfo);
         string hash = MapUtils.GetHash(json);
 
+        if (hash == Map.Hash)
+        {
+            notifications.Post("Map is already up to date");
+            return true;
+        }
+
         // write to file
         string path = storage.GetFullPath($"files/{PathUtils.HashToPath(hash)}");
         string dir = Path.GetDirectoryName(path);
@@ -425,12 +432,31 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     return;
                 }
 
+                var toRemove = new List<RealmFile>();
+
                 foreach (var file in Map.MapSet.Files)
                 {
                     if (set.Files.Any(f => f.Hash == file.Hash))
                         continue;
 
+                    if (file.Name.EndsWith(".fsc"))
+                    {
+                        if (set.Maps.All(m => m.Hash != file.Hash))
+                        {
+                            toRemove.Add(file);
+                            continue;
+                        }
+                    }
+
                     set.Files.Add(file);
+                }
+
+                foreach (var file in toRemove)
+                {
+                    Map.MapSet.Files.Remove(file);
+
+                    var f = set.Files.FirstOrDefault(f => f.Hash == file.Hash);
+                    if (f != null) set.Files.Remove(f);
                 }
 
                 prevFile.Hash = hash;
@@ -614,6 +640,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             return;
         }
 
+        // check for duplicate diffs
+        var diffs = Map.MapSet.Maps.Select(m => m.Difficulty).ToList();
+        var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+
+        if (duplicate.Count > 0)
+        {
+            notifications.PostError($"Cannot upload mapset!\nDuplicate difficulty names found: {string.Join(", ", duplicate)}");
+            return;
+        }
+
         Map.MapSet.SetStatus(0);
         if (!Save(false)) return;
 
@@ -628,6 +664,30 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         request.AddFile("file", buffer);
         request.Perform();
 
-        Logger.Log($"Upload response: {request.GetResponseString()}", LoggingTarget.Network);
+        var json = request.GetResponseString();
+        var response = JsonConvert.DeserializeObject<APIResponse<APIMapSet>>(json);
+
+        if (response.Status != 200)
+        {
+            notifications.PostError(response.Message);
+            return;
+        }
+
+        realm.RunWrite(r =>
+        {
+            var set = r.Find<RealmMapSet>(Map.MapSet.ID);
+            set.OnlineID = Map.MapSet.OnlineID = response.Data.Id;
+            set.SetStatus(response.Data.Status);
+            Map.MapSet.SetStatus(response.Data.Status);
+
+            for (var index = 0; index < set.Maps.Count; index++)
+            {
+                var onlineMap = response.Data.Maps[index];
+                var map = set.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
+                var loadedMap = Map.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
+
+                map.OnlineID = loadedMap.OnlineID = onlineMap.Id;
+            }
+        });
     }
 }
