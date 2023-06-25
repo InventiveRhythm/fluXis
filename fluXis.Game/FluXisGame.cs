@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using fluXis.Game.Graphics;
+﻿using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Overlay.FPS;
@@ -121,8 +119,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
         return false;
     }
-
-    public void HandleDragDrop(IEnumerable<string> files) => ImportManager.ImportMultiple(files.ToArray());
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 

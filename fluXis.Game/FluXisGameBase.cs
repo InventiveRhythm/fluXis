@@ -170,6 +170,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         base.Exit();
     }
 
+    public void HandleDragDrop(string[] files) => ImportManager.ImportMultiple(files);
+    public void HandleDragDrop(string file) => ImportManager.Import(file);
+
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
