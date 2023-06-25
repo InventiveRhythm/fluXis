@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Configuration;
+using fluXis.Game.Mods;
 using fluXis.Game.Online.API;
 using fluXis.Game.Scoring;
 using Newtonsoft.Json;
@@ -16,6 +17,12 @@ public class OnlineScores
         if (fluxel.Token == null)
         {
             callback(new APIResponse<APIScoreResponse>(401, "No token", null));
+            return;
+        }
+
+        if (performance.Mods.Any(m => m is PausedMod))
+        {
+            callback(new APIResponse<APIScoreResponse>(400, "Score not submittable.", null));
             return;
         }
 

@@ -7,6 +7,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Scores;
 using fluXis.Game.Scoring;
@@ -133,6 +134,8 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
             realm.RunWrite(r => r.Add(score));
             OnlineScores.UploadScore(fluxel, performance, res => ratingInfo.ScoreResponse = res);
         }
+        else
+            ratingInfo.ScoreResponse = new APIResponse<APIScoreResponse>(400, "Score not submittable.", null);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)

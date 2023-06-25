@@ -16,6 +16,9 @@ public partial class ResultsRatingInfo : Container
     {
         set => Schedule(() =>
         {
+            if (!showPlayData)
+                return;
+
             loadingIcon.FadeOut(200);
             ratingContainer.FadeOut();
             text.FadeOut();
