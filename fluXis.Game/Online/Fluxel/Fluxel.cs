@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using fluXis.Game.Online.Fluxel.Packets.Account;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.Fluxel;
@@ -317,6 +319,15 @@ public partial class Fluxel : Component
     {
         if (connection is { State: WebSocketState.Open })
             connection?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
+    }
+
+    public WebRequest CreateAPIRequest(string url, HttpMethod method)
+    {
+        var request = new WebRequest($"{Endpoint.APIUrl}{url}");
+        request.AllowInsecureRequests = true;
+        request.Method = method;
+        request.AddHeader("Authorization", Token);
+        return request;
     }
 
     private void onAuthResponse(FluxelResponse<string> response)

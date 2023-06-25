@@ -1,47 +1,103 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
+using fluXis.Game.Online.API;
+using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Scoring;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
-public partial class ScoreList : Container
+public partial class ScoreList : GridContainer
 {
     [Resolved]
     private FluXisRealm realm { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     public SelectMapInfo MapInfo { get; set; }
 
     private RealmMap map;
+    private ScoreListType type = ScoreListType.Local;
 
-    private readonly FluXisSpriteText noScoresText;
-    private readonly BasicScrollContainer scrollContainer;
+    private FluXisSpriteText noScoresText;
+    private BasicScrollContainer scrollContainer;
+    private FillFlowContainer<ClickableText> typeSwitcher;
 
-    public ScoreList()
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
-
-        InternalChildren = new Drawable[]
+        RowDimensions = new[]
         {
-            noScoresText = new FluXisSpriteText
+            new Dimension(GridSizeMode.AutoSize),
+            new Dimension()
+        };
+
+        Content = new[]
+        {
+            new Drawable[]
             {
-                Text = "No scores yet!",
-                FontSize = 32,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Alpha = 0
+                typeSwitcher = new FillFlowContainer<ClickableText>
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(40),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Margin = new MarginPadding { Bottom = 10 },
+                    Children = new ClickableText[]
+                    {
+                        new()
+                        {
+                            ScoreList = this,
+                            Type = ScoreListType.Global
+                        },
+                        new()
+                        {
+                            ScoreList = this,
+                            Type = ScoreListType.Local
+                        }
+                    }
+                }
             },
-            scrollContainer = new BasicScrollContainer
+            new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                ScrollbarVisible = false
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        noScoresText = new FluXisSpriteText
+                        {
+                            Text = "No scores yet!",
+                            FontSize = 32,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Alpha = 0
+                        },
+                        scrollContainer = new BasicScrollContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            ScrollbarVisible = false
+                        }
+                    }
+                }
             }
         };
+
+        updateTabs();
     }
 
     public void Refresh()
@@ -50,21 +106,91 @@ public partial class ScoreList : Container
             return;
 
         SetMap(map);
+        updateTabs();
     }
+
+    private void updateTabs() => typeSwitcher.Children.ForEach(c => c.Selected = c.Type == type);
 
     public void SetMap(RealmMap map)
     {
+        if (!IsLoaded)
+        {
+            Schedule(() => SetMap(map));
+            return;
+        }
+
         scrollContainer.ScrollContent.Clear();
         this.map = map;
 
         List<RealmScore> scores = new();
-        realm?.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
-        {
-            if (s.MapID == map.ID)
-                scores.Add(s);
-        }));
 
-        scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
+        switch (type)
+        {
+            case ScoreListType.Local:
+                realm?.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
+                {
+                    if (s.MapID == map.ID)
+                        scores.Add(s);
+                }));
+                scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
+                break;
+
+            case ScoreListType.Global:
+                if (map.OnlineID == -1)
+                {
+                    noScoresText.Text = "Scores are not available for this map!";
+                    noScoresText.FadeTo(1, 200);
+                    return;
+                }
+
+                var request = fluxel.CreateAPIRequest($"/map/{map.OnlineID}/scores", HttpMethod.Get);
+                request.Perform();
+
+                var json = request.GetResponseString();
+                var rsp = JsonConvert.DeserializeObject<APIResponse<APIScores>>(json);
+
+                if (rsp.Status != 200)
+                {
+                    noScoresText.Text = "Something went wrong!";
+                    Schedule(() => noScoresText.FadeTo(1, 200));
+                    return;
+                }
+
+                if (map.Status != rsp.Data.Map.Status)
+                {
+                    map.MapSet.SetStatus(rsp.Data.Map.Status);
+                    realm?.RunWrite(r =>
+                    {
+                        var m = r.Find<RealmMap>(map.ID);
+                        m.MapSet.SetStatus(rsp.Data.Map.Status);
+                    });
+                }
+
+                rsp.Data.Scores.ForEach(s => scores.Add(new RealmScore(map)
+                {
+                    ID = default,
+                    OnlineID = map.OnlineID,
+                    Accuracy = s.Accuracy,
+                    Grade = s.Grade,
+                    Score = s.TotalScore,
+                    MaxCombo = s.MaxCombo,
+                    Judgements = new RealmJudgements(new Dictionary<Judgement, int>
+                    {
+                        { Judgement.Flawless, s.FlawlessCount },
+                        { Judgement.Perfect, s.PerfectCount },
+                        { Judgement.Great, s.GreatCount },
+                        { Judgement.Alright, s.AlrightCount },
+                        { Judgement.Okay, s.OkayCount },
+                        { Judgement.Miss, s.MissCount }
+                    }),
+                    Mods = s.Mods,
+                    MapID = map.ID,
+                    Date = DateTimeOffset.FromUnixTimeSeconds(s.Time)
+                }));
+
+                break;
+        }
+
         scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
 
         noScoresText.Text = map.MapSet.Managed ? "Scores are not available for this map!" : "No scores yet!";
@@ -80,4 +206,44 @@ public partial class ScoreList : Container
         entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children.Last().Y + scrollContainer.ScrollContent.Children.Last().Height + 5 : 0;
         scrollContainer.ScrollContent.Add(entry);
     }
+
+    private partial class ClickableText : ClickableContainer
+    {
+        public ScoreListType Type { get; set; }
+        public ScoreList ScoreList { get; set; }
+
+        public bool Selected
+        {
+            set => Schedule(() => text.FadeColour(value ? FluXisColors.Text : FluXisColors.Text2, 200));
+        }
+
+        private FluXisSpriteText text;
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            AutoSizeAxes = Axes.Both;
+            Child = text = new FluXisSpriteText
+            {
+                Text = Type.ToString(),
+                FontSize = 32,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Colour = FluXisColors.Text2,
+                Shadow = true
+            };
+
+            Action = () =>
+            {
+                ScoreList.type = Type;
+                ScoreList.Refresh();
+            };
+        }
+    }
+}
+
+public enum ScoreListType
+{
+    Local,
+    Global
 }

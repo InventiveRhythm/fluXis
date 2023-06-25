@@ -1,32 +1,60 @@
-using System.Collections.Generic;
-using fluXis.Game.Scoring;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API;
 
 public class APIScore
 {
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("user")]
+    public int UserId { get; set; }
+
+    [JsonProperty("map")]
+    public APIMapShort Map { get; set; }
+
+    [JsonProperty("time")]
+    public long Time { get; set; }
+
+    [JsonProperty("mode")]
+    public int Mode { get; set; }
+
+    [JsonProperty("mods")]
+    public string Mods { get; set; } = "";
+
+    [JsonProperty("pr")]
+    public double PerformanceRating { get; set; }
+
     [JsonProperty("score")]
-    public int Score { get; set; }
+    public int TotalScore { get; set; }
 
     [JsonProperty("accuracy")]
     public float Accuracy { get; set; }
 
-    [JsonProperty("maxCombo")]
+    [JsonProperty("grade")]
+    public string Grade { get; set; }
+
+    [JsonProperty("maxcombo")]
     public int MaxCombo { get; set; }
 
-    [JsonProperty("judgements")]
-    public Dictionary<string, int> Judgements { get; set; }
+    [JsonProperty("flawless")]
+    public int FlawlessCount { get; set; }
 
-    [JsonProperty("hitStats")]
-    public List<HitStat> HitStats { get; set; }
+    [JsonProperty("perfect")]
+    public int PerfectCount { get; set; }
 
-    [JsonProperty("mapid")]
-    public int MapID { get; set; }
+    [JsonProperty("great")]
+    public int GreatCount { get; set; }
 
-    [JsonProperty("maphash")]
-    public string MapHash { get; set; }
+    [JsonProperty("alright")]
+    public int AlrightCount { get; set; }
 
-    [JsonProperty("playerid")]
-    public int PlayerID { get; set; }
+    [JsonProperty("okay")]
+    public int OkayCount { get; set; }
+
+    [JsonProperty("miss")]
+    public int MissCount { get; set; }
+
+    [JsonProperty("scrollspeed")]
+    public float ScrollSpeed { get; set; }
 }
