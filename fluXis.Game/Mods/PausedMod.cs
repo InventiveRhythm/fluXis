@@ -10,6 +10,7 @@ public class PausedMod : IMod
     public string Acronym => "PA";
     public string Description => "Paused the game mid-play.";
     public IconUsage Icon => FontAwesome.Solid.Pause;
+    public ModType Type => ModType.Special;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;
     public IEnumerable<string> IncompatibleMods => Array.Empty<string>();

@@ -102,6 +102,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         Mods = mods;
 
         Rate = ((RateMod)Mods.Find(m => m is RateMod))?.Rate ?? 1f;
+        Mods.RemoveAll(m => m is PausedMod);
     }
 
     [BackgroundDependencyLoader]
@@ -175,6 +176,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                     new JudgementCounter(Performance),
                     new HealthBar(this),
                     new HitErrorBar(this),
+                    new ModsDisplay(this),
                     new AttributeText(this)
                     {
                         Anchor = Anchor.BottomLeft,
@@ -443,7 +445,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             case FluXisKeybind.GameplayPause:
                 if (Playfield.Manager.Dead) return false;
 
-                if (!Mods.Any(m => m is PausedMod))
+                // only add when we have hit at least one note
+                if (!Mods.Any(m => m is PausedMod) && AudioClock.CurrentTime > Map.StartTime)
                     Mods.Add(new PausedMod());
 
                 IsPaused.Value = !IsPaused.Value;

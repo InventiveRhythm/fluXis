@@ -9,6 +9,7 @@ public class AutoPlayMod : IMod
     public string Acronym => "AP";
     public string Description => "Watch a perfect playthrough of the song.";
     public IconUsage Icon => FontAwesome.Solid.Plane;
+    public ModType Type => ModType.Automation;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => false;
     public IEnumerable<string> IncompatibleMods => new[] { "NF", "FR", "FL" };

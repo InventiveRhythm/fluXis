@@ -9,6 +9,7 @@ public class FlawlessMod : IMod
     public string Acronym => "FL";
     public string Description => "Only the best will do.";
     public IconUsage Icon => FontAwesome.Solid.ThumbsUp;
+    public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;
     public IEnumerable<string> IncompatibleMods => new[] { "NF", "AP", "FR" };

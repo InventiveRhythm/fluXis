@@ -9,8 +9,19 @@ public interface IMod
     string Acronym { get; }
     string Description { get; }
     IconUsage Icon { get; }
+    ModType Type { get; }
 
     float ScoreMultiplier { get; }
     bool Rankable { get; }
     IEnumerable<string> IncompatibleMods { get; }
+}
+
+public enum ModType
+{
+    Rate,
+    DifficultyDecrease,
+    DifficultyIncrease,
+    Automation,
+    Misc,
+    Special
 }
