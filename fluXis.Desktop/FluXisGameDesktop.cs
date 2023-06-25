@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Desktop.Integration;
 using fluXis.Game;
 using fluXis.Game.Integration;
+using fluXis.Game.IPC;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
 using osu.Framework.Platform;
@@ -15,6 +15,8 @@ public partial class FluXisGameDesktop : FluXisGame
     [Resolved]
     private Storage storage { get; set; }
 
+    private IPCImportChannel ipc;
+
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
@@ -23,7 +25,7 @@ public partial class FluXisGameDesktop : FluXisGame
         window.Title = "fluXis " + VersionString;
         window.ConfineMouseMode.Value = ConfineMouseMode.Never;
         window.CursorState = CursorState.Hidden;
-        window.DragDrop += f => onDragDrop(new[] { f });
+        window.DragDrop += f => HandleDragDrop(new[] { f });
     }
 
     [BackgroundDependencyLoader]
@@ -31,9 +33,18 @@ public partial class FluXisGameDesktop : FluXisGame
     {
         if (OperatingSystem.IsWindows())
             LoadComponentAsync(new WindowsUpdateManager());
+
+        ipc = new IPCImportChannel(Host, this);
     }
 
-    private void onDragDrop(IEnumerable<string> paths) => ImportManager.ImportMultiple(paths.ToArray());
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        var args = Program.Args.ToList();
+        args.RemoveAll(a => a.StartsWith("-"));
+        HandleDragDrop(args.ToArray());
+    }
 
     public override LightController CreateLightController() => new OpenRGBController();
 }
