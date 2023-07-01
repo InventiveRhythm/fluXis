@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
@@ -18,6 +19,13 @@ public partial class UserInterfaceSongSelectSection : SettingsSubSection
             {
                 Label = "Blur Background",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SongSelectBlur)
+            },
+            new SettingsDropdown<LoopMode>
+            {
+                Label = "Loop Mode",
+                Description = "How the song select music should loop.",
+                Items = Enum.GetValues<LoopMode>(),
+                Bindable = Config.GetBindable<LoopMode>(FluXisSetting.LoopMode)
             }
         });
     }

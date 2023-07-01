@@ -13,6 +13,7 @@ using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Transforms;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Timing;
@@ -81,6 +82,10 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     private readonly Bindable<Track> track = new();
     private Bindable<float> offset;
 
+    private Bindable<LoopMode> loopMode;
+    private bool loopEndReached;
+    public bool AllowLimitedLoop { get; set; } = true;
+
     public AudioClock()
     {
         underlying = new FramedMapClock { IsCoupled = false };
@@ -94,12 +99,14 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         realmTrackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(realmStorage));
         AddInternal(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
         offset = config.GetBindable<float>(FluXisSetting.GlobalOffset);
+        loopMode = config.GetBindable<LoopMode>(FluXisSetting.LoopMode);
     }
 
     public void LoadMap(RealmMap info, bool start = false, bool usePreview = false)
     {
         Stop();
         track.Value?.Dispose();
+        AllowLimitedLoop = true; // reset
 
         Track newTrack;
 
@@ -187,6 +194,20 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     {
         base.Update();
 
+        if (Looping && AllowLimitedLoop && Track.Value.CurrentTime - RestartPoint >= 14000)
+        {
+            if (!loopEndReached && loopMode.Value == LoopMode.Limited)
+            {
+                FadeOut(1000).OnComplete(_ =>
+                {
+                    Seek(RestartPoint);
+                    FadeIn(1000);
+                });
+                loopEndReached = true;
+            }
+        }
+        else loopEndReached = false;
+
         updateStep();
         updateAmplitudes();
     }
@@ -266,9 +287,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         }
     }
 
-    public void FadeTo(double volume, double duration = 0, Easing easing = Easing.None) => this.TransformTo(nameof(Volume), volume, duration, easing);
-    public void FadeIn(double duration = 0, Easing easing = Easing.None) => FadeTo(1, duration, easing);
-    public void FadeOut(double duration = 0, Easing easing = Easing.None) => FadeTo(0, duration, easing);
+    public TransformSequence<AudioClock> FadeTo(double volume, double duration = 0, Easing easing = Easing.None) => this.TransformTo(nameof(Volume), volume, duration, easing);
+    public TransformSequence<AudioClock> FadeIn(double duration = 0, Easing easing = Easing.None) => FadeTo(1, duration, easing);
+    public TransformSequence<AudioClock> FadeOut(double duration = 0, Easing easing = Easing.None) => FadeTo(0, duration, easing);
 
     #endregion
 }
