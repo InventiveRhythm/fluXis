@@ -1,11 +1,11 @@
 using System.Linq;
+using fluXis.Game.Activity;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Input;
-using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
@@ -38,6 +38,9 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private ActivityManager activity { get; set; }
 
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
@@ -127,7 +130,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
             }
         };
 
-        Discord.Update("Viewing Results", "", "results");
+        activity.Update("Viewing Results", "", "results");
 
         if (score != null && !map.MapSet.Managed)
         {

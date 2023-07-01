@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using fluXis.Game.Activity;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
@@ -10,7 +11,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
-using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Overlay.Notification;
@@ -57,6 +57,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     [Resolved]
     public AudioClock AudioClock { get; set; }
+
+    [Resolved]
+    private ActivityManager activity { get; set; }
 
     private bool starting = true;
     private bool ended;
@@ -238,9 +241,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         string details = $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]";
 
         if (!IsPaused.Value)
-            Discord.Update("Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
+            activity.Update("Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
         else
-            Discord.Update("Paused", details, "playing");
+            activity.Update("Paused", details, "playing");
     }
 
     public virtual MapInfo LoadMap()

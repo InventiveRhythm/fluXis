@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Context;
 using fluXis.Game.Input;
-using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
@@ -66,6 +66,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private ActivityManager activity { get; set; }
 
     private ITrackStore trackStore { get; set; }
 
@@ -355,7 +358,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         bottomBar.MoveToY(0, 300, Easing.OutQuint);
         tabs.ScaleTo(1, 300, Easing.OutQuint);
 
-        Discord.Update("Editing a map", "", "editor");
+        activity.Update("Editing a map", "", "editor");
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

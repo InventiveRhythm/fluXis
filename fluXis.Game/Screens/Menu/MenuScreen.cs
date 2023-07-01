@@ -1,9 +1,9 @@
 using System.Linq;
+using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
@@ -61,6 +61,9 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private ActivityManager activity { get; set; }
 
     private Container content;
     private FluXisSpriteText fluXisText;
@@ -335,7 +338,7 @@ public partial class MenuScreen : FluXisScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        Discord.Update("In the menus", "Idle", "menu");
+        activity.Update("In the menus", "Idle", "menu");
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -349,7 +352,7 @@ public partial class MenuScreen : FluXisScreen
         randomizeSplash();
         showMenu();
         this.FadeIn(200);
-        Discord.Update("In the menus", "Idle", "menu");
+        activity.Update("In the menus", "Idle", "menu");
     }
 
     protected override void Update()

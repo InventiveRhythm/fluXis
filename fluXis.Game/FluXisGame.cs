@@ -1,6 +1,5 @@
 ﻿using fluXis.Game.Graphics;
 using fluXis.Game.Input;
-using fluXis.Game.Integration;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
@@ -29,8 +28,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     [BackgroundDependencyLoader]
     private void load()
     {
-        Discord.Init(Fluxel);
-
         Children = new Drawable[]
         {
             AudioClock,

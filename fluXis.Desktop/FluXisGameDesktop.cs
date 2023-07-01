@@ -35,6 +35,7 @@ public partial class FluXisGameDesktop : FluXisGame
             LoadComponentAsync(new WindowsUpdateManager());
 
         ipc = new IPCImportChannel(Host, this);
+        ActivityManager.Add(new DiscordActivity());
     }
 
     protected override void LoadComplete()

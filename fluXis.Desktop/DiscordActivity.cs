@@ -1,24 +1,25 @@
 using System;
 using DiscordRPC;
+using fluXis.Game;
+using fluXis.Game.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 
-namespace fluXis.Game.Integration;
+namespace fluXis.Desktop;
 
-public abstract class Discord
+public class DiscordActivity : IActivity
 {
     private static DiscordRpcClient client;
-    private static Fluxel fluxel;
 
-    public static void Init(Fluxel api)
+    public void Initialize()
     {
-        fluxel = api;
         client = new DiscordRpcClient("975141679583604767");
         client.Initialize();
-        client.OnReady += (_, _) => Update("In the menus", "Idle", "menu");
     }
 
-    public static void Update(string details = "", string state = "", string largeImageKey = "", int timestamp = 0, int timeLeft = 0)
+    public void OnRemove() => client?.Dispose();
+
+    public void Update(Fluxel fluxel, string details = "", string state = "", string largeImageKey = "", int timestamp = 0, int timeLeft = 0)
     {
         Timestamps timestamps = new Timestamps();
 
@@ -48,12 +49,5 @@ public abstract class Discord
             Timestamps = timestamps,
             Assets = assets
         });
-    }
-
-    public static void Reload()
-    {
-        // TODO: Calculate times
-
-        Update(client?.CurrentPresence?.Details, client?.CurrentPresence?.State, client?.CurrentPresence?.Assets?.LargeImageKey);
     }
 }

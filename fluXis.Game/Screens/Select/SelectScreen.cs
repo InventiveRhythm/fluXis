@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
@@ -49,6 +50,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     [Resolved]
     private AudioClock clock { get; set; }
+
+    [Resolved]
+    private ActivityManager activity { get; set; }
 
     public BackgroundStack Backgrounds;
     public Bindable<RealmMapSet> MapSet = new();
@@ -353,7 +357,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         SelectMapInfo.MoveToX(0, 500, Easing.OutQuint);
         Footer.MoveToY(0, 500, Easing.OutQuint);
 
-        Discord.Update("Selecting a map", "", "songselect");
+        activity.Update("Selecting a map", "", "songselect");
 
         if (MapInfo.Value != null)
         {
@@ -383,7 +387,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         Footer.MoveToY(50)
               .MoveToY(0, 500, Easing.OutQuint);
 
-        Discord.Update("Selecting a map", "", "songselect");
+        activity.Update("Selecting a map", "", "songselect");
 
         if (MapInfo.Value != null)
             clock.RestartPoint = MapInfo.Value.Metadata.PreviewTime;

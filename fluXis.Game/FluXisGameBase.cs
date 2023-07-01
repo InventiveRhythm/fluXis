@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
@@ -66,6 +67,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public SkinManager SkinManager;
     public ImportManager ImportManager;
     public Fluxel Fluxel;
+    public ActivityManager ActivityManager;
 
     public Action OnSongChanged;
 
@@ -109,6 +111,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.CacheAs(LightController = CreateLightController());
         dependencies.Cache(SkinManager = new SkinManager());
+        dependencies.Cache(ActivityManager = new ActivityManager(Fluxel));
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
