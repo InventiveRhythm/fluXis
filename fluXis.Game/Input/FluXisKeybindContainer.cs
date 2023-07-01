@@ -147,15 +147,19 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
 
             if (binding == null)
             {
-                binding = new RealmKeybind
+                r.Write(() => r.Add(binding = new RealmKeybind
                 {
                     Key = key.ToString(),
                     Action = action.ToString(),
-                };
-                r.Write(() =>
-                {
-                    r.Add(binding);
-                });
+                }));
+            }
+
+            var split = binding.Key.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            if (split.Length > 1)
+            {
+                bind = new KeyBinding(split.Select(x => (InputKey)Enum.Parse(typeof(InputKey), x)).ToArray(), action);
+                return;
             }
 
             bind = new KeyBinding((InputKey)Enum.Parse(typeof(InputKey), binding.Key), action);

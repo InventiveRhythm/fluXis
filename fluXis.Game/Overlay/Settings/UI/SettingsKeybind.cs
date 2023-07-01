@@ -4,6 +4,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Graphics;
 using fluXis.Game.Input;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -52,25 +53,33 @@ public partial class SettingsKeybind : SettingsItem
         {
             flow.Add(new KeybindContainer
             {
-                Keybind = getBind(keybind).ToString(),
+                Keybind = InputUtils.GetReadableString(getBind(keybind)),
                 SettingsKeybind = this
             });
         }
     }
 
-    private InputKey getBind(FluXisKeybind keybind)
+    private KeyCombination getBind(FluXisKeybind keybind)
     {
-        InputKey key = InputKey.None;
+        KeyCombination combo = new KeyCombination();
 
         realm.Run(r =>
         {
-            var bind = r.All<RealmKeybind>().FirstOrDefault(x => x.Action == keybind.ToString());
-            if (bind == null) return;
+            var binding = r.All<RealmKeybind>().FirstOrDefault(x => x.Action == keybind.ToString());
+            if (binding == null) return;
 
-            key = (InputKey)Enum.Parse(typeof(InputKey), bind.Key);
+            var split = binding.Key.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            if (split.Length > 1)
+            {
+                combo = new KeyCombination(split.Select(x => (InputKey)Enum.Parse(typeof(InputKey), x)).ToArray());
+                return;
+            }
+
+            combo = new KeyCombination((InputKey)Enum.Parse(typeof(InputKey), binding.Key));
         });
 
-        return key;
+        return combo;
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -100,53 +109,47 @@ public partial class SettingsKeybind : SettingsItem
         base.Update();
     }
 
-    // WHY IS THERE 2 DIFFERENT KEY SYSTEMS
-    private InputKey fromEvent(Key key)
-    {
-        switch (key)
-        {
-            case Key.ControlLeft:
-            case Key.ControlRight:
-                return InputKey.Control;
-
-            case Key.ShiftLeft:
-            case Key.ShiftRight:
-                return InputKey.Shift;
-
-            case Key.AltLeft:
-            case Key.AltRight:
-                return InputKey.Alt;
-
-            case Key.WinLeft:
-            case Key.WinRight:
-                return InputKey.Super;
-
-            default:
-                try
-                {
-                    return (InputKey)Enum.Parse(typeof(InputKey), key.ToString());
-                }
-                catch
-                {
-                    return InputKey.None;
-                }
-        }
-    }
-
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         if (e.Repeat || Index == -1 || !HasFocus) return false;
 
+        if (e.Key >= Key.F1)
+            updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromKey(e.Key));
+
+        return true;
+    }
+
+    protected override void OnKeyUp(KeyUpEvent e)
+    {
+        if (Index == -1 || !HasFocus) return;
+
+        if (e.Key < Key.F1)
+            updateBinding(new KeyCombination(KeyCombination.FromKey(e.Key)));
+    }
+
+    protected override bool OnJoystickPress(JoystickPressEvent e)
+    {
+        if (Index == -1 || !HasFocus) return false;
+
+        updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromJoystickButton(e.Button));
+        return true;
+    }
+
+    protected override bool OnMidiDown(MidiDownEvent e)
+    {
+        if (Index == -1 || !HasFocus) return false;
+
+        updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromMidiKey(e.Key));
+        return true;
+    }
+
+    private void updateBinding(KeyCombination combination, InputKey key) => updateBinding(new KeyCombination(combination.Keys.Where(KeyCombination.IsModifierKey).Append(key)));
+
+    private void updateBinding(KeyCombination combination)
+    {
         if (Index < Keybinds.Length)
         {
             var keybind = Keybinds[Index];
-            var iKey = fromEvent(e.Key);
-
-            if (iKey == InputKey.Escape)
-            {
-                Index = -1;
-                return false;
-            }
 
             realm.RunWrite(r =>
             {
@@ -157,22 +160,20 @@ public partial class SettingsKeybind : SettingsItem
                     bind = new RealmKeybind
                     {
                         Action = keybind.ToString(),
-                        Key = iKey.ToString()
+                        Key = combination.ToString()
                     };
 
                     r.Add(bind);
                 }
-                else bind.Key = iKey.ToString();
+                else bind.Key = combination.ToString();
             });
 
             container.Reload();
 
-            flow.Children.ElementAt(Index).Keybind = iKey.ToString();
+            flow.Children.ElementAt(Index).Keybind = InputUtils.GetReadableString(combination);
             Index++;
         }
         else Index = -1;
-
-        return true;
     }
 
     private partial class KeybindContainer : Container
