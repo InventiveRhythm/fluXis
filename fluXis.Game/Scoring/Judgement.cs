@@ -18,10 +18,10 @@ public class HitWindow
     {
         new(Judgement.Flawless, "#00C3FF", 18, 1f, .5f, .5f),
         new(Judgement.Perfect, "#22FFB5", 40, .98f, .1f, .05f),
-        new(Judgement.Great, "#4BFF3B", 75, .65f, .02f, .025f),
-        new(Judgement.Alright, "#FFF12B", 100, .25f, -2, 0),
-        new(Judgement.Okay, "#F7AD40", 140, .1f, -4, -1f),
-        new(Judgement.Miss, "#FF5555", 9999, 0f, -6, -2) // 9999 is a placeholder for infinity
+        new(Judgement.Great, "#4BFF3B", 75, .65f, .05f, .025f),
+        new(Judgement.Alright, "#FFF12B", 100, .25f, .02f, 0),
+        new(Judgement.Okay, "#F7AD40", 140, .1f, -3, -1f),
+        new(Judgement.Miss, "#FF5555", 9999, 0f, -5, -2) // 9999 is a placeholder for infinity
     };
 
     public Judgement Key { get; }
