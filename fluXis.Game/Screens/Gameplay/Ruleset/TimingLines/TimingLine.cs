@@ -33,7 +33,7 @@ public partial class TimingLine : Box
     {
         double delta = ScrollVelocityTime - manager.HitObjectManager.CurrentTime;
         var receptor = manager.HitObjectManager.Playfield.Receptors[0];
-        float hitY = receptor.Y - skinManager.CurrentSkin.HitPosition;
+        float hitY = receptor.Y - skinManager.CurrentSkin.GetKeymode(manager.HitObjectManager.Map.KeyCount).HitPosition;
         Y = (float)(hitY - 0.5f * (delta * (manager.HitObjectManager.ScrollSpeed / manager.HitObjectManager.Playfield.Screen.Rate)));
 
         base.Update();

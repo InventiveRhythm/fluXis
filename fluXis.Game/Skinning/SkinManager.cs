@@ -7,6 +7,7 @@ using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
 using fluXis.Game.Skinning.Default.Stage;
+using fluXis.Game.Skinning.Json;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -247,7 +248,7 @@ public partial class SkinManager : Component
 
         var receptor = down ? new DefaultReceptorDown() : new DefaultReceptorUp();
         receptor.UpdateColor(lane, maxLanes);
-        receptor.Height = CurrentSkin.HitPosition;
+        receptor.Height = CurrentSkin.GetKeymode(maxLanes).HitPosition;
         return receptor;
     }
 

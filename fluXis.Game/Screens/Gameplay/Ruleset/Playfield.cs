@@ -61,7 +61,7 @@ public partial class Playfield : Container
         };
 
         HitLine = skinManager.GetHitLine();
-        HitLine.Y = -skinManager.CurrentSkin.HitPosition;
+        HitLine.Y = -skinManager.CurrentSkin.GetKeymode(Map.KeyCount).HitPosition;
 
         Manager = new HitObjectManager(this);
         Manager.LoadMap(Map);

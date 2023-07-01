@@ -23,5 +23,11 @@ public partial class DefaultHitObjectEnd : Container
         };
     }
 
+    protected override void Update()
+    {
+        var factor = DrawWidth / 114f;
+        Height = 42f * factor;
+    }
+
     public void UpdateColor(int lane, int keyCount) => box.Colour = FluXisColors.GetLaneColor(lane, keyCount).Darken(.4f);
 }

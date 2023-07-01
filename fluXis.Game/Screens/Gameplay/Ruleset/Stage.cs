@@ -10,8 +10,6 @@ public partial class Stage : Container
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    private const int lane_margin = 0;
-
     private readonly Playfield playfield;
 
     private int currentKeyCount;
@@ -27,7 +25,7 @@ public partial class Stage : Container
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Width = skinManager.CurrentSkin.ColumnWidth * playfield.Map.InitialKeyCount + lane_margin * 2;
+        Width = skinManager.CurrentSkin.GetKeymode(playfield.Map.InitialKeyCount).ColumnWidth * playfield.Map.InitialKeyCount;
 
         currentKeyCount = playfield.Map.InitialKeyCount;
 
@@ -45,7 +43,7 @@ public partial class Stage : Container
         {
             var currentEvent = playfield.Manager.CurrentLaneSwitchEvent;
             currentKeyCount = currentEvent.Count;
-            this.ResizeWidthTo(skinManager.CurrentSkin.ColumnWidth * currentKeyCount + lane_margin * 2, currentEvent.Speed, Easing.OutQuint);
+            this.ResizeWidthTo(skinManager.CurrentSkin.GetKeymode(playfield.Manager.CurrentKeyCount).ColumnWidth * playfield.Manager.CurrentKeyCount, currentEvent.Speed, Easing.OutQuint);
         }
     }
 }

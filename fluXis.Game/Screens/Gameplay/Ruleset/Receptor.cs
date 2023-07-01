@@ -36,7 +36,6 @@ public partial class Receptor : CompositeDrawable
     {
         Origin = Anchor.BottomCentre;
         Anchor = Anchor.BottomCentre;
-        Width = skinManager.CurrentSkin.ColumnWidth;
         RelativeSizeAxes = Axes.Y;
         Masking = true;
 
@@ -49,7 +48,7 @@ public partial class Receptor : CompositeDrawable
 
         hitLighting.Margin = new MarginPadding
         {
-            Bottom = skinManager.CurrentSkin.HitPosition
+            Bottom = skinManager.CurrentSkin.GetKeymode(Playfield.Map.KeyCount).HitPosition
         };
 
         updateKeyCount(true);
@@ -86,14 +85,16 @@ public partial class Receptor : CompositeDrawable
             visible = current[id];
         }
 
+        var width = visible ? skinManager.CurrentSkin.GetKeymode(currentKeyCount).ColumnWidth : 0;
+
         if (instant)
         {
-            this.ResizeWidthTo(visible ? skinManager.CurrentSkin.ColumnWidth : 0);
+            this.ResizeWidthTo(width);
         }
         else
         {
             float duration = Playfield.Manager.CurrentLaneSwitchEvent?.Speed ?? 200;
-            this.ResizeWidthTo(visible ? skinManager.CurrentSkin.ColumnWidth : 0, duration, Easing.OutQuint);
+            this.ResizeWidthTo(width, duration, Easing.OutQuint);
         }
     }
 }

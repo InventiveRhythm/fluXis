@@ -27,7 +27,7 @@ public partial class SkinEditor : FluXisScreen
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public Skinning.Skin Skin { get; private set; }
+    public Skinning.Json.Skin Skin { get; private set; }
     public Bindable<int> KeyMode { get; private set; } = new(4);
 
     private SkinEditorPlayfield playfield;
@@ -44,6 +44,9 @@ public partial class SkinEditor : FluXisScreen
         {
             playfield.KeyMode = e.NewValue;
             playfield.Reload();
+
+            hitPositionTextBox.TextBox.Text = Skin.GetKeymode(KeyMode.Value).HitPosition.ToString();
+            columnWidthTextBox.TextBox.Text = Skin.GetKeymode(KeyMode.Value).ColumnWidth.ToString();
         });
 
         InternalChildren = new Drawable[]
@@ -99,11 +102,11 @@ public partial class SkinEditor : FluXisScreen
                                                 hitPositionTextBox = new SkinEditorTextBox
                                                 {
                                                     Text = "Hit Position",
-                                                    DefaultText = Skin.HitPosition.ToString(),
+                                                    DefaultText = Skin.GetKeymode(KeyMode.Value).HitPosition.ToString(),
                                                     OnTextChanged = () =>
                                                     {
                                                         if (int.TryParse(hitPositionTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int y))
-                                                            Skin.HitPosition = y;
+                                                            Skin.GetKeymode(KeyMode.Value).HitPosition = y;
                                                         else
                                                             hitPositionTextBox.TextBox.NotifyError();
                                                     }
@@ -111,11 +114,11 @@ public partial class SkinEditor : FluXisScreen
                                                 columnWidthTextBox = new SkinEditorTextBox
                                                 {
                                                     Text = "Column Width",
-                                                    DefaultText = Skin.ColumnWidth.ToString(),
+                                                    DefaultText = Skin.GetKeymode(KeyMode.Value).ColumnWidth.ToString(),
                                                     OnTextChanged = () =>
                                                     {
                                                         if (int.TryParse(columnWidthTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int w))
-                                                            Skin.ColumnWidth = w;
+                                                            Skin.GetKeymode(KeyMode.Value).ColumnWidth = w;
                                                         else
                                                             columnWidthTextBox.TextBox.NotifyError();
                                                     }
