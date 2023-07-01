@@ -14,6 +14,8 @@ using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
+using fluXis.Game.Screens.Multiplayer;
+using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -70,7 +72,7 @@ public partial class MenuScreen : FluXisScreen
     private Container buttonContainer;
     private FillFlowContainer linkContainer;
 
-    private MenuButton playButton;
+    private MenuPlayButton playButton;
 
     private FluXisSpriteText titleText;
     private FluXisSpriteText artistText;
@@ -176,13 +178,45 @@ public partial class MenuScreen : FluXisScreen
                         X = -200,
                         Children = new Drawable[]
                         {
-                            playButton = new MenuButton
+                            playButton = new MenuPlayButton
                             {
-                                Text = "Play!",
                                 Description = $"{maps.MapSets.Count} maps loaded",
-                                Icon = FontAwesome.Solid.Play,
                                 Action = () => this.Push(new SelectScreen()),
-                                Width = 700
+                                Width = 710
+                            },
+                            new SmallMenuButton
+                            {
+                                Icon = FontAwesome.Solid.Cog,
+                                Action = settings.ToggleVisibility,
+                                Width = 100,
+                                Y = 80
+                            },
+                            new MenuButton
+                            {
+                                Text = "Multiplayer",
+                                Description = "Play against other players",
+                                Icon = FontAwesome.Solid.Users,
+                                Action = () => this.Push(new MultiplayerScreen()),
+                                Width = 300,
+                                X = 110,
+                                Y = 80
+                            },
+                            new MenuButton
+                            {
+                                Text = "Ranking",
+                                Description = "Check online leaderboards",
+                                Icon = FontAwesome.Solid.Trophy,
+                                Action = () => this.Push(new Rankings()),
+                                Width = 290,
+                                X = 430,
+                                Y = 80
+                            },
+                            new SmallMenuButton
+                            {
+                                Icon = FontAwesome.Solid.Times,
+                                Action = game.Exit,
+                                Width = 120,
+                                Y = 160
                             },
                             new MenuButton
                             {
@@ -190,7 +224,8 @@ public partial class MenuScreen : FluXisScreen
                                 Description = "Download community-made maps",
                                 Icon = FontAwesome.Solid.Download,
                                 Width = 340,
-                                Margin = new MarginPadding { Top = 80 },
+                                X = 130,
+                                Y = 160,
                                 Action = () =>
                                 {
                                     clock.Stop();
@@ -202,25 +237,11 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Edit",
                                 Description = "Create your own maps",
                                 Icon = FontAwesome.Solid.Pen,
+                                ShearAdjust = .05f,
                                 Action = () => this.Push(new Editor()),
-                                Width = 340,
-                                Margin = new MarginPadding { Top = 80, Left = 360 }
-                            },
-                            new SmallMenuButton
-                            {
-                                Text = "Settings",
-                                Icon = FontAwesome.Solid.Cog,
-                                Action = settings.ToggleVisibility,
-                                Width = 340,
-                                Margin = new MarginPadding { Top = 160 }
-                            },
-                            new SmallMenuButton
-                            {
-                                Text = "Exit",
-                                Icon = FontAwesome.Solid.Times,
-                                Action = game.Exit,
-                                Width = 340,
-                                Margin = new MarginPadding { Top = 160, Left = 360 }
+                                Width = 250,
+                                X = 490,
+                                Y = 160
                             }
                         }
                     },

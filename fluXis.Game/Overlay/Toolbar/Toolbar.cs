@@ -1,9 +1,15 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Overlay.Chat;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
+using fluXis.Game.Screens.Browse;
+using fluXis.Game.Screens.Dashboard;
 using fluXis.Game.Screens.Menu;
+using fluXis.Game.Screens.Music;
+using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
+using fluXis.Game.Screens.Wiki;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -23,6 +29,9 @@ public partial class Toolbar : Container
 
     [Resolved]
     private ChatOverlay chat { get; set; }
+
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
 
     public FluXisScreenStack ScreenStack { get; set; }
     public MenuScreen MenuScreen { get; set; }
@@ -85,14 +94,7 @@ public partial class Toolbar : Container
                             {
                                 Name = "Maps",
                                 Icon = FontAwesome.Solid.Map,
-                                Action = () =>
-                                {
-                                    if (ScreenStack?.CurrentScreen is not SelectScreen)
-                                    {
-                                        MenuScreen?.MakeCurrent();
-                                        ScreenStack?.Push(new SelectScreen());
-                                    }
-                                }
+                                Action = () => goToScreen(new SelectScreen())
                             },
                             new ToolbarButton
                             {
@@ -110,28 +112,33 @@ public partial class Toolbar : Container
                             new ToolbarButton
                             {
                                 Name = "Ranking",
-                                Icon = FontAwesome.Solid.ChartBar
+                                Icon = FontAwesome.Solid.Trophy,
+                                Action = () => goToScreen(new Rankings())
                             },
                             new ToolbarButton
                             {
                                 Name = "Download Maps",
-                                Icon = FontAwesome.Solid.Download
+                                Icon = FontAwesome.Solid.Download,
+                                Action = () => goToScreen(new MapBrowser())
                             },
                             new ToolbarButton
                             {
                                 Name = "Dashboard",
-                                Icon = FontAwesome.Solid.ChartLine
+                                Icon = FontAwesome.Solid.ChartLine,
+                                Action = () => goToScreen(new Dashboard())
                             },
                             new ToolbarButton
                             {
                                 Name = "Wiki",
-                                Icon = FontAwesome.Solid.Book
+                                Icon = FontAwesome.Solid.Book,
+                                Action = () => goToScreen(new Wiki())
                             },
                             new ToolbarButton
                             {
                                 Name = "Music Player",
-                                Icon = FontAwesome.Solid.Music
-                            },
+                                Icon = FontAwesome.Solid.Music,
+                                Action = () => goToScreen(new MusicPlayer())
+                            }
                         }
                     },
                     rightFlow = new FillFlowContainer
@@ -152,6 +159,20 @@ public partial class Toolbar : Container
         };
 
         ShowToolbar.BindValueChanged(OnShowToolbarChanged, true);
+    }
+
+    private void goToScreen(IScreen screen)
+    {
+        if (ScreenStack.CurrentScreen is not null && ScreenStack.CurrentScreen.GetType() == screen.GetType())
+        {
+            notifications.Post("You are already on this screen.");
+            return;
+        }
+
+        if (ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false }) return;
+
+        MenuScreen.MakeCurrent();
+        ScreenStack.Push(screen);
     }
 
     private void OnShowToolbarChanged(ValueChangedEvent<bool> e)

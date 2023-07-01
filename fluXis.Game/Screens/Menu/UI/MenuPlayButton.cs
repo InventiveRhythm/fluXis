@@ -11,13 +11,25 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
-public partial class SmallMenuButton : Container
+public partial class MenuPlayButton : CompositeDrawable
 {
     public Action Action { get; set; }
-    public IconUsage Icon { get; set; }
-    public float ShearAmount => Width / 100f * .2f;
+
+    public string Description
+    {
+        set
+        {
+            text = value;
+            if (spriteText != null)
+                spriteText.Text = value;
+        }
+    }
+
+    public float ShearAmount { get; set; } = .2f;
 
     private Container hover;
+    private FluXisSpriteText spriteText;
+    private string text;
 
     private Sample sampleClick;
     private Sample sampleHover;
@@ -32,7 +44,7 @@ public partial class SmallMenuButton : Container
         CornerRadius = 10;
         Masking = true;
 
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new Container // Background
             {
@@ -84,23 +96,43 @@ public partial class SmallMenuButton : Container
                         Masking = true,
                         Child = new Box
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Width = 0.714f,
+                            RelativeSizeAxes = Axes.Y,
+                            Width = 355,
                             Shear = new Vector2(ShearAmount, 0),
                             Anchor = Anchor.BottomRight,
-                            Origin = Anchor.BottomRight
+                            Origin = Anchor.BottomRight,
                         }
                     }
                 }
             },
             new SpriteIcon
             {
-                Size = new Vector2(20),
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                X = -5,
-                Icon = Icon
+                Size = new Vector2(30),
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Margin = new MarginPadding { Left = 20 },
+                Shadow = true,
+                Icon = FontAwesome.Solid.Play
             },
+            new FluXisSpriteText
+            {
+                FontSize = 30,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding { Left = 60 },
+                Y = 8,
+                Shadow = true,
+                Text = "Play"
+            },
+            spriteText = new FluXisSpriteText
+            {
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.TopLeft,
+                Margin = new MarginPadding { Left = 60 },
+                Colour = FluXisColors.Text2,
+                Shadow = true,
+                Text = text
+            }
         };
     }
 

@@ -4,7 +4,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -15,9 +14,11 @@ namespace fluXis.Game.Screens.Menu.UI;
 public partial class MenuButton : Container
 {
     public Action Action { get; set; }
-    public string Text { set => text.Text = value; }
-    public string Description { set => description.Text = value; }
-    public IconUsage Icon { set => icon.Icon = value; }
+    public string Text { get; set; }
+    public string Description { get; set; }
+    public IconUsage Icon { get; set; }
+    public float ShearAmount => Width / 250f * .2f + ShearAdjust;
+    public float ShearAdjust { get; set; }
 
     public bool Enabled
     {
@@ -31,26 +32,18 @@ public partial class MenuButton : Container
 
     private bool enabled = true;
 
-    private readonly Box hover;
-    private readonly SpriteIcon icon;
-    private readonly FluXisSpriteText text;
-    private readonly FluXisSpriteText description;
+    private Box hover;
 
     private Sample sampleClick;
     private Sample sampleHover;
 
-    public MenuButton()
+    [BackgroundDependencyLoader]
+    private void load()
     {
         Height = 60;
         CornerRadius = 10;
         Masking = true;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Colour4.Black.Opacity(.2f),
-            Radius = 5,
-            Offset = new Vector2(0, 1)
-        };
+        Shear = new Vector2(-ShearAmount, 0);
 
         Children = new Drawable[]
         {
@@ -64,30 +57,42 @@ public partial class MenuButton : Container
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            icon = new SpriteIcon
+            new Container
             {
-                Size = new Vector2(30),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 10 },
-                Shadow = true
-            },
-            text = new FluXisSpriteText
-            {
-                FontSize = 30,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.BottomLeft,
-                Margin = new MarginPadding { Left = 50 },
-                Y = 8,
-                Shadow = true
-            },
-            description = new FluXisSpriteText
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.TopLeft,
-                Margin = new MarginPadding { Left = 50 },
-                Colour = FluXisColors.Text2,
-                Shadow = true
+                RelativeSizeAxes = Axes.Both,
+                Shear = new Vector2(ShearAmount, 0),
+                Padding = new MarginPadding { Horizontal = Shear.X * -50 },
+                Children = new Drawable[]
+                {
+                    new SpriteIcon
+                    {
+                        Size = new Vector2(30),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Margin = new MarginPadding { Left = 10 },
+                        Shadow = true,
+                        Icon = Icon
+                    },
+                    new FluXisSpriteText
+                    {
+                        FontSize = 30,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.BottomLeft,
+                        Margin = new MarginPadding { Left = 50 },
+                        Y = 8,
+                        Shadow = true,
+                        Text = Text
+                    },
+                    new FluXisSpriteText
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.TopLeft,
+                        Margin = new MarginPadding { Left = 50 },
+                        Colour = FluXisColors.Text2,
+                        Shadow = true,
+                        Text = Description
+                    }
+                }
             }
         };
     }
