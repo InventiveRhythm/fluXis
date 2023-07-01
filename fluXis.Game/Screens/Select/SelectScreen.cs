@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,11 +25,13 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Framework.Utils;
+using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select;
@@ -72,6 +75,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     private FluXisSpriteText noMapsText;
     private LoadingIcon loadingIcon;
+    private Container letterContainer;
+    private FluXisSpriteText currentLetter;
 
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
@@ -123,6 +128,31 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                                 FontSize = 32,
                                 Blending = BlendingParameters.Additive,
                                 Alpha = 0
+                            },
+                            letterContainer = new Container
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(100),
+                                Alpha = 0,
+                                CornerRadius = 20,
+                                Masking = true,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        Alpha = 0.5f,
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Colour4.Black
+                                    },
+                                    currentLetter = new FluXisSpriteText
+                                    {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        FontSize = 64,
+                                        Text = "A"
+                                    }
+                                }
                             },
                             loadingIcon = new LoadingIcon
                             {
@@ -467,9 +497,83 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             case Key.F3:
                 Footer.OpenSettings();
                 return true;
+
+            case Key.PageUp:
+                changeLetter(-1);
+                return true;
+
+            case Key.PageDown:
+                changeLetter(1);
+                return true;
+
+            default:
+                if (e.ControlPressed || e.AltPressed || e.SuperPressed || e.ShiftPressed) break;
+
+                var str = e.Key.ToString();
+
+                if (str.Length != 1 || !char.IsLetter(str[0])) break;
+
+                changeLetter(str[0]);
+                return true;
         }
 
         return false;
+    }
+
+    private static char[] letters => "#ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+    private static char getLetter(char letter)
+    {
+        letter = char.ToUpper(letter);
+        if (!letters.Contains(letter)) letter = '#';
+        return letter;
+    }
+
+    private void changeLetter(int by)
+    {
+        if (Maps.Count <= 1) // no need to change letter if there's only one map
+            return;
+
+        var current = getLetter(MapSet.Value.Metadata.Title[0]);
+
+        var index = Array.IndexOf(letters, current);
+        index += by;
+
+        if (index < 0) index = letters.Length - 1;
+        if (index >= letters.Length) index = 0;
+
+        while (Maps.All(m => getLetter(m.Metadata.Title[0]) != letters[index]))
+        {
+            index += by;
+
+            if (index < 0) index = letters.Length - 1;
+            if (index >= letters.Length) index = 0;
+
+            if (index == Array.IndexOf(letters, current))
+                break;
+        }
+
+        var newLetter = letters[index];
+        changeLetter(newLetter);
+    }
+
+    private void changeLetter(char letter)
+    {
+        if (Maps.Count <= 1) // no need to change letter if there's only one map
+            return;
+
+        Logger.Log($"Changing letter to {letter}");
+
+        var first = Maps.FirstOrDefault(m => getLetter(m.Metadata.Title[0]) == letter);
+        if (first != null) MapSet.Value = first;
+
+        currentLetter.Text = letter.ToString();
+        letterContainer.FadeIn(200).Delay(1000).FadeOut(300);
+
+        if (first == null)
+        {
+            currentLetter.FadeColour(Colour4.FromHex("#FF5555")).FadeColour(Colour4.White, 1000);
+        }
     }
 
     public void UpdateSearch()
