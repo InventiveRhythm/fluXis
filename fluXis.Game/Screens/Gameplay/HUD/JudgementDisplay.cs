@@ -132,10 +132,11 @@ public partial class JudgementDisplay : GameplayHUDElement
             textEarlyLate.Colour = early ? Colour4.FromHex("#37cbfb") : Colour4.FromHex("#fb9d37");
 
             textEarlyLate.ScaleTo(1f)
+                         .FadeIn()
                          .TransformSpacingTo(new Vector2(0, 0))
                          .ScaleTo(scale, 1000, Easing.OutQuint)
-                         .FadeOutFromOne(500)
-                         .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint);
+                         .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
+                         .Delay(600).FadeOut(400);
         }
         else textEarlyLate.FadeOut();
     }
@@ -175,8 +176,8 @@ public partial class JudgementDisplay : GameplayHUDElement
                 var randomSpeed = RNG.NextSingle(200, 800);
 
                 circle.Scale = new Vector2(randomScale);
-                circle.MoveTo(Vector2.Zero).MoveTo(randomVelocity * 80, randomSpeed, Easing.OutQuint);
-                circle.FadeIn().Delay(randomSpeed - 100).FadeOutFromOne(100);
+                circle.MoveTo(Vector2.Zero).MoveTo(randomVelocity * 80, randomSpeed + 400, Easing.OutQuint);
+                circle.FadeIn().Delay(randomSpeed - 200).FadeOutFromOne(300);
             }
         }
     }
