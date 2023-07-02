@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Container;
 using fluXis.Game.Screens.Edit.Tabs.Timing;
 using fluXis.Game.Screens.Edit.Tabs.Timing.List;
 using osu.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Screens.Edit.Tabs;
 
 public partial class TimingTab : EditorTab
 {
-    private readonly BasicScrollContainer pointSettingsContainer;
+    private readonly FluXisScrollContainer pointSettingsContainer;
 
     public TimingTab(Editor screen)
         : base(screen)
@@ -48,10 +49,10 @@ public partial class TimingTab : EditorTab
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Padding = new MarginPadding(20),
-                                    Child = pointSettingsContainer = new BasicScrollContainer
+                                    Child = pointSettingsContainer = new FluXisScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        ScrollbarVisible = false,
+                                        ScrollbarAnchor = Anchor.TopRight
                                     }
                                 }
                             }

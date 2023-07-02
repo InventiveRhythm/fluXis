@@ -108,6 +108,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Both,
                         Width = .5f,
+                        Padding = new MarginPadding(10) { Top = 60, Left = 20 },
                         Child = MapList = new MapList { Alpha = 0 }
                     },
                     SearchBar = new SearchBar(this),

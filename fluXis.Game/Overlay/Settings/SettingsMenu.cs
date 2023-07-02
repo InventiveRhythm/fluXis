@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Settings.Sections;
@@ -79,10 +80,10 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                             },
                             new Drawable[]
                             {
-                                new BasicScrollContainer
+                                new FluXisScrollContainer
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    ScrollbarVisible = false,
+                                    ScrollbarAnchor = Anchor.TopRight,
                                     Child = SectionContent = new Container<SettingsSection>
                                     {
                                         RelativeSizeAxes = Axes.X,

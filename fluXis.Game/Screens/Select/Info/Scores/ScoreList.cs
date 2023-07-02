@@ -6,6 +6,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Scoring;
@@ -32,7 +33,7 @@ public partial class ScoreList : GridContainer
     private ScoreListType type = ScoreListType.Local;
 
     private FluXisSpriteText noScoresText;
-    private BasicScrollContainer scrollContainer;
+    private FluXisScrollContainer scrollContainer;
     private FillFlowContainer<ClickableText> typeSwitcher;
 
     [BackgroundDependencyLoader]
@@ -87,10 +88,10 @@ public partial class ScoreList : GridContainer
                             Origin = Anchor.Centre,
                             Alpha = 0
                         },
-                        scrollContainer = new BasicScrollContainer
+                        scrollContainer = new FluXisScrollContainer
                         {
                             RelativeSizeAxes = Axes.Both,
-                            ScrollbarVisible = false
+                            ScrollbarAnchor = Anchor.TopRight
                         }
                     }
                 }

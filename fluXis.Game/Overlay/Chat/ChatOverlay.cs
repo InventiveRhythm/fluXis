@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
@@ -19,7 +20,7 @@ public partial class ChatOverlay : Container
 
     private FluXisTextBox textBox;
     private FillFlowContainer<DrawableChatMessage> flow;
-    private BasicScrollContainer scroll;
+    private FluXisScrollContainer scroll;
 
     private Container content;
 
@@ -74,9 +75,9 @@ public partial class ChatOverlay : Container
                                     RelativeSizeAxes = Axes.Both,
                                     Masking = true,
                                     Padding = new MarginPadding { Bottom = 40 },
-                                    Child = scroll = new BasicScrollContainer
+                                    Child = scroll = new FluXisScrollContainer
                                     {
-                                        ScrollbarVisible = false,
+                                        ScrollbarAnchor = Anchor.TopRight,
                                         RelativeSizeAxes = Axes.Both,
                                         Child = flow = new FillFlowContainer<DrawableChatMessage>
                                         {

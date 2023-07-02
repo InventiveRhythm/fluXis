@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Graphics.Scroll;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -94,7 +95,7 @@ public partial class SettingsDropdown<T> : SettingsItem
 
             protected override DrawableDropdownMenuItem CreateDrawableDropdownMenuItem(MenuItem item) => new DrawableFluXisDropdownMenuItem(item);
 
-            protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer(direction)
+            protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new FluXisScrollContainer(direction)
             {
                 ScrollbarVisible = false
             };

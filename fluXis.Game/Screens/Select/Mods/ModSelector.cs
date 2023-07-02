@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Mods;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -116,11 +117,11 @@ public partial class ModSelector : Container
                                     new[] { Empty() },
                                     new Drawable[]
                                     {
-                                        new BasicScrollContainer
+                                        new FluXisScrollContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Masking = true,
-                                            ScrollbarVisible = false,
+                                            ScrollbarAnchor = Anchor.TopRight,
                                             Child = new FillFlowContainer
                                             {
                                                 RelativeSizeAxes = Axes.X,

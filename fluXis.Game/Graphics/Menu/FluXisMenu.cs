@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Scroll;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -47,5 +48,5 @@ public partial class FluXisMenu : osu.Framework.Graphics.UserInterface.Menu
         return new DrawableFluXisMenuItem(item);
     }
 
-    protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer(direction) { ScrollbarVisible = false };
+    protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new FluXisScrollContainer(direction) { ScrollbarVisible = false };
 }

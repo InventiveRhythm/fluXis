@@ -1,4 +1,5 @@
 using System.IO;
+using fluXis.Game.Graphics.Scroll;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -20,7 +21,7 @@ public partial class FileSelect : FileSelector
         Padding = new MarginPadding(25);
     }
 
-    protected override ScrollContainer<Drawable> CreateScrollContainer() => new BasicScrollContainer { ScrollbarVisible = false };
+    protected override ScrollContainer<Drawable> CreateScrollContainer() => new FluXisScrollContainer { ScrollbarAnchor = Anchor.TopRight };
     protected override DirectorySelectorBreadcrumbDisplay CreateBreadcrumb() => new DirectorySelectBreadCrumb();
     protected override DirectorySelectorDirectory CreateDirectoryItem(DirectoryInfo directory, string displayName = null) => new DirectorySelectDirectory(directory, displayName);
     protected override DirectorySelectorDirectory CreateParentDirectoryItem(DirectoryInfo directory) => new DirectorySelectParentDirectory(directory);

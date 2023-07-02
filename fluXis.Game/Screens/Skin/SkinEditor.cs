@@ -1,5 +1,6 @@
 using System.Globalization;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Skin.UI;
@@ -87,7 +88,7 @@ public partial class SkinEditor : FluXisScreen
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = FluXisColors.Background2
                                     },
-                                    new BasicScrollContainer
+                                    new FluXisScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Padding = new MarginPadding(10),

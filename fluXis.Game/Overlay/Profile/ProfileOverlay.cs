@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
@@ -80,7 +81,7 @@ public partial class ProfileOverlay : Container
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background2
                     },
-                    new BasicScrollContainer
+                    new FluXisScrollContainer
                     {
                         ScrollbarVisible = false,
                         RelativeSizeAxes = Axes.Both,

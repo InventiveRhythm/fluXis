@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Screens.Edit.Tabs.Metadata;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -38,7 +39,7 @@ public partial class SetupTab : EditorTab
                 Padding = new MarginPadding(20),
                 RelativeSizeAxes = Axes.Both,
                 Masking = true,
-                Child = new BasicScrollContainer
+                Child = new FluXisScrollContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Child = new FillFlowContainer

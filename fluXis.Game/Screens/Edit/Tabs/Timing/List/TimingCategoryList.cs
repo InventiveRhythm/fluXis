@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Graphics.Scroll;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -47,10 +48,10 @@ public partial class TimingCategoryList<T> : Container
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Bottom = 80, Top = 10 },
                 Masking = true,
-                Child = new BasicScrollContainer
+                Child = new FluXisScrollContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ScrollbarVisible = false,
+                    ScrollbarAnchor = Anchor.TopRight,
                     Children = new Drawable[]
                     {
                         new FluXisSpriteText
