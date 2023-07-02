@@ -200,18 +200,25 @@ public partial class Fluxel : Component
         {
             try
             {
-                // receive data
-                byte[] buffer = new byte[2048];
-                await connection.ReceiveAsync(buffer, CancellationToken.None);
+                string message = "";
 
-                // convert to string
-                string message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+                while (!message.EndsWith("}")) // incomplete packet, wait for more data)
+                {
+                    // receive data
+                    byte[] buffer = new byte[1024 * 1024 * 2]; // 2MB (some packets are big)
+                    await connection.ReceiveAsync(buffer, CancellationToken.None);
+
+                    // convert to string
+                    string msg = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+                    message += msg;
+                }
+
                 Logger.Log(message, LoggingTarget.Network);
 
                 // handler logic
-                void handleListener<T>()
+                void handleListener<T>(string msg)
                 {
-                    var response = FluxelResponse<T>.Parse(message);
+                    var response = FluxelResponse<T>.Parse(msg);
 
                     if (responseListeners.ContainsKey(response.Type))
                     {
@@ -225,16 +232,19 @@ public partial class Fluxel : Component
                 }
 
                 // find right handler
-                Action handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
+                Action<string> handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
                 {
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUserShort>,
                     EventType.Register => handleListener<APIRegisterResponse>,
                     EventType.ChatMessage => handleListener<ChatMessage>,
-                    _ => () => { }
+                    EventType.ChatHistory => handleListener<ChatMessage[]>,
+                    EventType.ChatMessageDelete => handleListener<string>,
+                    _ => _ => { }
                 };
+
                 // execute handler
-                handler();
+                handler(message);
             }
             catch (Exception e)
             {
@@ -396,6 +406,8 @@ public enum EventType
     Register = 2,
 
     ChatMessage = 10,
+    ChatHistory = 11,
+    ChatMessageDelete = 12,
 
     MultiplayerCreateLobby = 20,
     MultiplayerJoinLobby = 21,

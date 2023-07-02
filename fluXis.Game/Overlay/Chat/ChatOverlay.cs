@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Context;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
+using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,11 +21,19 @@ public partial class ChatOverlay : Container
     [Resolved]
     private Fluxel fluxel { get; set; }
 
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
+
+    public string Channel { get; set; } = "general";
+
+    private readonly Dictionary<string, List<ChatMessage>> messages = new();
+
     private FluXisTextBox textBox;
     private FillFlowContainer<DrawableChatMessage> flow;
     private FluXisScrollContainer scroll;
 
-    private Container content;
+    private ClickableContainer content;
+    private LoadingIcon loading;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -43,7 +54,7 @@ public partial class ChatOverlay : Container
                     Alpha = 0.5f
                 }
             },
-            content = new Container
+            content = new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 RelativePositionAxes = Axes.Both,
@@ -52,52 +63,62 @@ public partial class ChatOverlay : Container
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 Padding = new MarginPadding(20),
-                Child = new ClickableContainer
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    CornerRadius = 10,
-                    Masking = true,
-                    Children = new Drawable[]
+                    new FluXisContextMenuContainer
                     {
-                        new Box
+                        RelativeSizeAxes = Axes.Both,
+                        CornerRadius = 10,
+                        Masking = true,
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(20),
-                            Children = new Drawable[]
+                            new Box
                             {
-                                new Container
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background2
+                            },
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Padding = new MarginPadding(20),
+                                Children = new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Masking = true,
-                                    Padding = new MarginPadding { Bottom = 40 },
-                                    Child = scroll = new FluXisScrollContainer
+                                    new Container
                                     {
-                                        ScrollbarAnchor = Anchor.TopRight,
                                         RelativeSizeAxes = Axes.Both,
-                                        Child = flow = new FillFlowContainer<DrawableChatMessage>
+                                        Masking = true,
+                                        Padding = new MarginPadding { Bottom = 40 },
+                                        Child = scroll = new FluXisScrollContainer
                                         {
-                                            RelativeSizeAxes = Axes.X,
-                                            AutoSizeAxes = Axes.Y,
-                                            Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(0, 5)
+                                            ScrollbarAnchor = Anchor.TopRight,
+                                            RelativeSizeAxes = Axes.Both,
+                                            Child = flow = new FillFlowContainer<DrawableChatMessage>
+                                            {
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                Direction = FillDirection.Vertical,
+                                                Spacing = new Vector2(0, 5)
+                                            }
                                         }
+                                    },
+                                    textBox = new FluXisTextBox
+                                    {
+                                        Anchor = Anchor.BottomLeft,
+                                        Origin = Anchor.BottomLeft,
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 30,
+                                        PlaceholderText = "Type your message here..."
                                     }
-                                },
-                                textBox = new FluXisTextBox
-                                {
-                                    Anchor = Anchor.BottomLeft,
-                                    Origin = Anchor.BottomLeft,
-                                    RelativeSizeAxes = Axes.X,
-                                    Height = 30,
-                                    PlaceholderText = "Type your message here..."
                                 }
                             }
                         }
+                    },
+                    loading = new LoadingIcon
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Size = new Vector2(30),
+                        Alpha = 0
                     }
                 }
             }
@@ -117,19 +138,91 @@ public partial class ChatOverlay : Container
             sender.Text = "";
         };
 
-        fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
+        fluxel.OnStatusChanged += status =>
         {
             Schedule(() =>
             {
-                var last = flow.LastOrDefault();
+                switch (status)
+                {
+                    case ConnectionStatus.Online:
+                        fluxel.SendPacketAsync(new ChatHistoryPacket { Channel = Channel });
+                        break;
 
-                if (last != null && last.Message.Sender.Username == response.Data.Sender.Username)
-                    last.AddMessage(response.Data);
-                else
-                    flow.Add(new DrawableChatMessage { Message = response.Data });
-
-                ScheduleAfterChildren(() => scroll.ScrollToEnd());
+                    case ConnectionStatus.Offline:
+                    case ConnectionStatus.Connecting:
+                    case ConnectionStatus.Reconnecting:
+                    case ConnectionStatus.Failing:
+                        flow.Clear();
+                        messages.Clear();
+                        loading.FadeIn(200);
+                        break;
+                }
             });
+        };
+
+        fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
+        {
+            var list = messages.GetValueOrDefault(response.Data.Channel, new List<ChatMessage>());
+            list.Add(response.Data);
+            messages[response.Data.Channel] = list;
+
+            if (response.Data.Channel == Channel)
+                addMessage(response.Data);
+        });
+
+        fluxel.RegisterListener<ChatMessage[]>(EventType.ChatHistory, response =>
+        {
+            var first = response.Data.FirstOrDefault();
+
+            if (first == null)
+                return;
+
+            var channel = first.Channel;
+
+            var list = messages.GetValueOrDefault(channel, new List<ChatMessage>());
+            list.AddRange(response.Data);
+            messages[channel] = list;
+
+            ScheduleAfterChildren(() => loading.FadeOut(200));
+
+            if (channel != Channel) return;
+
+            foreach (var message in response.Data) addMessage(message);
+        });
+
+        fluxel.RegisterListener<string>(EventType.ChatMessageDelete, res =>
+        {
+            if (res.Status != 200)
+            {
+                notifications.PostError(res.Message);
+                return;
+            }
+
+            Schedule(() =>
+            {
+                var message = flow.FirstOrDefault(x => x.Messages.Any(m => m.Id == res.Data));
+                message?.RemoveMessage(res.Data);
+                if (message?.Messages.Count == 0)
+                    flow.Remove(message, true);
+            });
+        });
+
+        if (fluxel.Status == ConnectionStatus.Online)
+            fluxel.SendPacketAsync(new ChatHistoryPacket { Channel = Channel });
+    }
+
+    private void addMessage(ChatMessage message)
+    {
+        Schedule(() =>
+        {
+            var last = flow.LastOrDefault();
+
+            if (last != null && last.InitialMessage.Sender.ID == message.Sender.ID)
+                last.AddMessage(message);
+            else
+                flow.Add(new DrawableChatMessage { InitialMessage = message });
+
+            ScheduleAfterChildren(() => scroll.ScrollToEnd());
         });
     }
 

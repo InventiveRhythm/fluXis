@@ -1,12 +1,22 @@
-using System;
 using fluXis.Game.Online.API;
+using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.Chat;
 
 public class ChatMessage
 {
-    public APIUserShort Sender { get; set; }
+    [JsonProperty("id")]
+    public string Id { get; set; }
+
+    [JsonProperty("created")]
+    public long Timestamp { get; set; }
+
+    [JsonProperty("content")]
     public string Content { get; set; }
+
+    [JsonProperty("channel")]
     public string Channel { get; set; }
-    public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+    [JsonProperty("sender")]
+    public APIUserShort Sender { get; set; }
 }

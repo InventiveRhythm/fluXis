@@ -4,10 +4,8 @@ namespace fluXis.Game.Online.API;
 
 public class APIUser : APIUserShort
 {
+    [JsonProperty("aboutme")]
     public string AboutMe;
-
-    [JsonProperty("role")]
-    public int Role;
 
     [JsonProperty("social")]
     public APIUserSocials Socials;
