@@ -1,5 +1,7 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Screens;
+using fluXis.Game.Screens.Offset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -10,7 +12,7 @@ public partial class AudioOffsetSection : SettingsSubSection
     public override string Title => "Offset";
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisGameBase game)
     {
         AddRange(new Drawable[]
         {
@@ -24,9 +26,15 @@ public partial class AudioOffsetSection : SettingsSubSection
             new SettingsButton
             {
                 Label = "Open Offset wizard",
-                Enabled = false,
-                ButtonText = "Open"
-            },
+                ButtonText = "Open",
+                Action = () =>
+                {
+                    if (game.ScreenStack.CurrentScreen is OffsetSetup || game.ScreenStack.CurrentScreen is not FluXisScreen { AllowExit: true }) return;
+
+                    game.Settings.Hide();
+                    game.ScreenStack.Push(new OffsetSetup());
+                }
+            }
         });
     }
 }

@@ -45,6 +45,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
     public override bool ApplyValuesAfterLoad => true;
+    public override bool AllowExit => false;
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
