@@ -26,6 +26,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -515,6 +516,54 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                 if (str.Length != 1 || !char.IsLetter(str[0])) break;
 
                 changeLetter(str[0]);
+                return true;
+        }
+
+        return false;
+    }
+
+    protected override bool OnJoystickPress(JoystickPressEvent e)
+    {
+        Logger.Log($"Joystick button {e.Button} pressed");
+
+        switch (e.Button)
+        {
+            case JoystickButton.Button1: // X
+                ModSelector.IsOpen.Toggle();
+                return true;
+
+            case JoystickButton.Button2: // A
+                Accept();
+                return true;
+
+            case JoystickButton.Button3: // B
+                this.Exit();
+                return true;
+
+            case JoystickButton.Button4: // Y
+                RandomMap();
+                return true;
+
+            case JoystickButton.GamePadLeftShoulder: // LB
+                return true;
+
+            case JoystickButton.GamePadRightShoulder: // RB
+                return true;
+
+            case JoystickButton.Hat1Up or JoystickButton.Axis2Negative: // Up
+                changeMapSelection(-1);
+                return true;
+
+            case JoystickButton.Hat1Down or JoystickButton.Axis2Positive: // Down
+                changeMapSelection(1);
+                return true;
+
+            case JoystickButton.Hat1Left or JoystickButton.FirstAxisNegative: // Left
+                changeSelection(-1);
+                return true;
+
+            case JoystickButton.Hat1Right or JoystickButton.FirstAxisPositive: // Right
+                changeSelection(1);
                 return true;
         }
 
