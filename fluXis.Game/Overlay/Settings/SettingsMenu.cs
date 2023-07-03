@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Mouse;
@@ -27,6 +28,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
     private bool visible;
     private ClickableContainer content;
+    private PanelBackground background;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -59,10 +61,10 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                 Masking = true,
                 Children = new Drawable[]
                 {
-                    new Box
+                    background = new PanelBackground
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Width = 1.2f,
+                        RelativePositionAxes = Axes.X
                     },
                     new GridContainer
                     {
@@ -120,6 +122,9 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     {
         SectionContent.Children.ForEach(s => s.FadeOut(200));
         section.FadeIn(200);
+
+        int index = SectionContent.IndexOf(section);
+        background.MoveToX(index * -0.002f, 600, Easing.OutQuint);
     }
 
     public void ToggleVisibility()

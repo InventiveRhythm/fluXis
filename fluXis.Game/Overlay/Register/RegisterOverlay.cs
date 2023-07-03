@@ -1,5 +1,6 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
@@ -60,11 +61,7 @@ public partial class RegisterOverlay : Container
                 CornerRadius = 10,
                 Children = new Drawable[]
                 {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
-                    },
+                    new PanelBackground(),
                     entry = new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,
