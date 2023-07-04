@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -12,5 +11,5 @@ public class FragileMod : IMod
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1f;
     public bool Rankable => true;
-    public IEnumerable<string> IncompatibleMods => new[] { "FL", "AP", "NF" };
+    public string[] IncompatibleMods => new[] { "FL", "AP", "NF" };
 }

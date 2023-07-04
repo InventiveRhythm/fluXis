@@ -16,22 +16,22 @@ public partial class Cursor : Container
     private readonly GlobalCursorOverlay overlay;
 
     private Sprite clickSprite;
-    private FluXisSpriteText tooltipText;
     private Container tooltipContainer;
+    private Container tooltipContent;
 
-    public string TooltipText
+    public Drawable DrawableTooltip
     {
         set
         {
-            if (value == "" && tooltipText.Text != "")
+            if (value == null)
             {
                 tooltipContainer.FadeOut(200);
+                return;
             }
-            else
-            {
-                tooltipText.Text = value;
-                tooltipContainer.FadeIn(200);
-            }
+
+            tooltipContent.Clear();
+            tooltipContent.Add(value);
+            tooltipContainer.FadeIn(200);
         }
     }
 
@@ -75,12 +75,11 @@ public partial class Cursor : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Surface
                 },
-                tooltipText = new FluXisSpriteText
+                tooltipContent = new Container
                 {
+                    AutoSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Margin = new MarginPadding { Horizontal = 5, Vertical = 2 },
-                    Shadow = true
+                    Origin = Anchor.Centre
                 }
             }
         });

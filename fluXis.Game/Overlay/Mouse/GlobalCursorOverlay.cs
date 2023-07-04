@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
@@ -13,6 +14,7 @@ public partial class GlobalCursorOverlay : Container
     private double timeInactive;
     private bool isHidden;
     private string tooltipText;
+    private IHasDrawableTooltip lastHoveredDrawable;
 
     public GlobalCursorOverlay()
     {
@@ -30,23 +32,54 @@ public partial class GlobalCursorOverlay : Container
 
     protected override void Update()
     {
-        IHasTooltip tooltip = null;
+        bool foundHovered = false;
 
         foreach (var drawable in inputManager.HoveredDrawables)
         {
-            if (drawable is IHasTooltip desc)
+            switch (drawable)
             {
-                tooltip = desc;
-                break;
+                case IHasTextTooltip desc:
+                {
+                    var newTip = desc.Tooltip ?? "";
+
+                    if (newTip != tooltipText)
+                    {
+                        tooltipText = newTip;
+                        cursor.DrawableTooltip = new FluXisSpriteText
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Margin = new MarginPadding { Horizontal = 5, Vertical = 2 },
+                            Shadow = true,
+                            Text = desc.Tooltip
+                        };
+                    }
+
+                    foundHovered = true;
+
+                    break;
+                }
+
+                case IHasDrawableTooltip drawTooltip:
+                {
+                    if (drawTooltip != lastHoveredDrawable)
+                    {
+                        lastHoveredDrawable = drawTooltip;
+                        cursor.DrawableTooltip = drawTooltip.GetTooltip();
+                    }
+
+                    foundHovered = true;
+
+                    break;
+                }
             }
         }
 
-        var newTip = tooltip?.Tooltip ?? "";
-
-        if (newTip != tooltipText)
+        if (!foundHovered)
         {
-            tooltipText = newTip;
-            cursor.TooltipText = tooltipText;
+            tooltipText = null;
+            lastHoveredDrawable = null;
+            cursor.DrawableTooltip = null;
         }
 
         timeInactive += Time.Elapsed;

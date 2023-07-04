@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -13,5 +12,5 @@ public class NoLnMod : IMod
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => .8f;
     public bool Rankable => true;
-    public IEnumerable<string> IncompatibleMods => Array.Empty<string>();
+    public string[] IncompatibleMods => Array.Empty<string>();
 }

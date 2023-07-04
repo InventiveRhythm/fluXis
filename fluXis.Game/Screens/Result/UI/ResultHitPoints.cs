@@ -100,7 +100,7 @@ public partial class ResultHitPoints : Container
         return false;
     }
 
-    public partial class ResultHitPoint : CircularContainer, IHasTooltip
+    public partial class ResultHitPoint : CircularContainer, IHasTextTooltip
     {
         public string Tooltip => TimeUtils.Format(stat.Time) + " | " + stat.Difference + "ms";
 

@@ -137,56 +137,77 @@ public partial class ModSelector : Container
                                                         Margin = new MarginPadding { Bottom = 10 },
                                                         Child = new ModSelectRate { Selector = this }
                                                     },
-                                                    new FillFlowContainer<ModCategory>
+                                                    new FillFlowContainer<FillFlowContainer<ModCategory>>
                                                     {
-                                                        Direction = FillDirection.Full,
+                                                        Direction = FillDirection.Horizontal,
                                                         RelativeSizeAxes = Axes.X,
                                                         AutoSizeAxes = Axes.Y,
-                                                        Spacing = new Vector2(0, 10),
-                                                        Children = new ModCategory[]
+                                                        Children = new[]
                                                         {
-                                                            new()
+                                                            new FillFlowContainer<ModCategory>
                                                             {
-                                                                Label = "Difficulty Decrease",
-                                                                HexColour = "#b2ff66",
-                                                                Selector = this,
-                                                                Mods = new IMod[]
+                                                                AutoSizeAxes = Axes.Y,
+                                                                RelativeSizeAxes = Axes.X,
+                                                                Width = 0.5f,
+                                                                Direction = FillDirection.Vertical,
+                                                                Spacing = new Vector2(0, 10),
+                                                                Children = new ModCategory[]
                                                                 {
-                                                                    new EasyMod(),
-                                                                    new NoFailMod()
+                                                                    new()
+                                                                    {
+                                                                        Label = "Difficulty Decrease",
+                                                                        HexColour = "#b2ff66",
+                                                                        Selector = this,
+                                                                        Mods = new IMod[]
+                                                                        {
+                                                                            new EasyMod(),
+                                                                            new NoFailMod()
+                                                                        }
+                                                                    },
+                                                                    new()
+                                                                    {
+                                                                        Label = "Miscellaneous",
+                                                                        HexColour = "#8866ff",
+                                                                        Selector = this,
+                                                                        Mods = new IMod[]
+                                                                        {
+                                                                            new NoSvMod(),
+                                                                            new NoLnMod()
+                                                                        }
+                                                                    }
                                                                 }
                                                             },
-                                                            new()
+                                                            new FillFlowContainer<ModCategory>
                                                             {
-                                                                Label = "Difficulty Increase",
-                                                                HexColour = "#ff6666",
-                                                                Selector = this,
-                                                                Mods = new IMod[]
+                                                                AutoSizeAxes = Axes.Y,
+                                                                RelativeSizeAxes = Axes.X,
+                                                                Width = 0.5f,
+                                                                Direction = FillDirection.Vertical,
+                                                                Spacing = new Vector2(0, 10),
+                                                                Children = new ModCategory[]
                                                                 {
-                                                                    new HardMod(),
-                                                                    new FragileMod(),
-                                                                    new FlawlessMod()
-                                                                }
-                                                            },
-                                                            new()
-                                                            {
-                                                                Label = "Automation",
-                                                                HexColour = "#66b3ff",
-                                                                Selector = this,
-                                                                Mods = new IMod[]
-                                                                {
-                                                                    new AutoPlayMod(),
-                                                                }
-                                                            },
-                                                            new()
-                                                            {
-                                                                Label = "Miscellaneous",
-                                                                HexColour = "#8866ff",
-                                                                Selector = this,
-                                                                Mods = new IMod[]
-                                                                {
-                                                                    new NoSvMod(),
-                                                                    new NoLnMod()
+                                                                    new()
+                                                                    {
+                                                                        Label = "Difficulty Increase",
+                                                                        HexColour = "#ff6666",
+                                                                        Selector = this,
+                                                                        Mods = new IMod[]
+                                                                        {
+                                                                            new HardMod(),
+                                                                            new FragileMod(),
+                                                                            new FlawlessMod()
+                                                                        }
+                                                                    },
+                                                                    new()
+                                                                    {
+                                                                        Label = "Automation",
+                                                                        HexColour = "#66b3ff",
+                                                                        Selector = this,
+                                                                        Mods = new IMod[]
+                                                                        {
+                                                                            new AutoPlayMod(),
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }

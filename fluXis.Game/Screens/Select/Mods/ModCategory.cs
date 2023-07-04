@@ -24,7 +24,6 @@ public partial class ModCategory : Container
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Padding = new MarginPadding { Horizontal = 5 };
-        Width = 0.5f;
 
         Child = new Container
         {

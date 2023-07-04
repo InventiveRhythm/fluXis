@@ -20,7 +20,7 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
-public partial class ScoreListEntry : Container, IHasTooltip
+public partial class ScoreListEntry : Container, IHasTextTooltip
 {
     public string Tooltip => $"{score.Judgements.Flawless} / {score.Judgements.Perfect} / {score.Judgements.Great} / {score.Judgements.Alright} / {score.Judgements.Okay} / {score.Judgements.Miss}";
 

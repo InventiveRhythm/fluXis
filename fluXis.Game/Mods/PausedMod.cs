@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -13,5 +12,5 @@ public class PausedMod : IMod
     public ModType Type => ModType.Special;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;
-    public IEnumerable<string> IncompatibleMods => Array.Empty<string>();
+    public string[] IncompatibleMods => Array.Empty<string>();
 }

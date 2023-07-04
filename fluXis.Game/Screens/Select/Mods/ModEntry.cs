@@ -1,7 +1,10 @@
 using System;
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Mods;
+using fluXis.Game.Mods.Drawables;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,10 +15,8 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Mods;
 
-public partial class ModEntry : Container, IHasTooltip
+public partial class ModEntry : Container, IHasDrawableTooltip
 {
-    public string Tooltip => Mod.Description;
-
     public ModSelector Selector { get; set; }
 
     public IMod Mod { get; init; }
@@ -131,5 +132,52 @@ public partial class ModEntry : Container, IHasTooltip
     protected override void OnHoverLost(HoverLostEvent e)
     {
         hoverBox.FadeTo(0, 200);
+    }
+
+    public Drawable GetTooltip()
+    {
+        var flow = new FillFlowContainer
+        {
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Vertical,
+            Padding = new MarginPadding(10),
+            Children = new Drawable[]
+            {
+                new FluXisSpriteText
+                {
+                    Text = Mod.Name,
+                    FontSize = 28,
+                    Shadow = true
+                },
+                new FluXisSpriteText
+                {
+                    Text = Mod.Description,
+                    FontSize = 20,
+                    Colour = FluXisColors.Text2,
+                    Shadow = true
+                }
+            }
+        };
+
+        if (Mod.IncompatibleMods.Length > 0)
+        {
+            flow.AddRange(new Drawable[]
+            {
+                new FluXisSpriteText
+                {
+                    Text = "Incompatible Mods:",
+                    FontSize = 20,
+                    Margin = new MarginPadding { Top = 10, Bottom = 5 },
+                    Shadow = true
+                },
+                new ModList
+                {
+                    Scale = new Vector2(.8f),
+                    Mods = Mod.IncompatibleMods.Select(ModUtils.GetFromAcronym).ToList()
+                }
+            });
+        }
+
+        return flow;
     }
 }

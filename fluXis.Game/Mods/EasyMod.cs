@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -12,5 +11,5 @@ public class EasyMod : IMod
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.7f;
     public bool Rankable => true;
-    public IEnumerable<string> IncompatibleMods => new[] { "HD", "NF" };
+    public string[] IncompatibleMods => new[] { "HD", "NF" };
 }

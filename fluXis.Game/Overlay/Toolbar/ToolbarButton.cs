@@ -10,7 +10,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarButton : Container, IHasTooltip
+public partial class ToolbarButton : Container, IHasTextTooltip
 {
     public IconUsage Icon = FontAwesome.Solid.Question;
     public new string Name = "";

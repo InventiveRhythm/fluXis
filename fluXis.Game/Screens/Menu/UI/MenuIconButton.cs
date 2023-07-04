@@ -10,7 +10,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
-public partial class MenuIconButton : Container, IHasTooltip
+public partial class MenuIconButton : Container, IHasTextTooltip
 {
     public string Tooltip => Text;
 

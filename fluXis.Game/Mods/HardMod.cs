@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -12,5 +11,5 @@ public class HardMod : IMod
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1.04f;
     public bool Rankable => true;
-    public IEnumerable<string> IncompatibleMods => new[] { "EZ", "NF" };
+    public string[] IncompatibleMods => new[] { "EZ", "NF" };
 }

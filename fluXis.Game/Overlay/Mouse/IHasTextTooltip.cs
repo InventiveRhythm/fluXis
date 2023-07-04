@@ -1,6 +1,6 @@
 namespace fluXis.Game.Overlay.Mouse;
 
-public interface IHasTooltip
+public interface IHasTextTooltip
 {
     string Tooltip { get; }
 }
