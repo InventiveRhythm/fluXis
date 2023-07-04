@@ -28,8 +28,5 @@ public partial class GamepadHandler : Component
         return true;
     }
 
-    protected override bool Handle(UIEvent e)
-    {
-        return updateStatus(e is JoystickEvent);
-    }
+    protected override bool Handle(UIEvent e) => updateStatus(e is JoystickEvent);
 }
