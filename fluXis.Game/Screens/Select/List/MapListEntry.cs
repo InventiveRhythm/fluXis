@@ -171,7 +171,8 @@ public partial class MapListEntry : Container
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fill,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    Origin = Anchor.Centre,
+                    Cropped = true
                 }, 100, 200),
                 dim = new Box
                 {

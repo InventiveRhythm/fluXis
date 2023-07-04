@@ -9,6 +9,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
@@ -100,6 +101,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.Cache(AudioClock = new AudioClock());
         dependencies.Cache(new BackgroundTextureStore(Host, storage));
+        dependencies.Cache(new CroppedBackgroundStore(Host, storage));
         dependencies.Cache(BackgroundStack = new BackgroundStack());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
         dependencies.Cache(Settings = new SettingsMenu());

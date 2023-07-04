@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
@@ -13,6 +14,7 @@ public partial class MapBackground : Sprite
     private ImportManager importManager { get; set; }
 
     public readonly RealmMap Map;
+    public bool Cropped { get; set; }
 
     public MapBackground(RealmMap map)
     {
@@ -20,7 +22,7 @@ public partial class MapBackground : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(BackgroundTextureStore backgrounds, TextureStore textures)
+    private void load(BackgroundTextureStore backgrounds, CroppedBackgroundStore croppedBackgrounds, TextureStore textures)
     {
         if (Map == null)
             return;
@@ -43,7 +45,11 @@ public partial class MapBackground : Sprite
                 if (path != null) tex = store.Get(path);
             }
         }
-        else tex = backgrounds.Get(Map.MapSet.GetFile(Map.Metadata.Background)?.GetPath());
+        else
+        {
+            var path = Map.MapSet.GetFile(Map.Metadata.Background)?.GetPath();
+            tex = Cropped ? croppedBackgrounds.Get(path) : backgrounds.Get(path);
+        }
 
         Texture = tex ?? textures.Get("Backgrounds/default.png");
     }
