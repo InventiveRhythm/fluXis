@@ -5,6 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
@@ -47,7 +48,9 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
     private readonly Performance performance;
     private readonly RealmScore score;
 
+    private Container content;
     private ResultsRatingInfo ratingInfo;
+    private GamepadTooltipBar gamepadTooltips;
 
     private readonly bool showPlayData;
 
@@ -80,7 +83,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
         InternalChildren = new Drawable[]
         {
-            new Container
+            content = new Container
             {
                 AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -127,10 +130,24 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         }
                     }
                 }
+            },
+            gamepadTooltips = new GamepadTooltipBar
+            {
+                Y = 50,
+                TooltipsLeft = new GamepadTooltip[]
+                {
+                    new()
+                    {
+                        Text = "Back",
+                        Icon = "B"
+                    }
+                }
             }
         };
 
         activity.Update("Viewing Results", "", "results");
+        GamepadHandler.OnGamepadStatusChanged += onGamepadStatusChanged;
+        onGamepadStatusChanged(GamepadHandler.GamepadConnected);
 
         if (score != null && !map.MapSet.Managed)
         {
@@ -139,6 +156,11 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
         }
         else
             ratingInfo.ScoreResponse = new APIResponse<APIScoreResponse>(400, "Score not submittable.", null);
+    }
+
+    private void onGamepadStatusChanged(bool status)
+    {
+        gamepadTooltips.MoveToY(status ? 0 : 50, 250, Easing.OutQuint);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
@@ -157,19 +179,16 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.ScaleTo(0.95f)
-            .FadeOut()
-            .ScaleTo(1f, 250, Easing.OutQuint)
-            .FadeIn(250, Easing.OutQuint);
-
-        base.OnEntering(e);
+        content.ScaleTo(0.95f).ScaleTo(1f, 250, Easing.OutQuint);
+        this.FadeInFromZero(250, Easing.OutQuint);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.ScaleTo(1.05f, 250, Easing.OutQuint)
-            .FadeOut(250, Easing.OutQuint);
+        onGamepadStatusChanged(false);
+        content.ScaleTo(1.05f, 250, Easing.OutQuint);
+        this.FadeOut(250, Easing.OutQuint);
 
-        return base.OnExiting(e);
+        return false;
     }
 }

@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
@@ -6,7 +7,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
@@ -18,7 +18,7 @@ public partial class SelectFooter : Container
     public SelectScreen Screen { get; init; }
 
     private Container keyboardContainer;
-    private Container gamepadContainer;
+    private GamepadTooltipBar gamepadContainer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -97,69 +97,49 @@ public partial class SelectFooter : Container
                     }
                 }
             },
-            gamepadContainer = new Container
+            gamepadContainer = new GamepadTooltipBar
             {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 20 },
                 Alpha = GamepadHandler.GamepadConnected ? 1 : 0,
-                Children = new Drawable[]
+                ShowBackground = false,
+                TooltipsLeft = new GamepadTooltip[]
                 {
-                    new FillFlowContainer
+                    new()
                     {
-                        Direction = FillDirection.Horizontal,
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
-                        Spacing = new Vector2(20),
-                        Children = new Drawable[]
-                        {
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Back",
-                                Icon = "B"
-                            },
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Mods",
-                                Icon = "X"
-                            },
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Random",
-                                Icon = "Y"
-                            },
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Options",
-                                Icon = "Menu"
-                            },
-                        }
+                        Text = "Back",
+                        Icon = "B"
                     },
-                    new FillFlowContainer
+                    new()
                     {
-                        Direction = FillDirection.Horizontal,
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Spacing = new Vector2(20),
-                        Children = new Drawable[]
-                        {
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Change Map",
-                                Icons = new[] { "DpadLeft", "DpadRight" }
-                            },
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Change Difficulty",
-                                Icons = new[] { "DpadUp", "DpadDown" }
-                            },
-                            new SelectGamepadTooltip
-                            {
-                                Text = "Select",
-                                Icon = "A"
-                            }
-                        }
+                        Text = "Mods",
+                        Icon = "X"
+                    },
+                    new()
+                    {
+                        Text = "Random",
+                        Icon = "Y"
+                    },
+                    new()
+                    {
+                        Text = "Options",
+                        Icon = "Menu"
+                    }
+                },
+                TooltipsRight = new GamepadTooltip[]
+                {
+                    new()
+                    {
+                        Text = "Change Map",
+                        Icons = new[] { "DpadLeft", "DpadRight" }
+                    },
+                    new()
+                    {
+                        Text = "Change Difficulty",
+                        Icons = new[] { "DpadUp", "DpadDown" }
+                    },
+                    new()
+                    {
+                        Text = "Play",
+                        Icon = "A"
                     }
                 }
             }
