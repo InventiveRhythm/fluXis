@@ -165,7 +165,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                     },
                 }
             },
-            Footer = new SelectFooter(this),
+            Footer = new SelectFooter { Screen = this },
             ModSelector = new ModSelector()
         };
 
@@ -564,6 +564,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
             case JoystickButton.Hat1Right or JoystickButton.FirstAxisPositive: // Right
                 changeSelection(1);
+                return true;
+
+            case JoystickButton.Button9: // Back
+                return true;
+
+            case JoystickButton.Button10: // Start
+                Footer.OpenSettings();
                 return true;
         }
 

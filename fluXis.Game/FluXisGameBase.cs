@@ -132,7 +132,8 @@ public partial class FluXisGameBase : osu.Framework.Game
                     content = new Container
                     {
                         RelativeSizeAxes = Axes.Both
-                    }
+                    },
+                    new GamepadHandler()
                 }
             }
         });

@@ -1,3 +1,4 @@
+using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -5,6 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
@@ -13,12 +15,14 @@ public partial class SelectFooter : Container
     [Resolved]
     public NotificationOverlay Notifications { get; private set; }
 
-    public SelectScreen Screen { get; }
+    public SelectScreen Screen { get; init; }
 
-    public SelectFooter(SelectScreen screen)
+    private Container keyboardContainer;
+    private Container gamepadContainer;
+
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        Screen = screen;
-
         RelativeSizeAxes = Axes.X;
         Height = 50;
         Anchor = Origin = Anchor.BottomLeft;
@@ -31,10 +35,11 @@ public partial class SelectFooter : Container
                 Colour = Colour4.Black,
                 Alpha = .5f
             },
-            new Container
+            keyboardContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Horizontal = 10 },
+                Alpha = GamepadHandler.GamepadConnected ? 0 : 1,
                 Children = new Drawable[]
                 {
                     new FillFlowContainer
@@ -60,12 +65,12 @@ public partial class SelectFooter : Container
                             new SelectFooterButton
                             {
                                 Text = "Mods",
-                                Action = () => Screen.ModSelector.IsOpen.Toggle()
+                                Action = openModSelector
                             },
                             new SelectFooterButton
                             {
                                 Text = "Random",
-                                Action = Screen.RandomMap
+                                Action = randomMap
                             },
                             new SelectFooterButton
                             {
@@ -91,8 +96,98 @@ public partial class SelectFooter : Container
                         }
                     }
                 }
+            },
+            gamepadContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Horizontal = 20 },
+                Alpha = GamepadHandler.GamepadConnected ? 1 : 0,
+                Children = new Drawable[]
+                {
+                    new FillFlowContainer
+                    {
+                        Direction = FillDirection.Horizontal,
+                        RelativeSizeAxes = Axes.Y,
+                        AutoSizeAxes = Axes.X,
+                        Spacing = new Vector2(20),
+                        Children = new Drawable[]
+                        {
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Back",
+                                Icon = "B"
+                            },
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Mods",
+                                Icon = "X"
+                            },
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Random",
+                                Icon = "Y"
+                            },
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Options",
+                                Icon = "Menu"
+                            },
+                        }
+                    },
+                    new FillFlowContainer
+                    {
+                        Direction = FillDirection.Horizontal,
+                        RelativeSizeAxes = Axes.Y,
+                        AutoSizeAxes = Axes.X,
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight,
+                        Spacing = new Vector2(20),
+                        Children = new Drawable[]
+                        {
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Change Map",
+                                Icons = new[] { "DpadLeft", "DpadRight" }
+                            },
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Change Difficulty",
+                                Icons = new[] { "DpadUp", "DpadDown" }
+                            },
+                            new SelectGamepadTooltip
+                            {
+                                Text = "Select",
+                                Icon = "A"
+                            }
+                        }
+                    }
+                }
             }
         };
+
+        GamepadHandler.OnGamepadStatusChanged += updateGamepadStatus;
+    }
+
+    private void updateGamepadStatus(bool status)
+    {
+        keyboardContainer.FadeTo(status ? 0 : 1);
+        gamepadContainer.FadeTo(status ? 1 : 0);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        GamepadHandler.OnGamepadStatusChanged -= updateGamepadStatus;
+    }
+
+    private void openModSelector()
+    {
+        Screen.ModSelector.IsOpen.Value = true;
+    }
+
+    private void randomMap()
+    {
+        Screen.RandomMap();
     }
 
     public void OpenSettings()
