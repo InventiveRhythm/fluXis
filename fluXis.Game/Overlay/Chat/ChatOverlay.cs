@@ -172,6 +172,8 @@ public partial class ChatOverlay : Container
 
         fluxel.RegisterListener<ChatMessage[]>(EventType.ChatHistory, response =>
         {
+            response.Data = response.Data.OrderBy(x => x.Timestamp).ToArray();
+
             var first = response.Data.FirstOrDefault();
 
             if (first == null)
