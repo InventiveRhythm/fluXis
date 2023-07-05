@@ -9,8 +9,10 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Profile.Stats;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Import;
+using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -32,19 +34,19 @@ public partial class ProfileOverlay : Container
     private APIUser user = APIUser.DummyUser(-1);
 
     private Container content;
-    private ClickableContainer background;
 
     private DrawableBanner banner;
     private DrawableAvatar avatar;
     private AvatarEdit avatarEdit;
     private BannerEdit bannerEdit;
     private FluXisSpriteText username;
-    private Box roleBackground;
+    private FluXisSpriteText lastOnline;
     private FluXisSpriteText role;
     private FillFlowContainer<SocialChip> socialContainer;
+    private ProfileStats stats;
     private AboutMeProfileSection aboutMe;
 
-    private Box loadingBox;
+    private Container loadingBox;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -54,7 +56,7 @@ public partial class ProfileOverlay : Container
 
         InternalChildren = new Drawable[]
         {
-            background = new ClickableContainer
+            new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Child = new Box
@@ -67,11 +69,11 @@ public partial class ProfileOverlay : Container
             },
             content = new Container
             {
-                Width = 1200,
+                Width = 1350,
                 Height = 800,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                CornerRadius = 10,
+                CornerRadius = 20,
                 Masking = true,
                 Scale = new Vector2(0.9f),
                 Children = new Drawable[]
@@ -91,7 +93,7 @@ public partial class ProfileOverlay : Container
                             {
                                 RelativeSizeAxes = Axes.X,
                                 Height = 400,
-                                CornerRadius = 10,
+                                CornerRadius = 20,
                                 Masking = true,
                                 Children = new Drawable[]
                                 {
@@ -107,11 +109,6 @@ public partial class ProfileOverlay : Container
                                         Colour = Colour4.Black,
                                         Alpha = 0.4f
                                     },
-                                    /*new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = ColourInfo.GradientVertical(FluXisColors.Background2.Opacity(0), FluXisColors.Background2)
-                                    },*/
                                     bannerEdit = new BannerEdit
                                     {
                                         Overlay = this,
@@ -132,7 +129,7 @@ public partial class ProfileOverlay : Container
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.CentreLeft,
                                                 Margin = new MarginPadding { Right = 10 },
-                                                CornerRadius = 10,
+                                                CornerRadius = 20,
                                                 Masking = true,
                                                 Children = new Drawable[]
                                                 {
@@ -162,32 +159,22 @@ public partial class ProfileOverlay : Container
                                                         Text = user.Username,
                                                         FontSize = 45
                                                     },
-                                                    new Container
+                                                    lastOnline = new FluXisSpriteText
                                                     {
-                                                        AutoSizeAxes = Axes.Both,
-                                                        CornerRadius = 5,
-                                                        Masking = true,
-                                                        Children = new Drawable[]
-                                                        {
-                                                            roleBackground = new Box
-                                                            {
-                                                                RelativeSizeAxes = Axes.Both,
-                                                                Colour = FluXisColors.GetRoleColor(user.Role)
-                                                            },
-                                                            role = new FluXisSpriteText
-                                                            {
-                                                                Text = APIUser.GetRole(user.Role),
-                                                                FontSize = 25,
-                                                                Margin = new MarginPadding { Horizontal = 5, Vertical = 1 }
-                                                            }
-                                                        }
+                                                        Text = "",
+                                                        FontSize = 23
+                                                    },
+                                                    role = new FluXisSpriteText
+                                                    {
+                                                        Text = APIUser.GetRole(user.Role),
+                                                        Colour = FluXisColors.GetRoleColor(user.Role),
+                                                        FontSize = 25
                                                     },
                                                     socialContainer = new FillFlowContainer<SocialChip>
                                                     {
                                                         AutoSizeAxes = Axes.Both,
                                                         Direction = FillDirection.Horizontal,
-                                                        Spacing = new Vector2(10),
-                                                        Margin = new MarginPadding { Top = 10 }
+                                                        Spacing = new Vector2(10)
                                                     }
                                                 }
                                             }
@@ -205,6 +192,7 @@ public partial class ProfileOverlay : Container
                                 Direction = FillDirection.Vertical,
                                 Children = new Drawable[]
                                 {
+                                    stats = new ProfileStats { User = user },
                                     aboutMe = new AboutMeProfileSection { AboutMe = user.AboutMe },
                                     new ProfileSection { Title = "Recent" },
                                     new ProfileSection { Title = "Top Scores" },
@@ -214,11 +202,24 @@ public partial class ProfileOverlay : Container
                             }
                         }
                     },
-                    loadingBox = new Box
+                    loadingBox = new Container
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = 0.5f
+                        Alpha = 1,
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = Colour4.Black,
+                                Alpha = 0.5f
+                            },
+                            new LoadingIcon
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre
+                            }
+                        }
                     }
                 }
             }
@@ -229,26 +230,30 @@ public partial class ProfileOverlay : Container
 
     public void UpdateUser(int id)
     {
-        loadingBox.FadeTo(.5f, 200);
+        loadingBox.FadeIn(200);
 
         Task.Run(() =>
         {
-            var newUser = UserCache.GetUser(id);
+            var newUser = UserCache.GetUser(id, true);
 
             user = newUser ?? APIUser.DummyUser(-1);
 
             if (username != null) username.Text = user.Username;
             if (aboutMe != null) aboutMe.AboutMe = user.AboutMe;
+            if (stats != null) stats.User = user;
 
-            var roleColor = FluXisColors.GetRoleColor(user.Role);
+            if (lastOnline != null)
+            {
+                lastOnline.Text = user.Online
+                    ? "Online"
+                    : $"Last online {TimeUtils.Ago(DateTimeOffset.FromUnixTimeSeconds(user.LastLogin))}";
+            }
 
             if (role != null)
             {
                 role.Text = APIUser.GetRole(user.Role);
-                role.Colour = FluXisColors.IsBright(roleColor) ? FluXisColors.TextDark : Colour4.White;
+                role.Colour = FluXisColors.GetRoleColor(user.Role);
             }
-
-            if (roleBackground != null) roleBackground.Colour = roleColor;
 
             banner?.UpdateUser(user);
             avatar?.UpdateUser(user);

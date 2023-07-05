@@ -17,13 +17,15 @@ public class UserCache
         fluxel = api;
     }
 
-    public static APIUser GetUser(int id)
+    public static APIUser GetUser(int id, bool forceReload = false)
     {
-        if (users.TryGetValue(id, out var u))
+        if (users.TryGetValue(id, out var u) && !forceReload)
             return u;
 
-        APIUser user = fetchUser(id) ?? APIUser.DummyUser(id);
-        users.Add(id, user);
+        APIUser user = fetchUser(id);
+        if (user == null) return null;
+
+        users[id] = user;
         return user;
     }
 
