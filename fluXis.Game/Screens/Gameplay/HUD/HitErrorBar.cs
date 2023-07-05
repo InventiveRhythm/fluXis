@@ -139,7 +139,8 @@ public partial class HitErrorBar : GameplayHUDElement
         hit.ScaleTo(0)
            .ScaleTo(1f, 200, Easing.OutQuint)
            .Then()
-           .FadeOut(300);
+           .FadeOut(300)
+           .Expire();
 
         updateAverage();
     }

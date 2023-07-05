@@ -313,6 +313,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
             text += $"\n HitObjects: {Playfield.Manager.HitObjects.Count}";
             text += $"\n Future HitObjects: {Playfield.Manager.FutureHitObjects.Count}";
+            text += $"\n Internal Child Count: {Playfield.Manager.InternalChildCount}";
             text += "\nTime";
             text += $"\n Current Time: {AudioClock.CurrentTime}";
             text += $"\n Current Rate: {Rate}";

@@ -32,7 +32,6 @@ public partial class HitObject : CompositeDrawable
     public bool Missed;
     public bool IsBeingHeld;
     public bool LongNoteMissed;
-    public bool Exists = true;
 
     public HitObject(HitObjectManager manager, HitObjectInfo data)
     {
@@ -62,12 +61,6 @@ public partial class HitObject : CompositeDrawable
         }
     }
 
-    public void Kill()
-    {
-        Alpha = 0;
-        Exists = false;
-    }
-
     public void MissLongNote()
     {
         LongNoteMissed = true;
@@ -76,10 +69,9 @@ public partial class HitObject : CompositeDrawable
 
     public bool IsOffScreen()
     {
-        if (Data.IsLongNote())
-            return holdEndPiece.Y - holdEndPiece.Height > 0;
-
-        return notePiece.Y - notePiece.Height > manager.Playfield.Receptors[0].Y;
+        return Data.IsLongNote()
+            ? holdEndPiece.Y - holdEndPiece.Height > 0
+            : notePiece.Y - notePiece.Height > manager.Playfield.Receptors[0].Y;
     }
 
     protected override void Update()
@@ -89,8 +81,6 @@ public partial class HitObject : CompositeDrawable
         Missed = (clock.CurrentTime - Data.Time > missTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && clock.CurrentTime - Data.HoldEndTime > missTime);
         Hitable = clock.CurrentTime - Data.Time > -missTime && !Missed;
         Releasable = Data.IsLongNote() && clock.CurrentTime - Data.HoldEndTime > -missTime && !Missed;
-
-        if (!Exists) return;
 
         var receptor = manager.Playfield.Receptors[Data.Lane - 1];
 

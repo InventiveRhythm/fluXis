@@ -21,6 +21,8 @@ public partial class HitObjectManager : Container<HitObject>
     [Resolved]
     private AudioClock clock { get; set; }
 
+    public int InternalChildCount => InternalChildren.Count;
+
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value;
     public Playfield Playfield { get; }
@@ -130,7 +132,7 @@ public partial class HitObjectManager : Container<HitObject>
         else
             updateInput();
 
-        foreach (var hitObject in HitObjects.Where(h => h.Missed && h.Exists).ToList())
+        foreach (var hitObject in HitObjects.Where(h => h.Missed).ToList())
         {
             if (hitObject.Data.IsLongNote())
             {
@@ -140,17 +142,9 @@ public partial class HitObjectManager : Container<HitObject>
                     miss(hitObject);
                 }
 
-                if (hitObject.IsOffScreen())
-                {
-                    hitObject.Kill();
-                    HitObjects.Remove(hitObject);
-                    RemoveInternal(hitObject, true);
-                }
+                if (hitObject.IsOffScreen()) removeHitObject(hitObject);
             }
-            else
-            {
-                miss(hitObject);
-            }
+            else miss(hitObject);
         }
 
         foreach (var laneSwitchEvent in Playfield.Screen.MapEvents.LaneSwitchEvents)
@@ -191,7 +185,7 @@ public partial class HitObjectManager : Container<HitObject>
     {
         bool[] pressed = new bool[Map.KeyCount];
 
-        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= clock.CurrentTime && h.Exists).ToList();
+        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= clock.CurrentTime).ToList();
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
@@ -285,12 +279,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         Performance.IncCombo();
 
-        if (!hitObject.Data.IsLongNote() || isHoldEnd)
-        {
-            hitObject.Kill();
-            HitObjects.Remove(hitObject);
-            RemoveInternal(hitObject, true);
-        }
+        if (!hitObject.Data.IsLongNote() || isHoldEnd) removeHitObject(hitObject);
     }
 
     private void miss(HitObject hitObject)
@@ -301,11 +290,14 @@ public partial class HitObjectManager : Container<HitObject>
         judmentDisplay(hitObject, 0, !AutoPlay);
         Performance.ResetCombo();
 
-        if (hitObject.Data.IsLongNote()) return;
+        if (!hitObject.Data.IsLongNote()) removeHitObject(hitObject);
+    }
 
-        hitObject.Kill();
+    private void removeHitObject(HitObject hitObject)
+    {
         HitObjects.Remove(hitObject);
-        RemoveInternal(hitObject, true);
+
+        RemoveInternal(hitObject, false);
     }
 
     private void judmentDisplay(HitObject hitObject, double difference, bool missed = false)
