@@ -1,5 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
+using fluXis.Game.Skinning;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -206,37 +208,27 @@ public partial class FailResults : Container
 
         foreach (var judgement in judgements)
         {
-            judgement.JudgementCount = performance.Judgements.ContainsKey(judgement.HitWindow.Key)
-                ? performance.Judgements[judgement.HitWindow.Key]
+            judgement.JudgementCount = performance.Judgements.TryGetValue(judgement.HitWindow.Key, out var performanceJudgement)
+                ? performanceJudgement
                 : 0;
         }
     }
 
     private partial class FailResultsJudgement : FillFlowContainer
     {
-        private readonly FluXisSpriteText name;
-        private readonly FluXisSpriteText countText;
+        private FluXisSpriteText name;
+        private FluXisSpriteText countText;
         private int count = 0;
 
-        private HitWindow hitWindow;
-
-        public HitWindow HitWindow
-        {
-            set
-            {
-                name.Text = value.Key.ToString();
-                name.Colour = value.Color;
-                hitWindow = value;
-            }
-            get => hitWindow;
-        }
+        public HitWindow HitWindow { set; get; }
 
         public int JudgementCount
         {
             set => this.TransformTo(nameof(count), value, 2000, Easing.OutQuint);
         }
 
-        public FailResultsJudgement()
+        [BackgroundDependencyLoader]
+        private void load(SkinManager skinManager)
         {
             AutoSizeAxes = Axes.Both;
             Direction = FillDirection.Horizontal;
@@ -247,6 +239,8 @@ public partial class FailResults : Container
                 name = new FluXisSpriteText
                 {
                     FontSize = 32,
+                    Text = HitWindow.Key.ToString(),
+                    Colour = skinManager.CurrentSkin.GetColorForJudgement(HitWindow.Key)
                 },
                 countText = new FluXisSpriteText
                 {

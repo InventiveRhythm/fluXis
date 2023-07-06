@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Scoring;
 using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
@@ -288,5 +289,20 @@ public partial class SkinManager : Component
         }
 
         return bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();
+    }
+
+    public Drawable GetJudgement(Judgement judgement)
+    {
+        var path = $"{SkinFolder}/Judgement/{judgement.ToString().ToLower()}.png";
+
+        if (skinStorage?.Exists(path) ?? false)
+        {
+            return new Sprite
+            {
+                Texture = skinTextures.Get(path)
+            };
+        }
+
+        return null;
     }
 }

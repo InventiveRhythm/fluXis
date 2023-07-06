@@ -2,7 +2,9 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
+using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -60,7 +62,7 @@ public partial class ResultHitPoints : Container
         });
 
         foreach (var hitPoint in performance.HitStats)
-            hitPoints.Add(new ResultHitPoint(map, hitPoint));
+            hitPoints.Add(new ResultHitPoint { Stat = hitPoint, MapInfo = map });
     }
 
     protected override bool OnDragStart(DragStartEvent e)
@@ -102,31 +104,31 @@ public partial class ResultHitPoints : Container
 
     public partial class ResultHitPoint : CircularContainer, IHasTextTooltip
     {
-        public string Tooltip => TimeUtils.Format(stat.Time) + " | " + stat.Difference + "ms";
+        public string Tooltip => TimeUtils.Format(Stat.Time) + " | " + Stat.Difference + "ms";
 
-        private readonly HitStat stat;
+        public HitStat Stat { get; init; }
+        public MapInfo MapInfo { get; init; }
 
-        public ResultHitPoint(MapInfo map, HitStat stat)
+        [BackgroundDependencyLoader]
+        private void load(SkinManager skinManager)
         {
-            this.stat = stat;
-
             Size = new Vector2(3);
             Masking = true;
             RelativePositionAxes = Axes.X;
             Anchor = Anchor.CentreLeft;
             Origin = Anchor.Centre;
 
-            X = (stat.Time - map.StartTime) / (map.EndTime - map.StartTime);
-            Y = stat.Difference;
+            X = (Stat.Time - MapInfo.StartTime) / (MapInfo.EndTime - MapInfo.StartTime);
+            Y = Stat.Difference;
 
-            HitWindow hitWindow = HitWindow.FromKey(stat.Judgement);
+            HitWindow hitWindow = HitWindow.FromKey(Stat.Judgement);
 
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = hitWindow.Color
+                    Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
                 }
             };
         }

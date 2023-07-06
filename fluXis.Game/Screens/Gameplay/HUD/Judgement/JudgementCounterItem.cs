@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,7 +26,7 @@ public partial class JudgementCounterItem : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(SkinManager skinManager)
     {
         RelativeSizeAxes = Axes.X;
         Height = 50;
@@ -36,7 +37,7 @@ public partial class JudgementCounterItem : Container
         {
             background = new Box
             {
-                Colour = hitWindow.Color,
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key),
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
@@ -46,7 +47,7 @@ public partial class JudgementCounterItem : Container
                 FontSize = 24,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = hitWindow.Color
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
             }
         };
     }

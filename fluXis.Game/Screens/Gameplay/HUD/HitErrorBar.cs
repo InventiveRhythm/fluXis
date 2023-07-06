@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Scoring;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -14,22 +15,32 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class HitErrorBar : GameplayHUDElement
 {
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
     private Bindable<float> scaleBind;
 
-    private readonly SpriteIcon icon;
-    private readonly Container hits;
-    private readonly CircularContainer average;
+    private SpriteIcon icon;
+    private Container hits;
+    private CircularContainer average;
 
     public HitErrorBar(GameplayScreen screen)
         : base(screen)
     {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        scaleBind = config.GetBindable<float>(FluXisSetting.HitErrorScale);
+
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
         AutoSizeAxes = Axes.Y;
         Width = 280;
         Y = 50;
 
-        screen.Performance.OnHitStatAdded += AddHit;
+        Screen.Performance.OnHitStatAdded += AddHit;
 
         Container colors;
 
@@ -97,16 +108,10 @@ public partial class HitErrorBar : GameplayHUDElement
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = hitWindow.Color
+                    Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
                 }
             });
         }
-    }
-
-    [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
-    {
-        scaleBind = config.GetBindable<float>(FluXisSetting.HitErrorScale);
     }
 
     protected override void LoadComplete()
@@ -131,7 +136,7 @@ public partial class HitErrorBar : GameplayHUDElement
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = hitWindow.Color
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
             }
         };
 
@@ -151,6 +156,6 @@ public partial class HitErrorBar : GameplayHUDElement
         HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(avg));
 
         average.MoveToX(avg, 100, Easing.OutQuint);
-        average.Colour = hitWindow.Color;
+        average.Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key);
     }
 }

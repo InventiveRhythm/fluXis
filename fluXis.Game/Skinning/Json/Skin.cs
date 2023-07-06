@@ -1,5 +1,7 @@
 using System;
+using fluXis.Game.Scoring;
 using Newtonsoft.Json;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Skinning.Json;
 
@@ -35,6 +37,9 @@ public class Skin
     [JsonProperty("10k")]
     public SkinKeymode TenKey { get; set; } = new() { ColumnWidth = 78 };
 
+    [JsonProperty("judgements")]
+    public SkinJudgements Judgements { get; set; } = new();
+
     public SkinKeymode GetKeymode(int keyCount)
     {
         return keyCount switch
@@ -51,6 +56,23 @@ public class Skin
             10 => TenKey,
             _ => throw new ArgumentOutOfRangeException(nameof(keyCount), keyCount, null)
         };
+    }
+
+    public Colour4 GetColorForJudgement(Judgement judgement)
+    {
+        var hex = judgement switch
+        {
+            Judgement.Flawless => Judgements.Flawless,
+            Judgement.Perfect => Judgements.Perfect,
+            Judgement.Great => Judgements.Great,
+            Judgement.Alright => Judgements.Alright,
+            Judgement.Okay => Judgements.Okay,
+            Judgement.Miss => Judgements.Miss,
+            _ => throw new ArgumentOutOfRangeException(nameof(judgement), judgement, null)
+        };
+
+        try { return Colour4.FromHex(hex); }
+        catch { return Colour4.White; }
     }
 
     public Skin Copy() => (Skin)MemberwiseClone();

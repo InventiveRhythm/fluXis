@@ -1,5 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Scoring;
+using fluXis.Game.Skinning;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -9,19 +11,19 @@ namespace fluXis.Game.Screens.Result.UI;
 
 public partial class ResultScore : FillFlowContainer
 {
-    private readonly Performance performance;
-    private readonly FluXisSpriteText scoreText;
-    private readonly FluXisSpriteText accuracyText;
-    private readonly FluXisSpriteText comboText;
+    public Performance Performance { get; init; }
+
+    private FluXisSpriteText scoreText;
+    private FluXisSpriteText accuracyText;
+    private FluXisSpriteText comboText;
 
     private int score = 0;
     private float accuracy = 0;
     private int combo = 0;
 
-    public ResultScore(Performance performance)
+    [BackgroundDependencyLoader]
+    private void load(SkinManager skinManager)
     {
-        this.performance = performance;
-
         AutoSizeAxes = Axes.Both;
         Direction = FillDirection.Vertical;
         Anchor = Anchor.TopCentre;
@@ -71,7 +73,7 @@ public partial class ResultScore : FillFlowContainer
                     comboText = new FluXisSpriteText
                     {
                         FontSize = 24,
-                        Colour = performance.AllFlawless ? HitWindow.FromKey(Judgement.Flawless).Color : performance.FullCombo ? HitWindow.FromKey(Judgement.Great).Color : Color4.White
+                        Colour = Performance.AllFlawless ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Flawless) : Performance.FullCombo ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Great) : Color4.White
                     }
                 }
             }
@@ -79,16 +81,16 @@ public partial class ResultScore : FillFlowContainer
 
         foreach (var judgement in HitWindow.LIST)
         {
-            int count = performance.GetJudgementCount(judgement.Key);
-            judgementsContainer.Add(new ResultJudgement(judgement, count));
+            int count = Performance.GetJudgementCount(judgement.Key);
+            judgementsContainer.Add(new ResultJudgement { HitWindow = judgement, Count = count });
         }
     }
 
     protected override void LoadComplete()
     {
-        this.TransformTo(nameof(score), performance.Score, 1000, Easing.OutQuint);
-        this.TransformTo(nameof(accuracy), performance.Accuracy, 800, Easing.OutQuint);
-        this.TransformTo(nameof(combo), performance.MaxCombo, 800, Easing.OutQuint);
+        this.TransformTo(nameof(score), Performance.Score, 1000, Easing.OutQuint);
+        this.TransformTo(nameof(accuracy), Performance.Accuracy, 800, Easing.OutQuint);
+        this.TransformTo(nameof(combo), Performance.MaxCombo, 800, Easing.OutQuint);
 
         base.LoadComplete();
     }
@@ -96,8 +98,8 @@ public partial class ResultScore : FillFlowContainer
     protected override void Update()
     {
         scoreText.Text = score.ToString().PadLeft(7, "0"[0]);
-        accuracyText.Text = $"{performance.Grade} - {accuracy:00.00}%".Replace(",", ".");
-        comboText.Text = $"{combo}/{performance.Map.MaxCombo}";
+        accuracyText.Text = $"{Performance.Grade} - {accuracy:00.00}%".Replace(",", ".");
+        comboText.Text = $"{combo}/{Performance.Map.MaxCombo}";
 
         base.Update();
     }

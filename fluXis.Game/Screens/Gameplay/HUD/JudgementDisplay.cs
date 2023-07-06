@@ -3,6 +3,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -19,6 +20,9 @@ public partial class JudgementDisplay : GameplayHUDElement
     [Resolved]
     private LightController lightController { get; set; }
 
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
     public JudgementDisplay(GameplayScreen screen)
         : base(screen)
     {
@@ -27,6 +31,8 @@ public partial class JudgementDisplay : GameplayHUDElement
 
     private FluXisSpriteText text;
     private FluXisSpriteText textEarlyLate;
+    private Container skinnableTextContainer;
+
     private Bindable<bool> hideFlawless;
     private Bindable<bool> showEarlyLate;
     private Bindable<bool> judgementSplash;
@@ -69,6 +75,12 @@ public partial class JudgementDisplay : GameplayHUDElement
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
+            skinnableTextContainer = new Container
+            {
+                AutoSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
             textEarlyLate = new FluXisSpriteText
             {
                 FontSize = 24,
@@ -96,19 +108,34 @@ public partial class JudgementDisplay : GameplayHUDElement
             rotation = new Random().Next(-random_angle, random_angle);
         }
 
-        text.Text = judgement.ToString();
-        text.Colour = hitWindow.Color;
-        text.RotateTo(rotation)
-            .ScaleTo(1f)
-            .FadeIn()
-            .TransformSpacingTo(new Vector2(0, 0))
-            .ScaleTo(scale, 1000, Easing.OutQuint)
-            .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
-            .Delay(600).FadeOut(400);
+        var skinTexture = skinManager.GetJudgement(judgement);
+
+        if (skinTexture != null)
+        {
+            text.FadeOut();
+
+            skinnableTextContainer.Clear();
+            skinnableTextContainer.Add(skinTexture);
+
+            skinnableTextContainer.RotateTo(rotation).ScaleTo(1f).FadeIn()
+                                  .ScaleTo(scale, 1000, Easing.OutQuint)
+                                  .Delay(600).FadeOut(400);
+        }
+        else
+        {
+            skinnableTextContainer.FadeOut();
+
+            text.Text = judgement.ToString();
+            text.Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement);
+            text.RotateTo(rotation).ScaleTo(1f).FadeIn().TransformSpacingTo(new Vector2(0, 0))
+                .ScaleTo(scale, 1000, Easing.OutQuint)
+                .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
+                .Delay(600).FadeOut(400);
+        }
 
         if (judgementSplash.Value)
         {
-            circle.BorderColour = hitWindow.Color;
+            circle.BorderColour = skinManager.CurrentSkin.GetColorForJudgement(judgement);
             circle.FadeInFromZero(200)
                   .TransformTo(nameof(circle.BorderThickness), 20f)
                   .TransformTo(nameof(circle.BorderThickness), 0f, 700, Easing.OutQuint)
@@ -117,12 +144,12 @@ public partial class JudgementDisplay : GameplayHUDElement
 
             if (judgement != Scoring.Judgement.Miss)
             {
-                splash.Colour = hitWindow.Color;
+                splash.Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement);
                 splash.Splat();
             }
         }
 
-        lightController.FadeColour(hitWindow.Color)
+        lightController.FadeColour(skinManager.CurrentSkin.GetColorForJudgement(judgement))
                        .FadeColour(Color4.Black, 400);
 
         if (showEarlyLate.Value && judgement != Scoring.Judgement.Flawless && judgement != Scoring.Judgement.Miss)
