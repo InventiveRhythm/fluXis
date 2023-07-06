@@ -1,5 +1,4 @@
 using System.Runtime.Versioning;
-using fluXis.Game;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
