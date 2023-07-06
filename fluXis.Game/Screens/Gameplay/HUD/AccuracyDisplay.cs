@@ -15,16 +15,12 @@ public partial class AccuracyDisplay : GameplayHUDElement
     private Grade grade = Grade.X;
     private DrawableGrade drawableGrade;
 
-    public AccuracyDisplay(GameplayScreen screen)
-        : base(screen)
-    {
-        displayedAccuracy = 0;
-        lastAccuracy = 0;
-    }
-
     [BackgroundDependencyLoader]
     private void load()
     {
+        displayedAccuracy = 0;
+        lastAccuracy = 0;
+
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
 

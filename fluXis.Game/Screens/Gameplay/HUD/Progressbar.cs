@@ -14,11 +14,6 @@ public partial class Progressbar : GameplayHUDElement
     [Resolved]
     private AudioClock clock { get; set; }
 
-    public Progressbar(GameplayScreen screen)
-        : base(screen)
-    {
-    }
-
     private Bar bar;
     private FluXisSpriteText currentTimeText;
     private FluXisSpriteText percentText;

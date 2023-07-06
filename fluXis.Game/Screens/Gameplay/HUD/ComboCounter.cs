@@ -6,11 +6,6 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class ComboCounter : GameplayHUDElement
 {
-    public ComboCounter(GameplayScreen screen)
-        : base(screen)
-    {
-    }
-
     private FluXisSpriteText text;
     private int lastCombo;
 

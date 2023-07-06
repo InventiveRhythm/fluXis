@@ -23,12 +23,6 @@ public partial class JudgementDisplay : GameplayHUDElement
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public JudgementDisplay(GameplayScreen screen)
-        : base(screen)
-    {
-        screen.Performance.OnHitStatAdded += popUp;
-    }
-
     private FluXisSpriteText text;
     private FluXisSpriteText textEarlyLate;
     private Container skinnableTextContainer;
@@ -46,6 +40,8 @@ public partial class JudgementDisplay : GameplayHUDElement
         hideFlawless = config.GetBindable<bool>(FluXisSetting.HideFlawless);
         showEarlyLate = config.GetBindable<bool>(FluXisSetting.ShowEarlyLate);
         judgementSplash = config.GetBindable<bool>(FluXisSetting.JudgementSplash);
+
+        Screen.Performance.OnHitStatAdded += popUp;
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;

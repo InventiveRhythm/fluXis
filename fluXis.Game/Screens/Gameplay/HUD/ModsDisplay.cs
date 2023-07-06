@@ -8,11 +8,6 @@ public partial class ModsDisplay : GameplayHUDElement
 {
     private ModList modsContainer;
 
-    public ModsDisplay(GameplayScreen screen)
-        : base(screen)
-    {
-    }
-
     [BackgroundDependencyLoader]
     private void load()
     {

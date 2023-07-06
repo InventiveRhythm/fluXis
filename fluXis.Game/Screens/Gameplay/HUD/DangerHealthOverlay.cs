@@ -16,15 +16,19 @@ public partial class DangerHealthOverlay : GameplayHUDElement
 
     private Bindable<bool> dimOnLowHealth;
 
-    private readonly Box glow;
-    private readonly Box darken;
+    private Box glow;
+    private Box darken;
     private float health;
 
     private const int threshold = 40;
 
-    public DangerHealthOverlay(GameplayScreen screen)
-        : base(screen)
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
     {
+        dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
+        dimOnLowHealth.BindValueChanged(onDimOnLowHealthChanged, true);
+        health = Screen.Playfield.Manager.Health;
+
         RelativeSizeAxes = Axes.Both;
 
         AddRangeInternal(new Drawable[]
@@ -45,14 +49,6 @@ public partial class DangerHealthOverlay : GameplayHUDElement
                 Alpha = 0
             }
         });
-    }
-
-    [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
-    {
-        dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
-        dimOnLowHealth.BindValueChanged(onDimOnLowHealthChanged, true);
-        health = Screen.Playfield.Manager.Health;
     }
 
     private void onDimOnLowHealthChanged(ValueChangedEvent<bool> e)

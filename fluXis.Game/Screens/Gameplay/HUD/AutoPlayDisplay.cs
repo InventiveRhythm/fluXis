@@ -7,11 +7,6 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class AutoPlayDisplay : GameplayHUDElement
 {
-    public AutoPlayDisplay(GameplayScreen screen)
-        : base(screen)
-    {
-    }
-
     private FluXisSpriteText text;
     private readonly Bindable<bool> autoPlay = new();
 

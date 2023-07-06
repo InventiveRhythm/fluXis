@@ -1,53 +1,25 @@
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
 public partial class AttributeText : GameplayHUDElement
 {
-    private readonly FluXisSpriteText sprText;
+    public string Text { get; init; } = "{value}";
+    public float FontSize { get; init; } = 32;
+    public AttributeType AttributeType { get; init; } = AttributeType.Title;
 
-    private string text = string.Empty;
-
-    public string Text
-    {
-        get => text;
-        set
-        {
-            sprText.Text = value.Replace("{value}", getValue());
-            text = value;
-        }
-    }
-
-    public float FontSize
-    {
-        get => sprText.FontSize;
-        set => sprText.FontSize = value;
-    }
-
-    private AttributeType attributeType;
-
-    public AttributeType AttributeType
-    {
-        get => attributeType;
-        set
-        {
-            attributeType = value;
-            Text = text;
-        }
-    }
-
-    public AttributeText(GameplayScreen screen)
-        : base(screen)
+    [BackgroundDependencyLoader]
+    private void load()
     {
         AutoSizeAxes = Axes.Both;
 
-        Add(sprText = new FluXisSpriteText());
-
-        //default values
-        FontSize = 32;
-        AttributeType = AttributeType.Title;
-        Text = "{value}";
+        Add(new FluXisSpriteText
+        {
+            FontSize = FontSize,
+            Text = Text.Replace("{value}", getValue())
+        });
     }
 
     private string getValue()

@@ -173,49 +173,49 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    new ComboCounter(this),
-                    new AccuracyDisplay(this),
-                    new Progressbar(this),
-                    new JudgementDisplay(this),
+                    createHudElement(new ComboCounter()),
+                    createHudElement(new AccuracyDisplay()),
+                    createHudElement(new Progressbar()),
+                    createHudElement(new JudgementDisplay()),
                     new JudgementCounter(Performance),
-                    new HealthBar(this),
-                    new HitErrorBar(this),
-                    new ModsDisplay(this),
-                    new AttributeText(this)
+                    createHudElement(new HealthBar()),
+                    createHudElement(new HitErrorBar()),
+                    createHudElement(new ModsDisplay()),
+                    createHudElement(new AttributeText
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
                         Margin = new MarginPadding(10),
                         AttributeType = AttributeType.Title,
                         FontSize = 48
-                    },
-                    new AttributeText(this)
+                    }),
+                    createHudElement(new AttributeText
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
                         Margin = new MarginPadding(10) { Bottom = 52 },
                         AttributeType = AttributeType.Artist
-                    },
-                    new AttributeText(this)
+                    }),
+                    createHudElement(new AttributeText
                     {
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
                         Margin = new MarginPadding(10),
                         AttributeType = AttributeType.Difficulty,
                         FontSize = 48
-                    },
-                    new AttributeText(this)
+                    }),
+                    createHudElement(new AttributeText
                     {
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
                         Margin = new MarginPadding(10) { Bottom = 52 },
                         AttributeType = AttributeType.Mapper,
                         Text = "mapped by {value}"
-                    }
+                    })
                 }
             },
-            new AutoPlayDisplay(this),
-            new DangerHealthOverlay(this),
+            createHudElement(new AutoPlayDisplay()),
+            createHudElement(new DangerHealthOverlay()),
             new LaneSwitchAlert { Playfield = Playfield },
             new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
             failOverlay = new FailOverlay { Screen = this },
@@ -245,6 +245,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             activity.Update("Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
         else
             activity.Update("Paused", details, "playing");
+    }
+
+    private T createHudElement<T>(T hudElement) where T : GameplayHUDElement
+    {
+        hudElement.Screen = this;
+        return hudElement;
     }
 
     protected virtual MapInfo LoadMap()

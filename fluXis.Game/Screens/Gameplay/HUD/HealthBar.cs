@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.Ruleset;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
@@ -12,16 +13,16 @@ public partial class HealthBar : GameplayHUDElement
 {
     private HitObjectManager manager => Screen.Playfield.Manager;
     private float health = 0;
-    private readonly Box background;
-    private readonly Box bar;
+    private Box background;
+    private Box bar;
 
     private readonly ColourInfo drainGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#40aef8"), Colour4.FromHex("#751010"));
     private float drainRate;
 
     private readonly ColourInfo normalGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#ff5555"), Colour4.White);
 
-    public HealthBar(GameplayScreen screen)
-        : base(screen)
+    [BackgroundDependencyLoader]
+    private void load()
     {
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;

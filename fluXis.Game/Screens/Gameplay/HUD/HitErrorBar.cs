@@ -24,11 +24,6 @@ public partial class HitErrorBar : GameplayHUDElement
     private Container hits;
     private CircularContainer average;
 
-    public HitErrorBar(GameplayScreen screen)
-        : base(screen)
-    {
-    }
-
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
