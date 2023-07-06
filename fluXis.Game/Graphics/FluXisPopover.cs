@@ -15,7 +15,7 @@ public partial class FluXisPopover : Popover
         Background.Colour = FluXisColors.Background2;
 
         Body.Masking = true;
-        Body.CornerRadius = 10;
+        Body.CornerRadius = 20;
         Body.Margin = new MarginPadding(10);
         Body.EdgeEffect = new EdgeEffectParameters
         {
@@ -28,6 +28,6 @@ public partial class FluXisPopover : Popover
 
     protected override Drawable CreateArrow() => Empty();
 
-    protected override void PopIn() => this.ScaleTo(1, 600, Easing.OutElastic).FadeIn(200);
+    protected override void PopIn() => this.ScaleTo(1, 800, Easing.OutElastic).FadeIn(200);
     protected override void PopOut() => this.ScaleTo(0.7f, 300, Easing.OutQuint).FadeOut(200);
 }

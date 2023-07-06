@@ -2,6 +2,7 @@ using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Skin.UI;
 using fluXis.Game.Skinning;
@@ -9,6 +10,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
@@ -30,6 +32,9 @@ public partial class SkinEditor : FluXisScreen
 
     public Skinning.Json.Skin Skin { get; private set; }
     public Bindable<int> KeyMode { get; private set; } = new(4);
+
+    private EditorMenuBar menuBar;
+    private PopoverContainer content;
 
     private SkinEditorPlayfield playfield;
 
@@ -56,72 +61,126 @@ public partial class SkinEditor : FluXisScreen
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding(10) { Top = 55 },
-                Child = new GridContainer
+                Child = content = new PopoverContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ColumnDimensions = new Dimension[]
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child = new GridContainer
                     {
-                        new(),
-                        new(GridSizeMode.Absolute, 20),
-                        new(GridSizeMode.Absolute, 300)
-                    },
-                    Content = new[]
-                    {
-                        new[]
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new Dimension[]
                         {
-                            playfield = new SkinEditorPlayfield
+                            new(),
+                            new(GridSizeMode.Absolute, 20),
+                            new(GridSizeMode.Absolute, 320)
+                        },
+                        Content = new[]
+                        {
+                            new[]
                             {
-                                Skin = Skin,
-                                SkinManager = skinManager,
-                                KeyMode = KeyMode.Value
-                            },
-                            Empty(),
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                CornerRadius = 10,
-                                Masking = true,
-                                Children = new Drawable[]
+                                playfield = new SkinEditorPlayfield
                                 {
-                                    new Box
+                                    Skin = Skin,
+                                    SkinManager = skinManager,
+                                    KeyMode = KeyMode.Value
+                                },
+                                Empty(),
+                                new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    CornerRadius = 10,
+                                    Masking = true,
+                                    Children = new Drawable[]
                                     {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = FluXisColors.Background2
-                                    },
-                                    new FluXisScrollContainer
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Padding = new MarginPadding(10),
-                                        Child = new FillFlowContainer
+                                        new Box
                                         {
-                                            RelativeSizeAxes = Axes.X,
-                                            AutoSizeAxes = Axes.Y,
-                                            Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(0, 10),
-                                            Children = new Drawable[]
+                                            RelativeSizeAxes = Axes.Both,
+                                            Colour = FluXisColors.Background2
+                                        },
+                                        new FluXisScrollContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Padding = new MarginPadding(10),
+                                            Child = new FillFlowContainer
                                             {
-                                                hitPositionTextBox = new SkinEditorTextBox
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                Direction = FillDirection.Vertical,
+                                                Spacing = new Vector2(0, 10),
+                                                Children = new Drawable[]
                                                 {
-                                                    Text = "Hit Position",
-                                                    DefaultText = Skin.GetKeymode(KeyMode.Value).HitPosition.ToString(),
-                                                    OnTextChanged = () =>
+                                                    new FluXisSpriteText
                                                     {
-                                                        if (int.TryParse(hitPositionTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int y))
-                                                            Skin.GetKeymode(KeyMode.Value).HitPosition = y;
-                                                        else
-                                                            hitPositionTextBox.TextBox.NotifyError();
-                                                    }
-                                                },
-                                                columnWidthTextBox = new SkinEditorTextBox
-                                                {
-                                                    Text = "Column Width",
-                                                    DefaultText = Skin.GetKeymode(KeyMode.Value).ColumnWidth.ToString(),
-                                                    OnTextChanged = () =>
+                                                        Text = "Keymode-specific",
+                                                        FontSize = 34,
+                                                        Margin = new MarginPadding { Top = 10 }
+                                                    },
+                                                    hitPositionTextBox = new SkinEditorTextBox
                                                     {
-                                                        if (int.TryParse(columnWidthTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int w))
-                                                            Skin.GetKeymode(KeyMode.Value).ColumnWidth = w;
-                                                        else
-                                                            columnWidthTextBox.TextBox.NotifyError();
+                                                        Text = "Hit Position",
+                                                        DefaultText = Skin.GetKeymode(KeyMode.Value).HitPosition.ToString(),
+                                                        OnTextChanged = () =>
+                                                        {
+                                                            if (int.TryParse(hitPositionTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int y))
+                                                                Skin.GetKeymode(KeyMode.Value).HitPosition = y;
+                                                            else
+                                                                hitPositionTextBox.TextBox.NotifyError();
+                                                        }
+                                                    },
+                                                    columnWidthTextBox = new SkinEditorTextBox
+                                                    {
+                                                        Text = "Column Width",
+                                                        DefaultText = Skin.GetKeymode(KeyMode.Value).ColumnWidth.ToString(),
+                                                        OnTextChanged = () =>
+                                                        {
+                                                            if (int.TryParse(columnWidthTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int w))
+                                                                Skin.GetKeymode(KeyMode.Value).ColumnWidth = w;
+                                                            else
+                                                                columnWidthTextBox.TextBox.NotifyError();
+                                                        }
+                                                    },
+                                                    new FluXisSpriteText
+                                                    {
+                                                        Text = "Judgements",
+                                                        FontSize = 34,
+                                                        Margin = new MarginPadding { Top = 10 }
+                                                    },
+                                                    new SkinEditorColor
+                                                    {
+                                                        Color = Skin.GetColorForJudgement(Judgement.Flawless),
+                                                        Text = "Flawless",
+                                                        OnColorChanged = c => Skin.Judgements.Flawless = c.ToHex()
+                                                    },
+                                                    new SkinEditorColor
+                                                    {
+                                                        Color = Skin.GetColorForJudgement(Judgement.Perfect),
+                                                        Text = "Perfect",
+                                                        OnColorChanged = c => Skin.Judgements.Perfect = c.ToHex()
+                                                    },
+                                                    new SkinEditorColor
+                                                    {
+                                                        Color = Skin.GetColorForJudgement(Judgement.Great),
+                                                        Text = "Great",
+                                                        OnColorChanged = c => Skin.Judgements.Great = c.ToHex()
+                                                    },
+                                                    new SkinEditorColor
+                                                    {
+                                                        Color = Skin.GetColorForJudgement(Judgement.Alright),
+                                                        Text = "Alright",
+                                                        OnColorChanged = c => Skin.Judgements.Alright = c.ToHex()
+                                                    },
+                                                    new SkinEditorColor
+                                                    {
+                                                        Color = Skin.GetColorForJudgement(Judgement.Okay),
+                                                        Text = "Okay",
+                                                        OnColorChanged = c => Skin.Judgements.Okay = c.ToHex()
+                                                    },
+                                                    new SkinEditorColor
+                                                    {
+                                                        Color = Skin.GetColorForJudgement(Judgement.Miss),
+                                                        Text = "Miss",
+                                                        OnColorChanged = c => Skin.Judgements.Miss = c.ToHex()
                                                     }
                                                 }
                                             }
@@ -133,7 +192,7 @@ public partial class SkinEditor : FluXisScreen
                     }
                 }
             },
-            new EditorMenuBar
+            menuBar = new EditorMenuBar
             {
                 Items = new[]
                 {
@@ -173,11 +232,20 @@ public partial class SkinEditor : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         skinManager.CanChangeSkin = false;
+
+        this.FadeInFromZero(200);
+        menuBar.MoveToY(-menuBar.Height).MoveToY(0, 400, Easing.OutQuint);
+        content.ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutElastic);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         skinManager.CanChangeSkin = true;
+
+        this.FadeOut(200);
+        menuBar.MoveToY(-menuBar.Height, 400, Easing.OutQuint);
+        content.ScaleTo(.9f, 400, Easing.OutQuint);
+
         return base.OnExiting(e);
     }
 }
