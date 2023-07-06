@@ -369,6 +369,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         this.FadeOut(200);
+        clock.Looping = false;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
         MapList.MoveToX(-200, 500, Easing.OutQuint);

@@ -36,6 +36,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public IBindable<Track> Track => track;
     public float TrackLength => (float)(track.Value?.Length ?? 10000);
+    private string trackHash { get; set; }
 
     [CanBeNull]
     public MapInfo MapInfo { get; set; }
@@ -104,11 +105,11 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public void LoadMap(RealmMap info, bool start = false, bool usePreview = false)
     {
-        Stop();
-        track.Value?.Dispose();
         AllowLimitedLoop = true; // reset
+        Volume = 1;
 
-        Track newTrack;
+        bool sameTrack = false;
+        Track newTrack = null;
 
         if (info.MapSet.Managed)
         {
@@ -117,21 +118,38 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         }
         else
         {
-            string path = info.MapSet.GetFile(info.Metadata.Audio)?.GetPath();
-            newTrack = realmTrackStore.Get(path);
+            var file = info.MapSet.GetFile(info.Metadata.Audio);
+
+            var hash = file?.Hash;
+
+            sameTrack = hash == trackHash;
+            trackHash = hash;
+
+            if (!sameTrack)
+            {
+                string path = file?.GetPath();
+                newTrack = realmTrackStore.Get(path);
+            }
         }
 
-        ChangeSource(newTrack ?? realmTrackStore.GetVirtual());
+        if (!sameTrack)
+        {
+            Stop();
+            track.Value?.Dispose();
+            ChangeSource(newTrack ?? realmTrackStore.GetVirtual());
 
-        Seek(usePreview ? info.Metadata.PreviewTime : 0);
+            Seek(usePreview ? info.Metadata.PreviewTime : 0);
 
-        if (start)
-            Start();
+            if (start) Start();
+        }
+        else if (start && !IsRunning) Start();
 
         Task.Run(() =>
         {
             MapInfo = null;
-            MapInfo = MapUtils.LoadFromPath(realmStorage.GetFullPath(PathUtils.HashToPath(info.Hash)));
+
+            var path = PathUtils.HashToPath(info.Hash);
+            MapInfo = MapUtils.LoadFromPath(realmStorage.GetFullPath(path));
         });
     }
 
