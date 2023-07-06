@@ -5,11 +5,13 @@ using fluXis.Game.Import;
 using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
 using fluXis.Game.Overlay.Notification;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 
 namespace fluXis.Import.osu;
 
+[UsedImplicitly]
 public class OsuImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".osz" };
@@ -111,7 +113,7 @@ public class OsuImport : MapImporter
         return parser.Parse();
     }
 
-    private OsuFileSection sectionFromString(string line)
+    private static OsuFileSection sectionFromString(string line)
     {
         string section = line.Substring(1, line.Length - 2);
 

@@ -36,7 +36,7 @@ public partial class ModCategory : Container
                 new Box
                 {
                     Colour = Colour4.FromHex(HexColour),
-                    RelativeSizeAxes = Axes.Both,
+                    RelativeSizeAxes = Axes.Both
                 },
                 new Container
                 {

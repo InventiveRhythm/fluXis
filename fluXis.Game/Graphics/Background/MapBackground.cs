@@ -13,13 +13,8 @@ public partial class MapBackground : Sprite
     [Resolved(CanBeNull = true)]
     private ImportManager importManager { get; set; }
 
-    public readonly RealmMap Map;
+    public RealmMap Map { get; set; }
     public bool Cropped { get; set; }
-
-    public MapBackground(RealmMap map)
-    {
-        Map = map;
-    }
 
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgrounds, CroppedBackgroundStore croppedBackgrounds, TextureStore textures)

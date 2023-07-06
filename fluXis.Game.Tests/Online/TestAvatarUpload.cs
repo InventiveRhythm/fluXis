@@ -17,8 +17,6 @@ public partial class TestAvatarUpload : FluXisTestScene
         var stack = new FluXisScreenStack();
         Add(stack);
 
-        const string url = "http://localhost:2434/assets/avatar/1";
-
         AddStep("Show file import screen", () => stack.Push(new FileImportScreen
         {
             AllowedExtensions = new[] { ".png" },

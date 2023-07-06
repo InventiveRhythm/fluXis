@@ -36,7 +36,6 @@ public partial class MapListEntry : Container
         }
     }
 
-    private MapListEntryHeader header;
     private Container difficultyContainer;
     private FillFlowContainer<MapDifficultyEntry> difficultyFlow;
 
@@ -54,7 +53,7 @@ public partial class MapListEntry : Container
 
         InternalChildren = new Drawable[]
         {
-            header = new MapListEntryHeader(this, MapSet),
+            new MapListEntryHeader(this, MapSet),
             difficultyContainer = new Container
             {
                 Masking = true,
@@ -166,8 +165,9 @@ public partial class MapListEntry : Container
             Masking = true;
             Children = new Drawable[]
             {
-                backgroundWrapper = new DelayedLoadUnloadWrapper(() => new MapBackground(mapset.Maps[0])
+                backgroundWrapper = new DelayedLoadUnloadWrapper(() => new MapBackground
                 {
+                    Map = mapset.Maps[0],
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fill,
                     Anchor = Anchor.Centre,

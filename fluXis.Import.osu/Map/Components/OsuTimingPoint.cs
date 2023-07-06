@@ -5,10 +5,10 @@ namespace fluXis.Import.osu.Map.Components;
 
 public class OsuTimingPoint
 {
-    public float Time { get; set; }
-    public float BeatLength { get; set; }
-    public int Meter { get; set; }
-    public int Inherited { get; set; }
+    public float Time { get; init; }
+    public float BeatLength { get; init; }
+    public int Meter { get; init; }
+    public int Inherited { get; init; }
 
     public bool IsScrollVelocity => Inherited == 0 || BeatLength < 0;
 

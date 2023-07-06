@@ -25,7 +25,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
                 Label = "Open Layout editor",
                 Enabled = false,
                 ButtonText = "Open"
-            },
+            }
         });
     }
 }

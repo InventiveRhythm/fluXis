@@ -28,7 +28,7 @@ public class HitWindow
     public float Health { get; }
     public float DrainRate { get; }
 
-    public HitWindow(Judgement key, int timing, float accuracy, float health, float drainRate)
+    private HitWindow(Judgement key, int timing, float accuracy, float health, float drainRate)
     {
         Key = key;
         Timing = timing;

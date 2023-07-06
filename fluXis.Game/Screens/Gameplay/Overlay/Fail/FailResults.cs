@@ -216,11 +216,10 @@ public partial class FailResults : Container
 
     private partial class FailResultsJudgement : FillFlowContainer
     {
-        private FluXisSpriteText name;
         private FluXisSpriteText countText;
         private int count = 0;
 
-        public HitWindow HitWindow { set; get; }
+        public HitWindow HitWindow { init; get; }
 
         public int JudgementCount
         {
@@ -236,7 +235,7 @@ public partial class FailResults : Container
 
             InternalChildren = new Drawable[]
             {
-                name = new FluXisSpriteText
+                new FluXisSpriteText
                 {
                     FontSize = 32,
                     Text = HitWindow.Key.ToString(),

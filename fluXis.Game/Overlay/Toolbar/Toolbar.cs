@@ -38,9 +38,6 @@ public partial class Toolbar : Container
 
     public BindableBool ShowToolbar = new();
 
-    private FillFlowContainer leftFlow;
-    private FillFlowContainer rightFlow;
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -76,7 +73,7 @@ public partial class Toolbar : Container
                 Padding = new MarginPadding { Horizontal = 10 },
                 Children = new Drawable[]
                 {
-                    leftFlow = new FillFlowContainer
+                    new FillFlowContainer
                     {
                         Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,
@@ -141,7 +138,7 @@ public partial class Toolbar : Container
                             }
                         }
                     },
-                    rightFlow = new FillFlowContainer
+                    new FillFlowContainer
                     {
                         Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,

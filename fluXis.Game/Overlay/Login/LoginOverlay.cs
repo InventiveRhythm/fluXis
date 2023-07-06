@@ -2,7 +2,6 @@ using System;
 using fluXis.Game.Graphics;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login.UI;
-using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Register;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -15,9 +14,6 @@ namespace fluXis.Game.Overlay.Login;
 
 public partial class LoginOverlay : Container
 {
-    [Resolved]
-    private NotificationOverlay notifications { get; set; }
-
     [Resolved]
     private RegisterOverlay register { get; set; }
 

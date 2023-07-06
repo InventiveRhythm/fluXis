@@ -18,7 +18,6 @@ public partial class EditorTimeline : Container
     private EditorValues values { get; set; }
 
     private CircularContainer currentTimeIndicator;
-    private CircularContainer line;
     private Container timingPoints;
 
     [BackgroundDependencyLoader]
@@ -29,7 +28,7 @@ public partial class EditorTimeline : Container
 
         Children = new Drawable[]
         {
-            line = new CircularContainer
+            new CircularContainer
             {
                 RelativeSizeAxes = Axes.X,
                 Height = 5,

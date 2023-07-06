@@ -17,20 +17,9 @@ public partial class MenuButton : Container
     public string Text { get; set; }
     public string Description { get; set; }
     public IconUsage Icon { get; set; }
-    public float ShearAmount => Width / 250f * .2f + ShearAdjust;
-    public float ShearAdjust { get; set; }
 
-    public bool Enabled
-    {
-        get => enabled;
-        set
-        {
-            enabled = value;
-            Alpha = value ? 1 : .5f;
-        }
-    }
-
-    private bool enabled = true;
+    private float shearAmount => Width / 250f * .2f + ShearAdjust;
+    public float ShearAdjust { get; init; }
 
     private Box hover;
 
@@ -43,7 +32,7 @@ public partial class MenuButton : Container
         Height = 60;
         CornerRadius = 10;
         Masking = true;
-        Shear = new Vector2(-ShearAmount, 0);
+        Shear = new Vector2(-shearAmount, 0);
 
         Children = new Drawable[]
         {
@@ -60,7 +49,7 @@ public partial class MenuButton : Container
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Shear = new Vector2(ShearAmount, 0),
+                Shear = new Vector2(shearAmount, 0),
                 Padding = new MarginPadding { Horizontal = Shear.X * -50 },
                 Children = new Drawable[]
                 {
@@ -106,9 +95,6 @@ public partial class MenuButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        if (!Enabled)
-            return false;
-
         hover.FadeTo(.2f, 200);
         sampleHover?.Play();
         return true;
@@ -116,17 +102,11 @@ public partial class MenuButton : Container
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        if (!Enabled)
-            return;
-
         hover.FadeOut(200);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (!Enabled)
-            return false;
-
         Action?.Invoke();
         sampleClick?.Play();
 

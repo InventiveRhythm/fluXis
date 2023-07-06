@@ -16,7 +16,6 @@ public partial class TestMultiplayer : FluXisTestScene
     private Fluxel fluxel { get; set; }
 
     private readonly TextFlowContainer textFlow;
-    private readonly FillFlowContainer<Container> players;
 
     private string text = "";
     private bool inLobby;
@@ -44,7 +43,7 @@ public partial class TestMultiplayer : FluXisTestScene
             TextAnchor = Anchor.TopLeft
         });
 
-        Add(players = new FillFlowContainer<Container>
+        Add(new FillFlowContainer<Container>
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,

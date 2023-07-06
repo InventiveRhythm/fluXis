@@ -40,7 +40,7 @@ public partial class HitErrorBar : GameplayHUDElement
         Width = 280;
         Y = 50;
 
-        Screen.Performance.OnHitStatAdded += AddHit;
+        Screen.Performance.OnHitStatAdded += addHit;
 
         Container colors;
 
@@ -119,7 +119,7 @@ public partial class HitErrorBar : GameplayHUDElement
         scaleBind.BindValueChanged(e => Scale = new Vector2(e.NewValue), true);
     }
 
-    public void AddHit(HitStat stat)
+    private void addHit(HitStat stat)
     {
         float time = -stat.Difference;
         HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(time));

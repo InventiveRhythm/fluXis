@@ -46,7 +46,7 @@ public partial class GeneralSection : SettingsSection
                     {
                         Text = "fluXis",
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre
                     },
                     new FluXisSpriteText
                     {

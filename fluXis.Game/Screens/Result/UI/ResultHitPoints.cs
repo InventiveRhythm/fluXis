@@ -53,7 +53,7 @@ public partial class ResultHitPoints : Container
                                 Width = 3,
                                 RelativeSizeAxes = Axes.X,
                                 Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
+                                Origin = Anchor.Centre
                             }
                         }
                     }

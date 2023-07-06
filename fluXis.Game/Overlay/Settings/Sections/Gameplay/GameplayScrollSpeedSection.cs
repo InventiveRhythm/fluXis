@@ -19,7 +19,7 @@ public partial class GameplayScrollSpeedSection : SettingsSubSection
                 Label = "Scroll Speed",
                 Bindable = Config.GetBindable<float>(FluXisSetting.ScrollSpeed),
                 Step = 0.1f
-            },
+            }
         });
     }
 }

@@ -29,7 +29,7 @@ namespace fluXis.Game.Overlay.Profile;
 
 public partial class ProfileOverlay : Container
 {
-    public bool IsVisible { get; private set; }
+    private bool isVisible { get; set; }
 
     private APIUser user = APIUser.DummyUser(-1);
 
@@ -321,19 +321,19 @@ public partial class ProfileOverlay : Container
     {
         this.FadeOut(200);
         content.ScaleTo(0.9f, 400, Easing.OutQuint);
-        IsVisible = false;
+        isVisible = false;
     }
 
     public override void Show()
     {
         this.FadeIn(200);
         content.ScaleTo(1, 400, Easing.OutQuint);
-        IsVisible = true;
+        isVisible = true;
     }
 
     public void ToggleVisibility()
     {
-        if (IsVisible)
+        if (isVisible)
             Hide();
         else
             Show();

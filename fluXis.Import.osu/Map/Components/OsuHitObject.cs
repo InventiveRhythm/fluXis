@@ -4,9 +4,9 @@ namespace fluXis.Import.osu.Map.Components;
 
 public class OsuHitObject
 {
-    public int X { get; set; }
-    public int StartTime { get; set; }
-    public int EndTime { get; set; }
+    public int X { get; init; }
+    public int StartTime { get; init; }
+    public int EndTime { get; init; }
 
     public HitObjectInfo ToHitObjectInfo(int keyCount)
     {

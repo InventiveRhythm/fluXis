@@ -120,8 +120,8 @@ public partial class DrawableChatMessage : Container
 
     private partial class MessageText : FluXisTextFlow, IHasContextMenu
     {
-        public ChatMessage Message { get; set; }
-        public Fluxel Fluxel { get; set; }
+        public ChatMessage Message { get; init; }
+        public Fluxel Fluxel { get; init; }
 
         [Resolved]
         private NotificationOverlay notifications { get; set; }

@@ -29,7 +29,7 @@ public partial class AudioOffsetSection : SettingsSubSection
                 ButtonText = "Open",
                 Action = () =>
                 {
-                    if (game.ScreenStack.CurrentScreen is OffsetSetup || game.ScreenStack.CurrentScreen is not FluXisScreen { AllowExit: true }) return;
+                    if (game.ScreenStack.CurrentScreen is OffsetSetup or not FluXisScreen { AllowExit: true }) return;
 
                     game.Settings.Hide();
                     game.ScreenStack.Push(new OffsetSetup());

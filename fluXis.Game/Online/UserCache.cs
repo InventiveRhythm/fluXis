@@ -7,7 +7,7 @@ using osu.Framework.Logging;
 
 namespace fluXis.Game.Online;
 
-public class UserCache
+public static class UserCache
 {
     private static readonly Dictionary<int, APIUser> users = new();
     private static Fluxel.Fluxel fluxel;

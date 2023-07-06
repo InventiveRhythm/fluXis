@@ -26,7 +26,7 @@ public partial class JudgementDisplay : GameplayHUDElement
     public JudgementDisplay(GameplayScreen screen)
         : base(screen)
     {
-        screen.Performance.OnHitStatAdded += PopUp;
+        screen.Performance.OnHitStatAdded += popUp;
     }
 
     private FluXisSpriteText text;
@@ -86,14 +86,14 @@ public partial class JudgementDisplay : GameplayHUDElement
                 FontSize = 24,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Margin = new MarginPadding { Top = 48 },
+                Margin = new MarginPadding { Top = 48 }
             }
         };
     }
 
-    public void PopUp(HitStat stat)
+    private void popUp(HitStat stat)
     {
-        var hitWindow = HitWindow.FromKey(stat.Judgement);
+        HitWindow.FromKey(stat.Judgement);
         var judgement = stat.Judgement;
 
         if (hideFlawless.Value && judgement == Scoring.Judgement.Flawless) return;

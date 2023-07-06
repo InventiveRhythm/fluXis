@@ -19,12 +19,12 @@ public partial class EditorPlaytestScreen : GameplayScreen
         this.events = events;
     }
 
-    public override MapInfo LoadMap()
+    protected override MapInfo LoadMap()
     {
         return map;
     }
 
-    public override MapEvents LoadMapEvents()
+    protected override MapEvents LoadMapEvents()
     {
         return events;
     }
@@ -49,7 +49,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
         this.Exit();
     }
 
-    public override void End()
+    protected override void End()
     {
         AudioClock.Stop();
         this.Exit();

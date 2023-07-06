@@ -28,7 +28,7 @@ public partial class LoginTextBox : FluXisTextBox
         var container = new FallingDownContainer
         {
             Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft,
+            Origin = Anchor.CentreLeft
         };
 
         if (isPassword)
@@ -43,7 +43,7 @@ public partial class LoginTextBox : FluXisTextBox
             container.Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                FontSize = CalculatedTextSize,
+                FontSize = CalculatedTextSize
             };
         }
 

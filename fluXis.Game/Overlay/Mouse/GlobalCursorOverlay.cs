@@ -84,15 +84,17 @@ public partial class GlobalCursorOverlay : Container
 
         timeInactive += Time.Elapsed;
 
-        if (timeInactive > 4000 && !isHidden)
+        switch (timeInactive)
         {
-            cursor.FadeOut(1200);
-            isHidden = true;
-        }
-        else if (timeInactive < 5000 && isHidden)
-        {
-            cursor.FadeIn(200);
-            isHidden = false;
+            case > 4000 when !isHidden:
+                cursor.FadeOut(1200);
+                isHidden = true;
+                break;
+
+            case < 5000 when isHidden:
+                cursor.FadeIn(200);
+                isHidden = false;
+                break;
         }
     }
 

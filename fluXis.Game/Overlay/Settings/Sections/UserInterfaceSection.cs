@@ -19,7 +19,7 @@ public partial class UserInterfaceSection : SettingsSection
             Divider,
             new UserInterfaceMainMenuSection(),
             Divider,
-            new UserInterfaceSongSelectSection(),
+            new UserInterfaceSongSelectSection()
         });
     }
 }

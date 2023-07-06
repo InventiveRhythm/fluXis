@@ -52,12 +52,12 @@ public partial class Fluxel : Component
 
     public Action<ConnectionStatus> OnStatusChanged { get; set; }
 
-    public bool HasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
+    private bool hasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
 
     public APIUserShort LoggedInUser
     {
         get => loggedInUser;
-        set
+        private set
         {
             if (value == null)
                 Logger.Log("Logged out", LoggingTarget.Network);
@@ -75,7 +75,7 @@ public partial class Fluxel : Component
 
     public Fluxel(FluXisConfig config, APIEndpointConfig endpoint)
     {
-        this.Config = config;
+        Config = config;
         Endpoint = endpoint;
 
         Token = config.Get<string>(FluXisSetting.Token);
@@ -95,7 +95,7 @@ public partial class Fluxel : Component
             if (Status == ConnectionStatus.Failing)
                 Thread.Sleep(5000);
 
-            if (!HasValidCredentials)
+            if (!hasValidCredentials)
             {
                 Status = ConnectionStatus.Offline;
                 Thread.Sleep(100);
@@ -165,7 +165,7 @@ public partial class Fluxel : Component
                 if (Status != ConnectionStatus.Connecting) return;
 
                 Logger.Log("Login timed out!", LoggingTarget.Network);
-                Logout();
+                logout();
 
                 LastError = "Login timed out!";
                 Status = ConnectionStatus.Failing;
@@ -189,7 +189,7 @@ public partial class Fluxel : Component
         var packet = packetQueue[0];
         packetQueue.RemoveAt(0);
 
-        await Send(packet);
+        await send(packet);
     }
 
     private async Task receive()
@@ -275,7 +275,7 @@ public partial class Fluxel : Component
         registering = true;
     }
 
-    public async void Logout()
+    private async void logout()
     {
         await connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Logout Requested", CancellationToken.None);
         LoggedInUser = null;
@@ -286,7 +286,7 @@ public partial class Fluxel : Component
         Config.GetBindable<string>(FluXisSetting.Token).Value = "";
     }
 
-    public async Task Send(string message)
+    private async Task send(string message)
     {
         if (connection is not { State: WebSocketState.Open })
         {
@@ -304,7 +304,7 @@ public partial class Fluxel : Component
     {
         FluxelRequest request = new FluxelRequest(packet.ID, packet);
         string json = JsonConvert.SerializeObject(request);
-        await Send(json);
+        await send(json);
     }
 
     public void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
@@ -351,7 +351,7 @@ public partial class Fluxel : Component
         }
         else
         {
-            Logout();
+            logout();
             LastError = response.Message;
             Status = ConnectionStatus.Failing;
         }
@@ -366,7 +366,7 @@ public partial class Fluxel : Component
         }
         else
         {
-            Logout();
+            logout();
             LastError = response.Message;
             Status = ConnectionStatus.Failing;
         }
@@ -376,7 +376,7 @@ public partial class Fluxel : Component
     {
         if (response.Status != 200)
         {
-            Logout();
+            logout();
             LastError = response.Message;
             Status = ConnectionStatus.Failing;
             return;
@@ -411,5 +411,5 @@ public enum EventType
 
     MultiplayerCreateLobby = 20,
     MultiplayerJoinLobby = 21,
-    MultiplayerLobbyUpdate = 22,
+    MultiplayerLobbyUpdate = 22
 }

@@ -23,7 +23,6 @@ public partial class EditorFlashEvent : Container, IHasPopover
 
     public FlashEvent FlashEvent { get; init; }
 
-    private FlashEffectEditor flashEffectEditor;
     private CircularContainer line;
 
     [BackgroundDependencyLoader]
@@ -62,5 +61,5 @@ public partial class EditorFlashEvent : Container, IHasPopover
         line.Child.Colour = Colour = ColourInfo.GradientVertical(FlashEvent.EndColor.Opacity(FlashEvent.EndOpacity), FlashEvent.StartColor.Opacity(FlashEvent.StartOpacity));
     }
 
-    public Popover GetPopover() => flashEffectEditor = new FlashEffectEditor { FlashEvent = FlashEvent };
+    public Popover GetPopover() => new FlashEffectEditor { FlashEvent = FlashEvent };
 }

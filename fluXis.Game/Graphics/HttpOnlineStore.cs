@@ -34,13 +34,11 @@ public class HttpOnlineStore : IResourceStore<byte[]>
     public Stream GetStream(string url)
     {
         byte[] ret = Get(url);
-
-        if (ret == null) return null;
-
-        return new MemoryStream(ret);
+        return ret == null ? null : new MemoryStream(ret);
     }
 
     public Task<byte[]> GetAsync(string name, CancellationToken cancellationToken = new()) => throw new NotImplementedException();
     public IEnumerable<string> GetAvailableResources() => new List<string>();
-    public void Dispose() { }
+
+    public void Dispose() => GC.SuppressFinalize(this);
 }

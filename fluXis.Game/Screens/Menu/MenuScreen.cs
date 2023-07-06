@@ -7,8 +7,6 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
-using fluXis.Game.Overlay.Mouse;
-using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Edit;
@@ -43,12 +41,6 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private SettingsMenu settings { get; set; }
-
-    [Resolved]
-    private GlobalCursorOverlay cursorOverlay { get; set; }
-
-    [Resolved]
-    private NotificationOverlay notifications { get; set; }
 
     [Resolved]
     private LoginOverlay login { get; set; }
@@ -135,7 +127,7 @@ public partial class MenuScreen : FluXisScreen
                                 Margin = new MarginPadding { Top = 80 },
                                 Shadow = true,
                                 Alpha = 0,
-                                X = -200,
+                                X = -200
                             },
                             pressAnyKeyText = new FluXisSpriteText
                             {

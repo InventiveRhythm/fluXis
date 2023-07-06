@@ -47,7 +47,7 @@ public partial class ModEntry : Container, IHasDrawableTooltip
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface,
+                Colour = FluXisColors.Surface
             },
             hoverBox = new Box
             {

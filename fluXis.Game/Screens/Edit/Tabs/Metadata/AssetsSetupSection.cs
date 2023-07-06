@@ -52,9 +52,9 @@ public partial class AssetsSetupSection : SetupSection
         [Resolved]
         private EditorValues values { get; set; }
 
-        public string Label { get; set; }
-        public Action<FileInfo> OnFileSelected { get; set; }
-        public string[] AllowedExtensions { get; set; }
+        public string Label { get; init; }
+        public Action<FileInfo> OnFileSelected { get; init; }
+        public string[] AllowedExtensions { get; init; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -96,7 +96,7 @@ public partial class AssetsSetupSection : SetupSection
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Padding = new MarginPadding { Left = 5 }
-                            },
+                            }
                         }
                     },
                     Padding = new MarginPadding { Left = 150 },

@@ -19,7 +19,7 @@ public class RealmMapSet : RealmObject
     public RealmMapMetadata Metadata => Maps.FirstOrDefault()?.Metadata ?? new RealmMapMetadata();
 
     [Ignored]
-    public bool Managed { get; set; } = false;
+    public bool Managed { get; set; }
 
     [Ignored]
     public string Path { get; set; } = string.Empty;

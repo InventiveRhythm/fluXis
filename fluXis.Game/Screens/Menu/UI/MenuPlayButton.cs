@@ -25,8 +25,6 @@ public partial class MenuPlayButton : CompositeDrawable
         }
     }
 
-    public float ShearAmount { get; set; } = .2f;
-
     private Container hover;
     private FluXisSpriteText spriteText;
     private string text;
@@ -63,7 +61,7 @@ public partial class MenuPlayButton : CompositeDrawable
                         Width = .7f,
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
-                        Shear = new Vector2(-ShearAmount, 0),
+                        Shear = new Vector2(-.2f, 0),
                         CornerRadius = 10,
                         Masking = true,
                         Child = new Box
@@ -91,16 +89,16 @@ public partial class MenuPlayButton : CompositeDrawable
                         Width = .7f,
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
-                        Shear = new Vector2(-ShearAmount, 0),
+                        Shear = new Vector2(-.2f, 0),
                         CornerRadius = 10,
                         Masking = true,
                         Child = new Box
                         {
                             RelativeSizeAxes = Axes.Y,
                             Width = 355,
-                            Shear = new Vector2(ShearAmount, 0),
+                            Shear = new Vector2(.2f, 0),
                             Anchor = Anchor.BottomRight,
-                            Origin = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight
                         }
                     }
                 }

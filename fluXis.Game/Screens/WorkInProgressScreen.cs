@@ -49,7 +49,7 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
                     Width = 600,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-                    TextAnchor = Anchor.TopCentre,
+                    TextAnchor = Anchor.TopCentre
                 }
             }
         };

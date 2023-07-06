@@ -44,7 +44,7 @@ public partial class ModSelector : Container
                 {
                     Colour = Colour4.Black,
                     RelativeSizeAxes = Axes.Both,
-                    Alpha = 0.5f,
+                    Alpha = 0.5f
                 }
             },
             content = new ClickableContainer
@@ -66,7 +66,7 @@ public partial class ModSelector : Container
                         new Box
                         {
                             Colour = FluXisColors.Background2,
-                            RelativeSizeAxes = Axes.Both,
+                            RelativeSizeAxes = Axes.Both
                         },
                         new Container
                         {
@@ -205,7 +205,7 @@ public partial class ModSelector : Container
                                                                         Selector = this,
                                                                         Mods = new IMod[]
                                                                         {
-                                                                            new AutoPlayMod(),
+                                                                            new AutoPlayMod()
                                                                         }
                                                                     }
                                                                 }

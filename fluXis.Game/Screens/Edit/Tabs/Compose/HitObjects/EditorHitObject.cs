@@ -17,7 +17,7 @@ public partial class EditorHitObject : Container
     [Resolved]
     private EditorValues values { get; set; }
 
-    public EditorPlayfield Playfield { get; }
+    public EditorPlayfield Playfield { get; init; }
     public HitObjectInfo Info { get; set; }
 
     public bool IsOnScreen
@@ -36,11 +36,6 @@ public partial class EditorHitObject : Container
     private DefaultHitObjectBody holdBody;
     private DefaultHitObjectEnd holdEnd;
     private Container outline;
-
-    public EditorHitObject(EditorPlayfield playfield)
-    {
-        Playfield = playfield;
-    }
 
     [BackgroundDependencyLoader]
     private void load()

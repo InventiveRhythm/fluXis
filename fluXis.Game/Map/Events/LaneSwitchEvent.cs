@@ -9,17 +9,17 @@ public class LaneSwitchEvent : TimedObject
     {
         new[] // 2k
         {
-            new[] { true, false }, // 1k
+            new[] { true, false } // 1k
         },
         new[] // 3k
         {
-            new[] { true, false, true }, // 2k
+            new[] { true, false, true } // 2k
         },
         new[] // 4k
         {
             new[] { false, true, false, false }, // 1k
             new[] { true, false, false, true }, // 2k
-            new[] { true, true, false, true }, // 3k
+            new[] { true, true, false, true } // 3k
         },
         new[] // 5k
         {
@@ -77,7 +77,7 @@ public class LaneSwitchEvent : TimedObject
             new[] { false, true, true, true, true, false, true, true, true, false }, // 7k
             new[] { false, true, true, true, true, true, true, true, true, false }, // 8k
             new[] { true, true, true, true, true, false, true, true, true, true } // 9k
-        },
+        }
     };
 
     public override string ToString() => $"LaneSwitch({Time},{Count},{Speed})";

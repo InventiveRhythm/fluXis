@@ -9,7 +9,7 @@ namespace fluXis.Game.Screens.Menu;
 
 public static class MenuSplashes
 {
-    public static string[] Splashes { get; private set; } =
+    private static string[] splashes =
     {
         "Literally 1984.",
         "What do you mean the chart is unreadable?",
@@ -19,7 +19,7 @@ public static class MenuSplashes
         "This is made with the sole intention to create farm. It has no intresting non generic patterning and adds nothing to the ranked section but farm. This does not deserve to be ranked."
     };
 
-    public static string RandomSplash => Splashes[RNG.Next(0, Splashes.Length)];
+    public static string RandomSplash => splashes[RNG.Next(0, splashes.Length)];
 
     public static void Load(Storage storage)
     {
@@ -38,7 +38,7 @@ public static class MenuSplashes
             var stream = storage.GetStream("splashes.json");
             using var sr = new StreamReader(stream);
             var json = sr.ReadToEnd();
-            Splashes = JsonConvert.DeserializeObject<string[]>(json);
+            splashes = JsonConvert.DeserializeObject<string[]>(json);
 
             Logger.Log("Splashes loaded from local storage");
         }
@@ -56,7 +56,7 @@ public static class MenuSplashes
             var req = new WebRequest("https://fluxis.foxes4life.net/splashes.json");
             await req.PerformAsync();
             var json = req.GetResponseString();
-            Splashes = JsonConvert.DeserializeObject<string[]>(json);
+            splashes = JsonConvert.DeserializeObject<string[]>(json);
 
             Logger.Log("Saving splashes to local storage", LoggingTarget.Network);
 

@@ -57,7 +57,7 @@ public partial class SettingsToggle : SettingsItem
 
     private partial class ToggleIcon : CircularContainer
     {
-        public int BorderSize { get; set; } = size_off;
+        public int BorderSize { get; init; } = size_off;
 
         private const int size_off = 4;
         private const int size_off_hover = 6;

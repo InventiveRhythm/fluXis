@@ -14,9 +14,9 @@ public class Performance
     {
         get
         {
-            if (NotesTotal == 0) return 100;
+            if (notesTotal == 0) return 100;
 
-            return NotesRated / NotesTotal * 100;
+            return notesRated / notesTotal * 100;
         }
     }
 
@@ -38,8 +38,8 @@ public class Performance
     {
         get
         {
-            var maxScore = (int)(1000000 * ScoreMultiplier);
-            var accBased = (int)(NotesRated / Map.MaxCombo * (maxScore * .9f));
+            var maxScore = (int)(1000000 * scoreMultiplier);
+            var accBased = (int)(notesRated / Map.MaxCombo * (maxScore * .9f));
             var comboBased = (int)(MaxCombo / (float)Map.MaxCombo * (maxScore * .1f));
             return accBased + comboBased;
         }
@@ -70,19 +70,19 @@ public class Performance
     public readonly MapInfo Map;
 
     [JsonIgnore]
-    public int TotalNotesHit => (from j in Judgements let j2 = HitWindow.FromKey(j.Key) where j2 is { Accuracy: > 0 } select j.Value).Sum();
+    private int totalNotesHit => (from j in Judgements let j2 = HitWindow.FromKey(j.Key) where j2 is { Accuracy: > 0 } select j.Value).Sum();
 
     [JsonIgnore]
-    public float NotesRated => (from j in Judgements let j2 = HitWindow.FromKey(j.Key) select j.Value * j2.Accuracy).Sum();
+    private float notesRated => (from j in Judgements let j2 = HitWindow.FromKey(j.Key) select j.Value * j2.Accuracy).Sum();
 
     [JsonIgnore]
-    public int NotesMissed => (from j in Judgements where j.Key == Judgement.Miss select j.Value).Sum();
+    private int notesMissed => (from j in Judgements where j.Key == Judgement.Miss select j.Value).Sum();
 
     [JsonIgnore]
-    public int NotesTotal => TotalNotesHit + NotesMissed;
+    private int notesTotal => totalNotesHit + notesMissed;
 
     [JsonIgnore]
-    public bool FullCombo => NotesMissed == 0;
+    public bool FullCombo => notesMissed == 0;
 
     [JsonIgnore]
     public bool AllFlawless => Judgements.All(j => j.Key == Judgement.Flawless);
@@ -97,7 +97,7 @@ public class Performance
     public bool IsRanked => Mods.All(m => m.Rankable);
 
     [JsonIgnore]
-    public float ScoreMultiplier => 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
+    private float scoreMultiplier => 1f + Mods.Sum(mod => mod.ScoreMultiplier - 1f);
 
     public Performance(MapInfo map, int mapid, string hash, List<IMod> mods = null)
     {

@@ -122,7 +122,7 @@ public partial class FluXisTextBox : BasicTextBox
             container.Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                FontSize = CalculatedTextSize,
+                FontSize = CalculatedTextSize
             };
         }
 

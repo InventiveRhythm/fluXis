@@ -204,14 +204,14 @@ public partial class ScoreList : GridContainer
             return;
 
         var entry = new ScoreListEntry(score, index) { ScoreList = this };
-        entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children.Last().Y + scrollContainer.ScrollContent.Children.Last().Height + 5 : 0;
+        entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children[^1].Y + scrollContainer.ScrollContent.Children[^1].Height + 5 : 0;
         scrollContainer.ScrollContent.Add(entry);
     }
 
     private partial class ClickableText : ClickableContainer
     {
-        public ScoreListType Type { get; set; }
-        public ScoreList ScoreList { get; set; }
+        public ScoreListType Type { get; init; }
+        public ScoreList ScoreList { get; init; }
 
         public bool Selected
         {

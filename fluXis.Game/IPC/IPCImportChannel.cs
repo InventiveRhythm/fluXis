@@ -6,7 +6,7 @@ namespace fluXis.Game.IPC;
 
 public class IPCImportChannel : IpcChannel<IPCImportRequest>
 {
-    public IPCImportChannel(IIpcHost host, FluXisGame game = null)
+    public IPCImportChannel(IIpcHost host, FluXisGameBase game = null)
         : base(host)
     {
         MessageReceived += msg =>

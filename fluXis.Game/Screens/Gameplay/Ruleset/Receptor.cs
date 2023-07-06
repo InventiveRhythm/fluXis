@@ -11,7 +11,7 @@ public partial class Receptor : CompositeDrawable
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public Playfield Playfield;
+    public Playfield Playfield { get; set; }
 
     private readonly int id;
 
@@ -24,16 +24,16 @@ public partial class Receptor : CompositeDrawable
 
     public bool IsDown;
 
-    public Receptor(Playfield playfield, int id)
+    public Receptor(int id)
     {
         this.id = id;
-        Playfield = playfield;
-        currentKeyCount = playfield.Map.InitialKeyCount;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        currentKeyCount = Playfield.Map.InitialKeyCount;
+
         Origin = Anchor.BottomCentre;
         Anchor = Anchor.BottomCentre;
         RelativeSizeAxes = Axes.Y;

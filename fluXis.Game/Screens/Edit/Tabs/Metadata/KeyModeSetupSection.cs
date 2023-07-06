@@ -47,10 +47,10 @@ public partial class KeyModeSetupSection : SetupSection
             }
         });
 
-        SetKeyMode(map.KeyCount);
+        setKeyMode(map.KeyCount);
     }
 
-    public void SetKeyMode(int keyMode)
+    private void setKeyMode(int keyMode)
     {
         keyModeContainer.Children.ForEach(b => b.Selected = b.KeyMode == keyMode);
         values?.Editor.SetKeyMode(keyMode);
@@ -137,7 +137,7 @@ public partial class KeyModeSetupSection : SetupSection
         {
             background.FadeTo(.4f)
                       .FadeTo(.2f, 400);
-            parent.SetKeyMode(KeyMode);
+            parent.setKeyMode(KeyMode);
 
             for (var i = 0; i < keyContainer.Count; i++)
             {

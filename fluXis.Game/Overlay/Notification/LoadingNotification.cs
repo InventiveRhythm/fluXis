@@ -64,7 +64,7 @@ public partial class LoadingNotification : SimpleNotification
         }
     }
 
-    public bool ShowProgress { get; set; } = false;
+    public bool ShowProgress { get; set; }
 
     public LoadingNotification()
     {

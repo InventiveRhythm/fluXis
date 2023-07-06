@@ -106,7 +106,9 @@ public partial class BackgroundStack : CompositeDrawable
 
         this.blur = blur;
 
-        if (backgroundContainer.LastOrDefault() is Background background) // 🧀 transforming blur is laggy so we just replace the background
+        var last = backgroundContainer.Count > 0 ? backgroundContainer[^1] : null;
+
+        if (last is Background background) // 🧀 transforming blur is laggy so we just replace the background
         {
             Schedule(() =>
             {

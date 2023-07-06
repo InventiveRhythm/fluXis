@@ -262,7 +262,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     #region Amplitude Stuff
 
-    public float[] Amplitudes { get; private set; } = new float[256];
+    public float[] Amplitudes { get; } = new float[256];
     private double lastAmplitudeUpdate;
     private const int amplitude_update_fps = 120;
 

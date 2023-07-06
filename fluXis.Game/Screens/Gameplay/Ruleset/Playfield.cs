@@ -17,9 +17,10 @@ public partial class Playfield : Container
     public FillFlowContainer<Receptor> Receptors;
     public GameplayScreen Screen;
     public HitObjectManager Manager;
-    public TimingLineManager TimingLineManager;
     public Stage Stage;
-    public Drawable HitLine;
+
+    private TimingLineManager timingLineManager;
+    private Drawable hitLine;
 
     private Container laneCovers;
     private Drawable topCover;
@@ -57,20 +58,20 @@ public partial class Playfield : Container
             RelativeSizeAxes = Axes.Y,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Direction = FillDirection.Horizontal,
+            Direction = FillDirection.Horizontal
         };
 
-        HitLine = skinManager.GetHitLine();
-        HitLine.Y = -skinManager.CurrentSkin.GetKeymode(Map.KeyCount).HitPosition;
+        hitLine = skinManager.GetHitLine();
+        hitLine.Y = -skinManager.CurrentSkin.GetKeymode(Map.KeyCount).HitPosition;
 
         Manager = new HitObjectManager(this);
         Manager.LoadMap(Map);
 
-        TimingLineManager = new TimingLineManager(Manager);
+        timingLineManager = new TimingLineManager(Manager);
 
         for (int i = 0; i < Map.KeyCount; i++)
         {
-            Receptor receptor = new Receptor(this, i);
+            Receptor receptor = new Receptor(i) { Playfield = this };
             Receptors.Add(receptor);
         }
 
@@ -89,23 +90,23 @@ public partial class Playfield : Container
         InternalChildren = new[]
         {
             Stage,
-            TimingLineManager,
+            timingLineManager,
             Manager,
             Receptors,
-            HitLine,
+            hitLine,
             laneCovers
         };
     }
 
     protected override void LoadComplete()
     {
-        TimingLineManager.CreateLines(Map);
+        timingLineManager.CreateLines(Map);
         base.LoadComplete();
     }
 
     protected override void Update()
     {
-        HitLine.Width = Stage.Width;
+        hitLine.Width = Stage.Width;
         laneCovers.Width = Stage.Width;
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;

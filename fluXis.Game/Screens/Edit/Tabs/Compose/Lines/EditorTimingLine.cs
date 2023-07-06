@@ -12,8 +12,6 @@ public partial class EditorTimingLine : Box
     [Resolved]
     private EditorValues values { get; set; }
 
-    public EditorPlayfield Playfield { get; set; }
-
     public new float Time { get; set; }
 
     public bool IsOnScreen
@@ -26,10 +24,8 @@ public partial class EditorTimingLine : Box
         }
     }
 
-    public EditorTimingLine(EditorPlayfield playfield)
+    public EditorTimingLine()
     {
-        Playfield = playfield;
-
         RelativeSizeAxes = Axes.X;
         Height = 1;
         Anchor = Anchor.BottomCentre;

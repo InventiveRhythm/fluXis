@@ -10,7 +10,7 @@ using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.Scores;
 
-public class OnlineScores
+public static class OnlineScores
 {
     public static async void UploadScore(Fluxel.Fluxel fluxel, Performance performance, Action<APIResponse<APIScoreResponse>> callback)
     {

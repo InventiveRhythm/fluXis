@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.Versioning;
 using fluXis.Game;
 using fluXis.Game.Overlay.Notification;
@@ -14,9 +13,6 @@ public partial class WindowsUpdateManager : Component
 {
     [Resolved]
     private NotificationOverlay notifications { get; set; }
-
-    [Resolved]
-    private FluXisGameBase game { get; set; }
 
     [BackgroundDependencyLoader]
     private async void load()
@@ -42,9 +38,8 @@ public partial class WindowsUpdateManager : Component
         }
 
         notifications.Post("There is an update available, check the GitHub releases page to download it.");
-        return;
 
-        var loading = new LoadingNotification
+        /*var loading = new LoadingNotification
         {
             TextLoading = "Applying update...",
             TextSuccess = "Update applied. Restarting...",
@@ -65,6 +60,6 @@ public partial class WindowsUpdateManager : Component
             Logger.Error(e, "Update failed.");
             loading.State = LoadingState.Failed;
             throw;
-        }
+        }*/
     }
 }

@@ -15,7 +15,8 @@ public partial class SmallMenuButton : Container
 {
     public Action Action { get; set; }
     public IconUsage Icon { get; set; }
-    public float ShearAmount => Width / 100f * .2f;
+
+    private float shearAmount => Width / 100f * .2f;
 
     private Container hover;
 
@@ -51,7 +52,7 @@ public partial class SmallMenuButton : Container
                         Width = .7f,
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
-                        Shear = new Vector2(-ShearAmount, 0),
+                        Shear = new Vector2(-shearAmount, 0),
                         CornerRadius = 10,
                         Masking = true,
                         Child = new Box
@@ -79,14 +80,14 @@ public partial class SmallMenuButton : Container
                         Width = .7f,
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
-                        Shear = new Vector2(-ShearAmount, 0),
+                        Shear = new Vector2(-shearAmount, 0),
                         CornerRadius = 10,
                         Masking = true,
                         Child = new Box
                         {
                             RelativeSizeAxes = Axes.Both,
                             Width = 0.714f,
-                            Shear = new Vector2(ShearAmount, 0),
+                            Shear = new Vector2(shearAmount, 0),
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight
                         }
@@ -100,7 +101,7 @@ public partial class SmallMenuButton : Container
                 Origin = Anchor.Centre,
                 X = -5,
                 Icon = Icon
-            },
+            }
         };
     }
 

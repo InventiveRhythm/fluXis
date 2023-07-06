@@ -9,10 +9,16 @@ public partial class SkinnableSprite : Sprite
     {
         if (Texture != null)
         {
-            if (RelativeSizeAxes == Axes.X)
-                Height = DrawWidth / Texture.DisplayWidth * Texture.DisplayHeight;
-            else if (RelativeSizeAxes == Axes.Y)
-                Width = DrawHeight / Texture.DisplayHeight * Texture.DisplayWidth;
+            switch (RelativeSizeAxes)
+            {
+                case Axes.X:
+                    Height = DrawWidth / Texture.DisplayWidth * Texture.DisplayHeight;
+                    break;
+
+                case Axes.Y:
+                    Width = DrawHeight / Texture.DisplayHeight * Texture.DisplayWidth;
+                    break;
+            }
         }
     }
 }

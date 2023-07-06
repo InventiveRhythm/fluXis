@@ -79,25 +79,19 @@ public partial class ImportManager : Component
     [CanBeNull]
     public Storage GetStorage(int id)
     {
-        if (storages.TryGetValue(id, out var s)) return s;
-
-        return null;
+        return storages.TryGetValue(id, out var s) ? s : null;
     }
 
     [CanBeNull]
     public ITextureStore GetTextureStore(int id)
     {
-        if (textureStores.TryGetValue(id, out var s)) return s;
-
-        return null;
+        return textureStores.TryGetValue(id, out var s) ? s : null;
     }
 
     [CanBeNull]
     public ITrackStore GetTrackStore(int id)
     {
-        if (trackStores.TryGetValue(id, out var s)) return s;
-
-        return null;
+        return trackStores.TryGetValue(id, out var s) ? s : null;
     }
 
     [CanBeNull]
@@ -136,10 +130,7 @@ public partial class ImportManager : Component
     public string GetAsset(RealmMap map, ImportedAssetType type)
     {
         var importer = importers.FirstOrDefault(i => i.ID == map.Status);
-
-        if (importer == null) return "";
-
-        return importer.GetAsset(map, type);
+        return importer == null ? "" : importer.GetAsset(map, type);
     }
 
     private void loadSingle(Assembly assembly)
@@ -249,15 +240,15 @@ public partial class ImportManager : Component
 
     private void loadFromPlugins()
     {
-        var plugins = storage.GetFullPath("plugins");
+        var path = storage.GetFullPath("plugins");
 
-        if (!Directory.Exists(plugins))
+        if (!Directory.Exists(path))
         {
-            Logger.Log($"Plugins directory {plugins} does not exist. Creating...");
-            Directory.CreateDirectory(plugins);
+            Logger.Log($"Plugins directory {path} does not exist. Creating...");
+            Directory.CreateDirectory(path);
         }
 
-        string[] files = Directory.GetFiles(plugins, $"{lib_prefix}.*.dll");
+        string[] files = Directory.GetFiles(path, $"{lib_prefix}.*.dll");
 
         foreach (var file in files)
         {
@@ -273,7 +264,7 @@ public partial class ImportManager : Component
         }
     }
 
-    private int getNewId(Realm realm)
+    private static int getNewId(Realm realm)
     {
         var highest = 99;
 

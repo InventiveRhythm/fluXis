@@ -3,7 +3,7 @@ using osu.Framework;
 
 namespace fluXis.Game.Utils;
 
-public class PathUtils
+public static class PathUtils
 {
     public static string HashToPath(string hash)
     {

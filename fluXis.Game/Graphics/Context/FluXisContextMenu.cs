@@ -15,7 +15,7 @@ public partial class FluXisContextMenu : FluXisMenu
         {
             Type = EdgeEffectType.Shadow,
             Colour = Colour4.Black.Opacity(0.1f),
-            Radius = 4,
+            Radius = 4
         };
     }
 

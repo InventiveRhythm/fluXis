@@ -23,11 +23,10 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
     public override bool AllowMusicControl => false;
 
     public Action<FileInfo> OnFileSelected { get; set; }
-    public string[] AllowedExtensions { get; set; } = null;
+    public string[] AllowedExtensions { get; set; }
 
     private FileSelect fileSelect;
     private FluXisSpriteText selectedFileText;
-    private GridContainer grid;
     private Button importButton;
 
     [BackgroundDependencyLoader]
@@ -55,9 +54,9 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                 {
                     RelativeSizeAxes = Axes.Both,
                     Height = .9f,
-                    Padding = new MarginPadding { Top = 25, Horizontal = 25 },
+                    Padding = new MarginPadding { Top = 25, Horizontal = 25 }
                 },
-                grid = new GridContainer
+                new GridContainer
                 {
                     ColumnDimensions = new[]
                     {
@@ -131,7 +130,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
 
     private partial class Button : ClickableContainer
     {
-        public string Text { get; set; }
+        public string Text { get; init; }
 
         private Box hover;
 

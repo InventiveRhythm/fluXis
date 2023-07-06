@@ -13,7 +13,7 @@ public partial class SettingsSlider<T> : SettingsItem
 {
     public Bindable<T> Bindable { get; init; }
     public string ValueLabel { get; init; } = "{value}";
-    public bool DisplayAsPercentage { get; init; } = false;
+    public bool DisplayAsPercentage { get; init; }
     public float Step { get; init; } = .01f;
 
     private FluXisSpriteText valueLabel;

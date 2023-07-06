@@ -6,7 +6,7 @@ namespace fluXis.Game.Audio;
 
 public partial class LowPassFilter : Component
 {
-    public AudioMixer Mixer { get; private set; }
+    private AudioMixer mixer { get; }
     private readonly BQFParameters parameters;
 
     public const int MAX = 22049;
@@ -30,26 +30,26 @@ public partial class LowPassFilter : Component
             cutoff = value;
             parameters.fCenter = cutoff;
 
-            int filterIndex = Mixer.Effects.IndexOf(parameters);
+            int filterIndex = mixer.Effects.IndexOf(parameters);
 
             if (filterIndex < 0)
             {
                 parameters.fCenter = value;
-                Mixer.Effects.Add(parameters);
+                mixer.Effects.Add(parameters);
                 return;
             }
 
-            if (Mixer.Effects[filterIndex] is BQFParameters existingFilter)
+            if (mixer.Effects[filterIndex] is BQFParameters existingFilter)
             {
                 existingFilter.fCenter = value;
-                Mixer.Effects[filterIndex] = existingFilter;
+                mixer.Effects[filterIndex] = existingFilter;
             }
         }
     }
 
     public LowPassFilter(AudioMixer mixer)
     {
-        Mixer = mixer;
+        this.mixer = mixer;
 
         parameters = new BQFParameters
         {
@@ -76,13 +76,13 @@ public partial class LowPassFilter : Component
 
     private void removeFilter()
     {
-        if (Mixer.Effects.Contains(parameters))
-            Mixer.Effects.Remove(parameters);
+        if (mixer.Effects.Contains(parameters))
+            mixer.Effects.Remove(parameters);
     }
 
     private void addFilter()
     {
-        if (!Mixer.Effects.Contains(parameters))
-            Mixer.Effects.Add(parameters);
+        if (!mixer.Effects.Contains(parameters))
+            mixer.Effects.Add(parameters);
     }
 }

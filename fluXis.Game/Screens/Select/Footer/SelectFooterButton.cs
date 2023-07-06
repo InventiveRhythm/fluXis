@@ -9,7 +9,7 @@ namespace fluXis.Game.Screens.Select.Footer;
 
 public partial class SelectFooterButton : Container
 {
-    public string Text { get => text.Text.ToString(); set => text.Text = value; }
+    public string Text { set => text.Text = value; }
 
     public Action Action { get; set; }
 

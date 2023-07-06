@@ -12,8 +12,9 @@ public partial class OpenRGBController : LightController
     private Colour4 lastColor;
     private Device[] devices;
     private double lastUpdate;
+
     private const int fps = 30;
-    private double frameTime => 1000d / fps;
+    private static double frameTime => 1000d / fps;
 
     public OpenRGBController()
     {

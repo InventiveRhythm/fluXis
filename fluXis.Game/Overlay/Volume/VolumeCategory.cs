@@ -78,7 +78,7 @@ public partial class VolumeCategory : Container
                             },
                             progress = new Box
                             {
-                                RelativeSizeAxes = Axes.Both,
+                                RelativeSizeAxes = Axes.Both
                             }
                         }
                     }

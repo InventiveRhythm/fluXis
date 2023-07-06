@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -75,9 +76,7 @@ public class MapEvents
 
     public string Save()
     {
-        var content = string.Empty;
-        foreach (var laneSwitch in LaneSwitchEvents) content += laneSwitch + Environment.NewLine;
-        foreach (var flash in FlashEvents) content += flash + Environment.NewLine;
-        return content;
+        var content = LaneSwitchEvents.Aggregate(string.Empty, (current, laneSwitch) => current + (laneSwitch + Environment.NewLine));
+        return FlashEvents.Aggregate(content, (current, flash) => current + (flash + Environment.NewLine));
     }
 }

@@ -12,11 +12,6 @@ namespace fluXis.Desktop;
 
 public partial class FluXisGameDesktop : FluXisGame
 {
-    [Resolved]
-    private Storage storage { get; set; }
-
-    private IPCImportChannel ipc;
-
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
@@ -34,7 +29,7 @@ public partial class FluXisGameDesktop : FluXisGame
         if (OperatingSystem.IsWindows())
             LoadComponentAsync(new WindowsUpdateManager());
 
-        ipc = new IPCImportChannel(Host, this);
+        new IPCImportChannel(Host, this);
         ActivityManager.Add(new DiscordActivity());
     }
 

@@ -17,8 +17,8 @@ public partial class HitObject : CompositeDrawable
     private AudioClock clock { get; set; }
 
     public HitObjectInfo Data;
-    public readonly double ScrollVelocityTime;
-    public readonly double ScrollVelocityEndTime;
+    private double scrollVelocityTime { get; }
+    private double scrollVelocityEndTime { get; }
 
     private readonly HitObjectManager manager;
 
@@ -37,8 +37,8 @@ public partial class HitObject : CompositeDrawable
     {
         this.manager = manager;
         Data = data;
-        ScrollVelocityTime = manager.PositionFromTime(data.Time);
-        ScrollVelocityEndTime = manager.PositionFromTime(data.HoldEndTime);
+        scrollVelocityTime = manager.PositionFromTime(data.Time);
+        scrollVelocityEndTime = manager.PositionFromTime(data.HoldEndTime);
     }
 
     [BackgroundDependencyLoader]
@@ -90,13 +90,13 @@ public partial class HitObject : CompositeDrawable
         var scrollSpeed = manager.ScrollSpeed / manager.Playfield.Screen.Rate;
 
         float hitY = receptor.Y - skinManager.CurrentSkin.GetKeymode(manager.Map.KeyCount).HitPosition;
-        notePiece.Y = (float)(hitY - .5f * ((ScrollVelocityTime - manager.CurrentTime) * scrollSpeed));
+        notePiece.Y = (float)(hitY - .5f * ((scrollVelocityTime - manager.CurrentTime) * scrollSpeed));
 
         if (IsBeingHeld) notePiece.Y = hitY;
 
         if (Data.IsLongNote())
         {
-            var endY = hitY - .5f * ((ScrollVelocityEndTime - manager.CurrentTime) * scrollSpeed);
+            var endY = hitY - .5f * ((scrollVelocityEndTime - manager.CurrentTime) * scrollSpeed);
 
             var height = notePiece.Y - endY;
             holdBodyPiece.Size = new Vector2(holdBodyPiece.Width, (float)height);

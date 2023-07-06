@@ -26,40 +26,39 @@ public partial class HitObjectManager : Container<HitObject>
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value;
     public Playfield Playfield { get; }
-    public Performance Performance { get; }
-    public MapInfo Map { get; set; }
+    public MapInfo Map { get; private set; }
     public List<HitObjectInfo> FutureHitObjects { get; } = new();
     public List<HitObject> HitObjects { get; } = new();
+    private Performance performance { get; }
 
     public double CurrentTime { get; private set; }
     public int CurrentKeyCount { get; private set; }
     public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
     public bool Dead { get; set; }
-    public bool SkipNextHitSounds { get; set; }
+    private bool skipNextHitSounds { get; set; }
 
     public HealthMode HealthMode
     {
         get
         {
             if (Playfield.Screen.Mods.Any(m => m is HardMod)) return HealthMode.Drain;
-            if (Playfield.Screen.Mods.Any(m => m is EasyMod)) return HealthMode.Requirement;
 
-            return HealthMode.Normal;
+            return Playfield.Screen.Mods.Any(m => m is EasyMod) ? HealthMode.Requirement : HealthMode.Normal;
         }
     }
 
     public float Health { get; private set; }
     public float HealthDrainRate { get; private set; }
 
-    public List<float> ScrollVelocityMarks { get; } = new();
+    private List<float> scrollVelocityMarks { get; } = new();
 
     public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
     public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
 
-    public bool Break => TimeUntilNextHitObject >= 2000;
-    public double TimeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - clock.CurrentTime;
-    public double MaxHitObjectTime => PositionFromTime(clock.CurrentTime) + 2000 * Playfield.Screen.Rate / ScrollSpeed;
+    public bool Break => timeUntilNextHitObject >= 2000;
+    private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - clock.CurrentTime;
+    private double maxHitObjectTime => PositionFromTime(clock.CurrentTime) + 2000 * Playfield.Screen.Rate / ScrollSpeed;
 
     private HitObjectInfo nextHitObject
     {
@@ -75,7 +74,7 @@ public partial class HitObjectManager : Container<HitObject>
     public HitObjectManager(Playfield playfield)
     {
         Playfield = playfield;
-        Performance = playfield.Screen.Performance;
+        performance = playfield.Screen.Performance;
         Health = HealthMode == HealthMode.Requirement ? 0 : 100;
     }
 
@@ -95,7 +94,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         newTime = Math.Max(newTime, 0);
 
-        SkipNextHitSounds = true;
+        skipNextHitSounds = true;
         clock.Seek(newTime);
 
         if (newTime < prevTime)
@@ -103,9 +102,9 @@ public partial class HitObjectManager : Container<HitObject>
             var hitObjects = Map.HitObjects.Where(h => h.Time >= newTime && h.Time < prevTime).ToList();
 
             int count = hitObjects.Sum(h => h.IsLongNote() ? 2 : 1);
-            Performance.Combo -= count;
-            Performance.Judgements[Judgement.Flawless] -= count;
-            Performance.HitStats.RemoveAll(h => h.Time > newTime);
+            performance.Combo -= count;
+            performance.Judgements[Judgement.Flawless] -= count;
+            performance.HitStats.RemoveAll(h => h.Time > newTime);
 
             foreach (var hit in hitObjects)
                 FutureHitObjects.Add(hit);
@@ -119,7 +118,7 @@ public partial class HitObjectManager : Container<HitObject>
     {
         updateTime();
 
-        while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= MaxHitObjectTime)
+        while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= maxHitObjectTime)
         {
             HitObject hitObject = new HitObject(this, FutureHitObjects[0]);
             FutureHitObjects.RemoveAt(0);
@@ -189,7 +188,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
-            if (!SkipNextHitSounds)
+            if (!skipNextHitSounds)
                 Playfield.Screen.HitSound.Play();
 
             hit(hitObject, false);
@@ -208,7 +207,7 @@ public partial class HitObjectManager : Container<HitObject>
         for (var i = 0; i < pressed.Length; i++)
             Playfield.Receptors[i].IsDown = pressed[i];
 
-        SkipNextHitSounds = false;
+        skipNextHitSounds = false;
     }
 
     private void updateInput()
@@ -277,18 +276,18 @@ public partial class HitObjectManager : Container<HitObject>
 
         judmentDisplay(hitObject, diff);
 
-        Performance.IncCombo();
+        performance.IncCombo();
 
         if (!hitObject.Data.IsLongNote() || isHoldEnd) removeHitObject(hitObject);
     }
 
     private void miss(HitObject hitObject)
     {
-        if (Performance.Combo >= 5)
+        if (performance.Combo >= 5)
             Playfield.Screen.Combobreak.Play();
 
         judmentDisplay(hitObject, 0, !AutoPlay);
-        Performance.ResetCombo();
+        performance.ResetCombo();
 
         if (!hitObject.Data.IsLongNote()) removeHitObject(hitObject);
     }
@@ -307,8 +306,8 @@ public partial class HitObjectManager : Container<HitObject>
         if (Dead)
             return;
 
-        Performance.AddHitStat(new HitStat(hitObject.Data.Time, (float)difference, hitWindow.Key));
-        Performance.AddJudgement(hitWindow.Key);
+        performance.AddHitStat(new HitStat(hitObject.Data.Time, (float)difference, hitWindow.Key));
+        performance.AddJudgement(hitWindow.Key);
 
         if (HealthMode == HealthMode.Drain)
             HealthDrainRate -= hitWindow.DrainRate;
@@ -345,7 +344,7 @@ public partial class HitObjectManager : Container<HitObject>
         ScrollVelocityInfo first = Map.ScrollVelocities[0];
 
         float time = first.Time;
-        ScrollVelocityMarks.Add(time);
+        scrollVelocityMarks.Add(time);
 
         for (var i = 1; i < Map.ScrollVelocities.Count; i++)
         {
@@ -353,7 +352,7 @@ public partial class HitObjectManager : Container<HitObject>
             ScrollVelocityInfo current = Map.ScrollVelocities[i];
 
             time += (int)((current.Time - prev.Time) * prev.Multiplier);
-            ScrollVelocityMarks.Add(time);
+            scrollVelocityMarks.Add(time);
         }
     }
 
@@ -376,7 +375,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         ScrollVelocityInfo prev = Map.ScrollVelocities[index - 1];
 
-        double position = ScrollVelocityMarks[index - 1];
+        double position = scrollVelocityMarks[index - 1];
         position += (time - prev.Time) * prev.Multiplier;
         return position;
     }

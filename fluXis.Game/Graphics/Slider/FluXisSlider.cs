@@ -36,7 +36,7 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
             leftIcon = new ClickableSpriteIcon
             {
                 Icon = FontAwesome.Solid.ChevronLeft,
-                Size = new(10),
+                Size = new Vector2(10),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 5 },
@@ -63,7 +63,7 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
             rightIcon = new ClickableSpriteIcon
             {
                 Icon = FontAwesome.Solid.ChevronRight,
-                Size = new(10),
+                Size = new Vector2(10),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Margin = new MarginPadding { Right = 5 },

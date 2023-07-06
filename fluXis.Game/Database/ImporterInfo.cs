@@ -9,5 +9,5 @@ public class ImporterInfo : RealmObject
 
     public string Name { get; set; }
     public string Color { get; set; }
-    public bool AutoImport { get; set; } = false;
+    public bool AutoImport { get; set; }
 }

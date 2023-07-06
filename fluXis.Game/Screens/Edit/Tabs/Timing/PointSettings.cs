@@ -28,9 +28,7 @@ public partial class PointSettings<T> : PointSettings
 
 public partial class PointSettings : FillFlowContainer
 {
-    public TimingTab Tab { get; set; }
-
-    public PointSettings()
+    protected PointSettings()
     {
         Direction = FillDirection.Vertical;
         RelativeSizeAxes = Axes.X;

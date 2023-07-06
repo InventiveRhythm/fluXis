@@ -63,8 +63,8 @@ public partial class JudgementCounterItem : Container
                 text.FontSize = count switch
                 {
                     > 0 and < 100 => 24,
-                    > 99 and < 1000 => 20,
-                    > 999 and < 10000 => 16,
+                    < 1000 => 20,
+                    < 10000 => 16,
                     _ => 12 // > 9999
                 };
             }

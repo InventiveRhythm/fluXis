@@ -9,9 +9,6 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
 public partial class ScrollVelocitySettings : PointSettings<ScrollVelocityInfo>
 {
-    [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
-
     private BasicPointSettingsField multiplierField;
 
     public ScrollVelocitySettings(ScrollVelocityInfo point)

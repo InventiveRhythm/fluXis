@@ -9,12 +9,14 @@ using fluXis.Game.Import;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Import.Quaver.Map;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using YamlDotNet.Serialization;
 
 namespace fluXis.Import.Quaver;
 
+[UsedImplicitly]
 public class QuaverImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".qp" };
@@ -45,15 +47,12 @@ public class QuaverImport : MapImporter
 
             ZipArchive qp = ZipFile.OpenRead(path);
 
-            List<MapInfo> mapInfos = new();
-
             foreach (var entry in qp.Entries)
             {
                 if (entry.FullName.EndsWith(".qua"))
                 {
                     QuaverMap quaverMap = parseQuaverMap(entry);
                     MapInfo map = quaverMap.ToMapInfo();
-                    mapInfos.Add(map);
 
                     notification.TextSuccess = $"Imported Quaver map: {map.Metadata.Artist} - {map.Metadata.Title}";
 
@@ -113,7 +112,7 @@ public class QuaverImport : MapImporter
         return parseFromYaml(yaml);
     }
 
-    private QuaverMap parseFromYaml(string yaml)
+    private static QuaverMap parseFromYaml(string yaml)
     {
         var builder = new DeserializerBuilder();
         builder.IgnoreUnmatchedProperties();
@@ -180,7 +179,6 @@ public class QuaverImport : MapImporter
             {
                 string directoryName = reader["Directory"].ToString();
                 string path = reader["Path"].ToString();
-                int mapsetId = int.Parse(reader["MapSetId"].ToString());
                 string artist = reader["Artist"].ToString();
                 string title = reader["Title"].ToString();
                 string difficulty = reader["DifficultyName"].ToString();
@@ -236,17 +234,15 @@ public class QuaverImport : MapImporter
 
             reader.Close();
 
-            foreach (var mapSet in maps)
+            foreach (var (key, mapSetMaps) in maps)
             {
-                var mapSetMaps = mapSet.Value;
-
                 var mapSetRealm = new RealmMapSet(mapSetMaps)
                 {
                     ID = default,
                     OnlineID = 0,
                     Cover = "",
                     Managed = true,
-                    Path = mapSet.Key
+                    Path = key
                 };
 
                 foreach (var map in mapSetMaps)
@@ -269,18 +265,13 @@ public class QuaverImport : MapImporter
     public override string GetAsset(RealmMap map, ImportedAssetType type)
     {
         string directory = map.MapSet.Path;
-        string path = "";
 
-        switch (type)
+        string path = type switch
         {
-            case ImportedAssetType.Background or ImportedAssetType.Cover:
-                path = map.Metadata.Background;
-                break;
-
-            case ImportedAssetType.Audio:
-                path = map.Metadata.Audio;
-                break;
-        }
+            ImportedAssetType.Background or ImportedAssetType.Cover => map.Metadata.Background,
+            ImportedAssetType.Audio => map.Metadata.Audio,
+            _ => ""
+        };
 
         return Path.Combine(directory, path);
     }
@@ -296,7 +287,7 @@ public class QuaverImport : MapImporter
         var package = new MapPackage
         {
             MapInfo = quaverMap.ToMapInfo(),
-            MapEvents = new MapEvents().Load(quaverMap.GetEffects()),
+            MapEvents = new MapEvents().Load(quaverMap.GetEffects())
         };
 
         return package;

@@ -4,7 +4,6 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
@@ -33,9 +32,6 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     [Resolved]
     private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private BackgroundStack backgrounds { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
@@ -108,7 +104,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
+                        Origin = Anchor.Centre
                     },
                     new Box
                     {

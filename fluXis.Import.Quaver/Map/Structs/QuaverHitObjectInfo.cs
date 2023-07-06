@@ -1,7 +1,9 @@
+using JetBrains.Annotations;
 using YamlDotNet.Serialization;
 
-namespace fluXis.Game.Import.Quaver.Map.Structs;
+namespace fluXis.Import.Quaver.Map.Structs;
 
+[UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public class QuaverHitObjectInfo
 {
     public float StartTime { get; set; }

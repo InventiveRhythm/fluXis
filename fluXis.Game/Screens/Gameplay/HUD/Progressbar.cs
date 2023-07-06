@@ -96,7 +96,7 @@ public partial class Progressbar : GameplayHUDElement
         [Resolved]
         private AudioClock clock { get; set; }
 
-        public Progressbar Progressbar { get; set; }
+        public Progressbar Progressbar { get; init; }
 
         private Box bar;
 

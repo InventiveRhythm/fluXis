@@ -17,6 +17,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
@@ -106,7 +107,7 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
                                 },
                                 avatarContainer = new Container
                                 {
-                                    Size = new(50),
+                                    Size = new Vector2(50),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     Margin = new MarginPadding(5),
@@ -204,7 +205,7 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
 
         LoadComponentAsync(new DrawableAvatar(fluxel.LoggedInUser)
         {
-            RelativeSizeAxes = Axes.Both,
+            RelativeSizeAxes = Axes.Both
         }, avatarContainer.Add);
 
         this.MoveToX(100).FadeOut()

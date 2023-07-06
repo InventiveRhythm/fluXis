@@ -17,10 +17,6 @@ public partial class MenuVisualizer : Container
     [Resolved]
     private AudioClock clock { get; set; }
 
-    // between 60 and 240
-    private const int start_index = 1; // 78
-    private const int end_index = 3; // 234
-
     private const int circle_count = 64;
 
     private bool loaded;

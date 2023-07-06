@@ -28,7 +28,7 @@ public partial class DirectorySelectBreadCrumb : DirectorySelectorBreadcrumbDisp
             Child = new Box
             {
                 Colour = FluXisColors.Background,
-                RelativeSizeAxes = Axes.Both,
+                RelativeSizeAxes = Axes.Both
             }
         });
     }

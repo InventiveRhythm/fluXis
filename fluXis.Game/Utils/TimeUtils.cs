@@ -2,7 +2,7 @@ using System;
 
 namespace fluXis.Game.Utils;
 
-public class TimeUtils
+public static class TimeUtils
 {
     public static string Format(double time, bool showMs = true)
     {
@@ -70,9 +70,6 @@ public class TimeUtils
             return minutes == 1 ? "1 minute ago" : $"{minutes} minutes ago";
         }
 
-        if (span.TotalSeconds >= 30)
-            return $"{(int)span.TotalSeconds} seconds ago";
-
-        return "now";
+        return span.TotalSeconds >= 30 ? $"{(int)span.TotalSeconds} seconds ago" : "now";
     }
 }

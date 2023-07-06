@@ -80,7 +80,7 @@ public partial class ToolbarProfile : Container
 
         LoadComponentAsync(avatar = new DrawableAvatar(user)
         {
-            RelativeSizeAxes = Axes.Both,
+            RelativeSizeAxes = Axes.Both
         }, avatarContainer.Add);
 
         fluxel.OnUserLoggedIn += updateUser;

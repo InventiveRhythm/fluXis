@@ -38,7 +38,7 @@ public partial class AudioVolumeSection : SettingsSubSection
                 Label = "Hit Sound Volume",
                 Bindable = Config.GetBindable<double>(FluXisSetting.HitSoundVolume),
                 DisplayAsPercentage = true
-            },
+            }
         });
     }
 }

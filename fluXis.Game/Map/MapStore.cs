@@ -60,7 +60,7 @@ public class MapStore
         });
     }
 
-    private void loadMapSets(IEnumerable<RealmMapSet> sets)
+    private void loadMapSets(IQueryable<RealmMapSet> sets)
     {
         Logger.Log($"Found {sets.Count()} maps");
 

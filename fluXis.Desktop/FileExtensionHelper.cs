@@ -32,13 +32,13 @@ public static class FileExtensionHelper
 
     private static void ensureAssociationsSet(params FileAssociation[] associations)
     {
-        bool madeChanges = associations.Aggregate(false, (current, association) => current | SetAssociation(association.Extension, association.ProgId, association.FileTypeDescription, association.ExecutableFilePath));
+        bool madeChanges = associations.Aggregate(false, (current, association) => current | setAssociation(association.Extension, association.ProgId, association.FileTypeDescription, association.ExecutableFilePath));
 
         if (madeChanges)
             SHChangeNotify(shcne_assocchanged, shcnf_flush, IntPtr.Zero, IntPtr.Zero);
     }
 
-    public static bool SetAssociation(string extension, string progId, string fileTypeDescription, string applicationFilePath)
+    private static bool setAssociation(string extension, string progId, string fileTypeDescription, string applicationFilePath)
     {
         bool madeChanges = false;
         madeChanges |= setKeyDefaultValue(@"Software\Classes\" + extension, progId);

@@ -217,7 +217,7 @@ public partial class ChatOverlay : Container
     {
         Schedule(() =>
         {
-            var last = flow.LastOrDefault();
+            var last = flow.Count > 0 ? flow[^1] : null;
 
             if (last != null && last.InitialMessage.Sender.ID == message.Sender.ID)
                 last.AddMessage(message);

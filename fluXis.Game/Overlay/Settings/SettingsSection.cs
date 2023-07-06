@@ -8,12 +8,12 @@ namespace fluXis.Game.Overlay.Settings;
 
 public partial class SettingsSection : FillFlowContainer
 {
-    public virtual IconUsage Icon { get; set; } = FontAwesome.Solid.Cog;
-    public virtual string Title { get; set; } = "Section";
+    public virtual IconUsage Icon { get; } = FontAwesome.Solid.Cog;
+    public virtual string Title { get; } = "Section";
 
-    public SettingsDivider Divider => new();
+    protected static SettingsDivider Divider => new();
 
-    public SettingsSection()
+    protected SettingsSection()
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;

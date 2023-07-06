@@ -28,7 +28,7 @@ public partial class SettingsKeybind : SettingsItem
     private FillFlowContainer<KeybindContainer> flow;
     private FluXisKeybindContainer container;
 
-    public int Index = -1;
+    private int index = -1;
 
     [BackgroundDependencyLoader]
     private void load(FluXisRealm realm, FluXisKeybindContainer container)
@@ -86,21 +86,21 @@ public partial class SettingsKeybind : SettingsItem
     {
         if (e.Button == MouseButton.Left)
         {
-            Index = 0;
+            index = 0;
             return true;
         }
 
         return false;
     }
 
-    protected override void OnFocusLost(FocusLostEvent e) => Index = -1;
+    protected override void OnFocusLost(FocusLostEvent e) => index = -1;
 
     protected override void Update()
     {
         for (var i = 0; i < flow.Children.Count; i++)
         {
             var child = flow.Children.ElementAt(i);
-            bool isCurrent = i == Index;
+            bool isCurrent = i == index;
 
             if (child.IsCurrent.Value != isCurrent)
                 child.IsCurrent.Value = isCurrent;
@@ -111,7 +111,7 @@ public partial class SettingsKeybind : SettingsItem
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
-        if (e.Repeat || Index == -1 || !HasFocus) return false;
+        if (e.Repeat || index == -1 || !HasFocus) return false;
 
         if (e.Key >= Key.F1)
             updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromKey(e.Key));
@@ -121,7 +121,7 @@ public partial class SettingsKeybind : SettingsItem
 
     protected override void OnKeyUp(KeyUpEvent e)
     {
-        if (Index == -1 || !HasFocus) return;
+        if (index == -1 || !HasFocus) return;
 
         if (e.Key < Key.F1)
             updateBinding(new KeyCombination(KeyCombination.FromKey(e.Key)));
@@ -129,7 +129,7 @@ public partial class SettingsKeybind : SettingsItem
 
     protected override bool OnJoystickPress(JoystickPressEvent e)
     {
-        if (Index == -1 || !HasFocus) return false;
+        if (index == -1 || !HasFocus) return false;
 
         updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromJoystickButton(e.Button));
         return true;
@@ -137,7 +137,7 @@ public partial class SettingsKeybind : SettingsItem
 
     protected override bool OnMidiDown(MidiDownEvent e)
     {
-        if (Index == -1 || !HasFocus) return false;
+        if (index == -1 || !HasFocus) return false;
 
         updateBinding(KeyCombination.FromInputState(e.CurrentState), KeyCombination.FromMidiKey(e.Key));
         return true;
@@ -147,9 +147,9 @@ public partial class SettingsKeybind : SettingsItem
 
     private void updateBinding(KeyCombination combination)
     {
-        if (Index < Keybinds.Length)
+        if (index < Keybinds.Length)
         {
-            var keybind = Keybinds[Index];
+            var keybind = Keybinds[index];
 
             realm.RunWrite(r =>
             {
@@ -170,16 +170,16 @@ public partial class SettingsKeybind : SettingsItem
 
             container.Reload();
 
-            flow.Children.ElementAt(Index).Keybind = InputUtils.GetReadableString(combination);
-            Index++;
+            flow.Children.ElementAt(index).Keybind = InputUtils.GetReadableString(combination);
+            index++;
         }
-        else Index = -1;
+        else index = -1;
     }
 
     private partial class KeybindContainer : Container
     {
         public string Keybind { set => text.Text = value; }
-        public SettingsKeybind SettingsKeybind { get; set; }
+        public SettingsKeybind SettingsKeybind { get; init; }
 
         public BindableBool IsCurrent { get; } = new();
 
@@ -222,7 +222,7 @@ public partial class SettingsKeybind : SettingsItem
 
         protected override bool OnClick(ClickEvent e)
         {
-            SettingsKeybind.Index = SettingsKeybind.flow.Children.ToList().IndexOf(this);
+            SettingsKeybind.index = SettingsKeybind.flow.Children.ToList().IndexOf(this);
             return base.OnClick(e);
         }
     }

@@ -8,7 +8,7 @@ public partial class ResultsScreen
 {
     protected override bool OnJoystickPress(JoystickPressEvent e) => handleGeneric(e);
 
-    private bool handleGeneric(JoystickPressEvent e)
+    private bool handleGeneric(JoystickButtonEvent e)
     {
         switch (e.Button)
         {

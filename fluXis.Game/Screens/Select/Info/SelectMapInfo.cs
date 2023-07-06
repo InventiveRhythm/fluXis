@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
@@ -228,7 +229,7 @@ public partial class SelectMapInfo : GridContainer
                     }
                 }
             },
-            new Drawable[] { }, // Spacer
+            Array.Empty<Drawable>(), // Spacer
             new Drawable[]
             {
                 new Container
@@ -288,8 +289,9 @@ public partial class SelectMapInfo : GridContainer
 
         public void ChangeMap(RealmMap map)
         {
-            var background = new MapBackground(map)
+            var background = new MapBackground
             {
+                Map = map,
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fill,
                 Anchor = Anchor.Centre,

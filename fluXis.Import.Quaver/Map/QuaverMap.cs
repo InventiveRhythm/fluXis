@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using fluXis.Game.Import.Quaver.Map.Structs;
 using fluXis.Game.Map;
+using fluXis.Import.Quaver.Map.Structs;
+using JetBrains.Annotations;
 using osu.Framework.Logging;
 
 namespace fluXis.Import.Quaver.Map;
 
 [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
+[UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public class QuaverMap
 {
     public string AudioFile { get; set; }

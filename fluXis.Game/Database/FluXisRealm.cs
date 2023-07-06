@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -29,7 +28,7 @@ public class FluXisRealm : IDisposable
 
     private Realm updateRealm;
 
-    public Realm Realm
+    private Realm realm
     {
         get
         {
@@ -82,10 +81,8 @@ public class FluXisRealm : IDisposable
             case 5:
                 var newMaps = migration.NewRealm.All<RealmMap>().ToList();
 
-                for (var i = 0; i < newMaps.Count; i++)
+                foreach (var newMap in newMaps)
                 {
-                    var newMap = newMaps[i];
-
                     string path = storage.GetFullPath("files/" + PathUtils.HashToPath(newMap.Hash));
 
                     MapInfo map = MapUtils.LoadFromPath(path);
@@ -121,9 +118,6 @@ public class FluXisRealm : IDisposable
         }
     }
 
-    // from realm extensions
-    private static string getMappedOrOriginalName(MemberInfo member) => member.GetCustomAttribute<MapToAttribute>()?.Mapping ?? member.Name;
-
     public FluXisRealm(Storage storage)
     {
         this.storage = storage;
@@ -137,44 +131,44 @@ public class FluXisRealm : IDisposable
     public T Run<T>(Func<Realm, T> action)
     {
         if (ThreadSafety.IsUpdateThread)
-            return action(Realm);
+            return action(realm);
 
-        using var realm = getInstance();
-        return action(realm);
+        using var r = getInstance();
+        return action(r);
     }
 
     public void Run(Action<Realm> action)
     {
         if (ThreadSafety.IsUpdateThread)
-            action(Realm);
+            action(realm);
         else
         {
-            using var realm = getInstance();
-            action(realm);
+            using var r = getInstance();
+            action(r);
         }
     }
 
     public T RunWrite<T>(Func<Realm, T> action)
     {
         if (ThreadSafety.IsUpdateThread)
-            return write(Realm, action);
+            return write(realm, action);
 
-        using var realm = getInstance();
-        return write(realm, action);
+        using var r = getInstance();
+        return write(r, action);
     }
 
     public void RunWrite(Action<Realm> action)
     {
         if (ThreadSafety.IsUpdateThread)
-            write(Realm, action);
+            write(realm, action);
         else
         {
-            using var realm = getInstance();
-            write(realm, action);
+            using var r = getInstance();
+            write(r, action);
         }
     }
 
-    private T write<T>(Realm realm, Func<Realm, T> func)
+    private static T write<T>(Realm realm, Func<Realm, T> func)
     {
         Transaction transaction = null;
 
@@ -193,7 +187,7 @@ public class FluXisRealm : IDisposable
         }
     }
 
-    private void write(Realm realm, Action<Realm> func)
+    private static void write(Realm realm, Action<Realm> func)
     {
         Transaction transaction = null;
 
@@ -214,5 +208,6 @@ public class FluXisRealm : IDisposable
     public void Dispose()
     {
         updateRealm?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

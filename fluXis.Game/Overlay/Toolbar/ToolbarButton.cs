@@ -41,7 +41,7 @@ public partial class ToolbarButton : Container, IHasTextTooltip
                 {
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
-                },
+                }
             },
             new SpriteIcon
             {

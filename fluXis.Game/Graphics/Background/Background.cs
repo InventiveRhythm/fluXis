@@ -14,7 +14,6 @@ public partial class Background : CompositeDrawable
     private RealmMap map { get; }
 
     private MapBackground sprite;
-    private BufferedContainer buffer;
 
     public float Blur { get; init; }
 
@@ -29,8 +28,9 @@ public partial class Background : CompositeDrawable
     {
         Alpha = 0f;
 
-        sprite = new MapBackground(map)
+        sprite = new MapBackground
         {
+            Map = map,
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
@@ -39,7 +39,7 @@ public partial class Background : CompositeDrawable
 
         if (Blur > 0)
         {
-            AddInternal(buffer = new BufferedContainer(cachedFrameBuffer: true)
+            AddInternal(new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 BlurSigma = new Vector2(Blur * 25),

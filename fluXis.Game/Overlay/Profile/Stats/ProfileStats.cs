@@ -115,7 +115,7 @@ public partial class ProfileStats : Container
     private partial class UserStat : FillFlowContainer
     {
         private string value;
-        public string Title { get; set; }
+        public string Title { get; init; }
 
         public string Value
         {
@@ -143,7 +143,7 @@ public partial class ProfileStats : Container
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Text = Title,
-                    FontSize = 24,
+                    FontSize = 24
                 },
                 valueText = new FluXisSpriteText
                 {

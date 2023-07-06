@@ -17,7 +17,6 @@ public partial class ComposeTab : EditorTab
     private EditorValues values { get; set; }
 
     private EditorPlayfield playfield;
-    private EditorToolbox toolbox;
 
     public ComposeTab(Editor screen)
         : base(screen)
@@ -30,7 +29,7 @@ public partial class ComposeTab : EditorTab
         Children = new Drawable[]
         {
             playfield = new EditorPlayfield(this),
-            toolbox = new EditorToolbox(playfield)
+            new EditorToolbox(playfield)
         };
     }
 

@@ -43,7 +43,7 @@ public partial class SkinEditorPlayfield : Container
                 {
                     SkinManager.GetStageBorder(false),
                     SkinManager.GetStageBackground(),
-                    SkinManager.GetStageBorder(true),
+                    SkinManager.GetStageBorder(true)
                 }
             },
             receptorContainer = new FillFlowContainer

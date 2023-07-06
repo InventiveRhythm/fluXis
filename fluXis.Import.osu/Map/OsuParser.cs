@@ -7,19 +7,19 @@ namespace fluXis.Import.osu.Map;
 
 public class OsuParser
 {
-    public List<string> General { get; set; }
-    public List<string> Metadata { get; set; }
-    public List<string> Events { get; set; }
-    public List<string> TimingPoints { get; set; }
-    public List<string> HitObjects { get; set; }
+    private List<string> general { get; }
+    private List<string> metadata { get; }
+    private List<string> events { get; }
+    private List<string> timingPoints { get; }
+    private List<string> hitObjects { get; }
 
     public OsuParser()
     {
-        General = new List<string>();
-        Metadata = new List<string>();
-        Events = new List<string>();
-        TimingPoints = new List<string>();
-        HitObjects = new List<string>();
+        general = new List<string>();
+        metadata = new List<string>();
+        events = new List<string>();
+        timingPoints = new List<string>();
+        hitObjects = new List<string>();
     }
 
     public void AddLine(string line, OsuFileSection section)
@@ -27,23 +27,23 @@ public class OsuParser
         switch (section)
         {
             case OsuFileSection.General:
-                General.Add(line);
+                general.Add(line);
                 break;
 
             case OsuFileSection.Metadata:
-                Metadata.Add(line);
+                metadata.Add(line);
                 break;
 
             case OsuFileSection.Events:
-                Events.Add(line);
+                events.Add(line);
                 break;
 
             case OsuFileSection.TimingPoints:
-                TimingPoints.Add(line);
+                timingPoints.Add(line);
                 break;
 
             case OsuFileSection.HitObjects:
-                HitObjects.Add(line);
+                hitObjects.Add(line);
                 break;
         }
     }
@@ -63,7 +63,7 @@ public class OsuParser
 
     private void parseGeneral(OsuMap map)
     {
-        foreach (var line in General)
+        foreach (var line in general)
         {
             string[] split = line.Split(':');
             string key = split[0];
@@ -88,7 +88,7 @@ public class OsuParser
 
     private void parseMetadata(OsuMap map)
     {
-        foreach (var line in Metadata)
+        foreach (var line in metadata)
         {
             string[] split = line.Split(':');
             string key = split[0];
@@ -125,14 +125,13 @@ public class OsuParser
 
     private void parseEvents(OsuMap map)
     {
-        foreach (var line in Events)
+        foreach (var line in events)
         {
             string[] split = line.Split(',');
 
             OsuEvent @event = new OsuEvent
             {
                 EventType = split[0],
-                StartTime = split[1],
                 Parameter = split[2]
             };
 
@@ -142,7 +141,7 @@ public class OsuParser
 
     private void parseTimingPoints(OsuMap map)
     {
-        foreach (var line in TimingPoints)
+        foreach (var line in timingPoints)
         {
             string[] split = line.Split(',');
 
@@ -158,7 +157,7 @@ public class OsuParser
 
     private void parseHitObjects(OsuMap map)
     {
-        foreach (var line in HitObjects)
+        foreach (var line in hitObjects)
         {
             string[] split = line.Split(',');
 

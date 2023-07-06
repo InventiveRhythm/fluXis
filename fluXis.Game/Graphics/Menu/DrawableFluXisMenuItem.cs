@@ -28,20 +28,12 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
 
     private void updateColor()
     {
-        switch ((Item as FluXisMenuItem)?.Type)
+        text.Colour = (Item as FluXisMenuItem)?.Type switch
         {
-            default:
-                text.Colour = FluXisColors.Text;
-                break;
-
-            case MenuItemType.Highlighted:
-                text.Colour = FluXisColors.Accent;
-                break;
-
-            case MenuItemType.Dangerous:
-                text.Colour = Colour4.FromHex("#ff5555");
-                break;
-        }
+            MenuItemType.Highlighted => FluXisColors.Accent,
+            MenuItemType.Dangerous => Colour4.FromHex("#ff5555"),
+            _ => FluXisColors.Text
+        };
     }
 
     protected override Drawable CreateContent()

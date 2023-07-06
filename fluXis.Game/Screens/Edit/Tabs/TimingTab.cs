@@ -43,7 +43,7 @@ public partial class TimingTab : EditorTab
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = FluXisColors.Background,
+                                    Colour = FluXisColors.Background
                                 },
                                 new Container
                                 {
@@ -67,7 +67,6 @@ public partial class TimingTab : EditorTab
     {
         Schedule(() =>
         {
-            pointSettings.Tab = this;
             pointSettingsContainer.Clear();
             pointSettingsContainer.Add(pointSettings);
         });

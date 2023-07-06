@@ -78,15 +78,27 @@ public partial class InfiniteScrollingPattern : Container
         {
             child.Position += Speed * ((float)Clock.ElapsedFrameTime / 1000f);
 
-            if (Speed.X > 0 && child.X > DrawWidth)
-                child.X -= child.Size.X * xCount;
-            else if (Speed.X < 0 && child.X < -DrawWidth)
-                child.X += child.Size.X * xCount;
+            switch (Speed.X)
+            {
+                case > 0 when child.X > DrawWidth:
+                    child.X -= child.Size.X * xCount;
+                    break;
 
-            if (Speed.Y > 0 && child.Y > DrawHeight)
-                child.Y -= child.Size.Y * yCount;
-            else if (Speed.Y < 0 && child.Y < -DrawHeight)
-                child.Y += child.Size.Y * yCount;
+                case < 0 when child.X < -DrawWidth:
+                    child.X += child.Size.X * xCount;
+                    break;
+            }
+
+            switch (Speed.Y)
+            {
+                case > 0 when child.Y > DrawHeight:
+                    child.Y -= child.Size.Y * yCount;
+                    break;
+
+                case < 0 when child.Y < -DrawHeight:
+                    child.Y += child.Size.Y * yCount;
+                    break;
+            }
         }
 
         base.Update();

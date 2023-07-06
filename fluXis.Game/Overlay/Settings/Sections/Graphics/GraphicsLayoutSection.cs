@@ -20,7 +20,7 @@ public partial class GraphicsLayoutSection : SettingsSubSection
                 Label = "Window Mode",
                 Items = host.Window.SupportedWindowModes,
                 Bindable = frameworkConfig.GetBindable<WindowMode>(FrameworkSetting.WindowMode)
-            },
+            }
         });
     }
 }

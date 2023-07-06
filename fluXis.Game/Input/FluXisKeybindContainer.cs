@@ -13,7 +13,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
 {
     private readonly Drawable handleInput;
     private InputManager inputManager;
-    private FluXisRealm realm;
+    private readonly FluXisRealm realm;
 
     public FluXisKeybindContainer(Drawable game, FluXisRealm realm)
         : base(matchingMode: KeyCombinationMatchingMode.Modifiers, simultaneousMode: SimultaneousBindingMode.All)
@@ -150,7 +150,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
                 r.Write(() => r.Add(binding = new RealmKeybind
                 {
                     Key = key.ToString(),
-                    Action = action.ToString(),
+                    Action = action.ToString()
                 }));
             }
 

@@ -14,7 +14,7 @@ public partial class SelectScreen
         return handleGeneric(e);
     }
 
-    private bool handleGeneric(JoystickPressEvent e)
+    private bool handleGeneric(JoystickButtonEvent e)
     {
         switch (e.Button)
         {
@@ -68,7 +68,7 @@ public partial class SelectScreen
                 return true;
 
             case JoystickButton.Button10: // Start
-                Footer.OpenSettings();
+                footer.OpenSettings();
                 return true;
         }
 

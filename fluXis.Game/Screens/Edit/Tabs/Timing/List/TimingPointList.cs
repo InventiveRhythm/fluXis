@@ -4,7 +4,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
@@ -51,9 +50,6 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
     public partial class TimingPointEntry : ListEntry
     {
-        [Resolved]
-        private EditorChangeHandler changeHandler { get; set; }
-
         public readonly TimingPointInfo PointInfo;
 
         private FluXisSpriteText timeText;

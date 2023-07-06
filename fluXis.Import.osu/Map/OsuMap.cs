@@ -26,16 +26,16 @@ public class OsuMap
     // dont need this
 
     // [Events]
-    public List<OsuEvent> Events { get; set; }
+    public List<OsuEvent> Events { get; init; }
 
     // [TimingPoints]
-    public List<OsuTimingPoint> TimingPoints { get; set; }
+    public List<OsuTimingPoint> TimingPoints { get; init; }
 
     // [Colours]
     // dont need this
 
     // [HitObjects]
-    public List<OsuHitObject> HitObjects { get; set; }
+    public List<OsuHitObject> HitObjects { get; init; }
 
     public OsuMap()
     {
@@ -46,6 +46,9 @@ public class OsuMap
 
     public MapInfo ToMapInfo()
     {
+        if (Mode != 3)
+            throw new System.Exception("Only osu!mania maps are supported.");
+
         MapInfo mapInfo = new(new MapMetadata
         {
             Title = Title?.Trim() ?? "",
@@ -57,7 +60,7 @@ public class OsuMap
             PreviewTime = PreviewTime
         })
         {
-            AudioFile = AudioFilename.Trim() ?? "",
+            AudioFile = AudioFilename.Trim(),
             BackgroundFile = "",
             HitObjects = new List<HitObjectInfo>(),
             TimingPoints = new List<TimingPointInfo>(),

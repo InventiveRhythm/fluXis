@@ -73,7 +73,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private ITrackStore trackStore { get; set; }
 
     public RealmMap Map;
-    public MapInfo OriginalMapInfo;
     public MapInfo MapInfo;
 
     private Container tabs;
@@ -93,8 +92,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
         Map = realmMap ?? RealmMap.CreateNew();
-        OriginalMapInfo = map ?? new MapInfo(new MapMetadata());
-        MapInfo = OriginalMapInfo.Clone();
+        MapInfo = (map ?? new MapInfo(new MapMetadata())).Clone();
         MapInfo.KeyCount = Map.KeyCount;
     }
 
@@ -155,23 +153,23 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     {
                         Items = new MenuItem[]
                         {
-                            new("Save", () => Save()),
-                            new("Export", Export),
+                            new("Save", () => save()),
+                            new("Export", export),
                             new("Upload", uploadSet),
-                            new("Exit", TryExit)
+                            new("Exit", tryExit)
                         }
                     },
                     new("Edit")
                     {
                         Items = new MenuItem[]
                         {
-                            new("Undo", SendWipNotification),
-                            new("Redo", SendWipNotification),
-                            new("Cut", SendWipNotification),
-                            new("Copy", SendWipNotification),
-                            new("Paste", SendWipNotification),
-                            new("Delete", SendWipNotification),
-                            new("Select all", SendWipNotification)
+                            new("Undo", sendWipNotification),
+                            new("Redo", sendWipNotification),
+                            new("Cut", sendWipNotification),
+                            new("Copy", sendWipNotification),
+                            new("Paste", sendWipNotification),
+                            new("Delete", sendWipNotification),
+                            new("Select all", sendWipNotification)
                         }
                     },
                     new("View")
@@ -211,17 +209,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     new()
                     {
                         Text = "Setup",
-                        Action = () => ChangeTab(0)
+                        Action = () => changeTab(0)
                     },
                     new()
                     {
                         Text = "Compose",
-                        Action = () => ChangeTab(1)
+                        Action = () => changeTab(1)
                     },
                     new()
                     {
                         Text = "Timing",
-                        Action = () => ChangeTab(2)
+                        Action = () => changeTab(2)
                     }
                 }
             },
@@ -258,7 +256,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     protected override void LoadComplete()
     {
-        ChangeTab(0);
+        changeTab(0);
     }
 
     public void SortEverything()
@@ -270,7 +268,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         values.MapEvents.LaneSwitchEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
-    public void ChangeTab(int to)
+    private void changeTab(int to)
     {
         currentTab = to;
 
@@ -293,19 +291,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             switch (e.Key)
             {
                 case Key.Number1:
-                    ChangeTab(0);
+                    changeTab(0);
                     return true;
 
                 case Key.Number2:
-                    ChangeTab(1);
+                    changeTab(1);
                     return true;
 
                 case Key.Number3:
-                    ChangeTab(2);
+                    changeTab(2);
                     return true;
 
                 case Key.S:
-                    Save();
+                    save();
                     return true;
             }
         }
@@ -363,7 +361,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
-    public bool Save(bool setStatus = true)
+    private bool save(bool setStatus = true)
     {
         if (Map == null)
             return false;
@@ -489,7 +487,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     set.Files.Add(new RealmFile
                     {
                         Hash = effectsHash,
-                        Name = MapInfo.EffectFile,
+                        Name = MapInfo.EffectFile
                     });
                 }
                 else
@@ -505,7 +503,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 set.Files.Add(new RealmFile
                 {
                     Hash = hash,
-                    Name = $"{time}.fsc",
+                    Name = $"{time}.fsc"
                 });
 
                 Map.Hash = hash;
@@ -520,7 +518,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     Tags = MapInfo.Metadata.Tags,
                     Background = MapInfo.BackgroundFile,
                     Audio = MapInfo.AudioFile,
-                    PreviewTime = MapInfo.Metadata.PreviewTime,
+                    PreviewTime = MapInfo.Metadata.PreviewTime
                 };
 
                 r.Add(set);
@@ -532,9 +530,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         return true;
     }
 
-    public void Export() => SendWipNotification();
-    public void TryExit() => this.Exit(); // TODO: unsaved changes check
-    public void SendWipNotification() => notifications.Post("This is still in development\nCome back later!");
+    private void export() => sendWipNotification();
+    private void tryExit() => this.Exit(); // TODO: unsaved changes check
+    private void sendWipNotification() => notifications.Post("This is still in development\nCome back later!");
 
     public void SetKeyMode(int keyMode)
     {
@@ -654,7 +652,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         }
 
         Map.MapSet.SetStatus(0);
-        if (!Save(false)) return;
+        if (!save(false)) return;
 
         var notification = new LoadingNotification();
         var path = mapStore.Export(Map.MapSet, notification, false);

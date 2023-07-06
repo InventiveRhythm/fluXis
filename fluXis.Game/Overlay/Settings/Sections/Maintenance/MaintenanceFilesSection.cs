@@ -18,7 +18,7 @@ public partial class MaintenanceFilesSection : SettingsSubSection
                 Label = "Clean up files",
                 Enabled = false,
                 ButtonText = "Run"
-            },
+            }
         });
     }
 }

@@ -29,11 +29,11 @@ public partial class TimingCategoryList<T> : Container
     public EditorClock EditorClock { get; private set; }
 
     private readonly FillFlowContainer<T> flow;
-    public readonly TimingTab TimingTab;
+    private readonly TimingTab timingTab;
 
-    public TimingCategoryList(string title, Colour4 background, TimingTab tab)
+    protected TimingCategoryList(string title, Colour4 background, TimingTab tab)
     {
-        TimingTab = tab;
+        timingTab = tab;
         RelativeSizeAxes = Axes.Both;
 
         AddRange(new Drawable[]
@@ -84,7 +84,7 @@ public partial class TimingCategoryList<T> : Container
 
     public void AddEntry(T item)
     {
-        item.TimingTab = TimingTab;
+        item.TimingTab = timingTab;
         item.List = this;
         flow.Add(item);
     }

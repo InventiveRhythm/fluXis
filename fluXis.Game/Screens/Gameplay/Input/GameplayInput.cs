@@ -128,7 +128,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
             8 => keys8,
             9 => keys9,
             10 => keys10,
-            _ => throw new ArgumentOutOfRangeException() // Should never happen lmao
+            _ => Array.Empty<FluXisKeybind>()
         };
 
         pressedStatus = new bool[mode];

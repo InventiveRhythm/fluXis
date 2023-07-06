@@ -30,8 +30,8 @@ public partial class SkinEditor : FluXisScreen
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public Skinning.Json.Skin Skin { get; private set; }
-    public Bindable<int> KeyMode { get; private set; } = new(4);
+    private Skinning.Json.Skin skin { get; set; }
+    private Bindable<int> keyMode { get; } = new(4);
 
     private EditorMenuBar menuBar;
     private PopoverContainer content;
@@ -44,15 +44,15 @@ public partial class SkinEditor : FluXisScreen
     [BackgroundDependencyLoader]
     private void load(NotificationOverlay notifications)
     {
-        Skin = skinManager.CurrentSkin.Copy();
+        skin = skinManager.CurrentSkin.Copy();
 
-        KeyMode.BindValueChanged(e =>
+        keyMode.BindValueChanged(e =>
         {
             playfield.KeyMode = e.NewValue;
             playfield.Reload();
 
-            hitPositionTextBox.TextBox.Text = Skin.GetKeymode(KeyMode.Value).HitPosition.ToString();
-            columnWidthTextBox.TextBox.Text = Skin.GetKeymode(KeyMode.Value).ColumnWidth.ToString();
+            hitPositionTextBox.TextBox.Text = skin.GetKeymode(keyMode.Value).HitPosition.ToString();
+            columnWidthTextBox.TextBox.Text = skin.GetKeymode(keyMode.Value).ColumnWidth.ToString();
         });
 
         InternalChildren = new Drawable[]
@@ -81,9 +81,9 @@ public partial class SkinEditor : FluXisScreen
                             {
                                 playfield = new SkinEditorPlayfield
                                 {
-                                    Skin = Skin,
+                                    Skin = skin,
                                     SkinManager = skinManager,
-                                    KeyMode = KeyMode.Value
+                                    KeyMode = keyMode.Value
                                 },
                                 Empty(),
                                 new Container
@@ -119,11 +119,11 @@ public partial class SkinEditor : FluXisScreen
                                                     hitPositionTextBox = new SkinEditorTextBox
                                                     {
                                                         Text = "Hit Position",
-                                                        DefaultText = Skin.GetKeymode(KeyMode.Value).HitPosition.ToString(),
+                                                        DefaultText = skin.GetKeymode(keyMode.Value).HitPosition.ToString(),
                                                         OnTextChanged = () =>
                                                         {
                                                             if (int.TryParse(hitPositionTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int y))
-                                                                Skin.GetKeymode(KeyMode.Value).HitPosition = y;
+                                                                skin.GetKeymode(keyMode.Value).HitPosition = y;
                                                             else
                                                                 hitPositionTextBox.TextBox.NotifyError();
                                                         }
@@ -131,11 +131,11 @@ public partial class SkinEditor : FluXisScreen
                                                     columnWidthTextBox = new SkinEditorTextBox
                                                     {
                                                         Text = "Column Width",
-                                                        DefaultText = Skin.GetKeymode(KeyMode.Value).ColumnWidth.ToString(),
+                                                        DefaultText = skin.GetKeymode(keyMode.Value).ColumnWidth.ToString(),
                                                         OnTextChanged = () =>
                                                         {
                                                             if (int.TryParse(columnWidthTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int w))
-                                                                Skin.GetKeymode(KeyMode.Value).ColumnWidth = w;
+                                                                skin.GetKeymode(keyMode.Value).ColumnWidth = w;
                                                             else
                                                                 columnWidthTextBox.TextBox.NotifyError();
                                                         }
@@ -148,39 +148,39 @@ public partial class SkinEditor : FluXisScreen
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = Skin.GetColorForJudgement(Judgement.Flawless),
+                                                        Color = skin.GetColorForJudgement(Judgement.Flawless),
                                                         Text = "Flawless",
-                                                        OnColorChanged = c => Skin.Judgements.Flawless = c.ToHex()
+                                                        OnColorChanged = c => skin.Judgements.Flawless = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = Skin.GetColorForJudgement(Judgement.Perfect),
+                                                        Color = skin.GetColorForJudgement(Judgement.Perfect),
                                                         Text = "Perfect",
-                                                        OnColorChanged = c => Skin.Judgements.Perfect = c.ToHex()
+                                                        OnColorChanged = c => skin.Judgements.Perfect = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = Skin.GetColorForJudgement(Judgement.Great),
+                                                        Color = skin.GetColorForJudgement(Judgement.Great),
                                                         Text = "Great",
-                                                        OnColorChanged = c => Skin.Judgements.Great = c.ToHex()
+                                                        OnColorChanged = c => skin.Judgements.Great = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = Skin.GetColorForJudgement(Judgement.Alright),
+                                                        Color = skin.GetColorForJudgement(Judgement.Alright),
                                                         Text = "Alright",
-                                                        OnColorChanged = c => Skin.Judgements.Alright = c.ToHex()
+                                                        OnColorChanged = c => skin.Judgements.Alright = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = Skin.GetColorForJudgement(Judgement.Okay),
+                                                        Color = skin.GetColorForJudgement(Judgement.Okay),
                                                         Text = "Okay",
-                                                        OnColorChanged = c => Skin.Judgements.Okay = c.ToHex()
+                                                        OnColorChanged = c => skin.Judgements.Okay = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = Skin.GetColorForJudgement(Judgement.Miss),
+                                                        Color = skin.GetColorForJudgement(Judgement.Miss),
                                                         Text = "Miss",
-                                                        OnColorChanged = c => Skin.Judgements.Miss = c.ToHex()
+                                                        OnColorChanged = c => skin.Judgements.Miss = c.ToHex()
                                                     }
                                                 }
                                             }
@@ -203,7 +203,7 @@ public partial class SkinEditor : FluXisScreen
                             new MenuItem("Save", () =>
                             {
                                 notifications.Post("Skin Saved");
-                                skinManager.UpdateAndSave(Skin);
+                                skinManager.UpdateAndSave(skin);
                             }),
                             new MenuItem("Exit", this.Exit)
                         }
@@ -212,16 +212,16 @@ public partial class SkinEditor : FluXisScreen
                     {
                         Items = new[]
                         {
-                            new MenuItem("1 Key", () => KeyMode.Value = 1),
-                            new MenuItem("2 Keys", () => KeyMode.Value = 2),
-                            new MenuItem("3 Keys", () => KeyMode.Value = 3),
-                            new MenuItem("4 Keys", () => KeyMode.Value = 4),
-                            new MenuItem("5 Keys", () => KeyMode.Value = 5),
-                            new MenuItem("6 Keys", () => KeyMode.Value = 6),
-                            new MenuItem("7 Keys", () => KeyMode.Value = 7),
-                            new MenuItem("8 Keys", () => KeyMode.Value = 8),
-                            new MenuItem("9 Keys", () => KeyMode.Value = 9),
-                            new MenuItem("10 Keys", () => KeyMode.Value = 10)
+                            new MenuItem("1 Key", () => keyMode.Value = 1),
+                            new MenuItem("2 Keys", () => keyMode.Value = 2),
+                            new MenuItem("3 Keys", () => keyMode.Value = 3),
+                            new MenuItem("4 Keys", () => keyMode.Value = 4),
+                            new MenuItem("5 Keys", () => keyMode.Value = 5),
+                            new MenuItem("6 Keys", () => keyMode.Value = 6),
+                            new MenuItem("7 Keys", () => keyMode.Value = 7),
+                            new MenuItem("8 Keys", () => keyMode.Value = 8),
+                            new MenuItem("9 Keys", () => keyMode.Value = 9),
+                            new MenuItem("10 Keys", () => keyMode.Value = 10)
                         }
                     }
                 }

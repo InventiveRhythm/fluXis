@@ -14,16 +14,10 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class PauseMenu : CompositeDrawable
 {
-
     [Resolved]
     private AudioClock clock { get; set; }
 
-    public GameplayScreen Screen;
-
-    public PauseMenu(GameplayScreen screen)
-    {
-        Screen = screen;
-    }
+    public GameplayScreen Screen { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()

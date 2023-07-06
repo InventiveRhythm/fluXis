@@ -38,7 +38,7 @@ public partial class TestResultsScreen : FluXisTestScene
                     {
                         Title = "Title",
                         Artist = "Artist",
-                        Mapper = "Mapper",
+                        Mapper = "Mapper"
                     },
                     MapSet = null,
                     Status = 0,
@@ -53,7 +53,7 @@ public partial class TestResultsScreen : FluXisTestScene
             {
                 Title = realmMap.Metadata.Title,
                 Artist = realmMap.Metadata.Artist,
-                Mapper = realmMap.Metadata.Mapper,
+                Mapper = realmMap.Metadata.Mapper
             });
 
             screenStack.Push(new ResultsScreen(realmMap, map, new Performance(map, 0, ""), false));

@@ -76,7 +76,7 @@ public partial class SettingsDropdown<T> : SettingsItem
                         Icon = FontAwesome.Solid.ChevronDown,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Size = new(14),
+                        Size = new Vector2(14),
                         Margin = new MarginPadding { Right = 5 }
                     }
                 };
@@ -133,8 +133,6 @@ public partial class SettingsDropdown<T> : SettingsItem
 
             private partial class DrawableFluXisDropdownMenuItem : DrawableDropdownMenuItem
             {
-                private FluXisSpriteText text;
-
                 public DrawableFluXisDropdownMenuItem(MenuItem item)
                     : base(item)
                 {
@@ -146,7 +144,7 @@ public partial class SettingsDropdown<T> : SettingsItem
 
                 protected override Drawable CreateContent()
                 {
-                    return text = new FluXisSpriteText
+                    return new FluXisSpriteText
                     {
                         FontSize = 16,
                         Margin = new MarginPadding { Vertical = 2, Horizontal = 5 },

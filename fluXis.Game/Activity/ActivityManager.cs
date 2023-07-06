@@ -19,12 +19,6 @@ public class ActivityManager
         activity.Initialize();
     }
 
-    public void Remove(IActivity activity)
-    {
-        activities.Remove(activity);
-        activity.OnRemove();
-    }
-
     public void Update(string details = "", string state = "", string largeImageKey = "", int timestamp = 0, int timeLeft = 0)
     {
         foreach (IActivity activity in activities)

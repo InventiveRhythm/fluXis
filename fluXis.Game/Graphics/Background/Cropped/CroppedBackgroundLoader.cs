@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -23,6 +24,7 @@ public class CroppedBackgroundLoader : IResourceStore<TextureUpload>
     public void Dispose()
     {
         textureStore.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public TextureUpload Get(string name)

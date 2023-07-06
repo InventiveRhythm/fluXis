@@ -57,21 +57,23 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     [Resolved]
     private ActivityManager activity { get; set; }
 
-    public BackgroundStack Backgrounds;
+    [Resolved]
+    private BackgroundStack backgrounds { get; set; }
+
     public Bindable<RealmMapSet> MapSet = new();
     public Bindable<RealmMap> MapInfo = new();
-    public readonly List<RealmMapSet> Maps = new();
+    private readonly List<RealmMapSet> maps = new();
     public SearchFilters Filters = new();
 
-    public MapList MapList;
-    public SelectMapInfo SelectMapInfo;
-    public SearchBar SearchBar;
-    public SelectFooter Footer;
+    private MapList mapList;
+    private SelectMapInfo selectMapInfo;
+    private SearchBar searchBar;
+    private SelectFooter footer;
     public ModSelector ModSelector;
 
-    public Sample MenuAccept;
-    public Sample MenuBack;
-    public Sample MenuScroll;
+    private Sample menuAccept;
+    private Sample menuBack;
+    private Sample menuScroll;
 
     private FluXisSpriteText noMapsText;
     private LoadingIcon loadingIcon;
@@ -83,15 +85,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     private Bindable<bool> songSelectBlur;
 
     [BackgroundDependencyLoader]
-    private void load(BackgroundStack background, ISampleStore samples, FluXisConfig config)
+    private void load(ISampleStore samples, FluXisConfig config)
     {
-        Backgrounds = background;
+        menuAccept = samples.Get("UI/accept.mp3");
+        menuBack = samples.Get("UI/back.mp3");
+        menuScroll = samples.Get("UI/scroll.mp3");
 
-        MenuAccept = samples.Get("UI/accept.mp3");
-        MenuBack = samples.Get("UI/back.mp3");
-        MenuScroll = samples.Get("UI/scroll.mp3");
-
-        Filters.OnChange += UpdateSearch;
+        Filters.OnChange += updateSearch;
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
 
         InternalChildren = new Drawable[]
@@ -109,10 +109,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         RelativeSizeAxes = Axes.Both,
                         Width = .5f,
                         Padding = new MarginPadding(10) { Top = 60, Left = 20 },
-                        Child = MapList = new MapList { Alpha = 0 }
+                        Child = mapList = new MapList { Alpha = 0 }
                     },
-                    SearchBar = new SearchBar(this),
-                    SelectMapInfo = new SelectMapInfo { Screen = this },
+                    searchBar = new SearchBar(this),
+                    selectMapInfo = new SelectMapInfo { Screen = this },
                     new Container
                     {
                         Anchor = Anchor.CentreLeft,
@@ -161,10 +161,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                                 Origin = Anchor.Centre
                             }
                         }
-                    },
+                    }
                 }
             },
-            Footer = new SelectFooter { Screen = this },
+            footer = new SelectFooter { Screen = this },
             ModSelector = new ModSelector()
         };
 
@@ -180,8 +180,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         {
             MapListEntry entry = new(this, set);
             LoadComponent(entry);
-            Schedule(() => MapList.AddMap(entry));
-            Maps.Add(set);
+            Schedule(() => mapList.AddMap(entry));
+            maps.Add(set);
             lookup[set] = entry;
         }
 
@@ -201,10 +201,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
             Schedule(() =>
             {
-                if (Maps.Count > 0)
+                if (maps.Count > 0)
                     MapSet.Value = mapStore.CurrentMapSet;
 
-                MapList.FadeIn(500);
+                mapList.FadeIn(500);
                 loadingIcon.FadeOut(500);
             });
         });
@@ -217,8 +217,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             int index = mapStore.MapSetsSorted.IndexOf(set);
 
             MapListEntry entry = new(this, set);
-            Maps.Insert(index, set);
-            MapList.Insert(index, entry);
+            maps.Insert(index, set);
+            mapList.Insert(index, entry);
             lookup[set] = entry;
 
             MapSet.Value = set;
@@ -237,8 +237,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                 return;
             }
 
-            MapList.Remove(lookup[oldSet], false);
-            Maps.Remove(oldSet);
+            mapList.Remove(lookup[oldSet], false);
+            maps.Remove(oldSet);
             lookup.Remove(oldSet);
             changeSelection(1);
             addMapSet(newSet);
@@ -268,11 +268,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         if (map == null)
             return;
 
-        MenuScroll.Play();
-        Backgrounds.AddBackgroundFromMap(map);
-        SelectMapInfo.ChangeMap(map);
+        menuScroll.Play();
+        backgrounds.AddBackgroundFromMap(map);
+        selectMapInfo.ChangeMap(map);
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
-        ScheduleAfterChildren(() => MapList.ScrollTo(lookup[MapSet.Value]));
+        ScheduleAfterChildren(() => mapList.ScrollTo(lookup[MapSet.Value]));
     }
 
     public void Accept()
@@ -280,9 +280,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         if (MapInfo == null)
             return;
 
-        MenuAccept.Play();
-        Backgrounds.AddBackgroundFromMap(MapInfo.Value);
-        Backgrounds.SwipeAnimation();
+        menuAccept.Play();
+        backgrounds.AddBackgroundFromMap(MapInfo.Value);
+        backgrounds.SwipeAnimation();
 
         this.Push(new GameplayLoader
         {
@@ -293,23 +293,23 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     private void changeSelection(int by = 0)
     {
-        if (Maps.Count == 0)
+        if (maps.Count == 0)
             return;
 
-        int current = Maps.IndexOf(MapSet.Value);
+        int current = maps.IndexOf(MapSet.Value);
         current += by;
 
         if (current < 0)
-            current = Maps.Count - 1;
-        else if (current >= Maps.Count)
+            current = maps.Count - 1;
+        else if (current >= maps.Count)
             current = 0;
 
-        MapSet.Value = Maps[current];
+        MapSet.Value = maps[current];
     }
 
     private void changeMapSelection(int by = 0)
     {
-        if (!Maps.Contains(MapInfo.Value.MapSet)) return;
+        if (!maps.Contains(MapInfo.Value.MapSet)) return;
 
         var listEntry = lookup[MapInfo.Value.MapSet];
 
@@ -338,14 +338,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             return;
 
         mapStore.DeleteMapSet(set);
-        MapList.Remove(lookup[set], false);
-        Maps.Remove(set);
+        mapList.Remove(lookup[set], false);
+        maps.Remove(set);
         lookup.Remove(set);
 
         if (Equals(set, MapSet.Value))
             changeSelection(1);
 
-        if (Maps.Count == 0)
+        if (maps.Count == 0)
             noMapsText.FadeIn(500);
     }
 
@@ -372,10 +372,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         clock.Looping = false;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
-        MapList.MoveToX(-200, 500, Easing.OutQuint);
-        SearchBar.MoveToY(-200, 500, Easing.OutQuint);
-        SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
-        Footer.MoveToY(50, 500, Easing.OutQuint);
+        mapList.MoveToX(-200, 500, Easing.OutQuint);
+        searchBar.MoveToY(-200, 500, Easing.OutQuint);
+        selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+        footer.MoveToY(50, 500, Easing.OutQuint);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
@@ -384,10 +384,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         lightController.FadeColour(FluXisColors.GetKeyColor(MapInfo.Value.KeyCount), 400);
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
-        MapList.MoveToX(0, 500, Easing.OutQuint);
-        SearchBar.MoveToY(0, 500, Easing.OutQuint);
-        SelectMapInfo.MoveToX(0, 500, Easing.OutQuint);
-        Footer.MoveToY(0, 500, Easing.OutQuint);
+        mapList.MoveToX(0, 500, Easing.OutQuint);
+        searchBar.MoveToY(0, 500, Easing.OutQuint);
+        selectMapInfo.MoveToX(0, 500, Easing.OutQuint);
+        footer.MoveToY(0, 500, Easing.OutQuint);
 
         activity.Update("Selecting a map", "", "songselect");
 
@@ -399,7 +399,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                 clock.Start();
         }
 
-        SelectMapInfo.ScoreList.Refresh();
+        selectMapInfo.ScoreList.Refresh();
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -407,16 +407,16 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         this.FadeInFromZero(200);
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
-        MapList.MoveToX(-200)
+        mapList.MoveToX(-200)
                .MoveToX(0, 500, Easing.OutQuint);
 
-        SearchBar.MoveToY(-200)
+        searchBar.MoveToY(-200)
                  .MoveToY(0, 500, Easing.OutQuint);
 
-        SelectMapInfo.MoveToX(200)
+        selectMapInfo.MoveToX(200)
                      .MoveToX(0, 500, Easing.OutQuint);
 
-        Footer.MoveToY(50)
+        footer.MoveToY(50)
               .MoveToY(0, 500, Easing.OutQuint);
 
         activity.Update("Selecting a map", "", "songselect");
@@ -430,10 +430,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         this.FadeOut(200);
         clock.Looping = false;
 
-        MapList.MoveToX(-200, 500, Easing.OutQuint);
-        SearchBar.MoveToY(-200, 500, Easing.OutQuint);
-        SelectMapInfo.MoveToX(200, 500, Easing.OutQuint);
-        Footer.MoveToY(50, 500, Easing.OutQuint);
+        mapList.MoveToX(-200, 500, Easing.OutQuint);
+        searchBar.MoveToY(-200, 500, Easing.OutQuint);
+        selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+        footer.MoveToY(50, 500, Easing.OutQuint);
 
         mapStore.MapSetAdded -= addMapSet;
         mapStore.MapSetUpdated -= replaceMapSet;
@@ -474,7 +474,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                     return true;
                 }
 
-                MenuBack.Play();
+                menuBack.Play();
                 this.Exit();
                 return true;
         }
@@ -497,7 +497,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                 return true;
 
             case Key.F3:
-                Footer.OpenSettings();
+                footer.OpenSettings();
                 return true;
 
             case Key.PageUp:
@@ -533,7 +533,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     private void changeLetter(int by)
     {
-        if (Maps.Count <= 1) // no need to change letter if there's only one map
+        if (maps.Count <= 1) // no need to change letter if there's only one map
             return;
 
         var current = getLetter(MapSet.Value.Metadata.Title[0]);
@@ -544,7 +544,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         if (index < 0) index = letters.Length - 1;
         if (index >= letters.Length) index = 0;
 
-        while (Maps.All(m => getLetter(m.Metadata.Title[0]) != letters[index]))
+        while (maps.All(m => getLetter(m.Metadata.Title[0]) != letters[index]))
         {
             index += by;
 
@@ -561,12 +561,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     private void changeLetter(char letter)
     {
-        if (Maps.Count <= 1) // no need to change letter if there's only one map
+        if (maps.Count <= 1) // no need to change letter if there's only one map
             return;
 
         Logger.Log($"Changing letter to {letter}");
 
-        var first = Maps.FirstOrDefault(m => getLetter(m.Metadata.Title[0]) == letter);
+        var first = maps.FirstOrDefault(m => getLetter(m.Metadata.Title[0]) == letter);
         if (first != null) MapSet.Value = first;
 
         currentLetter.Text = letter.ToString();
@@ -578,24 +578,24 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         }
     }
 
-    public void UpdateSearch()
+    private void updateSearch()
     {
-        Maps.Clear();
+        maps.Clear();
 
-        foreach (var child in MapList.Content.Children)
+        foreach (var child in mapList.Content.Children)
         {
             bool matches = child.MapSet.Maps.Aggregate(false, (current, map) => current | Filters.Matches(map));
 
             if (matches)
             {
-                Maps.Add(child.MapSet);
+                maps.Add(child.MapSet);
                 child.Show();
             }
             else
                 child.Hide();
         }
 
-        if (!Maps.Any())
+        if (!maps.Any())
             noMapsText.FadeIn(200);
         else
             noMapsText.FadeOut(200);
@@ -603,17 +603,17 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     public void RandomMap()
     {
-        if (Maps.Count == 0)
+        if (maps.Count == 0)
             return;
 
-        MapSet.Value = Maps[RNG.Next(0, Maps.Count)];
+        MapSet.Value = maps[RNG.Next(0, maps.Count)];
     }
 
     private void updateBackgroundBlur(ValueChangedEvent<bool> e)
     {
         if (e.NewValue)
-            Backgrounds.SetBlur(BackgroundBlur, 500);
+            backgrounds.SetBlur(BackgroundBlur, 500);
         else
-            Backgrounds.SetBlur(0, 500);
+            backgrounds.SetBlur(0, 500);
     }
 }

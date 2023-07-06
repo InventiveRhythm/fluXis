@@ -54,7 +54,7 @@ public partial class EditorToolbox : Container
                         Icon = FontAwesome.Solid.PencilRuler,
                         Text = "Long Note",
                         Tool = EditorTool.Long
-                    },
+                    }
                 }
             }
         };

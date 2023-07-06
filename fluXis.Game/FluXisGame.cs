@@ -3,6 +3,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,7 +16,6 @@ namespace fluXis.Game;
 public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybind>
 {
     public static readonly string[] AUDIO_EXTENSIONS = { ".mp3", ".wav", ".ogg" };
-    public static readonly string[] MAP_EXTENSIONS = { ".fms", ".osz", ".qp" };
     public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
 
@@ -23,6 +23,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     private Container exitContainer;
     private FluXisSpriteText seeyaText;
 
+    [UsedImplicitly]
     public bool Sex = true;
 
     [BackgroundDependencyLoader]
@@ -38,7 +39,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                 Padding = new MarginPadding { Top = Toolbar.Height },
                 Children = new Drawable[]
                 {
-                    ScreenStack,
+                    ScreenStack
                 }
             },
             LoginOverlay,

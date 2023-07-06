@@ -19,7 +19,7 @@ public partial class SearchDropdownBPM : Container
                 Text = "BPM",
                 FontSize = 24,
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft
             },
             new TextBox(filters)
         });
@@ -58,12 +58,12 @@ public partial class SearchDropdownBPM : Container
             if (text.StartsWith(">"))
             {
                 type = SearchFilters.Type.Over;
-                text = text.Substring(1);
+                text = text[1..];
             }
             else if (text.StartsWith("<"))
             {
                 type = SearchFilters.Type.Under;
-                text = text.Substring(1);
+                text = text[1..];
             }
 
             if (text == "") text = "0";

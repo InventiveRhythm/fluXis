@@ -19,8 +19,6 @@ public partial class PlaybackControl : Container
 
     private static readonly float[] playback_speeds = { .25f, .5f, .75f, 1f };
 
-    private PlayButton playIcon;
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -34,7 +32,7 @@ public partial class PlaybackControl : Container
                 Margin = new MarginPadding { Left = 10 },
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Child = playIcon = new PlayButton()
+                Child = new PlayButton()
             },
             new GridContainer
             {
@@ -79,7 +77,7 @@ public partial class PlaybackControl : Container
         return false;
     }
 
-    private float getClosetPlaybackSpeed(double speed) => playback_speeds.Aggregate((x, y) => Math.Abs(x - speed) < Math.Abs(y - speed) ? x : y);
+    private static float getClosetPlaybackSpeed(double speed) => playback_speeds.Aggregate((x, y) => Math.Abs(x - speed) < Math.Abs(y - speed) ? x : y);
 
     private partial class PlayButton : Container
     {

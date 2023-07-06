@@ -14,7 +14,7 @@ public class APIUserShort
     public string CountryCode { get; set; } = string.Empty;
 
     [JsonProperty("role")]
-    public int Role { get; set; } = 0;
+    public int Role { get; set; }
 
     public string GetAvatarUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/avatar/" + ID;
     public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/banner/" + ID;

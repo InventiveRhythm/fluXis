@@ -78,7 +78,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public List<IMod> Mods;
 
     public Playfield Playfield { get; private set; }
-    public Container HUD { get; private set; }
+    private Container hud { get; set; }
 
     private FluXisTextFlow debugText;
     private static bool showDebug;
@@ -166,7 +166,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             Input,
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             Playfield = new Playfield(this),
-            HUD = new Container
+            hud = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -222,7 +222,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             fcOverlay = new FullComboOverlay(),
             quickActionOverlay = new QuickActionOverlay(),
             new GameplayTouchInput { Screen = this },
-            new PauseMenu(this),
+            new PauseMenu { Screen = this },
             debugText = new FluXisTextFlow
             {
                 Anchor = Anchor.TopLeft,
@@ -247,7 +247,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             activity.Update("Paused", details, "playing");
     }
 
-    public virtual MapInfo LoadMap()
+    protected virtual MapInfo LoadMap()
     {
         var map = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(RealmMap.Hash)));
 
@@ -289,23 +289,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         var hudWasVisible = hudVisible;
 
-        switch (hudVisibility.Value)
+        hudVisible = hudVisibility.Value switch
         {
-            case HudVisibility.Hidden:
-                hudVisible = false;
-                break;
-
-            case HudVisibility.ShowDuringBreaks:
-                hudVisible = Playfield.Manager.Break;
-                break;
-
-            default:
-                hudVisible = true;
-                break;
-        }
+            HudVisibility.Hidden => false,
+            HudVisibility.ShowDuringBreaks => Playfield.Manager.Break,
+            _ => true
+        };
 
         if (hudVisible != hudWasVisible)
-            HUD.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
+            hud.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
 
         if (showDebug)
         {
@@ -338,7 +330,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         });
     }
 
-    public virtual void End()
+    protected virtual void End()
     {
         if (Performance.FullCombo || Performance.AllFlawless)
         {
@@ -402,7 +394,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     {
         if (Playfield.Manager.Dead)
         {
-            HUD.FadeOut();
+            hud.FadeOut();
             Playfield.FadeOut();
             this.FadeOut(500);
         }
@@ -488,7 +480,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             quickActionOverlay.IsHolding = false;
     }
 
-    public virtual MapEvents LoadMapEvents()
+    protected virtual MapEvents LoadMapEvents()
     {
         var mapEvents = new MapEvents();
 

@@ -9,6 +9,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.Mods;
 
@@ -59,7 +60,7 @@ public partial class ModSelectRate : Container
                     Colour = FluXisColors.TextDark,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    FontSize = 22,
+                    FontSize = 22
                 }
             },
             new Container
@@ -103,7 +104,7 @@ public partial class ModSelectRate : Container
                                         {
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
-                                            FontSize = 22,
+                                            FontSize = 22
                                         },
                                         multiplierText = new FluXisSpriteText
                                         {
@@ -118,7 +119,7 @@ public partial class ModSelectRate : Container
                                     Bindable = rateBindable,
                                     RelativeSizeAxes = Axes.X,
                                     Step = rateBindable.Precision,
-                                    Margin = new MarginPadding { Top = 35 },
+                                    Margin = new MarginPadding { Top = 35 }
                                 },
                                 new Container
                                 {
@@ -166,7 +167,7 @@ public partial class ModSelectRate : Container
 
     private partial class SliderTickMark : Container
     {
-        public float Value { get; set; }
+        public float Value { get; init; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -180,7 +181,7 @@ public partial class ModSelectRate : Container
             {
                 new CircularContainer
                 {
-                    Size = new(3),
+                    Size = new Vector2(3),
                     Masking = true,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,

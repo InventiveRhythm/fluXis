@@ -3,7 +3,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Input;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Settings.Sections;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -20,11 +19,8 @@ namespace fluXis.Game.Overlay.Settings;
 
 public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 {
-    [Resolved]
-    private GlobalCursorOverlay cursorOverlay { get; set; }
-
     public CategorySelector Selector { get; private set; }
-    public Container<SettingsSection> SectionContent { get; private set; }
+    private Container<SettingsSection> sectionContent { get; set; }
 
     private bool visible;
     private ClickableContainer content;
@@ -47,7 +43,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black,
                     Alpha = .25f
-                },
+                }
             },
             content = new ClickableContainer
             {
@@ -86,7 +82,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     ScrollbarAnchor = Anchor.TopRight,
-                                    Child = SectionContent = new Container<SettingsSection>
+                                    Child = sectionContent = new Container<SettingsSection>
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         AutoSizeAxes = Axes.Y,
@@ -115,15 +111,15 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     private void createSection(SettingsSection section)
     {
         Selector.AddTab(new SettingsCategoryTab(this, section));
-        SectionContent.Add(section);
+        sectionContent.Add(section);
     }
 
-    public void SelectSection(SettingsSection section)
+    private void selectSection(SettingsSection section)
     {
-        SectionContent.Children.ForEach(s => s.FadeOut(200));
+        sectionContent.Children.ForEach(s => s.FadeOut(200));
         section.FadeIn(200);
 
-        int index = SectionContent.IndexOf(section);
+        int index = sectionContent.IndexOf(section);
         background.MoveToX(index * -0.002f, 600, Easing.OutQuint);
     }
 
@@ -271,7 +267,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
         public void SelectTab(SettingsCategoryTab tab = null)
         {
-            tab ??= Tabs.Children.First();
+            tab ??= Tabs.Children[0];
 
             // if still null, return
             if (tab == null)
@@ -301,7 +297,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
             selectedTab = tab;
             tab.Section.MoveToX(0, 400, Easing.OutQuint);
             tab.Select();
-            Menu.SelectSection(tab.Section);
+            Menu.selectSection(tab.Section);
             tabSwitch?.Play();
 
             line.ResizeWidthTo(tab.TabContent.DrawWidth + 10, 400, Easing.OutQuint)

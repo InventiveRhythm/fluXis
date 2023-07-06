@@ -22,10 +22,11 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => underlying.TimeInfo;
     public override double CurrentTime => underlying.CurrentTime;
-    public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
     public IClock Source => underlying.Source;
     public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
+
+    private double currentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
 
     public double BeatTime { get; private set; }
 
@@ -43,7 +44,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
 
     public bool SeekSnapped(float position)
     {
-        return Seek(Snap(position));
+        return Seek(snap(position));
     }
 
     public void SeekSmoothly(double time)
@@ -56,7 +57,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             TimeTo(time, 300, Easing.OutQuint);
     }
 
-    public double Snap(double position)
+    private double snap(double position)
     {
         var point = MapInfo.GetTimingPoint((float)position);
         float snapLength = point.Signature * point.MsPerBeat / (4 * 4);
@@ -109,7 +110,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     {
         if (amount <= 0) return;
 
-        double time = CurrentTimeAccurate;
+        double time = currentTimeAccurate;
         var tp = MapInfo.GetTimingPoint((float)time);
 
         if (direction < 0 && tp.Time == time)

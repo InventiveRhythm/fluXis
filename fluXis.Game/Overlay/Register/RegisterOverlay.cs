@@ -1,4 +1,3 @@
-using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Online.API;
@@ -17,9 +16,6 @@ public partial class RegisterOverlay : Container
 {
     [Resolved]
     private NotificationOverlay notifications { get; set; }
-
-    [Resolved]
-    private FluXisConfig config { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
