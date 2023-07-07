@@ -6,7 +6,7 @@ namespace fluXis.Game.Graphics.Menu;
 
 public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterface.Menu.DrawableMenuItem
 {
-    protected virtual float TextSize => 16;
+    protected virtual float TextSize => 20;
 
     private FluXisSpriteText text;
 

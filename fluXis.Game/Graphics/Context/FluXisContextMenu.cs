@@ -9,9 +9,7 @@ public partial class FluXisContextMenu : FluXisMenu
     public FluXisContextMenu()
         : base(Direction.Vertical)
     {
-        MaxHeight = 300;
-        Masking = true;
-        EdgeEffect = new EdgeEffectParameters
+        MaskingContainer.EdgeEffect = new EdgeEffectParameters
         {
             Type = EdgeEffectType.Shadow,
             Colour = Colour4.Black.Opacity(0.1f),
