@@ -1,8 +1,11 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Map;
 using fluXis.Game.Skinning;
+using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
@@ -53,6 +56,21 @@ public partial class HitObject : CompositeDrawable
             holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.Map.KeyCount),
             notePiece = skinManager.GetHitObject(Data.Lane, manager.Map.KeyCount)
         };
+
+        if (manager.UseSnapColors)
+        {
+            var colorStart = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.Time));
+            var colorEnd = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.HoldEndTime));
+
+            if (notePiece is DefaultHitObjectPiece defaultPiece) defaultPiece.SetColor(colorStart);
+            else notePiece.Colour = colorStart;
+
+            if (holdBodyPiece is DefaultHitObjectBody defaultBody) defaultBody.SetColor(colorStart, colorEnd.Darken(.4f));
+            else holdBodyPiece.Colour = ColourInfo.GradientVertical(colorEnd.Darken(.4f), colorStart);
+
+            if (holdEndPiece is DefaultHitObjectEnd defaultEnd) defaultEnd.SetColor(colorEnd.Darken(.4f));
+            else holdEndPiece.Colour = colorEnd.Darken(.4f);
+        }
 
         if (!Data.IsLongNote())
         {

@@ -12,6 +12,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
@@ -23,6 +24,8 @@ public partial class HitObjectManager : Container<HitObject>
 
     public int InternalChildCount => InternalChildren.Count;
 
+    private Bindable<bool> useSnapColors;
+    public bool UseSnapColors => useSnapColors.Value;
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value;
     public Playfield Playfield { get; }
@@ -52,6 +55,7 @@ public partial class HitObjectManager : Container<HitObject>
     public float HealthDrainRate { get; private set; }
 
     private List<float> scrollVelocityMarks { get; } = new();
+    private Dictionary<int, int> snapIndicies { get; } = new();
 
     public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
     public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
@@ -85,6 +89,7 @@ public partial class HitObjectManager : Container<HitObject>
         Size = new Vector2(1, 1);
 
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
+        useSnapColors = config.GetBindable<bool>(FluXisSetting.SnapColoring);
         Playfield.Screen.OnSeek += onSeek;
     }
 
@@ -326,6 +331,7 @@ public partial class HitObjectManager : Container<HitObject>
         Map = map;
         CurrentKeyCount = map.InitialKeyCount;
         initScrollVelocityMarks();
+        initSnapIndicies();
 
         foreach (var hit in map.HitObjects)
         {
@@ -354,6 +360,46 @@ public partial class HitObjectManager : Container<HitObject>
             time += (int)((current.Time - prev.Time) * prev.Multiplier);
             scrollVelocityMarks.Add(time);
         }
+    }
+
+    private void initSnapIndicies()
+    {
+        // shouldn't happen but just in case
+        if (Map.TimingPoints == null || Map.TimingPoints.Count == 0) return;
+
+        for (var i = 0; i < Map.TimingPoints.Count; i++)
+        {
+            TimingPointInfo timingPoint = Map.TimingPoints[i];
+            double time = timingPoint.Time;
+            float target = i + 1 < Map.TimingPoints.Count ? Map.TimingPoints[i + 1].Time : Map.EndTime;
+            float increment = timingPoint.MsPerBeat;
+
+            while (time < target)
+            {
+                for (int j = 0; j < 16; j++)
+                {
+                    var add = increment / 16 * j;
+                    var snap = time + add;
+
+                    snapIndicies.TryAdd((int)snap, j);
+                    Logger.Log($"Added snap index {j} at {(int)snap}");
+                }
+
+                time += increment;
+            }
+        }
+    }
+
+    public int GetSnapIndex(int time)
+    {
+        if (snapIndicies.TryGetValue(time, out int i)) return i;
+
+        // allow a 10ms margin of error for snapping
+        var closest = snapIndicies.Keys.MinBy(k => Math.Abs(k - time));
+        if (Math.Abs(closest - time) <= 10 && snapIndicies.TryGetValue(closest, out i)) return i;
+
+        // still nothing...
+        return -1;
     }
 
     public double PositionFromTime(double time, int index = -1)

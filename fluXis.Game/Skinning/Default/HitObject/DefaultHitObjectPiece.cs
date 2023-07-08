@@ -29,5 +29,6 @@ public partial class DefaultHitObjectPiece : Container
         Height = 42f * factor;
     }
 
-    public void UpdateColor(int lane, int keyCount) => box.Colour = FluXisColors.GetLaneColor(lane, keyCount);
+    public void UpdateColor(int lane, int keyCount) => SetColor(FluXisColors.GetLaneColor(lane, keyCount));
+    public void SetColor(Colour4 color) => box.Colour = color;
 }

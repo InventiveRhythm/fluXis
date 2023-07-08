@@ -2,7 +2,6 @@ using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Gameplay;
@@ -26,9 +25,8 @@ public partial class GameplayGeneralSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Snap Coloring",
-                Enabled = false,
                 Description = "Color notes based on their snap divisor",
-                Bindable = new BindableBool()
+                Bindable = Config.GetBindable<bool>(FluXisSetting.SnapColoring)
             },
             new SettingsToggle
             {
