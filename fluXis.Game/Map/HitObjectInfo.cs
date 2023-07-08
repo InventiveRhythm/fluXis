@@ -8,7 +8,17 @@ public class HitObjectInfo : TimedObject
     public float HoldTime;
 
     [JsonIgnore]
-    public float HoldEndTime => Time + HoldTime;
+    public float HoldEndTime
+    {
+        get
+        {
+            if (HoldTime <= 0)
+                return Time;
+
+            return Time + HoldTime;
+        }
+        set => HoldTime = value - Time;
+    }
 
     public bool IsLongNote()
     {

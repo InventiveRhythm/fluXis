@@ -72,6 +72,8 @@ public static class MapUtils
 
     private static float getNps(List<HitObjectInfo> hitObjects)
     {
+        if (hitObjects.Count == 0) return 0;
+
         Dictionary<int, int> seconds = new Dictionary<int, int>();
 
         foreach (var hitObject in hitObjects)

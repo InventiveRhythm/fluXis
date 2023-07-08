@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.Quaver", "flu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.osu", "fluXis.Import.osu\fluXis.Import.osu.csproj", "{19C19CD2-DA19-42F6-A381-45145AB417A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.Stepmania", "fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj", "{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,18 @@ Global
 		{19C19CD2-DA19-42F6-A381-45145AB417A4}.Release|iPhone.Build.0 = Release|Any CPU
 		{19C19CD2-DA19-42F6-A381-45145AB417A4}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{19C19CD2-DA19-42F6-A381-45145AB417A4}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Release|iPhone.Build.0 = Release|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

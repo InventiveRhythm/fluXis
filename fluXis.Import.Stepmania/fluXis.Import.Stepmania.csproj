@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
+  </ItemGroup>
+
+</Project>

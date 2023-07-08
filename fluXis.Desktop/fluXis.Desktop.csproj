@@ -14,6 +14,7 @@
     <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
     <ProjectReference Include="..\fluXis.Import.Quaver\fluXis.Import.Quaver.csproj" />
     <ProjectReference Include="..\fluXis.Import.osu\fluXis.Import.osu.csproj" />
+    <ProjectReference Include="..\fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj" />
   </ItemGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="Clowd.Squirrel" Version="2.9.42" />
