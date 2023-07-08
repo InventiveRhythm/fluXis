@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map.Events;
@@ -73,19 +74,25 @@ public partial class LaneSwitchAlert : Container
 
     protected override void Update()
     {
+        if (Playfield.Screen.IsPaused.Value) return;
+
         leftContainer.X = -Playfield.Stage.Width / 2 - 100;
         rightContainer.X = Playfield.Stage.Width / 2 + 100;
 
-        if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts))
-            return;
+        if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts)) return;
 
         if (currentEvent == null)
             currentEvent = Playfield.Manager.CurrentLaneSwitchEvent;
         else
         {
+            var time = clock.BeatTime;
+            var fadeTime = time / 2;
+
+            if (Math.Abs(clock.Rate - Playfield.Screen.Rate) >= .1f) return;
+
             var nextEvent = Playfield.Screen.MapEvents.LaneSwitchEvents.Find(e => e.Time > clock.CurrentTime);
 
-            if (nextEvent == null || nextEvent.Time - clock.CurrentTime > clock.BeatTime)
+            if (nextEvent == null || nextEvent.Time - clock.CurrentTime > time)
                 return;
 
             if (currentEvent.Count < nextEvent.Count)
@@ -96,11 +103,11 @@ public partial class LaneSwitchAlert : Container
                 rightIcon.X = 0;
                 rightIcon.Rotation = 0;
 
-                leftIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
-                leftIcon.MoveToX(-100, clock.BeatTime, Easing.OutQuint);
+                leftIcon.FadeIn(fadeTime).Then().FadeOut(fadeTime);
+                leftIcon.MoveToX(-100, time, Easing.OutQuint);
 
-                rightIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
-                rightIcon.MoveToX(100, clock.BeatTime, Easing.OutQuint);
+                rightIcon.FadeIn(fadeTime).Then().FadeOut(fadeTime);
+                rightIcon.MoveToX(100, time, Easing.OutQuint);
             }
             else if (currentEvent.Count > nextEvent.Count)
             {
@@ -109,16 +116,14 @@ public partial class LaneSwitchAlert : Container
                 rightIcon.X = 100;
                 rightIcon.Rotation = 180;
 
-                leftIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
-                leftIcon.MoveToX(0, clock.BeatTime, Easing.OutQuint);
+                leftIcon.FadeIn(fadeTime).Then().FadeOut(fadeTime);
+                leftIcon.MoveToX(0, time, Easing.OutQuint);
 
-                rightIcon.FadeIn(clock.BeatTime / 2).Then().FadeOut(clock.BeatTime / 2);
-                rightIcon.MoveToX(0, clock.BeatTime, Easing.OutQuint);
+                rightIcon.FadeIn(fadeTime).Then().FadeOut(fadeTime);
+                rightIcon.MoveToX(0, time, Easing.OutQuint);
             }
 
             currentEvent = nextEvent;
         }
-
-        base.Update();
     }
 }

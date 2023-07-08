@@ -453,7 +453,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 if (!Mods.Any(m => m is PausedMod) && AudioClock.CurrentTime > Map.StartTime)
                     Mods.Add(new PausedMod());
 
-                IsPaused.Value = !IsPaused.Value;
+                IsPaused.Toggle();
                 return true;
 
             case FluXisKeybind.Skip:
