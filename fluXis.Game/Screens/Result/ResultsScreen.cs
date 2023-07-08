@@ -90,7 +90,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                 {
                     Type = EdgeEffectType.Shadow,
                     Colour = Colour4.Black.Opacity(.2f),
-                    Radius = 5,
+                    Radius = 10,
                     Offset = new Vector2(0, 2)
                 },
                 Children = new Drawable[]

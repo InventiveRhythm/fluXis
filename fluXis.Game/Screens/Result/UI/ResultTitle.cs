@@ -54,7 +54,12 @@ public partial class ResultTitle : Container
                         Margin = new MarginPadding { Right = 10 },
                         CornerRadius = 10,
                         Masking = true,
-                        Child = new DrawableCover(map.MapSet) { RelativeSizeAxes = Axes.Both }
+                        Child = new DrawableCover(map.MapSet)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre
+                        }
                     },
                     new Container
                     {
