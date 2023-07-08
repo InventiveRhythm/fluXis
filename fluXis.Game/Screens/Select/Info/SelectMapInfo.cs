@@ -8,7 +8,9 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info;
 
@@ -37,7 +39,7 @@ public partial class SelectMapInfo : GridContainer
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
         Padding = new MarginPadding { Vertical = 10 };
-        Margin = new MarginPadding { Right = -10 };
+        Margin = new MarginPadding { Right = -20 };
         RowDimensions = new Dimension[]
         {
             new(GridSizeMode.Relative, .4f),
@@ -52,8 +54,15 @@ public partial class SelectMapInfo : GridContainer
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    CornerRadius = 10,
+                    CornerRadius = 20,
                     Masking = true,
+                    EdgeEffect = new EdgeEffectParameters
+                    {
+                        Type = EdgeEffectType.Shadow,
+                        Colour = Colour4.Black.Opacity(.25f),
+                        Radius = 10,
+                        Offset = new Vector2(0, 2)
+                    },
                     Children = new Drawable[]
                     {
                         new Box
@@ -68,7 +77,7 @@ public partial class SelectMapInfo : GridContainer
                             Child = new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                CornerRadius = 10,
+                                CornerRadius = 20,
                                 Masking = true,
                                 Children = new Drawable[]
                                 {
