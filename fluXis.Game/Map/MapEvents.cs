@@ -12,6 +12,7 @@ public class MapEvents
 {
     public List<LaneSwitchEvent> LaneSwitchEvents = new();
     public List<FlashEvent> FlashEvents = new();
+    public List<TimedObject> PulseEvents = new();
 
     public MapEvents Load(string content)
     {
@@ -66,6 +67,13 @@ public class MapEvents
                         StartOpacity = startOpacity,
                         EndColor = endColor,
                         EndOpacity = endOpacity
+                    });
+                    break;
+
+                case "Pulse":
+                    PulseEvents.Add(new TimedObject
+                    {
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture)
                     });
                     break;
             }

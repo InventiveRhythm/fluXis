@@ -108,6 +108,9 @@ public class QuaverMap
 
                 if (split[0] == "flash" && split.Length == 8)
                     effectFile += $"Flash({b.StartTime},{split[1]},{split[2]},{split2[3]},{split[4]},{split[5]},{split[6]},{split[7]}){Environment.NewLine}";
+
+                if (split[0] == "pulse" && split.Length == 1)
+                    effectFile += $"Pulse({b.StartTime}){Environment.NewLine}";
             }
         }
 

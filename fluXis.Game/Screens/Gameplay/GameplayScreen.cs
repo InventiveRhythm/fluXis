@@ -165,6 +165,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         {
             Input,
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
+            new PulseEffect { ParentScreen = this },
             Playfield = new Playfield(this),
             hud = new Container
             {
