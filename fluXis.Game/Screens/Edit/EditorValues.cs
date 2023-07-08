@@ -6,6 +6,7 @@ namespace fluXis.Game.Screens.Edit;
 public class EditorValues
 {
     public float Zoom = 2f;
+    public int SnapDivisor = 4;
     public Bindable<float> WaveformOpacity = new(.25f);
     public MapInfo MapInfo;
     public MapEvents MapEvents = new();

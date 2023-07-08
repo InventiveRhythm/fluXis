@@ -16,6 +16,9 @@ public partial class ComposeTab : EditorTab
     [Resolved]
     private EditorValues values { get; set; }
 
+    [Resolved]
+    private EditorChangeHandler changeHandler { get; set; }
+
     private EditorPlayfield playfield;
 
     public ComposeTab(Editor screen)
@@ -29,7 +32,7 @@ public partial class ComposeTab : EditorTab
         Children = new Drawable[]
         {
             playfield = new EditorPlayfield(this),
-            new EditorToolbox(playfield)
+            new EditorToolbox { Playfield = playfield }
         };
     }
 
@@ -52,12 +55,27 @@ public partial class ComposeTab : EditorTab
 
     protected override bool OnScroll(ScrollEvent e)
     {
-        int delta = e.ScrollDelta.Y > 0 ? 1 : -1;
+        var scroll = e.ShiftPressed ? e.ScrollDelta.X : e.ScrollDelta.Y;
+        int delta = scroll > 0 ? 1 : -1;
 
         if (e.ControlPressed)
         {
             values.Zoom += delta * .1f;
             values.Zoom = Math.Clamp(values.Zoom, .5f, 5f);
+        }
+        else if (e.ShiftPressed)
+        {
+            var snaps = EditorPlayfield.SNAP_DIVISORS;
+            var index = Array.IndexOf(snaps, values.SnapDivisor);
+            index += delta;
+
+            if (index < 0)
+                index = snaps.Length - 1;
+            else if (index >= snaps.Length)
+                index = 0;
+
+            values.SnapDivisor = snaps[index];
+            changeHandler.SnapDivisorChanged?.Invoke();
         }
         else
         {

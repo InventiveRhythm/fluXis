@@ -8,4 +8,5 @@ public class EditorChangeHandler
     public Action OnTimingPointRemoved { get; set; }
     public Action OnTimingPointAdded { get; set; }
     public Action<int> OnKeyModeChanged { get; set; }
+    public Action SnapDivisorChanged { get; set; }
 }

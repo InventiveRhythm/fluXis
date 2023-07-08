@@ -37,8 +37,8 @@ public partial class EditorPlayfield : Container
     public const int COLUMN_WIDTH = 80;
     public const int HITPOSITION_Y = 100;
     private const int selection_fade = 200;
+    public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
 
-    private int snap { get; set; } = 4;
     public EditorTool Tool { get; set; } = EditorTool.Select;
 
     private ComposeTab tab { get; }
@@ -193,6 +193,7 @@ public partial class EditorPlayfield : Container
         changeHandler.OnTimingPointRemoved += redrawLines;
         changeHandler.OnTimingPointChanged += redrawLines;
         changeHandler.OnKeyModeChanged += onKeyModeChanged;
+        changeHandler.SnapDivisorChanged += redrawLines;
     }
 
     private Container getColumnDividers()
@@ -235,7 +236,7 @@ public partial class EditorPlayfield : Container
                 continue;
 
             float target = i + 1 < mapInfo.TimingPoints.Count ? mapInfo.TimingPoints[i + 1].Time : clock.TrackLength;
-            float increase = point.Signature * point.MsPerBeat / (4 * snap);
+            float increase = point.Signature * point.MsPerBeat / (4 * values.SnapDivisor);
             float position = point.Time;
 
             int j = 0;
@@ -245,7 +246,7 @@ public partial class EditorPlayfield : Container
                 futureTimingLines.Add(new EditorTimingLine
                 {
                     Time = position,
-                    Colour = getSnapColor(j % snap, j)
+                    Colour = getSnapColor(j % values.SnapDivisor, j)
                 });
                 position += increase;
                 j++;
@@ -298,8 +299,10 @@ public partial class EditorPlayfield : Container
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
         string debug = "";
-        debug += $"Time: {getTimeFromMouse(e.MousePosition)}ms\nLane: {getLaneFromMouse(e.ScreenSpaceMousePosition)}";
-        debug += $"\nMouse Global: {e.MousePosition}";
+        debug += $"Time: {getTimeFromMouse(e.MousePosition)}ms";
+        debug += $"\nLane: {getLaneFromMouse(e.ScreenSpaceMousePosition)}";
+        debug += $"\nZoom: {values.Zoom}";
+        debug += $"\nSnap: {values.SnapDivisor}";
 
         debugText.Text = debug;
 
@@ -439,10 +442,7 @@ public partial class EditorPlayfield : Container
                         selectHitObjects();
                     }
 
-                    if (isDragging)
-                    {
-                        isDragging = false;
-                    }
+                    isDragging = false;
 
                     break;
             }
@@ -544,7 +544,7 @@ public partial class EditorPlayfield : Container
     {
         var tp = mapInfo.GetTimingPoint(time);
         float t = tp.Time;
-        float increase = tp.Signature * tp.MsPerBeat / (4 * snap);
+        float increase = tp.Signature * tp.MsPerBeat / (4 * values.SnapDivisor);
         if (increase == 0) return time; // no snapping, the game will just freeze because it loops infinitely
 
         if (time < t)
@@ -642,7 +642,7 @@ public partial class EditorPlayfield : Container
 
     private Colour4 getSnapColor(int val, int i)
     {
-        switch (snap)
+        switch (values.SnapDivisor)
         {
             case 1:
                 return Colour4.White;
@@ -675,7 +675,7 @@ public partial class EditorPlayfield : Container
             default:
                 if (val != 0) return Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7");
 
-                Logger.Log($"Unknown snap value: {snap}", LoggingTarget.Runtime, LogLevel.Important);
+                Logger.Log($"Unknown snap value: {values.SnapDivisor}", LoggingTarget.Runtime, LogLevel.Important);
                 return Colour4.White;
         }
     }
