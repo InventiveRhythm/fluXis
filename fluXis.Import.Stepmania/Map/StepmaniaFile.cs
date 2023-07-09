@@ -165,7 +165,7 @@ public class StepmaniaFile
 
             foreach (var measure in chart.Measures)
             {
-                var snap = 4f / measure.Notes.Count;
+                var increment = 4f / measure.Notes.Count;
 
                 foreach (var row in measure.Notes)
                 {
@@ -221,15 +221,15 @@ public class StepmaniaFile
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
-
-                        time += map.GetTimingPoint(time).MsPerBeat * 4 / measure.Notes.Count;
-                        beats += snap * 4;
-
-                        if (stops.Count == 0 || !(beats > stops.First().Beat)) continue;
-
-                        time += stops.First().Seconds * 1000;
-                        stops.Remove(stops.First());
                     }
+
+                    time += map.GetTimingPoint(time).MsPerBeat * 4 / measure.Notes.Count;
+                    beats += increment * 4;
+
+                    if (stops.Count == 0 || !(beats > stops.First().Beat)) continue;
+
+                    time += stops.First().Seconds * 1000;
+                    stops.Remove(stops.First());
                 }
             }
 
