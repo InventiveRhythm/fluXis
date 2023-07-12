@@ -30,7 +30,7 @@ namespace fluXis.Game.Screens.Menu;
 public partial class MenuScreen : FluXisScreen
 {
     public override float Zoom => 1f;
-    public override float BackgroundDim => pressedStart ? default : 1f;
+    public override float BackgroundDim => pressedStart ? base.BackgroundDim : 1f;
     public override bool ShowToolbar => pressedStart;
 
     [Resolved]
@@ -283,8 +283,8 @@ public partial class MenuScreen : FluXisScreen
         game.OnSongChanged += songChanged;
 
         pressAnyKeyText.FadeInFromZero(800).Then().FadeOut(800).Loop();
-        backgrounds.SetDim(base.BackgroundDim, 800);
-        visualizer.FadeInFromZero(800);
+        backgrounds.SetDim(base.BackgroundDim, 2000);
+        visualizer.FadeInFromZero(2000);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
