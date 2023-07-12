@@ -73,6 +73,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private Fluxel fluxel;
 
     public Action OnSongChanged;
+    public virtual Drawable Overlay { get; set; }
 
     public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
     private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;

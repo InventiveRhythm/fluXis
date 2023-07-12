@@ -1,4 +1,5 @@
-﻿using fluXis.Game.Graphics;
+﻿using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Volume;
@@ -22,6 +23,18 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     private Container screenContainer;
     private Container exitContainer;
     private FluXisSpriteText seeyaText;
+    private Container overlayDim;
+    private Container overlayContainer;
+
+    public override Drawable Overlay
+    {
+        get => overlayContainer.Count == 0 ? null : overlayContainer[0];
+        set
+        {
+            overlayContainer.Clear();
+            if (value != null) overlayContainer.Add(value);
+        }
+    }
 
     [UsedImplicitly]
     public bool Sex = true;
@@ -47,6 +60,28 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             RegisterOverlay,
             ChatOverlay,
             ProfileOverlay,
+            new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    overlayDim = new ClickableContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Colour4.Black,
+                            Alpha = .5f
+                        }
+                    },
+                    overlayContainer = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both
+                    }
+                }
+            },
             Settings,
             new VolumeOverlay(),
             Notifications,
@@ -123,6 +158,15 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     protected override void Update()
     {
         screenContainer.Padding = new MarginPadding { Top = Toolbar.Height + Toolbar.Y };
+
+        if (Overlay is { IsLoaded: true, IsPresent: false } && !Overlay.Transforms.Any())
+        {
+            Schedule(() => overlayContainer.Remove(Overlay, false));
+        }
+        else if (Overlay is { IsLoaded: true })
+        {
+            overlayDim.Alpha = Overlay.Alpha;
+        }
     }
 
     public override void Exit()
