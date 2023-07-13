@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game;
 
@@ -26,6 +27,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     private FluXisSpriteText seeyaText;
     private Container overlayDim;
     private Container overlayContainer;
+
+    private BufferedContainer buffer;
 
     public override Drawable Overlay
     {
@@ -46,21 +49,29 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         Children = new Drawable[]
         {
             AudioClock,
-            BackgroundStack,
-            screenContainer = new Container
+            buffer = new BufferedContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = Toolbar.Height },
+                RedrawOnScale = false,
                 Children = new Drawable[]
                 {
-                    ScreenStack
+                    BackgroundStack,
+                    screenContainer = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Padding = new MarginPadding { Top = Toolbar.Height },
+                        Children = new Drawable[]
+                        {
+                            ScreenStack
+                        }
+                    },
+                    LoginOverlay,
+                    Toolbar,
+                    RegisterOverlay,
+                    ChatOverlay,
+                    ProfileOverlay,
                 }
             },
-            LoginOverlay,
-            Toolbar,
-            RegisterOverlay,
-            ChatOverlay,
-            ProfileOverlay,
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -167,6 +178,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         else if (Overlay is { IsLoaded: true })
         {
             overlayDim.Alpha = Overlay.Alpha;
+            buffer.BlurSigma = new Vector2(Overlay.Alpha * 4);
 
             var lowpass = (LowPassFilter.MAX - LowPassFilter.MIN) * Overlay.Alpha;
             lowpass = LowPassFilter.MAX - lowpass;
