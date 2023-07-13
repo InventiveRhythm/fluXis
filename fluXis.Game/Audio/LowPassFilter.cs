@@ -19,6 +19,9 @@ public partial class LowPassFilter : Component
         get => cutoff;
         set
         {
+            if (value == cutoff)
+                return;
+
             if (value >= MAX)
                 removeFilter();
             else

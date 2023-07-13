@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.FPS;
@@ -166,6 +167,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         else if (Overlay is { IsLoaded: true })
         {
             overlayDim.Alpha = Overlay.Alpha;
+
+            var lowpass = (LowPassFilter.MAX - LowPassFilter.MIN) * Overlay.Alpha;
+            lowpass = LowPassFilter.MAX - lowpass;
+            AudioClock.LowPassFilter.Cutoff = (int)lowpass;
         }
     }
 
