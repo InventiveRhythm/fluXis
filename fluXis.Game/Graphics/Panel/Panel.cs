@@ -14,6 +14,8 @@ public partial class Panel : Container
     {
         Masking = true;
         CornerRadius = 20;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
         Scale = new Vector2(.95f);
         Rotation = 2;
         Alpha = 0;

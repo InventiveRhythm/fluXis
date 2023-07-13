@@ -7,8 +7,10 @@ using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Context;
+using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
@@ -68,6 +70,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private Fluxel fluxel { get; set; }
 
     [Resolved]
+    private FluXisGameBase game { get; set; }
+
+    [Resolved]
     private ActivityManager activity { get; set; }
 
     private ITrackStore trackStore { get; set; }
@@ -88,6 +93,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private EditorValues values;
 
     private DependencyContainer dependencies;
+    private bool exitConfirmed;
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
@@ -329,6 +335,29 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     public override bool OnExiting(ScreenExitEvent e)
     {
+        if (HasChanges() && !exitConfirmed)
+        {
+            game.Overlay ??= new ButtonPanel
+            {
+                Text = "There are unsaved changes.\nAre you sure you want to exit?",
+                Buttons = new ButtonData[]
+                {
+                    new()
+                    {
+                        Text = "Yes",
+                        Action = () =>
+                        {
+                            exitConfirmed = true;
+                            this.Exit();
+                        }
+                    },
+                    new() { Text = "Nevermind" }
+                }
+            };
+
+            return true;
+        }
+
         exitAnimation();
         clock.Stop();
         audioClock.Seek((float)clock.CurrentTime);
@@ -462,6 +491,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
                 prevFile.Hash = hash;
                 existingMap.Hash = hash;
+                Map.Hash = hash;
                 r.Remove(existingMap.Filters);
                 existingMap.Filters = MapUtils.GetMapFilters(MapInfo, values.MapEvents);
 
@@ -528,6 +558,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         notifications.Post("Saved!");
         return true;
+    }
+
+    public bool HasChanges()
+    {
+        string json = JsonConvert.SerializeObject(MapInfo);
+        string hash = MapUtils.GetHash(json);
+        return hash != Map.Hash;
     }
 
     private void export() => sendWipNotification();
