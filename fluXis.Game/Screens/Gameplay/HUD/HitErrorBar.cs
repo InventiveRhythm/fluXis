@@ -150,7 +150,7 @@ public partial class HitErrorBar : GameplayHUDElement
         float avg = Screen.Performance.HitStats.Average(h => h.Difference);
         HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(avg));
 
-        average.MoveToX(avg, 100, Easing.OutQuint);
+        average.MoveToX(-avg, 100, Easing.OutQuint);
         average.Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key);
     }
 }
