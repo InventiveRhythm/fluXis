@@ -23,6 +23,8 @@ public partial class KeyModeSetupSection : SetupSection
         {
             AutoSizeAxes = Axes.Y,
             RelativeSizeAxes = Axes.X,
+            CornerRadius = 10,
+            Masking = true,
             Children = new Drawable[]
             {
                 new Box
@@ -32,16 +34,15 @@ public partial class KeyModeSetupSection : SetupSection
                 },
                 keyModeContainer = new FillFlowContainer<KeyModeButton>
                 {
-                    CornerRadius = 10,
-                    Masking = true,
                     RelativeSizeAxes = Axes.X,
-                    Height = 100,
+                    AutoSizeAxes = Axes.Y,
                     Children = new[]
                     {
                         new KeyModeButton(this, 4),
                         new KeyModeButton(this, 5),
                         new KeyModeButton(this, 6),
-                        new KeyModeButton(this, 7)
+                        new KeyModeButton(this, 7),
+                        new KeyModeButton(this, 8)
                     }
                 }
             }
@@ -84,8 +85,9 @@ public partial class KeyModeSetupSection : SetupSection
             this.parent = parent;
             KeyMode = keys;
 
-            RelativeSizeAxes = Axes.Both;
-            Width = .25f;
+            RelativeSizeAxes = Axes.X;
+            Height = 80;
+            Width = .2f;
             Children = new Drawable[]
             {
                 background = new Box

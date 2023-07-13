@@ -18,20 +18,29 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
     private EditorClock clock { get; set; }
 
     private Container<EditorFlashEvent> flashContainer;
+    private Container<EditorLaneSwitchEvent> lsContainer;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
 
-        Child = flashContainer = new Container<EditorFlashEvent>
+        Children = new Drawable[]
         {
-            AutoSizeAxes = Axes.X,
-            RelativeSizeAxes = Axes.Y,
-            Y = -EditorPlayfield.HITPOSITION_Y,
-            Anchor = Anchor.BottomRight,
-            Origin = Anchor.BottomLeft,
-            Margin = new MarginPadding { Left = 10 }
+            flashContainer = new Container<EditorFlashEvent>
+            {
+                AutoSizeAxes = Axes.X,
+                RelativeSizeAxes = Axes.Y,
+                Y = -EditorPlayfield.HITPOSITION_Y,
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding { Left = 10 }
+            },
+            lsContainer = new Container<EditorLaneSwitchEvent>
+            {
+                RelativeSizeAxes = Axes.Both,
+                Y = -EditorPlayfield.HITPOSITION_Y
+            }
         };
     }
 
@@ -55,6 +64,18 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
 
                     values.MapEvents.FlashEvents.Add(flash);
                     AddFlash(flash);
+                }),
+                new FluXisMenuItem("Add LaneSwitch", MenuItemType.Normal, () =>
+                {
+                    var ls = new LaneSwitchEvent
+                    {
+                        Time = (float)clock.CurrentTime,
+                        Speed = (float)clock.BeatTime,
+                        Count = 1
+                    };
+
+                    values.MapEvents.LaneSwitchEvents.Add(ls);
+                    AddLaneSwitch(ls);
                 })
             };
 
@@ -65,5 +86,16 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
     public void AddFlash(FlashEvent flash)
     {
         flashContainer.Add(new EditorFlashEvent { FlashEvent = flash });
+    }
+
+    public void AddLaneSwitch(LaneSwitchEvent ls)
+    {
+        lsContainer.Add(new EditorLaneSwitchEvent { Event = ls, Map = values.MapInfo });
+    }
+
+    public void ClearAll()
+    {
+        flashContainer.Clear();
+        lsContainer.Clear();
     }
 }

@@ -39,7 +39,11 @@ public partial class EditorPlayfield : Container
     private const int selection_fade = 200;
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
 
-    public EditorTool Tool { get; set; } = EditorTool.Select;
+    public EditorTool Tool
+    {
+        get => values.Tool;
+        set => values.Tool = value;
+    }
 
     private ComposeTab tab { get; }
     public RealmMap Map => tab.Screen.Map;
@@ -54,7 +58,6 @@ public partial class EditorPlayfield : Container
     private Container playfieldContainer { get; set; }
     private Container selectionContainer { get; set; }
     private WaveformGraph waveform { get; set; }
-    private Container laneSwitchContainer { get; set; }
     private EditorEffectContainer effectContainer { get; set; }
     private Container columnDividerContainer { get; set; }
 
@@ -73,7 +76,6 @@ public partial class EditorPlayfield : Container
     private bool isDragging;
 
     private Box hitPosLine;
-    private FluXisTextFlow debugText;
 
     public EditorPlayfield(ComposeTab tab)
     {
@@ -152,11 +154,6 @@ public partial class EditorPlayfield : Container
                         Alpha = 0.5f,
                         Info = new HitObjectInfo()
                     },
-                    laneSwitchContainer = new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Y = -HITPOSITION_Y
-                    },
                     effectContainer = new EditorEffectContainer()
                 }
             },
@@ -171,14 +168,6 @@ public partial class EditorPlayfield : Container
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0.2f
                 }
-            },
-            debugText = new FluXisTextFlow
-            {
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopRight,
-                TextAnchor = Anchor.TopRight,
-                AutoSizeAxes = Axes.Both,
-                Margin = new MarginPadding { Right = 10, Top = 10 }
             }
         };
 
@@ -260,7 +249,7 @@ public partial class EditorPlayfield : Container
             effectContainer.AddFlash(flashEvent);
 
         foreach (var laneSwitch in values.MapEvents.LaneSwitchEvents)
-            laneSwitchContainer.Add(new EditorLaneSwitchEvent { Event = laneSwitch, Map = Map });
+            effectContainer.AddLaneSwitch(laneSwitch);
     }
 
     private void redrawLines()
@@ -274,8 +263,7 @@ public partial class EditorPlayfield : Container
     {
         playfieldContainer.Width = COLUMN_WIDTH * keys;
         waveform.Height = COLUMN_WIDTH * keys;
-        effectContainer.Clear();
-        laneSwitchContainer.Clear();
+        effectContainer.ClearAll();
         loadEvents();
 
         columnDividerContainer.Clear();
@@ -298,14 +286,6 @@ public partial class EditorPlayfield : Container
 
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
-        string debug = "";
-        debug += $"Time: {getTimeFromMouse(e.MousePosition)}ms";
-        debug += $"\nLane: {getLaneFromMouse(e.ScreenSpaceMousePosition)}";
-        debug += $"\nZoom: {values.Zoom}";
-        debug += $"\nSnap: {values.SnapDivisor}";
-
-        debugText.Text = debug;
-
         switch (Tool)
         {
             case EditorTool.Long when isDragging:
