@@ -91,7 +91,7 @@ public partial class GlobalCursorOverlay : Container
                 isHidden = true;
                 break;
 
-            case < 5000 when isHidden:
+            case < 4000 when isHidden:
                 cursor.FadeIn(200);
                 isHidden = false;
                 break;

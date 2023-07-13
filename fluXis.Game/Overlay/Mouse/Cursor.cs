@@ -18,6 +18,7 @@ public partial class Cursor : Container
     private Sprite clickSprite;
     private Container tooltipContainer;
     private Container tooltipContent;
+    private bool visible;
 
     public Drawable DrawableTooltip
     {
@@ -25,13 +26,20 @@ public partial class Cursor : Container
         {
             if (value == null)
             {
-                tooltipContainer.FadeOut(200);
+                if (visible)
+                    tooltipContainer.FadeOut(200).ScaleTo(.9f, 400, Easing.OutQuint);
+
+                visible = false;
                 return;
             }
 
             tooltipContent.Clear();
             tooltipContent.Add(value);
-            tooltipContainer.FadeIn(200);
+
+            if (!visible)
+                tooltipContainer.FadeIn(200).ScaleTo(1f, 600, Easing.OutElastic);
+
+            visible = true;
         }
     }
 
@@ -60,6 +68,7 @@ public partial class Cursor : Container
             X = 30,
             Y = 20,
             CornerRadius = 5,
+            Scale = new Vector2(.9f),
             Masking = true,
             EdgeEffect = new EdgeEffectParameters
             {
