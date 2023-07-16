@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Screens.Multiplayer.SubScreens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -14,6 +15,12 @@ public partial class MultiplayerScreen : FluXisScreen
     public override bool AllowMusicControl => false;
     public override bool AllowExit => canExit();
 
+    [Resolved]
+    private AudioClock audioClock { get; set; }
+
+    [Cached]
+    private MultiplayerMenuMusic menuMusic = new();
+
     private ScreenStack screenStack;
 
     [BackgroundDependencyLoader]
@@ -21,6 +28,7 @@ public partial class MultiplayerScreen : FluXisScreen
     {
         InternalChildren = new Drawable[]
         {
+            menuMusic,
             screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both }
         };
     }
@@ -51,8 +59,19 @@ public partial class MultiplayerScreen : FluXisScreen
         return true;
     }
 
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        audioClock.FadeOut(400).OnComplete(c => c.Stop());
+    }
+
     public override bool OnExiting(ScreenExitEvent e)
     {
-        return !canExit();
+        if (!canExit()) return true;
+
+        menuMusic.StopAll();
+
+        audioClock.Start();
+        audioClock.FadeIn(400);
+        return false;
     }
 }

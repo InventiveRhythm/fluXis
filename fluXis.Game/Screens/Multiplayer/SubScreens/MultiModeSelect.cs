@@ -14,6 +14,9 @@ public partial class MultiModeSelect : MultiSubScreen
     public override string Title => "Multiplayer";
     public override string SubTitle => "Mode Select";
 
+    [Resolved]
+    private MultiplayerMenuMusic menuMusic { get; set; }
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -52,5 +55,17 @@ public partial class MultiModeSelect : MultiSubScreen
                 }
             }
         };
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        menuMusic.GoToLayer(0, -1);
+        base.OnEntering(e);
+    }
+
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        menuMusic.GoToLayer(0, -1);
+        base.OnResuming(e);
     }
 }

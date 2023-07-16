@@ -14,6 +14,9 @@ public partial class MultiLobby : MultiSubScreen
     [Resolved]
     private FluXisGameBase game { get; set; }
 
+    [Resolved]
+    private MultiplayerMenuMusic menuMusic { get; set; }
+
     private bool confirmExit;
 
     [BackgroundDependencyLoader]
@@ -47,5 +50,11 @@ public partial class MultiLobby : MultiSubScreen
         };
 
         return true;
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        menuMusic.StopAll();
+        base.OnEntering(e);
     }
 }

@@ -14,6 +14,9 @@ public partial class MultiLobbyList : MultiSubScreen
     public override string Title => "Open Match";
     public override string SubTitle => "Lobby List";
 
+    [Resolved]
+    private MultiplayerMenuMusic menuMusic { get; set; }
+
     private FillFlowContainer lobbyList;
 
     [BackgroundDependencyLoader]
@@ -47,5 +50,17 @@ public partial class MultiLobbyList : MultiSubScreen
             lobbyList.Add(new EmptyLobbySlot());
 
         base.LoadComplete();
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        menuMusic.GoToLayer(0, 1);
+        base.OnEntering(e);
+    }
+
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        menuMusic.GoToLayer(0, 1);
+        base.OnResuming(e);
     }
 }
