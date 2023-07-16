@@ -672,12 +672,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 return;
         }
 
-        if (Map.OnlineID != -1)
-        {
-            notifications.PostError("This map is already uploaded!\nUpdating maps is not supported yet.");
-            return;
-        }
-
         // check for duplicate diffs
         var diffs = Map.MapSet.Maps.Select(m => m.Difficulty).ToList();
         var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
@@ -695,7 +689,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         var path = mapStore.Export(Map.MapSet, notification, false);
         var buffer = File.ReadAllBytes(path);
 
-        var request = new WebRequest($"{fluxel.Endpoint.APIUrl}/maps/upload");
+        string requestUrl = Map.MapSet.OnlineID != -1 ? $"{fluxel.Endpoint.APIUrl}/map/{Map.MapSet.OnlineID}/update" : $"{fluxel.Endpoint.APIUrl}/maps/upload";
+
+        var request = new WebRequest(requestUrl);
         request.AllowInsecureRequests = true;
         request.Method = HttpMethod.Post;
         request.AddHeader("Authorization", fluxel.Token);
