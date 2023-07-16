@@ -9,14 +9,17 @@ namespace fluXis.Game.Screens.Edit;
 
 public partial class EditorPlaytestScreen : GameplayScreen
 {
+    protected override double GameplayStartTime { get; }
+
     private readonly MapInfo map;
     private readonly MapEvents events;
 
-    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, MapEvents events)
+    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, MapEvents events, double startTime)
         : base(realmMap, new List<IMod>())
     {
         map = info;
         this.events = events;
+        GameplayStartTime = startTime;
     }
 
     protected override MapInfo LoadMap()
@@ -39,7 +42,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
     public override void RestartMap()
     {
         Restart?.Play();
-        this.Push(new EditorPlaytestScreen(RealmMap, map, events));
+        this.Push(new EditorPlaytestScreen(RealmMap, map, events, GameplayStartTime));
     }
 
     public override void Die()

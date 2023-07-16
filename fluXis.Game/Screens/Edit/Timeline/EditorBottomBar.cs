@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
@@ -15,6 +16,9 @@ public partial class EditorBottomBar : Container
 
     [Resolved]
     private EditorValues values { get; set; }
+
+    [Resolved]
+    private EditorClock clock { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -76,7 +80,13 @@ public partial class EditorBottomBar : Container
                                     }
 
                                     values.Editor.SortEverything();
-                                    values.Editor.Push(new EditorPlaytestScreen(values.Editor.Map, values.MapInfo, values.MapEvents));
+
+                                    var startTime = clock.CurrentTime;
+
+                                    var clone = values.Editor.MapInfo.Clone();
+                                    clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
+
+                                    values.Editor.Push(new EditorPlaytestScreen(values.Editor.Map, clone, values.MapEvents, startTime));
                                 }
                             }
                         }

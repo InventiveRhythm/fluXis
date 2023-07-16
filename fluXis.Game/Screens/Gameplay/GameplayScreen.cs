@@ -47,6 +47,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
+    protected virtual double GameplayStartTime => 0;
+
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
 
@@ -383,7 +385,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     public override void OnEntering(ScreenTransitionEvent e)
     {
         AudioClock.LoadMap(RealmMap, true);
-        AudioClock.Seek(-2000 * Rate);
+        AudioClock.Seek(GameplayStartTime - 2000 * Rate);
         AudioClock.RateTo(Rate, 0);
 
         IsPaused.BindValueChanged(_ => updateRpc(), true);
