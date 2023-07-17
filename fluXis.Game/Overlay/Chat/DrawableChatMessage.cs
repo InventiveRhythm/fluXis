@@ -70,7 +70,8 @@ public partial class DrawableChatMessage : Container
                             new FluXisSpriteText
                             {
                                 Text = InitialMessage.Sender.Username,
-                                FontSize = 22
+                                FontSize = 22,
+                                Colour = InitialMessage.Sender.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(InitialMessage.Sender.Role)
                             },
                             new FluXisSpriteText
                             {
