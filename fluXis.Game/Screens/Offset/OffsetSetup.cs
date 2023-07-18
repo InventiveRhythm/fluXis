@@ -31,7 +31,7 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisKeybin
     private Bindable<float> offset;
 
     private Track track;
-    private double time => track?.CurrentTime ?? 0 - offset.Value - 50; // the track has an offset of 50ms before the first beat
+    private double time => (track?.CurrentTime ?? 0) - offset.Value - 50; // the track has an offset of 50ms before the first beat
 
     private Line line;
     private Container container;
