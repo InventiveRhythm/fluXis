@@ -1,4 +1,6 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Background;
+using fluXis.Game.Map;
 using fluXis.Game.Screens.Multiplayer.SubScreens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -17,6 +19,12 @@ public partial class MultiplayerScreen : FluXisScreen
 
     [Resolved]
     private AudioClock audioClock { get; set; }
+
+    [Resolved]
+    private MapStore mapStore { get; set; }
+
+    [Resolved]
+    private BackgroundStack backgroundStack { get; set; }
 
     [Cached]
     private MultiplayerMenuMusic menuMusic = new();
@@ -62,6 +70,7 @@ public partial class MultiplayerScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         audioClock.FadeOut(400).OnComplete(c => c.Stop());
+        backgroundStack.AddBackgroundFromMap(null);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
@@ -72,6 +81,7 @@ public partial class MultiplayerScreen : FluXisScreen
 
         audioClock.Start();
         audioClock.FadeIn(400);
+        backgroundStack.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
         return false;
     }
 }

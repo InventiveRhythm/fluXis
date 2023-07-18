@@ -11,13 +11,12 @@ public partial class MultiplayerMenuMusic : Container
 
     private MultiplayerTrack rankedMain;
     private MultiplayerTrack rankedPrepare;
-    private MultiplayerTrack rankedWin;
-    private MultiplayerTrack rankedLoose;
 
     private MultiplayerTrack lobbyList;
     private MultiplayerTrack lobbyPrepare;
-    private MultiplayerTrack lobbyWin;
-    private MultiplayerTrack lobbyLoose;
+
+    private MultiplayerTrack win;
+    private MultiplayerTrack lose;
 
     [BackgroundDependencyLoader]
     private void load(ITrackStore trackStore)
@@ -27,12 +26,10 @@ public partial class MultiplayerMenuMusic : Container
             baseTrack = trackStore.Get("Menu/Multiplayer/base.wav"),
             rankedMain = trackStore.Get("Menu/Multiplayer/ranked-main.wav"),
             rankedPrepare = trackStore.Get("Menu/Multiplayer/ranked-prepare.wav"),
-            rankedWin = trackStore.Get("Menu/Multiplayer/ranked-win.wav"),
-            rankedLoose = trackStore.Get("Menu/Multiplayer/ranked-loose.wav"),
             lobbyList = trackStore.Get("Menu/Multiplayer/lobby-list.wav"),
             lobbyPrepare = trackStore.Get("Menu/Multiplayer/lobby-prepare.wav"),
-            lobbyWin = trackStore.Get("Menu/Multiplayer/lobby-win.wav"),
-            lobbyLoose = trackStore.Get("Menu/Multiplayer/lobby-loose.wav")
+            win = trackStore.Get("Menu/Multiplayer/win.wav"),
+            lose = trackStore.Get("Menu/Multiplayer/lose.wav")
         };
     }
 
@@ -43,14 +40,14 @@ public partial class MultiplayerMenuMusic : Container
         // Ranked
         rankedMain.Start();
         rankedPrepare.Start();
-        rankedWin.Start();
-        rankedLoose.Start();
 
         // OpenLobby
         lobbyList.Start();
         lobbyPrepare.Start();
-        lobbyWin.Start();
-        lobbyLoose.Start();
+
+        // Win/Lose
+        win.Start();
+        lose.Start();
     }
 
     public void GoToLayer(int layer, int mode, int alt = 0)
@@ -62,31 +59,46 @@ public partial class MultiplayerMenuMusic : Container
             case -1:
                 rankedMain.VolumeTo(0);
                 rankedPrepare.VolumeTo(0);
-                rankedWin.VolumeTo(0);
-                rankedLoose.VolumeTo(0);
 
                 lobbyList.VolumeTo(0);
                 lobbyPrepare.VolumeTo(0);
+
+                win.VolumeTo(0);
+                lose.VolumeTo(0);
                 break;
 
             case 0: // Ranked
                 rankedMain.VolumeTo(layer >= 0 ? 1 : 0);
-                rankedPrepare.VolumeTo(layer >= 1 ? 1 : 0);
+                rankedPrepare.VolumeTo(layer == 1 ? 1 : 0);
 
-                if (alt == 0)
-                    rankedWin.VolumeTo(layer >= 2 ? 1 : 0);
+                if (layer == 2)
+                {
+                    win.VolumeTo(alt == 0 ? 1 : 0);
+                    lose.VolumeTo(alt == 1 ? 1 : 0);
+                }
                 else
-                    rankedLoose.VolumeTo(layer >= 2 ? 1 : 0);
+                {
+                    win.VolumeTo(0);
+                    lose.VolumeTo(0);
+                }
+
                 break;
 
             case 1: // OpenLobby
                 lobbyList.VolumeTo(layer >= 0 ? 1 : 0);
-                lobbyPrepare.VolumeTo(layer >= 1 ? 1 : 0);
+                lobbyPrepare.VolumeTo(layer == 1 ? 1 : 0);
 
-                if (alt == 0)
-                    lobbyWin.VolumeTo(layer >= 2 ? 1 : 0);
+                if (layer == 2)
+                {
+                    win.VolumeTo(alt == 0 ? 1 : 0);
+                    lose.VolumeTo(alt == 1 ? 1 : 0);
+                }
                 else
-                    lobbyLoose.VolumeTo(layer >= 2 ? 1 : 0);
+                {
+                    win.VolumeTo(0);
+                    lose.VolumeTo(0);
+                }
+
                 break;
         }
     }
@@ -97,11 +109,12 @@ public partial class MultiplayerMenuMusic : Container
 
         rankedMain.VolumeTo(0);
         rankedPrepare.VolumeTo(0);
-        rankedWin.VolumeTo(0);
-        rankedLoose.VolumeTo(0);
 
         lobbyList.VolumeTo(0);
         lobbyPrepare.VolumeTo(0);
+
+        win.VolumeTo(0);
+        lose.VolumeTo(0);
     }
 
     private partial class MultiplayerTrack : Component

@@ -20,7 +20,10 @@ public partial class MapBackground : Sprite
     private void load(BackgroundTextureStore backgrounds, CroppedBackgroundStore croppedBackgrounds, TextureStore textures)
     {
         if (Map == null)
+        {
+            Texture = textures.Get("Backgrounds/default.png");
             return;
+        }
 
         Texture tex = null;
 

@@ -162,6 +162,7 @@ public partial class BackgroundStack : CompositeDrawable
 
             currentBackground = path;
         }
+        else currentBackground = null;
 
         scheduledBackgrounds.Add(new Background(map) { Blur = blur });
     }
