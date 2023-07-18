@@ -77,7 +77,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    overlayDim = new ClickableContainer
+                    overlayDim = new FullInputBlockingContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0,

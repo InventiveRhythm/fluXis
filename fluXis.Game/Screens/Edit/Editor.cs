@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
@@ -161,7 +162,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                         {
                             new("Save", () => save()),
                             new("Export", export),
-                            new("Upload", uploadSet),
+                            new("Upload", startUpload),
                             new("Exit", tryExit)
                         }
                     },
@@ -663,7 +664,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         });
     }
 
-    private void uploadSet()
+    private void startUpload() => Task.Run(uploadSet);
+
+    private async void uploadSet()
     {
         switch (Map.Status)
         {
@@ -671,6 +674,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 notifications.PostError("Map is from another game!");
                 return;
         }
+
+        var overlay = new LoadingPanel
+        {
+            Text = "Uploading mapset...",
+            SubText = "Checking for duplicate diffs..."
+        };
+
+        Schedule(() => game.Overlay = overlay);
 
         // check for duplicate diffs
         var diffs = Map.MapSet.Maps.Select(m => m.Difficulty).ToList();
@@ -682,12 +693,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             return;
         }
 
+        overlay.SubText = "Saving mapset...";
+
         Map.MapSet.SetStatus(0);
         if (!save(false)) return;
 
+        overlay.SubText = "Uploading mapset...";
+
         var notification = new LoadingNotification();
         var path = mapStore.Export(Map.MapSet, notification, false);
-        var buffer = File.ReadAllBytes(path);
+        var buffer = await File.ReadAllBytesAsync(path);
 
         string requestUrl = Map.MapSet.OnlineID != -1 ? $"{fluxel.Endpoint.APIUrl}/map/{Map.MapSet.OnlineID}/update" : $"{fluxel.Endpoint.APIUrl}/maps/upload";
 
@@ -696,7 +711,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         request.Method = HttpMethod.Post;
         request.AddHeader("Authorization", fluxel.Token);
         request.AddFile("file", buffer);
-        request.Perform();
+        request.UploadProgress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
+        await request.PerformAsync();
+
+        overlay.SubText = "Reading server response...";
 
         var json = request.GetResponseString();
         var response = JsonConvert.DeserializeObject<APIResponse<APIMapSet>>(json);
@@ -704,8 +722,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         if (response.Status != 200)
         {
             notifications.PostError(response.Message);
+            Schedule(overlay.Hide);
             return;
         }
+
+        overlay.SubText = "Updating mapset...";
 
         realm.RunWrite(r =>
         {
@@ -723,5 +744,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 map.OnlineID = loadedMap.OnlineID = onlineMap.Id;
             }
         });
+
+        Schedule(overlay.Hide);
     }
 }
