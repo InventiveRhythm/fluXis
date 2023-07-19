@@ -5,6 +5,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Mods;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -28,9 +29,19 @@ public partial class ModSelector : Container
     private ClickableContainer background;
     private ClickableContainer content;
 
+    private Sample sampleOpen;
+    private Sample sampleClose;
+    private Sample sampleSelect;
+    private Sample sampleDeselect;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        sampleOpen = samples.Get("UI/Select/ModSelect-Open");
+        sampleClose = samples.Get("UI/Select/ModSelect-Close");
+        sampleSelect = samples.Get("UI/Select/ModSelect-Select");
+        sampleDeselect = samples.Get("UI/Select/ModSelect-Deselect");
+
         RelativeSizeAxes = Axes.Both;
 
         InternalChildren = new Drawable[]
@@ -250,12 +261,14 @@ public partial class ModSelector : Container
             }
         }
 
+        sampleSelect?.Play();
         SelectedMods.Add(mod);
         UpdateTotalMultiplier();
     }
 
     public void Deselect(IMod mod)
     {
+        sampleDeselect?.Play();
         SelectedMods.Remove(mod);
         UpdateTotalMultiplier();
     }
@@ -266,6 +279,9 @@ public partial class ModSelector : Container
     {
         background.FadeTo(IsOpen.Value ? 1 : 0, 400);
         content.MoveToX(IsOpen.Value ? 0 : .5f, 800, Easing.OutQuint);
+
+        if (IsOpen.Value) sampleOpen?.Play();
+        else sampleClose?.Play();
     }
 
     protected override void Update()

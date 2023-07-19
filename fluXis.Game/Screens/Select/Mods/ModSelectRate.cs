@@ -149,9 +149,9 @@ public partial class ModSelectRate : Container
         {
             var rate = e.NewValue;
 
-            if (rate == 1f)
+            if (rate == 1f && Selector.SelectedMods.Contains(mod))
                 Selector.Deselect(mod);
-            else if (!Selector.SelectedMods.Contains(mod))
+            else if (rate != 1f && !Selector.SelectedMods.Contains(mod))
                 Selector.Select(mod);
 
             mod.Rate = rate;
