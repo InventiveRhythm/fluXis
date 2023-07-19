@@ -24,12 +24,17 @@ public static class Program
         }
 
         string name = @"fluXis";
+        bool dev = false;
 
-        if (args.Contains("--dev")) name += "-dev";
+        if (args.Contains("--dev"))
+        {
+            name += "-dev";
+            dev = true;
+        }
 
         using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { BindIPC = true });
 
-        if (host.IsPrimaryInstance)
+        if (host.IsPrimaryInstance || dev)
         {
             var ipc = new TcpIpcProvider(24242);
             ipc.Bind();

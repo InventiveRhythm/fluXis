@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Multi;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Online.Fluxel.Packets.Account;
@@ -240,6 +241,8 @@ public partial class Fluxel : Component
                     EventType.ChatMessage => handleListener<ChatMessage>,
                     EventType.ChatHistory => handleListener<ChatMessage[]>,
                     EventType.ChatMessageDelete => handleListener<string>,
+                    EventType.MultiplayerJoinLobby => handleListener<MultiplayerRoom>,
+                    EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
                     _ => _ => { }
                 };
 
@@ -410,6 +413,6 @@ public enum EventType
     ChatMessageDelete = 12,
 
     MultiplayerCreateLobby = 20,
-    MultiplayerJoinLobby = 21,
-    MultiplayerLobbyUpdate = 22
+    MultiplayerJoinLobby = 21, // 22 is the leave packet, but it never gets sent to the client
+    MultiplayerRoomUpdate = 23,
 }

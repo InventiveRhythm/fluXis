@@ -1,13 +1,19 @@
+using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Map;
+using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Multi;
+using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
+using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 
@@ -31,7 +37,14 @@ public partial class MultiLobby : MultiSubScreen
     [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
+    public MultiplayerRoom Room { get; set; }
+
     private bool confirmExit;
+
+    private MultiLobbyPlayerList playerList;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -42,62 +55,85 @@ public partial class MultiLobby : MultiSubScreen
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
-                Spacing = new Vector2(0, 10),
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomRight,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
                 Children = new Drawable[]
                 {
-                    new ClickableContainer
+                    new FluXisSpriteText
                     {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Action = () =>
-                        {
-                            menuMusic.StopAll();
-                            startClockMusic();
-                        },
-                        Child = new FluXisSpriteText { Text = "Stop Music" }
+                        Text = Room.Settings.Name,
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopRight,
+                        FontSize = 30
                     },
-                    new ClickableContainer
+                    new FluXisSpriteText
                     {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Action = () =>
-                        {
-                            stopClockMusic();
-                            menuMusic.GoToLayer(1, 1);
-                        },
-                        Child = new FluXisSpriteText { Text = "Play Prepare Music" }
-                    },
-                    new ClickableContainer
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Action = () =>
-                        {
-                            stopClockMusic();
-                            menuMusic.GoToLayer(2, 1);
-                        },
-                        Child = new FluXisSpriteText { Text = "Play Win Music" }
-                    },
-                    new ClickableContainer
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Action = () =>
-                        {
-                            stopClockMusic();
-                            menuMusic.GoToLayer(2, 1, 1);
-                        },
-                        Child = new FluXisSpriteText { Text = "Play Lose Music" }
+                        Text = $"hosted by {Room.Host.Username}",
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopRight,
+                        FontSize = 20
                     }
                 }
-            }
+            },
+            new GridContainer
+            {
+                Width = 1600,
+                Height = 800,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                ColumnDimensions = new[]
+                {
+                    new Dimension(),
+                    new Dimension(GridSizeMode.Absolute, 20),
+                    new Dimension(),
+                    new Dimension(GridSizeMode.Absolute, 20),
+                    new Dimension()
+                },
+                RowDimensions = new[]
+                {
+                    new Dimension()
+                },
+                Content = new[]
+                {
+                    new[]
+                    {
+                        playerList = new MultiLobbyPlayerList { Room = Room },
+                        Empty(),
+                        new MultiLobbyContainer(),
+                        Empty(),
+                        new MultiLobbyContainer(),
+                    }
+                }
+            },
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        fluxel.RegisterListener<MultiplayerRoomUpdate>(EventType.MultiplayerRoomUpdate, onRoomUpdate);
+    }
+
+    private void onRoomUpdate(FluxelResponse<MultiplayerRoomUpdate> response)
+    {
+        Schedule(() =>
+        {
+            string json = JsonConvert.SerializeObject(response.Data.Data);
+
+            switch (response.Data.Type)
+            {
+                case "player/join":
+                    var player = JsonConvert.DeserializeObject<APIUserShort>(json);
+                    playerList.AddPlayer(player);
+                    break;
+
+                case "player/leave":
+                    var remPlayer = int.Parse(json);
+                    playerList.RemovePlayer(remPlayer);
+                    break;
+            }
+        });
     }
 
     public override bool OnExiting(ScreenExitEvent e)
@@ -107,6 +143,7 @@ public partial class MultiLobby : MultiSubScreen
             clock.Looping = false;
             stopClockMusic();
             backgroundStack.AddBackgroundFromMap(null);
+            fluxel.SendPacketAsync(new MultiplayerLeavePacket());
             return false;
         }
 
@@ -146,9 +183,22 @@ public partial class MultiLobby : MultiSubScreen
     {
         menuMusic.StopAll();
 
-        clock.RestartPoint = mapStore.CurrentMapSet?.Metadata.PreviewTime ?? 0;
-        backgroundStack.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
-        startClockMusic();
+        var map = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == Room.Maps[0].Id));
+
+        if (map != null)
+        {
+            mapStore.CurrentMapSet = map;
+
+            var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Maps[0].Id);
+            if (mapInfo == null) return; // what
+
+            clock.LoadMap(mapInfo, true);
+            clock.FadeOut(); // because it sets itself to 1
+            clock.RestartPoint = 0;
+            clock.AllowLimitedLoop = false;
+            backgroundStack.AddBackgroundFromMap(mapInfo);
+            startClockMusic();
+        }
 
         base.OnEntering(e);
     }

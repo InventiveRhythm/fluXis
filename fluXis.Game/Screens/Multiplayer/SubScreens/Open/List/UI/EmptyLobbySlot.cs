@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -6,13 +5,8 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 
-public partial class EmptyLobbySlot : Container, ILobby
+public partial class EmptyLobbySlot : Container
 {
-    public bool Joinable => false;
-    public bool Selectable => false;
-    public bool Selected { get; set; }
-    public void Join() => throw new NotImplementedException("You can't join an empty lobby slot!");
-
     [BackgroundDependencyLoader]
     private void load()
     {

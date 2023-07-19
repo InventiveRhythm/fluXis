@@ -1,11 +1,20 @@
+using System.Collections.Generic;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Multi;
+using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
 using osuTK;
+using WebRequest = osu.Framework.IO.Network.WebRequest;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 
@@ -17,7 +26,19 @@ public partial class MultiLobbyList : MultiSubScreen
     [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }
 
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
+    [Resolved]
+    private NotificationOverlay notifications { get; set; }
+
+    private LoadingPanel loadingPanel;
+
     private FillFlowContainer lobbyList;
+    private LoadingIcon loadingIcon;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -33,23 +54,74 @@ public partial class MultiLobbyList : MultiSubScreen
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            new ClickableContainer
+            loadingIcon = new LoadingIcon
             {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomRight,
-                Action = () => this.Push(new MultiLobby()),
-                Child = new FluXisSpriteText { Text = "Enter lobby screen" }
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
             }
         };
     }
 
     protected override void LoadComplete()
     {
-        for (var i = 0; i < 12; i++)
+        base.LoadComplete();
+
+        fluxel.RegisterListener<MultiplayerRoom>(EventType.MultiplayerJoinLobby, onLobbyJoin);
+
+        loadLobbies();
+    }
+
+    private async void loadLobbies()
+    {
+        loadingIcon.FadeIn(200);
+        lobbyList.FadeOut(200).OnComplete(_ => lobbyList.Clear());
+
+        var request = new WebRequest($"{fluxel.Endpoint.APIUrl}/multi/lobbies");
+        request.AllowInsecureRequests = true;
+        await request.PerformAsync();
+
+        var json = request.GetResponseString();
+        var lobbies = JsonConvert.DeserializeObject<APIResponse<List<MultiplayerRoom>>>(json);
+
+        foreach (var lobby in lobbies.Data)
+            lobbyList.Add(new LobbySlot { Room = lobby, List = this });
+
+        for (var i = 0; i < 12 - lobbies.Data.Count; i++)
             lobbyList.Add(new EmptyLobbySlot());
 
-        base.LoadComplete();
+        loadingIcon.FadeOut(200);
+        lobbyList.FadeIn(200);
+    }
+
+    public void JoinLobby(MultiplayerRoom room)
+    {
+        game.Overlay = loadingPanel = new LoadingPanel
+        {
+            Text = "Joining lobby...",
+        };
+
+        fluxel.SendPacketAsync(new MultiplayerJoinPacket
+        {
+            LobbyId = room.RoomID,
+            Password = ""
+        });
+    }
+
+    private void onLobbyJoin(FluxelResponse<MultiplayerRoom> res)
+    {
+        Schedule(() =>
+        {
+            if (res.Status == 200)
+            {
+                loadingPanel?.Hide();
+                this.Push(new MultiLobby { Room = res.Data });
+            }
+            else
+            {
+                game.Overlay = null;
+                notifications.PostError($"Failed to join lobby {res.Message}");
+            }
+        });
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

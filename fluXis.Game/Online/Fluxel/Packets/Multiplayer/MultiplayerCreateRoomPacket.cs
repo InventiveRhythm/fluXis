@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 
-public class MultiplayerCreateLobbyPacket : Packet
+public class MultiplayerCreateRoomPacket : Packet
 {
     [JsonProperty("name")]
     public string Name;
@@ -13,7 +13,7 @@ public class MultiplayerCreateLobbyPacket : Packet
     [JsonProperty("max")]
     public int MaxPlayers;
 
-    public MultiplayerCreateLobbyPacket(string name, string password, int maxPlayers)
+    public MultiplayerCreateRoomPacket(string name, string password, int maxPlayers)
         : base(20)
     {
         Name = name;
