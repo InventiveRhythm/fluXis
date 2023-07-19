@@ -103,12 +103,11 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         FluXisKeybind.Key10k10
     };
 
-    private readonly FluXisKeybind[] keys;
-
     private readonly bool[] pressedStatus;
     public bool[] JustPressed { get; }
     public bool[] Pressed { get; }
     public bool[] JustReleased { get; }
+    public FluXisKeybind[] Keys { get; }
 
     private readonly GameplayScreen screen;
 
@@ -116,7 +115,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
     {
         this.screen = screen;
 
-        keys = mode switch
+        Keys = mode switch
         {
             1 => keys1,
             2 => keys2,
@@ -141,7 +140,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
     {
         base.Update();
 
-        for (int i = 0; i < keys.Length; i++)
+        for (int i = 0; i < Keys.Length; i++)
         {
             switch (pressedStatus[i])
             {
@@ -172,9 +171,9 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return false;
 
-        for (int i = 0; i < keys.Length; i++)
+        for (int i = 0; i < Keys.Length; i++)
         {
-            if (key == keys[i])
+            if (key == Keys[i])
             {
                 pressedStatus[i] = true;
                 return true;
@@ -189,9 +188,9 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return;
 
-        for (int i = 0; i < keys.Length; i++)
+        for (int i = 0; i < Keys.Length; i++)
         {
-            if (key == keys[i])
+            if (key == Keys[i])
                 pressedStatus[i] = false;
         }
     }

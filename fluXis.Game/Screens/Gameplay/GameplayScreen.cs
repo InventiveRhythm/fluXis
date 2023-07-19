@@ -184,6 +184,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                     createHudElement(new HealthBar()),
                     createHudElement(new HitErrorBar()),
                     createHudElement(new ModsDisplay()),
+                    createHudElement(new KeyOverlay()),
                     createHudElement(new AttributeText
                     {
                         Anchor = Anchor.BottomLeft,
