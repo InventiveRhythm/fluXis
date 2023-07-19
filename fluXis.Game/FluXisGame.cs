@@ -184,6 +184,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             lowpass = LowPassFilter.MAX - lowpass;
             AudioClock.LowPassFilter.Cutoff = (int)lowpass;
         }
+        else if (Overlay is null)
+        {
+            overlayDim.Alpha = 0;
+            buffer.BlurSigma = Vector2.Zero;
+            AudioClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
+        }
     }
 
     public override void Exit()
