@@ -188,7 +188,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         {
             overlayDim.Alpha = 0;
             buffer.BlurSigma = Vector2.Zero;
-            AudioClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
         }
     }
 
