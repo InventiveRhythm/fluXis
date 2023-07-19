@@ -44,4 +44,8 @@ public partial class SettingsButton : SettingsItem
             }
         });
     }
+
+    public override void Reset()
+    {
+    }
 }

@@ -11,6 +11,8 @@ namespace fluXis.Game.Overlay.Settings.UI;
 
 public partial class SettingsToggle : SettingsItem
 {
+    public override bool IsDefault => Bindable.IsDefault;
+
     public Bindable<bool> Bindable { get; init; } = new();
 
     private ToggleIcon icon;
@@ -31,6 +33,8 @@ public partial class SettingsToggle : SettingsItem
         Bindable.BindValueChanged(e => icon.UpdateValue(e.NewValue), true);
         icon.UpdateHover(false);
     }
+
+    public override void Reset() => Bindable.SetDefault();
 
     protected override bool OnClick(ClickEvent e)
     {

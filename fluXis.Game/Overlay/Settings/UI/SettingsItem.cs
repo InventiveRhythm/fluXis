@@ -2,14 +2,23 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Overlay.Settings.UI;
 
-public partial class SettingsItem : Container
+public abstract partial class SettingsItem : Container
 {
     public string Label { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public bool Enabled { get; init; } = true;
+
+    public virtual bool IsDefault => true;
+
+    private bool isDefault;
+    private CircularContainer resetButton;
+
+    private const float reset_button_height = 30;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -20,6 +29,24 @@ public partial class SettingsItem : Container
 
         InternalChildren = new Drawable[]
         {
+            resetButton = new CircularContainer
+            {
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreRight,
+                X = -5,
+                Size = new Vector2(10, IsDefault ? 0 : reset_button_height),
+                Masking = true,
+                Child = new ClickableContainer
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Action = Reset,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Accent
+                    }
+                }
+            },
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -47,4 +74,15 @@ public partial class SettingsItem : Container
             }
         };
     }
+
+    protected override void Update()
+    {
+        if (isDefault != IsDefault)
+        {
+            isDefault = IsDefault;
+            resetButton.ResizeHeightTo(IsDefault ? 0 : reset_button_height, 200, Easing.OutQuint);
+        }
+    }
+
+    public abstract void Reset();
 }

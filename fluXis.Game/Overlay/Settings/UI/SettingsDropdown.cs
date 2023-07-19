@@ -20,6 +20,8 @@ public partial class SettingsDropdown<T> : SettingsItem
     public Bindable<T> Bindable { get; set; }
     public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
 
+    public override bool IsDefault => Bindable.IsDefault;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -33,6 +35,8 @@ public partial class SettingsDropdown<T> : SettingsItem
             Current = Bindable
         });
     }
+
+    public override void Reset() => Bindable.SetDefault();
 
     private partial class SettingsDropdownMenu : Dropdown<T>
     {

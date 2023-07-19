@@ -59,6 +59,10 @@ public partial class SettingsKeybind : SettingsItem
         }
     }
 
+    public override void Reset()
+    {
+    }
+
     private KeyCombination getBind(FluXisKeybind keybind)
     {
         KeyCombination combo = new KeyCombination();
