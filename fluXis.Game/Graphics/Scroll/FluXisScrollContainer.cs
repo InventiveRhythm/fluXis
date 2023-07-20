@@ -39,6 +39,9 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
 
     public void ScrollTo(T entry)
     {
+        if (entry == null) return;
+        if (!entry.IsPresent) return;
+
         var pos1 = GetChildPosInContent(entry);
         var pos2 = GetChildPosInContent(entry, entry.DrawSize);
 

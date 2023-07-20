@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
 
@@ -13,30 +14,16 @@ public partial class SearchTextBox : FluXisTextBox
     public SearchTextBox(SearchBar search)
     {
         this.search = search;
-
-        RelativeSizeAxes = Axes.Both;
-        Masking = true;
-        CornerRadius = 5;
-        TextContainer.Padding = new MarginPadding { Left = 10, Right = 40 };
-        BackgroundUnfocused = FluXisColors.Background2;
-        BackgroundFocused = FluXisColors.Hover;
-        PlaceholderText = "Search...";
-        Placeholder.Colour = Colour4.Gray;
-        Placeholder.Font = FluXisSpriteText.GetFont(size: 40);
     }
 
-    protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        Height = 40,
-        AutoSizeAxes = Axes.X,
-        Anchor = Anchor.CentreLeft,
-        Origin = Anchor.CentreLeft,
-        Child = new FluXisSpriteText
-        {
-            Text = c.ToString(),
-            FontSize = 40
-        }
-    };
+        RelativeSizeAxes = Axes.Both;
+        TextContainer.Padding = new MarginPadding { Left = 10, Right = 40 };
+        PlaceholderText = "Search...";
+        CornerRadius = 10;
+    }
 
     private void updateSearch()
     {

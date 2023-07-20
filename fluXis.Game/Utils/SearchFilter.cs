@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 
 namespace fluXis.Game.Utils;
@@ -37,13 +38,15 @@ public class SearchFilters
         }
     }
 
+    public List<int> Status { get; set; } = new();
+
     private int bpm;
     private Type bpmType;
     private string query = string.Empty;
 
     public bool Matches(RealmMap map)
     {
-        bool matches = false;
+        bool matches = true;
 
         if (BPM > 0)
         {
@@ -71,16 +74,19 @@ public class SearchFilters
 
                 case Type.Under:
                 {
-                    if (map.Filters.BPMMax <= BPM)
-                        matches = true;
-                    else
+                    if (!(map.Filters.BPMMax <= BPM))
                         return false;
 
                     break;
                 }
             }
         }
-        else matches = true;
+
+        if (Status.Count > 0)
+        {
+            if (!Status.Contains(map.Status))
+                return false;
+        }
 
         if (Query.Length > 0)
         {
@@ -101,10 +107,7 @@ public class SearchFilters
             termMatches |= difficulty.Contains(Query);
 
             if (!termMatches)
-                return false;
-
-            if (!matches)
-                matches = true;
+                matches = false;
         }
 
         return matches;

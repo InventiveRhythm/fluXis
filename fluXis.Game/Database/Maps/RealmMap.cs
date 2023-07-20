@@ -15,14 +15,13 @@ public class RealmMap : RealmObject
     public RealmMapSet MapSet { get; set; } = null!;
 
     /**
-     * -4 = osu!mania
-     * -3 = Quaver
      * -2 = Local
-     * -1 = Blacklisted
+     * -1 = Blacklisted (server side)
      * 0 = Unsubmitted
      * 1 = Pending
      * 2 = Impure
      * 3 = Pure
+     * everything over 100 is from other games
      */
     public int Status { get; set; } = -2;
 

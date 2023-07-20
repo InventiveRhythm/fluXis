@@ -30,16 +30,7 @@ public partial class StatusTag : Container
 
         RealmMap map = set.Maps[0];
 
-        Colour4 colour = map.Status switch
-        {
-            -2 => Colour4.FromHex("#8fffc8"),
-            -1 => Colour4.FromHex("#888888"),
-            0 => Colour4.FromHex("#888888"),
-            1 => Colour4.FromHex("#f7b373"),
-            2 => Colour4.FromHex("#ff7b74"),
-            3 => Colour4.FromHex("#55b2ff"),
-            _ => Colour4.Black
-        };
+        var colour = FluXisColors.GetStatusColor(map.Status);
 
         string text = map.Status switch
         {

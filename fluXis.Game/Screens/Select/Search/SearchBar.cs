@@ -1,9 +1,13 @@
 using fluXis.Game.Graphics;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Search;
 
@@ -25,38 +29,44 @@ public partial class SearchBar : Container
         Width = .5f;
         Padding = new MarginPadding { Left = 20, Top = 10, Right = 10 };
 
-        Children = new Drawable[]
+        Child = new Container
         {
-            new Container
+            RelativeSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Y,
+            CornerRadius = 10,
+            Masking = true,
+            EdgeEffect = new EdgeEffectParameters
             {
-                CornerRadius = 5,
-                Masking = true,
-                RelativeSizeAxes = Axes.X,
-                Height = 40,
-                Children = new Drawable[]
-                {
-                    new SearchTextBox(this),
-                    new DropdownIcon
-                    {
-                        Action = () => dropdownOpen.Value = !dropdownOpen.Value
-                    }
-                }
+                Type = EdgeEffectType.Shadow,
+                Colour = Color4.Black.Opacity(0.25f),
+                Radius = 10,
+                Offset = new Vector2(0, 1)
             },
-            dropdownContainer = new Container
+            Children = new Drawable[]
             {
-                CornerRadius = 5,
-                Masking = true,
-                RelativeSizeAxes = Axes.X,
-                Height = 0,
-                Margin = new MarginPadding { Top = 50 },
-                Children = new Drawable[]
+                dropdownContainer = new Container
                 {
-                    new Box
+                    RelativeSizeAxes = Axes.X,
+                    Height = 0,
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
-                    },
-                    dropdown = new SearchDropdown(Screen.Filters)
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background2
+                        },
+                        dropdown = new SearchDropdown(Screen.Filters)
+                    }
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 40,
+                    Children = new Drawable[]
+                    {
+                        new SearchTextBox(this),
+                        new DropdownIcon { Action = () => dropdownOpen.Value = !dropdownOpen.Value }
+                    }
                 }
             }
         };
@@ -69,7 +79,7 @@ public partial class SearchBar : Container
         if (dropdownOpen.Value)
             dropdownContainer.ResizeHeightTo(dropdown.DrawHeight, 400, Easing.OutQuint);
         else
-            dropdownContainer.ResizeHeightTo(0, 400, Easing.InQuint);
+            dropdownContainer.ResizeHeightTo(0, 400, Easing.OutQuint);
     }
 
     protected override bool OnClick(ClickEvent e)

@@ -47,6 +47,20 @@ public static class FluXisColors
         return hsl.Z > .5f;
     }
 
+    public static Colour4 GetStatusColor(int status)
+    {
+        return status switch
+        {
+            -2 => Colour4.FromHex("#8fffc8"),
+            -1 => Colour4.FromHex("#888888"),
+            0 => Colour4.FromHex("#888888"),
+            1 => Colour4.FromHex("#f7b373"),
+            2 => Colour4.FromHex("#ff7b74"),
+            3 => Colour4.FromHex("#55b2ff"),
+            _ => Colour4.Black
+        };
+    }
+
     public static Colour4 GetRoleColor(int role)
     {
         return role switch

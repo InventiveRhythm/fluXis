@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Utils;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -7,22 +8,26 @@ namespace fluXis.Game.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownBPM : Container
 {
-    public SearchDropdownBPM(SearchFilters filters)
+    public SearchFilters Filters { get; init; }
+
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
 
-        AddRange(new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new FluXisSpriteText
             {
                 Text = "BPM",
                 FontSize = 24,
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft
+                Origin = Anchor.CentreLeft,
+                X = 5
             },
-            new TextBox(filters)
-        });
+            new TextBox(Filters)
+        };
     }
 
     private partial class TextBox : FluXisTextBox
@@ -36,19 +41,13 @@ public partial class SearchDropdownBPM : Container
 
             Width = 200;
             Height = 30;
-            Masking = true;
-            CornerRadius = 5;
+            CornerRadius = 10;
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;
-            BackgroundUnfocused = FluXisColors.Surface;
-            BackgroundFocused = FluXisColors.Surface2;
             PlaceholderText = "0";
-            Placeholder.Colour = Colour4.Gray;
-            Placeholder.Font = FluXisSpriteText.GetFont(size: 24);
-        }
 
-        protected override void OnUserTextAdded(string added) => update();
-        protected override void OnUserTextRemoved(string removed) => update();
+            OnTextChanged += update;
+        }
 
         private void update()
         {
@@ -73,18 +72,5 @@ public partial class SearchDropdownBPM : Container
             filters.BPM = bpm;
             filters.BPMType = type;
         }
-
-        protected override Drawable GetDrawableCharacter(char c) => new FallingDownContainer
-        {
-            Height = 24,
-            AutoSizeAxes = Axes.X,
-            Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft,
-            Child = new FluXisSpriteText
-            {
-                Text = c.ToString(),
-                FontSize = 24
-            }
-        };
     }
 }
