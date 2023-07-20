@@ -22,11 +22,10 @@ public partial class TimingLine : Box
     [BackgroundDependencyLoader]
     private void load()
     {
-        Colour = Colour4.White;
         RelativeSizeAxes = Axes.X;
-        Height = 1;
+        Height = 3;
         Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
+        Origin = Anchor.Centre;
     }
 
     protected override void Update()
