@@ -121,7 +121,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         {
                             new ResultTitle(map),
                             new ResultScore { Performance = performance },
-                            showPlayData ? new ResultHitPoints(mapInfo, performance) : Empty(),
+                            showPlayData ? new ResultHitPoints { MapInfo = mapInfo, Performance = performance } : Empty(),
                             ratingInfo = new ResultsRatingInfo(showPlayData)
                         }
                     }
