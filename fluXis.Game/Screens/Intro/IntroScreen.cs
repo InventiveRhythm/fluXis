@@ -1,10 +1,12 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Background;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -16,6 +18,9 @@ public partial class IntroScreen : FluXisScreen
 
     [Resolved]
     private Toolbar toolbar { get; set; }
+
+    [Resolved]
+    private BackgroundStack backgrounds { get; set; }
 
     private FillFlowContainer epilepsyContainer;
     private bool shouldSkip;
@@ -29,31 +34,39 @@ public partial class IntroScreen : FluXisScreen
             return;
         }
 
-        InternalChild = epilepsyContainer = new FillFlowContainer
+        InternalChildren = new Drawable[]
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Scale = new Vector2(0.9f),
-            Children = new Drawable[]
+            new Box
             {
-                new FluXisSpriteText
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Black
+            },
+            epilepsyContainer = new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Scale = new Vector2(0.9f),
+                Children = new Drawable[]
                 {
-                    Text = "Epilepsy warning!",
-                    FontSize = 60,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Margin = new MarginPadding { Bottom = 20 }
-                },
-                new FluXisTextFlow
-                {
-                    Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
-                    FontSize = 30,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Width = 800,
-                    TextAnchor = Anchor.TopCentre
+                    new FluXisSpriteText
+                    {
+                        Text = "Epilepsy warning!",
+                        FontSize = 60,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Margin = new MarginPadding { Bottom = 20 }
+                    },
+                    new FluXisTextFlow
+                    {
+                        Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
+                        FontSize = 30,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Width = 800,
+                        TextAnchor = Anchor.TopCentre
+                    }
                 }
             }
         };
@@ -66,6 +79,8 @@ public partial class IntroScreen : FluXisScreen
             continueToMenu();
             return;
         }
+
+        backgrounds.SetDim(1f, 0);
 
         const int scale_duration = 700;
         const int fade_duration = 500;

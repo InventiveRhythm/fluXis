@@ -281,36 +281,38 @@ public partial class MenuScreen : FluXisScreen
     protected override void LoadComplete()
     {
         game.OnSongChanged += songChanged;
-
-        pressAnyKeyText.FadeInFromZero(800).Then().FadeOut(800).Loop();
-        backgrounds.SetDim(base.BackgroundDim, 2000);
-        visualizer.FadeInFromZero(2000);
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e)
+    private bool canPlayAnimation()
     {
-        if (!pressedStart)
-        {
-            pressedStart = true;
-            menuStart?.Play();
-            randomizeSplash();
+        if (pressedStart) return false;
 
-            fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
-            fluXisText.Delay(600).FadeIn().OnComplete(_ =>
-            {
-                game.Toolbar.ShowToolbar.Value = true;
-                splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
-                showMenu(600);
-                login.Show();
-            });
-
-            pressAnyKeyText.FadeOut(600).MoveToY(0, 800, Easing.InQuint);
-
-            return true;
-        }
-
-        return false;
+        playStartAnimation();
+        return true;
     }
+
+    private void playStartAnimation()
+    {
+        pressedStart = true;
+        menuStart?.Play();
+        randomizeSplash();
+
+        fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
+        fluXisText.Delay(600).FadeIn().OnComplete(_ =>
+        {
+            game.Toolbar.ShowToolbar.Value = true;
+            splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
+            showMenu(600);
+            login.Show();
+        });
+
+        pressAnyKeyText.FadeOut(600).MoveToY(0, 800, Easing.InQuint);
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e) => canPlayAnimation();
+    protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
+    protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
+    protected override bool OnJoystickPress(JoystickPressEvent e) => canPlayAnimation();
 
     private void showMenu(int duration = 400)
     {
@@ -331,6 +333,12 @@ public partial class MenuScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         activity.Update("In the menus", "Idle", "menu");
+
+        pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
+        fluXisText.FadeInFromZero(800);
+        visualizer.FadeInFromZero(2000);
+        backgrounds.SetDim(1f, 0);
+        backgrounds.SetDim(base.BackgroundDim, 2000);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
