@@ -13,6 +13,7 @@ namespace fluXis.Game.Screens.Result.UI;
 public partial class ResultTitle : Container
 {
     private readonly RealmMap map;
+    public APIUserShort User { get; init; }
 
     public ResultTitle(RealmMap map)
     {
@@ -24,8 +25,6 @@ public partial class ResultTitle : Container
     {
         AutoSizeAxes = Axes.Y;
         RelativeSizeAxes = Axes.X;
-
-        APIUserShort user = fluxel.LoggedInUser;
 
         InternalChild = new GridContainer
         {
@@ -121,7 +120,7 @@ public partial class ResultTitle : Container
                                     },
                                     new FluXisSpriteText
                                     {
-                                        Text = user?.Username ?? "Guest",
+                                        Text = User?.Username ?? "Guest",
                                         FontSize = 22,
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.TopRight
@@ -135,7 +134,7 @@ public partial class ResultTitle : Container
                                 Origin = Anchor.CentreRight,
                                 CornerRadius = 10,
                                 Masking = true,
-                                Child = new DrawableAvatar(user)
+                                Child = new DrawableAvatar(User)
                                 {
                                     Size = new Vector2(50)
                                 }

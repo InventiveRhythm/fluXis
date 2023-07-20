@@ -20,6 +20,17 @@ public static class UserCache
 
     public static APIUser GetUser(int id, bool forceReload = false)
     {
+        if (id == -1)
+        {
+            return new APIUser
+            {
+                ID = fluxel.LoggedInUser?.ID ?? -1,
+                Username = fluxel.LoggedInUser?.Username ?? "Guest",
+                CountryCode = fluxel.LoggedInUser?.CountryCode ?? "XX",
+                Role = fluxel.LoggedInUser?.Role ?? 0
+            };
+        }
+
         if (users.TryGetValue(id, out var u) && !forceReload)
             return u;
 

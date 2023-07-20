@@ -56,7 +56,7 @@ public partial class TestResultsScreen : FluXisTestScene
                 Mapper = realmMap.Metadata.Mapper
             });
 
-            screenStack.Push(new ResultsScreen(realmMap, map, new Performance(map, 0, ""), false));
+            screenStack.Push(new ResultsScreen(realmMap, map, new Performance(map, 0, ""), null, false));
         });
     }
 }

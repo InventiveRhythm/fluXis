@@ -171,6 +171,7 @@ public partial class ScoreList : GridContainer
                 rsp.Data.Scores.ForEach(s => scores.Add(new RealmScore(map)
                 {
                     ID = default,
+                    PlayerID = s.UserId,
                     OnlineID = map.OnlineID,
                     Accuracy = s.Accuracy,
                     Grade = s.Grade,

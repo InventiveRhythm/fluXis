@@ -1,5 +1,7 @@
 using System;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Online;
+using fluXis.Game.Online.API.Users;
 using JetBrains.Annotations;
 using Realms;
 
@@ -27,6 +29,11 @@ public class RealmScore : RealmObject
     public Guid MapID { get; set; }
 
     public DateTimeOffset Date { get; set; }
+
+    public int PlayerID { get; set; }
+
+    [Ignored]
+    public APIUser Player => UserCache.GetUser(PlayerID);
 
     public RealmScore(RealmMap map)
     {

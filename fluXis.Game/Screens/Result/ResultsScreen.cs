@@ -9,6 +9,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Scores;
 using fluXis.Game.Scoring;
@@ -43,6 +44,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
     private readonly Performance performance;
+    private readonly APIUserShort player;
     private readonly RealmScore score;
 
     private Container content;
@@ -51,17 +53,19 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     private readonly bool showPlayData;
 
-    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, bool showPlayData = true, bool saveScore = true)
+    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, APIUserShort player, bool showPlayData = true, bool saveScore = true)
     {
         this.map = map;
         this.mapInfo = mapInfo;
         this.performance = performance;
         this.showPlayData = showPlayData;
+        this.player = player;
 
         if (performance.IsRanked && saveScore)
         {
             score = new RealmScore(map)
             {
+                PlayerID = player?.ID ?? -1,
                 Accuracy = performance.Accuracy,
                 Grade = performance.Grade.ToString(),
                 Score = performance.Score,
@@ -101,7 +105,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background2
                     },
-                    new DrawableBanner(fluxel.LoggedInUser)
+                    new DrawableBanner(player)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
@@ -120,7 +124,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         Margin = new MarginPadding(20),
                         Children = new[]
                         {
-                            new ResultTitle(map),
+                            new ResultTitle(map) { User = player },
                             new ResultScore { Performance = performance },
                             showPlayData ? new ResultHitPoints { MapInfo = mapInfo, Performance = performance } : Empty(),
                             ratingInfo = new ResultsRatingInfo(showPlayData)

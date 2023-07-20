@@ -4,7 +4,6 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Map;
-using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result;
@@ -30,9 +29,6 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
 
     [Resolved]
     private Storage storage { get; set; }
-
-    [Resolved]
-    private Fluxel fluxel { get; set; }
 
     public ScoreList ScoreList { get; set; }
 
@@ -116,7 +112,7 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = fluxel.LoggedInUser?.Username ?? "Player",
+                                    Text = score.Player?.Username ?? "Player",
                                     FontSize = 28,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
@@ -195,7 +191,7 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
             }
         };
 
-        LoadComponentAsync(new DrawableBanner(fluxel.LoggedInUser)
+        LoadComponentAsync(new DrawableBanner(score.Player)
         {
             RelativeSizeAxes = Axes.Both,
             Depth = 1,
@@ -203,7 +199,7 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
             Origin = Anchor.Centre
         }, bannerContainer.Add);
 
-        LoadComponentAsync(new DrawableAvatar(fluxel.LoggedInUser)
+        LoadComponentAsync(new DrawableAvatar(score.Player)
         {
             RelativeSizeAxes = Axes.Both
         }, avatarContainer.Add);
@@ -250,7 +246,7 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
         for (int i = 0; i < score.Judgements.Miss; i++) performance.AddJudgement(Judgement.Miss);
         for (int i = 0; i < score.MaxCombo; i++) performance.IncCombo();
 
-        ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, false, false));
+        ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, score.Player, false, false));
 
         return true;
     }

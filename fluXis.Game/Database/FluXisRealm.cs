@@ -23,8 +23,9 @@ public class FluXisRealm : IDisposable
     /// 5 - add RealmMapFilters
     /// 6 - add AutoImport to ImporterInfo
     /// 7 - Make RealmScore.Mods a string
+    /// 8 - Added PlayerID to RealmScore
     /// </summary>
-    private const int schema_version = 7;
+    private const int schema_version = 8;
 
     private Realm updateRealm;
 
@@ -113,6 +114,14 @@ public class FluXisRealm : IDisposable
 
                 foreach (var score in newScores)
                     score.Mods = string.Empty;
+
+                break;
+
+            case 8:
+                var newScores2 = migration.NewRealm.All<RealmScore>().ToList();
+
+                foreach (var score in newScores2)
+                    score.PlayerID = -1;
 
                 break;
         }

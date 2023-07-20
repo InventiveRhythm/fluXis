@@ -13,6 +13,8 @@ using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
@@ -51,6 +53,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
+
+    [Resolved]
+    private Fluxel fluxel { get; set; }
 
     [Resolved]
     private NotificationOverlay notifications { get; set; }
@@ -342,12 +347,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     protected virtual void End()
     {
+        var player = Playfield.Manager.AutoPlay ? new APIUserShort { Username = "AutoPlay", ID = 0 } : fluxel.LoggedInUser;
+
         if (Performance.FullCombo || Performance.AllFlawless)
         {
             fcOverlay.Show(Performance.AllFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
-            this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance)));
+            this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance, player)));
         }
-        else this.Push(new ResultsScreen(RealmMap, Map, Performance));
+        else this.Push(new ResultsScreen(RealmMap, Map, Performance, player));
     }
 
     public virtual void RestartMap()
