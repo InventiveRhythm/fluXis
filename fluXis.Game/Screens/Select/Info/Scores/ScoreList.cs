@@ -8,6 +8,7 @@ using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Scoring;
 using Newtonsoft.Json;

@@ -4,6 +4,7 @@ using System.Net.Http;
 using fluXis.Game.Configuration;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Scoring;
 using Newtonsoft.Json;
 using osu.Framework.IO.Network;

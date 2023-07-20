@@ -1,5 +1,5 @@
 using fluXis.Game.Graphics;
-using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Profile;

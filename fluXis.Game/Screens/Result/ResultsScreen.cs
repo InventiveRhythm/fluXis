@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Scores;
 using fluXis.Game.Scoring;

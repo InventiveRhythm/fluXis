@@ -4,7 +4,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Map;
-using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.API.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;

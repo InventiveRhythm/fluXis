@@ -1,4 +1,4 @@
-using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.Chat;

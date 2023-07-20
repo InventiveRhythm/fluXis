@@ -15,6 +15,7 @@ using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.MenuBar;

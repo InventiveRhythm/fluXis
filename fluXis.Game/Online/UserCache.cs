@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using Newtonsoft.Json;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;

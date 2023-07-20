@@ -1,6 +1,7 @@
+using fluXis.Game.Online.API.Maps;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API;
+namespace fluXis.Game.Online.API.Scores;
 
 public class APIScore
 {

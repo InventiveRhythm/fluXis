@@ -1,7 +1,7 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Cover;
-using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

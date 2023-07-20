@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using fluXis.Game.Online.API.Users;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API;
+namespace fluXis.Game.Online.API.Maps;
 
 public class APIMapSet
 {

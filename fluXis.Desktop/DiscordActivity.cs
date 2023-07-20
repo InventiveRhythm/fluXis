@@ -2,7 +2,7 @@ using System;
 using DiscordRPC;
 using fluXis.Game;
 using fluXis.Game.Activity;
-using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 
 namespace fluXis.Desktop;

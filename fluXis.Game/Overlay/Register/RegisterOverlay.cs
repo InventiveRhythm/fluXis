@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Panel;
-using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Account;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;

@@ -7,6 +7,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Scroll;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Profile.Stats;
