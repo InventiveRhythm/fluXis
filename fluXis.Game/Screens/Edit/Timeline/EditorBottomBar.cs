@@ -81,6 +81,7 @@ public partial class EditorBottomBar : Container
 
                                     values.Editor.SortEverything();
 
+                                    clock.Stop();
                                     var startTime = clock.CurrentTime;
 
                                     var clone = values.Editor.MapInfo.Clone();
