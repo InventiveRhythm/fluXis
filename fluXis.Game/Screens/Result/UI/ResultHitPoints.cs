@@ -127,14 +127,15 @@ public partial class ResultHitPoints : Container
         Schedule(() => loadingIcon.FadeIn(200));
 
         image = new Image<Rgba32>(740 * max_zoom, 300 * max_zoom, new Rgba32(0, 0, 0, 0));
+        const int padding = 10 * max_zoom;
 
         foreach (var stat in Performance.HitStats)
         {
             var statTime = stat.Time - MapInfo.StartTime;
             var endTime = MapInfo.EndTime - MapInfo.StartTime;
 
-            var x = (int)(image.Width * (statTime == endTime ? .5f : statTime / endTime)) + 10 * max_zoom;
-            var y = (int)(image.Height / 2f - stat.Difference * max_zoom) + 10 * max_zoom;
+            var x = (int)((image.Width - padding * 2) * (statTime == endTime ? .5f : statTime / endTime)) + padding;
+            var y = (int)(image.Height / 2f - stat.Difference * max_zoom);
 
             HitWindow hitWindow = HitWindow.FromKey(stat.Judgement);
             var colour4 = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key);
