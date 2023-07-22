@@ -17,7 +17,6 @@
     <ProjectReference Include="..\fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj" />
   </ItemGroup>
   <ItemGroup Label="Package References">
-    <PackageReference Include="Clowd.Squirrel" Version="2.9.42" />
     <PackageReference Include="OpenRGB.NET" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup Label="Resources">

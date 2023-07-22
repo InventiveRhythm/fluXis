@@ -75,9 +75,9 @@ public partial class FluXisGameBase : osu.Framework.Game
     public Action OnSongChanged;
     public virtual Drawable Overlay { get; set; }
 
-    public static string VersionString => version != null ? isDebug ? "local development build" : $"v{version.Major}.{version.Minor}.{version.Build}" : "unknown version";
-    private static Version version => Assembly.GetEntryAssembly()?.GetName().Version;
-    private static bool isDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
+    public static string VersionString => Version != null ? IsDebug ? "local development build" : $"v{Version.Major}.{Version.Minor}.{Version.Build}" : "unknown version";
+    public static Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
+    public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
     public virtual LightController CreateLightController() => new();
 

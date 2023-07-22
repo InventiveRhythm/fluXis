@@ -1,9 +1,15 @@
+using System;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
+using fluXis.Game;
 using fluXis.Game.Overlay.Notification;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.IO.Network;
 using osu.Framework.Logging;
-using Squirrel;
 
 namespace fluXis.Desktop;
 
@@ -16,49 +22,57 @@ public partial class WindowsUpdateManager : Component
     [BackgroundDependencyLoader]
     private async void load()
     {
-        var manager = new GithubUpdateManager(@"https://github.com/TeamFluXis/fluXis", false, null, "fluXis");
-        // var manager = new UpdateManager(@"C:\Users\Flux\fluXis_dev", "fluXis");
+        var logger = Logger.GetLogger("update");
 
-        if (manager.CurrentlyInstalledVersion() is { } version)
-            Logger.Log($"Current version: {version}", LoggingTarget.Runtime, LogLevel.Important);
-        else
+        var current = FluXisGameBase.Version;
+
+        if (current == null)
         {
-            Logger.Log("No version installed.", LoggingTarget.Runtime, LogLevel.Important);
+            logger.Add("No version installed.");
             return;
         }
 
-        Logger.Log("Checking for updates...", LoggingTarget.Runtime, LogLevel.Important);
-        var info = await manager.CheckForUpdate().ConfigureAwait(false);
-
-        if (info.ReleasesToApply.Count == 0)
+        if (FluXisGameBase.IsDebug)
         {
-            Logger.Log("No updates available.", LoggingTarget.Runtime, LogLevel.Important);
+            logger.Add("Running in debug mode. Skipping update check.");
             return;
         }
 
-        notifications.Post("There is an update available, check the GitHub releases page to download it.");
+        logger.Add($"Current version: {current}");
+        logger.Add("Checking for updates...");
 
-        /*var loading = new LoadingNotification
-        {
-            TextLoading = "Applying update...",
-            TextSuccess = "Update applied. Restarting...",
-            TextFailure = "Update failed. Check logs for more information."
-        };
+        var latest = fetchLatestVersion();
 
-        try
+        if (!Version.TryParse(latest, out var latestVersion))
         {
-            notifications.Post("An update is available. Downloading...");
-            await manager.DownloadReleases(info.ReleasesToApply).ConfigureAwait(false);
-            notifications.AddNotification(loading);
-            await manager.ApplyReleases(info).ConfigureAwait(false);
-            loading.State = LoadingState.Loaded;
-            await UpdateManager.RestartAppWhenExited().ContinueWith(_ => game.Exit());
+            logger.Add($"Failed to parse latest version. {latestVersion}");
+            return;
         }
-        catch (Exception e)
+
+        logger.Add($"Latest version: {latestVersion}");
+
+        if (current >= latestVersion)
         {
-            Logger.Error(e, "Update failed.");
-            loading.State = LoadingState.Failed;
-            throw;
-        }*/
+            logger.Add("No updates available.");
+            return;
+        }
+
+        notifications.Post("There is an update available.\nLaunching updater in 5 seconds.");
+
+        await Task.Delay(5000);
+        Process.Start("Updater.exe");
+        Environment.Exit(0);
+    }
+
+    private string fetchLatestVersion()
+    {
+        const string url = "https://api.github.com/repos/TeamfluXis/fluXis/releases/latest";
+        var request = new WebRequest(url);
+        request.AddHeader("User-Agent", "fluXis.Updater");
+        request.Method = HttpMethod.Get;
+        request.Perform();
+
+        var json = JObject.Parse(request.GetResponseString());
+        return json["tag_name"]?.ToString() ?? "";
     }
 }
