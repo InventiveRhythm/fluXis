@@ -9,9 +9,9 @@ namespace fluXis.Game.Mods.Drawables;
 
 public partial class ModList : FillFlowContainer<ModIcon>
 {
-    private IEnumerable<IMod> mods;
+    private List<IMod> mods = new();
 
-    public IEnumerable<IMod> Mods
+    public List<IMod> Mods
     {
         get => mods;
         set
@@ -22,12 +22,14 @@ public partial class ModList : FillFlowContainer<ModIcon>
         }
     }
 
+    public int ModSpacing { get; set; } = 10;
+
     [BackgroundDependencyLoader]
     private void load()
     {
         AutoSizeAxes = Axes.Both;
         Direction = FillDirection.Horizontal;
-        Spacing = new Vector2(10);
+        Spacing = new Vector2(ModSpacing);
 
         InternalChildren = Mods.Select(mod => new ModIcon
         {

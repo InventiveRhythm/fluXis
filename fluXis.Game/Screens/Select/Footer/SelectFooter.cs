@@ -62,11 +62,7 @@ public partial class SelectFooter : Container
                                 Width = 100,
                                 Name = "Spacer"
                             },
-                            new SelectFooterButton
-                            {
-                                Text = "Mods",
-                                Action = openModSelector
-                            },
+                            new SelectModsButton { ModSelector = Screen.ModSelector },
                             new SelectFooterButton
                             {
                                 Text = "Random",

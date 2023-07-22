@@ -43,6 +43,7 @@ public partial class ModSelector : Container
         sampleDeselect = samples.Get("UI/Select/ModSelect-Deselect");
 
         RelativeSizeAxes = Axes.Both;
+        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
@@ -277,10 +278,17 @@ public partial class ModSelector : Container
 
     private void updateVisibility()
     {
-        background.FadeTo(IsOpen.Value ? 1 : 0, 400);
         content.MoveToX(IsOpen.Value ? 0 : .5f, 800, Easing.OutQuint);
+        background.FadeTo(IsOpen.Value ? 1 : 0, 400).OnComplete(_ =>
+        {
+            if (!IsOpen.Value) Hide();
+        });
 
-        if (IsOpen.Value) sampleOpen?.Play();
+        if (IsOpen.Value)
+        {
+            sampleOpen?.Play();
+            Show();
+        }
         else sampleClose?.Play();
     }
 
@@ -289,7 +297,7 @@ public partial class ModSelector : Container
         maxScoreText.Text = $"Max Score: {(int)Math.Round(scoreMultiplier * 100)}%";
     }
 
-    protected override bool OnHover(HoverEvent e) => IsOpen.Value;
-    protected override bool OnDragStart(DragStartEvent e) => IsOpen.Value;
-    protected override bool OnScroll(ScrollEvent e) => IsOpen.Value;
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
 }
