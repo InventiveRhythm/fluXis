@@ -1,4 +1,5 @@
-﻿using fluXis.Game.Graphics;
+﻿using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
@@ -24,9 +25,10 @@ public partial class Bluescreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind
     private FluXisSpriteText loadingText;
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures)
+    private void load(TextureStore textures, AudioClock clock)
     {
         Schedule(() => cursorOverlay.FadeOut());
+        clock.Stop();
 
         InternalChildren = new Drawable[]
         {

@@ -1,20 +1,12 @@
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Screens;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select;
 
 public partial class SelectScreen
 {
     protected override bool OnJoystickPress(JoystickPressEvent e)
-    {
-        Logger.Log($"[{GamePad.GetName(0)}] Pressed gampad button {e.Button}", LoggingTarget.Runtime, LogLevel.Important);
-        return handleGeneric(e);
-    }
-
-    private bool handleGeneric(JoystickButtonEvent e)
     {
         switch (e.Button)
         {

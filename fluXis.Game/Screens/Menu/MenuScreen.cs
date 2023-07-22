@@ -176,7 +176,7 @@ public partial class MenuScreen : FluXisScreen
                             playButton = new MenuPlayButton
                             {
                                 Description = $"{maps.MapSets.Count} maps loaded",
-                                Action = () => this.Push(new SelectScreen()),
+                                Action = continueToPlay,
                                 Width = 710
                             },
                             new SmallMenuButton
@@ -191,7 +191,7 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Multiplayer",
                                 Description = "Play against other players",
                                 Icon = FontAwesome.Solid.Users,
-                                Action = () => this.Push(new MultiplayerScreen()),
+                                Action = continueToMultiplayer,
                                 Width = 300,
                                 X = 110,
                                 Y = 80
@@ -201,7 +201,7 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Ranking",
                                 Description = "Check online leaderboards",
                                 Icon = FontAwesome.Solid.Trophy,
-                                Action = () => this.Push(new Rankings()),
+                                Action = continueToRankings,
                                 Width = 290,
                                 X = 430,
                                 Y = 80
@@ -221,11 +221,7 @@ public partial class MenuScreen : FluXisScreen
                                 Width = 340,
                                 X = 130,
                                 Y = 160,
-                                Action = () =>
-                                {
-                                    clock.Stop();
-                                    this.Push(new Bluescreen());
-                                }
+                                Action = continueToBrowse
                             },
                             new MenuButton
                             {
@@ -239,6 +235,10 @@ public partial class MenuScreen : FluXisScreen
                                 Y = 160
                             }
                         }
+                    },
+                    new MenuGamepadTooltips
+                    {
+                        ButtonContainer = buttonContainer
                     },
                     linkContainer = new FillFlowContainer
                     {
@@ -283,6 +283,11 @@ public partial class MenuScreen : FluXisScreen
         game.OnSongChanged += songChanged;
     }
 
+    private void continueToPlay() => this.Push(new SelectScreen());
+    private void continueToMultiplayer() => this.Push(new MultiplayerScreen());
+    private void continueToRankings() => this.Push(new Rankings());
+    private void continueToBrowse() => this.Push(new Bluescreen());
+
     private bool canPlayAnimation()
     {
         if (pressedStart) return false;
@@ -312,7 +317,6 @@ public partial class MenuScreen : FluXisScreen
     protected override bool OnKeyDown(KeyDownEvent e) => canPlayAnimation();
     protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
     protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
-    protected override bool OnJoystickPress(JoystickPressEvent e) => canPlayAnimation();
 
     private void showMenu(int duration = 400)
     {
