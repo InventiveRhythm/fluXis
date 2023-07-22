@@ -6,6 +6,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
@@ -106,6 +107,8 @@ public partial class Playfield : Container
 
     protected override void Update()
     {
+        Scale = new Vector2(1, IsUpScroll ? -1 : 1);
+
         hitLine.Width = Stage.Width;
         laneCovers.Width = Stage.Width;
 

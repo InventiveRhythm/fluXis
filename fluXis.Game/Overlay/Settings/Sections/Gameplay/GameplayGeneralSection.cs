@@ -18,7 +18,6 @@ public partial class GameplayGeneralSection : SettingsSubSection
             new SettingsDropdown<ScrollDirection>
             {
                 Label = "Scroll Direction",
-                Enabled = false,
                 Items = Enum.GetValues<ScrollDirection>(),
                 Bindable = Config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection)
             },
