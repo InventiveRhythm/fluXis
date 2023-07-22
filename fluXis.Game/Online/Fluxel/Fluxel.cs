@@ -340,7 +340,10 @@ public partial class Fluxel : Component
         var request = new WebRequest($"{Endpoint.APIUrl}{url}");
         request.AllowInsecureRequests = true;
         request.Method = method;
-        request.AddHeader("Authorization", Token);
+
+        if (!string.IsNullOrEmpty(Token))
+            request.AddHeader("Authorization", Token);
+
         return request;
     }
 
