@@ -12,7 +12,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
@@ -382,7 +381,6 @@ public partial class HitObjectManager : Container<HitObject>
                     var snap = time + add;
 
                     snapIndicies.TryAdd((int)snap, j);
-                    Logger.Log($"Added snap index {j} at {(int)snap}");
                 }
 
                 time += increment;
