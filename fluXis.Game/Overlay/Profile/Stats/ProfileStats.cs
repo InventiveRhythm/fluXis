@@ -34,7 +34,7 @@ public partial class ProfileStats : Container
             countryRank.Value = value.CountryRank == 0 ? "#---" : $"#{value.CountryRank}";
             overallRating.Value = value.OverallRating == 0 ? "--.--" : value.OverallRating.ToStringInvariant("N2");
             potentialRating.Value = value.PotentialRating == 0 ? "--.--" : value.PotentialRating.ToStringInvariant("N2");
-            accuracy.Value = value.OverallAccuracy == 0 ? "--.--%" : $"{value.OverallAccuracy.ToStringInvariant("P2").Replace(" ", "")}";
+            accuracy.Value = value.OverallAccuracy == 0 ? "--.--%" : $"{(value.OverallAccuracy / 100).ToStringInvariant("P2").Replace(" ", "")}";
             rankedScore.Value = value.RankedScore == 0 ? "---,---" : value.RankedScore.ToString("N0");
             maxCombo.Value = value.MaxCombo == 0 ? "---x" : value.MaxCombo.ToString("N0") + "x";
         }
