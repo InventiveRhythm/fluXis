@@ -26,6 +26,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -75,7 +76,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     private Sample menuBack;
     private Sample menuScroll;
 
-    private FluXisSpriteText noMapsText;
+    private Container noMapsContainer;
     private LoadingIcon loadingIcon;
     private Container letterContainer;
     private FluXisSpriteText currentLetter;
@@ -125,14 +126,56 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         Width = .5f,
                         Children = new Drawable[]
                         {
-                            noMapsText = new FluXisSpriteText
+                            noMapsContainer = new Container
                             {
+                                AutoSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Text = "No maps found!",
-                                FontSize = 32,
-                                Blending = BlendingParameters.Additive,
-                                Alpha = 0
+                                CornerRadius = 20,
+                                Masking = true,
+                                Alpha = 0,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Colour4.Black,
+                                        Alpha = 0.5f
+                                    },
+                                    new FillFlowContainer
+                                    {
+                                        AutoSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Vertical,
+                                        Padding = new MarginPadding(20),
+                                        Children = new Drawable[]
+                                        {
+                                            new SpriteIcon
+                                            {
+                                                Icon = FontAwesome.Solid.ExclamationTriangle,
+                                                Size = new Vector2(30),
+                                                Anchor = Anchor.TopCentre,
+                                                Origin = Anchor.TopCentre
+                                            },
+                                            new FluXisSpriteText
+                                            {
+                                                Text = "No maps found!",
+                                                FontSize = 32,
+                                                Shadow = true,
+                                                Anchor = Anchor.TopCentre,
+                                                Origin = Anchor.TopCentre
+                                            },
+                                            new FluXisSpriteText
+                                            {
+                                                Text = "Try changing your search filters.",
+                                                FontSize = 26,
+                                                Colour = FluXisColors.Text2,
+                                                Shadow = true,
+                                                Anchor = Anchor.TopCentre,
+                                                Origin = Anchor.TopCentre
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             letterContainer = new Container
                             {
@@ -162,7 +205,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                             loadingIcon = new LoadingIcon
                             {
                                 Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(50)
                             }
                         }
                     }
@@ -189,7 +233,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             lookup[set] = entry;
         }
 
-        if (!sets.Any()) Schedule(() => noMapsText.FadeIn(500));
+        if (!sets.Any()) Schedule(() => noMapsContainer.FadeIn(500));
     }
 
     protected override void LoadComplete()
@@ -227,7 +271,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
             MapSet.Value = set;
 
-            noMapsText.FadeOut(200);
+            noMapsContainer.FadeOut(200);
         });
     }
 
@@ -350,7 +394,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             changeSelection(1);
 
         if (maps.Count == 0)
-            noMapsText.FadeIn(500);
+            noMapsContainer.FadeIn(500);
     }
 
     public void ExportMapSet(RealmMapSet set)
@@ -600,9 +644,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         }
 
         if (!maps.Any())
-            noMapsText.FadeIn(200);
+            noMapsContainer.FadeIn(200);
         else
-            noMapsText.FadeOut(200);
+            noMapsContainer.FadeOut(200);
     }
 
     public void RandomMap()
