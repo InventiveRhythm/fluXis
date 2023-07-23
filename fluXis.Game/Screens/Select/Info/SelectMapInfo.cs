@@ -20,8 +20,7 @@ public partial class SelectMapInfo : GridContainer
     private AudioClock clock { get; set; }
 
     public SelectScreen Screen { get; set; }
-
-    public ScoreList ScoreList;
+    public ScoreList ScoreList { get; set; }
 
     private BackgroundStack backgroundStack;
     private FluXisSpriteText titleText;
@@ -257,23 +256,28 @@ public partial class SelectMapInfo : GridContainer
     protected override void LoadComplete()
     {
         clock.OnBeat += OnBeat;
-
-        base.LoadComplete();
     }
 
     public void ChangeMap(RealmMap map)
     {
         backgroundStack.ChangeMap(map);
         ScoreList.SetMap(map);
-        titleText.Text = map.Metadata.Title;
-        artistText.Text = map.Metadata.Artist;
-        // difficultyText.Text = map.Difficulty;
-        // mapperText.Text = map.Metadata.Mapper;
+    }
 
-        lengthText.Text = TimeUtils.Format(map.Filters.Length, false);
-        bpmText.Text = map.Filters.BPMMin == map.Filters.BPMMax ? $"{map.Filters.BPMMin}" : $"{map.Filters.BPMMin}-{map.Filters.BPMMax}";
-        npsText.Text = $"{map.Filters.NotesPerSecond:F}".Replace(",", ".");
-        lnpText.Text = $"{map.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Screen.MapInfo.Value == null)
+            return;
+
+        titleText.Text = Screen.MapInfo.Value.Metadata.Title;
+        artistText.Text = Screen.MapInfo.Value.Metadata.Artist;
+
+        lengthText.Text = TimeUtils.Format(Screen.MapInfo.Value.Filters.Length / clock.Rate, false);
+        bpmText.Text = Screen.MapInfo.Value.Filters.BPMMin == Screen.MapInfo.Value.Filters.BPMMax ? $"{Screen.MapInfo.Value.Filters.BPMMin * clock.Rate}" : $"{Screen.MapInfo.Value.Filters.BPMMin * clock.Rate}-{Screen.MapInfo.Value.Filters.BPMMax * clock.Rate}";
+        npsText.Text = $"{Screen.MapInfo.Value.Filters.NotesPerSecond * clock.Rate:F}".Replace(",", ".");
+        lnpText.Text = $"{Screen.MapInfo.Value.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
     }
 
     private void OnBeat(int beat)
