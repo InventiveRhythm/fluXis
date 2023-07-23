@@ -39,6 +39,12 @@ public partial class Cursor : Container
             if (!visible)
                 tooltipContainer.FadeIn(200).ScaleTo(1f, 600, Easing.OutElastic);
 
+            var roundness = 0f;
+
+            if (value is CompositeDrawable cornerRadius)
+                roundness = cornerRadius.CornerRadius;
+
+            tooltipContainer.CornerRadius = roundness == 0 ? 10 : roundness;
             visible = true;
         }
     }
@@ -67,7 +73,7 @@ public partial class Cursor : Container
             AutoSizeAxes = Axes.Both,
             X = 30,
             Y = 20,
-            CornerRadius = 5,
+            CornerRadius = 10,
             Scale = new Vector2(.9f),
             Masking = true,
             EdgeEffect = new EdgeEffectParameters

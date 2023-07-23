@@ -94,7 +94,11 @@ public partial class DrawableChatMessage : Container
             }
         };
 
-        LoadComponentAsync(new DrawableAvatar(InitialMessage.Sender) { RelativeSizeAxes = Axes.Both }, avatar =>
+        LoadComponentAsync(new DrawableAvatar(InitialMessage.Sender)
+        {
+            RelativeSizeAxes = Axes.Both,
+            ShowTooltip = true
+        }, avatar =>
         {
             avatarContainer.Add(avatar);
             avatar.FadeInFromZero(200);
