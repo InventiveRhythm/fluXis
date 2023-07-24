@@ -5,12 +5,15 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.UI;
 
-public partial class DangerHealthOverlay : GameplayHUDElement
+public partial class DangerHealthOverlay : Container
 {
+    public GameplayScreen Screen { get; set; }
+
     [Resolved]
     private AudioClock clock { get; set; }
 

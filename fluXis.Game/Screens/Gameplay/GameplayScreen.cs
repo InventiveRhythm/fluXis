@@ -188,8 +188,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                     new JudgementCounter(Performance),
                     createHudElement(new HealthBar()),
                     createHudElement(new HitErrorBar()),
-                    createHudElement(new ModsDisplay()),
-                    createHudElement(new KeyOverlay()),
                     createHudElement(new AttributeText
                     {
                         Anchor = Anchor.BottomLeft,
@@ -220,11 +218,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                         Margin = new MarginPadding(10) { Bottom = 52 },
                         AttributeType = AttributeType.Mapper,
                         Text = "mapped by {value}"
-                    })
+                    }),
+                    new ModsDisplay { Screen = this },
+                    new KeyOverlay { Screen = this }
                 }
             },
-            createHudElement(new AutoPlayDisplay()),
-            createHudElement(new DangerHealthOverlay()),
+            new AutoPlayDisplay { Screen = this },
+            new DangerHealthOverlay { Screen = this },
             new LaneSwitchAlert { Playfield = Playfield },
             new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
             failOverlay = new FailOverlay { Screen = this },

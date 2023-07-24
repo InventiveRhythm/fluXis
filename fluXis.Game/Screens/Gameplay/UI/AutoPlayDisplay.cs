@@ -2,11 +2,14 @@ using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.UI;
 
-public partial class AutoPlayDisplay : GameplayHUDElement
+public partial class AutoPlayDisplay : Container
 {
+    public GameplayScreen Screen { get; set; }
+
     private FluXisSpriteText text;
     private readonly Bindable<bool> autoPlay = new();
 

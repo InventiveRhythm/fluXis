@@ -11,10 +11,12 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.UI;
 
-public partial class KeyOverlay : GameplayHUDElement
+public partial class KeyOverlay : Container
 {
+    public GameplayScreen Screen { get; set; }
+
     [Resolved]
     private FluXisRealm realm { get; set; }
 

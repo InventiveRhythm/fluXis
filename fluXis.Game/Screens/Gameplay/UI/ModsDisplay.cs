@@ -1,11 +1,14 @@
 using fluXis.Game.Mods.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.UI;
 
-public partial class ModsDisplay : GameplayHUDElement
+public partial class ModsDisplay : Container
 {
+    public GameplayScreen Screen { get; set; }
+
     private ModList modsContainer;
 
     [BackgroundDependencyLoader]
