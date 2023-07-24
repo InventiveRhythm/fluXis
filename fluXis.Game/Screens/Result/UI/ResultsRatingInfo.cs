@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,6 +12,9 @@ namespace fluXis.Game.Screens.Result.UI;
 
 public partial class ResultsRatingInfo : Container
 {
+    [Resolved]
+    private Fluxel fluxel { get; set; }
+
     private readonly bool showPlayData;
 
     public APIResponse<APIScoreResponse> ScoreResponse
@@ -36,6 +40,9 @@ public partial class ResultsRatingInfo : Container
 
             ovr.Text = value.Data.OverallRating.ToStringInvariant();
             pvr.Text = value.Data.PotentialRating.ToStringInvariant();
+
+            fluxel.LoggedInUser.OverallRating = (float)value.Data.OverallRating;
+            fluxel.LoggedInUser.PotentialRating = (float)value.Data.PotentialRating;
 
             switch (ovrc)
             {

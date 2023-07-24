@@ -21,12 +21,6 @@ public class APIUser : APIUserShort
     [JsonProperty("is_online")]
     public bool Online { get; set; }
 
-    [JsonProperty("ovr")]
-    public float OverallRating { get; set; }
-
-    [JsonProperty("ptr")]
-    public float PotentialRating { get; set; }
-
     [JsonProperty("ova")]
     public float OverallAccuracy { get; set; }
 

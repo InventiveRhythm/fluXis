@@ -16,6 +16,12 @@ public class APIUserShort
     [JsonProperty("role")]
     public int Role { get; set; }
 
+    [JsonProperty("ovr")]
+    public double OverallRating { get; set; }
+
+    [JsonProperty("ptr")]
+    public double PotentialRating { get; set; }
+
     public string GetAvatarUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/avatar/" + ID;
     public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/banner/" + ID;
 

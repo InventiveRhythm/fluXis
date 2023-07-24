@@ -3,6 +3,7 @@ using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Profile;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -26,7 +27,10 @@ public partial class ToolbarProfile : Container
     private Container avatarContainer;
     private DrawableAvatar avatar;
     private FluXisSpriteText username;
+    private FluXisSpriteText ptrText;
     private Box background;
+
+    private double ptr;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -51,12 +55,33 @@ public partial class ToolbarProfile : Container
                     Alpha = 0
                 }
             },
-            username = new FluXisSpriteText
+            new FillFlowContainer
             {
-                Text = user?.Username ?? "Not logged in",
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Margin = new MarginPadding { Right = 45, Left = 10 }
+                Spacing = new Vector2(0, -1),
+                Margin = new MarginPadding { Right = 45, Left = 10 },
+                Children = new Drawable[]
+                {
+                    username = new FluXisSpriteText
+                    {
+                        Text = user?.Username ?? "Not logged in",
+                        FontSize = 18,
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight
+                    },
+                    ptrText = new FluXisSpriteText
+                    {
+                        Text = "--.--",
+                        Colour = FluXisColors.Text2,
+                        FontSize = 12,
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
+                        Margin = new MarginPadding { Right = 2 }
+                    }
+                }
             },
             new Container
             {
@@ -92,6 +117,17 @@ public partial class ToolbarProfile : Container
 
         username.Text = user.Username;
         avatar.UpdateUser(user);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (fluxel.LoggedInUser == null) return;
+        if (ptr == fluxel.LoggedInUser.PotentialRating) return;
+
+        ptr = fluxel.LoggedInUser.PotentialRating;
+        ptrText.Text = ptr.ToStringInvariant("0.00");
     }
 
     protected override bool OnClick(ClickEvent e)
