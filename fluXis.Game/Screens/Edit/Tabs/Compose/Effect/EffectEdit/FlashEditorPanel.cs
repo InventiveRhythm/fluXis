@@ -1,44 +1,81 @@
 using System;
 using System.Globalization;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect.EffectEdit;
 
-public partial class FlashEffectEditor : FluXisPopover
+public partial class FlashEditorPanel : Panel
 {
-    public FlashEvent FlashEvent { get; init; }
+    public FlashEvent Event { get; set; }
+    public MapEvents MapEvents { get; init; }
+    public EditorClock EditorClock { get; set; }
 
     [Resolved]
-    private EditorClock clock { get; set; }
+    private NotificationOverlay notifications { get; set; }
 
-    private float beatLength => clock.MapInfo.GetTimingPoint(FlashEvent.Time).MsPerBeat;
+    private float beatLength => EditorClock.MapInfo.GetTimingPoint(Event.Time).MsPerBeat;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Child = new FillFlowContainer
+        Width = 400;
+        AutoSizeAxes = Axes.Y;
+        Content.RelativeSizeAxes = Axes.X;
+        Content.AutoSizeAxes = Axes.Y;
+
+        Content.Child = new FillFlowContainer
         {
+            RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
-            Width = 250,
+            Spacing = new Vector2(10),
             Direction = FillDirection.Vertical,
-            Spacing = new Vector2(0, 5),
             Children = new Drawable[]
             {
+                new Container
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Children = new Drawable[]
+                    {
+                        new FluXisSpriteText
+                        {
+                            Text = "Flash Editor",
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            FontSize = 30
+                        },
+                        new ClickableSpriteIcon
+                        {
+                            Anchor = Anchor.TopRight,
+                            Origin = Anchor.TopRight,
+                            Icon = FontAwesome.Solid.Question,
+                            Size = new Vector2(20),
+                            Margin = new MarginPadding(5),
+                            Action = () => notifications.Post("Not implemented yet!")
+                        }
+                    }
+                },
                 new LabelledTextBox
                 {
                     LabelText = "Time",
-                    Text = FlashEvent.Time.ToStringInvariant(),
+                    Text = Event.Time.ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
-                            FlashEvent.Time = result;
+                            Event.Time = result;
                         else
                             textBox.NotifyError();
                     }
@@ -46,11 +83,11 @@ public partial class FlashEffectEditor : FluXisPopover
                 new BeatsTextBox
                 {
                     LabelText = "Duration",
-                    Text = (FlashEvent.Duration / beatLength).ToStringInvariant(),
+                    Text = (Event.Duration / beatLength).ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
-                            FlashEvent.Duration = result * beatLength;
+                            Event.Duration = result * beatLength;
                         else
                             textBox.NotifyError();
                     }
@@ -58,7 +95,7 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "Start Color",
-                    Text = FlashEvent.StartColor.ToHex(),
+                    Text = Event.StartColor.ToHex(),
                     OnTextChanged = textBox =>
                     {
                         try
@@ -74,7 +111,7 @@ public partial class FlashEffectEditor : FluXisPopover
                                 throw new Exception();
 
                             var color = Colour4.FromHex(text);
-                            FlashEvent.StartColor = color;
+                            Event.StartColor = color;
                         }
                         catch
                         {
@@ -85,13 +122,13 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "Start Opacity",
-                    Text = FlashEvent.StartOpacity.ToStringInvariant(),
+                    Text = Event.StartOpacity.ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
                         {
                             if (result is >= 0 and <= 1)
-                                FlashEvent.StartOpacity = result;
+                                Event.StartOpacity = result;
                             else
                                 textBox.NotifyError();
                         }
@@ -102,7 +139,7 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "End Color",
-                    Text = FlashEvent.EndColor.ToHex(),
+                    Text = Event.EndColor.ToHex(),
                     OnTextChanged = textBox =>
                     {
                         try
@@ -118,7 +155,7 @@ public partial class FlashEffectEditor : FluXisPopover
                                 throw new Exception();
 
                             var color = Colour4.FromHex(text);
-                            FlashEvent.EndColor = color;
+                            Event.EndColor = color;
                         }
                         catch
                         {
@@ -129,18 +166,48 @@ public partial class FlashEffectEditor : FluXisPopover
                 new LabelledTextBox
                 {
                     LabelText = "End Opacity",
-                    Text = FlashEvent.EndOpacity.ToStringInvariant(),
+                    Text = Event.EndOpacity.ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
                         {
                             if (result is >= 0 and <= 1)
-                                FlashEvent.EndOpacity = result;
+                                Event.EndOpacity = result;
                             else
                                 textBox.NotifyError();
                         }
                         else
                             textBox.NotifyError();
+                    }
+                },
+                new FillFlowContainer
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(10),
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Children = new FluXisButton[]
+                    {
+                        new()
+                        {
+                            Width = 100,
+                            Height = 40,
+                            Text = "Delete",
+                            Color = FluXisColors.ButtonRed,
+                            Action = () =>
+                            {
+                                MapEvents.FlashEvents.Remove(Event);
+                                Hide();
+                            }
+                        },
+                        new()
+                        {
+                            Width = 100,
+                            Height = 40,
+                            Text = "Cancel",
+                            Action = Hide
+                        }
                     }
                 }
             }

@@ -17,7 +17,7 @@ public partial class LabelledTextBox : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Height = 20;
+        Height = 30;
         RelativeSizeAxes = Axes.X;
 
         Children = new Drawable[]
@@ -25,13 +25,14 @@ public partial class LabelledTextBox : Container
             new FluXisSpriteText
             {
                 Text = LabelText,
+                FontSize = 30,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
             textBox = new FluXisTextBox
             {
-                Height = 20,
-                Width = 100,
+                Height = 30,
+                Width = 200,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Text = Text,
@@ -52,7 +53,7 @@ public partial class BeatsTextBox : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Height = 20;
+        Height = 30;
         RelativeSizeAxes = Axes.X;
 
         Children = new Drawable[]
@@ -60,23 +61,25 @@ public partial class BeatsTextBox : Container
             new FluXisSpriteText
             {
                 Text = LabelText,
+                FontSize = 30,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
             new GridContainer
             {
-                Width = 100,
-                Height = 20,
+                Width = 200,
+                Height = 30,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 ColumnDimensions = new[]
                 {
                     new Dimension(),
+                    new Dimension(GridSizeMode.Absolute, 5),
                     new Dimension(GridSizeMode.AutoSize)
                 },
                 Content = new[]
                 {
-                    new Drawable[]
+                    new[]
                     {
                         textBox = new FluXisTextBox
                         {
@@ -84,12 +87,13 @@ public partial class BeatsTextBox : Container
                             Text = Text,
                             OnTextChanged = () => OnTextChanged?.Invoke(textBox)
                         },
+                        Empty(),
                         new FluXisSpriteText
                         {
                             Text = "beat(s)",
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,
-                            FontSize = 12
+                            FontSize = 18
                         }
                     }
                 }

@@ -3,22 +3,22 @@ using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Effect.EffectEdit;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
 
-public partial class EditorLaneSwitchEvent : ClickableContainer, IHasPopover
+public partial class EditorLaneSwitchEvent : ClickableContainer
 {
     [Resolved]
     private EditorValues values { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
 
     public MapInfo Map { get; set; }
     public LaneSwitchEvent Event { get; set; }
@@ -36,7 +36,14 @@ public partial class EditorLaneSwitchEvent : ClickableContainer, IHasPopover
         Action = () =>
         {
             if (values.Tool == EditorTool.Select)
-                this.ShowPopover();
+            {
+                game.Overlay = new LaneSwtichEditorPanel
+                {
+                    Event = Event,
+                    MapInfo = Map,
+                    EditorClock = clock
+                };
+            }
         };
 
         count = Event.Count;
@@ -82,6 +89,12 @@ public partial class EditorLaneSwitchEvent : ClickableContainer, IHasPopover
 
     protected override void Update()
     {
+        if (!values.MapEvents.LaneSwitchEvents.Contains(Event))
+        {
+            Expire();
+            return;
+        }
+
         var nextEvent = values.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
         if (nextEvent != null)
             length = nextEvent.Time - Event.Time;
@@ -118,6 +131,4 @@ public partial class EditorLaneSwitchEvent : ClickableContainer, IHasPopover
         Height = .5f * (length * values.Zoom);
         Y = -.5f * ((Event.Time - (float)clock.CurrentTime) * values.Zoom);
     }
-
-    public Popover GetPopover() => new LaneSwitchEffectEditor { LaneSwitchEvent = Event, MapInfo = Map };
 }
