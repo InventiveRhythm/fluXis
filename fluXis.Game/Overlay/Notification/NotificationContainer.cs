@@ -22,7 +22,7 @@ public partial class NotificationContainer : FillFlowContainer<Notification>
         Margin = new MarginPadding { Top = 10, Right = 20 };
         Direction = FillDirection.Vertical;
         AutoSizeAxes = Axes.Y;
-        Width = 300;
+        Width = 400;
         Spacing = new Vector2(0, 10);
     }
 

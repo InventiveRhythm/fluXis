@@ -1,11 +1,13 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Notification;
 
 public partial class ErrorNotification : SimpleNotification
 {
     public override string SampleAppearing => "UI/Notifications/error.mp3";
+    protected override IconUsage Icon => FontAwesome.Solid.ExclamationTriangle;
 
     public ErrorNotification()
     {
