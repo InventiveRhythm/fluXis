@@ -174,6 +174,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         if (Overlay is { IsLoaded: true, IsPresent: false } && !Overlay.Transforms.Any())
         {
             Schedule(() => overlayContainer.Remove(Overlay, false));
+            overlayDim.Alpha = 0;
+            buffer.BlurSigma = Vector2.Zero;
+            AudioClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
         }
         else if (Overlay is { IsLoaded: true })
         {
@@ -183,11 +186,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             var lowpass = (LowPassFilter.MAX - LowPassFilter.MIN) * Overlay.Alpha;
             lowpass = LowPassFilter.MAX - lowpass;
             AudioClock.LowPassFilter.Cutoff = (int)lowpass;
-        }
-        else if (Overlay is null)
-        {
-            overlayDim.Alpha = 0;
-            buffer.BlurSigma = Vector2.Zero;
         }
     }
 
