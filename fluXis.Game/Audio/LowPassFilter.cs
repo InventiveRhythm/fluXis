@@ -9,6 +9,8 @@ public partial class LowPassFilter : Component
     private AudioMixer mixer { get; }
     private readonly BQFParameters parameters;
 
+    public bool Enabled => mixer.Effects.Contains(parameters);
+
     public const int MAX = 22049;
     public const int MIN = 1000;
 
@@ -23,9 +25,12 @@ public partial class LowPassFilter : Component
                 return;
 
             if (value >= MAX)
+            {
                 removeFilter();
-            else
-                addFilter();
+                return;
+            }
+
+            addFilter();
 
             if (value < MIN)
                 value = MIN;
