@@ -592,7 +592,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         if (index < 0) index = letters.Length - 1;
         if (index >= letters.Length) index = 0;
 
-        while (maps.All(m => m.Metadata.Title.Length > 0 && getLetter(m.Metadata.Title[0]) != letters[index]))
+        while (maps.All(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) != letters[index]))
         {
             index += by;
 
@@ -614,7 +614,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
         Logger.Log($"Changing letter to {letter}");
 
-        var first = maps.FirstOrDefault(m => getLetter(m.Metadata.Title[0]) == letter);
+        var first = maps.FirstOrDefault(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter);
         if (first != null) MapSet.Value = first;
 
         currentLetter.Text = letter.ToString();
