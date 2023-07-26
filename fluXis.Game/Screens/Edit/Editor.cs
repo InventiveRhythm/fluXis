@@ -35,7 +35,6 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.IO.Network;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -706,12 +705,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         var path = mapStore.Export(Map.MapSet, notification, false);
         var buffer = await File.ReadAllBytesAsync(path);
 
-        string requestUrl = Map.MapSet.OnlineID != -1 ? $"{fluxel.Endpoint.APIUrl}/map/{Map.MapSet.OnlineID}/update" : $"{fluxel.Endpoint.APIUrl}/maps/upload";
-
-        var request = new WebRequest(requestUrl);
-        request.AllowInsecureRequests = true;
-        request.Method = HttpMethod.Post;
-        request.AddHeader("Authorization", fluxel.Token);
+        var request = fluxel.CreateAPIRequest(Map.MapSet.OnlineID != -1 ? $"/map/{Map.MapSet.OnlineID}/update" : "/maps/upload", HttpMethod.Post);
         request.AddFile("file", buffer);
         request.UploadProgress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
         await request.PerformAsync();
