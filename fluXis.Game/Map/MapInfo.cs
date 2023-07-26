@@ -9,6 +9,7 @@ public class MapInfo
 {
     public string AudioFile { get; set; } = string.Empty;
     public string BackgroundFile { get; set; } = string.Empty;
+    public string CoverFile { get; set; } = string.Empty;
     public string VideoFile { get; set; } = string.Empty;
     public string EffectFile { get; set; } = string.Empty;
     public MapMetadata Metadata { get; set; }

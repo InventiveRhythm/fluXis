@@ -117,6 +117,9 @@ public class FluXisImport : MapImporter
 
                     map.Filters = MapUtils.GetMapFilters(mapInfo, events);
                     maps.Add(map);
+
+                    if (!string.IsNullOrEmpty(mapInfo.CoverFile))
+                        mapSet.Cover = mapInfo.CoverFile;
                 }
             }
 

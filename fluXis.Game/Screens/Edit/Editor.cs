@@ -615,6 +615,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         copyFile(file);
         Map.MapSet.Cover = file.Name;
+        MapInfo.CoverFile = file.Name;
     }
 
     public void SetVideo(FileInfo file)
