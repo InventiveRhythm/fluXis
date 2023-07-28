@@ -142,12 +142,12 @@ public partial class InputGameplaySection : SettingsSubSection
             new SettingsKeybind
             {
                 Label = "Quick Restart",
-                Keybinds = new[] { FluXisKeybind.Restart }
+                Keybinds = new[] { FluXisKeybind.QuickRestart }
             },
             new SettingsKeybind
             {
                 Label = "Quick Exit",
-                Keybinds = new[] { FluXisKeybind.Exit }
+                Keybinds = new[] { FluXisKeybind.QuickExit }
             }
         });
     }

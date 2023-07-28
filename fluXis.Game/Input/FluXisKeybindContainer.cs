@@ -115,8 +115,8 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         getBinding(FluXisKeybind.Key10k10, InputKey.L),
 
         new KeyBinding(InputKey.Space, FluXisKeybind.Skip),
-        getBinding(FluXisKeybind.Restart, InputKey.Shift),
-        getBinding(FluXisKeybind.Exit, InputKey.Control),
+        getBinding(FluXisKeybind.QuickRestart, InputKey.Shift),
+        getBinding(FluXisKeybind.QuickExit, InputKey.Control),
         new KeyBinding(InputKey.Escape, FluXisKeybind.GameplayPause),
         new KeyBinding(InputKey.Left, FluXisKeybind.SeekBackward),
         new KeyBinding(InputKey.Right, FluXisKeybind.SeekForward),
@@ -264,8 +264,8 @@ public enum FluXisKeybind
 
     // Ingame
     Skip,
-    Restart,
-    Exit,
+    QuickRestart,
+    QuickExit,
     GameplayPause,
     SeekBackward,
     SeekForward,

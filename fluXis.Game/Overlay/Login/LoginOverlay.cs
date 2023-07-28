@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Graphics;
+using fluXis.Game.Input;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login.UI;
 using fluXis.Game.Overlay.Register;
@@ -7,12 +8,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Login;
 
-public partial class LoginOverlay : Container
+public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     [Resolved]
     private RegisterOverlay register { get; set; }
@@ -44,7 +47,7 @@ public partial class LoginOverlay : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = 0.5f
+                    Alpha = .5f
                 }
             },
             content = new ClickableContainer
@@ -190,6 +193,25 @@ public partial class LoginOverlay : Container
         this.FadeOut(200);
         content.ResizeHeightTo(0, 200, Easing.InQuint);
     }
+
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnKeyDown(KeyDownEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisKeybind.Back:
+                Hide();
+                break;
+        }
+
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 
     private partial class LoginContent : FillFlowContainer
     {

@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Input;
 using fluXis.Game.Online.API.Account;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
@@ -7,12 +8,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Register;
 
-public partial class RegisterOverlay : Container
+public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     [Resolved]
     private NotificationOverlay notifications { get; set; }
@@ -44,7 +47,7 @@ public partial class RegisterOverlay : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = 0.5f
+                    Alpha = .5f
                 }
             },
             new ClickableContainer
@@ -273,4 +276,23 @@ public partial class RegisterOverlay : Container
     }
 
     public override void Hide() => this.FadeOut(200);
+
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnKeyDown(KeyDownEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisKeybind.Back:
+                Hide();
+                break;
+        }
+
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 }

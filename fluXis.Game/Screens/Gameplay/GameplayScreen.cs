@@ -446,12 +446,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         switch (e.Action)
         {
-            case FluXisKeybind.Restart:
+            case FluXisKeybind.QuickRestart:
                 quickActionOverlay.OnConfirm = RestartMap;
                 quickActionOverlay.IsHolding = true;
                 return true;
 
-            case FluXisKeybind.Exit:
+            case FluXisKeybind.QuickExit:
                 quickActionOverlay.OnConfirm = this.Exit;
                 quickActionOverlay.IsHolding = true;
                 return true;
@@ -493,7 +493,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
     {
-        if (e.Action is FluXisKeybind.Restart or FluXisKeybind.Exit)
+        if (e.Action is FluXisKeybind.QuickRestart or FluXisKeybind.QuickExit)
             quickActionOverlay.IsHolding = false;
     }
 

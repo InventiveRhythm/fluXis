@@ -42,7 +42,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black,
-                    Alpha = .25f
+                    Alpha = .5f
                 }
             },
             content = new ClickableContainer
@@ -152,6 +152,9 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
         this.FadeIn(200);
     }
+
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
 
     protected override bool OnHover(HoverEvent e)
     {

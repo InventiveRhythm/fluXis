@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Input;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Users;
@@ -20,6 +21,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
@@ -28,13 +30,13 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Profile;
 
-public partial class ProfileOverlay : Container
+public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     private bool isVisible { get; set; }
 
     private APIUser user = APIUser.DummyUser(-1);
 
-    private Container content;
+    private ClickableContainer content;
 
     private DrawableBanner banner;
     private DrawableAvatar avatar;
@@ -64,11 +66,11 @@ public partial class ProfileOverlay : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = 0.25f
+                    Alpha = .5f
                 },
                 Action = Hide
             },
-            content = new Container
+            content = new ClickableContainer
             {
                 Width = 1350,
                 Height = 800,
@@ -340,6 +342,25 @@ public partial class ProfileOverlay : Container
             Show();
     }
 
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnKeyDown(KeyDownEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisKeybind.Back:
+                Hide();
+                break;
+        }
+
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+
     private partial class AvatarEdit : Container
     {
         public ProfileOverlay Overlay;
@@ -534,7 +555,7 @@ public partial class ProfileOverlay : Container
                     var notif = new LoadingNotification
                     {
                         TextLoading = "Uploading banner...",
-                        TextSuccess = "Banner uploaded! Restart the game to see the changes.",
+                        TextSuccess = "Banner uploaded! QuickRestart the game to see the changes.",
                         TextFailure = "Failed to upload banner!"
                     };
 

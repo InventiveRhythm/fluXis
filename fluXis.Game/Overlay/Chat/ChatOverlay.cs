@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Context;
 using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Input;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
@@ -11,12 +12,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Chat;
 
-public partial class ChatOverlay : Container
+public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     [Resolved]
     private Fluxel fluxel { get; set; }
@@ -51,7 +54,7 @@ public partial class ChatOverlay : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = 0.5f
+                    Alpha = .5f
                 }
             },
             content = new ClickableContainer
@@ -240,4 +243,23 @@ public partial class ChatOverlay : Container
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
     }
+
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override bool OnKeyDown(KeyDownEvent e) => true;
+    protected override bool OnScroll(ScrollEvent e) => true;
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisKeybind.Back:
+                Hide();
+                break;
+        }
+
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 }
