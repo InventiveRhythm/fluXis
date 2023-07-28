@@ -14,6 +14,7 @@ namespace fluXis.Game.Graphics;
 public partial class FluXisTextBox : BasicTextBox
 {
     protected override Color4 SelectionColour => FluXisColors.Accent2;
+    protected override Color4 InputErrorColour => FluXisColors.ButtonRed;
 
     public bool IsPassword { get; set; }
     public Action OnTextChanged;

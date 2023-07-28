@@ -28,6 +28,7 @@ public static class FluXisColors
     public static Colour4 TextDark => Colour4.FromHex("#1a1a20");
 
     public static Colour4 ButtonRed => Colour4.FromHex("#752727");
+    public static Colour4 Red => Colour4.FromHex("#ff5555");
 
     public static Colour4 RoleAdmin => Colour4.FromHex("#f7b373");
     public static Colour4 RoleMod => Colour4.FromHex("#73d173");
