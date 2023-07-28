@@ -1,13 +1,12 @@
-using System;
 using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Screens.Edit.Tabs.Compose.Effect.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -92,93 +91,29 @@ public partial class FlashEditorPanel : Panel
                             textBox.NotifyError();
                     }
                 },
-                new LabelledTextBox
+                new ColorTextBox
                 {
                     LabelText = "Start Color",
-                    Text = Event.StartColor.ToHex(),
-                    OnTextChanged = textBox =>
-                    {
-                        try
-                        {
-                            string text = textBox.Text;
-                            if (text.StartsWith("#"))
-                                text = text.Remove(0, 1);
-
-                            if (text.Length == 3)
-                                text = $"{text[0]}{text[0]}{text[1]}{text[1]}{text[2]}{text[2]}";
-
-                            if (text.Length != 6)
-                                throw new Exception();
-
-                            var color = Colour4.FromHex(text);
-                            Event.StartColor = color;
-                        }
-                        catch
-                        {
-                            textBox.NotifyError();
-                        }
-                    }
+                    Color = Event.StartColor,
+                    OnColorChanged = color => Event.StartColor = color
                 },
-                new LabelledTextBox
+                new PercentTextBox
                 {
                     LabelText = "Start Opacity",
-                    Text = Event.StartOpacity.ToStringInvariant(),
-                    OnTextChanged = textBox =>
-                    {
-                        if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
-                        {
-                            if (result is >= 0 and <= 1)
-                                Event.StartOpacity = result;
-                            else
-                                textBox.NotifyError();
-                        }
-                        else
-                            textBox.NotifyError();
-                    }
+                    Text = (Event.StartOpacity * 100).ToStringInvariant(),
+                    OnValueChanged = value => Event.StartOpacity = value
                 },
-                new LabelledTextBox
+                new ColorTextBox
                 {
                     LabelText = "End Color",
-                    Text = Event.EndColor.ToHex(),
-                    OnTextChanged = textBox =>
-                    {
-                        try
-                        {
-                            string text = textBox.Text;
-                            if (text.StartsWith("#"))
-                                text = text.Remove(0, 1);
-
-                            if (text.Length == 3)
-                                text = $"{text[0]}{text[0]}{text[1]}{text[1]}{text[2]}{text[2]}";
-
-                            if (text.Length != 6)
-                                throw new Exception();
-
-                            var color = Colour4.FromHex(text);
-                            Event.EndColor = color;
-                        }
-                        catch
-                        {
-                            textBox.NotifyError();
-                        }
-                    }
+                    Color = Event.EndColor,
+                    OnColorChanged = color => Event.EndColor = color
                 },
-                new LabelledTextBox
+                new PercentTextBox
                 {
                     LabelText = "End Opacity",
-                    Text = Event.EndOpacity.ToStringInvariant(),
-                    OnTextChanged = textBox =>
-                    {
-                        if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
-                        {
-                            if (result is >= 0 and <= 1)
-                                Event.EndOpacity = result;
-                            else
-                                textBox.NotifyError();
-                        }
-                        else
-                            textBox.NotifyError();
-                    }
+                    Text = (Event.EndOpacity * 100).ToStringInvariant(),
+                    OnValueChanged = value => Event.EndOpacity = value
                 },
                 new FillFlowContainer
                 {
@@ -205,7 +140,7 @@ public partial class FlashEditorPanel : Panel
                         {
                             Width = 100,
                             Height = 40,
-                            Text = "Cancel",
+                            Text = "Close",
                             Action = Hide
                         }
                     }

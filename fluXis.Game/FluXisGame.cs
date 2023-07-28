@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -72,7 +73,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                     ProfileOverlay,
                 }
             },
-            new Container
+            new PopoverContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]

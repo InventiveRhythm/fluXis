@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Screens.Edit.Tabs.Compose.Effect.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -133,7 +134,7 @@ public partial class LaneSwtichEditorPanel : Panel
                         {
                             Width = 100,
                             Height = 40,
-                            Text = "Cancel",
+                            Text = "Close",
                             Action = Hide
                         }
                     }
