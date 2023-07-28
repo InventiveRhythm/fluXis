@@ -9,39 +9,46 @@ public static class InputUtils
     {
         var result = string.Empty;
         if (combo.Keys.Contains(InputKey.Control))
-            result += "Ctrl + ";
+            result += "Ctrl";
         if (combo.Keys.Contains(InputKey.LControl))
-            result += "LeftCtrl + ";
+            result += "LeftCtrl";
         if (combo.Keys.Contains(InputKey.RControl))
-            result += "RightCtrl + ";
+            result += "RightCtrl";
 
         if (combo.Keys.Contains(InputKey.Shift))
-            result += "Shift + ";
+            result += "Shift";
         if (combo.Keys.Contains(InputKey.LShift))
-            result += "LeftShift + ";
+            result += "LeftShift";
         if (combo.Keys.Contains(InputKey.RShift))
-            result += "RightShift + ";
+            result += "RightShift";
 
         if (combo.Keys.Contains(InputKey.Alt))
-            result += "Alt + ";
+            result += "Alt";
         if (combo.Keys.Contains(InputKey.LAlt))
-            result += "LeftAlt + ";
+            result += "LeftAlt";
         if (combo.Keys.Contains(InputKey.RAlt))
-            result += "RightAlt + ";
+            result += "RightAlt";
 
         if (combo.Keys.Contains(InputKey.Super))
-            result += "Super + ";
+            result += "Super";
         if (combo.Keys.Contains(InputKey.LSuper))
-            result += "LeftSuper + ";
+            result += "LeftSuper";
         if (combo.Keys.Contains(InputKey.RSuper))
-            result += "RightSuper + ";
+            result += "RightSuper";
 
-        return combo.Keys.Where(key => key >= InputKey.F1)
-                    .Where(inputKey => inputKey is
-                        not (InputKey.LControl or InputKey.RControl
-                        or InputKey.LShift or InputKey.RShift
-                        or InputKey.LAlt or InputKey.RAlt
-                        or InputKey.LSuper or InputKey.RSuper))
-                    .Aggregate(result, (current, inputKey) => current + $"{inputKey}");
+        foreach (var inputKey in combo.Keys.Where(key => key >= InputKey.F1))
+        {
+            if (inputKey is InputKey.LControl or InputKey.RControl
+                or InputKey.LShift or InputKey.RShift
+                or InputKey.LAlt or InputKey.RAlt
+                or InputKey.LSuper or InputKey.RSuper) continue;
+
+            if (!result.EndsWith(" ") && !string.IsNullOrEmpty(result))
+                result += " + ";
+
+            result += $"{inputKey}";
+        }
+
+        return result;
     }
 }
