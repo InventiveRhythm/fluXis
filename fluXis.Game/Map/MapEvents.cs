@@ -13,6 +13,7 @@ public class MapEvents
     public List<LaneSwitchEvent> LaneSwitchEvents = new();
     public List<FlashEvent> FlashEvents = new();
     public List<TimedObject> PulseEvents = new();
+    public List<PlayfieldMoveEvent> PlayfieldMoveEvents = new();
 
     public MapEvents Load(string content)
     {
@@ -74,6 +75,20 @@ public class MapEvents
                     PulseEvents.Add(new TimedObject
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture)
+                    });
+                    break;
+
+                case "PlayfieldMove":
+                    if (args.Length < 4) continue;
+
+                    Logger.Log($"PlayfieldMove: {args[0]} {args[1]} {args[2]} {args[3]}");
+
+                    PlayfieldMoveEvents.Add(new PlayfieldMoveEvent
+                    {
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
+                        OffsetX = float.Parse(args[1]),
+                        Duration = float.Parse(args[2], CultureInfo.InvariantCulture),
+                        Easing = Enum.TryParse<Easing>(args[3], out var ease) ? ease : Easing.None
                     });
                     break;
             }

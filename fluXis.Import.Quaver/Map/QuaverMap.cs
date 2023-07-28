@@ -111,6 +111,9 @@ public class QuaverMap
 
                 if (split[0] == "pulse" && split.Length == 1)
                     effectFile += $"Pulse({b.StartTime}){Environment.NewLine}";
+
+                if (split[0] == "playfieldmove" && split.Length >= 2)
+                    effectFile += $"PlayfieldMove({b.StartTime},{split[1]},{(split.Length >= 3 ? split[2] : 0)},{(split.Length >= 4 ? split2[3] : "None")}){Environment.NewLine}";
             }
         }
 

@@ -1,5 +1,7 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
@@ -14,6 +16,9 @@ public partial class Playfield : Container
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
+
+    [Resolved]
+    private AudioClock clock { get; set; }
 
     public FillFlowContainer<Receptor> Receptors;
     public GameplayScreen Screen;
@@ -34,6 +39,8 @@ public partial class Playfield : Container
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
     public MapInfo Map { get; }
+
+    private PlayfieldMoveEvent currentPlayfieldMoveEvent;
 
     public Playfield(GameplayScreen screen)
     {
@@ -114,5 +121,20 @@ public partial class Playfield : Container
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
+
+        updateOffset();
+    }
+
+    private void updateOffset()
+    {
+        var ev = currentPlayfieldMoveEvent;
+
+        foreach (var pmEvent in Screen.MapEvents.PlayfieldMoveEvents)
+        {
+            if (pmEvent.Time <= clock.CurrentTime) currentPlayfieldMoveEvent = pmEvent;
+        }
+
+        if (ev != currentPlayfieldMoveEvent)
+            this.MoveToX(currentPlayfieldMoveEvent.OffsetX, currentPlayfieldMoveEvent.Duration, Easing.OutQuint);
     }
 }
