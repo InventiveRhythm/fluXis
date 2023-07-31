@@ -4,6 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
@@ -24,12 +25,13 @@ using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Menu;
 
 public partial class MenuScreen : FluXisScreen
 {
-    public override float Zoom => 1f;
+    public override float Zoom => pressedStart ? 1f : 1.2f;
     public override float BackgroundDim => pressedStart ? base.BackgroundDim : 1f;
     public override bool ShowToolbar => pressedStart;
 
@@ -74,6 +76,8 @@ public partial class MenuScreen : FluXisScreen
 
     private bool pressedStart;
     private Sample menuStart;
+    private double inactivityTime;
+    private const double inactivity_timeout = 22000;
 
     [BackgroundDependencyLoader]
     private void load(GameHost host, ISampleStore samples)
@@ -299,11 +303,13 @@ public partial class MenuScreen : FluXisScreen
     private void playStartAnimation()
     {
         pressedStart = true;
+        inactivityTime = 0;
         menuStart?.Play();
         randomizeSplash();
+        backgrounds.Zoom = 1f;
 
         fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
-        fluXisText.Delay(600).FadeIn().OnComplete(_ =>
+        fluXisText.Delay(800).FadeIn().OnComplete(_ =>
         {
             game.Toolbar.ShowToolbar.Value = true;
             splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
@@ -311,10 +317,41 @@ public partial class MenuScreen : FluXisScreen
             login.Show();
         });
 
-        pressAnyKeyText.FadeOut(600).MoveToY(0, 800, Easing.InQuint);
+        pressAnyKeyText.FadeOut(600).MoveToY(200, 800, Easing.InQuint);
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e) => canPlayAnimation();
+    private void revertStartAnimation()
+    {
+        game.Toolbar.ShowToolbar.Value = false;
+        backgrounds.Zoom = 1.2f;
+        splashText.MoveToX(-200, 600, Easing.InQuint).FadeOut(300);
+        buttonContainer.MoveToX(-200, 600, Easing.InQuint).FadeOut(300);
+        linkContainer.MoveToX(200, 600, Easing.InQuint).FadeOut(300);
+
+        var vec = new Vector2(content.DrawWidth / 2 - fluXisText.DrawWidth / 2 - 40, (content.DrawHeight + 50) / 2 - fluXisText.DrawHeight / 2 - 40);
+
+        fluXisText.MoveTo(vec, 1000, Easing.InOutCirc)
+                  .Delay(800).FadeIn().OnComplete(_ => pressedStart = false);
+
+        pressAnyKeyText.MoveToY(0, 800, Easing.OutQuint);
+        pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            if (pressedStart)
+                revertStartAnimation();
+            else
+                game.Overlay = new ConfirmExitPanel();
+
+            return true;
+        }
+
+        return canPlayAnimation();
+    }
+
     protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
     protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
 
@@ -343,6 +380,7 @@ public partial class MenuScreen : FluXisScreen
         visualizer.FadeInFromZero(2000);
         backgrounds.SetDim(1f, 0);
         backgrounds.SetDim(base.BackgroundDim, 2000);
+        inactivityTime = 0;
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -357,6 +395,7 @@ public partial class MenuScreen : FluXisScreen
         showMenu();
         this.FadeIn(200);
         activity.Update("In the menus", "Idle", "menu");
+        inactivityTime = 0;
     }
 
     protected override void Update()
@@ -367,6 +406,14 @@ public partial class MenuScreen : FluXisScreen
         {
             fluXisText.X = content.DrawWidth / 2 - fluXisText.DrawWidth / 2 - 40;
             fluXisText.Y = content.DrawHeight / 2 - fluXisText.DrawHeight / 2 - 40;
+        }
+
+        inactivityTime += Time.Elapsed;
+
+        if (inactivityTime > inactivity_timeout && pressedStart)
+        {
+            inactivityTime = 0;
+            revertStartAnimation();
         }
     }
 
