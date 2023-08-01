@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Overlay.Notification;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map;
@@ -13,9 +17,9 @@ public class MapInfo
     public string VideoFile { get; set; } = string.Empty;
     public string EffectFile { get; set; } = string.Empty;
     public MapMetadata Metadata { get; set; }
-    public List<HitObjectInfo> HitObjects;
-    public List<TimingPointInfo> TimingPoints;
-    public List<ScrollVelocityInfo> ScrollVelocities;
+    public List<HitObjectInfo> HitObjects { get; set; }
+    public List<TimingPointInfo> TimingPoints { get; set; }
+    public List<ScrollVelocityInfo> ScrollVelocities { get; set; }
 
     [JsonIgnore]
     public float StartTime => HitObjects[0].Time;
@@ -47,15 +51,16 @@ public class MapInfo
     [JsonIgnore]
     public int InitialKeyCount;
 
+    [CanBeNull]
+    [JsonIgnore]
+    public RealmMap Map { get; set; }
+
     public MapInfo(MapMetadata metadata)
     {
         Metadata = metadata;
         HitObjects = new List<HitObjectInfo>();
-        TimingPoints = new List<TimingPointInfo>();
+        TimingPoints = new List<TimingPointInfo> { new() { BPM = 120, Time = 0, Signature = 4 } }; // Add default timing point to avoid issues
         ScrollVelocities = new List<ScrollVelocityInfo>();
-
-        // Add default timing point so it doesn't crash
-        TimingPoints.Add(new TimingPointInfo { BPM = 120, Time = 0, Signature = 4 });
     }
 
     public bool Validate(NotificationOverlay notifications = null)
@@ -106,6 +111,20 @@ public class MapInfo
         HitObjects.Sort((a, b) => a.Time == b.Time ? a.Lane.CompareTo(b.Lane) : a.Time.CompareTo(b.Time));
         TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
+    }
+
+    public virtual MapEvents GetMapEvents()
+    {
+        var events = new MapEvents();
+
+        if (Map == null) return events;
+
+        var effectFile = Map.MapSet.GetFile(EffectFile);
+        if (effectFile == null) return events;
+
+        var content = File.ReadAllText(RealmStorage.GetFullPath(effectFile));
+        events.Load(content);
+        return events;
     }
 
     public TimingPointInfo GetTimingPoint(double time)

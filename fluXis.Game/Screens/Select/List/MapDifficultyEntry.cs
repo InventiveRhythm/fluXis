@@ -3,14 +3,12 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Menu;
 using fluXis.Game.Screens.Edit;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
@@ -41,14 +39,8 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                     screen.MapSet.Value = map.MapSet;
                     screen.MapInfo.Value = map;
 
-                    var path = storage.GetFullPath($"files/{PathUtils.HashToPath(map.Hash)}");
-                    var loadedMap = MapUtils.LoadFromPath(path);
-
-                    if (loadedMap == null)
-                    {
-                        Logger.Log($"Could not load map file for {map.Hash}", LoggingTarget.Runtime, LogLevel.Error);
-                        return;
-                    }
+                    var loadedMap = map.GetMapInfo();
+                    if (loadedMap == null) return;
 
                     var editor = new Editor(map, loadedMap);
                     screen.Push(editor);

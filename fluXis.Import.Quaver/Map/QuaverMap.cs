@@ -40,8 +40,9 @@ public class QuaverMap
             PreviewTime = SongPreviewTime
         };
 
-        var mapInfo = new MapInfo(metadata)
+        var mapInfo = new QuaverMapInfo(metadata)
         {
+            Map = this,
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
             HitObjects = new List<HitObjectInfo>(),
@@ -82,7 +83,7 @@ public class QuaverMap
         return mapInfo;
     }
 
-    public string GetEffects()
+    public MapEvents GetEffects()
     {
         string effectFile = "";
 
@@ -117,6 +118,6 @@ public class QuaverMap
             }
         }
 
-        return effectFile;
+        return new MapEvents().Load(effectFile);
     }
 }

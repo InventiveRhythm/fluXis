@@ -5,18 +5,32 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Utils;
+using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Graphics;
+using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Map;
 
-public class MapStore
+public partial class MapStore : Component
 {
-    private readonly Storage storage;
-    private readonly Storage files;
-    private readonly FluXisRealm realm;
+    [Resolved]
+    private Storage storage { get; set; }
+
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private AudioManager audio { get; set; }
+
+    private Storage files;
+    private MapResourceProvider resources;
 
     public List<RealmMapSet> MapSets { get; } = new();
     public List<RealmMapSet> MapSetsSorted => MapSets.OrderBy(x => x.Metadata.Title).ToList();
@@ -25,13 +39,19 @@ public class MapStore
     public Action<RealmMapSet> MapSetAdded;
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
 
-    public MapStore(Storage storage, FluXisRealm realm)
+    [BackgroundDependencyLoader]
+    private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
     {
-        this.storage = storage;
         files = storage.GetStorageForDirectory("files");
-        this.realm = realm;
 
         Logger.Log("Loading maps...");
+
+        resources = new MapResourceProvider
+        {
+            BackgroundStore = backgroundStore,
+            CroppedBackgroundStore = croppedBackgroundStore,
+            TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(files))
+        };
 
         realm.RunWrite(r =>
         {
@@ -64,12 +84,13 @@ public class MapStore
     {
         Logger.Log($"Found {sets.Count()} maps");
 
-        foreach (var map in sets)
-            AddMapSet(map.Detach());
+        foreach (var set in sets) AddMapSet(set.Detach());
     }
 
     public void AddMapSet(RealmMapSet mapSet)
     {
+        mapSet.Resources ??= resources;
+
         MapSets.Add(mapSet);
         MapSetAdded?.Invoke(mapSet);
     }
@@ -137,7 +158,7 @@ public class MapStore
 
                 var entry = archive.CreateEntry(file.Name);
                 using var stream = entry.Open();
-                using var fileStream = files.GetStream(file.GetPath());
+                using var fileStream = files.GetStream(file.Path);
                 fileStream.CopyTo(stream);
                 fileNames.Add(file.Name);
                 current++;

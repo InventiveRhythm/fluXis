@@ -6,30 +6,11 @@ using System.Security.Cryptography;
 using System.Text;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Utils;
 
 public static class MapUtils
 {
-    [CanBeNull]
-    public static MapInfo LoadFromPath(string path)
-    {
-        try
-        {
-            var json = File.ReadAllText(path);
-            MapInfo map = JsonConvert.DeserializeObject<MapInfo>(json);
-            return map;
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, "Failed to load map from path: " + path);
-            return null;
-        }
-    }
-
     public static RealmMapFilters GetMapFilters(MapInfo map, MapEvents events)
     {
         RealmMapFilters filters = new RealmMapFilters();

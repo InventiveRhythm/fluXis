@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using fluXis.Game.Activity;
 using fluXis.Game.Screens.Gameplay.Ruleset;
@@ -9,7 +8,6 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -24,7 +22,6 @@ using fluXis.Game.Screens.Gameplay.Overlay;
 using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Result;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -32,7 +29,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK.Input;
@@ -117,40 +113,20 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples, FluXisConfig config, ImportManager importManager)
+    private void load(ISampleStore samples, FluXisConfig config)
     {
         this.config = config;
         hudVisibility = config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
 
-        if (RealmMap.MapSet.Managed)
-        {
-            var package = importManager.GetMapPackage(RealmMap);
-
-            if (package != null)
-            {
-                Map = package.MapInfo;
-                MapEvents = package.MapEvents;
-
-                if (!Map.Validate(notifications))
-                {
-                    this.Exit();
-                    return;
-                }
-            }
-        }
-        else
-        {
-            Map = LoadMap();
-            if (Map != null) MapEvents = LoadMapEvents();
-        }
+        Map = LoadMap();
 
         if (Map == null)
         {
-            Logger.Log("Failed to load map", LoggingTarget.Runtime, LogLevel.Error);
             this.Exit();
             return;
         }
 
+        MapEvents = Map.GetMapEvents();
         Map.Sort();
         getKeyCountFromEvents();
         backgrounds.SetVideoBackground(RealmMap, Map);
@@ -264,7 +240,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     protected virtual MapInfo LoadMap()
     {
-        var map = MapUtils.LoadFromPath(storage.GetFullPath("files/" + PathUtils.HashToPath(RealmMap.Hash)));
+        var map = RealmMap.GetMapInfo();
 
         // map is null or invalid, leave
         if (map == null || !map.Validate(notifications)) return null;
@@ -495,29 +471,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     {
         if (e.Action is FluXisKeybind.QuickRestart or FluXisKeybind.QuickExit)
             quickActionOverlay.IsHolding = false;
-    }
-
-    protected virtual MapEvents LoadMapEvents()
-    {
-        var mapEvents = new MapEvents();
-
-        try
-        {
-            if (!string.IsNullOrEmpty(Map.EffectFile))
-            {
-                var effectFile = RealmMap.MapSet.GetFile(Map.EffectFile);
-                if (effectFile == null) return mapEvents;
-
-                string content = File.ReadAllText(storage.GetFullPath("files/" + effectFile.GetPath()));
-                mapEvents.Load(content);
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, "Error loading map events");
-        }
-
-        return mapEvents;
     }
 
     private void getKeyCountFromEvents()

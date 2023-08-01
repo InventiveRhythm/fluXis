@@ -155,9 +155,9 @@ public partial class BackgroundStack : CompositeDrawable
 
         if (map != null)
         {
-            string path = file?.GetPath() ?? map.Hash;
+            string path = file?.Path ?? map.Hash;
 
-            if (path == currentBackground)
+            if (path == currentBackground && !string.IsNullOrEmpty(path))
                 return;
 
             currentBackground = path;

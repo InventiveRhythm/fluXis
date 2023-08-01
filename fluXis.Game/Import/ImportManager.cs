@@ -5,16 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using fluXis.Game.Database;
-using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
-using JetBrains.Annotations;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
-using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -41,16 +39,16 @@ public partial class ImportManager : Component
     [Resolved]
     private AudioManager audio { get; set; }
 
+    [Resolved]
+    private GameHost host { get; set; }
+
     private List<ImportPlugin> plugins { get; } = new();
     public IEnumerable<ImportPlugin> Plugins => plugins.ToImmutableArray();
 
     private List<MapImporter> importers { get; } = new();
-    private Dictionary<int, Storage> storages { get; } = new();
-    private Dictionary<int, ITextureStore> textureStores { get; } = new();
-    private Dictionary<int, ITrackStore> trackStores { get; } = new();
 
     [BackgroundDependencyLoader]
-    private void load(GameHost host)
+    private void load()
     {
         loadFromAppDomain();
         loadFromRunFolder();
@@ -63,42 +61,7 @@ public partial class ImportManager : Component
 
             var maps = importer.GetMaps();
             foreach (var map in maps) mapStore.AddMapSet(map);
-
-            if (!string.IsNullOrEmpty(importer.StoragePath))
-            {
-                var storageFor = new NativeStorage(importer.StoragePath);
-                storages.Add(importer.ID, storageFor);
-
-                var resourceStore = new StorageBackedResourceStore(storageFor);
-                textureStores.Add(importer.ID, new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(resourceStore)));
-                trackStores.Add(importer.ID, audio.GetTrackStore(resourceStore));
-            }
         }
-    }
-
-    [CanBeNull]
-    public Storage GetStorage(int id)
-    {
-        return storages.TryGetValue(id, out var s) ? s : null;
-    }
-
-    [CanBeNull]
-    public ITextureStore GetTextureStore(int id)
-    {
-        return textureStores.TryGetValue(id, out var s) ? s : null;
-    }
-
-    [CanBeNull]
-    public ITrackStore GetTrackStore(int id)
-    {
-        return trackStores.TryGetValue(id, out var s) ? s : null;
-    }
-
-    [CanBeNull]
-    public MapPackage GetMapPackage(RealmMap map)
-    {
-        var importer = importers.FirstOrDefault(i => i.ID == map.Status);
-        return importer?.GetMapPackage(map);
     }
 
     public void Import(string path)
@@ -125,12 +88,6 @@ public partial class ImportManager : Component
     public void ImportMultiple(string[] paths)
     {
         foreach (var path in paths) Import(path);
-    }
-
-    public string GetAsset(RealmMap map, ImportedAssetType type)
-    {
-        var importer = importers.FirstOrDefault(i => i.ID == map.Status);
-        return importer == null ? "" : importer.GetAsset(map, type);
     }
 
     private void loadSingle(Assembly assembly)
@@ -189,6 +146,18 @@ public partial class ImportManager : Component
                         HasAutoImport = importer.SupportsAutoImport,
                         ImporterId = importer.ID
                     });
+
+                    if (!string.IsNullOrEmpty(importer.StoragePath))
+                    {
+                        var storageFor = new NativeStorage(importer.StoragePath);
+
+                        importer.Resources = new MapResourceProvider
+                        {
+                            TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(storageFor)),
+                            BackgroundStore = new BackgroundTextureStore(host, storageFor),
+                            CroppedBackgroundStore = new CroppedBackgroundStore(host, storageFor)
+                        };
+                    }
                 }
 
                 importer.Realm = realm;

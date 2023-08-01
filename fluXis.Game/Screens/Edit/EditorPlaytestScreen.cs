@@ -27,11 +27,6 @@ public partial class EditorPlaytestScreen : GameplayScreen
         return map;
     }
 
-    protected override MapEvents LoadMapEvents()
-    {
-        return events;
-    }
-
     public override bool OnExiting(ScreenExitEvent e)
     {
         base.OnExiting(e);

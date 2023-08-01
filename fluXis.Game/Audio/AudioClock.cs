@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Import;
 using fluXis.Game.Map;
-using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -27,9 +25,6 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     [Resolved]
     private ITrackStore trackStore { get; set; }
-
-    [Resolved]
-    private ImportManager importManager { get; set; }
 
     private ITrackStore realmTrackStore { get; set; }
     private Storage realmStorage { get; set; }
@@ -108,35 +103,15 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         AllowLimitedLoop = true; // reset
         Volume = 1;
 
-        bool sameTrack = false;
-        Track newTrack = null;
-
-        if (info.MapSet.Managed)
-        {
-            string path = importManager.GetAsset(info, ImportedAssetType.Audio);
-            newTrack = importManager.GetTrackStore(info.Status)?.Get(path);
-        }
-        else
-        {
-            var file = info.MapSet.GetFile(info.Metadata.Audio);
-
-            var hash = file?.Hash;
-
-            sameTrack = hash == trackHash;
-            trackHash = hash;
-
-            if (!sameTrack)
-            {
-                string path = file?.GetPath();
-                newTrack = realmTrackStore.Get(path);
-            }
-        }
+        string hash = info.MapSet.GetFile(info.Metadata.Audio)?.Hash;
+        bool sameTrack = hash == trackHash && !string.IsNullOrEmpty(hash);
 
         if (!sameTrack)
         {
             Stop();
             track.Value?.Dispose();
-            ChangeSource(newTrack ?? realmTrackStore.GetVirtual());
+            ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
+            trackHash = hash;
 
             Seek(usePreview ? info.Metadata.PreviewTime : 0);
 
@@ -147,9 +122,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         Task.Run(() =>
         {
             MapInfo = null;
-
-            var path = PathUtils.HashToPath(info.Hash);
-            MapInfo = MapUtils.LoadFromPath(realmStorage.GetFullPath(path));
+            MapInfo = info.GetMapInfo();
         });
     }
 

@@ -1,6 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using fluXis.Game.Map;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
+using osu.Framework.Audio.Track;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Logging;
 using Realms;
 
 namespace fluXis.Game.Database.Maps;
@@ -31,6 +37,9 @@ public class RealmMap : RealmObject
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
 
+    [Ignored]
+    public RealmFile File => MapSet.Files.FirstOrDefault(f => f.Hash == Hash);
+
     public RealmMap([CanBeNull] RealmMapMetadata meta = null)
     {
         Metadata = meta ?? new RealmMapMetadata();
@@ -42,9 +51,51 @@ public class RealmMap : RealmObject
     {
     }
 
-    public override string ToString()
+    public override string ToString() => $"{ID} - {Metadata}";
+
+    [CanBeNull]
+    public virtual MapInfo GetMapInfo()
     {
-        return ID.ToString();
+        try
+        {
+            var path = RealmStorage.GetFullPath(File);
+            var json = System.IO.File.ReadAllText(path);
+            MapInfo map = JsonConvert.DeserializeObject<MapInfo>(json);
+            map.Map = this;
+            return map;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Failed to load map from path: " + File.Path);
+            return null;
+        }
+    }
+
+    public virtual Texture GetBackground()
+    {
+        var backgrounds = MapSet.Resources?.BackgroundStore;
+        if (backgrounds == null) return null;
+
+        var file = MapSet.GetFile(Metadata.Background);
+        return file == null ? null : backgrounds.Get(file.Path);
+    }
+
+    public virtual Texture GetPanelBackground()
+    {
+        var croppedBackgrounds = MapSet.Resources?.CroppedBackgroundStore;
+        if (croppedBackgrounds == null) return null;
+
+        var file = MapSet.GetFile(Metadata.Background);
+        return file == null ? null : croppedBackgrounds.Get(file.Path);
+    }
+
+    public virtual Track GetTrack()
+    {
+        var tracks = MapSet.Resources?.TrackStore;
+        if (tracks == null) return null;
+
+        var file = MapSet.GetFile(Metadata.Audio);
+        return file == null ? null : tracks.Get(file.Path);
     }
 
     public static RealmMap CreateNew()

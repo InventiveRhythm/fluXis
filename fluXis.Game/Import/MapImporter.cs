@@ -35,11 +35,11 @@ public class MapImporter
     public Storage Storage { get; set; }
     public NotificationOverlay Notifications { get; set; }
 
+    public MapResourceProvider Resources { get; set; }
+
     public virtual void Import(string path) => throw new NotImplementedException();
 
     public virtual List<RealmMapSet> GetMaps() => new();
-    public virtual string GetAsset(RealmMap map, ImportedAssetType type) => "";
-    public virtual MapPackage GetMapPackage(RealmMap map) => new();
 
     public static string GetHash(ZipArchiveEntry entry)
     {

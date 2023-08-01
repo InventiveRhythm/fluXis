@@ -91,20 +91,25 @@ public partial class FluXisGameBase : osu.Framework.Game
         Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
         initFonts();
 
+        RealmStorage.Initialize(storage.GetStorageForDirectory("files"));
+
         dependencies.CacheAs(this);
         dependencies.CacheAs(config = new FluXisConfig(storage));
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(Notifications = new NotificationOverlay());
-        dependencies.Cache(mapStore = new MapStore(storage, realm));
         dependencies.Cache(fluxel = new Fluxel(config, getApiEndpoint()));
         UserCache.Init(fluxel);
+
+        dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("files")));
+        dependencies.Cache(new CroppedBackgroundStore(Host, storage.GetStorageForDirectory("files")));
+
+        LoadComponent(mapStore = new MapStore());
+        dependencies.Cache(mapStore);
 
         LoadComponent(importManager = new ImportManager());
         dependencies.Cache(importManager);
 
         dependencies.Cache(AudioClock = new AudioClock());
-        dependencies.Cache(new BackgroundTextureStore(Host, storage));
-        dependencies.Cache(new CroppedBackgroundStore(Host, storage));
         dependencies.Cache(BackgroundStack = new BackgroundStack());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
         dependencies.Cache(Settings = new SettingsMenu());

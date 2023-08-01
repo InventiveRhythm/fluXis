@@ -236,7 +236,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private Track loadMapTrack()
     {
-        string path = Map.MapSet?.GetFile(Map.Metadata?.Audio)?.GetPath();
+        string path = Map.MapSet?.GetFile(Map.Metadata?.Audio)?.Path;
 
         Waveform w = null;
 
@@ -254,7 +254,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private void loadMapEvents()
     {
-        var path = Map.MapSet.GetFile(MapInfo.EffectFile)?.GetPath();
+        var path = Map.MapSet.GetFile(MapInfo.EffectFile)?.Path;
         if (path == null) return;
 
         var fullPath = storage.GetFullPath($"files/{path}");

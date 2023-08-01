@@ -22,12 +22,45 @@ public class QuaverImport : MapImporter
     public override string[] FileExtensions => new[] { ".qp" };
     public override string Name => "Quaver";
     public override string Author => "Flustix";
-    public override Version Version => new(1, 0, 0);
+    public override Version Version => new(1, 1, 0);
     public override bool SupportsAutoImport => true;
     public override string Color => "#0cb2d8";
-    public override string StoragePath => quaverPath;
+    public override string StoragePath => songsPath;
 
-    private string quaverPath = "";
+    private readonly string quaverPath;
+    private string songsPath => Path.Combine(quaverPath, "Songs");
+
+    public QuaverImport()
+    {
+        const string c_path = @"C:\Program Files (x86)\Steam\steamapps\common\Quaver\Quaver.exe";
+        var installPath = "";
+
+        if (File.Exists(c_path)) installPath = c_path;
+        else
+        {
+            string[] drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                              .Select(c => $@"{c}:\")
+                              .Where(Directory.Exists)
+                              .ToArray();
+
+            const string drive_path = @"SteamLibrary\steamapps\common\Quaver\Quaver.exe";
+
+            foreach (var drive in drives)
+            {
+                if (File.Exists($@"{drive}{drive_path}"))
+                {
+                    installPath = $@"{drive}{drive_path}";
+                    break;
+                }
+            }
+        }
+
+        if (string.IsNullOrEmpty(installPath))
+            Logger.Log("Could not find Quaver install");
+
+        Logger.Log($"Found Quaver install at {installPath}");
+        quaverPath = Path.GetDirectoryName(installPath);
+    }
 
     public override void Import(string path)
     {
@@ -56,7 +89,7 @@ public class QuaverImport : MapImporter
 
                     notification.TextSuccess = $"Imported Quaver map: {map.Metadata.Artist} - {map.Metadata.Title}";
 
-                    string effect = quaverMap.GetEffects();
+                    string effect = quaverMap.GetEffects().Save();
                     Logger.Log(effect);
 
                     if (effect != "")
@@ -109,10 +142,10 @@ public class QuaverImport : MapImporter
     private QuaverMap parseQuaverMap(ZipArchiveEntry entry)
     {
         string yaml = new StreamReader(entry.Open()).ReadToEnd();
-        return parseFromYaml(yaml);
+        return ParseFromYaml(yaml);
     }
 
-    private static QuaverMap parseFromYaml(string yaml)
+    public static QuaverMap ParseFromYaml(string yaml)
     {
         var builder = new DeserializerBuilder();
         builder.IgnoreUnmatchedProperties();
@@ -124,46 +157,15 @@ public class QuaverImport : MapImporter
 
     public override List<RealmMapSet> GetMaps()
     {
-        const string c_path = @"C:\Program Files (x86)\Steam\steamapps\common\Quaver\Quaver.exe";
-        var installPath = "";
-
-        if (File.Exists(c_path)) installPath = c_path;
-        else
-        {
-            string[] drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                              .Select(c => $@"{c}:\")
-                              .Where(Directory.Exists)
-                              .ToArray();
-
-            const string drive_path = @"SteamLibrary\steamapps\common\Quaver\Quaver.exe";
-
-            foreach (var drive in drives)
-            {
-                if (File.Exists($@"{drive}{drive_path}"))
-                {
-                    installPath = $@"{drive}{drive_path}";
-                    break;
-                }
-            }
-        }
-
-        if (string.IsNullOrEmpty(installPath))
-        {
-            Logger.Log("Could not find Quaver install");
-            return base.GetMaps();
-        }
-
-        Logger.Log($"Found Quaver install at {installPath}");
-
-        string directory = Path.GetDirectoryName(installPath);
-        string dbPath = Path.Combine(directory, "quaver.db");
-        quaverPath = directory + "\\" + "Songs";
+        string dbPath = Path.Combine(quaverPath, "quaver.db");
 
         if (!File.Exists(dbPath))
         {
             Logger.Log("Could not find Quaver database");
             return base.GetMaps();
         }
+
+        List<RealmMapSet> mapSets = new();
 
         try
         {
@@ -194,10 +196,12 @@ public class QuaverImport : MapImporter
                 int noteCount = int.Parse(reader["RegularNoteCount"].ToString());
                 int longNoteCount = int.Parse(reader["LongNoteCount"].ToString());
 
-                var map = new RealmMap
+                var map = new QuaverRealmMap
                 {
                     ID = default,
-                    Hash = path, // we'll use the path as the hash
+                    QuaverPath = songsPath,
+                    FolderPath = directoryName,
+                    FileName = path,
                     Difficulty = difficulty,
                     Metadata = new RealmMapMetadata
                     {
@@ -234,23 +238,22 @@ public class QuaverImport : MapImporter
 
             reader.Close();
 
-            foreach (var (key, mapSetMaps) in maps)
+            foreach (var (directoryName, mapSetMaps) in maps)
             {
-                var mapSetRealm = new RealmMapSet(mapSetMaps)
+                var mapSetRealm = new QuaverRealmMapSet(mapSetMaps)
                 {
                     ID = default,
+                    FolderPath = directoryName,
                     OnlineID = 0,
                     Cover = "",
                     Managed = true,
-                    Path = key
+                    Resources = Resources
                 };
 
                 foreach (var map in mapSetMaps)
-                {
                     map.MapSet = mapSetRealm;
-                }
 
-                MapStore.AddMapSet(mapSetRealm);
+                mapSets.Add(mapSetRealm);
             }
         }
         catch (Exception e)
@@ -259,37 +262,6 @@ public class QuaverImport : MapImporter
             return base.GetMaps();
         }
 
-        return base.GetMaps();
-    }
-
-    public override string GetAsset(RealmMap map, ImportedAssetType type)
-    {
-        string directory = map.MapSet.Path;
-
-        string path = type switch
-        {
-            ImportedAssetType.Background or ImportedAssetType.Cover => map.Metadata.Background,
-            ImportedAssetType.Audio => map.Metadata.Audio,
-            _ => ""
-        };
-
-        return Path.Combine(directory, path);
-    }
-
-    public override MapPackage GetMapPackage(RealmMap map)
-    {
-        var path = Path.Combine(quaverPath, map.MapSet.Path);
-        path = Path.Combine(path, map.Hash);
-
-        string yaml = File.ReadAllText(path);
-        var quaverMap = parseFromYaml(yaml);
-
-        var package = new MapPackage
-        {
-            MapInfo = quaverMap.ToMapInfo(),
-            MapEvents = new MapEvents().Load(quaverMap.GetEffects())
-        };
-
-        return package;
+        return mapSets;
     }
 }

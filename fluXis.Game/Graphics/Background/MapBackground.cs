@@ -1,10 +1,8 @@
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Graphics.Background;
 
@@ -17,38 +15,11 @@ public partial class MapBackground : Sprite
     public bool Cropped { get; set; }
 
     [BackgroundDependencyLoader]
-    private void load(BackgroundTextureStore backgrounds, CroppedBackgroundStore croppedBackgrounds, TextureStore textures)
+    private void load(TextureStore textures)
     {
         if (Map == null)
-        {
             Texture = textures.Get("Backgrounds/default.png");
-            return;
-        }
-
-        Texture tex = null;
-
-        if (Map.MapSet.Managed)
-        {
-            if (importManager == null)
-            {
-                Logger.Log("ImportManager is null!", LoggingTarget.Runtime, LogLevel.Error);
-                return;
-            }
-
-            var store = importManager.GetTextureStore(Map.Status);
-
-            if (store != null)
-            {
-                string path = importManager.GetAsset(Map, ImportedAssetType.Background);
-                if (path != null) tex = store.Get(path);
-            }
-        }
         else
-        {
-            var path = Map.MapSet.GetFile(Map.Metadata.Background)?.GetPath();
-            tex = Cropped ? croppedBackgrounds.Get(path) : backgrounds.Get(path);
-        }
-
-        Texture = tex ?? textures.Get("Backgrounds/default.png");
+            Texture = (Cropped ? Map.GetPanelBackground() : Map.GetBackground()) ?? textures.Get("Backgrounds/default.png");
     }
 }

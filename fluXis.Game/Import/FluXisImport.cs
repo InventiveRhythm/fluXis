@@ -131,7 +131,7 @@ public class FluXisImport : MapImporter
 
                     foreach (var file in files)
                     {
-                        string filePath = Storage.GetStorageForDirectory("files").GetFullPath(file.GetPath());
+                        string filePath = Storage.GetStorageForDirectory("files").GetFullPath(file.Path);
                         Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                         if (File.Exists(filePath)) continue;
 

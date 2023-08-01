@@ -8,7 +8,6 @@ using fluXis.Game.Database.Score;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
 using osu.Framework.Development;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
 
@@ -84,15 +83,8 @@ public class FluXisRealm : IDisposable
 
                 foreach (var newMap in newMaps)
                 {
-                    string path = storage.GetFullPath("files/" + PathUtils.HashToPath(newMap.Hash));
-
-                    MapInfo map = MapUtils.LoadFromPath(path);
-
-                    if (map == null)
-                    {
-                        Logger.Log($"[RealmMigration 4 -> 5] Map file not found: {path}??? Something definitely went wrong here.");
-                        continue;
-                    }
+                    MapInfo map = newMap.GetMapInfo();
+                    if (map == null) continue;
 
                     MapEvents events = new MapEvents();
 

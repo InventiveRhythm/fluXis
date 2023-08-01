@@ -227,13 +227,8 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
             return false;
         }
 
-        MapInfo mapInfo = MapUtils.LoadFromPath(storage.GetFullPath($"files/{PathUtils.HashToPath(map.Hash)}"));
-
-        if (mapInfo == null)
-        {
-            Logger.Log("MapInfo is null", LoggingTarget.Runtime, LogLevel.Error);
-            return false;
-        }
+        MapInfo mapInfo = map.GetMapInfo();
+        if (mapInfo == null) return false;
 
         Performance performance = new Performance(mapInfo, map.OnlineID, map.Hash);
 

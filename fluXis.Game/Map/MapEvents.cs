@@ -12,7 +12,7 @@ public class MapEvents
 {
     public List<LaneSwitchEvent> LaneSwitchEvents = new();
     public List<FlashEvent> FlashEvents = new();
-    public List<TimedObject> PulseEvents = new();
+    public List<PulseEvent> PulseEvents = new();
     public List<PlayfieldMoveEvent> PlayfieldMoveEvents = new();
 
     public MapEvents Load(string content)
@@ -72,7 +72,7 @@ public class MapEvents
                     break;
 
                 case "Pulse":
-                    PulseEvents.Add(new TimedObject
+                    PulseEvents.Add(new PulseEvent
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture)
                     });
@@ -99,7 +99,11 @@ public class MapEvents
 
     public string Save()
     {
-        var content = LaneSwitchEvents.Aggregate(string.Empty, (current, laneSwitch) => current + (laneSwitch + Environment.NewLine));
-        return FlashEvents.Aggregate(content, (current, flash) => current + (flash + Environment.NewLine));
+        var content = "";
+        content += LaneSwitchEvents.Aggregate(string.Empty, (current, laneSwitch) => current + (laneSwitch + Environment.NewLine));
+        content += FlashEvents.Aggregate(string.Empty, (current, flash) => current + (flash + Environment.NewLine));
+        content += PulseEvents.Aggregate(string.Empty, (current, pulse) => current + (pulse + Environment.NewLine));
+        content += PlayfieldMoveEvents.Aggregate(string.Empty, (current, playfieldMove) => current + (playfieldMove + Environment.NewLine));
+        return content;
     }
 }

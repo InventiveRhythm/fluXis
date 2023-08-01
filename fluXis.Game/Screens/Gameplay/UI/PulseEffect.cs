@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,7 +11,7 @@ public partial class PulseEffect : Container
 {
     public GameplayScreen ParentScreen { get; set; }
 
-    private List<TimedObject> pulses = new();
+    private List<PulseEvent> pulses = new();
 
     public PulseEffect()
     {

@@ -52,7 +52,7 @@ public partial class BackgroundVideo : CompositeDrawable
 
         try
         {
-            string path = storage.GetFullPath($"files/{file.GetPath()}");
+            string path = storage.GetFullPath($"files/{file.Path}");
             Stream stream = File.OpenRead(path);
 
             LoadComponent(video = new Video(stream, false)
@@ -68,7 +68,7 @@ public partial class BackgroundVideo : CompositeDrawable
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"Failed to load video: {file.GetPath()}");
+            Logger.Error(e, $"Failed to load video: {file.Path}");
         }
     }
 
