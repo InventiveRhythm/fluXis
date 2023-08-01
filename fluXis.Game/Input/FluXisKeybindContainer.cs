@@ -33,21 +33,23 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
 
     public override IEnumerable<IKeyBinding> DefaultKeyBindings => new[]
     {
-        new KeyBinding(InputKey.Enter, FluXisKeybind.Select),
-        new KeyBinding(InputKey.Space, FluXisKeybind.Select),
-        new KeyBinding(InputKey.Escape, FluXisKeybind.Back),
-        new KeyBinding(InputKey.ExtraMouseButton4, FluXisKeybind.Back),
-        new KeyBinding(InputKey.Up, FluXisKeybind.Previous),
-        new KeyBinding(InputKey.Down, FluXisKeybind.Next),
-        new KeyBinding(InputKey.Left, FluXisKeybind.PreviousGroup),
-        new KeyBinding(InputKey.Right, FluXisKeybind.NextGroup),
-        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), FluXisKeybind.ToggleSettings),
+        getBinding(FluXisKeybind.Select, InputKey.Enter),
+        getBinding(FluXisKeybind.Back, InputKey.Escape),
+        getBinding(FluXisKeybind.Previous, InputKey.Up),
+        getBinding(FluXisKeybind.Next, InputKey.Down),
+        getBinding(FluXisKeybind.PreviousGroup, InputKey.Left),
+        getBinding(FluXisKeybind.NextGroup, InputKey.Right),
+        getBinding(FluXisKeybind.ToggleSettings, new KeyCombination(InputKey.Control, InputKey.O)),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.Shift, InputKey.S), FluXisKeybind.OpenSkinEditor),
-        new KeyBinding(InputKey.Delete, FluXisKeybind.Delete),
-        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.BackSpace), FluXisKeybind.Delete),
-        new KeyBinding(InputKey.F5, FluXisKeybind.MusicPrevious),
-        new KeyBinding(InputKey.F6, FluXisKeybind.MusicPause),
-        new KeyBinding(InputKey.F7, FluXisKeybind.MusicNext),
+        getBinding(FluXisKeybind.Delete, InputKey.Delete),
+        getBinding(FluXisKeybind.MusicPrevious, InputKey.F5),
+        getBinding(FluXisKeybind.MusicPause, InputKey.F6),
+        getBinding(FluXisKeybind.MusicNext, InputKey.F7),
+
+        getBinding(FluXisKeybind.VolumeDecrease, new KeyCombination(InputKey.Alt, InputKey.Left)),
+        getBinding(FluXisKeybind.VolumeIncrease, new KeyCombination(InputKey.Alt, InputKey.Right)),
+        getBinding(FluXisKeybind.VolumePreviousCategory, new KeyCombination(InputKey.Alt, InputKey.Up)),
+        getBinding(FluXisKeybind.VolumeNextCategory, new KeyCombination(InputKey.Alt, InputKey.Down)),
 
         getBinding(FluXisKeybind.Key1k1, InputKey.Space),
 
@@ -114,14 +116,14 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         getBinding(FluXisKeybind.Key10k9, InputKey.K),
         getBinding(FluXisKeybind.Key10k10, InputKey.L),
 
-        new KeyBinding(InputKey.Space, FluXisKeybind.Skip),
+        getBinding(FluXisKeybind.Skip, InputKey.Space),
         getBinding(FluXisKeybind.QuickRestart, InputKey.Shift),
         getBinding(FluXisKeybind.QuickExit, InputKey.Control),
         new KeyBinding(InputKey.Escape, FluXisKeybind.GameplayPause),
-        new KeyBinding(InputKey.Left, FluXisKeybind.SeekBackward),
-        new KeyBinding(InputKey.Right, FluXisKeybind.SeekForward),
-        new KeyBinding(InputKey.F3, FluXisKeybind.ScrollSpeedDecrease),
-        new KeyBinding(InputKey.F4, FluXisKeybind.ScrollSpeedIncrease)
+        getBinding(FluXisKeybind.SeekBackward, InputKey.Left),
+        getBinding(FluXisKeybind.SeekForward, InputKey.Right),
+        getBinding(FluXisKeybind.ScrollSpeedDecrease, InputKey.F3),
+        getBinding(FluXisKeybind.ScrollSpeedIncrease, InputKey.F4),
     };
 
     protected override IEnumerable<Drawable> KeyBindingInputQueue
@@ -137,7 +139,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         }
     }
 
-    private KeyBinding getBinding(FluXisKeybind action, InputKey key)
+    private KeyBinding getBinding(FluXisKeybind action, KeyCombination combo)
     {
         KeyBinding bind = null;
 
@@ -149,7 +151,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
             {
                 r.Write(() => r.Add(binding = new RealmKeybind
                 {
-                    Key = key.ToString(),
+                    Key = string.Join(',', combo.Keys.Select(x => x.ToString())),
                     Action = action.ToString()
                 }));
             }
@@ -186,6 +188,11 @@ public enum FluXisKeybind
     MusicPrevious,
     MusicPause,
     MusicNext,
+
+    VolumeDecrease,
+    VolumeIncrease,
+    VolumePreviousCategory,
+    VolumeNextCategory,
 
     // 1k
     Key1k1,

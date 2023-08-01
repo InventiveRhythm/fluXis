@@ -1,5 +1,6 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
+using fluXis.Game.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -8,14 +9,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
-using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Volume;
 
-public partial class VolumeOverlay : Container
+public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     private const int max_inactive = 2000;
 
@@ -102,33 +103,6 @@ public partial class VolumeOverlay : Container
         visible.BindValueChanged(updateVisibility, true);
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e)
-    {
-        if (e.AltPressed)
-        {
-            switch (e.Key)
-            {
-                case Key.Up:
-                    changeCategory(-1);
-                    return true;
-
-                case Key.Down:
-                    changeCategory(1);
-                    return true;
-
-                case Key.Left:
-                    changeVolume(-.01f);
-                    return true;
-
-                case Key.Right:
-                    changeVolume(.01f);
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
     protected override bool OnScroll(ScrollEvent e)
     {
         if (e.AltPressed)
@@ -189,4 +163,30 @@ public partial class VolumeOverlay : Container
         else
             content.MoveToX(-400, 500, Easing.InQuint);
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisKeybind.VolumeDecrease:
+                changeVolume(-.01f);
+                return true;
+
+            case FluXisKeybind.VolumeIncrease:
+                changeVolume(.01f);
+                return true;
+
+            case FluXisKeybind.VolumePreviousCategory:
+                changeCategory(-1);
+                return true;
+
+            case FluXisKeybind.VolumeNextCategory:
+                changeCategory(1);
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
 }

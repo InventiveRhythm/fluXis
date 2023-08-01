@@ -14,7 +14,7 @@ public partial class InputSection : SettingsSection
     [BackgroundDependencyLoader]
     private void load(GameHost host)
     {
-        Add(new InputGameplaySection());
+        Add(new InputKeybindingsSection());
 
         foreach (var handler in host.AvailableInputHandlers)
         {
