@@ -116,7 +116,6 @@ public class MapInfo
     public virtual MapEvents GetMapEvents()
     {
         var events = new MapEvents();
-
         if (Map == null) return events;
 
         var effectFile = Map.MapSet.GetFile(EffectFile);
@@ -151,13 +150,15 @@ public class MapInfo
         {
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
+            CoverFile = CoverFile,
             VideoFile = VideoFile,
             EffectFile = EffectFile,
             HitObjects = HitObjects,
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
             KeyCount = KeyCount,
-            InitialKeyCount = InitialKeyCount
+            InitialKeyCount = InitialKeyCount,
+            Map = Map
         };
     }
 }

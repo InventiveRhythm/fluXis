@@ -79,7 +79,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private ITrackStore trackStore { get; set; }
 
     public RealmMap Map;
-    public MapInfo MapInfo;
+    public EditorMapInfo MapInfo;
 
     private Container tabs;
     private int currentTab;
@@ -99,7 +99,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
         Map = realmMap ?? RealmMap.CreateNew();
-        MapInfo = (map ?? new MapInfo(new MapMetadata())).Clone();
+        MapInfo = getEditorMapInfo(map) ?? new EditorMapInfo(new MapMetadata());
         MapInfo.KeyCount = Map.KeyCount;
     }
 
@@ -118,7 +118,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         values.MapInfo = MapInfo;
         values.Editor = this;
-        loadMapEvents();
+        values.MapEvents = MapInfo.MapEvents;
 
         changeHandler.OnTimingPointAdded += () => Logger.Log("Timing point added");
         changeHandler.OnTimingPointRemoved += () => Logger.Log("Timing point removed");
@@ -243,22 +243,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         if (!string.IsNullOrEmpty(path))
         {
             Stream s = trackStore.GetStream(path);
-
-            if (s != null)
-                w = new Waveform(s);
+            if (s != null) w = new Waveform(s);
         }
 
         waveform.Value = w;
-        return trackStore.Get(path) ?? trackStore.GetVirtual(10000);
-    }
-
-    private void loadMapEvents()
-    {
-        var path = Map.MapSet.GetFile(MapInfo.EffectFile)?.Path;
-        if (path == null) return;
-
-        var fullPath = storage.GetFullPath($"files/{path}");
-        values.MapEvents.Load(File.ReadAllText(fullPath));
+        return Map.GetTrack() ?? trackStore.GetVirtual(10000);
     }
 
     protected override void LoadComplete()
@@ -742,5 +731,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         });
 
         Schedule(overlay.Hide);
+    }
+
+    private EditorMapInfo getEditorMapInfo(MapInfo map)
+    {
+        var eMap = EditorMapInfo.FromMapInfo(map.Clone());
+        eMap.Map = Map;
+        return eMap;
     }
 }
