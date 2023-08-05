@@ -263,9 +263,7 @@ public partial class SkinManager : Component
             {
                 Texture = skinTextures.Get(path),
                 Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
+                Origin = Anchor.BottomCentre
             };
         }
 
