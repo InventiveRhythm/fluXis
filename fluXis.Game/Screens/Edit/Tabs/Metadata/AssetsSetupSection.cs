@@ -15,6 +15,9 @@ public partial class AssetsSetupSection : SetupSection
     [Resolved]
     private EditorValues values { get; set; }
 
+    public Action BackgroundChanged { get; set; }
+    public Action CoverChanged { get; set; }
+
     public AssetsSetupSection()
         : base("Assets")
     {
@@ -30,13 +33,21 @@ public partial class AssetsSetupSection : SetupSection
             {
                 Label = "Background",
                 AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                OnFileSelected = file => values.Editor.SetBackground(file)
+                OnFileSelected = file =>
+                {
+                    values.Editor.SetBackground(file);
+                    BackgroundChanged?.Invoke();
+                }
             },
             new AssetsSetupTextBox
             {
                 Label = "Cover",
                 AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                OnFileSelected = file => values.Editor.SetCover(file)
+                OnFileSelected = file =>
+                {
+                    values.Editor.SetCover(file);
+                    CoverChanged?.Invoke();
+                }
             },
             new AssetsSetupTextBox
             {

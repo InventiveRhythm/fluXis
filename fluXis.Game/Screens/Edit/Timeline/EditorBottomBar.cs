@@ -26,19 +26,19 @@ public partial class EditorBottomBar : Container
         Anchor = Origin = Anchor.BottomLeft;
         RelativeSizeAxes = Axes.X;
         Height = 60;
-        Padding = new MarginPadding(5);
+        // Padding = new MarginPadding(5);
 
         Child = new Container
         {
             RelativeSizeAxes = Axes.Both,
-            Masking = true,
-            CornerRadius = 10,
+            // Masking = true,
+            // CornerRadius = 10,
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
+                    Colour = FluXisColors.Background
                 },
                 new GridContainer
                 {

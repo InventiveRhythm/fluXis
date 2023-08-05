@@ -10,6 +10,7 @@ public partial class EditorTab : Container
     public EditorTab(Editor screen)
     {
         Screen = screen;
+        Alpha = 0;
         RelativeSizeAxes = Axes.Both;
         RelativePositionAxes = Axes.Both;
     }

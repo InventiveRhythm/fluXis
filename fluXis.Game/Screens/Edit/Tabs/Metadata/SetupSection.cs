@@ -12,6 +12,7 @@ public partial class SetupSection : FillFlowContainer
         Direction = FillDirection.Vertical;
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
+        Padding = new MarginPadding { Horizontal = 160 };
 
         Add(new MetadataSectionHeader(title));
     }
@@ -22,7 +23,9 @@ public partial class MetadataSectionHeader : FluXisSpriteText
     public MetadataSectionHeader(string text)
     {
         Text = text;
+        Shadow = true;
         FontSize = 32;
+        Margin = new MarginPadding { Vertical = 10 };
     }
 }
 

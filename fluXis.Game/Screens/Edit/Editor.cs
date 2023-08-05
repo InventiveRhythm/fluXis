@@ -139,13 +139,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     RelativeSizeAxes = Axes.Both,
                     Child = tabs = new Container
                     {
-                        Padding = new MarginPadding(10) { Top = 50, Bottom = 60 },
+                        Padding = new MarginPadding { Top = 45, Bottom = 60 },
                         RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
                         Children = new Drawable[]
                         {
                             new SetupTab(this),
+                            // new ChartingTab(this),
                             new ComposeTab(this),
                             new TimingTab(this)
                         }
@@ -220,7 +219,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     },
                     new()
                     {
-                        Text = "Compose",
+                        Text = "Charting",
                         Action = () => changeTab(1)
                     },
                     new()
@@ -735,6 +734,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private EditorMapInfo getEditorMapInfo(MapInfo map)
     {
+        if (map == null) return null;
+
         var eMap = EditorMapInfo.FromMapInfo(map.Clone());
         eMap.Map = Map;
         return eMap;

@@ -17,8 +17,8 @@ public partial class TimingTab : EditorTab
     {
         AddInternal(new Container
         {
-            CornerRadius = 10,
-            Masking = true,
+            // CornerRadius = 10,
+            // Masking = true,
             RelativeSizeAxes = Axes.Both,
             Child = new GridContainer
             {

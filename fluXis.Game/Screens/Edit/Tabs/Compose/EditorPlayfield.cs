@@ -7,6 +7,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Compose.HitObjects;
 using fluXis.Game.Screens.Edit.Tabs.Compose.Lines;
+using fluXis.Game.Screens.Edit.Tabs.Compose.Toolbox;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
@@ -36,7 +37,6 @@ public partial class EditorPlayfield : Container
 
     public const int COLUMN_WIDTH = 80;
     public const int HITPOSITION_Y = 100;
-    private const int selection_fade = 200;
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
 
     public EditorTool Tool
@@ -160,7 +160,8 @@ public partial class EditorPlayfield : Container
             selectionContainer = new Container
             {
                 BorderColour = Colour4.White,
-                BorderThickness = 2,
+                BorderThickness = 4,
+                CornerRadius = 10,
                 Masking = true,
                 Alpha = 0,
                 Child = new Box
@@ -168,7 +169,8 @@ public partial class EditorPlayfield : Container
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0.2f
                 }
-            }
+            },
+            new EditorToolbox { Playfield = this }
         };
 
         loadTimingLines();
@@ -245,6 +247,8 @@ public partial class EditorPlayfield : Container
 
     private void loadEvents()
     {
+        values.MapEvents ??= new MapEvents();
+
         foreach (var flashEvent in values.MapEvents.FlashEvents)
             effectContainer.AddFlash(flashEvent);
 
@@ -291,8 +295,17 @@ public partial class EditorPlayfield : Container
             case EditorTool.Long when isDragging:
             {
                 float holdTime = getTimeFromMouseSnapped(e.MousePosition) - ghostNote.Info.Time;
-                if (holdTime < 0) holdTime = 0;
-                ghostNote.Info.HoldTime = holdTime;
+
+                if (holdTime < 0)
+                {
+                    ghostNote.Info.Time += holdTime;
+                    ghostNote.Info.HoldTime += holdTime;
+                }
+                else
+                {
+                    ghostNote.Info.HoldTime = holdTime;
+                }
+
                 break;
             }
 
@@ -355,7 +368,7 @@ public partial class EditorPlayfield : Container
                         selectionStart = e.MousePosition;
                         selectionStartTime = getTimeFromMouse(e.MousePosition);
                         selectionStartLane = getLaneFromMouse(e.ScreenSpaceMousePosition);
-                        selectionContainer.FadeIn(selection_fade);
+                        selectionContainer.FadeIn();
                         selectionNow = e.MousePosition;
                         selecting = true;
                         break;
@@ -418,7 +431,7 @@ public partial class EditorPlayfield : Container
                     if (selecting)
                     {
                         selecting = false;
-                        selectionContainer.FadeOut(selection_fade);
+                        selectionContainer.FadeOut(100);
                         selectHitObjects();
                     }
 

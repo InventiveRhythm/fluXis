@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Scroll;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,11 +12,13 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Compose.Toolbox;
 
-public partial class EditorToolbox : Container
+public partial class EditorToolbox : ExpandingContainer
 {
     private const int padding = 5;
     private const int size_closed = 48 + padding * 2;
     private const int size_open = 200 + padding * 2;
+
+    protected override double HoverDelay => 500;
 
     public EditorPlayfield Playfield { get; init; }
 
@@ -28,8 +31,6 @@ public partial class EditorToolbox : Container
     {
         RelativeSizeAxes = Axes.Y;
         Width = size_closed;
-        CornerRadius = 10;
-        Masking = true;
 
         Children = new Drawable[]
         {
@@ -79,18 +80,13 @@ public partial class EditorToolbox : Container
         };
     }
 
-    protected override bool OnHover(HoverEvent e)
+    protected override void LoadComplete()
     {
-        this.ResizeWidthTo(size_open, 200, Easing.OutQuint);
-        updateTitles(true);
-
-        return true;
-    }
-
-    protected override void OnHoverLost(HoverLostEvent e)
-    {
-        this.ResizeWidthTo(size_closed, 200, Easing.OutQuint);
-        updateTitles(false);
+        Expanded.BindValueChanged(v =>
+        {
+            this.ResizeWidthTo(v.NewValue ? size_open : size_closed, 500, Easing.OutQuint);
+            updateTitles(v.NewValue);
+        }, true);
     }
 
     protected override void Update()

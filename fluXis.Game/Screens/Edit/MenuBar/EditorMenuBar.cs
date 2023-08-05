@@ -13,7 +13,7 @@ public partial class EditorMenuBar : FluXisMenu
     {
         RelativeSizeAxes = Axes.X;
         MaskingContainer.CornerRadius = 0;
-        BackgroundColour = FluXisColors.Background2;
+        BackgroundColour = FluXisColors.Background;
     }
 
     protected override void UpdateSize(Vector2 newSize)
