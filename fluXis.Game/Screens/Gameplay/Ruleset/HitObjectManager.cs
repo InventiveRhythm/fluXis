@@ -116,6 +116,28 @@ public partial class HitObjectManager : Container<HitObject>
             FutureHitObjects.RemoveAll(h => h.Time <= newTime);
             FutureHitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
         }
+        else
+        {
+            // all future hitobjects behind the new time
+            var hitObjects = FutureHitObjects.Where(h => h.Time <= newTime).ToList();
+
+            // remove all hitobjects behind the new time
+            foreach (var info in hitObjects)
+            {
+                performance.AddHitStat(new HitStat(info.Time, 0, Judgement.Flawless));
+                performance.AddJudgement(Judgement.Flawless);
+                performance.IncCombo();
+
+                if (info.IsLongNote())
+                {
+                    performance.AddHitStat(new HitStat(info.HoldEndTime, 0, Judgement.Flawless));
+                    performance.AddJudgement(Judgement.Flawless);
+                    performance.IncCombo();
+                }
+            }
+
+            FutureHitObjects.RemoveAll(h => h.Time <= newTime);
+        }
     }
 
     protected override void Update()
