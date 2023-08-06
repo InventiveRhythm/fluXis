@@ -17,11 +17,13 @@ public partial class GameplayEffectsSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Lane Switch Alerts",
+                Description = "Shows arrows next to the playfield before a lane switch.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.LaneSwitchAlerts)
             },
             new SettingsToggle
             {
                 Label = "Disable Epilepsy Intrusing Effects",
+                Description = "Disables effects like flashes and shakes.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.DisableEpilepsyIntrusingEffects)
             }
         });

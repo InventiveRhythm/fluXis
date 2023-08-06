@@ -31,6 +31,7 @@ public partial class InputMouseSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "High Precision Mouse",
+                Description = "Uses raw input from the mouse instead of the cursor position.",
                 Bindable = mh.UseRelativeMode.GetBoundCopy()
             },
             new SettingsSlider<double>

@@ -40,11 +40,13 @@ public partial class GeneralSection : SettingsSection
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
+                Margin = new MarginPadding { Top = 20 },
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText
                     {
                         Text = "fluXis",
+                        FontSize = 32,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.BottomCentre
                     },

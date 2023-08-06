@@ -86,7 +86,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         AutoSizeAxes = Axes.Y,
-                                        Padding = new MarginPadding { Horizontal = 50, Vertical = 20 }
+                                        Padding = new MarginPadding { Horizontal = 50, Top = 20, Bottom = 50 }
                                     }
                                 }
                             }

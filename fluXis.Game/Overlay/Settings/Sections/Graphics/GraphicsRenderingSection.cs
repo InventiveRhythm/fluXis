@@ -40,6 +40,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
             new SettingsToggle
             {
                 Label = "Show FPS",
+                Description = "Shows the current DrawsPerSecond and UpdatesPerSecond in the bottom right corner.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.ShowFps)
             }
         });

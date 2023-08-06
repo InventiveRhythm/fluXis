@@ -16,6 +16,7 @@ public partial class MaintenanceFilesSection : SettingsSubSection
             new SettingsButton
             {
                 Label = "Clean up files",
+                Description = "Deletes all files that are not used by any maps",
                 Enabled = false,
                 ButtonText = "Run"
             }

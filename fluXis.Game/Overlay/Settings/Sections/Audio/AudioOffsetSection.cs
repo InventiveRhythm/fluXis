@@ -20,6 +20,7 @@ public partial class AudioOffsetSection : SettingsSubSection
             {
                 Label = "Audio Offset",
                 ValueLabel = "{value}ms",
+                Description = "Changes the audio offset for all songs.",
                 Bindable = Config.GetBindable<float>(FluXisSetting.GlobalOffset),
                 Step = 1
             },
