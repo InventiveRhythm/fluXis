@@ -19,17 +19,25 @@ public partial class PauseMenu : CompositeDrawable
 
     public GameplayScreen Screen { get; set; }
 
+    private Container background;
+    private FluXisSpriteText title;
+    private FluXisSpriteText subtitle;
+    private FillFlowContainer buttons;
+
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
-            new ClickableContainer
+            background = new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
+                RelativePositionAxes = Axes.X,
+                X = 1.2f,
+                Width = 1.2f,
+                Shear = new Vector2(-.2f, 0f),
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -37,28 +45,31 @@ public partial class PauseMenu : CompositeDrawable
                     Alpha = 0.4f
                 }
             },
-            new FluXisSpriteText
+            title = new FluXisSpriteText
             {
                 Text = "Paused",
                 FontSize = 100,
+                Alpha = 0,
                 Margin = new MarginPadding { Left = 100, Top = 100 },
                 Shadow = true
             },
-            new FluXisSpriteText
+            subtitle = new FluXisSpriteText
             {
                 Text = "What do you want to do?",
                 FontSize = 48,
+                Alpha = 0,
                 Margin = new MarginPadding { Left = 100, Top = 180 },
                 Colour = Colour4.Gray,
                 Shadow = true
             },
-            new FillFlowContainer
+            buttons = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Direction = FillDirection.Vertical,
                 Spacing = new Vector2(10),
+                Alpha = 0,
                 Margin = new MarginPadding { Left = 100 },
                 Children = new Drawable[]
                 {
@@ -98,14 +109,22 @@ public partial class PauseMenu : CompositeDrawable
 
     public override void Hide()
     {
-        clock.RateTo(Screen.Rate);
-        this.FadeOut(200);
+        clock.RateTo(Screen.Rate, 600, Easing.InQuint);
+
+        background.MoveToX(1.2f, 500, Easing.InQuint);
+        title.MoveToX(100, 400, Easing.InQuint).Delay(100).FadeOut(200);
+        subtitle.Delay(40).MoveToX(100, 400, Easing.InQuint).Delay(100).FadeOut(200);
+        buttons.Delay(80).MoveToX(100, 400, Easing.InQuint).Delay(100).FadeOut(200);
     }
 
     public override void Show()
     {
         clock.RateTo(0);
-        this.FadeIn(200);
+
+        background.MoveToX(-1.2f).MoveToX(-.2f, 750, Easing.OutQuint);
+        title.MoveToX(-100).FadeInFromZero(200).MoveToX(0, 400, Easing.OutQuint);
+        subtitle.MoveToX(-100).FadeOut().Delay(40).FadeIn(200).MoveToX(0, 400, Easing.OutQuint);
+        buttons.MoveToX(-100).FadeOut().Delay(80).FadeIn(200).MoveToX(0, 400, Easing.OutQuint);
     }
 
     private partial class PauseButton : Container

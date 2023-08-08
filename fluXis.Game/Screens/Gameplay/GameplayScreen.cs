@@ -360,7 +360,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         }
 
         AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, time);
-        ScheduleAfterChildren(() => AudioClock.RateTo(Rate, time));
+        ScheduleAfterChildren(() => AudioClock.RateTo(Rate, time, Easing.InQuint));
         backgrounds.StopVideo();
 
         return base.OnExiting(e);
