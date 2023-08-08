@@ -25,7 +25,8 @@ public partial class Progressbar : GameplayHUDElement
         Anchor = Anchor.TopLeft;
         Origin = Anchor.TopLeft;
         RelativeSizeAxes = Axes.X;
-        Padding = new MarginPadding { Top = 10, Left = 10, Right = 10 };
+        AutoSizeAxes = Axes.Y;
+        Padding = new MarginPadding(10);
 
         InternalChildren = new Drawable[]
         {
