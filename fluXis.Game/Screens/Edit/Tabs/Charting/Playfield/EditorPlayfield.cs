@@ -1,3 +1,4 @@
+using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -21,6 +22,9 @@ public partial class EditorPlayfield : Container
 
         InternalChildren = new Drawable[]
         {
+            new DefaultStageBackground(),
+            new DefaultStageBorderLeft(),
+            new DefaultStageBorderRight(),
             HitObjectContainer = new EditorHitObjectContainer()
         };
     }

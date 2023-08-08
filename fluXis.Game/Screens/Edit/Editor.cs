@@ -144,9 +144,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                         Children = new Drawable[]
                         {
                             new SetupTab(this),
-                            // new ChartingTab(this),
-                            new ComposeTab(this),
-                            new TimingTab(this)
+                            new ChartingTab(this),
+                            new TimingTab(this),
+                            new ComposeTab(this)
                         }
                     }
                 }
@@ -283,20 +283,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
         if (e.ControlPressed)
         {
+            if (e.Key is >= Key.Number1 and <= Key.Number9)
+            {
+                int index = e.Key - Key.Number1;
+
+                if (index < tabs.Count)
+                    changeTab(index);
+
+                return true;
+            }
+
             switch (e.Key)
             {
-                case Key.Number1:
-                    changeTab(0);
-                    return true;
-
-                case Key.Number2:
-                    changeTab(1);
-                    return true;
-
-                case Key.Number3:
-                    changeTab(2);
-                    return true;
-
                 case Key.S:
                     save();
                     return true;

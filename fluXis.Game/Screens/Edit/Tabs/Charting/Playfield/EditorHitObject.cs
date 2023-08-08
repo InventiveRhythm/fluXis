@@ -3,6 +3,7 @@ using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 
@@ -13,8 +14,9 @@ public partial class EditorHitObject : Container
 
     public HitObjectInfo Data { get; init; }
 
-    private Drawable lnBody;
-    private Drawable lnEnd;
+    public Drawable HitObjectPiece { get; private set; }
+    private Drawable longNoteBody { get; set; }
+    public Drawable LongNoteEnd { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -25,13 +27,13 @@ public partial class EditorHitObject : Container
 
         Children = new[]
         {
-            new DefaultHitObjectPiece(),
-            lnBody = new DefaultHitObjectBody().With(b =>
+            HitObjectPiece = new DefaultHitObjectPiece(),
+            longNoteBody = new DefaultHitObjectBody().With(b =>
             {
                 b.Anchor = Anchor.BottomCentre;
                 b.Origin = Anchor.BottomCentre;
             }),
-            lnEnd = new DefaultHitObjectEnd().With(e =>
+            LongNoteEnd = new DefaultHitObjectEnd().With(e =>
             {
                 e.Anchor = Anchor.BottomCentre;
                 e.Origin = Anchor.BottomCentre;
@@ -49,9 +51,11 @@ public partial class EditorHitObject : Container
         if (Data.IsLongNote())
         {
             var endY = playfield.HitObjectContainer.PositionAtTime(Data.HoldEndTime);
-            lnBody.Height = Y - endY;
-            lnBody.Y = -lnEnd.Height / 2;
-            lnEnd.Y = endY - Y;
+            longNoteBody.Height = Y - endY;
+            longNoteBody.Y = -LongNoteEnd.Height / 2;
+            LongNoteEnd.Y = endY - Y;
         }
     }
+
+    protected override bool OnHover(HoverEvent e) => true;
 }

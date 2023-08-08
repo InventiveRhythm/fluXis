@@ -1,7 +1,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
 
 public partial class SelectionBlueprints : Container<SelectionBlueprint>
 {

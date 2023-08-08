@@ -5,16 +5,17 @@ using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
 
 public partial class SelectionBlueprint : Container
 {
     [Resolved]
     private EditorPlayfield playfield { get; set; }
 
-    private EditorHitObjectContainer hitObjectContainer => playfield.HitObjectContainer;
+    protected EditorHitObjectContainer HitObjectContainer => playfield.HitObjectContainer;
 
     public HitObjectInfo HitObject { get; }
     public EditorHitObject Drawable { get; internal set; }
@@ -35,18 +36,16 @@ public partial class SelectionBlueprint : Container
     {
         HitObject = info;
         AlwaysPresent = true;
-        Width = 80;
+        Width = EditorHitObjectContainer.NOTEWIDTH;
+        Anchor = Origin = Anchor.BottomLeft;
     }
 
     protected override void Update()
     {
         base.Update();
 
-        Anchor = Origin = Anchor.BottomCentre;
-        foreach (var child in InternalChildren)
-            child.Anchor = child.Origin = Anchor.BottomCentre;
-
-        Position = Parent.ToLocalSpace(hitObjectContainer.ScreenSpacePositionAtTime(HitObject.Time, HitObject.Lane)) - AnchorPosition;
+        if (Parent != null)
+            Position = Parent.ToLocalSpace(HitObjectContainer.ScreenSpacePositionAtTime(HitObject.Time, HitObject.Lane));
     }
 
     protected override void LoadComplete()
@@ -88,13 +87,13 @@ public partial class SelectionBlueprint : Container
         }
     }
 
-    protected virtual void OnDeselected()
+    protected void OnDeselected()
     {
         foreach (var drawable in InternalChildren)
             drawable.Hide();
     }
 
-    protected virtual void OnSelected()
+    protected void OnSelected()
     {
         foreach (var drawable in InternalChildren)
             drawable.Show();
@@ -103,4 +102,6 @@ public partial class SelectionBlueprint : Container
     protected override bool ShouldBeConsideredForInput(Drawable child) => State == SelectedState.Selected;
     public void Select() => State = SelectedState.Selected;
     public void Deselect() => State = SelectedState.Deselected;
+
+    protected override bool OnHover(HoverEvent e) => true;
 }

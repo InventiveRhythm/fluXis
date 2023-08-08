@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Slider;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -17,7 +19,9 @@ public partial class PlaybackControl : Container
     [Resolved]
     private EditorClock clock { get; set; }
 
-    private static readonly float[] playback_speeds = { .25f, .5f, .75f, 1f };
+    private static readonly float[] playback_speeds = { .4f, .6f, .8f, 1f };
+
+    private BindableFloat rateBindable;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -34,25 +38,57 @@ public partial class PlaybackControl : Container
                 Origin = Anchor.CentreLeft,
                 Child = new PlayButton()
             },
-            new GridContainer
+            new FillFlowContainer
             {
-                ColumnDimensions = new Dimension[]
-                {
-                    new(),
-                    new(),
-                    new(),
-                    new()
-                },
-                RelativeSizeAxes = Axes.Y,
                 Width = 140,
+                AutoSizeAxes = Axes.Y,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 50 },
-                Content = new[]
+                Children = new Drawable[]
                 {
-                    playback_speeds.Select(speed => new PlaybackSpeedText { Speed = speed }).ToArray()
+                    new GridContainer
+                    {
+                        ColumnDimensions = new Dimension[] { new(), new(), new(), new() },
+                        RowDimensions = new Dimension[] { new(GridSizeMode.AutoSize) },
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Content = new[]
+                        {
+                            playback_speeds.Select(speed => new PlaybackSpeedText
+                            {
+                                Speed = speed,
+                                OnClickAction = ChangeRate,
+                                ClosestCheckAction = GetClosestPlaybackSpeed
+                            }).ToArray()
+                        }
+                    },
+                    new FluXisSlider<float>
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 10,
+                        Bindable = rateBindable = new BindableFloat
+                        {
+                            MinValue = playback_speeds[0],
+                            MaxValue = playback_speeds[^1],
+                            Default = 1f,
+                            Value = 1f,
+                            Precision = 0.05f
+                        }
+                    }
                 }
             }
         };
     }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        rateBindable.BindValueChanged(e => clock.Rate = e.NewValue, true);
+    }
+
+    public void ChangeRate(float rate) => rateBindable.Value = rate;
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
@@ -63,12 +99,12 @@ public partial class PlaybackControl : Container
             switch (e.Key)
             {
                 case Key.Minus or Key.KeypadMinus:
-                    int index = Array.IndexOf(playback_speeds, getClosetPlaybackSpeed(clock.Rate));
+                    int index = Array.IndexOf(playback_speeds, GetClosestPlaybackSpeed());
                     clock.Rate = index == 0 ? playback_speeds[0] : playback_speeds[index - 1];
                     return true;
 
                 case Key.Plus or Key.KeypadPlus:
-                    index = Array.IndexOf(playback_speeds, getClosetPlaybackSpeed(clock.Rate));
+                    index = Array.IndexOf(playback_speeds, GetClosestPlaybackSpeed());
                     clock.Rate = index == playback_speeds.Length - 1 ? playback_speeds[^1] : playback_speeds[index + 1];
                     return true;
             }
@@ -77,7 +113,7 @@ public partial class PlaybackControl : Container
         return false;
     }
 
-    private static float getClosetPlaybackSpeed(double speed) => playback_speeds.Aggregate((x, y) => Math.Abs(x - speed) < Math.Abs(y - speed) ? x : y);
+    public float GetClosestPlaybackSpeed() => playback_speeds.Aggregate((x, y) => Math.Abs(x - clock.Rate) < Math.Abs(y - clock.Rate) ? x : y);
 
     private partial class PlayButton : Container
     {
@@ -160,8 +196,8 @@ public partial class PlaybackControl : Container
 
     private partial class PlaybackSpeedText : FluXisSpriteText
     {
-        [Resolved]
-        private EditorClock clock { get; set; }
+        public Func<float> ClosestCheckAction { get; init; }
+        public Action<float> OnClickAction { get; init; }
 
         public float Speed
         {
@@ -169,7 +205,7 @@ public partial class PlaybackControl : Container
             init
             {
                 speed = value;
-                Text = $"{speed * 100}%";
+                Text = $"{(int)(speed * 100)}%";
             }
         }
 
@@ -184,12 +220,12 @@ public partial class PlaybackControl : Container
 
         protected override void Update()
         {
-            Colour = clock.Rate == Speed ? FluXisColors.Text : FluXisColors.Text2;
+            Colour = ClosestCheckAction() == Speed ? FluXisColors.Text : FluXisColors.Text2;
         }
 
         protected override bool OnClick(ClickEvent e)
         {
-            clock.Rate = Speed;
+            OnClickAction(Speed);
             return base.OnClick(e);
         }
     }

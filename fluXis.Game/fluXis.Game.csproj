@@ -20,6 +20,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Stores\" />
-    <Folder Include="Screens\Edit\Tabs\Charting\Selection\" />
   </ItemGroup>
 </Project>

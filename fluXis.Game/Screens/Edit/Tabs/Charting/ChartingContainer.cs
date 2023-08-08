@@ -19,7 +19,9 @@ public partial class ChartingContainer : Container
     private EditorClock clock { get; set; }
 
     private DependencyContainer dependencies;
-    private EditorPlayfield playfield;
+
+    public EditorPlayfield Playfield { get; private set; }
+    public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -33,15 +35,14 @@ public partial class ChartingContainer : Container
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    playfield = new EditorPlayfield
-                    {
-                        Clock = clock
-                    },
-                    new BlueprintContainer()
+                    Playfield = new EditorPlayfield { Clock = clock },
+                    new BlueprintContainer { ChartingContainer = this }
                 }
             },
             new Toolbox()
         };
+
+        dependencies.Cache(Playfield);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
