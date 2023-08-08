@@ -317,7 +317,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             AudioClock.PlayTrack("Gameplay/DeathLoop.mp3");
             AudioClock.RestartPoint = 0;
             AudioClock.Looping = true;
+            AudioClock.RateTo(1, 0);
             AudioClock.LowPassFilter.CutoffTo(0);
+            ScheduleAfterChildren(AudioClock.Start);
         });
     }
 
@@ -350,17 +352,16 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     {
         fadeOut();
 
-        int time = Playfield.Manager.Dead ? 1400 : 500;
-
         if (Playfield.Manager.Dead)
         {
             AudioClock.LoadMap(RealmMap, true);
             AudioClock.SeekForce(DeathTime);
+            AudioClock.RateTo(0, 0);
             AudioClock.LowPassFilter.CutoffTo(0);
         }
 
-        AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, time);
-        ScheduleAfterChildren(() => AudioClock.RateTo(Rate, time, Easing.InQuint));
+        AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500);
+        ScheduleAfterChildren(() => AudioClock.RateTo(Rate, 500, Easing.InQuint));
         backgrounds.StopVideo();
 
         return base.OnExiting(e);

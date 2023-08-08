@@ -109,7 +109,6 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         if (!sameTrack)
         {
             Stop();
-            track.Value?.Dispose();
             ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
             trackHash = hash;
 
@@ -128,6 +127,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public void PlayTrack(string path, bool start = false)
     {
+        trackHash = null;
+        MapInfo = null;
+
         Stop();
         ChangeSource(trackStore.Get(path));
         if (start) Start();
@@ -176,6 +178,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public void ChangeSource(IClock source)
     {
+        track.Value?.Dispose();
         track.Value = source as Track;
         Track.Value.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
