@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
@@ -28,12 +29,17 @@ public partial class BlueprintContainer : Container
         get => currentTool;
         set
         {
+            var previousTool = currentTool;
             currentTool = value;
             removePlacement();
+
+            CurrentToolChanged?.Invoke(previousTool, currentTool);
         }
     }
 
-    private ChartingTool currentTool = new SelectTool();
+    public event Action<ChartingTool, ChartingTool> CurrentToolChanged;
+
+    private ChartingTool currentTool;
 
     protected readonly BindableList<HitObjectInfo> SelectedHitObjects = new();
 
@@ -57,6 +63,7 @@ public partial class BlueprintContainer : Container
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        currentTool = ChartingContainer.Tools[0];
 
         SelectionHandler = new SelectionHandler();
         SelectionHandler.SelectedHitObjects.BindTo(SelectedHitObjects);

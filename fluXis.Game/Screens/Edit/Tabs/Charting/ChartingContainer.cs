@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +21,12 @@ public partial class ChartingContainer : Container
         new SelectTool(),
         new SingleNoteTool(),
         new LongNoteTool()
+    };
+
+    public IReadOnlyList<EffectTool> EffectTools { get; } = new EffectTool[]
+    {
+        new LaneSwitchTool(),
+        new FlashTool()
     };
 
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
@@ -60,7 +68,7 @@ public partial class ChartingContainer : Container
                     BlueprintContainer = new BlueprintContainer { ChartingContainer = this }
                 }
             },
-            new Toolbox()
+            new Toolbox.Toolbox()
         };
 
         dependencies.Cache(Playfield);
@@ -84,6 +92,17 @@ public partial class ChartingContainer : Container
                 if (index >= Tools.Count) return false;
 
                 BlueprintContainer.CurrentTool = Tools[index];
+                return true;
+            }
+
+            case >= Key.A and <= Key.Z when !e.ControlPressed:
+            {
+                var letter = e.Key.ToString();
+                var tool = EffectTools.FirstOrDefault(t => t.Letter == letter);
+
+                if (tool == null) return false;
+
+                BlueprintContainer.CurrentTool = tool;
                 return true;
             }
 
