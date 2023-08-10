@@ -148,8 +148,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                         {
                             new SetupTab(this),
                             new ChartingTab(this),
-                            new TimingTab(this),
-                            new ComposeTab(this)
+                            new TimingTab(this)
                         }
                     }
                 }

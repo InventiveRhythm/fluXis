@@ -1,18 +1,22 @@
 using System.Collections.Generic;
 using fluXis.Game.Graphics.Menu;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 
 public partial class EditorEffectContainer : Container, IHasContextMenu
 {
     [Resolved]
     private EditorValues values { get; set; }
+
+    [Resolved]
+    private EditorChangeHandler changeHandler { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -31,7 +35,7 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
             {
                 AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
-                Y = -EditorPlayfield.HITPOSITION_Y,
+                Y = -EditorHitObjectContainer.HITPOSITION,
                 Anchor = Anchor.BottomRight,
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Left = 10 }
@@ -39,9 +43,26 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
             lsContainer = new Container<EditorLaneSwitchEvent>
             {
                 RelativeSizeAxes = Axes.Both,
-                Y = -EditorPlayfield.HITPOSITION_Y
+                Y = -EditorHitObjectContainer.HITPOSITION
             }
         };
+
+        loadEvents();
+
+        changeHandler.OnKeyModeChanged += _ =>
+        {
+            ClearAll();
+            loadEvents();
+        };
+    }
+
+    private void loadEvents()
+    {
+        foreach (var flashEvent in values.MapEvents.FlashEvents)
+            AddFlash(flashEvent);
+
+        foreach (var laneSwitch in values.MapEvents.LaneSwitchEvents)
+            AddLaneSwitch(laneSwitch);
     }
 
     public MenuItem[] ContextMenuItems

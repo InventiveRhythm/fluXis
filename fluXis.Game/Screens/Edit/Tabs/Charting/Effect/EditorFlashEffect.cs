@@ -1,6 +1,6 @@
 using System;
 using fluXis.Game.Map.Events;
-using fluXis.Game.Screens.Edit.Tabs.Compose.Effect.EffectEdit;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -8,7 +8,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 
 public partial class EditorFlashEvent : Container
 {

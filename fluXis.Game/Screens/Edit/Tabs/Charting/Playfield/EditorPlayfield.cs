@@ -1,4 +1,5 @@
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
@@ -30,6 +31,7 @@ public partial class EditorPlayfield : Container
             new DefaultStageBackground(),
             new DefaultStageBorderLeft(),
             new DefaultStageBorderRight(),
+            new EditorEffectContainer(),
             timingLines = new EditorTimingLines(),
             HitObjectContainer = new EditorHitObjectContainer()
         };

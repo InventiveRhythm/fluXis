@@ -10,7 +10,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect.UI;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
 
 public partial class ColorTextBox : Container, IHasPopover
 {

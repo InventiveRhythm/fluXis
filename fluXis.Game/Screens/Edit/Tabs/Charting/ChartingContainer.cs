@@ -45,6 +45,9 @@ public partial class ChartingContainer : Container
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+
+        dependencies.Cache(this);
+
         InternalChildren = new Drawable[]
         {
             new Container
@@ -60,7 +63,6 @@ public partial class ChartingContainer : Container
             new Toolbox()
         };
 
-        dependencies.Cache(this);
         dependencies.Cache(Playfield);
     }
 

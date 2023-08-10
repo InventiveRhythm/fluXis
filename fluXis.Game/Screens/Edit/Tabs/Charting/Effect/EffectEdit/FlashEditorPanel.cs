@@ -4,7 +4,7 @@ using fluXis.Game.Graphics.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Notification;
-using fluXis.Game.Screens.Edit.Tabs.Compose.Effect.UI;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,12 +12,11 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect.EffectEdit;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 
-public partial class LaneSwtichEditorPanel : Panel
+public partial class FlashEditorPanel : Panel
 {
-    public LaneSwitchEvent Event { get; set; }
-    public MapInfo MapInfo { get; init; }
+    public FlashEvent Event { get; set; }
     public MapEvents MapEvents { get; init; }
     public EditorClock EditorClock { get; set; }
 
@@ -52,7 +51,7 @@ public partial class LaneSwtichEditorPanel : Panel
                     {
                         new FluXisSpriteText
                         {
-                            Text = "Lane Switch Editor",
+                            Text = "Flash Editor",
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
                             FontSize = 30
@@ -82,32 +81,39 @@ public partial class LaneSwtichEditorPanel : Panel
                 },
                 new BeatsTextBox
                 {
-                    LabelText = "Speed",
-                    Text = (Event.Speed / beatLength).ToStringInvariant(),
+                    LabelText = "Duration",
+                    Text = (Event.Duration / beatLength).ToStringInvariant(),
                     OnTextChanged = textBox =>
                     {
                         if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
-                            Event.Speed = result * beatLength;
+                            Event.Duration = result * beatLength;
                         else
                             textBox.NotifyError();
                     }
                 },
-                new LabelledTextBox
+                new ColorTextBox
                 {
-                    LabelText = "Lanes",
-                    Text = Event.Count.ToString(),
-                    OnTextChanged = textBox =>
-                    {
-                        if (int.TryParse(textBox.Text, out var result))
-                        {
-                            if (result > MapInfo.KeyCount || result < 1)
-                                textBox.NotifyError();
-                            else
-                                Event.Count = result;
-                        }
-                        else
-                            textBox.NotifyError();
-                    }
+                    LabelText = "Start Color",
+                    Color = Event.StartColor,
+                    OnColorChanged = color => Event.StartColor = color
+                },
+                new PercentTextBox
+                {
+                    LabelText = "Start Opacity",
+                    Text = (Event.StartOpacity * 100).ToStringInvariant(),
+                    OnValueChanged = value => Event.StartOpacity = value
+                },
+                new ColorTextBox
+                {
+                    LabelText = "End Color",
+                    Color = Event.EndColor,
+                    OnColorChanged = color => Event.EndColor = color
+                },
+                new PercentTextBox
+                {
+                    LabelText = "End Opacity",
+                    Text = (Event.EndOpacity * 100).ToStringInvariant(),
+                    OnValueChanged = value => Event.EndOpacity = value
                 },
                 new FillFlowContainer
                 {
@@ -126,7 +132,7 @@ public partial class LaneSwtichEditorPanel : Panel
                             Color = FluXisColors.ButtonRed,
                             Action = () =>
                             {
-                                MapEvents.LaneSwitchEvents.Remove(Event);
+                                MapEvents.FlashEvents.Remove(Event);
                                 Hide();
                             }
                         },

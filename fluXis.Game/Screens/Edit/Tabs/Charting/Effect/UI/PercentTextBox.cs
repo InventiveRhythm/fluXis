@@ -1,16 +1,17 @@
 using System;
+using System.Globalization;
 using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect.UI;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
 
-public partial class BeatsTextBox : Container
+public partial class PercentTextBox : Container
 {
     public string LabelText { get; init; }
     public string Text { get; init; }
-    public Action<FluXisTextBox> OnTextChanged { get; init; }
+    public Action<float> OnValueChanged { get; init; }
 
     private FluXisTextBox textBox;
 
@@ -49,19 +50,28 @@ public partial class BeatsTextBox : Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Text = Text,
-                            OnTextChanged = () => OnTextChanged?.Invoke(textBox)
+                            OnTextChanged = onTextChanged
                         },
                         Empty(),
                         new FluXisSpriteText
                         {
-                            Text = "beat(s)",
+                            Text = "%",
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,
-                            FontSize = 18
+                            Margin = new MarginPadding { Left = 3 },
+                            FontSize = 30
                         }
                     }
                 }
             }
         };
+    }
+
+    private void onTextChanged()
+    {
+        if (float.TryParse(textBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result) && result is >= 0 and <= 100)
+            OnValueChanged?.Invoke(result / 100f);
+        else
+            textBox.NotifyError();
     }
 }

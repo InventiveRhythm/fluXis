@@ -4,7 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect.UI;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
 
 public partial class LabelledTextBox : Container
 {

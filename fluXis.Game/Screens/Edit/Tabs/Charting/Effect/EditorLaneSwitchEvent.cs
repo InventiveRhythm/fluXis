@@ -1,13 +1,15 @@
 using System.Linq;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
-using fluXis.Game.Screens.Edit.Tabs.Compose.Effect.EffectEdit;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Compose.Effect;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 
 public partial class EditorLaneSwitchEvent : ClickableContainer
 {
@@ -19,6 +21,9 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
 
     [Resolved]
     private FluXisGameBase game { get; set; }
+
+    [Resolved]
+    private ChartingContainer chartingContainer { get; set; }
 
     public MapInfo Map { get; set; }
     public LaneSwitchEvent Event { get; set; }
@@ -35,7 +40,7 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
 
         Action = () =>
         {
-            if (values.Tool == EditorTool.Select)
+            if (chartingContainer.BlueprintContainer.CurrentTool is SelectTool)
             {
                 game.Overlay = new LaneSwtichEditorPanel
                 {
@@ -62,8 +67,8 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Y,
                     Height = 0,
-                    Width = EditorPlayfield.COLUMN_WIDTH,
-                    X = i * EditorPlayfield.COLUMN_WIDTH,
+                    Width = EditorHitObjectContainer.NOTEWIDTH,
+                    X = i * EditorHitObjectContainer.NOTEWIDTH,
                     Colour = Colour4.FromHex("#FF5555").Opacity(0.4f)
                 });
             }
@@ -79,8 +84,8 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Y,
                     Height = !current[i] ? 1 : 0,
-                    Width = EditorPlayfield.COLUMN_WIDTH,
-                    X = i * EditorPlayfield.COLUMN_WIDTH,
+                    Width = EditorHitObjectContainer.NOTEWIDTH,
+                    X = i * EditorHitObjectContainer.NOTEWIDTH,
                     Colour = Colour4.FromHex("#FF5555").Opacity(0.4f)
                 });
             }
