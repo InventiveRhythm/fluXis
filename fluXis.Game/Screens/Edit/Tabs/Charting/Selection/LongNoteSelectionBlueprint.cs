@@ -26,8 +26,17 @@ public partial class LongNoteSelectionBlueprint : SelectionBlueprint
         Anchor = Origin = Anchor.BottomLeft;
         InternalChildren = new Drawable[]
         {
-            head = new BlueprintNotePiece().With(b => b.Y = -Drawable.HitObjectPiece.DrawHeight / 2),
-            end = new BlueprintNotePiece(),
+            head = new BlueprintNotePiece
+            {
+                Y = -Drawable.HitObjectPiece.DrawHeight / 2,
+                RelativeSizeAxes = Axes.X,
+                Width = 0.5f
+            },
+            end = new BlueprintNotePiece
+            {
+                RelativeSizeAxes = Axes.X,
+                Width = 0.5f
+            },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,

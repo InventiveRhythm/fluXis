@@ -1,3 +1,4 @@
+using fluXis.Game.Map;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,6 +14,8 @@ public partial class EditorPlayfield : Container
 
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
 
+    private HitObjectInfo placementObject;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -27,5 +30,18 @@ public partial class EditorPlayfield : Container
             new DefaultStageBorderRight(),
             HitObjectContainer = new EditorHitObjectContainer()
         };
+    }
+
+    public void StartPlacement(HitObjectInfo hitObject)
+    {
+        placementObject = hitObject;
+    }
+
+    public void FinishPlacement(HitObjectInfo hitObject, bool place)
+    {
+        if (place)
+        {
+            values.MapInfo.Add(hitObject);
+        }
     }
 }

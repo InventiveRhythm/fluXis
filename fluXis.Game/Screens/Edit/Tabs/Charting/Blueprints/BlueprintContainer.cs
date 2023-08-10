@@ -1,11 +1,15 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
@@ -14,7 +18,22 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 
 public partial class BlueprintContainer : Container
 {
+    [Resolved]
+    private EditorValues values { get; set; }
+
     public ChartingContainer ChartingContainer { get; init; }
+
+    public ChartingTool CurrentTool
+    {
+        get => currentTool;
+        set
+        {
+            currentTool = value;
+            removePlacement();
+        }
+    }
+
+    private ChartingTool currentTool = new SelectTool();
 
     protected readonly BindableList<HitObjectInfo> SelectedHitObjects = new();
 
@@ -22,12 +41,17 @@ public partial class BlueprintContainer : Container
     public SelectionBlueprints SelectionBlueprints { get; private set; }
     public SelectionHandler SelectionHandler { get; private set; }
 
+    private InputManager inputManager;
     private MouseButtonEvent lastDragEvent;
+    private readonly Dictionary<HitObjectInfo, SelectionBlueprint> blueprints = new();
 
     // movement
     private bool isDragging;
     private SelectionBlueprint[] dragBlueprints;
     private Vector2[] dragBlueprintsPositions;
+
+    private PlacementBlueprint currentPlacementBlueprint;
+    private Container placementBlueprintContainer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -41,13 +65,19 @@ public partial class BlueprintContainer : Container
         {
             SelectionBox = new SelectionBox { Playfield = ChartingContainer.Playfield },
             SelectionHandler,
-            SelectionBlueprints = new SelectionBlueprints()
+            SelectionBlueprints = new SelectionBlueprints(),
+            placementBlueprintContainer = new Container { RelativeSizeAxes = Axes.Both }
         };
     }
 
     protected override void LoadComplete()
     {
+        inputManager = GetContainingInputManager();
+
         if (ChartingContainer == null) return;
+
+        values.MapInfo.HitObjectAdded += AddBlueprint;
+        values.MapInfo.HitObjectRemoved += RemoveBlueprint;
 
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
@@ -72,7 +102,7 @@ public partial class BlueprintContainer : Container
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        return e.Button == MouseButton.Left && prepareMovement();
+        return selectByClick(e) || prepareMovement();
     }
 
     protected override void OnDrag(DragEvent e)
@@ -93,10 +123,25 @@ public partial class BlueprintContainer : Container
 
     public void AddBlueprint(HitObjectInfo info)
     {
+        if (blueprints.ContainsKey(info))
+            return;
+
         var blueprint = createBlueprint(info);
+        blueprints[info] = blueprint;
         blueprint.Selected += onSelected;
         blueprint.Deselected += onDeselected;
         SelectionBlueprints.Add(blueprint);
+    }
+
+    public void RemoveBlueprint(HitObjectInfo info)
+    {
+        if (!blueprints.Remove(info, out var blueprint))
+            return;
+
+        blueprint.Deselect();
+        blueprint.Selected -= onSelected;
+        blueprint.Deselected -= onDeselected;
+        SelectionBlueprints.Remove(blueprint, true);
     }
 
     private SelectionBlueprint createBlueprint(HitObjectInfo info)
@@ -110,6 +155,18 @@ public partial class BlueprintContainer : Container
         return blueprint;
     }
 
+    private bool selectByClick(MouseButtonEvent e)
+    {
+        foreach (SelectionBlueprint blueprint in SelectionBlueprints.AliveChildren.Reverse().OrderByDescending(b => b.IsSelected))
+        {
+            if (!blueprint.IsHovered) continue;
+
+            return SelectionHandler.SingleClickSelection(blueprint, e);
+        }
+
+        return false;
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -120,6 +177,57 @@ public partial class BlueprintContainer : Container
             SelectionBox.HandleDrag(lastDragEvent);
             UpdateSelection();
         }
+
+        if (currentPlacementBlueprint != null)
+        {
+            switch (currentPlacementBlueprint.State)
+            {
+                case PlacementBlueprint.PlacementState.Waiting:
+                    if (!ChartingContainer.CursorInPlacementArea)
+                        removePlacement();
+                    break;
+
+                case PlacementBlueprint.PlacementState.Completed:
+                    removePlacement();
+                    break;
+            }
+        }
+
+        if (ChartingContainer.CursorInPlacementArea)
+            ensurePlacementCreated();
+
+        if (currentPlacementBlueprint != null)
+            updatePlacementPosition();
+    }
+
+    private void ensurePlacementCreated()
+    {
+        if (currentPlacementBlueprint != null) return;
+
+        var blueprint = CurrentTool?.CreateBlueprint();
+
+        if (blueprint != null)
+        {
+            placementBlueprintContainer.Child = currentPlacementBlueprint = blueprint;
+            updatePlacementPosition();
+        }
+    }
+
+    private void updatePlacementPosition()
+    {
+        var hitObjectContainer = ChartingContainer.Playfield.HitObjectContainer;
+        var mousePosition = inputManager.CurrentState.Mouse.Position;
+
+        var time = hitObjectContainer.SnapTime(hitObjectContainer.TimeAtScreenSpacePosition(mousePosition));
+        var lane = hitObjectContainer.LaneAtScreenSpacePosition(mousePosition);
+        currentPlacementBlueprint.UpdatePlacement(time, lane);
+    }
+
+    private void removePlacement()
+    {
+        currentPlacementBlueprint?.EndPlacement(false);
+        currentPlacementBlueprint?.Expire();
+        currentPlacementBlueprint = null;
     }
 
     public void UpdateSelection()

@@ -247,8 +247,6 @@ public partial class EditorPlayfield : Container
 
     private void loadEvents()
     {
-        values.MapEvents ??= new MapEvents();
-
         foreach (var flashEvent in values.MapEvents.FlashEvents)
             effectContainer.AddFlash(flashEvent);
 

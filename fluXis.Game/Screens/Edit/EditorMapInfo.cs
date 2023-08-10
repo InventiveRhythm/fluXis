@@ -1,10 +1,16 @@
+using System;
 using fluXis.Game.Map;
+using Newtonsoft.Json;
 
 namespace fluXis.Game.Screens.Edit;
 
 public class EditorMapInfo : MapInfo
 {
+    [JsonIgnore]
     public MapEvents MapEvents { get; set; }
+
+    public event Action<HitObjectInfo> HitObjectAdded;
+    public event Action<HitObjectInfo> HitObjectRemoved;
 
     public EditorMapInfo(MapMetadata metadata)
         : base(metadata)
@@ -27,6 +33,18 @@ public class EditorMapInfo : MapInfo
             InitialKeyCount = info.InitialKeyCount,
             MapEvents = info.GetMapEvents()
         };
+    }
+
+    public void Add(HitObjectInfo hitObject)
+    {
+        HitObjects.Add(hitObject);
+        HitObjectAdded?.Invoke(hitObject);
+    }
+
+    public void Remove(HitObjectInfo hitObject)
+    {
+        HitObjects.Remove(hitObject);
+        HitObjectRemoved?.Invoke(hitObject);
     }
 
     public override MapEvents GetMapEvents() => MapEvents;

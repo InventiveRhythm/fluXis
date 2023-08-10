@@ -114,11 +114,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         dependencies.CacheAs(waveform = new Bindable<Waveform>());
         dependencies.CacheAs(changeHandler = new EditorChangeHandler());
-        dependencies.CacheAs(values = new EditorValues());
-
-        values.MapInfo = MapInfo;
-        values.Editor = this;
-        values.MapEvents = MapInfo.MapEvents;
+        dependencies.CacheAs(values = new EditorValues
+        {
+            MapInfo = MapInfo,
+            MapEvents = MapInfo.MapEvents ?? new MapEvents(),
+            Editor = this
+        });
 
         changeHandler.OnTimingPointAdded += () => Logger.Log("Timing point added");
         changeHandler.OnTimingPointRemoved += () => Logger.Log("Timing point removed");
@@ -141,6 +142,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     {
                         Padding = new MarginPadding { Top = 45, Bottom = 60 },
                         RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
                         Children = new Drawable[]
                         {
                             new SetupTab(this),

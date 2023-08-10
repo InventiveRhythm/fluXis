@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -26,13 +27,10 @@ public partial class EditorHitObjectContainer : Container
     {
         RelativeSizeAxes = Axes.Both;
 
-        foreach (var hitObject in values.MapInfo.HitObjects)
-        {
-            Add(new EditorHitObject
-            {
-                Data = hitObject
-            });
-        }
+        values.MapInfo.HitObjectAdded += add;
+        values.MapInfo.HitObjectRemoved += remove;
+
+        values.MapInfo.HitObjects.ForEach(add);
 
         Add(new Box
         {
@@ -42,6 +40,17 @@ public partial class EditorHitObjectContainer : Container
             Origin = Anchor.BottomCentre,
             Y = -HITPOSITION
         });
+    }
+
+    private void add(HitObjectInfo info)
+    {
+        Add(new EditorHitObject { Data = info });
+    }
+
+    private void remove(HitObjectInfo info)
+    {
+        var hitObject = InternalChildren.OfType<EditorHitObject>().FirstOrDefault(h => h.Data == info);
+        if (hitObject != null) Remove(hitObject, true);
     }
 
     public Vector2 ScreenSpacePositionAtTime(float time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));

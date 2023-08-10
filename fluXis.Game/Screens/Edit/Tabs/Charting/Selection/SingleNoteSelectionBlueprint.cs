@@ -15,7 +15,12 @@ public partial class SingleNoteSelectionBlueprint : SelectionBlueprint
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = new BlueprintNotePiece().With(b => b.Y = -Drawable.HitObjectPiece.DrawHeight / 2);
+        InternalChild = new BlueprintNotePiece
+        {
+            RelativeSizeAxes = Axes.X,
+            Width = 0.5f,
+            Anchor = Anchor.Centre
+        };
     }
 
     protected override void Update()
