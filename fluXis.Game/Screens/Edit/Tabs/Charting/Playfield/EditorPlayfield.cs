@@ -1,4 +1,5 @@
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,6 +14,7 @@ public partial class EditorPlayfield : Container
     private EditorValues values { get; set; }
 
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
+    private EditorTimingLines timingLines;
 
     private HitObjectInfo placementObject;
 
@@ -28,6 +30,7 @@ public partial class EditorPlayfield : Container
             new DefaultStageBackground(),
             new DefaultStageBorderLeft(),
             new DefaultStageBorderRight(),
+            timingLines = new EditorTimingLines(),
             HitObjectContainer = new EditorHitObjectContainer()
         };
     }
@@ -40,8 +43,6 @@ public partial class EditorPlayfield : Container
     public void FinishPlacement(HitObjectInfo hitObject, bool place)
     {
         if (place)
-        {
             values.MapInfo.Add(hitObject);
-        }
     }
 }
