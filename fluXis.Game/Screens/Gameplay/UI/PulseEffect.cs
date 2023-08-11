@@ -57,8 +57,8 @@ public partial class PulseEffect : Container
             Add(left);
             Add(right);
 
-            left.MoveToX(-width / 2 - 400, ParentScreen.AudioClock.StepTime, Easing.OutQuint).FadeOut(ParentScreen.AudioClock.StepTime).Expire();
-            right.MoveToX(width / 2 + 400, ParentScreen.AudioClock.StepTime, Easing.OutQuint).FadeOut(ParentScreen.AudioClock.StepTime).Expire();
+            left.MoveToX(-width / 2 - 400, ParentScreen.AudioClock.BeatTime, Easing.OutQuint).FadeOut(ParentScreen.AudioClock.BeatTime).Expire();
+            right.MoveToX(width / 2 + 400, ParentScreen.AudioClock.BeatTime, Easing.OutQuint).FadeOut(ParentScreen.AudioClock.BeatTime).Expire();
         }
     }
 }
