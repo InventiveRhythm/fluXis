@@ -1,4 +1,5 @@
 using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Placement.Effect;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
@@ -10,5 +11,5 @@ public class LaneSwitchTool : EffectTool
     public override string Description => "Changes the amount of lanes mid-song.";
     public override string Letter => "L";
     public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Solid.ArrowsAltH };
-    public override PlacementBlueprint CreateBlueprint() => null;
+    public override PlacementBlueprint CreateBlueprint() => new LaneSwitchPlacementBlueprint();
 }

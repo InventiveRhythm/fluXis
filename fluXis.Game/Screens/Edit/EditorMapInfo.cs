@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Screens.Edit;
@@ -7,7 +9,7 @@ namespace fluXis.Game.Screens.Edit;
 public class EditorMapInfo : MapInfo
 {
     [JsonIgnore]
-    public MapEvents MapEvents { get; set; }
+    public EditorMapEvents MapEvents { get; set; } = new();
 
     public event Action<HitObjectInfo> HitObjectAdded;
     public event Action<HitObjectInfo> HitObjectRemoved;
@@ -19,6 +21,8 @@ public class EditorMapInfo : MapInfo
 
     public static EditorMapInfo FromMapInfo(MapInfo info)
     {
+        var events = info.GetMapEvents();
+
         return new EditorMapInfo(info.Metadata)
         {
             AudioFile = info.AudioFile,
@@ -31,7 +35,13 @@ public class EditorMapInfo : MapInfo
             ScrollVelocities = info.ScrollVelocities,
             KeyCount = info.KeyCount,
             InitialKeyCount = info.InitialKeyCount,
-            MapEvents = info.GetMapEvents()
+            MapEvents = new EditorMapEvents
+            {
+                LaneSwitchEvents = events.LaneSwitchEvents ?? new List<LaneSwitchEvent>(),
+                FlashEvents = events.FlashEvents ?? new List<FlashEvent>(),
+                PulseEvents = events.PulseEvents ?? new List<PulseEvent>(),
+                PlayfieldMoveEvents = events.PlayfieldMoveEvents ?? new List<PlayfieldMoveEvent>()
+            }
         };
     }
 

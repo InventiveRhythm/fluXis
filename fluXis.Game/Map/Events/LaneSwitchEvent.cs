@@ -2,8 +2,8 @@ namespace fluXis.Game.Map.Events;
 
 public class LaneSwitchEvent : TimedObject
 {
-    public int Count { get; set; }
-    public float Speed { get; set; } = 250;
+    public int Count { get; set; } = 1;
+    public float Speed { get; set; }
 
     public static readonly bool[][][] SWITCH_VISIBILITY =
     {

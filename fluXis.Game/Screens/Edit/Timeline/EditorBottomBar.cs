@@ -1,10 +1,12 @@
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Overlay.Notification;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.Timeline;
@@ -84,8 +86,14 @@ public partial class EditorBottomBar : Container
                                     clock.Stop();
                                     var startTime = clock.CurrentTime;
 
+                                    var json = JsonConvert.SerializeObject(values.Editor.MapInfo);
+                                    Logger.Log(json);
+
                                     var clone = values.Editor.MapInfo.Clone();
                                     clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
+
+                                    var cloneJson = JsonConvert.SerializeObject(clone);
+                                    Logger.Log(cloneJson);
 
                                     values.Editor.Push(new EditorPlaytestScreen(values.Editor.Map, clone, values.MapEvents, startTime));
                                 }

@@ -63,7 +63,7 @@ public partial class BlueprintContainer : Container
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        currentTool = ChartingContainer.Tools[0];
+        currentTool = ChartingContainer.Tools[0] as SelectTool;
 
         SelectionHandler = new SelectionHandler();
         SelectionHandler.SelectedHitObjects.BindTo(SelectedHitObjects);
@@ -189,12 +189,12 @@ public partial class BlueprintContainer : Container
         {
             switch (currentPlacementBlueprint.State)
             {
-                case PlacementBlueprint.PlacementState.Waiting:
+                case PlacementState.Waiting:
                     if (!ChartingContainer.CursorInPlacementArea)
                         removePlacement();
                     break;
 
-                case PlacementBlueprint.PlacementState.Completed:
+                case PlacementState.Completed:
                     removePlacement();
                     break;
             }

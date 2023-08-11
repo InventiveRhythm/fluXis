@@ -1,4 +1,3 @@
-using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Skinning.Default.Stage;
@@ -14,10 +13,11 @@ public partial class EditorPlayfield : Container
     [Resolved]
     private EditorValues values { get; set; }
 
+    [Resolved]
+    private EditorChangeHandler changeHandler { get; set; }
+
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
     private EditorTimingLines timingLines;
-
-    private HitObjectInfo placementObject;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -35,16 +35,7 @@ public partial class EditorPlayfield : Container
             timingLines = new EditorTimingLines(),
             HitObjectContainer = new EditorHitObjectContainer()
         };
-    }
 
-    public void StartPlacement(HitObjectInfo hitObject)
-    {
-        placementObject = hitObject;
-    }
-
-    public void FinishPlacement(HitObjectInfo hitObject, bool place)
-    {
-        if (place)
-            values.MapInfo.Add(hitObject);
+        changeHandler.OnKeyModeChanged += count => Width = EditorHitObjectContainer.NOTEWIDTH * count;
     }
 }

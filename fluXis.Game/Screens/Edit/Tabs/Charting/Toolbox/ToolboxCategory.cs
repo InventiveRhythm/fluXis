@@ -32,7 +32,7 @@ public partial class ToolboxCategory : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0.1f
+                Colour = FluXisColors.Surface
             },
             new FillFlowContainer
             {

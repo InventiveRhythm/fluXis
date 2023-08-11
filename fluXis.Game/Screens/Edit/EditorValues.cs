@@ -1,4 +1,3 @@
-using fluXis.Game.Map;
 using osu.Framework.Bindables;
 
 namespace fluXis.Game.Screens.Edit;
@@ -9,7 +8,7 @@ public class EditorValues
     public int SnapDivisor { get; set; } = 4;
     public Bindable<float> WaveformOpacity { get; } = new(.25f);
     public EditorMapInfo MapInfo { get; init; }
-    public MapEvents MapEvents { get; init; } = new();
+    public EditorMapEvents MapEvents { get; init; } = new();
     public Editor Editor { get; init; }
 
     public override string ToString()

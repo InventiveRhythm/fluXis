@@ -12,21 +12,28 @@ public partial class PlacementBlueprint : Container
     [Resolved]
     protected EditorPlayfield Playfield { get; set; }
 
+    [Resolved]
+    protected EditorValues EditorValues { get; set; }
+
     public PlacementState State { get; set; }
-    public HitObjectInfo HitObject { get; set; } = new();
+    public TimedObject Object { get; set; }
+
+    protected PlacementBlueprint(TimedObject obj)
+    {
+        Object = obj;
+    }
 
     public virtual void UpdatePlacement(float time, int lane)
     {
         if (State == PlacementState.Waiting)
         {
-            HitObject.Time = time;
-            HitObject.Lane = lane;
+            Object.Time = time;
         }
     }
 
     protected void BeginPlacement()
     {
-        Playfield.StartPlacement(HitObject);
+        OnPlacementStarted();
         State = PlacementState.Working;
     }
 
@@ -42,8 +49,16 @@ public partial class PlacementBlueprint : Container
                 break;
         }
 
-        Playfield.FinishPlacement(HitObject, commit);
+        OnPlacementFinished(commit);
         State = PlacementState.Completed;
+    }
+
+    public virtual void OnPlacementStarted()
+    {
+    }
+
+    public virtual void OnPlacementFinished(bool commit)
+    {
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
@@ -54,11 +69,11 @@ public partial class PlacementBlueprint : Container
         BeginPlacement();
         return true;
     }
+}
 
-    public enum PlacementState
-    {
-        Waiting,
-        Working,
-        Completed
-    }
+public enum PlacementState
+{
+    Waiting,
+    Working,
+    Completed
 }

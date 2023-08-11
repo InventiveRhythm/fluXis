@@ -46,7 +46,8 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
                 {
                     Event = Event,
                     MapInfo = Map,
-                    EditorClock = clock
+                    EditorClock = clock,
+                    MapEvents = values.MapEvents
                 };
             }
         };

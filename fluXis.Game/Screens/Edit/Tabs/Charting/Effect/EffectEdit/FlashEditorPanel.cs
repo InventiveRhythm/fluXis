@@ -1,7 +1,6 @@
 using System.Globalization;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Panel;
-using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
@@ -17,7 +16,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 public partial class FlashEditorPanel : Panel
 {
     public FlashEvent Event { get; set; }
-    public MapEvents MapEvents { get; init; }
+    public EditorMapEvents MapEvents { get; init; }
     public EditorClock EditorClock { get; set; }
 
     [Resolved]
@@ -132,7 +131,7 @@ public partial class FlashEditorPanel : Panel
                             Color = FluXisColors.ButtonRed,
                             Action = () =>
                             {
-                                MapEvents.FlashEvents.Remove(Event);
+                                MapEvents.Remove(Event);
                                 Hide();
                             }
                         },

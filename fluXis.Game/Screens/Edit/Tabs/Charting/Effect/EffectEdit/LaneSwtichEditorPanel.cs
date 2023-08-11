@@ -18,7 +18,7 @@ public partial class LaneSwtichEditorPanel : Panel
 {
     public LaneSwitchEvent Event { get; set; }
     public MapInfo MapInfo { get; init; }
-    public MapEvents MapEvents { get; init; }
+    public EditorMapEvents MapEvents { get; init; }
     public EditorClock EditorClock { get; set; }
 
     [Resolved]
@@ -126,7 +126,7 @@ public partial class LaneSwtichEditorPanel : Panel
                             Color = FluXisColors.ButtonRed,
                             Action = () =>
                             {
-                                MapEvents.LaneSwitchEvents.Remove(Event);
+                                MapEvents.Remove(Event);
                                 Hide();
                             }
                         },

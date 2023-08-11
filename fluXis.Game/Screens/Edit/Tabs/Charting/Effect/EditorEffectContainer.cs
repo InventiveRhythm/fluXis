@@ -1,25 +1,19 @@
-using System.Collections.Generic;
-using fluXis.Game.Graphics.Menu;
+using System.Linq;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 
-public partial class EditorEffectContainer : Container, IHasContextMenu
+public partial class EditorEffectContainer : Container
 {
     [Resolved]
     private EditorValues values { get; set; }
 
     [Resolved]
     private EditorChangeHandler changeHandler { get; set; }
-
-    [Resolved]
-    private EditorClock clock { get; set; }
 
     private Container<EditorFlashEvent> flashContainer;
     private Container<EditorLaneSwitchEvent> lsContainer;
@@ -56,6 +50,28 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        values.MapEvents.FlashEventAdded += AddFlash;
+        values.MapEvents.LaneSwitchEventAdded += AddLaneSwitch;
+
+        values.MapEvents.FlashEventRemoved += flash =>
+        {
+            var editorFlash = flashContainer.FirstOrDefault(f => f.FlashEvent == flash);
+            if (editorFlash != null)
+                flashContainer.Remove(editorFlash, true);
+        };
+
+        values.MapEvents.LaneSwitchEventRemoved += ls =>
+        {
+            var editorLs = lsContainer.FirstOrDefault(l => l.Event == ls);
+            if (editorLs != null)
+                lsContainer.Remove(editorLs, true);
+        };
+    }
+
     private void loadEvents()
     {
         foreach (var flashEvent in values.MapEvents.FlashEvents)
@@ -63,45 +79,6 @@ public partial class EditorEffectContainer : Container, IHasContextMenu
 
         foreach (var laneSwitch in values.MapEvents.LaneSwitchEvents)
             AddLaneSwitch(laneSwitch);
-    }
-
-    public MenuItem[] ContextMenuItems
-    {
-        get
-        {
-            List<MenuItem> items = new()
-            {
-                new FluXisMenuItem("Add Flash", MenuItemType.Normal, () =>
-                {
-                    var flash = new FlashEvent
-                    {
-                        Time = (float)clock.CurrentTime,
-                        Duration = (float)clock.BeatTime,
-                        StartColor = Colour4.White,
-                        EndColor = Colour4.White,
-                        StartOpacity = 1,
-                        EndOpacity = 0
-                    };
-
-                    values.MapEvents.FlashEvents.Add(flash);
-                    AddFlash(flash);
-                }),
-                new FluXisMenuItem("Add LaneSwitch", MenuItemType.Normal, () =>
-                {
-                    var ls = new LaneSwitchEvent
-                    {
-                        Time = (float)clock.CurrentTime,
-                        Speed = (float)clock.BeatTime,
-                        Count = 1
-                    };
-
-                    values.MapEvents.LaneSwitchEvents.Add(ls);
-                    AddLaneSwitch(ls);
-                })
-            };
-
-            return items.ToArray();
-        }
     }
 
     public void AddFlash(FlashEvent flash)

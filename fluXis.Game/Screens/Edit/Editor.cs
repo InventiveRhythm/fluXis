@@ -117,7 +117,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         dependencies.CacheAs(values = new EditorValues
         {
             MapInfo = MapInfo,
-            MapEvents = MapInfo.MapEvents ?? new MapEvents(),
+            MapEvents = MapInfo.MapEvents ?? new EditorMapEvents(),
             Editor = this
         });
 

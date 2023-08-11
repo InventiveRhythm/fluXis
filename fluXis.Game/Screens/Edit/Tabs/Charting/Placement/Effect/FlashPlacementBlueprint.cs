@@ -1,15 +1,14 @@
 using System;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement.Effect;
 
-public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
+public partial class FlashPlacementBlueprint : PlacementBlueprint
 {
     private readonly BlueprintLongNoteBody body;
     private readonly BlueprintNotePiece head;
@@ -17,7 +16,8 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
 
     private float originalStartTime;
 
-    public LongNotePlacementBlueprint()
+    public FlashPlacementBlueprint()
+        : base(new FlashEvent())
     {
         RelativeSizeAxes = Axes.Both;
 
@@ -47,14 +47,14 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
 
         if (Parent == null) return;
 
-        head.Width = EditorHitObjectContainer.NOTEWIDTH;
-        body.Width = EditorHitObjectContainer.NOTEWIDTH;
-        end.Width = EditorHitObjectContainer.NOTEWIDTH;
+        head.Width = Playfield.DrawWidth;
+        body.Width = Playfield.DrawWidth;
+        end.Width = Playfield.DrawWidth;
 
-        if (Object is not HitObjectInfo hit) return;
+        if (Object is not FlashEvent flash) return;
 
-        head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.Time, hit.Lane));
-        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.HoldEndTime, hit.Lane));
+        head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(flash.Time, 1));
+        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(flash.Time + flash.Duration, 1));
         body.Height = Math.Abs(head.Y - end.Y);
         body.Position = new Vector2(head.X, head.Y - head.DrawHeight / 2);
     }
@@ -70,13 +70,18 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
     public override void UpdatePlacement(float time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        if (Object is not HitObjectInfo hit) return;
+        if (Object is not FlashEvent flash) return;
 
         if (State == PlacementState.Working)
         {
-            hit.Time = time < originalStartTime ? time : originalStartTime;
-            hit.HoldTime = Math.Abs(time - originalStartTime);
+            flash.Time = time < originalStartTime ? time : originalStartTime;
+            flash.Duration = Math.Abs(time - originalStartTime);
         }
-        else originalStartTime = hit.Time = time;
+        else originalStartTime = flash.Time = time;
+    }
+
+    public override void OnPlacementFinished(bool commit)
+    {
+        if (commit) EditorValues.MapEvents.Add(Object as FlashEvent);
     }
 }

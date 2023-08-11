@@ -6,7 +6,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 
-public partial class SingleNotePlacementBlueprint : PlacementBlueprint
+public partial class SingleNotePlacementBlueprint : NotePlacementBlueprint
 {
     private readonly BlueprintNotePiece piece;
 
