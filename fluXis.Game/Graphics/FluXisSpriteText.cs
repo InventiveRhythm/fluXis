@@ -23,14 +23,15 @@ public partial class FluXisSpriteText : SpriteText
 
     public FluXisSpriteText()
     {
-        Font = FluXisFont.Renogare;
+        Font = FluXisFont.RenogareSoft;
     }
 
-    public static FontUsage GetFont(FluXisFont font = FluXisFont.Renogare, float size = 20, bool fixedWidth = false) => new(font.ToString(), size, fixedWidth: fixedWidth);
+    public static FontUsage GetFont(FluXisFont font = FluXisFont.RenogareSoft, float size = 20, bool fixedWidth = false) => new(font.ToString(), size, fixedWidth: fixedWidth);
 }
 
 public enum FluXisFont
 {
     Renogare,
+    RenogareSoft,
     YoureGone
 }
