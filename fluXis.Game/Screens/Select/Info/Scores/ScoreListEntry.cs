@@ -7,6 +7,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -20,15 +21,16 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
-public partial class ScoreListEntry : Container, IHasTextTooltip
+public partial class ScoreListEntry : Container, IHasDrawableTooltip
 {
-    public string Tooltip => $"{score.Judgements.Flawless} / {score.Judgements.Perfect} / {score.Judgements.Great} / {score.Judgements.Alright} / {score.Judgements.Okay} / {score.Judgements.Miss}";
-
     [Resolved]
     private MapStore mapStore { get; set; }
 
     [Resolved]
     private Storage storage { get; set; }
+
+    [Resolved]
+    private SkinManager skinManager { get; set; }
 
     public ScoreList ScoreList { get; set; }
 
@@ -244,5 +246,65 @@ public partial class ScoreListEntry : Container, IHasTextTooltip
         ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, score.Player, false, false));
 
         return true;
+    }
+
+    public Drawable GetTooltip()
+    {
+        var date = score.Date;
+
+        return new FillFlowContainer
+        {
+            Padding = new MarginPadding(10),
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Vertical,
+            Spacing = new Vector2(10),
+            Children = new Drawable[]
+            {
+                new FluXisSpriteText
+                {
+                    Text = $"Played on {date:dd MMMM yyyy} at {date:HH:mm}"
+                },
+                new FillFlowContainer
+                {
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Full,
+                    Spacing = new Vector2(10, 5),
+                    Width = 290,
+                    Children = new Drawable[]
+                    {
+                        new FluXisSpriteText
+                        {
+                            Text = $"FLAWLESS {score.Judgements.Flawless}",
+                            Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Flawless)
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = $"PERFECT {score.Judgements.Perfect}",
+                            Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Perfect)
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = $"GREAT {score.Judgements.Great}",
+                            Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Great)
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = $"ALRIGHT {score.Judgements.Alright}",
+                            Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Alright)
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = $"OKAY {score.Judgements.Okay}",
+                            Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Okay)
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = $"MISS {score.Judgements.Miss}",
+                            Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Miss)
+                        }
+                    }
+                }
+            }
+        };
     }
 }
