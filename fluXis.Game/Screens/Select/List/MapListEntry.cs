@@ -185,51 +185,72 @@ public partial class MapListEntry : Container
                 {
                     Padding = new MarginPadding(10),
                     RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
+                    Child = new GridContainer
                     {
-                        coverWrapper = new DelayedLoadUnloadWrapper(() => new Container
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new[]
                         {
-                            Size = new Vector2(60),
-                            Masking = true,
-                            CornerRadius = 10,
-                            Child = new DrawableCover(mapset)
+                            new Dimension(GridSizeMode.Absolute, 60),
+                            new Dimension(GridSizeMode.Absolute, 10),
+                            new Dimension(),
+                            new Dimension(GridSizeMode.Absolute, 10),
+                            new Dimension(GridSizeMode.AutoSize)
+                        },
+                        Content = new[]
+                        {
+                            new[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre
-                            },
-                            EdgeEffect = new EdgeEffectParameters
-                            {
-                                Type = EdgeEffectType.Shadow,
-                                Colour = Colour4.Black.Opacity(.2f),
-                                Radius = 5,
-                                Offset = new Vector2(0, 1)
+                                coverWrapper = new DelayedLoadUnloadWrapper(() => new Container
+                                {
+                                    Size = new Vector2(60),
+                                    Masking = true,
+                                    CornerRadius = 10,
+                                    Child = new DrawableCover(mapset)
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre
+                                    },
+                                    EdgeEffect = new EdgeEffectParameters
+                                    {
+                                        Type = EdgeEffectType.Shadow,
+                                        Colour = Colour4.Black.Opacity(.2f),
+                                        Radius = 5,
+                                        Offset = new Vector2(0, 1)
+                                    }
+                                }, 100, 200),
+                                Empty(),
+                                new FillFlowContainer
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Spacing = new Vector2(0, -5),
+                                    Children = new Drawable[]
+                                    {
+                                        new FluXisSpriteText
+                                        {
+                                            FontSize = 32,
+                                            Text = mapset.Metadata.Title,
+                                            RelativeSizeAxes = Axes.X,
+                                            Truncate = true,
+                                            Shadow = true
+                                        },
+                                        new FluXisSpriteText
+                                        {
+                                            FontSize = 24,
+                                            Text = mapset.Metadata.Artist,
+                                            RelativeSizeAxes = Axes.X,
+                                            Truncate = true,
+                                            Shadow = true
+                                        }
+                                    }
+                                },
+                                Empty(),
+                                new StatusTag(mapset)
                             }
-                        }, 100, 200),
-                        new FluXisSpriteText
-                        {
-                            FontSize = 32,
-                            Text = mapset.Metadata.Title,
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.BottomLeft,
-                            Y = 5,
-                            Width = 740,
-                            Truncate = true,
-                            Margin = new MarginPadding { Left = 70 },
-                            Shadow = true
-                        },
-                        new FluXisSpriteText
-                        {
-                            FontSize = 24,
-                            Text = mapset.Metadata.Artist,
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.TopLeft,
-                            Width = 740,
-                            Truncate = true,
-                            Margin = new MarginPadding { Left = 70 },
-                            Shadow = true
-                        },
-                        new StatusTag(mapset)
+                        }
                     }
                 }, 100, 200)
             };
