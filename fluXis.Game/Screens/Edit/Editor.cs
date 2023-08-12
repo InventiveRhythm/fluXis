@@ -95,9 +95,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private DependencyContainer dependencies;
     private bool exitConfirmed;
+    private bool isNewMap;
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
+        isNewMap = map == null && realmMap == null;
         Map = realmMap ?? RealmMap.CreateNew();
         MapInfo = getEditorMapInfo(map) ?? new EditorMapInfo(new MapMetadata());
         MapInfo.KeyCount = Map.KeyCount;
@@ -253,7 +255,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     protected override void LoadComplete()
     {
-        changeTab(0);
+        changeTab(isNewMap ? 0 : 1);
     }
 
     public void SortEverything()
