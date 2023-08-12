@@ -2,7 +2,20 @@
 A free and open-source vertical scrolling rhythm game.
 
 ## Downloading and playing the game
-See [INSTALLING.md](docs/INSTALLING.md)
+### Windows 8.1+
+1. Download the installer from [here](https://dl.choccy.foxes4life.net/fluXis/fluXis.Updater.exe) or the download button on the website.
+2. Run the installer.
+3. Wait for the installer to finish.
+    - This also creates a shortcut in the start menu.
+4. The game should now be automatically launched.
+
+*Make sure to report any issues with the installer to the [discord server](https://discord.gg/29hMftpNq9).*
+
+### Linux
+Linux releases soon™
+
+### macOS
+macOS releases soon™
 
 ## Building and Developing
 ### Requirements
