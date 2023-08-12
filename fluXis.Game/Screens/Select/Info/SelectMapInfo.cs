@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Mods;
 using fluXis.Game.Screens.Select.Info.Scores;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -271,13 +273,19 @@ public partial class SelectMapInfo : GridContainer
         if (Screen.MapInfo.Value == null)
             return;
 
+        var mod = Screen.ModSelector.SelectedMods.FirstOrDefault(m => m is RateMod) as RateMod;
+        var rate = mod?.Rate ?? 1;
+
         titleText.Text = Screen.MapInfo.Value.Metadata.Title;
         artistText.Text = Screen.MapInfo.Value.Metadata.Artist;
 
-        lengthText.Text = TimeUtils.Format(Screen.MapInfo.Value.Filters.Length / clock.Rate, false);
-        bpmText.Text = Screen.MapInfo.Value.Filters.BPMMin == Screen.MapInfo.Value.Filters.BPMMax ? $"{Screen.MapInfo.Value.Filters.BPMMin * clock.Rate}" : $"{Screen.MapInfo.Value.Filters.BPMMin * clock.Rate}-{Screen.MapInfo.Value.Filters.BPMMax * clock.Rate}";
-        npsText.Text = $"{Screen.MapInfo.Value.Filters.NotesPerSecond * clock.Rate:F}".Replace(",", ".");
+        lengthText.Text = TimeUtils.Format(Screen.MapInfo.Value.Filters.Length / rate, false);
+        npsText.Text = $"{Screen.MapInfo.Value.Filters.NotesPerSecond * rate:F}".Replace(",", ".");
         lnpText.Text = $"{Screen.MapInfo.Value.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
+
+        int bpmMin = (int)(Screen.MapInfo.Value.Filters.BPMMin * rate);
+        int bpmMax = (int)(Screen.MapInfo.Value.Filters.BPMMax * rate);
+        bpmText.Text = bpmMin == bpmMax ? $"{bpmMin}" : $"{bpmMin}-{bpmMax}";
     }
 
     private void OnBeat(int beat)
