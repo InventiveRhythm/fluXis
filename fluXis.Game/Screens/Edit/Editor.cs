@@ -99,10 +99,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
-        isNewMap = map == null && realmMap == null;
-        Map = realmMap ?? RealmMap.CreateNew();
-        MapInfo = getEditorMapInfo(map) ?? new EditorMapInfo(new MapMetadata());
-        MapInfo.KeyCount = Map.KeyCount;
+        Map = realmMap;
+        MapInfo = getEditorMapInfo(map);
     }
 
     [BackgroundDependencyLoader]
@@ -110,6 +108,20 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
         audioClock.Looping = false;
         audioClock.Stop(); // the editor clock will handle this
+
+        isNewMap = MapInfo == null && Map == null;
+
+        if (Map == null)
+            Map = RealmMap.CreateNew();
+        else
+        {
+            var resources = Map.MapSet.Resources;
+            Map = Map.Detach();
+            Map.MapSet.Resources = resources;
+        }
+
+        MapInfo ??= new EditorMapInfo(new MapMetadata());
+        MapInfo.KeyCount = Map.KeyCount;
 
         backgrounds.AddBackgroundFromMap(Map);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
@@ -514,7 +526,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                 else
                     effectsFile.Hash = effectsHash;
 
-                mapStore.UpdateMapSet(Map.MapSet, set.Detach());
+                mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), set.Detach());
             }
             else
             {

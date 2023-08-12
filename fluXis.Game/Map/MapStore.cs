@@ -98,6 +98,7 @@ public partial class MapStore : Component
     public void UpdateMapSet(RealmMapSet oldMapSet, RealmMapSet newMapSet)
     {
         MapSets.Remove(oldMapSet);
+        newMapSet.Resources = oldMapSet.Resources; // keep the resources
         MapSets.Add(newMapSet);
         MapSetUpdated?.Invoke(oldMapSet, newMapSet);
 
@@ -135,6 +136,8 @@ public partial class MapStore : Component
         Random rnd = new Random();
         return MapSets[rnd.Next(MapSets.Count)];
     }
+
+    public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
 
     public string Export(RealmMapSet set, LoadingNotification notification, bool openFolder = true)
     {
