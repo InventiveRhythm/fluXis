@@ -54,12 +54,12 @@ public partial class EditorHitObjectContainer : Container
     }
 
     public Vector2 ScreenSpacePositionAtTime(float time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));
-    public float PositionAtTime(float time) => DrawHeight - HITPOSITION - .5f * ((time - (float)Time.Current) * values.Zoom);
+    public float PositionAtTime(float time) => DrawHeight - HITPOSITION - .5f * ((time - (float)clock.CurrentTime) * values.Zoom);
     public float PositionFromLane(int lane) => (lane - 1) * NOTEWIDTH;
 
     public float TimeAtScreenSpacePosition(Vector2 screenSpacePosition) => TimeAtPosition(ToLocalSpace(screenSpacePosition).Y);
     public int LaneAtScreenSpacePosition(Vector2 postition) => LaneAtPosition(ToLocalSpace(postition).X);
-    public float TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / values.Zoom + (float)Time.Current;
+    public float TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / values.Zoom + (float)clock.CurrentTime;
     public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH);
 
     public float SnapTime(float time)

@@ -64,7 +64,7 @@ public partial class ChartingContainer : Container
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    Playfield = new EditorPlayfield { Clock = clock },
+                    Playfield = new EditorPlayfield(),
                     BlueprintContainer = new BlueprintContainer { ChartingContainer = this }
                 }
             },
