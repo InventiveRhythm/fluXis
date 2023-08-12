@@ -23,7 +23,7 @@ public partial class DefaultStageBorderLeft : Container
                 RelativeSizeAxes = Axes.Y,
                 Width = 5,
                 Margin = new MarginPadding { Left = 2 },
-                Colour = FluXisColors.Surface
+                Colour = FluXisColors.Background3
             },
             new Box
             {

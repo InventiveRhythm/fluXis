@@ -59,7 +59,7 @@ public partial class ResultHitPoints : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = ColourInfo.GradientVertical(FluXisColors.Surface.Opacity(.4f), FluXisColors.Surface.Opacity(.6f))
+                Colour = ColourInfo.GradientVertical(FluXisColors.Background3.Opacity(.4f), FluXisColors.Background3.Opacity(.6f))
             },
             new Container
             {

@@ -232,7 +232,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
                     Height = 3,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
-                    Colour = FluXisColors.Surface2
+                    Colour = FluXisColors.Background4
                 },
                 new Container
                 {

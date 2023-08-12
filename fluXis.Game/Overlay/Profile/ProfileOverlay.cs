@@ -84,7 +84,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = FluXisColors.Background1
                     },
                     new FluXisScrollContainer
                     {

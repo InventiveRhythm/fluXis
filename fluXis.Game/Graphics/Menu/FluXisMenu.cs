@@ -11,7 +11,7 @@ public partial class FluXisMenu : osu.Framework.Graphics.UserInterface.Menu
     public FluXisMenu(Direction direction, bool topLevelMenu = false)
         : base(direction, topLevelMenu)
     {
-        BackgroundColour = FluXisColors.Surface2;
+        BackgroundColour = FluXisColors.Background4;
         MaskingContainer.CornerRadius = 10;
         ItemsContainer.Padding = new MarginPadding(5);
     }

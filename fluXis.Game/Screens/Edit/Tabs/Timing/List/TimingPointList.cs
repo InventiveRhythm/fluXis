@@ -11,7 +11,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 public partial class TimingPointList : TimingCategoryList<TimingPointList.TimingPointEntry>
 {
     public TimingPointList(List<TimingPointInfo> points, TimingTab tab)
-        : base("Timing Points", FluXisColors.Surface, tab)
+        : base("Timing Points", FluXisColors.Background3, tab)
     {
         points.ForEach(point => AddEntry(new TimingPointEntry(point)));
     }

@@ -47,7 +47,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Surface2
+                        Colour = FluXisColors.Background4
                     },
                     hover = new Box
                     {

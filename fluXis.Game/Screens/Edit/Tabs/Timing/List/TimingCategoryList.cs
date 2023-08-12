@@ -127,7 +127,7 @@ public partial class TimingCategoryList<T> : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Surface2
+                    Colour = FluXisColors.Background4
                 },
                 hoverBox = new Box
                 {

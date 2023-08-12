@@ -15,7 +15,7 @@ public partial class FluXisHexColorPicker : HexColourPicker
     {
         Padding = new MarginPadding(20);
         Spacing = 20;
-        Background.Colour = FluXisColors.Surface2;
+        Background.Colour = FluXisColors.Background4;
     }
 
     private partial class FluXisColorPreview : ColourPreview

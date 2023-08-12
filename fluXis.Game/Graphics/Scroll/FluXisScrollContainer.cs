@@ -98,7 +98,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface2
+                Colour = FluXisColors.Background4
             };
         }
 

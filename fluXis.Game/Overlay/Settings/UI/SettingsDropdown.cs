@@ -66,8 +66,8 @@ public partial class SettingsDropdown<T> : SettingsItem
             {
                 Foreground.Padding = new MarginPadding(5);
                 CornerRadius = 5;
-                BackgroundColour = Colour4.Black.Opacity(.2f);
-                BackgroundColourHover = Colour4.White.Opacity(.2f);
+                BackgroundColour = FluXisColors.Background2;
+                BackgroundColourHover = FluXisColors.Background3;
 
                 Children = new Drawable[]
                 {
@@ -107,7 +107,7 @@ public partial class SettingsDropdown<T> : SettingsItem
             public FluXisDropdownMenu()
             {
                 MaskingContainer.CornerRadius = 5;
-                BackgroundColour = Colour4.Black.Opacity(.2f);
+                BackgroundColour = FluXisColors.Background2;
                 Margin = new MarginPadding { Top = 3 };
             }
 
@@ -142,6 +142,7 @@ public partial class SettingsDropdown<T> : SettingsItem
                 {
                     BackgroundColour = Colour4.Transparent;
                     BackgroundColourHover = Colour4.White.Opacity(.2f);
+                    BackgroundColourSelected = FluXisColors.Background6;
                     CornerRadius = 5;
                     Masking = true;
                 }

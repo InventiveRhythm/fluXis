@@ -11,7 +11,7 @@ public partial class FluXisButton : ClickableContainer
 {
     public int FontSize { get; set; } = 24;
     public string Text { get; set; } = "Default Text";
-    public Colour4 Color { get; set; } = FluXisColors.Surface2;
+    public Colour4 Color { get; set; } = FluXisColors.Background4;
 
     public ButtonData Data
     {
@@ -97,6 +97,6 @@ public partial class FluXisButton : ClickableContainer
 public class ButtonData
 {
     public string Text { get; init; } = "Default Text";
-    public Colour4 Color { get; init; } = FluXisColors.Surface2;
+    public Colour4 Color { get; init; } = FluXisColors.Background2;
     public Action Action { get; init; } = () => { };
 }

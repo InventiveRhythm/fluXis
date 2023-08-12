@@ -40,7 +40,7 @@ public partial class EditorBottomBar : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background
+                    Colour = FluXisColors.Background1
                 },
                 new GridContainer
                 {

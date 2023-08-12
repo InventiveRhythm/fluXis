@@ -47,7 +47,7 @@ public partial class ModEntry : Container, IHasDrawableTooltip
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface
+                Colour = FluXisColors.Background3
             },
             hoverBox = new Box
             {
@@ -116,7 +116,7 @@ public partial class ModEntry : Container, IHasDrawableTooltip
     {
         var color = Selected ? FluXisColors.TextDark : FluXisColors.Text;
 
-        background.FadeColour(Selected ? Colour4.FromHex(HexColour) : FluXisColors.Surface, 200);
+        background.FadeColour(Selected ? Colour4.FromHex(HexColour) : FluXisColors.Background3, 200);
         icon.FadeColour(color, 200);
         name.FadeColour(color, 200);
         description.FadeColour(color, 200);

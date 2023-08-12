@@ -36,7 +36,7 @@ public partial class JudgementCounter : CompositeDrawable
             {
                 new Box
                 {
-                    Colour = FluXisColors.Surface2,
+                    Colour = FluXisColors.Background4,
                     RelativeSizeAxes = Axes.Both
                 },
                 new FillFlowContainer<JudgementCounterItem>

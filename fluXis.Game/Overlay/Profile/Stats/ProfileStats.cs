@@ -45,13 +45,15 @@ public partial class ProfileStats : Container
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
+        CornerRadius = 10;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background
+                Colour = FluXisColors.Background1
             },
             new FillFlowContainer
             {

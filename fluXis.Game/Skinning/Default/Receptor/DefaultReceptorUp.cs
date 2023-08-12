@@ -20,7 +20,7 @@ public partial class DefaultReceptorUp : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface
+                Colour = FluXisColors.Background3
             },
             Diamond = new Container
             {
@@ -29,7 +29,7 @@ public partial class DefaultReceptorUp : Container
                 Size = new Vector2(24, 24),
                 Masking = true,
                 CornerRadius = 5,
-                BorderColour = FluXisColors.Background,
+                BorderColour = FluXisColors.Background1,
                 BorderThickness = 5,
                 Rotation = 45,
                 Child = new Box

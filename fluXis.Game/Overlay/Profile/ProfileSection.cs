@@ -23,7 +23,7 @@ public partial class ProfileSection : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background
+                Colour = FluXisColors.Background2
             },
             new FillFlowContainer
             {

@@ -88,7 +88,7 @@ public partial class Cursor : Container
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Surface
+                    Colour = FluXisColors.Background3
                 },
                 tooltipContent = new Container
                 {

@@ -23,7 +23,7 @@ public partial class TestMultiplayer : FluXisTestScene
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background
+                Colour = FluXisColors.Background1
             },
             stack
         };

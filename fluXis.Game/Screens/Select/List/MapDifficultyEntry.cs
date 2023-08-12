@@ -110,7 +110,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                         Child = new Box
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Colour = FluXisColors.Background
+                                            Colour = FluXisColors.Background1
                                         }
                                     },
                                     wedge2 = new Box

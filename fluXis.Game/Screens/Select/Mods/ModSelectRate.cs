@@ -90,7 +90,7 @@ public partial class ModSelectRate : Container
                             {
                                 new Box
                                 {
-                                    Colour = FluXisColors.Surface,
+                                    Colour = FluXisColors.Background3,
                                     RelativeSizeAxes = Axes.Both
                                 },
                                 new Container

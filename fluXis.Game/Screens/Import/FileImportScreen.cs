@@ -146,7 +146,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background
+                    Colour = FluXisColors.Background1
                 },
                 hover = new Box
                 {

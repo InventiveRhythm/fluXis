@@ -48,7 +48,7 @@ public partial class FpsOverlay : Container
         {
             new Box
             {
-                Colour = FluXisColors.Surface2,
+                Colour = FluXisColors.Background4,
                 RelativeSizeAxes = Axes.Both
             },
             new Container

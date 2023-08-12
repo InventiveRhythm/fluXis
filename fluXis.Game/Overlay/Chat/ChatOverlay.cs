@@ -78,7 +78,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Background2
+                                Colour = FluXisColors.Background1
                             },
                             new Container
                             {
@@ -110,7 +110,6 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
                                         Origin = Anchor.BottomLeft,
                                         RelativeSizeAxes = Axes.X,
                                         Height = 30,
-                                        LengthLimit = 200,
                                         PlaceholderText = "Type your message here..."
                                     }
                                 }

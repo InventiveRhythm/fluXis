@@ -62,7 +62,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisKeybind>
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
+                        Colour = FluXisColors.Background1
                     },
                     loginContainer = new FillFlowContainer
                     {

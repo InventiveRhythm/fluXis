@@ -22,7 +22,7 @@ public partial class DefaultStageBorderRight : Container
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = 5,
-                Colour = FluXisColors.Surface
+                Colour = FluXisColors.Background3
             },
             new Box
             {

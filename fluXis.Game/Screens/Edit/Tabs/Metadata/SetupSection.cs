@@ -52,8 +52,8 @@ public partial class SetupTextBox : Container
             {
                 Text = name,
                 FontSize = 24,
-                Margin = new MarginPadding { Top = 5 },
-                Origin = Anchor.TopRight,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreRight,
                 X = 90
             },
             new Container
@@ -61,7 +61,12 @@ public partial class SetupTextBox : Container
                 RelativeSizeAxes = Axes.X,
                 Height = 30,
                 Margin = new MarginPadding { Top = 5 },
-                Child = textBox = new FluXisTextBox { RelativeSizeAxes = Axes.Both },
+                Child = textBox = new FluXisTextBox
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    BackgroundInactive = FluXisColors.Background3,
+                    BackgroundActive = FluXisColors.Background4
+                },
                 Padding = new MarginPadding { Left = 100 }
             }
         };

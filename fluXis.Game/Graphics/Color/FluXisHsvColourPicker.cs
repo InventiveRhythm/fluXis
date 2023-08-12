@@ -15,7 +15,7 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
     [BackgroundDependencyLoader]
     private void load()
     {
-        Background.Colour = FluXisColors.Surface2;
+        Background.Colour = FluXisColors.Background4;
         Content.Padding = new MarginPadding(10);
         Content.Spacing = new Vector2(0, 10);
     }

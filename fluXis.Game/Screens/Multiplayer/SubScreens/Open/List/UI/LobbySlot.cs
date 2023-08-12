@@ -26,7 +26,7 @@ public partial class LobbySlot : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Surface2
+                Colour = FluXisColors.Background4
             },
             new Container
             {

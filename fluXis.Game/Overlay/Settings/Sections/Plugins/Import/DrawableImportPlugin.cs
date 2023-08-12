@@ -30,7 +30,7 @@ public partial class DrawableImportPlugin : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background
+                Colour = FluXisColors.Background1
             },
             flow = new FillFlowContainer
             {

@@ -98,7 +98,7 @@ public partial class AssetsSetupSection : SetupSection
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = FluXisColors.Surface
+                                Colour = FluXisColors.Background3
                             },
                             new FluXisSpriteText
                             {

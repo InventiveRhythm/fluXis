@@ -13,11 +13,23 @@ namespace fluXis.Game.Graphics;
 
 public partial class FluXisTextBox : BasicTextBox
 {
-    protected override Color4 SelectionColour => FluXisColors.Accent2;
+    protected override Color4 SelectionColour => FluXisColors.Background6;
     protected override Color4 InputErrorColour => FluXisColors.ButtonRed;
 
     public bool IsPassword { get; set; }
     public Action OnTextChanged;
+
+    public Colour4 BackgroundInactive
+    {
+        get => BackgroundUnfocused;
+        set => BackgroundUnfocused = value;
+    }
+
+    public Colour4 BackgroundActive
+    {
+        get => BackgroundFocused;
+        set => BackgroundFocused = value;
+    }
 
     private List<Sample> textAdded;
     private List<Sample> textAddedCaps;
@@ -28,34 +40,38 @@ public partial class FluXisTextBox : BasicTextBox
     private Sample selectWord;
     private Sample selectAll;
 
+    public FluXisTextBox()
+    {
+        Colour = FluXisColors.Text;
+        CornerRadius = 5;
+        Masking = true;
+        LengthLimit = 256;
+        BackgroundInactive = FluXisColors.Background2;
+        BackgroundActive = FluXisColors.Background3;
+    }
+
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        CornerRadius = 5;
-        Masking = true;
-        BackgroundUnfocused = FluXisColors.Surface;
-        BackgroundFocused = FluXisColors.Hover;
-        BackgroundCommit = FluXisColors.Click;
+        BackgroundCommit = BorderColour = FluXisColors.Highlight;
         Placeholder.Font = FluXisSpriteText.GetFont();
-        Placeholder.Colour = FluXisColors.Text2;
-        Placeholder.Anchor = Anchor.CentreLeft;
-        Placeholder.Origin = Anchor.CentreLeft;
+        Placeholder.Colour = FluXisColors.Foreground;
 
         textAdded = new List<Sample>(3);
         textAddedCaps = new List<Sample>(3);
 
         for (int i = 0; i < textAdded.Capacity; i++)
-            textAdded.Add(samples.Get($@"UI/Keyboard/tap-{i + 1}"));
+            textAdded.Add(samples.Get($"UI/Keyboard/tap-{i + 1}"));
 
         for (int i = 0; i < textAddedCaps.Capacity; i++)
-            textAddedCaps.Add(samples.Get($@"UI/Keyboard/caps-{i + 1}"));
+            textAddedCaps.Add(samples.Get($"UI/Keyboard/caps-{i + 1}"));
 
-        accept = samples.Get(@"UI/Keyboard/confirm");
-        delete = samples.Get(@"UI/Keyboard/delete");
-        error = samples.Get(@"UI/Keyboard/error");
-        selectChar = samples.Get(@"UI/Keyboard/select-char");
-        selectWord = samples.Get(@"UI/Keyboard/select-word");
-        selectAll = samples.Get(@"UI/Keyboard/select-all");
+        accept = samples.Get("UI/Keyboard/confirm");
+        delete = samples.Get("UI/Keyboard/delete");
+        error = samples.Get("UI/Keyboard/error");
+        selectChar = samples.Get("UI/Keyboard/select-char");
+        selectWord = samples.Get("UI/Keyboard/select-word");
+        selectAll = samples.Get("UI/Keyboard/select-all");
     }
 
     protected override void OnUserTextAdded(string added)

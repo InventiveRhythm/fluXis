@@ -30,7 +30,7 @@ public partial class KeyModeSetupSection : SetupSection
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Surface
+                    Colour = FluXisColors.Background3
                 },
                 keyModeContainer = new FillFlowContainer<KeyModeButton>
                 {
