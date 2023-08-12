@@ -13,13 +13,15 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
-public partial class SelectFooterButton : Container
+public partial class FooterCornerButton : Container
 {
-    public string Text { get; init; } = string.Empty;
-    public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
+    private const int corner_radius = 20;
+
     public Action Action { get; set; }
-    public Colour4 AccentColor { get; init; } = Color4.White;
-    public int Index { get; init; }
+
+    protected virtual string ButtonText => "Button";
+    protected virtual IconUsage Icon => FontAwesome.Solid.Question;
+    protected virtual Colour4 ButtonColor => FluXisColors.Background4;
 
     private Box hover;
     private Box flash;
@@ -27,11 +29,13 @@ public partial class SelectFooterButton : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = 150;
-        Height = 90;
-        Y = 20;
-        Anchor = Origin = Anchor.BottomLeft;
-        CornerRadius = 10;
+        bool isRight = Anchor == Anchor.BottomRight;
+
+        Width = 250 + corner_radius;
+        Height = 80 + corner_radius;
+        Position = new Vector2(isRight ? 200 : -200, corner_radius);
+        Shear = new Vector2(isRight ? .1f : -.1f, 0);
+        CornerRadius = corner_radius;
         Masking = true;
         EdgeEffect = new EdgeEffectParameters
         {
@@ -45,9 +49,14 @@ public partial class SelectFooterButton : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = ButtonColor
             },
             hover = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0
+            },
+            flash = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
@@ -55,66 +64,69 @@ public partial class SelectFooterButton : Container
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Bottom = 10 },
+                Shear = new Vector2(isRight ? -.1f : .1f, 0),
+                Padding = new MarginPadding
+                {
+                    Left = isRight ? 0 : corner_radius,
+                    Right = isRight ? corner_radius : 0,
+                    Bottom = corner_radius
+                },
                 Child = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Vertical,
+                    Direction = FillDirection.Horizontal,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Spacing = new Vector2(0, 5),
+                    Spacing = new Vector2(10),
                     Children = new Drawable[]
                     {
                         new SpriteIcon
                         {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Size = new Vector2(24),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
                             Icon = Icon,
-                            Shadow = true,
-                            Colour = AccentColor
+                            Size = new Vector2(24)
                         },
                         new FluXisSpriteText
                         {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Text = Text,
-                            Shadow = true
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            FontSize = 24,
+                            Text = ButtonText
                         }
                     }
                 }
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                Colour = AccentColor
             }
         };
     }
 
-    public override void Show()
-    {
-        this.MoveToY(100).Delay(100 * Index).MoveToY(20, 500, Easing.OutQuint);
-    }
-
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.FadeOutFromOne(500);
         Action?.Invoke();
         return true;
     }
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
-        this.MoveToY(10, 200, Easing.OutQuint);
+        hover.FadeTo(.2f, 200);
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(0, 200);
-        this.MoveToY(20, 400, Easing.OutQuint);
+        hover.FadeOut(200);
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        this.ScaleTo(.9f, 1000, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        this.ScaleTo(1, 1000, Easing.OutElastic);
     }
 }
+

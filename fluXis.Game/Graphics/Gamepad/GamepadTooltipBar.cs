@@ -16,8 +16,7 @@ public partial class GamepadTooltipBar : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.X;
-        Height = 50;
+        RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.BottomCentre;
 
         if (ShowBackground)

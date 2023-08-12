@@ -1,12 +1,18 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
@@ -16,24 +22,39 @@ public partial class SelectFooter : Container
     public NotificationOverlay Notifications { get; private set; }
 
     public SelectScreen Screen { get; init; }
+    public Container<SelectFooterButton> ButtonContainer { get; private set; }
 
+    private Container backgroundContainer;
     private Container keyboardContainer;
     private GamepadTooltipBar gamepadContainer;
+    private FooterCornerButton backButton;
+    private FooterCornerButton playButton;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 50;
+        Height = 60;
         Anchor = Origin = Anchor.BottomLeft;
 
         Children = new Drawable[]
         {
-            new Box
+            backgroundContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black,
-                Alpha = .5f
+                Masking = true,
+                Y = 80,
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Color4.Black.Opacity(.25f),
+                    Radius = 10
+                },
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2
+                }
             },
             keyboardContainer = new Container
             {
@@ -42,55 +63,49 @@ public partial class SelectFooter : Container
                 Alpha = GamepadHandler.GamepadConnected ? 0 : 1,
                 Children = new Drawable[]
                 {
-                    new FillFlowContainer
+                    backButton = new SelectFooterBackButton { Action = Screen.Exit },
+                    ButtonContainer = new Container<SelectFooterButton>
                     {
-                        Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,
                         AutoSizeAxes = Axes.X,
+                        Y = 100,
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Children = new Drawable[]
+                        Padding = new MarginPadding { Left = 300 },
+                        Children = new[]
                         {
+                            /*new SelectModsButton
+                            {
+                                ModSelector = Screen.ModSelector
+                            },*/
                             new SelectFooterButton
                             {
-                                Text = "Back",
-                                Action = Screen.Exit
+                                Text = "Mods",
+                                Icon = FontAwesome.Solid.LayerGroup,
+                                AccentColor = Colour4.FromHex("#edbb98"),
+                                Action = openModSelector
                             },
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Y,
-                                Width = 100,
-                                Name = "Spacer"
-                            },
-                            new SelectModsButton { ModSelector = Screen.ModSelector },
                             new SelectFooterButton
                             {
                                 Text = "Random",
-                                Action = randomMap
+                                Icon = FontAwesome.Solid.Random,
+                                AccentColor = Colour4.FromHex("#ed98a7"),
+                                Action = randomMap,
+                                Index = 1,
+                                Margin = new MarginPadding { Left = 160 }
                             },
                             new SelectFooterButton
                             {
                                 Text = "Options",
-                                Action = OpenSettings
+                                Icon = FontAwesome.Solid.Cog,
+                                AccentColor = Colour4.FromHex("#98cbed"),
+                                Action = OpenSettings,
+                                Index = 2,
+                                Margin = new MarginPadding { Left = 320 }
                             }
                         }
                     },
-                    new FillFlowContainer
-                    {
-                        Direction = FillDirection.Horizontal,
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Children = new Drawable[]
-                        {
-                            new SelectFooterButton
-                            {
-                                Text = "Play",
-                                Action = Screen.Accept
-                            }
-                        }
-                    }
+                    playButton = new SelectFooterPlayButton { Action = Screen.Accept }
                 }
             },
             gamepadContainer = new GamepadTooltipBar
@@ -156,20 +171,26 @@ public partial class SelectFooter : Container
         GamepadHandler.OnGamepadStatusChanged -= updateGamepadStatus;
     }
 
-    private void openModSelector()
+    public override void Show()
     {
-        Screen.ModSelector.IsOpen.Value = true;
+        backButton.MoveToX(-20, 500, Easing.OutQuint);
+        playButton.MoveToX(20, 500, Easing.OutQuint);
+        backgroundContainer.MoveToY(0, 500, Easing.OutQuint);
+        ButtonContainer.MoveToY(0);
+        ButtonContainer.ForEach(b => b.Show());
     }
 
-    private void randomMap()
+    public override void Hide()
     {
-        Screen.RandomMap();
+        backButton.MoveToX(-200, 500, Easing.OutQuint);
+        playButton.MoveToX(200, 500, Easing.OutQuint);
+        backgroundContainer.MoveToY(80, 500, Easing.OutQuint);
+        ButtonContainer.MoveToY(100, 500, Easing.OutQuint);
     }
 
-    public void OpenSettings()
-    {
-        Notifications.Post("This is still in development\nCome back later!");
-    }
+    private void openModSelector() => Screen.ModSelector.IsOpen.Toggle();
+    private void randomMap() => Screen.RandomMap();
+    public void OpenSettings() => Notifications.Post("This is still in development\nCome back later!");
 
     protected override bool OnClick(ClickEvent e) => true; // Prevents the click from going through to the map list
 }

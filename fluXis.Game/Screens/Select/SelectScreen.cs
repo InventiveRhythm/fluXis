@@ -423,7 +423,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         mapList.MoveToX(-200, 500, Easing.OutQuint);
         searchBar.MoveToY(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
-        footer.MoveToY(50, 500, Easing.OutQuint);
+        footer.Hide();
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
@@ -435,7 +435,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         mapList.MoveToX(0, 500, Easing.OutQuint);
         searchBar.MoveToY(0, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(0, 500, Easing.OutQuint);
-        footer.MoveToY(0, 500, Easing.OutQuint);
+        footer.Show();
 
         activity.Update("Selecting a map", "", "songselect");
 
@@ -464,8 +464,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         selectMapInfo.MoveToX(200)
                      .MoveToX(0, 500, Easing.OutQuint);
 
-        footer.MoveToY(50)
-              .MoveToY(0, 500, Easing.OutQuint);
+        footer.Show();
 
         activity.Update("Selecting a map", "", "songselect");
 
@@ -477,11 +476,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         this.FadeOut(200);
         clock.Looping = false;
+        menuBack.Play();
 
         mapList.MoveToX(-200, 500, Easing.OutQuint);
         searchBar.MoveToY(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
-        footer.MoveToY(50, 500, Easing.OutQuint);
+        footer.Hide();
 
         mapStore.MapSetAdded -= addMapSet;
         mapStore.MapSetUpdated -= replaceMapSet;
@@ -522,7 +522,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                     return true;
                 }
 
-                menuBack.Play();
                 this.Exit();
                 return true;
         }
@@ -536,16 +535,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         switch (e.Key)
         {
-            case Key.F1:
-                ModSelector.IsOpen.Toggle();
-                return true;
+            case >= Key.F1 and <= Key.F12:
+                var index = (int)e.Key - (int)Key.F1;
 
-            case Key.F2:
-                RandomMap();
-                return true;
+                if (index < footer.ButtonContainer.Count)
+                    footer.ButtonContainer[index].TriggerClick();
 
-            case Key.F3:
-                footer.OpenSettings();
                 return true;
 
             case Key.PageUp:
