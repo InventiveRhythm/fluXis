@@ -77,7 +77,7 @@ public partial class MenuScreen : FluXisScreen
     private bool pressedStart;
     private Sample menuStart;
     private double inactivityTime;
-    private const double inactivity_timeout = 22000;
+    private const double inactivity_timeout = 60 * 1000;
 
     [BackgroundDependencyLoader]
     private void load(GameHost host, ISampleStore samples)
@@ -341,11 +341,7 @@ public partial class MenuScreen : FluXisScreen
     {
         if (e.Key == Key.Escape)
         {
-            if (pressedStart)
-                revertStartAnimation();
-            else
-                game.Overlay = new ConfirmExitPanel();
-
+            game.Overlay ??= new ConfirmExitPanel();
             return true;
         }
 
