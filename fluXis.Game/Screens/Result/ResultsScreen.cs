@@ -5,6 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
+using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
@@ -15,15 +16,18 @@ using fluXis.Game.Online.Scores;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result.UI;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Result;
 
@@ -50,6 +54,8 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
     private Container content;
     private ResultsRatingInfo ratingInfo;
     private GamepadTooltipBar gamepadTooltips;
+    private Container buttons;
+    private CornerButton backButton;
 
     private readonly bool showPlayData;
 
@@ -90,11 +96,12 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 CornerRadius = 10,
+                MaskingSmoothness = 0,
                 Masking = true,
                 EdgeEffect = new EdgeEffectParameters
                 {
                     Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(.2f),
+                    Colour = Colour4.Black.Opacity(.25f),
                     Radius = 10,
                     Offset = new Vector2(0, 2)
                 },
@@ -132,15 +139,54 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                     }
                 }
             },
-            gamepadTooltips = new GamepadTooltipBar
+            new Container
             {
-                Y = 50,
-                TooltipsLeft = new GamepadTooltip[]
+                RelativeSizeAxes = Axes.X,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                Height = 60,
+                Children = new Drawable[]
                 {
-                    new()
+                    new Container
                     {
-                        Text = "Back",
-                        Icon = "B"
+                        RelativeSizeAxes = Axes.Both,
+                        Masking = true,
+                        EdgeEffect = new EdgeEffectParameters
+                        {
+                            Type = EdgeEffectType.Shadow,
+                            Colour = Color4.Black.Opacity(.25f),
+                            Radius = 10
+                        },
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background2
+                        }
+                    },
+                    buttons = new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
+                        {
+                            backButton = new CornerButton
+                            {
+                                ButtonText = "Back",
+                                Icon = FontAwesome.Solid.ChevronLeft,
+                                Action = this.Exit
+                            }
+                        }
+                    },
+                    gamepadTooltips = new GamepadTooltipBar
+                    {
+                        ShowBackground = false,
+                        TooltipsLeft = new GamepadTooltip[]
+                        {
+                            new()
+                            {
+                                Text = "Back",
+                                Icon = "B"
+                            }
+                        }
                     }
                 }
             }
@@ -161,7 +207,8 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     private void onGamepadStatusChanged(bool status)
     {
-        gamepadTooltips.MoveToY(status ? 0 : 50, 250, Easing.OutQuint);
+        gamepadTooltips.FadeTo(status ? 1 : 0);
+        buttons.FadeTo(status ? 0 : 1);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
@@ -180,15 +227,16 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        content.ScaleTo(0.95f).ScaleTo(1f, 250, Easing.OutQuint);
-        this.FadeInFromZero(250, Easing.OutQuint);
+        content.ScaleTo(0.9f).ScaleTo(1f, 400, Easing.OutQuint);
+        this.FadeInFromZero(200);
+        backButton.Show();
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        onGamepadStatusChanged(false);
-        content.ScaleTo(1.05f, 250, Easing.OutQuint);
-        this.FadeOut(250, Easing.OutQuint);
+        content.ScaleTo(1.1f, 400, Easing.OutQuint);
+        this.FadeOut(200);
+        backButton.Hide();
 
         return false;
     }

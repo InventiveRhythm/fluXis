@@ -1,7 +1,9 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
+using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -27,8 +29,8 @@ public partial class SelectFooter : Container
     private Container backgroundContainer;
     private Container keyboardContainer;
     private GamepadTooltipBar gamepadContainer;
-    private FooterCornerButton backButton;
-    private FooterCornerButton playButton;
+    private CornerButton backButton;
+    private CornerButton playButton;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -63,7 +65,12 @@ public partial class SelectFooter : Container
                 Alpha = GamepadHandler.GamepadConnected ? 0 : 1,
                 Children = new Drawable[]
                 {
-                    backButton = new SelectFooterBackButton { Action = Screen.Exit },
+                    backButton = new CornerButton
+                    {
+                        ButtonText = "Back",
+                        Icon = FontAwesome.Solid.ChevronLeft,
+                        Action = Screen.Exit
+                    },
                     ButtonContainer = new Container<SelectFooterButton>
                     {
                         RelativeSizeAxes = Axes.Y,
@@ -74,10 +81,6 @@ public partial class SelectFooter : Container
                         Padding = new MarginPadding { Left = 300 },
                         Children = new[]
                         {
-                            /*new SelectModsButton
-                            {
-                                ModSelector = Screen.ModSelector
-                            },*/
                             new SelectFooterButton
                             {
                                 Text = "Mods",
@@ -105,7 +108,14 @@ public partial class SelectFooter : Container
                             }
                         }
                     },
-                    playButton = new SelectFooterPlayButton { Action = Screen.Accept }
+                    playButton = new CornerButton
+                    {
+                        ButtonText = "Play!",
+                        Icon = FontAwesome.Solid.Play,
+                        ButtonColor = FluXisColors.Accent2,
+                        Corner = Corner.BottomRight,
+                        Action = Screen.Accept
+                    }
                 }
             },
             gamepadContainer = new GamepadTooltipBar
@@ -173,8 +183,8 @@ public partial class SelectFooter : Container
 
     public override void Show()
     {
-        backButton.MoveToX(-20, 500, Easing.OutQuint);
-        playButton.MoveToX(20, 500, Easing.OutQuint);
+        backButton.Show();
+        playButton.Show();
         backgroundContainer.MoveToY(0, 500, Easing.OutQuint);
         ButtonContainer.MoveToY(0);
         ButtonContainer.ForEach(b => b.Show());
@@ -182,8 +192,8 @@ public partial class SelectFooter : Container
 
     public override void Hide()
     {
-        backButton.MoveToX(-200, 500, Easing.OutQuint);
-        playButton.MoveToX(200, 500, Easing.OutQuint);
+        backButton.Hide();
+        playButton.Hide();
         backgroundContainer.MoveToY(80, 500, Easing.OutQuint);
         ButtonContainer.MoveToY(100, 500, Easing.OutQuint);
     }
