@@ -7,6 +7,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
+using fluXis.Game.Overlay.Chat.UI;
 using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -60,19 +61,15 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
             content = new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                RelativePositionAxes = Axes.Both,
-                Y = 0.5f,
+                Y = 50,
                 Height = 0.4f,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Padding = new MarginPadding(20),
                 Children = new Drawable[]
                 {
                     new FluXisContextMenuContainer
                     {
                         RelativeSizeAxes = Axes.Both,
-                        CornerRadius = 10,
-                        Masking = true,
                         Children = new Drawable[]
                         {
                             new Box
@@ -82,8 +79,52 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
                             },
                             new Container
                             {
+                                Width = 300,
+                                RelativeSizeAxes = Axes.Y,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = FluXisColors.Background2
+                                    },
+                                    new FluXisScrollContainer
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Padding = new MarginPadding(10) { Bottom = 80 },
+                                        Child = new FillFlowContainer
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(0, 10),
+                                            Children = new Drawable[]
+                                            {
+                                                new FluXisSpriteText { Text = "Channels" },
+                                                new ChatChannelButton { Channel = "general" }
+                                            }
+                                        }
+                                    },
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 80,
+                                        Anchor = Anchor.BottomLeft,
+                                        Origin = Anchor.BottomLeft,
+                                        Padding = new MarginPadding(10),
+                                        Child = new FluXisButton
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Text = "Add Channel",
+                                            Action = () => notifications.Post("Not implemented yet!"),
+                                        }
+                                    }
+                                }
+                            },
+                            new Container
+                            {
                                 RelativeSizeAxes = Axes.Both,
-                                Padding = new MarginPadding(20),
+                                Padding = new MarginPadding(20) { Left = 320 },
                                 Children = new Drawable[]
                                 {
                                     new Container
@@ -234,7 +275,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
     public override void Hide()
     {
         this.FadeOut(200);
-        content.MoveToY(0.5f, 400, Easing.OutQuint);
+        content.MoveToY(50, 400, Easing.OutQuint);
     }
 
     public override void Show()

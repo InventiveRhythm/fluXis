@@ -24,6 +24,7 @@ public partial class FluXisButton : ClickableContainer
     }
 
     private Box hoverBox;
+    private Box flashBox;
     private CircularContainer content;
 
     [BackgroundDependencyLoader]
@@ -47,6 +48,11 @@ public partial class FluXisButton : ClickableContainer
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
                 },
+                flashBox = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -65,10 +71,9 @@ public partial class FluXisButton : ClickableContainer
 
     protected override bool OnClick(ClickEvent e)
     {
-        hoverBox.FadeTo(0.4f)
-                .FadeTo(.2f, 400);
-
-        return base.OnClick(e);
+        flashBox.FadeOutFromOne(1000, Easing.OutQuint);
+        base.OnClick(e);
+        return true;
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -84,13 +89,13 @@ public partial class FluXisButton : ClickableContainer
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        content.ScaleTo(0.95f, 4000, Easing.OutQuint);
+        content.ScaleTo(0.95f, 1000, Easing.OutQuint);
         return true;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        content.ScaleTo(1, 800, Easing.OutElastic);
+        content.ScaleTo(1, 1000, Easing.OutElastic);
     }
 }
 
