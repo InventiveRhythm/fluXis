@@ -1,33 +1,30 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Search;
 
 public partial class SearchTextBox : FluXisTextBox
 {
-    private readonly SearchBar search;
-
-    protected override Color4 SelectionColour => FluXisColors.Accent2;
-
-    public SearchTextBox(SearchBar search)
-    {
-        this.search = search;
-    }
+    public SearchFilters Search { get; init; }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.Both;
-        TextContainer.Padding = new MarginPadding { Left = 10, Right = 40 };
-        PlaceholderText = "Search...";
-        CornerRadius = 10;
+        BackgroundInactive = FluXisColors.Background2;
+        BackgroundActive = FluXisColors.Background2;
+        RelativeSizeAxes = Axes.X;
+        Height = 40;
+        Anchor = Anchor.CentreLeft;
+        Origin = Anchor.CentreLeft;
+        PlaceholderText = "Click to Search...";
+        CornerRadius = 0;
     }
 
     private void updateSearch()
     {
-        search.Screen.Filters.Query = Text;
+        Search.Query = Text;
     }
 
     protected override void OnUserTextAdded(string added)

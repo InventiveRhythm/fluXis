@@ -1,7 +1,6 @@
 using System;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -12,7 +11,6 @@ public partial class DropdownIcon : Container
 {
     public Action Action;
 
-    private readonly Box background;
     private readonly Container content;
     private readonly SpriteIcon icon;
 
@@ -20,10 +18,8 @@ public partial class DropdownIcon : Container
 
     public DropdownIcon()
     {
-        Height = 30;
-        Width = 30;
-        Anchor = Origin = Anchor.CentreRight;
-        Margin = new MarginPadding { Right = 5 };
+        Size = new Vector2(30);
+        Anchor = Origin = Anchor.Centre;
 
         InternalChild = content = new Container
         {
@@ -34,17 +30,12 @@ public partial class DropdownIcon : Container
             CornerRadius = 5,
             Children = new Drawable[]
             {
-                background = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
                 icon = new SpriteIcon
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Icon = FontAwesome.Solid.ChevronDown,
-                    Size = new Vector2(20)
+                    Size = new Vector2(24)
                 }
             }
         };
@@ -53,9 +44,6 @@ public partial class DropdownIcon : Container
     protected override bool OnClick(ClickEvent e)
     {
         Action?.Invoke();
-
-        background.FadeTo(.4f)
-                  .FadeTo(.2f, 400);
 
         rotation += 180;
         icon.RotateTo(rotation, 400, Easing.OutQuint);
@@ -76,12 +64,10 @@ public partial class DropdownIcon : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        background.FadeTo(.2f, 200);
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        background.FadeTo(0, 200);
     }
 }

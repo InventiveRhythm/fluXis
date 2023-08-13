@@ -112,11 +112,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
                         Child = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(10) { Top = 60, Left = 20 },
+                            Padding = new MarginPadding(10) { Top = 80, Left = 20 },
                             Child = mapList = new MapList { Alpha = 0 }
                         }
                     },
-                    searchBar = new SearchBar(this),
+                    searchBar = new SearchBar { Filters = Filters },
                     selectMapInfo = new SelectMapInfo { Screen = this },
                     new Container
                     {
@@ -421,8 +421,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
         mapList.MoveToX(-200, 500, Easing.OutQuint);
-        searchBar.MoveToY(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+        searchBar.Hide();
         footer.Hide();
     }
 
@@ -433,8 +433,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
         mapList.MoveToX(0, 500, Easing.OutQuint);
-        searchBar.MoveToY(0, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(0, 500, Easing.OutQuint);
+        searchBar.Show();
         footer.Show();
 
         activity.Update("Selecting a map", "", "songselect");
@@ -458,12 +458,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         mapList.MoveToX(-200)
                .MoveToX(0, 500, Easing.OutQuint);
 
-        searchBar.MoveToY(-200)
-                 .MoveToY(0, 500, Easing.OutQuint);
-
         selectMapInfo.MoveToX(200)
                      .MoveToX(0, 500, Easing.OutQuint);
 
+        searchBar.Show();
         footer.Show();
 
         activity.Update("Selecting a map", "", "songselect");
@@ -479,8 +477,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         menuBack.Play();
 
         mapList.MoveToX(-200, 500, Easing.OutQuint);
-        searchBar.MoveToY(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
+        searchBar.Hide();
         footer.Hide();
 
         mapStore.MapSetAdded -= addMapSet;

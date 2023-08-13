@@ -202,7 +202,7 @@ public partial class MapListEntry : Container
                             {
                                 coverWrapper = new DelayedLoadUnloadWrapper(() => new Container
                                 {
-                                    Size = new Vector2(60),
+                                    RelativeSizeAxes = Axes.Both,
                                     Masking = true,
                                     CornerRadius = 10,
                                     Child = new DrawableCover(mapset)
@@ -218,7 +218,10 @@ public partial class MapListEntry : Container
                                         Radius = 5,
                                         Offset = new Vector2(0, 1)
                                     }
-                                }, 100, 200),
+                                }, 100, 200)
+                                {
+                                    Size = new Vector2(60)
+                                },
                                 Empty(),
                                 new FillFlowContainer
                                 {
