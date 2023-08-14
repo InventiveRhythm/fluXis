@@ -1,9 +1,11 @@
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 
@@ -15,6 +17,8 @@ public partial class EditorEffectContainer : Container
     [Resolved]
     private EditorChangeHandler changeHandler { get; set; }
 
+    private Box flashUnderlay;
+
     private Container<EditorFlashEvent> flashContainer;
     private Container<EditorLaneSwitchEvent> lsContainer;
 
@@ -25,6 +29,16 @@ public partial class EditorEffectContainer : Container
 
         Children = new Drawable[]
         {
+            flashUnderlay = new Box
+            {
+                Width = 14,
+                RelativeSizeAxes = Axes.Y,
+                Alpha = 0,
+                Colour = FluXisColors.Background1,
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomLeft,
+                Margin = new MarginPadding { Left = 8 }
+            },
             flashContainer = new Container<EditorFlashEvent>
             {
                 AutoSizeAxes = Axes.X,
@@ -48,6 +62,9 @@ public partial class EditorEffectContainer : Container
             ClearAll();
             loadEvents();
         };
+
+        values.FlashUnderlay.BindValueChanged(val => flashUnderlay.FadeTo(val.NewValue ? 1 : 0, 200), true);
+        values.FlashUnderlayColor.BindValueChanged(val => flashUnderlay.Colour = val.NewValue, true);
     }
 
     protected override void LoadComplete()

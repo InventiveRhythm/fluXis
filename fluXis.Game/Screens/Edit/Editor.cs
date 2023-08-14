@@ -208,6 +208,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                                     new("75%", () => values.WaveformOpacity.Value = 0.75f),
                                     new("100%", () => values.WaveformOpacity.Value = 1)
                                 }
+                            },
+                            new("Flash effect underlay", values.FlashUnderlay.Toggle),
+                            new("Flash effect underlay color")
+                            {
+                                Items = new MenuItem[]
+                                {
+                                    new("Dark", () => values.FlashUnderlayColor.Value = FluXisColors.Background1),
+                                    new("Light", () => values.FlashUnderlayColor.Value = Colour4.White)
+                                }
                             }
                         }
                     },
