@@ -112,7 +112,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         isNewMap = MapInfo == null && Map == null;
 
         if (Map == null)
-            Map = RealmMap.CreateNew();
+            Map = mapStore.CreateNew();
         else
         {
             var resources = Map.MapSet.Resources;
@@ -595,7 +595,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         MapInfo.AudioFile = file.Name;
         Map.Metadata.Audio = file.Name;
         clock.ChangeSource(loadMapTrack());
-        changeHandler.OnTimingPointAdded.Invoke();
     }
 
     public void SetBackground(FileInfo file)

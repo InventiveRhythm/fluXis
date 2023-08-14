@@ -180,4 +180,11 @@ public partial class MapStore : Component
             return "";
         }
     }
+
+    public RealmMap CreateNew()
+    {
+        var map = RealmMap.CreateNew();
+        map.MapSet.Resources = resources;
+        return map;
+    }
 }

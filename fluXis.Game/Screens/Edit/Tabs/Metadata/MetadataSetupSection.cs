@@ -42,11 +42,11 @@ public partial class MetadataSetupSection : SetupSection
 
     private void updateMetadata()
     {
-        values.MapInfo.Metadata.Title = titleTextBox.Text;
-        values.MapInfo.Metadata.Artist = artistTextBox.Text;
-        values.MapInfo.Metadata.Mapper = mapperTextBox.Text;
-        values.MapInfo.Metadata.Difficulty = difficultyTextBox.Text;
-        values.MapInfo.Metadata.Source = sourceTextBox.Text;
-        values.MapInfo.Metadata.Tags = tagsTextBox.Text;
+        values.MapInfo.Metadata.Title = values.Editor.Map.Metadata.Title = titleTextBox.Text;
+        values.MapInfo.Metadata.Artist = values.Editor.Map.Metadata.Artist = artistTextBox.Text;
+        values.MapInfo.Metadata.Mapper = values.Editor.Map.Metadata.Mapper = mapperTextBox.Text;
+        values.MapInfo.Metadata.Difficulty = values.Editor.Map.Difficulty = difficultyTextBox.Text;
+        values.MapInfo.Metadata.Source = values.Editor.Map.Metadata.Source = sourceTextBox.Text;
+        values.MapInfo.Metadata.Tags = values.Editor.Map.Metadata.Tags = tagsTextBox.Text;
     }
 }

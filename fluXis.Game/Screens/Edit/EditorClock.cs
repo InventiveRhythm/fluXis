@@ -171,6 +171,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
 
     public void ChangeSource(IClock source)
     {
+        track.Value?.Dispose();
         track.Value = source as Track;
         Track.Value.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
