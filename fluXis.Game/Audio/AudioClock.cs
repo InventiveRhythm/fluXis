@@ -109,6 +109,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         if (!sameTrack)
         {
             Stop();
+            Seek(0);
             ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
             trackHash = hash;
 
@@ -228,7 +229,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         var point = MapInfo.GetTimingPoint(CurrentTime);
 
         stepTime = 60000f / point.BPM / point.Signature;
-        step = (int)(CurrentTime / stepTime);
+
+        var timeSinceTimingPoint = CurrentTime - point.Time;
+        step = (int)(timeSinceTimingPoint / stepTime);
 
         if (lastStep != step && step % 4 == 0)
             OnBeat?.Invoke(step / 4);

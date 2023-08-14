@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
 using osuTK;
@@ -73,6 +75,8 @@ public partial class FluXisTextBox : BasicTextBox
         selectWord = samples.Get("UI/Keyboard/select-word");
         selectAll = samples.Get("UI/Keyboard/select-all");
     }
+
+    protected override Caret CreateCaret() => new FluXisCaret { SelectionColour = SelectionColour };
 
     protected override void OnUserTextAdded(string added)
     {
@@ -160,6 +164,80 @@ public partial class FluXisTextBox : BasicTextBox
         {
             base.LoadComplete();
             this.ScaleTo(0).ScaleTo(1, 100);
+        }
+    }
+
+    public partial class FluXisCaret : Caret
+    {
+        [Resolved]
+        private AudioClock clock { get; set; }
+
+        private bool shouldPulse = true;
+
+        public FluXisCaret()
+        {
+            RelativeSizeAxes = Axes.Y;
+            Size = new Vector2(4, 0.8f);
+            Anchor = Anchor.CentreLeft;
+            Origin = Anchor.CentreLeft;
+            CornerRadius = 2;
+            Masking = true;
+
+            InternalChild = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Color4.White
+            };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            clock.OnBeat += onBeat;
+        }
+
+        private void onBeat(int beat)
+        {
+            if (!shouldPulse) return;
+
+            this.FadeIn().FadeTo(.5f, clock.BeatTime);
+        }
+
+        public override void Show()
+        {
+            base.Show();
+            shouldPulse = true;
+        }
+
+        public override void Hide()
+        {
+            this.FadeOut(200);
+            shouldPulse = false;
+        }
+
+        public Color4 SelectionColour { get; set; }
+
+        public override void DisplayAt(Vector2 position, float? selectionWidth)
+        {
+            if (selectionWidth != null)
+            {
+                this.MoveTo(new Vector2(position.X, position.Y), 100, Easing.OutQuint);
+                this.ResizeWidthTo(selectionWidth.Value, 100, Easing.OutQuint);
+                this.FadeColour(SelectionColour, 200, Easing.OutQuint);
+            }
+            else
+            {
+                this.MoveTo(new Vector2(position.X, position.Y), 100, Easing.OutQuint);
+                this.ResizeWidthTo(2, 100, Easing.OutQuint);
+                this.FadeColour(Color4.White, 200, Easing.OutQuint);
+            }
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            clock.OnBeat -= onBeat;
         }
     }
 }
