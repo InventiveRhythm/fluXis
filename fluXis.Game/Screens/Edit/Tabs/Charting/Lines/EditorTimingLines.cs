@@ -28,15 +28,20 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
         RelativeSizeAxes = Axes.Both;
         createLines();
 
-        changeHandler.SnapDivisorChanged += () =>
+        changeHandler.SnapDivisorChanged += scheduleRedraw;
+        changeHandler.OnTimingPointAdded += scheduleRedraw;
+        changeHandler.OnTimingPointRemoved += scheduleRedraw;
+        changeHandler.OnTimingPointChanged += scheduleRedraw;
+    }
+
+    private void scheduleRedraw()
+    {
+        Schedule(() =>
         {
-            Schedule(() =>
-            {
-                storedLines.Clear();
-                Clear();
-                createLines();
-            });
-        };
+            storedLines.Clear();
+            Clear();
+            createLines();
+        });
     }
 
     protected override void Update()
