@@ -332,7 +332,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             fcOverlay.Show(Performance.AllFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
             this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance, player)));
         }
-        else this.Push(new ResultsScreen(RealmMap, Map, Performance, player));
+        else this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, Performance, player)));
     }
 
     public virtual void RestartMap()
@@ -407,6 +407,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
+        if (ended) return false;
+
         if (e.ControlPressed && e.AltPressed && e.ShiftPressed && e.Key == Key.D)
         {
             showDebug = !showDebug;
@@ -419,7 +421,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
     {
-        if (e.Repeat) return false;
+        if (e.Repeat || ended) return false;
 
         switch (e.Action)
         {
