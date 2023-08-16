@@ -15,7 +15,18 @@ namespace fluXis.Game.Screens.Select.Footer;
 
 public partial class SelectFooterButton : Container
 {
-    public string Text { get; init; } = string.Empty;
+    public string Text
+    {
+        get => text;
+        set
+        {
+            text = value;
+
+            if (spriteText != null)
+                spriteText.Text = value;
+        }
+    }
+
     public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
     public Action Action { get; set; }
     public Colour4 AccentColor { get; init; } = Color4.White;
@@ -23,6 +34,8 @@ public partial class SelectFooterButton : Container
 
     private Box hover;
     private Box flash;
+    private FluXisSpriteText spriteText;
+    private string text = string.Empty;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -74,7 +87,7 @@ public partial class SelectFooterButton : Container
                             Shadow = true,
                             Colour = AccentColor
                         },
-                        new FluXisSpriteText
+                        spriteText = new FluXisSpriteText
                         {
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,

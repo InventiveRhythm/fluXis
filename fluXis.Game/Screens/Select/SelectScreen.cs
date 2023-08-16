@@ -75,11 +75,15 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     private Sample menuAccept;
     private Sample menuBack;
     private Sample menuScroll;
+    private Sample randomClick;
+    private Sample rewindClick;
 
     private Container noMapsContainer;
     private LoadingIcon loadingIcon;
     private Container letterContainer;
     private FluXisSpriteText currentLetter;
+
+    private readonly List<RealmMapSet> randomHistory = new();
 
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
@@ -91,6 +95,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         menuAccept = samples.Get("UI/accept.mp3");
         menuBack = samples.Get("UI/back.mp3");
         menuScroll = samples.Get("UI/scroll.mp3");
+        randomClick = samples.Get("UI/Select/Random.wav");
+        rewindClick = samples.Get("UI/Select/Rewind.wav");
 
         Filters.OnChange += updateSearch;
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
@@ -647,7 +653,30 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         if (maps.Count == 0)
             return;
 
-        MapSet.Value = maps[RNG.Next(0, maps.Count)];
+        var newMap = maps[RNG.Next(0, maps.Count)];
+        var currentMap = MapSet.Value;
+
+        MapSet.Value = newMap;
+        randomClick?.Play();
+
+        if (randomHistory.Count > 0)
+        {
+            var last = randomHistory.Last();
+            if (!Equals(last, currentMap))
+                randomHistory.Add(currentMap);
+        }
+        else
+            randomHistory.Add(currentMap);
+    }
+
+    public void RewindRandom()
+    {
+        if (randomHistory.Count <= 0)
+            return;
+
+        MapSet.Value = randomHistory.Last();
+        randomHistory.RemoveAt(randomHistory.Count - 1);
+        rewindClick?.Play();
     }
 
     private void updateBackgroundBlur(ValueChangedEvent<bool> e)

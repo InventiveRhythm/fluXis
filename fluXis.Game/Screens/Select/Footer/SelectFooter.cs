@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK.Graphics;
@@ -31,6 +32,9 @@ public partial class SelectFooter : Container
     private GamepadTooltipBar gamepadContainer;
     private CornerButton backButton;
     private CornerButton playButton;
+    private SelectFooterButton randomButton;
+
+    private InputManager inputManager;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -88,7 +92,7 @@ public partial class SelectFooter : Container
                                 AccentColor = Colour4.FromHex("#edbb98"),
                                 Action = openModSelector
                             },
-                            new SelectFooterButton
+                            randomButton = new SelectFooterButton
                             {
                                 Text = "Random",
                                 Icon = FontAwesome.Solid.Random,
@@ -169,6 +173,19 @@ public partial class SelectFooter : Container
         GamepadHandler.OnGamepadStatusChanged += updateGamepadStatus;
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        inputManager = GetContainingInputManager();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        randomButton.Text = inputManager.CurrentState.Keyboard.ShiftPressed ? "Rewind" : "Random";
+    }
+
     private void updateGamepadStatus(bool status)
     {
         keyboardContainer.FadeTo(status ? 0 : 1);
@@ -199,7 +216,15 @@ public partial class SelectFooter : Container
     }
 
     private void openModSelector() => Screen.ModSelector.IsOpen.Toggle();
-    private void randomMap() => Screen.RandomMap();
+
+    private void randomMap()
+    {
+        if (inputManager.CurrentState.Keyboard.ShiftPressed)
+            Screen.RewindRandom();
+        else
+            Screen.RandomMap();
+    }
+
     public void OpenSettings() => Notifications.Post("This is still in development\nCome back later!");
 
     protected override bool OnClick(ClickEvent e) => true; // Prevents the click from going through to the map list
