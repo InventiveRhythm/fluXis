@@ -1,7 +1,10 @@
+using fluXis.Game.Configuration;
+using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -22,16 +25,23 @@ public partial class EditorPlayfield : Container
     [Resolved]
     private EditorChangeHandler changeHandler { get; set; }
 
+    [Resolved]
+    private FluXisConfig config { get; set; }
+
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
     private EditorTimingLines timingLines;
     private WaveformGraph waveform;
 
+    private Sample hitSound;
+
     [BackgroundDependencyLoader]
-    private void load(Bindable<Waveform> waveformBind)
+    private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
     {
         Width = EditorHitObjectContainer.NOTEWIDTH * values.MapInfo.KeyCount;
         RelativeSizeAxes = Axes.Y;
         Anchor = Origin = Anchor.Centre;
+
+        hitSound = samples.Get("Gameplay/hitsound.mp3");
 
         InternalChildren = new Drawable[]
         {
@@ -68,5 +78,13 @@ public partial class EditorPlayfield : Container
 
         waveform.Width = songLengthInPixels;
         waveform.Y = songTimeInPixels;
+
+        if (hitSound != null)
+            hitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
+    }
+
+    public void PlayHitSound(HitObjectInfo info)
+    {
+        hitSound?.Play();
     }
 }

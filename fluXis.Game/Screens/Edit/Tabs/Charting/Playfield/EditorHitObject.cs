@@ -12,11 +12,17 @@ public partial class EditorHitObject : Container
     [Resolved]
     private EditorPlayfield playfield { get; set; }
 
+    [Resolved]
+    private EditorClock clock { get; set; }
+
     public HitObjectInfo Data { get; init; }
 
     public Drawable HitObjectPiece { get; private set; }
     private Drawable longNoteBody { get; set; }
     public Drawable LongNoteEnd { get; private set; }
+
+    private bool overZero = true;
+    private const int max_distance = 100;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -55,6 +61,10 @@ public partial class EditorHitObject : Container
             longNoteBody.Y = -LongNoteEnd.Height / 2;
             LongNoteEnd.Y = endY - Y;
         }
+
+        if (Data.Time <= clock.CurrentTime && clock.CurrentTime - Data.Time <= max_distance && overZero) playfield.PlayHitSound(Data);
+
+        overZero = Data.Time > clock.CurrentTime;
     }
 
     protected override bool OnHover(HoverEvent e) => true;
