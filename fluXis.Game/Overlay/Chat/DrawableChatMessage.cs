@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Graphics.Drawables;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;

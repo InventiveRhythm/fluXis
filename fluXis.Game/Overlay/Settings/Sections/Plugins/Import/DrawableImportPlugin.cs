@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Game.Database;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Import;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;

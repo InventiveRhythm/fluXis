@@ -1,6 +1,5 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;

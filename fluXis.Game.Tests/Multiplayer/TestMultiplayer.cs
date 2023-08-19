@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Screens.Multiplayer;
 using osu.Framework.Allocation;

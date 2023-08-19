@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;

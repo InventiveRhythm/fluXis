@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Scoring;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;

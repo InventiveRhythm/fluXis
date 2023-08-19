@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Offset;
 using osu.Framework.Graphics;

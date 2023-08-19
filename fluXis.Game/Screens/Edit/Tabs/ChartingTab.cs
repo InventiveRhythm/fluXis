@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

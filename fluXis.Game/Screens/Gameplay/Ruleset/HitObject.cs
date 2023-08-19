@@ -1,5 +1,5 @@
 using fluXis.Game.Audio;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Default.HitObject;

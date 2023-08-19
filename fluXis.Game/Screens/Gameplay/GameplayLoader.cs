@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Cover;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Mods;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

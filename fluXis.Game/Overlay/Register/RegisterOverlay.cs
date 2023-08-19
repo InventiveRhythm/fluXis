@@ -1,5 +1,8 @@
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Online.API.Account;
 using fluXis.Game.Online.Fluxel;

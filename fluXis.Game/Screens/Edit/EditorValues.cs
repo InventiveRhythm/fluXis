@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Bindables;
 
 namespace fluXis.Game.Screens.Edit;

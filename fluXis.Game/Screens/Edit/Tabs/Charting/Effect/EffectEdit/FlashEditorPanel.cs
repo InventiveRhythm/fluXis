@@ -1,6 +1,8 @@
 using System.Globalization;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;

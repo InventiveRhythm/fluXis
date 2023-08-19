@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Mods;
 using fluXis.Game.Mods.Drawables;
 using fluXis.Game.Overlay.Mouse;

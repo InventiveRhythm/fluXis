@@ -1,4 +1,5 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Patterns;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Screens.Gameplay.Overlay.Fail;
 using osu.Framework.Graphics;

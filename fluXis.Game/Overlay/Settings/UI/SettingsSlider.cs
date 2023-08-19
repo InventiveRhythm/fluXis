@@ -1,6 +1,6 @@
 using System;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Slider;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

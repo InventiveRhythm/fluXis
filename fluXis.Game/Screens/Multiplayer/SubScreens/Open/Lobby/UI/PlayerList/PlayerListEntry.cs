@@ -1,4 +1,5 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Drawables;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

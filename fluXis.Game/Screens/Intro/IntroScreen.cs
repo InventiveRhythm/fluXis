@@ -1,6 +1,7 @@
 using fluXis.Game.Configuration;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;

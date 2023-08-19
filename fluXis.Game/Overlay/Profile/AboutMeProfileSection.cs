@@ -1,4 +1,5 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Overlay.Profile;

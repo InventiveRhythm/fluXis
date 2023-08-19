@@ -1,7 +1,8 @@
 using System;
 using System.IO;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.FileSelect;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.FileSelect;
 using fluXis.Game.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

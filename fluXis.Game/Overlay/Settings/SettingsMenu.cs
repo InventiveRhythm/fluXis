@@ -1,7 +1,7 @@
 using System.Linq;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Panel;
-using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Settings.Sections;
 using osu.Framework.Allocation;

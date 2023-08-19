@@ -1,7 +1,8 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Cover;
-using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Metadata;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

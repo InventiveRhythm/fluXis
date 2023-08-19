@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Slider;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

@@ -1,5 +1,7 @@
 using System;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 

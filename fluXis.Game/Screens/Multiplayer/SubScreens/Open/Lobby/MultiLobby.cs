@@ -1,8 +1,10 @@
 using System.Linq;
 using fluXis.Game.Audio;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.API.Multi;

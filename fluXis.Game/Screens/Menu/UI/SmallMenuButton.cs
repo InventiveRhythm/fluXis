@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;

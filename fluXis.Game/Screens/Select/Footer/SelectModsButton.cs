@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Mods.Drawables;
 using fluXis.Game.Screens.Select.Mods;
 using osu.Framework.Allocation;

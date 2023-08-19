@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;

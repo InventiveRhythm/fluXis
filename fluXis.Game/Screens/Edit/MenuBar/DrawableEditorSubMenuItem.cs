@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Graphics.UserInterface.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;

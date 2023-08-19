@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Panel;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Multi;
 using fluXis.Game.Online.Fluxel;

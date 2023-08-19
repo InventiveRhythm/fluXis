@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;

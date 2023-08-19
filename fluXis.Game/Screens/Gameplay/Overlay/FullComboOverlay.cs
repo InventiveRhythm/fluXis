@@ -1,4 +1,6 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Patterns;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;

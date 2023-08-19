@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;

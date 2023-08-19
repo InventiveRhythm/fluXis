@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 
 namespace fluXis.Game.Skinning.Default.Receptor;
 

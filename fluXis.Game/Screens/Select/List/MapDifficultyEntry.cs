@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Screens.Edit;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

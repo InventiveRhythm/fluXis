@@ -1,6 +1,6 @@
 using System;
 using fluXis.Game.Audio;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Cover;
-using fluXis.Game.Graphics.Menu;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

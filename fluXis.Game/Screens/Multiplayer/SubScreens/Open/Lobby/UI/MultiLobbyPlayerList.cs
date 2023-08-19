@@ -1,6 +1,6 @@
 using System.Linq;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.API.Multi;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;

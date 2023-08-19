@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

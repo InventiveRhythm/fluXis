@@ -1,4 +1,6 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;

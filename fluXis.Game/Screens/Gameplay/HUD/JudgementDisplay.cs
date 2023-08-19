@@ -1,6 +1,6 @@
 using System;
 using fluXis.Game.Configuration;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Integration;
 using fluXis.Game.Scoring;
 using fluXis.Game.Skinning;

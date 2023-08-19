@@ -1,6 +1,7 @@
 using System.Globalization;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Edit.MenuBar;

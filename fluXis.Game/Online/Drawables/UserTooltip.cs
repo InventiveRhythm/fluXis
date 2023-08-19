@@ -1,6 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Drawables;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

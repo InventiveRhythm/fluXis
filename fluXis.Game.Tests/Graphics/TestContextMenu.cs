@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Game.Graphics.Context;
+using fluXis.Game.Graphics.UserInterface.Context;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;

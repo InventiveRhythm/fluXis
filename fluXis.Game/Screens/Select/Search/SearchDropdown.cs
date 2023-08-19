@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Select.Search.Dropdown;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

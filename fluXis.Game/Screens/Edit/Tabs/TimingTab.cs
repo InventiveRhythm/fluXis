@@ -1,5 +1,5 @@
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Scroll;
+using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Timing;
 using fluXis.Game.Screens.Edit.Tabs.Timing.List;
 using osu.Framework.Graphics;

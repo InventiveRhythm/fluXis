@@ -4,6 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

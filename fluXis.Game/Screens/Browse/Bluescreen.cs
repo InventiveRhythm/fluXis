@@ -1,5 +1,6 @@
 ﻿using fluXis.Game.Audio;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;

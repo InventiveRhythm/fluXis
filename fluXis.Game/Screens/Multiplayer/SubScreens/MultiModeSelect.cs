@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Ranked;
 using osu.Framework.Allocation;

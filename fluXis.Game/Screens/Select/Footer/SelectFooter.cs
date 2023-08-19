@@ -1,6 +1,6 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.UI;

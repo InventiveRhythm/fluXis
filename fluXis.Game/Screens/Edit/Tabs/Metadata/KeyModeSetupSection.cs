@@ -1,11 +1,13 @@
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using TicTac = fluXis.Game.Graphics.Drawables.TicTac;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 

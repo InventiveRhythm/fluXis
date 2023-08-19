@@ -1,5 +1,5 @@
 using System.Linq;
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;

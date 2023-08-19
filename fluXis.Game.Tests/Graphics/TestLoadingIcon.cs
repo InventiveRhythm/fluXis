@@ -1,4 +1,5 @@
-using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
