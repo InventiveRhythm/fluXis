@@ -45,6 +45,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         getBinding(FluXisKeybind.MusicPrevious, InputKey.F5),
         getBinding(FluXisKeybind.MusicPause, InputKey.F6),
         getBinding(FluXisKeybind.MusicNext, InputKey.F7),
+        getBinding(FluXisKeybind.ToggleMusicPlayer, InputKey.F8),
 
         getBinding(FluXisKeybind.VolumeDecrease, new KeyCombination(InputKey.Alt, InputKey.Left)),
         getBinding(FluXisKeybind.VolumeIncrease, new KeyCombination(InputKey.Alt, InputKey.Right)),
@@ -188,6 +189,7 @@ public enum FluXisKeybind
     MusicPrevious,
     MusicPause,
     MusicNext,
+    ToggleMusicPlayer,
 
     VolumeDecrease,
     VolumeIncrease,

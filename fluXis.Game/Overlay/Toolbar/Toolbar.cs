@@ -1,12 +1,12 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Chat;
+using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Dashboard;
 using fluXis.Game.Screens.Menu;
-using fluXis.Game.Screens.Music;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Wiki;
@@ -26,6 +26,9 @@ public partial class Toolbar : Container
 {
     [Resolved]
     private SettingsMenu settings { get; set; }
+
+    [Resolved]
+    private MusicPlayer musicPlayer { get; set; }
 
     [Resolved]
     private ChatOverlay chat { get; set; }
@@ -134,7 +137,7 @@ public partial class Toolbar : Container
                             {
                                 Name = "Music Player",
                                 Icon = FontAwesome.Solid.Music,
-                                Action = () => goToScreen(new MusicPlayer())
+                                Action = musicPlayer.ToggleVisibility
                             }
                         }
                     },

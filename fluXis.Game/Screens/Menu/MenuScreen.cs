@@ -94,7 +94,6 @@ public partial class MenuScreen : FluXisScreen
 
             RealmMap map = maps.CurrentMapSet.Maps.First();
             clock.LoadMap(map, true, true);
-            Schedule(songChanged);
         }
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());

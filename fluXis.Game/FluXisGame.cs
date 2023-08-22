@@ -67,6 +67,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                             ScreenStack
                         }
                     },
+                    MusicPlayer,
                     LoginOverlay,
                     Toolbar,
                     RegisterOverlay,
@@ -138,6 +139,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         {
             case FluXisKeybind.ToggleSettings:
                 Settings.ToggleVisibility();
+                return true;
+
+            case FluXisKeybind.ToggleMusicPlayer:
+                MusicPlayer.ToggleVisibility();
                 return true;
 
             case FluXisKeybind.OpenSkinEditor:

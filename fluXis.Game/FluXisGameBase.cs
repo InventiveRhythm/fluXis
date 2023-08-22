@@ -20,6 +20,7 @@ using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
@@ -57,6 +58,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected ProfileOverlay ProfileOverlay;
     protected RegisterOverlay RegisterOverlay;
     protected NotificationOverlay Notifications;
+    protected MusicPlayer MusicPlayer;
     protected BackgroundStack BackgroundStack;
     protected ActivityManager ActivityManager;
 
@@ -72,7 +74,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private ImportManager importManager;
     private Fluxel fluxel;
 
-    public Action OnSongChanged;
+    public Action OnSongChanged { get; set; }
     public virtual Drawable Overlay { get; set; }
 
     public static string VersionString => Version != null ? IsDebug ? "local development build" : $"v{Version.Major}.{Version.Minor}.{Version.Build}" : "unknown version";
@@ -122,6 +124,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.CacheAs(lightController = CreateLightController());
         dependencies.Cache(skinManager = new SkinManager());
         dependencies.Cache(ActivityManager = new ActivityManager(fluxel));
+        dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -245,7 +248,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         mapStore.CurrentMapSet = mapSet;
         BackgroundStack.AddBackgroundFromMap(map);
         AudioClock.LoadMap(map, true);
-        OnSongChanged?.Invoke();
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

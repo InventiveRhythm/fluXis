@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using fluXis.Game.Audio;
+using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
@@ -40,7 +41,17 @@ public partial class BackgroundVideo : CompositeDrawable
         {
             Schedule(() =>
             {
-                ClearInternal();
+                if (video == null) return;
+
+                if (!video.IsLoaded)
+                {
+                    video.OnLoadComplete += v => v.Expire();
+                    Logger.Log("[LoadVideo] Video is not loaded, waiting for load to complete.", LoggingTarget.Runtime, LogLevel.Debug);
+                    return;
+                }
+
+                video.FadeOut(500).Expire();
+                Logger.Log("Video is loaded, fading out.", LoggingTarget.Runtime, LogLevel.Debug);
                 video = null;
             });
             return;
@@ -52,19 +63,25 @@ public partial class BackgroundVideo : CompositeDrawable
 
         try
         {
-            string path = storage.GetFullPath($"files/{file.Path}");
+            var path = RealmStorage.GetFullPath(file);
+            Logger.Log($"Loading video: {path}", LoggingTarget.Runtime, LogLevel.Debug);
             Stream stream = File.OpenRead(path);
 
-            LoadComponent(video = new Video(stream, false)
+            Schedule(() =>
             {
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fill,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Alpha = 0
+                LoadComponentAsync(video = new Video(stream, false)
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    FillMode = FillMode.Fill,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Alpha = 0
+                }, loadedVideo =>
+                {
+                    Logger.Log("Video loaded, adding to scene tree.", LoggingTarget.Runtime, LogLevel.Debug);
+                    InternalChild = loadedVideo;
+                });
             });
-
-            Schedule(() => InternalChild = video);
         }
         catch (Exception e)
         {
@@ -92,7 +109,15 @@ public partial class BackgroundVideo : CompositeDrawable
     {
         if (video == null) return;
 
+        if (!video.IsLoaded)
+        {
+            video.OnLoadComplete += _ => Stop();
+            Logger.Log("[Stop] Video is not loaded, waiting for load to complete.", LoggingTarget.Runtime, LogLevel.Debug);
+            return;
+        }
+
         IsPlaying = false;
+        Logger.Log("Stopping video.", LoggingTarget.Runtime, LogLevel.Debug);
         video.FadeOut(500);
     }
 
@@ -100,7 +125,15 @@ public partial class BackgroundVideo : CompositeDrawable
     {
         if (video == null) return;
 
+        if (!video.IsLoaded)
+        {
+            video.OnLoadComplete += _ => Start();
+            Logger.Log("[Start] Video is not loaded, waiting for load to complete.", LoggingTarget.Runtime, LogLevel.Debug);
+            return;
+        }
+
         IsPlaying = true;
+        Logger.Log("Starting video.", LoggingTarget.Runtime, LogLevel.Debug);
         video.FadeIn(500);
     }
 }

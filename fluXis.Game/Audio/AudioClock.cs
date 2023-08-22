@@ -26,6 +26,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     [Resolved]
     private ITrackStore trackStore { get; set; }
 
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
     private ITrackStore realmTrackStore { get; set; }
     private Storage realmStorage { get; set; }
 
@@ -114,6 +117,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
             trackHash = hash;
 
             Seek(usePreview ? info.Metadata.PreviewTime : 0);
+            game.OnSongChanged?.Invoke();
 
             if (start) Start();
         }
@@ -250,6 +254,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         if (Time.Current - lastAmplitudeUpdate < 1000f / amplitude_update_fps)
             return;
 
+        var elapsed = Time.Current - lastAmplitudeUpdate;
         lastAmplitudeUpdate = Time.Current;
 
         ReadOnlySpan<float> span = new float[256];
@@ -262,8 +267,8 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
             float newAmplitude = span[i];
             float delta = newAmplitude - Amplitudes[i];
             float interpolation = delta < 0
-                ? (float)Time.Elapsed / 30f
-                : (float)Math.Pow(.1f, Time.Elapsed / 1000f);
+                ? (float)elapsed / 30f
+                : (float)Math.Pow(.1f, elapsed / 1000f);
 
             Amplitudes[i] += delta * interpolation;
         }
