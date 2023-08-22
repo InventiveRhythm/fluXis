@@ -19,29 +19,30 @@ public partial class ToolbarButton : Container, IHasTextTooltip
 
     public Action Action;
 
-    private Box background;
+    private Box hover;
+    private Box flash;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(30);
+        Size = new Vector2(40);
         Margin = new MarginPadding(5);
+        Anchor = Anchor.CentreLeft;
+        Origin = Anchor.CentreLeft;
+        CornerRadius = 5;
+        Masking = true;
 
         Children = new Drawable[]
         {
-            new Container
+            hover = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Masking = true,
-                CornerRadius = 5,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Shear = new Vector2(0.1f, 0),
-                Child = background = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                }
+                Alpha = 0
+            },
+            flash = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0
             },
             new SpriteIcon
             {
@@ -55,17 +56,18 @@ public partial class ToolbarButton : Container, IHasTextTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
-        background.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 200);
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        background.FadeOut(200);
+        hover.FadeOut(200);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
+        flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
         return true;
     }

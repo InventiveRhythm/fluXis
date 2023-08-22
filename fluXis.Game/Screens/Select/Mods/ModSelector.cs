@@ -44,6 +44,7 @@ public partial class ModSelector : Container
         sampleDeselect = samples.Get("UI/Select/ModSelect-Deselect");
 
         RelativeSizeAxes = Axes.Both;
+        Padding = new MarginPadding { Top = -10 };
         Alpha = 0;
 
         InternalChildren = new Drawable[]

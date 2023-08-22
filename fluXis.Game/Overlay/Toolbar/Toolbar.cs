@@ -45,9 +45,9 @@ public partial class Toolbar : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 50;
-        Y = -50;
-        Padding = new MarginPadding { Vertical = 5, Horizontal = 10 };
+        Height = 60;
+        Y = -60;
+        Padding = new MarginPadding { Bottom = 10 };
 
         Children = new Drawable[]
         {
@@ -55,8 +55,6 @@ public partial class Toolbar : Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Masking = true,
-                CornerRadius = 5,
-                Shear = new Vector2(0.1f, 0),
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -80,6 +78,8 @@ public partial class Toolbar : Container
                     {
                         Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
                         AutoSizeAxes = Axes.X,
                         Children = new Drawable[]
                         {
@@ -146,8 +146,8 @@ public partial class Toolbar : Container
                         Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,
                         AutoSizeAxes = Axes.X,
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight,
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
                         Children = new Drawable[]
                         {
                             new ToolbarProfile(),

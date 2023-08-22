@@ -49,7 +49,7 @@ public partial class GlobalCursorOverlay : Container
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Margin = new MarginPadding { Horizontal = 5, Vertical = 2 },
+                            Margin = new MarginPadding { Horizontal = 10, Vertical = 6 },
                             Shadow = true,
                             Text = desc.Tooltip
                         };

@@ -15,7 +15,7 @@ public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
     [Resolved]
     private Fluxel fluxel { get; set; }
 
-    public bool ShowTooltip { get; set; } = false;
+    public bool ShowTooltip { get; set; }
 
     private APIUserShort user;
     private TextureStore textures;
@@ -46,5 +46,5 @@ public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
     }
 
     protected override bool OnHover(HoverEvent e) => user.ID >= 0 && ShowTooltip;
-    public Drawable GetTooltip() => new UserTooltip { UserID = user.ID };
+    public Drawable GetTooltip() => OnHover(null) ? new UserTooltip { UserID = user.ID } : null;
 }
