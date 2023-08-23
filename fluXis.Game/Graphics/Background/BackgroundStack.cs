@@ -6,6 +6,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Toolbar;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -19,6 +20,9 @@ public partial class BackgroundStack : CompositeDrawable
 {
     [Resolved]
     private AudioClock clock { get; set; }
+
+    [Resolved]
+    private Toolbar toolbar { get; set; }
 
     private readonly List<Background> scheduledBackgrounds = new();
     private readonly Container backgroundContainer;
@@ -124,6 +128,8 @@ public partial class BackgroundStack : CompositeDrawable
 
     protected override void Update()
     {
+        Padding = new MarginPadding { Top = toolbar.Height - 10 + toolbar.Y };
+
         while (scheduledBackgrounds.Count > 0)
         {
             var background = scheduledBackgrounds[0];
