@@ -29,7 +29,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK.Input;
 
@@ -55,9 +54,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     [Resolved]
     private NotificationOverlay notifications { get; set; }
-
-    [Resolved]
-    private Storage storage { get; set; }
 
     [Resolved]
     public AudioClock AudioClock { get; set; }
@@ -227,7 +223,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         string details = $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]";
 
         if (!IsPaused.Value)
-            activity.Update("Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
+            activity.Update(Playfield.Manager.AutoPlay ? "Watching auto-play" : "Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
         else
             activity.Update("Paused", details, "playing");
     }
