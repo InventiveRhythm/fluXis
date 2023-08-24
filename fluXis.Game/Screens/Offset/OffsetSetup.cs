@@ -165,7 +165,7 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisKeybin
     {
         track?.Stop();
         clock.Start();
-        return false;
+        return base.OnExiting(e);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

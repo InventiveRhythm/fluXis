@@ -75,7 +75,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     public ModSelector ModSelector;
 
     private Sample menuAccept;
-    private Sample menuBack;
     private Sample menuScroll;
     private Sample randomClick;
     private Sample rewindClick;
@@ -95,7 +94,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     private void load(ISampleStore samples, FluXisConfig config)
     {
         menuAccept = samples.Get("UI/accept.mp3");
-        menuBack = samples.Get("UI/back.mp3");
         menuScroll = samples.Get("UI/scroll.mp3");
         randomClick = samples.Get("UI/Select/Random.wav");
         rewindClick = samples.Get("UI/Select/Rewind.wav");
@@ -482,7 +480,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     {
         this.FadeOut(200);
         clock.Looping = false;
-        menuBack.Play();
 
         mapList.MoveToX(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);

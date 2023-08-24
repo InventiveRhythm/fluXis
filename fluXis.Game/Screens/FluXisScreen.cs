@@ -1,3 +1,6 @@
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
+using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens;
@@ -12,4 +15,29 @@ public partial class FluXisScreen : Screen
     public virtual bool AllowMusicControl => true;
     public virtual bool ApplyValuesAfterLoad => false;
     public virtual bool AllowExit => true;
+    public virtual bool PlayBackSound => true;
+
+    private Sample backSample;
+
+    protected new FluXisGameBase Game => base.Game as FluXisGameBase;
+
+    protected FluXisScreen()
+    {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore samples)
+    {
+        backSample = samples.Get("UI/back");
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        if (PlayBackSound)
+            backSample.Play();
+
+        return base.OnExiting(e);
+    }
 }

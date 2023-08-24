@@ -239,6 +239,6 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
         this.FadeOut(200);
         backButton.Hide();
 
-        return false;
+        return base.OnExiting(e);
     }
 }

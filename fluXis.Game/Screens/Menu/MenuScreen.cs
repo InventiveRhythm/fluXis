@@ -51,9 +51,6 @@ public partial class MenuScreen : FluXisScreen
     private LoginOverlay login { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
-
-    [Resolved]
     private AudioClock clock { get; set; }
 
     [Resolved]
@@ -215,7 +212,7 @@ public partial class MenuScreen : FluXisScreen
                             new SmallMenuButton
                             {
                                 Icon = FontAwesome.Solid.Times,
-                                Action = game.Exit,
+                                Action = Game.Exit,
                                 Width = 120,
                                 Y = 160
                             },
@@ -286,7 +283,7 @@ public partial class MenuScreen : FluXisScreen
 
     protected override void LoadComplete()
     {
-        game.OnSongChanged += songChanged;
+        Game.OnSongChanged += songChanged;
     }
 
     private void continueToPlay() => this.Push(new SelectScreen());
@@ -313,7 +310,7 @@ public partial class MenuScreen : FluXisScreen
         fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
         fluXisText.Delay(800).FadeIn().OnComplete(_ =>
         {
-            game.Toolbar.ShowToolbar.Value = true;
+            Game.Toolbar.ShowToolbar.Value = true;
             splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
             showMenu(600);
             login.Show();
@@ -324,7 +321,7 @@ public partial class MenuScreen : FluXisScreen
 
     private void revertStartAnimation()
     {
-        game.Toolbar.ShowToolbar.Value = false;
+        Game.Toolbar.ShowToolbar.Value = false;
         backgrounds.Zoom = 1.2f;
         splashText.MoveToX(-200, 600, Easing.InQuint).FadeOut(300);
         buttonContainer.MoveToX(-200, 600, Easing.InQuint).FadeOut(300);
@@ -343,7 +340,7 @@ public partial class MenuScreen : FluXisScreen
     {
         if (e.Key == Key.Escape)
         {
-            game.Overlay ??= new ConfirmExitPanel();
+            Game.Overlay ??= new ConfirmExitPanel();
             return true;
         }
 
@@ -398,7 +395,7 @@ public partial class MenuScreen : FluXisScreen
 
     protected override void Update()
     {
-        if (clock.Finished) game.NextSong();
+        if (clock.Finished) Game.NextSong();
 
         if (!pressedStart)
         {

@@ -28,7 +28,7 @@ public partial class MenuScreen
                 return true;
 
             case JoystickButton.Button9: // Back
-                game.Exit();
+                Game.Exit();
                 return true;
 
             case JoystickButton.Button10: // Start

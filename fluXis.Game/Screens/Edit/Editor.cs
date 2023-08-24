@@ -72,9 +72,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private Fluxel fluxel { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
-
-    [Resolved]
     private ActivityManager activity { get; set; }
 
     private ITrackStore trackStore { get; set; }
@@ -350,7 +347,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
         if (HasChanges() && !exitConfirmed)
         {
-            game.Overlay ??= new ButtonPanel
+            Game.Overlay ??= new ButtonPanel
             {
                 Text = "There are unsaved changes.\nAre you sure you want to exit?",
                 Buttons = new ButtonData[]
@@ -374,7 +371,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         exitAnimation();
         clock.Stop();
         audioClock.Seek((float)clock.CurrentTime);
-        return false;
+        return base.OnExiting(e);
     }
 
     public override void OnEntering(ScreenTransitionEvent e) => enterAnimation();
@@ -693,7 +690,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             SubText = "Checking for duplicate diffs..."
         };
 
-        Schedule(() => game.Overlay = overlay);
+        Schedule(() => Game.Overlay = overlay);
 
         // check for duplicate diffs
         var diffs = Map.MapSet.Maps.Select(m => m.Difficulty).ToList();
