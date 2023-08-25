@@ -677,11 +677,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private async void uploadSet()
     {
-        switch (Map.Status)
+        if (Map.Status >= 100)
         {
-            case >= 100:
-                notifications.PostError("Map is from another game!");
-                return;
+            notifications.PostError("Map is from another game!");
+            return;
         }
 
         var overlay = new LoadingPanel
@@ -704,13 +703,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         overlay.SubText = "Saving mapset...";
 
-        Map.MapSet.SetStatus(0);
         if (!save(false)) return;
 
         overlay.SubText = "Uploading mapset...";
 
-        var notification = new LoadingNotification();
-        var path = mapStore.Export(Map.MapSet, notification, false);
+        var realmMapSet = mapStore.GetFromGuid(Map.MapSet.ID);
+        var path = mapStore.Export(realmMapSet.Detach(), new LoadingNotification(), false);
         var buffer = await File.ReadAllBytesAsync(path);
 
         var request = fluxel.CreateAPIRequest(Map.MapSet.OnlineID != -1 ? $"/map/{Map.MapSet.OnlineID}/update" : "/maps/upload", HttpMethod.Post);

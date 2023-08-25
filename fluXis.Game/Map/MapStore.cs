@@ -159,6 +159,8 @@ public partial class MapStore : Component
             {
                 if ((file.Name.EndsWith(".fsc") && set.Maps.All(m => m.Hash != file.Hash)) || fileNames.Contains(file.Name)) continue;
 
+                Logger.Log($"Exporting {file.Name}");
+
                 var entry = archive.CreateEntry(file.Name);
                 using var stream = entry.Open();
                 using var fileStream = files.GetStream(file.Path);
