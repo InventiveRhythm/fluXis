@@ -1,9 +1,11 @@
+using System;
 using fluXis.Game.Configuration;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Graphics.Containers;
@@ -50,11 +52,14 @@ public partial class ParallaxContainer : Container
             this.MoveTo(Vector2.Zero, 400, Easing.OutQuint);
     }
 
+    protected override void Update()
+    {
+        updatePosition();
+    }
+
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
         lastMousePos = ToLocalSpace(e.ScreenSpaceMousePosition);
-        updatePosition();
-
         return false;
     }
 
@@ -67,11 +72,11 @@ public partial class ParallaxContainer : Container
 
     private void updatePosition()
     {
-        if (!parallaxEnabled?.Value ?? false)
+        if ((!parallaxEnabled?.Value ?? false) || !IsLoaded)
             return;
 
         var pos = getParallaxPosition(lastMousePos);
-        this.MoveToX(pos.X, 400, Easing.OutQuint)
-            .MoveToY(pos.Y, 400, Easing.OutQuint);
+        X = (float)Interpolation.Lerp(pos.X, X, Math.Exp(-0.01f * Time.Elapsed));
+        Y = (float)Interpolation.Lerp(pos.Y, Y, Math.Exp(-0.01f * Time.Elapsed));
     }
 }
