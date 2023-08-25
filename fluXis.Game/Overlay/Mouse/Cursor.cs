@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -7,6 +8,8 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Mouse;
@@ -15,10 +18,16 @@ public partial class Cursor : Container
 {
     private readonly GlobalCursorOverlay overlay;
 
-    private Sprite clickSprite;
+    private Container spriteContainer;
+    private Sprite borderClick;
+    private Sprite fillClick;
     private Container tooltipContainer;
     private Container tooltipContent;
     private bool visible;
+
+    private InputManager inputManager;
+    private Vector2? mouseDownPosition;
+    private bool rotating;
 
     public Drawable DrawableTooltip
     {
@@ -57,50 +66,98 @@ public partial class Cursor : Container
     [BackgroundDependencyLoader]
     private void load(TextureStore textures)
     {
-        Add(new Sprite
+        InternalChildren = new Drawable[]
         {
-            Texture = textures.Get("Cursor/cursor.png")
-        });
-
-        Add(clickSprite = new Sprite
-        {
-            Texture = textures.Get("Cursor/cursorclick.png"),
-            Alpha = 0
-        });
-
-        Add(tooltipContainer = new Container
-        {
-            AutoSizeAxes = Axes.Both,
-            X = 30,
-            Y = 20,
-            CornerRadius = 10,
-            Scale = new Vector2(.9f),
-            Masking = true,
-            EdgeEffect = new EdgeEffectParameters
+            spriteContainer = new Container
             {
-                Type = EdgeEffectType.Shadow,
-                Colour = Colour4.Black.Opacity(.2f),
-                Radius = 5,
-                Offset = new Vector2(0, 1)
+                AutoSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    new Sprite
+                    {
+                        Texture = textures.Get("Cursor/fill.png")
+                    },
+                    fillClick = new Sprite
+                    {
+                        Texture = textures.Get("Cursor/fill-click.png"),
+                        Alpha = 0
+                    },
+                    new Sprite
+                    {
+                        Texture = textures.Get("Cursor/border.png")
+                    },
+                    borderClick = new Sprite
+                    {
+                        Texture = textures.Get("Cursor/border-click.png"),
+                        Alpha = 0
+                    }
+                }
             },
-            Children = new Drawable[]
+            tooltipContainer = new Container
             {
-                new Box
+                AutoSizeAxes = Axes.Both,
+                X = 30,
+                Y = 20,
+                CornerRadius = 10,
+                Scale = new Vector2(.9f),
+                Masking = true,
+                EdgeEffect = new EdgeEffectParameters
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background3
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Colour4.Black.Opacity(.2f),
+                    Radius = 5,
+                    Offset = new Vector2(0, 1)
                 },
-                tooltipContent = new Container
+                Children = new Drawable[]
                 {
-                    AutoSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background3
+                    },
+                    tooltipContent = new Container
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    }
                 }
             }
-        });
+        };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        inputManager = GetContainingInputManager();
     }
 
     protected override void Update()
+    {
+        if (mouseDownPosition != null && inputManager.DraggedDrawable != null)
+        {
+            var mouseDelta = inputManager.CurrentState.Mouse.Position - mouseDownPosition.Value;
+
+            if (!rotating)
+                rotating = mouseDelta.LengthSquared > 20;
+
+            if (rotating)
+            {
+                var angle = MathUtils.RadiansToDegrees(MathF.Atan2(-mouseDelta.X, mouseDelta.Y)) + 24.3f;
+
+                float delta = (angle - spriteContainer.Rotation) % 360;
+                if (delta < -180) delta += 360;
+                if (delta > 180) delta -= 360;
+                angle = spriteContainer.Rotation + delta;
+
+                spriteContainer.RotateTo(angle, 150, Easing.OutQuint);
+            }
+        }
+
+        updateTooltipPosition();
+    }
+
+    private void updateTooltipPosition()
     {
         Quad tooltipScreenSpace = ToScreenSpace(tooltipContainer.DrawRectangle);
 
@@ -117,11 +174,20 @@ public partial class Cursor : Container
 
     public override void Show()
     {
-        clickSprite.FadeIn(200);
+        borderClick.FadeIn(200);
+        fillClick.FadeIn(200);
+        spriteContainer.ScaleTo(.8f, 1000, Easing.OutQuint);
+        mouseDownPosition = inputManager.CurrentState.Mouse.Position;
     }
 
     public override void Hide()
     {
-        clickSprite.FadeOut(200);
+        borderClick.FadeOut(200);
+        fillClick.FadeOut(200);
+        spriteContainer.ScaleTo(1f, 1000, Easing.OutElastic);
+
+        mouseDownPosition = null;
+        rotating = false;
+        spriteContainer.RotateTo(0, 400, Easing.OutQuint);
     }
 }
