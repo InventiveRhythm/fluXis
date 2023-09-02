@@ -9,9 +9,6 @@ public class APIUser : APIUserShort
     [JsonProperty("aboutme")]
     public string AboutMe { get; set; } = string.Empty;
 
-    [JsonProperty("social")]
-    public APIUserSocials Socials { get; set; } = new();
-
     [JsonProperty("created")]
     public long Created { get; set; }
 
@@ -20,6 +17,12 @@ public class APIUser : APIUserShort
 
     [JsonProperty("is_online")]
     public bool Online { get; set; }
+
+    [JsonProperty("ovr")]
+    public double OverallRating { get; set; }
+
+    [JsonProperty("ptr")]
+    public double PotentialRating { get; set; }
 
     [JsonProperty("ova")]
     public float OverallAccuracy { get; set; }
@@ -71,13 +74,5 @@ public class APIUser : APIUserShort
             5 => "Bot",
             _ => "User"
         };
-    }
-
-    public class APIUserSocials
-    {
-        public string Twitter { get; set; } = string.Empty;
-        public string Twitch { get; set; } = string.Empty;
-        public string Youtube { get; set; } = string.Empty;
-        public string Discord { get; set; } = string.Empty;
     }
 }

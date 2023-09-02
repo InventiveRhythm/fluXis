@@ -134,7 +134,7 @@ public partial class Cursor : Container
 
     protected override void Update()
     {
-        if (mouseDownPosition != null && inputManager.DraggedDrawable != null)
+        if (mouseDownPosition != null && inputManager.DraggedDrawable is ScrollContainer<Drawable> or ICursorDrag)
         {
             var mouseDelta = inputManager.CurrentState.Mouse.Position - mouseDownPosition.Value;
 

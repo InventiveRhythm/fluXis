@@ -295,12 +295,12 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
             });
         }
 
-        if (!string.IsNullOrEmpty(user.Socials.Youtube))
+        if (!string.IsNullOrEmpty(user.Socials.YouTube))
         {
             socialContainer.Add(new SocialChip
             {
                 Type = UserSocialType.Youtube,
-                Username = user.Socials.Youtube
+                Username = user.Socials.YouTube
             });
         }
 

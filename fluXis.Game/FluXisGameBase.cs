@@ -21,6 +21,7 @@ using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Music;
+using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
@@ -59,6 +60,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected RegisterOverlay RegisterOverlay;
     protected NotificationOverlay Notifications;
     protected MusicPlayer MusicPlayer;
+    protected Dashboard Dashboard;
     protected BackgroundStack BackgroundStack;
     protected ActivityManager ActivityManager;
 
@@ -73,6 +75,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private SkinManager skinManager;
     private ImportManager importManager;
     private Fluxel fluxel;
+    private UISamples samples;
 
     public Action OnSongChanged { get; set; }
     public virtual Drawable Overlay { get; set; }
@@ -111,6 +114,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         LoadComponent(importManager = new ImportManager());
         dependencies.Cache(importManager);
 
+        LoadComponent(samples = new UISamples());
+        dependencies.Cache(samples);
+
         dependencies.Cache(AudioClock = new AudioClock());
         dependencies.Cache(BackgroundStack = new BackgroundStack());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
@@ -125,6 +131,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(skinManager = new SkinManager());
         dependencies.Cache(ActivityManager = new ActivityManager(fluxel));
         dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
+        dependencies.Cache(Dashboard = new Dashboard());
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 

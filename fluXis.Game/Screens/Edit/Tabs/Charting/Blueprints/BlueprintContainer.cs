@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
@@ -17,7 +18,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 
-public partial class BlueprintContainer : Container
+public partial class BlueprintContainer : Container, ICursorDrag
 {
     [Resolved]
     private EditorValues values { get; set; }

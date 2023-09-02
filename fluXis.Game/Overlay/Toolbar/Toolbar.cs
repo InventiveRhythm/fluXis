@@ -1,11 +1,11 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Music;
+using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Browse;
-using fluXis.Game.Screens.Dashboard;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
@@ -29,6 +29,9 @@ public partial class Toolbar : Container
 
     [Resolved]
     private MusicPlayer musicPlayer { get; set; }
+
+    [Resolved]
+    private Dashboard dashboard { get; set; }
 
     [Resolved]
     private ChatOverlay chat { get; set; }
@@ -125,7 +128,7 @@ public partial class Toolbar : Container
                             {
                                 Name = "Dashboard",
                                 Icon = FontAwesome.Solid.ChartLine,
-                                Action = () => goToScreen(new Dashboard())
+                                Action = dashboard.ToggleVisibility
                             },
                             new ToolbarButton
                             {

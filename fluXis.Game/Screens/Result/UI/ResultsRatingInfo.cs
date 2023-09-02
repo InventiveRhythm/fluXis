@@ -43,9 +43,6 @@ public partial class ResultsRatingInfo : Container
             ovr.Text = value.Data.OverallRating.ToStringInvariant();
             pvr.Text = value.Data.PotentialRating.ToStringInvariant();
 
-            fluxel.LoggedInUser.OverallRating = (float)value.Data.OverallRating;
-            fluxel.LoggedInUser.PotentialRating = (float)value.Data.PotentialRating;
-
             switch (ovrc)
             {
                 case > 0:

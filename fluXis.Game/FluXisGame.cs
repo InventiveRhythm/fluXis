@@ -67,6 +67,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
                             ScreenStack
                         }
                     },
+                    Dashboard,
                     MusicPlayer,
                     LoginOverlay,
                     Toolbar,
@@ -135,10 +136,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
     {
+        if (e.Repeat) return false;
+
         switch (e.Action)
         {
             case FluXisKeybind.ToggleSettings:
                 Settings.ToggleVisibility();
+                return true;
+
+            case FluXisKeybind.ToggleDashboard:
+                Dashboard.ToggleVisibility();
                 return true;
 
             case FluXisKeybind.ToggleMusicPlayer:
