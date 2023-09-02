@@ -1,4 +1,6 @@
 using System;
+using fluXis.Game.Audio;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -10,6 +12,9 @@ namespace fluXis.Game.Screens.Select.Search;
 public partial class DropdownIcon : Container
 {
     public Action Action;
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private readonly Container content;
     private readonly SpriteIcon icon;
@@ -44,6 +49,7 @@ public partial class DropdownIcon : Container
     protected override bool OnClick(ClickEvent e)
     {
         Action?.Invoke();
+        samples.Click();
 
         rotation += 180;
         icon.RotateTo(rotation, 400, Easing.OutQuint);

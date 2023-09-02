@@ -1,14 +1,19 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Graphics.UserInterface.Menu;
 
 public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterface.Menu.DrawableMenuItem
 {
     protected virtual float TextSize => 20;
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private FluXisSpriteText text;
 
@@ -36,6 +41,18 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
             MenuItemType.Dangerous => Colour4.FromHex("#ff5555"),
             _ => FluXisColors.Text
         };
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        samples.Hover();
+        return base.OnHover(e);
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        samples.Click();
+        return base.OnClick(e);
     }
 
     protected override Drawable CreateContent()

@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Mouse;
@@ -22,6 +23,9 @@ public partial class ToolboxButton : Container, IHasTextTooltip
 
     public ChartingTool Tool { get; init; }
     public string Tooltip => Tool.Description;
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Container content;
     private Box hover;
@@ -133,6 +137,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     protected override bool OnHover(HoverEvent e)
     {
         hover.FadeTo(.2f, 50);
+        samples.Hover();
         return false;
     }
 
@@ -145,6 +150,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     protected override bool OnClick(ClickEvent e)
     {
         flash.FadeOutFromOne(400);
+        samples.Click();
         blueprintContainer.CurrentTool = Tool;
         return true;
     }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Cover;
@@ -142,6 +143,9 @@ public partial class MapListEntry : Container
             }
         }
 
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private readonly MapListEntry parent;
         private readonly RealmMapSet mapset;
         private Box dim;
@@ -269,6 +273,7 @@ public partial class MapListEntry : Container
         protected override bool OnHover(HoverEvent e)
         {
             dim.FadeTo(.2f, 50);
+            samples.Hover();
             return false;
         }
 

@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -61,7 +62,11 @@ public partial class KeyModeSetupSection : SetupSection
 
     private partial class KeyModeButton : Container
     {
-        private readonly Box background;
+        [Resolved]
+        private UISamples samples { get; set; }
+
+        private readonly Box hover;
+        private readonly Box flash;
         private readonly FillFlowContainer<TicTac> keyContainer;
         private readonly KeyModeSetupSection parent;
 
@@ -75,10 +80,10 @@ public partial class KeyModeSetupSection : SetupSection
             {
                 selected = value;
 
-                background.FadeTo(value ? .1f : 0f, 200);
+                hover.FadeTo(value ? .1f : 0f, 200);
 
                 if (IsHovered)
-                    background.FadeTo(.2f, 200);
+                    hover.FadeTo(.2f, 200);
             }
         }
 
@@ -92,7 +97,12 @@ public partial class KeyModeSetupSection : SetupSection
             Width = .2f;
             Children = new Drawable[]
             {
-                background = new Box
+                hover = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                flash = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
@@ -127,21 +137,22 @@ public partial class KeyModeSetupSection : SetupSection
 
         protected override bool OnHover(HoverEvent e)
         {
-            background.FadeTo(.2f, 200);
+            hover.FadeTo(.2f, 50);
+            samples.Hover();
             return base.OnHover(e);
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            background.FadeTo(selected ? .1f : 0f, 200);
+            hover.FadeTo(selected ? .1f : 0f, 200);
             base.OnHoverLost(e);
         }
 
         protected override bool OnClick(ClickEvent e)
         {
-            background.FadeTo(.4f)
-                      .FadeTo(.2f, 400);
+            flash.FadeOutFromOne(1000, Easing.OutQuint);
             parent.setKeyMode(KeyMode);
+            samples.Click();
 
             for (var i = 0; i < keyContainer.Count; i++)
             {

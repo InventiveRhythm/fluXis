@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
@@ -19,6 +20,9 @@ namespace fluXis.Game.Overlay.Volume;
 public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     private const int max_inactive = 2000;
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private AudioManager audioManager;
     private int index;
@@ -142,6 +146,7 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisKeybind
         timeInactive = 0;
         int delta = categories.IndexOf(cat) - index;
         changeCategory(delta);
+        samples.Hover();
     }
 
     protected override void Update()

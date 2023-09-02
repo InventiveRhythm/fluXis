@@ -1,4 +1,6 @@
 using System;
+using fluXis.Game.Audio;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -19,12 +21,19 @@ public partial class ClickableSpriteIcon : SpriteIcon
         }
     }
 
+    [Resolved]
+    private UISamples samples { get; set; }
+
     public readonly BindableBool Enabled = new();
 
     protected override bool OnClick(ClickEvent e)
     {
         if (Enabled.Value)
+        {
             Action?.Invoke();
+            samples.Click();
+        }
+
         return true;
     }
 }

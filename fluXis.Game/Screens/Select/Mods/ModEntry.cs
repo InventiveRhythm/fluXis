@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Mods;
@@ -23,10 +24,14 @@ public partial class ModEntry : Container, IHasDrawableTooltip
     public IMod Mod { get; init; }
     public string HexColour { get; init; }
 
+    [Resolved]
+    private UISamples samples { get; set; }
+
     public bool Selected;
 
     private Box background;
-    private Box hoverBox;
+    private Box hover;
+    private Box flash;
     private SpriteIcon icon;
     private FluXisSpriteText name;
     private FluXisSpriteText description;
@@ -50,7 +55,12 @@ public partial class ModEntry : Container, IHasDrawableTooltip
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
-            hoverBox = new Box
+            hover = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0
+            },
+            flash = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
@@ -101,7 +111,8 @@ public partial class ModEntry : Container, IHasDrawableTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
-        hoverBox.FadeTo(.2f).FadeTo(.1f, 200);
+        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        samples.Click();
 
         Selected = !Selected;
 
@@ -126,13 +137,14 @@ public partial class ModEntry : Container, IHasDrawableTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
-        hoverBox.FadeTo(0.1f, 200);
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hoverBox.FadeTo(0, 200);
+        hover.FadeTo(0, 200);
     }
 
     public Drawable GetTooltip()

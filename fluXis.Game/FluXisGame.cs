@@ -51,6 +51,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         Children = new Drawable[]
         {
             AudioClock,
+            Samples,
             buffer = new BufferedContainer
             {
                 RelativeSizeAxes = Axes.Both,

@@ -198,6 +198,11 @@ public partial class SelectFooter : Container
         GamepadHandler.OnGamepadStatusChanged -= updateGamepadStatus;
     }
 
+    protected override bool OnHover(HoverEvent e)
+    {
+        return true;
+    }
+
     public override void Show()
     {
         backButton.Show();

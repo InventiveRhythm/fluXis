@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -32,6 +33,9 @@ public partial class SelectFooterButton : Container
     public Action Action { get; set; }
     public Colour4 AccentColor { get; init; } = Color4.White;
     public int Index { get; init; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Box hover;
     private Box flash;
@@ -116,6 +120,7 @@ public partial class SelectFooterButton : Container
     {
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
+        samples.Click();
         return true;
     }
 
@@ -123,6 +128,7 @@ public partial class SelectFooterButton : Container
     {
         hover.FadeTo(.2f, 50);
         this.MoveToY(10, 200, Easing.OutQuint);
+        samples.Hover();
         return true;
     }
 

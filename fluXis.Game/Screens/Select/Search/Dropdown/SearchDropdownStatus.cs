@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils;
@@ -67,6 +68,9 @@ public partial class SearchDropdownStatus : Container
         public string Text { get; init; }
         public SearchDropdownStatus DropdownItem { get; init; }
 
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private Box colorBox;
         private Box hoverBox;
         private FluXisSpriteText text;
@@ -106,6 +110,8 @@ public partial class SearchDropdownStatus : Container
 
         protected override bool OnClick(ClickEvent e)
         {
+            samples.Click();
+
             if (DropdownItem.onStatusClick(this))
             {
                 colorBox.FadeIn(200);
@@ -123,6 +129,7 @@ public partial class SearchDropdownStatus : Container
         protected override bool OnHover(HoverEvent e)
         {
             hoverBox.FadeTo(.2f, 50);
+            samples.Hover();
             return true;
         }
 

@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +10,10 @@ namespace fluXis.Game.Screens.Edit.Timeline;
 
 public partial class EditorPlayTestButton : ClickableContainer
 {
-    private Box background;
+    [Resolved]
+    private UISamples samples { get; set; }
+
+    private Box hover;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -18,7 +22,7 @@ public partial class EditorPlayTestButton : ClickableContainer
 
         Children = new Drawable[]
         {
-            background = new Box
+            hover = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
@@ -34,25 +38,20 @@ public partial class EditorPlayTestButton : ClickableContainer
 
     protected override bool OnHover(HoverEvent e)
     {
-        background.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
-    }
-
-    protected override bool OnMouseDown(MouseDownEvent e)
-    {
-        background.FadeTo(.4f, 100);
-        return false;
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        background.FadeTo(.2f, 200);
+        samples.Click();
         return base.OnClick(e);
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        background.FadeOut(200);
+        hover.FadeOut(200);
         base.OnHoverLost(e);
     }
 }

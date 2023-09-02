@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,7 +12,11 @@ public partial class EditorTabSwitcherButton : ClickableContainer
 {
     public string Text { get; set; }
 
-    private Box background;
+    [Resolved]
+    private UISamples samples { get; set; }
+
+    private Box hover;
+    private Box flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -22,10 +27,14 @@ public partial class EditorTabSwitcherButton : ClickableContainer
         Masking = true;
         Children = new Drawable[]
         {
-            background = new Box
+            hover = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.White,
+                Alpha = 0
+            },
+            flash = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
             new FluXisSpriteText
@@ -41,18 +50,21 @@ public partial class EditorTabSwitcherButton : ClickableContainer
 
     protected override bool OnHover(HoverEvent e)
     {
-        background.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        background.FadeTo(0, 200);
+        hover.FadeTo(0, 200);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        background.FadeTo(.4f).FadeTo(.2f, 200);
-        return base.OnClick(e);
+        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        samples.Click();
+        Action?.Invoke();
+        return true;
     }
 }

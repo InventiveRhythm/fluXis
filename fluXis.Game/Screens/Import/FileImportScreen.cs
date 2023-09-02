@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.FileSelect;
 using fluXis.Game.Input;
@@ -28,7 +29,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
 
     private FileSelect fileSelect;
     private FluXisSpriteText selectedFileText;
-    private Button importButton;
+    private FluXisButton importButton;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -76,7 +77,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                         new Drawable[]
                         {
                             new Container(),
-                            new Button
+                            new FluXisButton
                             {
                                 Text = "Cancel",
                                 Anchor = Anchor.CentreLeft,
@@ -89,7 +90,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                                 Origin = Anchor.Centre,
                                 FontSize = 24
                             },
-                            importButton = new Button
+                            importButton = new FluXisButton
                             {
                                 Text = "Import",
                                 Anchor = Anchor.CentreRight,
@@ -127,65 +128,6 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
     {
         this.ScaleTo(.9f, 300, Easing.OutQuint).FadeOut(200);
         return base.OnExiting(e);
-    }
-
-    private partial class Button : ClickableContainer
-    {
-        public string Text { get; init; }
-
-        private Box hover;
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            Size = new Vector2(100, 40);
-            CornerRadius = 10;
-            Masking = true;
-
-            InternalChildren = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background1
-                },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                new FluXisSpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Text = Text,
-                    FontSize = 24
-                }
-            };
-
-            Enabled.BindValueChanged(enabled => this.FadeTo(enabled.NewValue ? 1 : .6f, 400), true);
-        }
-
-        protected override bool OnHover(HoverEvent e)
-        {
-            if (Enabled.Value)
-                hover.FadeTo(.2f, 200);
-
-            return true;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            hover.FadeOut(200);
-        }
-
-        protected override bool OnClick(ClickEvent e)
-        {
-            if (Enabled.Value)
-                hover.FadeTo(.4f).FadeOut(200);
-
-            return base.OnClick(e);
-        }
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)

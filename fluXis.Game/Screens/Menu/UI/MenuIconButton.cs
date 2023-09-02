@@ -1,7 +1,7 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -18,10 +18,10 @@ public partial class MenuIconButton : Container, IHasTextTooltip
     public Action Action { get; set; }
     public IconUsage Icon { set => icon.Icon = value; }
 
-    private readonly SpriteIcon icon;
+    [Resolved]
+    private UISamples samples { get; set; }
 
-    private Sample sampleClick;
-    private Sample sampleHover;
+    private readonly SpriteIcon icon;
 
     public MenuIconButton()
     {
@@ -37,17 +37,10 @@ public partial class MenuIconButton : Container, IHasTextTooltip
         };
     }
 
-    [BackgroundDependencyLoader]
-    private void load(ISampleStore samples)
-    {
-        sampleClick = samples.Get("UI/accept.mp3");
-        sampleHover = samples.Get("UI/scroll.mp3");
-    }
-
     protected override bool OnHover(HoverEvent e)
     {
-        this.FadeTo(2f, 200);
-        sampleHover?.Play();
+        this.FadeTo(1f, 50);
+        samples.Hover();
         return true;
     }
 
@@ -59,7 +52,7 @@ public partial class MenuIconButton : Container, IHasTextTooltip
     protected override bool OnClick(ClickEvent e)
     {
         Action?.Invoke();
-        sampleClick?.Play();
+        samples.Click();
         return true;
     }
 }

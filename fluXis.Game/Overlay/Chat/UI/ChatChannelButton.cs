@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -14,6 +15,9 @@ public partial class ChatChannelButton : Container
 {
     public string Channel { get; set; }
     public IconUsage Icon { get; set; } = FontAwesome.Solid.Hashtag;
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Box hover;
     private Box flash;
@@ -84,6 +88,7 @@ public partial class ChatChannelButton : Container
     protected override bool OnClick(ClickEvent e)
     {
         flash.FadeOutFromOne(1000, Easing.OutQuint);
+        samples.Click();
         return true;
     }
 
@@ -100,7 +105,8 @@ public partial class ChatChannelButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 

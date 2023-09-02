@@ -85,7 +85,7 @@ public partial class DashboardSidebarButton : Container
     {
         SelectAction?.Invoke(Tab);
         flash.FadeOutFromOne(1000, Easing.OutQuint);
-        samples.Click?.Play();
+        samples.Click();
         return true;
     }
 
@@ -103,7 +103,7 @@ public partial class DashboardSidebarButton : Container
     protected override bool OnHover(HoverEvent e)
     {
         hover.FadeTo(.2f, 50);
-        samples.Hover?.Play();
+        samples.Hover();
         return false;
     }
 

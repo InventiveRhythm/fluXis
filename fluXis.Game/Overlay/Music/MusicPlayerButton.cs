@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,6 +16,9 @@ public partial class MusicPlayerButton : Container
     public Action Action { get; set; }
 
     public SpriteIcon IconSprite { get; private set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Container content;
     private Box hover;
@@ -60,12 +64,14 @@ public partial class MusicPlayerButton : Container
     {
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
+        samples.Click();
         return true;
     }
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(0.2f, 200);
+        hover.FadeTo(0.2f, 50);
+        samples.Hover();
         return true;
     }
 

@@ -63,6 +63,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected Dashboard Dashboard;
     protected BackgroundStack BackgroundStack;
     protected ActivityManager ActivityManager;
+    protected UISamples Samples;
 
     public SettingsMenu Settings;
     public Toolbar Toolbar;
@@ -75,7 +76,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     private SkinManager skinManager;
     private ImportManager importManager;
     private Fluxel fluxel;
-    private UISamples samples;
 
     public Action OnSongChanged { get; set; }
     public virtual Drawable Overlay { get; set; }
@@ -114,8 +114,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         LoadComponent(importManager = new ImportManager());
         dependencies.Cache(importManager);
 
-        LoadComponent(samples = new UISamples());
-        dependencies.Cache(samples);
+        LoadComponent(Samples = new UISamples());
+        dependencies.Cache(Samples);
 
         dependencies.Cache(AudioClock = new AudioClock());
         dependencies.Cache(BackgroundStack = new BackgroundStack());

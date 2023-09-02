@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -16,19 +17,16 @@ public partial class SmallMenuButton : Container
     public Action Action { get; set; }
     public IconUsage Icon { get; set; }
 
+    [Resolved]
+    private UISamples samples { get; set; }
+
     private float shearAmount => Width / 100f * .2f;
 
     private Container hover;
 
-    private Sample sampleClick;
-    private Sample sampleHover;
-
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        sampleClick = samples.Get("UI/accept.mp3");
-        sampleHover = samples.Get("UI/scroll.mp3");
-
         Height = 60;
         CornerRadius = 10;
         Masking = true;
@@ -107,8 +105,8 @@ public partial class SmallMenuButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 200);
-        sampleHover?.Play();
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 
@@ -120,7 +118,7 @@ public partial class SmallMenuButton : Container
     protected override bool OnClick(ClickEvent e)
     {
         Action?.Invoke();
-        sampleClick?.Play();
+        samples.Click();
         return true;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -121,8 +122,12 @@ public partial class PlaybackControl : Container
         [Resolved]
         private EditorClock clock { get; set; }
 
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private SpriteIcon icon;
-        private Box background;
+        private Box hover;
+        private Box flash;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -134,7 +139,12 @@ public partial class PlaybackControl : Container
 
             Children = new Drawable[]
             {
-                background = new Box
+                hover = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                flash = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
@@ -151,13 +161,14 @@ public partial class PlaybackControl : Container
 
         protected override bool OnHover(HoverEvent e)
         {
-            background.FadeTo(.2f, 200);
+            hover.FadeTo(.2f, 50);
+            samples.Hover();
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            background.FadeOut(200);
+            hover.FadeOut(200);
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -179,7 +190,8 @@ public partial class PlaybackControl : Container
         {
             if (e.Button != MouseButton.Left) return false;
 
-            background.FadeTo(.4f).FadeTo(.2f, 200);
+            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            samples.Click();
 
             if (clock.IsRunning)
                 clock.Stop();
@@ -210,6 +222,9 @@ public partial class PlaybackControl : Container
             }
         }
 
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private readonly float speed;
 
         [BackgroundDependencyLoader]
@@ -227,6 +242,7 @@ public partial class PlaybackControl : Container
         protected override bool OnClick(ClickEvent e)
         {
             OnClickAction(Speed);
+            samples.Click();
             return base.OnClick(e);
         }
     }

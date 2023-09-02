@@ -1,8 +1,8 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -19,13 +19,13 @@ public partial class MenuButton : Container
     public string Description { get; set; }
     public IconUsage Icon { get; set; }
 
+    [Resolved]
+    private UISamples samples { get; set; }
+
     private float shearAmount => Width / 250f * .2f + ShearAdjust;
     public float ShearAdjust { get; init; }
 
     private Box hover;
-
-    private Sample sampleClick;
-    private Sample sampleHover;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -87,17 +87,10 @@ public partial class MenuButton : Container
         };
     }
 
-    [BackgroundDependencyLoader]
-    private void load(ISampleStore samples)
-    {
-        sampleClick = samples.Get("UI/accept.mp3");
-        sampleHover = samples.Get("UI/scroll.mp3");
-    }
-
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 200);
-        sampleHover?.Play();
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 
@@ -109,7 +102,7 @@ public partial class MenuButton : Container
     protected override bool OnClick(ClickEvent e)
     {
         Action?.Invoke();
-        sampleClick?.Play();
+        samples.Click();
 
         return true;
     }

@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -24,6 +25,9 @@ public partial class FluXisButton : ClickableContainer
             Color = value.Color;
         }
     }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Box hoverBox;
     private Box flashBox;
@@ -75,12 +79,14 @@ public partial class FluXisButton : ClickableContainer
     {
         flashBox.FadeOutFromOne(1000, Easing.OutQuint);
         base.OnClick(e);
+        samples.Click();
         return true;
     }
 
     protected override bool OnHover(HoverEvent e)
     {
-        hoverBox.FadeTo(0.2f, 200);
+        hoverBox.FadeTo(0.2f, 50);
+        samples.Hover();
         return true;
     }
 

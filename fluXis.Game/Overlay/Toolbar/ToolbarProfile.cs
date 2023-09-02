@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Users;
@@ -24,6 +25,9 @@ public partial class ToolbarProfile : Container
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Container container;
     private Container avatarContainer;
@@ -110,6 +114,7 @@ public partial class ToolbarProfile : Container
     protected override bool OnClick(ClickEvent e)
     {
         flash.FadeOutFromOne(1000, Easing.OutQuint);
+        samples.Click();
 
         if (fluxel.LoggedInUser == null)
             loginOverlay.Show();
@@ -124,9 +129,10 @@ public partial class ToolbarProfile : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 50);
         container.ResizeHeightTo(80, 400, Easing.OutQuint);
         arrow.FadeIn(200).MoveToY(45, 400, Easing.OutQuint);
+        samples.Hover();
         return true;
     }
 

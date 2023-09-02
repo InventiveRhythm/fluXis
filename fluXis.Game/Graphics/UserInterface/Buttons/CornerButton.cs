@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.UI;
@@ -24,6 +25,9 @@ public partial class CornerButton : Container
     public virtual Colour4 ButtonColor { get; set; } = FluXisColors.Background4;
     public Corner Corner { get; set; } = Corner.BottomLeft;
     public Action Action { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Box hover;
     private Box flash;
@@ -115,12 +119,14 @@ public partial class CornerButton : Container
     {
         flash.FadeOutFromOne(500);
         Action?.Invoke();
+        samples.Click();
         return true;
     }
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 

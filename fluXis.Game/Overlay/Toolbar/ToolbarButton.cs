@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -18,6 +19,9 @@ public partial class ToolbarButton : Container, IHasTextTooltip
     public string Tooltip => Name;
 
     public Action Action;
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Box hover;
     private Box flash;
@@ -56,7 +60,8 @@ public partial class ToolbarButton : Container, IHasTextTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 200);
+        hover.FadeTo(.2f, 50);
+        samples.Hover();
         return true;
     }
 
@@ -69,6 +74,7 @@ public partial class ToolbarButton : Container, IHasTextTooltip
     {
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
+        samples.Click();
         return true;
     }
 }

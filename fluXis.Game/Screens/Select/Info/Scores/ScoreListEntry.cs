@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Drawables;
@@ -32,6 +33,9 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
 
     [Resolved]
     private SkinManager skinManager { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     public ScoreList ScoreList { get; set; }
 
@@ -218,9 +222,17 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
         base.Update();
     }
 
+    protected override bool OnHover(HoverEvent e)
+    {
+        samples.Hover();
+        return true;
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
         if (ScoreList == null) return false;
+
+        samples.Click();
 
         RealmMap map = mapStore.CurrentMapSet.Maps.FirstOrDefault(m => m.ID == score.MapID);
 
