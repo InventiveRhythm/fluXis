@@ -221,9 +221,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     private void updateRpc()
     {
         string details = $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]";
+        string icon = RealmMap.MapSet.OnlineID <= 0 ? "playing" : $"{fluxel.Endpoint.APIUrl}/assets/cover/{RealmMap.MapSet.OnlineID}";
 
         if (!IsPaused.Value)
-            activity.Update(Playfield.Manager.AutoPlay ? "Watching auto-play" : "Playing a map", details, "playing", 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
+            activity.Update(Playfield.Manager.AutoPlay ? "Watching auto-play" : "Playing a map", details, icon, 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
         else
             activity.Update("Paused", details, "playing");
     }
