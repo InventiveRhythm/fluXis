@@ -92,11 +92,9 @@ public class RealmMap : RealmObject
     public virtual Track GetTrack()
     {
         var tracks = MapSet.Resources?.TrackStore;
-        Logger.Log($"tracks is null: {tracks == null}");
         if (tracks == null) return null;
 
         var file = MapSet.GetFile(Metadata.Audio);
-        Logger.Log($"Loading track from {file?.Path}");
         return file == null ? null : tracks.Get(file.Path);
     }
 

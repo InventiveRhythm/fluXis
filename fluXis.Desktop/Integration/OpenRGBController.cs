@@ -29,9 +29,9 @@ public partial class OpenRGBController : LightController
             Logger.Log("OpenRGBController connected", LoggingTarget.Runtime, LogLevel.Important);
             Colour = Colour4.Black;
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Logger.Error(e, "Error while connecting to OpenRGBController");
+            Logger.Log("Error while connecting to OpenRGBController", LoggingTarget.Runtime, LogLevel.Error);
         }
     }
 

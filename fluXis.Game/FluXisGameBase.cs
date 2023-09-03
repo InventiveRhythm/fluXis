@@ -51,6 +51,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected override Container<Drawable> Content => content;
     private Container content;
     private int exceptionCount;
+    protected virtual int MaxExceptions => IsDebug ? 0 : 1;
 
     protected AudioClock AudioClock;
     protected GlobalCursorOverlay CursorOverlay;
@@ -205,7 +206,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
             Notifications.PostError($"An unhandled error occurred!\n{e.GetType().Name}:\n{e.Message}", 10000);
-            return exceptionCount <= 1;
+            return exceptionCount <= MaxExceptions;
         };
     }
 
