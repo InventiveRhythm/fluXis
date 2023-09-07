@@ -14,6 +14,7 @@ public partial class EditorMenuBar : FluXisMenu
         RelativeSizeAxes = Axes.X;
         MaskingContainer.CornerRadius = 0;
         BackgroundColour = FluXisColors.Background1;
+        ItemsContainer.Spacing = new Vector2(10, 0);
     }
 
     protected override void UpdateSize(Vector2 newSize)
@@ -23,5 +24,5 @@ public partial class EditorMenuBar : FluXisMenu
     }
 
     protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorSubMenu();
-    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorMenuBarItem(item);
+    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableFluXisMenuItem(item) { ShowChevron = false };
 }

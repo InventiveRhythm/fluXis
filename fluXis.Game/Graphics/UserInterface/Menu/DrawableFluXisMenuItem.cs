@@ -3,19 +3,31 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Menu;
 
 public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterface.Menu.DrawableMenuItem
 {
     protected virtual float TextSize => 20;
+    public bool ShowChevron { get; set; } = true;
+
+    private bool shouldShowChevron => Item.Items.Count > 0 && ShowChevron;
+    private bool shouldShowCheck => (Item as FluXisMenuItem)?.IsActive?.Invoke() ?? false;
+
+    private const int content_size = 20;
+    private const int icon_size = 16;
+    private const float icon_margin = (content_size - icon_size) / 2f;
 
     [Resolved]
     private UISamples samples { get; set; }
 
     private FluXisSpriteText text;
+    private SpriteIcon icon;
 
     public DrawableFluXisMenuItem(MenuItem item)
         : base(item)
@@ -29,16 +41,42 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
         BackgroundColourHover = Colour4.White.Opacity(.2f);
         CornerRadius = 5;
         Masking = true;
+        Foreground.Anchor = Anchor.CentreLeft;
+        Foreground.Origin = Anchor.CentreLeft;
+
+        AddRangeInternal(new[]
+        {
+            new SpriteIcon
+            {
+                Icon = FontAwesome.Solid.ChevronRight,
+                Alpha = shouldShowChevron ? 1f : 0f,
+                Size = new Vector2(icon_size * .8f),
+                Margin = new MarginPadding(icon_margin) { Right = icon_margin * 4 },
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Shadow = true
+            },
+            new SpriteIcon
+            {
+                Icon = FontAwesome.Solid.Check,
+                Alpha = shouldShowCheck ? 1f : 0f,
+                Size = new Vector2(icon_size * .8f),
+                Margin = new MarginPadding(icon_margin) { Right = icon_margin * 4 },
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Shadow = true
+            }
+        });
 
         updateColor();
     }
 
     private void updateColor()
     {
-        text.Colour = (Item as FluXisMenuItem)?.Type switch
+        text.Colour = icon.Colour = (Item as FluXisMenuItem)?.Type switch
         {
-            MenuItemType.Highlighted => FluXisColors.Accent,
-            MenuItemType.Dangerous => Colour4.FromHex("#ff5555"),
+            MenuItemType.Highlighted => FluXisColors.GetThemeColor(.8f, .8f),
+            MenuItemType.Dangerous => FluXisColors.Red,
             _ => FluXisColors.Text
         };
     }
@@ -57,11 +95,31 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
 
     protected override Drawable CreateContent()
     {
-        return text = new FluXisSpriteText
+        return new FillFlowContainer
         {
-            FontSize = TextSize,
-            Margin = new MarginPadding { Vertical = 2, Horizontal = 5 },
-            Shadow = true
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Horizontal,
+            Alpha = (Item as FluXisMenuItem)?.Enabled ?? true ? 1f : .75f,
+            Spacing = new Vector2(5),
+            Padding = new MarginPadding { Horizontal = 5, Vertical = 5 },
+            Children = new Drawable[]
+            {
+                icon = new SpriteIcon
+                {
+                    Icon = (Item as FluXisMenuItem)?.Icon ?? FontAwesome.Solid.Circle,
+                    Size = new Vector2(icon_size),
+                    Margin = new MarginPadding(icon_margin),
+                    Shadow = true,
+                },
+                text = new FluXisSpriteText
+                {
+                    FontSize = TextSize,
+                    Text = Item.Text.ToString(),
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft,
+                    Shadow = true
+                }
+            }
         };
     }
 }

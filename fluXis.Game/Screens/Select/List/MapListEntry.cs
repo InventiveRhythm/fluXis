@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -136,8 +137,8 @@ public partial class MapListEntry : Container
                 if (!Equals(parent.Screen.MapSet.Value, mapset))
                     items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => parent.Screen.MapSet.Value = mapset));
 
-                items.Add(new FluXisMenuItem("Export", MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)));
-                items.Add(new FluXisMenuItem("Delete", MenuItemType.Dangerous, () => parent.Screen.DeleteMapSet(mapset)));
+                items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)));
+                items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.DeleteMapSet(mapset)));
 
                 return items.ToArray();
             }

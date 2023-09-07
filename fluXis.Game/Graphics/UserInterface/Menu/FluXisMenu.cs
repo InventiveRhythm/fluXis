@@ -25,12 +25,12 @@ public partial class FluXisMenu : osu.Framework.Graphics.UserInterface.Menu
         if (Direction == Direction.Vertical)
         {
             Width = newSize.X + 30;
-            this.ResizeHeightTo(newSize.Y, 300, Easing.OutQuint);
+            this.ResizeHeightTo(newSize.Y, 400, Easing.OutQuint);
         }
         else
         {
             Height = newSize.Y;
-            this.ResizeWidthTo(newSize.X + 30, 300, Easing.OutQuint);
+            this.ResizeWidthTo(newSize.X + 30, 400, Easing.OutQuint);
         }
     }
 

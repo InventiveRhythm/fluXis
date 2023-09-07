@@ -12,6 +12,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
@@ -33,7 +34,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
@@ -167,62 +168,63 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             },
             menuBar = new EditorMenuBar
             {
-                Items = new MenuItem[]
+                Items = new FluXisMenuItem[]
                 {
-                    new("File")
+                    new("File", FontAwesome.Solid.File)
                     {
-                        Items = new MenuItem[]
+                        Items = new FluXisMenuItem[]
                         {
-                            new("Save", () => save()),
-                            new("Export", export),
-                            new("Upload", startUpload),
-                            new("Exit", tryExit)
+                            new("Save", FontAwesome.Solid.Save, () => save()) { Enabled = HasChanges() },
+                            new("Export", FontAwesome.Solid.BoxOpen, export),
+                            new("Upload", FontAwesome.Solid.Upload, startUpload),
+                            new("Exit", FontAwesome.Solid.Times, MenuItemType.Dangerous, tryExit)
                         }
                     },
-                    new("Edit")
+                    new("Edit", FontAwesome.Solid.Pen)
                     {
-                        Items = new MenuItem[]
+                        Items = new FluXisMenuItem[]
                         {
-                            new("Undo", sendWipNotification),
-                            new("Redo", sendWipNotification),
-                            new("Cut", sendWipNotification),
-                            new("Copy", sendWipNotification),
-                            new("Paste", sendWipNotification),
-                            new("Delete", sendWipNotification),
-                            new("Select all", sendWipNotification)
+                            // why are arrow-rotate-left and arrow-rotate-right not in here???
+                            new("Undo", FontAwesome.Solid.ArrowCircleLeft, sendWipNotification) { Enabled = false },
+                            new("Redo", FontAwesome.Solid.ArrowCircleRight, sendWipNotification) { Enabled = false },
+                            new("Cut", FontAwesome.Solid.Cut, sendWipNotification) { Enabled = false },
+                            new("Copy", FontAwesome.Solid.Copy, sendWipNotification) { Enabled = false },
+                            new("Paste", FontAwesome.Solid.Paste, sendWipNotification) { Enabled = false },
+                            new("Delete", FontAwesome.Solid.Trash, sendWipNotification) { Enabled = false },
+                            new("Select all", FontAwesome.Solid.ObjectGroup, sendWipNotification) { Enabled = false }
                         }
                     },
-                    new("View")
+                    new("View", FontAwesome.Solid.Eye)
                     {
-                        Items = new MenuItem[]
+                        Items = new FluXisMenuItem[]
                         {
-                            new("Waveform opacity")
+                            new("Waveform opacity", FontAwesome.Solid.Percentage)
                             {
-                                Items = new MenuItem[]
+                                Items = new FluXisMenuItem[]
                                 {
-                                    new("0%", () => values.WaveformOpacity.Value = 0),
-                                    new("25%", () => values.WaveformOpacity.Value = 0.25f),
-                                    new("50%", () => values.WaveformOpacity.Value = 0.5f),
-                                    new("75%", () => values.WaveformOpacity.Value = 0.75f),
-                                    new("100%", () => values.WaveformOpacity.Value = 1)
+                                    new("0%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0) { IsActive = () => values.WaveformOpacity.Value == 0 },
+                                    new("25%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0.25f) { IsActive = () => values.WaveformOpacity.Value == 0.25f },
+                                    new("50%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0.5f) { IsActive = () => values.WaveformOpacity.Value == 0.5f },
+                                    new("75%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0.75f) { IsActive = () => values.WaveformOpacity.Value == 0.75f },
+                                    new("100%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 1) { IsActive = () => values.WaveformOpacity.Value == 1 }
                                 }
                             },
-                            new("Flash effect underlay", values.FlashUnderlay.Toggle),
-                            new("Flash effect underlay color")
+                            new("Flash effect underlay", FontAwesome.Solid.LayerGroup, values.FlashUnderlay.Toggle) { IsActive = () => values.FlashUnderlay.Value },
+                            new("Flash effect underlay color", FontAwesome.Solid.Palette)
                             {
-                                Items = new MenuItem[]
+                                Items = new FluXisMenuItem[]
                                 {
-                                    new("Dark", () => values.FlashUnderlayColor.Value = FluXisColors.Background1),
-                                    new("Light", () => values.FlashUnderlayColor.Value = Colour4.White)
+                                    new("Dark", () => values.FlashUnderlayColor.Value = FluXisColors.Background1) { IsActive = () => values.FlashUnderlayColor.Value == FluXisColors.Background1 },
+                                    new("Light", () => values.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => values.FlashUnderlayColor.Value == Colour4.White }
                                 }
                             }
                         }
                     },
-                    new("Timing")
+                    new("Timing", FontAwesome.Solid.Clock)
                     {
-                        Items = new MenuItem[]
+                        Items = new FluXisMenuItem[]
                         {
-                            new("Set preview point to current time", () =>
+                            new("Set preview point to current time", FontAwesome.Solid.Stopwatch, () =>
                             {
                                 MapInfo.Metadata.PreviewTime = (int)clock.CurrentTime;
                                 Map.Metadata.PreviewTime = (int)clock.CurrentTime;

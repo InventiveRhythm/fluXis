@@ -12,19 +12,16 @@ public static class FluXisColors
 
     public static ColourInfo AccentGradient => ColourInfo.GradientHorizontal(Accent, Accent4);
 
-    public static Colour4 Background1 => getSurfaceColor(.1f, .1f);
-    public static Colour4 Background2 => getSurfaceColor(.1f, .15f);
-    public static Colour4 Background3 => getSurfaceColor(.1f, .2f);
-    public static Colour4 Background4 => getSurfaceColor(.1f, .25f);
-    public static Colour4 Background5 => getSurfaceColor(.1f, .3f);
-    public static Colour4 Background6 => getSurfaceColor(.1f, .35f);
-    public static Colour4 Foreground => getSurfaceColor(.1f, .6f);
-    public static Colour4 Highlight => getSurfaceColor(1f, .7f);
+    public static Colour4 Background1 => GetThemeColor(.1f, .1f);
+    public static Colour4 Background2 => GetThemeColor(.1f, .15f);
+    public static Colour4 Background3 => GetThemeColor(.1f, .2f);
+    public static Colour4 Background4 => GetThemeColor(.1f, .25f);
+    public static Colour4 Background5 => GetThemeColor(.1f, .3f);
+    public static Colour4 Background6 => GetThemeColor(.1f, .35f);
+    public static Colour4 Foreground => GetThemeColor(.1f, .6f);
+    public static Colour4 Highlight => GetThemeColor(1f, .7f);
 
-    private static Colour4 getSurfaceColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
-
-    public static Colour4 Hover => Colour4.FromHex("#7e7e7f");
-    public static Colour4 Click => Colour4.FromHex("#ffffff");
+    public static Colour4 GetThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
 
     public static Colour4 Text => Colour4.FromHex("#ffffff");
     public static Colour4 Text2 => Colour4.FromHex("#c8c8c8");

@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
@@ -25,7 +26,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
         {
             List<MenuItem> items = new()
             {
-                new FluXisMenuItem("Play", MenuItemType.Highlighted, () =>
+                new FluXisMenuItem("Play", FontAwesome.Solid.Play, MenuItemType.Highlighted, () =>
                 {
                     var screen = mapListEntry.Screen;
 
@@ -33,7 +34,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                     screen.MapInfo.Value = map;
                     screen.Accept();
                 }),
-                new FluXisMenuItem("Edit", MenuItemType.Normal, () =>
+                new FluXisMenuItem("Edit", FontAwesome.Solid.Pen, MenuItemType.Normal, () =>
                 {
                     var screen = mapListEntry.Screen;
 

@@ -10,11 +10,9 @@ public partial class EditorSubMenu : FluXisMenu
     public EditorSubMenu()
         : base(Direction.Vertical)
     {
-        ItemsContainer.Padding = new MarginPadding();
         BackgroundColour = FluXisColors.Background2;
-        MaskingContainer.CornerRadius = 0;
     }
 
     protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorSubMenu();
-    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorSubMenuItem(item);
+    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableFluXisMenuItem(item);
 }
