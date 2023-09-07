@@ -7,8 +7,13 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
+using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Utils;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Graphics;
@@ -25,6 +30,9 @@ public partial class MapStore : Component
 
     [Resolved]
     private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private Fluxel fluxel { get; set; }
 
     [Resolved]
     private AudioManager audio { get; set; }
@@ -181,6 +189,18 @@ public partial class MapStore : Component
             notification.State = LoadingState.Failed;
             return "";
         }
+    }
+
+    [CanBeNull]
+    public APIMap LookUpHash(string hash)
+    {
+        var req = fluxel.CreateAPIRequest($"/map/hash/{hash}");
+        req.Perform();
+        var json = req.GetResponseString();
+        if (json == null) return null;
+
+        var map = JsonConvert.DeserializeObject<APIResponse<APIMap>>(json);
+        return map.Data;
     }
 
     public RealmMap CreateNew()

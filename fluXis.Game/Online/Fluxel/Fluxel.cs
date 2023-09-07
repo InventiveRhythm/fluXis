@@ -335,8 +335,10 @@ public partial class Fluxel : Component
             connection?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
     }
 
-    public WebRequest CreateAPIRequest(string url, HttpMethod method)
+    public WebRequest CreateAPIRequest(string url, HttpMethod method = null)
     {
+        method ??= HttpMethod.Get;
+
         var request = new WebRequest($"{Endpoint.APIUrl}{url}");
         request.AllowInsecureRequests = true;
         request.Method = method;

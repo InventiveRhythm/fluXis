@@ -23,6 +23,9 @@ public class APIMap
     [JsonProperty("mode")]
     public int Mode { get; init; }
 
+    [JsonProperty("status")]
+    public int Status { get; set; }
+
     [JsonProperty("title")]
     public string Title { get; init; } = "";
 

@@ -120,6 +120,23 @@ public class FluXisImport : MapImporter
 
                     if (!string.IsNullOrEmpty(mapInfo.CoverFile))
                         mapSet.Cover = mapInfo.CoverFile;
+
+                    // skip metadata lookup if the map is from a different game
+                    if (map.Status >= 100) continue;
+
+                    try
+                    {
+                        var onlineMap = MapStore.LookUpHash(hash);
+                        if (onlineMap == null) continue;
+
+                        map.OnlineID = onlineMap.Id;
+                        map.Status = onlineMap.Status;
+                        mapSet.OnlineID = onlineMap.SetId;
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e, "Failed to look up map online.");
+                    }
                 }
             }
 
