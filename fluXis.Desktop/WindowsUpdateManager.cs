@@ -23,7 +23,6 @@ public partial class WindowsUpdateManager : Component
     private async void load()
     {
         var logger = Logger.GetLogger("update");
-
         var current = FluXisGameBase.Version;
 
         if (current == null)
@@ -57,11 +56,30 @@ public partial class WindowsUpdateManager : Component
             return;
         }
 
-        notifications.Post("There is an update available.\nLaunching updater in 5 seconds.");
+        const string updater_path = "Updater.exe";
 
-        await Task.Delay(5000);
-        Process.Start("Updater.exe");
-        Environment.Exit(0);
+        if (!System.IO.File.Exists(updater_path))
+        {
+            logger.Add("Updater.exe not found.");
+            notifications.PostError("There is an update available.\nBut the updater is missing.\nPlease download the latest version from GitHub or download the updater from the website.");
+        }
+        else
+        {
+            notifications.Post("There is an update available.\nLaunching updater in 5 seconds.");
+
+            await Task.Delay(5000);
+
+            try
+            {
+                Process.Start("Updater.exe");
+                Environment.Exit(0);
+            }
+            catch (Exception e)
+            {
+                logger.Add($"Failed to launch updater. {e.Message}");
+                notifications.PostError("Failed to launch updater.\nPlease download the latest version from GitHub or download the updater from the website.");
+            }
+        }
     }
 
     private string fetchLatestVersion()
