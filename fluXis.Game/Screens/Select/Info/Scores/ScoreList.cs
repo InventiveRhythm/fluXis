@@ -11,6 +11,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
@@ -84,7 +85,7 @@ public partial class ScoreList : GridContainer
             },
             new Drawable[]
             {
-                new Container
+                new FluXisContextMenuContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
@@ -164,7 +165,9 @@ public partial class ScoreList : GridContainer
                             ScoreInfo = s.ToScoreInfo(),
                             Map = map,
                             Player = s.Player,
-                            Date = s.Date
+                            Date = s.Date,
+                            Deletable = true,
+                            RealmScoreId = s.ID
                         });
                     }
                 }));

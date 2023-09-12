@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Audio;
+using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Overlay.Mouse;
@@ -14,7 +19,10 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
@@ -22,13 +30,46 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
-public partial class ScoreListEntry : Container, IHasDrawableTooltip
+public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContextMenu
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
+
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    public MenuItem[] ContextMenuItems
+    {
+        get
+        {
+            var items = new List<MenuItem>();
+
+            if (!deleted)
+                items.Add(new FluXisMenuItem("View Details", FontAwesome.Solid.InfoCircle, MenuItemType.Highlighted, viewDetails));
+
+            if (Deletable && !deleted && RealmScoreId != null)
+            {
+                items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Trash, MenuItemType.Dangerous, () =>
+                {
+                    deleted = true;
+                    deletedContainer.FadeIn(200);
+
+                    realm.RunWrite(r =>
+                    {
+                        var realmScore = r.Find<RealmScore>(RealmScoreId);
+                        if (realmScore == null) return;
+
+                        r.Remove(realmScore);
+                    });
+                }));
+            }
+
+            return items.ToArray();
+        }
+    }
 
     public ScoreList ScoreList { get; set; }
     public ScoreInfo ScoreInfo { get; set; }
@@ -37,9 +78,14 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
     public DateTimeOffset Date { get; set; }
     public int Place { get; set; }
 
+    public bool Deletable { get; set; }
+    public Guid? RealmScoreId { get; set; }
+    private bool deleted;
+
     private FluXisSpriteText timeText;
     private Container bannerContainer;
     private Container avatarContainer;
+    private Container deletedContainer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -185,6 +231,26 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                         }
                     }
                 }
+            },
+            deletedContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2
+                    },
+                    new FluXisSpriteText
+                    {
+                        Text = "Deleted.",
+                        FontSize = 28,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    }
+                }
             }
         };
 
@@ -215,27 +281,33 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        return true;
+        return !deleted;
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (ScoreList == null) return false;
+        if (deleted) return true;
 
         samples.Click();
+        viewDetails();
+
+        return true;
+    }
+
+    private void viewDetails()
+    {
+        if (ScoreList == null) return;
 
         if (Map == null)
         {
             Logger.Log("RealmMap is null", LoggingTarget.Runtime, LogLevel.Error);
-            return false;
+            return;
         }
 
         MapInfo mapInfo = Map.GetMapInfo();
-        if (mapInfo == null) return false;
+        if (mapInfo == null) return;
 
         ScoreList.MapInfo.Screen.Push(new ResultsScreen(Map, mapInfo, ScoreInfo, Player, false, false));
-
-        return true;
     }
 
     public Drawable GetTooltip()
