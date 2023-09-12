@@ -74,7 +74,6 @@ public static class RealmObjectUtils
         c.CreateMap<RealmMapSet, RealmMapSet>();
         c.CreateMap<RealmFile, RealmFile>();
         c.CreateMap<RealmScore, RealmScore>();
-        c.CreateMap<RealmJudgements, RealmJudgements>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();
     }
 

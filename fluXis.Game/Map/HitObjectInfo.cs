@@ -1,3 +1,4 @@
+using fluXis.Game.Scoring.Structs;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map;
@@ -19,6 +20,12 @@ public class HitObjectInfo : TimedObject
         }
         set => HoldTime = value - Time;
     }
+
+    [JsonIgnore]
+    public HitResult Result { get; set; }
+
+    [JsonIgnore]
+    public HitResult HoldEndResult { get; set; }
 
     public bool IsLongNote()
     {

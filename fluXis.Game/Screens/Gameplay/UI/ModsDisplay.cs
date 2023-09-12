@@ -17,7 +17,7 @@ public partial class ModsDisplay : Container
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.TopRight;
         Origin = Anchor.TopRight;
-        Margin = new MarginPadding { Top = 60, Right = 10 };
+        Margin = new MarginPadding { Top = 80, Right = 20 };
 
         Child = modsContainer = new ModList { Mods = Screen.Mods };
     }

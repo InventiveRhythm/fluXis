@@ -10,6 +10,7 @@ using fluXis.Game.Utils;
 using osu.Framework.Development;
 using osu.Framework.Platform;
 using Realms;
+using Realms.Dynamic;
 
 namespace fluXis.Game.Database;
 
@@ -23,8 +24,9 @@ public class FluXisRealm : IDisposable
     /// 6 - add AutoImport to ImporterInfo
     /// 7 - Make RealmScore.Mods a string
     /// 8 - Added PlayerID to RealmScore
+    /// 9 - Removed RealmJudgements and moved to RealmScore
     /// </summary>
-    private const int schema_version = 8;
+    private const int schema_version = 9;
 
     private Realm updateRealm;
 
@@ -114,6 +116,27 @@ public class FluXisRealm : IDisposable
 
                 foreach (var score in newScores2)
                     score.PlayerID = -1;
+
+                break;
+
+            case 9:
+                var oldScores = migration.OldRealm.DynamicApi.All("RealmScore").ToList();
+                var newScores3 = migration.NewRealm.All<RealmScore>().ToList();
+
+                foreach (DynamicRealmObject oldScore in oldScores)
+                {
+                    var judgement = oldScore.DynamicApi.Get<dynamic>("Judgements");
+                    var newScore = newScores3.FirstOrDefault(s => s.ID == oldScore.DynamicApi.Get<Guid>("ID"));
+
+                    if (newScore == null) continue;
+
+                    newScore.Flawless = (int)judgement.Flawless;
+                    newScore.Perfect = (int)judgement.Perfect;
+                    newScore.Great = (int)judgement.Great;
+                    newScore.Alright = (int)judgement.Alright;
+                    newScore.Okay = (int)judgement.Okay;
+                    newScore.Miss = (int)judgement.Miss;
+                }
 
                 break;
         }

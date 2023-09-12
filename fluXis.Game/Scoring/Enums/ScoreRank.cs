@@ -1,6 +1,6 @@
-namespace fluXis.Game.Scoring;
+namespace fluXis.Game.Scoring.Enums;
 
-public enum Grade
+public enum ScoreRank
 {
     X,
     SS,

@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
-using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Select.Info.Scores;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,16 +16,13 @@ public partial class TestScoreEntry : FluXisTestScene
             Accuracy = 100,
             MaxCombo = 1000,
             Grade = "X",
-            Mods = "HD,NF",
-            Judgements = new RealmJudgements(new Dictionary<Judgement, int>
-            {
-                { Judgement.Flawless, 100 },
-                { Judgement.Perfect, 100 },
-                { Judgement.Great, 100 },
-                { Judgement.Alright, 100 },
-                { Judgement.Okay, 100 },
-                { Judgement.Miss, 100 }
-            })
+            Mods = "HD NF",
+            Flawless = 100,
+            Perfect = 100,
+            Great = 100,
+            Alright = 100,
+            Okay = 100,
+            Miss = 100
         };
 
         Add(new Container
@@ -39,7 +34,7 @@ public partial class TestScoreEntry : FluXisTestScene
             Width = 0.5f,
             Children = new Drawable[]
             {
-                new ScoreListEntry(score, 1)
+                new ScoreListEntry()
             }
         });
     }

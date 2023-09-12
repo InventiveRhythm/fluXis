@@ -3,7 +3,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notification;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Skin.UI;
 using fluXis.Game.Skinning;

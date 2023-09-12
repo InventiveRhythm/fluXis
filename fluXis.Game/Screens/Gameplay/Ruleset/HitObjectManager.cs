@@ -6,7 +6,9 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Mods;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring.Processing;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -25,19 +27,20 @@ public partial class HitObjectManager : Container<HitObject>
 
     private Bindable<bool> useSnapColors;
     public bool UseSnapColors => useSnapColors.Value;
+
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value;
+
     public Playfield Playfield { get; }
     public MapInfo Map { get; private set; }
+    public List<HitObjectInfo> PastHitObjects { get; } = new();
     public List<HitObjectInfo> FutureHitObjects { get; } = new();
     public List<HitObject> HitObjects { get; } = new();
-    private Performance performance { get; }
 
     public double CurrentTime { get; private set; }
     public int CurrentKeyCount { get; private set; }
     public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
-    public bool Dead { get; set; }
     private bool skipNextHitSounds { get; set; }
 
     public HealthMode HealthMode
@@ -50,13 +53,14 @@ public partial class HitObjectManager : Container<HitObject>
         }
     }
 
-    public float Health { get; private set; }
-    public float HealthDrainRate { get; private set; }
+    private JudgementProcessor judgementProcessor => Playfield.Screen.JudgementProcessor;
 
     private List<float> scrollVelocityMarks { get; } = new();
     private Dictionary<int, int> snapIndicies { get; } = new();
 
-    public bool IsFinished => FutureHitObjects.Count == 0 && HitObjects.Count == 0;
+    public Action OnFinished { get; set; }
+    public bool Finished { get; private set; }
+
     public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
 
     public bool Break => timeUntilNextHitObject >= 2000;
@@ -77,8 +81,6 @@ public partial class HitObjectManager : Container<HitObject>
     public HitObjectManager(Playfield playfield)
     {
         Playfield = playfield;
-        performance = playfield.Screen.Performance;
-        Health = HealthMode == HealthMode.Requirement ? 0 : 100;
     }
 
     [BackgroundDependencyLoader]
@@ -103,16 +105,29 @@ public partial class HitObjectManager : Container<HitObject>
 
         if (newTime < prevTime)
         {
-            var hitObjects = Map.HitObjects.Where(h => h.Time >= newTime && h.Time < prevTime).ToList();
+            var hitObjects = PastHitObjects.Where(h => h.Time >= newTime).ToList();
 
-            int count = hitObjects.Sum(h => h.IsLongNote() ? 2 : 1);
-            performance.Combo -= count;
-            performance.Judgements[Judgement.Flawless] -= count;
-            performance.HitStats.RemoveAll(h => h.Time > newTime);
+            foreach (var hitObject in hitObjects)
+            {
+                if (hitObject.IsLongNote() && hitObject.HoldEndTime >= newTime && hitObject.HoldEndResult != null)
+                {
+                    var endResult = hitObject.HoldEndResult;
+                    judgementProcessor.RevertResult(endResult);
+                    hitObject.HoldEndResult = null;
+                }
 
-            foreach (var hit in hitObjects)
-                FutureHitObjects.Add(hit);
+                if (hitObject.Result == null) continue;
 
+                var result = hitObject.Result;
+                judgementProcessor.RevertResult(result);
+                hitObject.Result = null;
+
+                var hit = new HitObject(this, hitObject);
+                HitObjects.Add(hit);
+                AddInternal(hit);
+            }
+
+            PastHitObjects.RemoveAll(h => h.Time >= newTime);
             FutureHitObjects.RemoveAll(h => h.Time <= newTime);
             FutureHitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
         }
@@ -124,18 +139,20 @@ public partial class HitObjectManager : Container<HitObject>
             // remove all hitobjects behind the new time
             foreach (var info in hitObjects)
             {
-                performance.AddHitStat(new HitStat(info.Time, 0, Judgement.Flawless));
-                performance.AddJudgement(Judgement.Flawless);
-                performance.IncCombo();
+                var hitResult = new HitResult(info.Time, 0, Judgement.Flawless);
+                judgementProcessor.AddResult(hitResult);
+                info.Result = hitResult;
 
                 if (info.IsLongNote())
                 {
-                    performance.AddHitStat(new HitStat(info.HoldEndTime, 0, Judgement.Flawless));
-                    performance.AddJudgement(Judgement.Flawless);
-                    performance.IncCombo();
+                    var endHitResult = new HitResult(info.HoldEndTime, 0, Judgement.Flawless);
+                    judgementProcessor.AddResult(endHitResult);
+                    info.HoldEndResult = endHitResult;
                 }
             }
 
+            var toPast = FutureHitObjects.Where(h => h.Time <= newTime);
+            PastHitObjects.AddRange(toPast);
             FutureHitObjects.RemoveAll(h => h.Time <= newTime);
         }
     }
@@ -143,6 +160,12 @@ public partial class HitObjectManager : Container<HitObject>
     protected override void Update()
     {
         updateTime();
+
+        if (HitObjects.Count == 0 && FutureHitObjects.Count == 0 && !Finished)
+        {
+            Finished = true;
+            OnFinished?.Invoke();
+        }
 
         while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= maxHitObjectTime)
         {
@@ -181,17 +204,9 @@ public partial class HitObjectManager : Container<HitObject>
             }
         }
 
-        if (!Playfield.Screen.IsPaused.Value && !Break && HealthMode == HealthMode.Drain)
-        {
-            HealthDrainRate = Math.Max(HealthDrainRate, -1f);
-
-            Health -= HealthDrainRate * ((float)Clock.ElapsedFrameTime / 1000f);
-            HealthDrainRate += 0.001f * (float)Clock.ElapsedFrameTime;
-        }
-
-        Health = Math.Clamp(Health, 0, 100);
+        /*Health = Math.Clamp(Health, 0, 100);
         if (Health == 0 && !Dead && HealthMode != HealthMode.Requirement && !Playfield.Screen.Mods.Any(m => m is NoFailMod))
-            Playfield.Screen.Die();
+            Playfield.Screen.Die();*/
 
         base.Update();
     }
@@ -238,7 +253,7 @@ public partial class HitObjectManager : Container<HitObject>
 
     private void updateInput()
     {
-        if (Dead)
+        if (Playfield.Screen.HealthProcessor.Failed)
             return;
 
         GameplayInput input = Playfield.Screen.Input;
@@ -297,23 +312,16 @@ public partial class HitObjectManager : Container<HitObject>
     {
         double diff = isHoldEnd ? hitObject.Data.HoldEndTime - clock.CurrentTime : hitObject.Data.Time - clock.CurrentTime;
         diff = AutoPlay ? 0 : diff;
-        diff /= clock.Rate;
         hitObject.GotHit = true;
 
-        judmentDisplay(hitObject, diff);
-
-        performance.IncCombo();
+        judmentDisplay(hitObject, diff, isHoldEnd);
 
         if (!hitObject.Data.IsLongNote() || isHoldEnd) removeHitObject(hitObject);
     }
 
     private void miss(HitObject hitObject)
     {
-        if (performance.Combo >= 5)
-            Playfield.Screen.Combobreak.Play();
-
-        judmentDisplay(hitObject, 0, !AutoPlay);
-        performance.ResetCombo();
+        judmentDisplay(hitObject, -Playfield.Screen.HitWindows.TimingFor(Playfield.Screen.HitWindows.Lowest));
 
         if (!hitObject.Data.IsLongNote()) removeHitObject(hitObject);
     }
@@ -321,30 +329,31 @@ public partial class HitObjectManager : Container<HitObject>
     private void removeHitObject(HitObject hitObject)
     {
         HitObjects.Remove(hitObject);
-
+        PastHitObjects.Add(hitObject.Data);
         RemoveInternal(hitObject, false);
     }
 
-    private void judmentDisplay(HitObject hitObject, double difference, bool missed = false)
+    private void judmentDisplay(HitObject hitObject, double difference, bool isHoldEnd = false)
     {
-        HitWindow hitWindow = missed ? HitWindow.FromKey(Judgement.Miss) : HitWindow.FromTiming((float)Math.Abs(difference));
+        var hitWindows = Playfield.Screen.HitWindows;
+        var judgement = hitWindows.JudgementFor(difference);
 
-        if (Dead)
+        if (Playfield.Screen.HealthProcessor.Failed)
             return;
 
-        performance.AddHitStat(new HitStat(hitObject.Data.Time, (float)difference, hitWindow.Key));
-        performance.AddJudgement(hitWindow.Key);
+        var result = new HitResult(hitObject.Data.Time, (float)difference, judgement);
+        judgementProcessor.AddResult(result);
 
-        if (HealthMode == HealthMode.Drain)
-            HealthDrainRate -= hitWindow.DrainRate;
+        if (isHoldEnd)
+            hitObject.Data.HoldEndResult = result;
         else
-            Health += hitWindow.Health;
+            hitObject.Data.Result = result;
 
-        if (hitWindow.Key == Judgement.Miss && Playfield.Screen.Mods.Any(m => m is FragileMod))
-            Playfield.Screen.Die();
+        if (judgement == hitWindows.ComboBreakJudgement && Playfield.Screen.Mods.Any(m => m is FragileMod))
+            Playfield.Screen.OnDeath();
 
-        if (hitWindow.Key != Judgement.Flawless && Playfield.Screen.Mods.Any(m => m is FlawlessMod))
-            Playfield.Screen.Die();
+        if (judgement != hitWindows.HighestHitable && Playfield.Screen.Mods.Any(m => m is FlawlessMod))
+            Playfield.Screen.OnDeath();
     }
 
     public void LoadMap(MapInfo map)

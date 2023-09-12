@@ -2,16 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Scoring;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -29,14 +32,18 @@ public partial class ScoreList : GridContainer
     [Resolved]
     private Fluxel fluxel { get; set; }
 
-    public SelectMapInfo MapInfo { get; set; }
+    public SelectMapInfo MapInfo { get; init; }
 
     private RealmMap map;
     private ScoreListType type = ScoreListType.Local;
 
+    private CancellationTokenSource cancellationTokenSource;
+    private CancellationToken cancellationToken;
+
     private FluXisSpriteText noScoresText;
     private FluXisScrollContainer scrollContainer;
     private FillFlowContainer<ClickableText> typeSwitcher;
+    private LoadingIcon loadingIcon;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -94,6 +101,13 @@ public partial class ScoreList : GridContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             ScrollbarAnchor = Anchor.TopRight
+                        },
+                        loadingIcon = new LoadingIcon
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(50),
+                            Alpha = 0
                         }
                     }
                 }
@@ -122,10 +136,21 @@ public partial class ScoreList : GridContainer
             return;
         }
 
+        loadingIcon.FadeIn(200);
+
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource = new CancellationTokenSource();
+
         scrollContainer.ScrollContent.Clear();
         this.map = map;
 
-        List<RealmScore> scores = new();
+        cancellationToken = cancellationTokenSource.Token;
+        Task.Run(() => loadScores(cancellationToken), cancellationToken);
+    }
+
+    private void loadScores(CancellationToken cancellationToken)
+    {
+        List<ScoreListEntry> scores = new();
 
         switch (type)
         {
@@ -133,16 +158,27 @@ public partial class ScoreList : GridContainer
                 realm?.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
                 {
                     if (s.MapID == map.ID)
-                        scores.Add(s);
+                    {
+                        scores.Add(new ScoreListEntry
+                        {
+                            ScoreInfo = s.ToScoreInfo(),
+                            Map = map,
+                            Player = s.Player,
+                            Date = s.Date
+                        });
+                    }
                 }));
-                scores.Sort((s1, s2) => s2.Score.CompareTo(s1.Score));
                 break;
 
             case ScoreListType.Global:
                 if (map.OnlineID == -1)
                 {
                     noScoresText.Text = "Scores are not available for this map!";
-                    noScoresText.FadeTo(1, 200);
+                    Schedule(() =>
+                    {
+                        noScoresText.FadeIn(200);
+                        loadingIcon.FadeOut(200);
+                    });
                     return;
                 }
 
@@ -169,44 +205,40 @@ public partial class ScoreList : GridContainer
                     });
                 }
 
-                rsp.Data.Scores.ForEach(s => scores.Add(new RealmScore(map)
+                foreach (var score in rsp.Data.Scores)
                 {
-                    ID = default,
-                    PlayerID = s.UserId,
-                    OnlineID = map.OnlineID,
-                    Accuracy = s.Accuracy,
-                    Grade = s.Grade,
-                    Score = s.TotalScore,
-                    MaxCombo = s.MaxCombo,
-                    Judgements = new RealmJudgements(new Dictionary<Judgement, int>
+                    scores.Add(new ScoreListEntry
                     {
-                        { Judgement.Flawless, s.FlawlessCount },
-                        { Judgement.Perfect, s.PerfectCount },
-                        { Judgement.Great, s.GreatCount },
-                        { Judgement.Alright, s.AlrightCount },
-                        { Judgement.Okay, s.OkayCount },
-                        { Judgement.Miss, s.MissCount }
-                    }),
-                    Mods = s.Mods,
-                    MapID = map.ID,
-                    Date = DateTimeOffset.FromUnixTimeSeconds(s.Time)
-                }));
+                        ScoreInfo = score.ToScoreInfo(),
+                        Map = map,
+                        Player = UserCache.GetUser(score.UserId),
+                        Date = DateTimeOffset.FromUnixTimeSeconds(score.Time)
+                    });
+                }
 
                 break;
         }
 
-        scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
+        Schedule(() =>
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return;
 
-        noScoresText.Text = map.MapSet.Managed ? "Scores are not available for this map!" : "No scores yet!";
-        noScoresText.FadeTo(scrollContainer.ScrollContent.Children.Count == 0 ? 1 : 0, 200);
+            scores.Sort((a, b) => b.ScoreInfo.Score.CompareTo(a.ScoreInfo.Score));
+            scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
+
+            if (scrollContainer.ScrollContent.Children.Count == 0)
+                noScoresText.Text = map.MapSet.Managed ? "Scores are not available for this map!" : "No scores yet!";
+
+            noScoresText.FadeTo(scrollContainer.ScrollContent.Children.Count == 0 ? 1 : 0, 200);
+            loadingIcon.FadeOut(200);
+        });
     }
 
-    private void addScore(RealmScore score, int index = -1)
+    private void addScore(ScoreListEntry entry, int index = -1)
     {
-        if (score.MapID != map.ID)
-            return;
-
-        var entry = new ScoreListEntry(score, index) { ScoreList = this };
+        entry.ScoreList = this;
+        entry.Place = index;
         entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children[^1].Y + scrollContainer.ScrollContent.Children[^1].Height + 5 : 0;
         scrollContainer.ScrollContent.Add(entry);
     }

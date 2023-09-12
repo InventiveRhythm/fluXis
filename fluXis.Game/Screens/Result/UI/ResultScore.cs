@@ -1,5 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Map;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,7 +13,8 @@ namespace fluXis.Game.Screens.Result.UI;
 
 public partial class ResultScore : FillFlowContainer
 {
-    public Performance Performance { get; init; }
+    public MapInfo MapInfo { get; init; }
+    public ScoreInfo Score { get; init; }
 
     private FluXisSpriteText scoreText;
     private FluXisSpriteText accuracyText;
@@ -30,8 +33,6 @@ public partial class ResultScore : FillFlowContainer
         Origin = Anchor.TopCentre;
         Spacing = new Vector2(0, -20);
 
-        FillFlowContainer judgementsContainer;
-
         AddRange(new Drawable[]
         {
             scoreText = new FluXisSpriteText
@@ -46,14 +47,23 @@ public partial class ResultScore : FillFlowContainer
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre
             },
-            judgementsContainer = new FillFlowContainer
+            new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Horizontal,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Spacing = new Vector2(10, 0),
-                Margin = new MarginPadding { Top = 20 }
+                Margin = new MarginPadding { Top = 20 },
+                Children = new Drawable[]
+                {
+                    new ResultJudgement { Judgement = Judgement.Flawless, Count = Score.Flawless },
+                    new ResultJudgement { Judgement = Judgement.Perfect, Count = Score.Perfect },
+                    new ResultJudgement { Judgement = Judgement.Great, Count = Score.Great },
+                    new ResultJudgement { Judgement = Judgement.Alright, Count = Score.Alright },
+                    new ResultJudgement { Judgement = Judgement.Okay, Count = Score.Okay },
+                    new ResultJudgement { Judgement = Judgement.Miss, Count = Score.Miss }
+                }
             },
             new FillFlowContainer
             {
@@ -73,24 +83,18 @@ public partial class ResultScore : FillFlowContainer
                     comboText = new FluXisSpriteText
                     {
                         FontSize = 24,
-                        Colour = Performance.AllFlawless ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Flawless) : Performance.FullCombo ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Great) : Color4.White
+                        Colour = Score.FullFlawless ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Flawless) : Score.FullCombo ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Great) : Color4.White
                     }
                 }
             }
         });
-
-        foreach (var judgement in HitWindow.LIST)
-        {
-            int count = Performance.GetJudgementCount(judgement.Key);
-            judgementsContainer.Add(new ResultJudgement { HitWindow = judgement, Count = count });
-        }
     }
 
     protected override void LoadComplete()
     {
-        this.TransformTo(nameof(score), Performance.Score, 1000, Easing.OutQuint);
-        this.TransformTo(nameof(accuracy), Performance.Accuracy, 800, Easing.OutQuint);
-        this.TransformTo(nameof(combo), Performance.MaxCombo, 800, Easing.OutQuint);
+        this.TransformTo(nameof(score), Score.Score, 1000, Easing.OutQuint);
+        this.TransformTo(nameof(accuracy), Score.Accuracy, 800, Easing.OutQuint);
+        this.TransformTo(nameof(combo), Score.MaxCombo, 800, Easing.OutQuint);
 
         base.LoadComplete();
     }
@@ -98,8 +102,8 @@ public partial class ResultScore : FillFlowContainer
     protected override void Update()
     {
         scoreText.Text = score.ToString().PadLeft(7, "0"[0]);
-        accuracyText.Text = $"{Performance.Grade} - {accuracy:00.00}%".Replace(",", ".");
-        comboText.Text = $"{combo}/{Performance.Map.MaxCombo}";
+        accuracyText.Text = $"{Score.Rank} - {accuracy:00.00}%".Replace(",", ".");
+        comboText.Text = $"{combo}/{MapInfo.MaxCombo}";
 
         base.Update();
     }

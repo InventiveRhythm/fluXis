@@ -2,7 +2,7 @@ using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Integration;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -41,7 +41,7 @@ public partial class JudgementDisplay : GameplayHUDElement
         showEarlyLate = config.GetBindable<bool>(FluXisSetting.ShowEarlyLate);
         judgementSplash = config.GetBindable<bool>(FluXisSetting.JudgementSplash);
 
-        Screen.Performance.OnHitStatAdded += popUp;
+        Screen.JudgementProcessor.ResultAdded += popUp;
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -87,18 +87,17 @@ public partial class JudgementDisplay : GameplayHUDElement
         };
     }
 
-    private void popUp(HitStat stat)
+    private void popUp(HitResult result)
     {
-        HitWindow.FromKey(stat.Judgement);
-        var judgement = stat.Judgement;
+        var judgement = result.Judgement;
 
-        if (hideFlawless.Value && judgement == Scoring.Judgement.Flawless) return;
+        if (hideFlawless.Value && judgement == Scoring.Enums.Judgement.Flawless) return;
 
         const int random_angle = 7;
         float scale = 1.4f;
         float rotation = 0;
 
-        if (judgement == Scoring.Judgement.Miss)
+        if (judgement == Scoring.Enums.Judgement.Miss)
         {
             scale = 1.8f;
             rotation = new Random().Next(-random_angle, random_angle);
@@ -138,7 +137,7 @@ public partial class JudgementDisplay : GameplayHUDElement
                   .ScaleTo(0f)
                   .ScaleTo(1.4f, 500, Easing.OutQuint);
 
-            if (judgement != Scoring.Judgement.Miss)
+            if (judgement != Scoring.Enums.Judgement.Miss)
             {
                 splash.Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement);
                 splash.Splat();
@@ -148,9 +147,9 @@ public partial class JudgementDisplay : GameplayHUDElement
         lightController.FadeColour(skinManager.CurrentSkin.GetColorForJudgement(judgement))
                        .FadeColour(Color4.Black, 400);
 
-        if (showEarlyLate.Value && judgement != Scoring.Judgement.Flawless && judgement != Scoring.Judgement.Miss)
+        if (showEarlyLate.Value && judgement != Scoring.Enums.Judgement.Flawless && judgement != Scoring.Enums.Judgement.Miss)
         {
-            bool early = stat.Difference > 0;
+            bool early = result.Difference > 0;
             textEarlyLate.Text = early ? "Early" : "Late";
             textEarlyLate.Colour = early ? Colour4.FromHex("#37cbfb") : Colour4.FromHex("#fb9d37");
 

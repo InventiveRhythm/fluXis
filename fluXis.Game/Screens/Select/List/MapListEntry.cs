@@ -15,6 +15,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
@@ -140,12 +141,18 @@ public partial class MapListEntry : Container
                 items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)));
                 items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.DeleteMapSet(mapset)));
 
+                if (FluXisGameBase.IsDebug)
+                    items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => host.GetClipboard()?.SetText(mapset.ID.ToString())));
+
                 return items.ToArray();
             }
         }
 
         [Resolved]
         private UISamples samples { get; set; }
+
+        [Resolved]
+        private GameHost host { get; set; }
 
         private readonly MapListEntry parent;
         private readonly RealmMapSet mapset;

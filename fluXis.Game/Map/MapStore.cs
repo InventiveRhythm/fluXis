@@ -146,6 +146,7 @@ public partial class MapStore : Component
     }
 
     public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
+    public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
 
     public string Export(RealmMapSet set, LoadingNotification notification, bool openFolder = true)
     {

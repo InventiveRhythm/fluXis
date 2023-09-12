@@ -1,13 +1,13 @@
 using System;
-using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
+using fluXis.Game.Online.API.Users;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
@@ -17,7 +17,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -26,30 +25,21 @@ namespace fluXis.Game.Screens.Select.Info.Scores;
 public partial class ScoreListEntry : Container, IHasDrawableTooltip
 {
     [Resolved]
-    private MapStore mapStore { get; set; }
-
-    [Resolved]
-    private Storage storage { get; set; }
-
-    [Resolved]
     private SkinManager skinManager { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
 
     public ScoreList ScoreList { get; set; }
+    public ScoreInfo ScoreInfo { get; set; }
+    public RealmMap Map { get; set; }
+    public APIUserShort Player { get; set; }
+    public DateTimeOffset Date { get; set; }
+    public int Place { get; set; }
 
-    private readonly RealmScore score;
-    private readonly int rank;
     private FluXisSpriteText timeText;
     private Container bannerContainer;
     private Container avatarContainer;
-
-    public ScoreListEntry(RealmScore score, int index = -1)
-    {
-        this.score = score;
-        rank = index;
-    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -90,7 +80,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                     {
                         new FluXisSpriteText
                         {
-                            Text = $"#{rank}",
+                            Text = $"#{Place}",
                             FontSize = 26,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
@@ -119,7 +109,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = score.Player?.Username ?? "Player",
+                                    Text = Player?.Username ?? "Player",
                                     FontSize = 28,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
@@ -128,14 +118,14 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                                 },
                                 timeText = new FluXisSpriteText
                                 {
-                                    Text = TimeUtils.Ago(score.Date),
+                                    Text = TimeUtils.Ago(Date),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.TopLeft,
                                     Padding = new MarginPadding { Left = 60 }
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = score.Accuracy.ToString("00.00").Replace(",", ".") + "%",
+                                    Text = ScoreInfo.Accuracy.ToString("00.00").Replace(",", ".") + "%",
                                     FontSize = 28,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.BottomRight,
@@ -144,7 +134,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = $"{score.MaxCombo}x",
+                                    Text = $"{ScoreInfo.MaxCombo}x",
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.TopRight,
                                     Padding = new MarginPadding { Right = 10 }
@@ -169,7 +159,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                                     {
                                         new FluXisSpriteText
                                         {
-                                            Text = score.Score.ToString("0000000"),
+                                            Text = ScoreInfo.Score.ToString("0000000"),
                                             FontSize = 22,
                                             FixedWidth = true,
                                             Anchor = Anchor.TopRight,
@@ -177,17 +167,17 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                                         },
                                         new FluXisSpriteText
                                         {
-                                            Text = score.Mods.Replace(",", " "),
+                                            Text = string.Join(' ', ScoreInfo.Mods),
                                             FontSize = 18,
                                             Anchor = Anchor.TopRight,
                                             Origin = Anchor.TopRight
                                         }
                                     }
                                 },
-                                new DrawableGrade
+                                new DrawableScoreRank
                                 {
                                     Size = 32,
-                                    Grade = Enum.TryParse(score.Grade, out Grade grade) ? grade : Grade.D,
+                                    Rank = ScoreInfo.Rank,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight
                                 }
@@ -198,7 +188,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
             }
         };
 
-        LoadComponentAsync(new DrawableBanner(score.Player)
+        LoadComponentAsync(new DrawableBanner(Player)
         {
             RelativeSizeAxes = Axes.Both,
             Depth = 1,
@@ -206,19 +196,19 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
             Origin = Anchor.Centre
         }, bannerContainer.Add);
 
-        LoadComponentAsync(new DrawableAvatar(score.Player)
+        LoadComponentAsync(new DrawableAvatar(Player)
         {
             RelativeSizeAxes = Axes.Both
         }, avatarContainer.Add);
 
         this.MoveToX(100).FadeOut()
-            .Then((rank - 1) * 50)
+            .Then((Place - 1) * 50)
             .MoveToX(0, 500, Easing.OutQuint).FadeIn(400);
     }
 
     protected override void Update()
     {
-        timeText.Text = TimeUtils.Ago(score.Date);
+        timeText.Text = TimeUtils.Ago(Date);
         base.Update();
     }
 
@@ -234,36 +224,23 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
 
         samples.Click();
 
-        RealmMap map = mapStore.CurrentMapSet.Maps.FirstOrDefault(m => m.ID == score.MapID);
-
-        if (map == null)
+        if (Map == null)
         {
             Logger.Log("RealmMap is null", LoggingTarget.Runtime, LogLevel.Error);
             return false;
         }
 
-        MapInfo mapInfo = map.GetMapInfo();
+        MapInfo mapInfo = Map.GetMapInfo();
         if (mapInfo == null) return false;
 
-        Performance performance = new Performance(mapInfo, map.OnlineID, map.Hash);
-
-        // find a better way to do this
-        for (int i = 0; i < score.Judgements.Flawless; i++) performance.AddJudgement(Judgement.Flawless);
-        for (int i = 0; i < score.Judgements.Perfect; i++) performance.AddJudgement(Judgement.Perfect);
-        for (int i = 0; i < score.Judgements.Great; i++) performance.AddJudgement(Judgement.Great);
-        for (int i = 0; i < score.Judgements.Alright; i++) performance.AddJudgement(Judgement.Alright);
-        for (int i = 0; i < score.Judgements.Okay; i++) performance.AddJudgement(Judgement.Okay);
-        for (int i = 0; i < score.Judgements.Miss; i++) performance.AddJudgement(Judgement.Miss);
-        for (int i = 0; i < score.MaxCombo; i++) performance.IncCombo();
-
-        ScoreList.MapInfo.Screen.Push(new ResultsScreen(map, mapInfo, performance, score.Player, false, false));
+        ScoreList.MapInfo.Screen.Push(new ResultsScreen(Map, mapInfo, ScoreInfo, Player, false, false));
 
         return true;
     }
 
     public Drawable GetTooltip()
     {
-        var date = score.Date;
+        var date = Date;
 
         return new FillFlowContainer
         {
@@ -287,32 +264,32 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip
                     {
                         new FluXisSpriteText
                         {
-                            Text = $"FLAWLESS {score.Judgements.Flawless}",
+                            Text = $"FLAWLESS {ScoreInfo.Flawless}",
                             Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Flawless)
                         },
                         new FluXisSpriteText
                         {
-                            Text = $"PERFECT {score.Judgements.Perfect}",
+                            Text = $"PERFECT {ScoreInfo.Perfect}",
                             Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Perfect)
                         },
                         new FluXisSpriteText
                         {
-                            Text = $"GREAT {score.Judgements.Great}",
+                            Text = $"GREAT {ScoreInfo.Great}",
                             Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Great)
                         },
                         new FluXisSpriteText
                         {
-                            Text = $"ALRIGHT {score.Judgements.Alright}",
+                            Text = $"ALRIGHT {ScoreInfo.Alright}",
                             Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Alright)
                         },
                         new FluXisSpriteText
                         {
-                            Text = $"OKAY {score.Judgements.Okay}",
+                            Text = $"OKAY {ScoreInfo.Okay}",
                             Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Okay)
                         },
                         new FluXisSpriteText
                         {
-                            Text = $"MISS {score.Judgements.Miss}",
+                            Text = $"MISS {ScoreInfo.Miss}",
                             Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement.Miss)
                         }
                     }

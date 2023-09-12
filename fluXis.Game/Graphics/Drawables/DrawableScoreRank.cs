@@ -1,21 +1,21 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Graphics.Drawables;
 
-public partial class DrawableGrade : Container
+public partial class DrawableScoreRank : Container
 {
-    public Grade Grade
+    public ScoreRank Rank
     {
-        get => grade;
+        get => rank;
         set
         {
-            grade = value;
+            rank = value;
             ClearInternal();
-            drawGrade();
+            drawLetters();
         }
     }
 
@@ -28,46 +28,46 @@ public partial class DrawableGrade : Container
             Height = size;
             Width = size;
             ClearInternal();
-            drawGrade();
+            drawLetters();
         }
     }
 
-    private Grade grade = Grade.X;
+    private ScoreRank rank = ScoreRank.X;
     private float size = 64;
 
-    private void drawGrade()
+    private void drawLetters()
     {
-        switch (grade)
+        switch (rank)
         {
-            case Grade.X:
+            case ScoreRank.X:
                 drawSingleLetter("X", Colour4.FromHex("#a9a9a9"));
                 break;
 
-            case Grade.SS:
+            case ScoreRank.SS:
                 drawDoubleLetter("S", Colour4.FromHex("#ffc14a"));
                 break;
 
-            case Grade.S:
+            case ScoreRank.S:
                 drawSingleLetter("S", Colour4.FromHex("#ffc14a"));
                 break;
 
-            case Grade.AA:
+            case ScoreRank.AA:
                 drawDoubleLetter("A", Colour4.FromHex("#84ff70"));
                 break;
 
-            case Grade.A:
+            case ScoreRank.A:
                 drawSingleLetter("A", Colour4.FromHex("#84ff70"));
                 break;
 
-            case Grade.B:
+            case ScoreRank.B:
                 drawSingleLetter("B", Colour4.FromHex("#70d7ff"));
                 break;
 
-            case Grade.C:
+            case ScoreRank.C:
                 drawSingleLetter("C", Colour4.FromHex("#ff70ff"));
                 break;
 
-            case Grade.D:
+            case ScoreRank.D:
                 drawSingleLetter("D", Colour4.FromHex("#ff686b"));
                 break;
 
@@ -85,6 +85,7 @@ public partial class DrawableGrade : Container
             FontSize = Height,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
+            Shadow = true,
             Colour = color
         });
     }
@@ -100,6 +101,7 @@ public partial class DrawableGrade : Container
                 FontSize = Height,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+                Shadow = true,
                 Margin = new MarginPadding { Left = 10 },
                 Colour = color.Darken(.4f)
             },
@@ -110,6 +112,7 @@ public partial class DrawableGrade : Container
                 FontSize = Height,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+                Shadow = true,
                 Margin = new MarginPadding { Right = 10 },
                 Colour = color
             }

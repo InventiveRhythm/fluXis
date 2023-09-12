@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -10,19 +11,18 @@ namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
 
 public partial class JudgementCounterItem : Container
 {
-    private readonly Performance performance;
-    private readonly Scoring.Judgement judgement;
+    private readonly ScoreProcessor scoreProcessor;
+    private readonly Timing timing;
 
-    private HitWindow hitWindow;
     private int count;
 
     private Box background;
     private FluXisSpriteText text;
 
-    public JudgementCounterItem(Performance performance, Scoring.Judgement judgement)
+    public JudgementCounterItem(ScoreProcessor scoreProcessor, Timing timing)
     {
-        this.performance = performance;
-        this.judgement = judgement;
+        this.scoreProcessor = scoreProcessor;
+        this.timing = timing;
     }
 
     [BackgroundDependencyLoader]
@@ -31,13 +31,11 @@ public partial class JudgementCounterItem : Container
         RelativeSizeAxes = Axes.X;
         Height = 50;
 
-        hitWindow = HitWindow.FromKey(judgement);
-
         Children = new Drawable[]
         {
             background = new Box
             {
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key),
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(timing.Judgement),
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
@@ -47,18 +45,47 @@ public partial class JudgementCounterItem : Container
                 FontSize = 24,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(timing.Judgement)
             }
         };
     }
 
+    private int getCount()
+    {
+        switch (timing.Judgement)
+        {
+            case Scoring.Enums.Judgement.Miss:
+                return scoreProcessor.Miss;
+
+            case Scoring.Enums.Judgement.Okay:
+                return scoreProcessor.Okay;
+
+            case Scoring.Enums.Judgement.Alright:
+                return scoreProcessor.Alright;
+
+            case Scoring.Enums.Judgement.Great:
+                return scoreProcessor.Great;
+
+            case Scoring.Enums.Judgement.Perfect:
+                return scoreProcessor.Perfect;
+
+            case Scoring.Enums.Judgement.Flawless:
+                return scoreProcessor.Flawless;
+
+            default:
+                return 0;
+        }
+    }
+
     protected override void Update()
     {
-        if (performance.Judgements.ContainsKey(judgement))
+        var actualCount = getCount();
+
+        if (actualCount != 0)
         {
-            if (performance.Judgements[judgement] != count)
+            if (actualCount != count)
             {
-                count = performance.Judgements[judgement];
+                count = actualCount;
                 lightUp();
                 text.FontSize = count switch
                 {
@@ -73,14 +100,14 @@ public partial class JudgementCounterItem : Container
         }
         else
         {
-            text.Text = judgement switch
+            text.Text = timing.Judgement switch
             {
-                Scoring.Judgement.Flawless => "FL",
-                Scoring.Judgement.Perfect => "PF",
-                Scoring.Judgement.Great => "GR",
-                Scoring.Judgement.Alright => "AL",
-                Scoring.Judgement.Okay => "OK",
-                Scoring.Judgement.Miss => "MS",
+                Scoring.Enums.Judgement.Flawless => "FL",
+                Scoring.Enums.Judgement.Perfect => "PF",
+                Scoring.Enums.Judgement.Great => "GR",
+                Scoring.Enums.Judgement.Alright => "AL",
+                Scoring.Enums.Judgement.Okay => "OK",
+                Scoring.Enums.Judgement.Miss => "MS",
                 _ => "??"
             };
         }

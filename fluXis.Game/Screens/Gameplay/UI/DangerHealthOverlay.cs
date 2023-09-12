@@ -1,6 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -21,7 +21,7 @@ public partial class DangerHealthOverlay : Container
 
     private Box glow;
     private Box darken;
-    private float health;
+    private float health = 0;
 
     private const int threshold = 40;
 
@@ -30,7 +30,6 @@ public partial class DangerHealthOverlay : Container
     {
         dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
         dimOnLowHealth.BindValueChanged(onDimOnLowHealthChanged, true);
-        health = Screen.Playfield.Manager.Health;
 
         RelativeSizeAxes = Axes.Both;
 
@@ -54,6 +53,13 @@ public partial class DangerHealthOverlay : Container
         });
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
+    }
+
     private void onDimOnLowHealthChanged(ValueChangedEvent<bool> e)
     {
         if (e.NewValue)
@@ -75,15 +81,7 @@ public partial class DangerHealthOverlay : Container
         if (Screen.Playfield.Manager.HealthMode == HealthMode.Requirement)
             return;
 
-        if (health != Screen.Playfield.Manager.Health)
-        {
-            this.TransformTo(nameof(health), Screen.Playfield.Manager.Health, 300, Easing.OutQuint);
-        }
-
-        if (health < 0)
-            health = 0;
-
-        if (Screen.Playfield.Manager.Dead)
+        if (Screen.HealthProcessor.Failed)
             return;
 
         if (health < threshold && dimOnLowHealth.Value)

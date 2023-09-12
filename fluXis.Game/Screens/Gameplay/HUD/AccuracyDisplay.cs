@@ -1,6 +1,5 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,22 +9,16 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 public partial class AccuracyDisplay : GameplayHUDElement
 {
     private FluXisSpriteText accuracyText;
-    private float displayedAccuracy;
-    private float lastAccuracy;
-
-    private Grade grade = Grade.X;
-    private DrawableGrade drawableGrade;
+    private DrawableScoreRank drawableScoreRank;
+    private float accuracy = 0;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        displayedAccuracy = 0;
-        lastAccuracy = 0;
-
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
 
-        Add(new FillFlowContainer
+        InternalChild = new FillFlowContainer
         {
             AutoSizeAxes = Axes.Both,
             Direction = FillDirection.Horizontal,
@@ -33,38 +26,28 @@ public partial class AccuracyDisplay : GameplayHUDElement
             Origin = Anchor.TopCentre,
             Children = new Drawable[]
             {
-                drawableGrade = new DrawableGrade { Size = 32 },
-                accuracyText = new FluXisSpriteText { FontSize = 32, FixedWidth = true }
+                drawableScoreRank = new DrawableScoreRank { Size = 32 },
+                accuracyText = new FluXisSpriteText
+                {
+                    FontSize = 32,
+                    Shadow = true,
+                    FixedWidth = true
+                }
             }
-        });
+        };
     }
 
     protected override void LoadComplete()
     {
-        accuracyText.FadeOut().Then(500).FadeInFromZero(250);
-
         base.LoadComplete();
+
+        Screen.ScoreProcessor.Accuracy.BindValueChanged(e => this.TransformTo(nameof(accuracy), e.NewValue, 400, Easing.OutQuint), true);
+        Screen.ScoreProcessor.Rank.BindValueChanged(e => drawableScoreRank.Rank = e.NewValue, true);
     }
 
     protected override void Update()
     {
-        var currentAccuracy = Screen.Performance.Accuracy;
-
-        if (currentAccuracy != lastAccuracy)
-        {
-            float acc = (int)(currentAccuracy * 100) / 100f;
-            this.TransformTo(nameof(displayedAccuracy), acc, 400, Easing.Out);
-            lastAccuracy = acc;
-        }
-
-        accuracyText.Text = $"{displayedAccuracy:00.00}%".Replace(",", ".");
-
-        if (grade != Screen.Performance.Grade)
-        {
-            grade = Screen.Performance.Grade;
-            drawableGrade.Grade = grade;
-        }
-
+        accuracyText.Text = $"{accuracy:00.00}%".Replace(",", ".");
         base.Update();
     }
 }

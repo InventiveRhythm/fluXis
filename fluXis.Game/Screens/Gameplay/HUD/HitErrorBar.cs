@@ -1,7 +1,6 @@
-using System;
 using System.Linq;
 using fluXis.Game.Configuration;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -32,10 +31,10 @@ public partial class HitErrorBar : GameplayHUDElement
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
         AutoSizeAxes = Axes.Y;
-        Width = 280;
+        Width = Screen.HitWindows.TimingFor(Screen.HitWindows.LowestHitable) * 2f / Screen.Rate;
         Y = 50;
 
-        Screen.Performance.OnHitStatAdded += addHit;
+        Screen.JudgementProcessor.ResultAdded += addHit;
 
         Container colors;
 
@@ -87,15 +86,15 @@ public partial class HitErrorBar : GameplayHUDElement
             }
         };
 
-        foreach (var hitWindow in HitWindow.LIST.Reverse())
+        foreach (var timing in Screen.HitWindows.GetTimings().Reverse())
         {
-            if (hitWindow.Key == Scoring.Judgement.Miss)
+            if (timing.Judgement < Screen.HitWindows.LowestHitable)
                 continue;
 
             colors.Add(new Container
             {
                 RelativeSizeAxes = Axes.Y,
-                Width = hitWindow.Timing * 2,
+                Width = timing.Milliseconds * 2f / Screen.Rate,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 CornerRadius = 2.5f,
@@ -103,7 +102,7 @@ public partial class HitErrorBar : GameplayHUDElement
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
+                    Colour = skinManager.CurrentSkin.GetColorForJudgement(timing.Judgement)
                 }
             });
         }
@@ -114,10 +113,11 @@ public partial class HitErrorBar : GameplayHUDElement
         scaleBind.BindValueChanged(e => Scale = new Vector2(e.NewValue), true);
     }
 
-    private void addHit(HitStat stat)
+    private void addHit(HitResult result)
     {
-        float time = -stat.Difference;
-        HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(time));
+        float time = -result.Difference;
+        var judgement = Screen.HitWindows.JudgementFor(time);
+        time /= Screen.Rate;
 
         icon.MoveToX(time, 300, Easing.OutQuint);
 
@@ -131,7 +131,7 @@ public partial class HitErrorBar : GameplayHUDElement
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement)
             }
         };
 
@@ -147,10 +147,11 @@ public partial class HitErrorBar : GameplayHUDElement
 
     private void updateAverage()
     {
-        float avg = Screen.Performance.HitStats.Average(h => h.Difference);
-        HitWindow hitWindow = HitWindow.FromTiming(Math.Abs(avg));
+        float avg = Screen.JudgementProcessor.Results.Average(h => h.Difference);
+        var judgement = Screen.HitWindows.JudgementFor(avg);
+        avg /= Screen.Rate;
 
         average.MoveToX(-avg, 100, Easing.OutQuint);
-        average.Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key);
+        average.Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement);
     }
 }

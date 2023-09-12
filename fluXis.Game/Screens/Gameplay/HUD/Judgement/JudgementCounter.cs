@@ -1,5 +1,5 @@
+using System.Linq;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -7,22 +7,14 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
 
-public partial class JudgementCounter : CompositeDrawable
+public partial class JudgementCounter : GameplayHUDElement
 {
-    private readonly Performance performance;
-
-    public JudgementCounter(Performance performance)
-    {
-        this.performance = performance;
-    }
-
     [BackgroundDependencyLoader]
     private void load()
     {
         Anchor = Anchor.CentreRight;
         Origin = Anchor.CentreRight;
         Width = 50;
-        Margin = new MarginPadding { Right = 5 };
 
         AddInternal(new Container
         {
@@ -44,15 +36,7 @@ public partial class JudgementCounter : CompositeDrawable
                     Direction = FillDirection.Vertical,
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    Children = new JudgementCounterItem[]
-                    {
-                        new(performance, Scoring.Judgement.Flawless),
-                        new(performance, Scoring.Judgement.Perfect),
-                        new(performance, Scoring.Judgement.Great),
-                        new(performance, Scoring.Judgement.Alright),
-                        new(performance, Scoring.Judgement.Okay),
-                        new(performance, Scoring.Judgement.Miss)
-                    }
+                    Children = Screen.HitWindows.GetTimings().Select(t => new JudgementCounterItem(Screen.ScoreProcessor, t)).ToArray()
                 }
             }
         });

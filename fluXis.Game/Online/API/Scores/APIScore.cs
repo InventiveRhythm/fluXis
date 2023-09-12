@@ -1,4 +1,8 @@
+using System;
+using System.Linq;
 using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Scores;
@@ -33,7 +37,7 @@ public class APIScore
     public float Accuracy { get; set; }
 
     [JsonProperty("grade")]
-    public string Grade { get; set; }
+    public string Rank { get; set; }
 
     [JsonProperty("maxcombo")]
     public int MaxCombo { get; set; }
@@ -58,4 +62,26 @@ public class APIScore
 
     [JsonProperty("scrollspeed")]
     public float ScrollSpeed { get; set; }
+
+    public ScoreInfo ToScoreInfo()
+    {
+        return new ScoreInfo
+        {
+            Accuracy = Accuracy,
+            Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), Rank),
+            Score = TotalScore,
+            Combo = 0,
+            MaxCombo = MaxCombo,
+            Flawless = FlawlessCount,
+            Perfect = PerfectCount,
+            Great = GreatCount,
+            Alright = AlrightCount,
+            Okay = OkayCount,
+            Miss = MissCount,
+            HitResults = null,
+            MapID = Map.Id,
+            MapHash = null,
+            Mods = Mods.Split(" ").ToList()
+        };
+    }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using fluXis.Game.Activity;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -48,9 +47,9 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
-    private readonly Performance performance;
+    private readonly ScoreInfo score;
     private readonly APIUserShort player;
-    private readonly RealmScore score;
+    private readonly RealmScore realmScore;
 
     private Container content;
     private ResultsRatingInfo ratingInfo;
@@ -60,25 +59,30 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
 
     private readonly bool showPlayData;
 
-    public ResultsScreen(RealmMap map, MapInfo mapInfo, Performance performance, APIUserShort player, bool showPlayData = true, bool saveScore = true)
+    public ResultsScreen(RealmMap map, MapInfo mapInfo, ScoreInfo score, APIUserShort player, bool showPlayData = true, bool saveScore = true)
     {
         this.map = map;
         this.mapInfo = mapInfo;
-        this.performance = performance;
+        this.score = score;
         this.showPlayData = showPlayData;
         this.player = player;
 
-        if (performance.IsRanked && saveScore)
+        if (saveScore)
         {
-            score = new RealmScore(map)
+            realmScore = new RealmScore(map)
             {
                 PlayerID = player?.ID ?? -1,
-                Accuracy = performance.Accuracy,
-                Grade = performance.Grade.ToString(),
-                Score = performance.Score,
-                MaxCombo = performance.MaxCombo,
-                Judgements = new RealmJudgements(performance.Judgements),
-                Mods = string.Join(' ', performance.Mods.Select(m => m.Acronym))
+                Accuracy = score.Accuracy,
+                Rank = score.Rank,
+                Score = score.Score,
+                MaxCombo = score.MaxCombo,
+                Flawless = score.Flawless,
+                Perfect = score.Perfect,
+                Great = score.Great,
+                Alright = score.Alright,
+                Okay = score.Okay,
+                Miss = score.Miss,
+                Mods = string.Join(' ', score.Mods)
             };
         }
     }
@@ -133,8 +137,8 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
                         Children = new[]
                         {
                             new ResultTitle(map) { User = player },
-                            new ResultScore { Performance = performance },
-                            showPlayData ? new ResultHitPoints { MapInfo = mapInfo, Performance = performance } : Empty(),
+                            new ResultScore { Score = score, MapInfo = mapInfo },
+                            showPlayData ? new ResultHitPoints { MapInfo = mapInfo, Score = score } : Empty(),
                             ratingInfo = new ResultsRatingInfo(showPlayData)
                         }
                     }
@@ -197,10 +201,10 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
         GamepadHandler.OnGamepadStatusChanged += onGamepadStatusChanged;
         onGamepadStatusChanged(GamepadHandler.GamepadConnected);
 
-        if (score != null && !map.MapSet.Managed)
+        if (realmScore != null && !map.MapSet.Managed)
         {
-            realm.RunWrite(r => r.Add(score));
-            OnlineScores.UploadScore(fluxel, performance, res => ratingInfo.ScoreResponse = res);
+            realm.RunWrite(r => r.Add(realmScore));
+            OnlineScores.UploadScore(fluxel, score, res => ratingInfo.ScoreResponse = res);
         }
         else
             ratingInfo.ScoreResponse = new APIResponse<APIScoreResponse>(400, "Score not submittable.", null);

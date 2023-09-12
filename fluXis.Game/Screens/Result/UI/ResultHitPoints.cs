@@ -4,10 +4,9 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -31,7 +30,7 @@ namespace fluXis.Game.Screens.Result.UI;
 public partial class ResultHitPoints : Container
 {
     public MapInfo MapInfo { get; set; }
-    public Performance Performance { get; set; }
+    public ScoreInfo Score { get; set; }
 
     [Resolved]
     private SkinManager skinManager { get; set; }
@@ -41,7 +40,7 @@ public partial class ResultHitPoints : Container
 
     private const int max_zoom = 4;
 
-    private Container hitPoints;
+    private Container hitResults;
     private LoadingIcon loadingIcon;
 
     private Image<Rgba32> image;
@@ -69,7 +68,7 @@ public partial class ResultHitPoints : Container
                 // Padding = new MarginPadding(10),
                 Children = new Drawable[]
                 {
-                    hitPoints = new Container
+                    hitResults = new Container
                     {
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0,
@@ -115,9 +114,9 @@ public partial class ResultHitPoints : Container
                         Text = "Failed to draw hitstats..."
                     };
 
-                    hitPoints.Clear();
-                    hitPoints.Add(text);
-                    hitPoints.FadeInFromZero(200);
+                    hitResults.Clear();
+                    hitResults.Add(text);
+                    hitResults.FadeInFromZero(200);
                     loadingIcon.FadeOut(200);
                 });
             }
@@ -131,16 +130,15 @@ public partial class ResultHitPoints : Container
         image = new Image<Rgba32>(740 * max_zoom, 300 * max_zoom, new Rgba32(0, 0, 0, 0));
         const int padding = 10 * max_zoom;
 
-        foreach (var stat in Performance.HitStats)
+        foreach (var result in Score.HitResults)
         {
-            var statTime = stat.Time - MapInfo.StartTime;
+            var statTime = result.Time - MapInfo.StartTime;
             var endTime = MapInfo.EndTime - MapInfo.StartTime;
 
             var x = (int)((image.Width - padding * 2) * (statTime == endTime ? .5f : statTime / endTime)) + padding;
-            var y = (int)(image.Height / 2f - stat.Difference * max_zoom);
+            var y = (int)(image.Height / 2f - result.Difference * max_zoom);
 
-            HitWindow hitWindow = HitWindow.FromKey(stat.Judgement);
-            var colour4 = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key);
+            var colour4 = skinManager.CurrentSkin.GetColorForJudgement(result.Judgement);
             var rgb = new Rgba32(colour4.R, colour4.G, colour4.B);
 
             const int radius = 3 * max_zoom;
@@ -149,7 +147,7 @@ public partial class ResultHitPoints : Container
             var brush = new SolidBrush(new Color(rgb));
             image.Mutate(ctx => ctx.Fill(brush, poly));
 
-            if (stat.Judgement == Judgement.Miss)
+            if (result.Judgement == Judgement.Miss)
             {
                 // draw a semi-transparent line with the width of radius over every transparent pixel in the same x
                 for (int i = 0; i < radius / 2; i++)
@@ -195,8 +193,8 @@ public partial class ResultHitPoints : Container
 
         Schedule(() =>
         {
-            hitPoints.Add(sprite);
-            hitPoints.FadeInFromZero(200, Easing.OutQuint);
+            hitResults.Add(sprite);
+            hitResults.FadeInFromZero(200, Easing.OutQuint);
             loadingIcon.FadeOut(200);
         });
     }
@@ -218,19 +216,19 @@ public partial class ResultHitPoints : Container
     {
         if (e.Button == MouseButton.Left)
         {
-            float maxX = hitPoints.DrawWidth / 2f * hitPoints.Scale.X;
-            hitPoints.X += e.Delta.X;
-            hitPoints.X = MathHelper.Clamp(hitPoints.X, -maxX, maxX);
+            float maxX = hitResults.DrawWidth / 2f * hitResults.Scale.X;
+            hitResults.X += e.Delta.X;
+            hitResults.X = MathHelper.Clamp(hitResults.X, -maxX, maxX);
 
-            float maxY = hitPoints.DrawHeight / 2f * hitPoints.Scale.Y;
-            hitPoints.Y += e.Delta.Y;
-            hitPoints.Y = MathHelper.Clamp(hitPoints.Y, -maxY, maxY);
+            float maxY = hitResults.DrawHeight / 2f * hitResults.Scale.Y;
+            hitResults.Y += e.Delta.Y;
+            hitResults.Y = MathHelper.Clamp(hitResults.Y, -maxY, maxY);
         }
     }
 
     protected override bool OnScroll(ScrollEvent e)
     {
-        hitPoints.ScaleTo(MathHelper.Clamp(hitPoints.Scale.X + e.ScrollDelta.Y / 2f, 1f, max_zoom), 100, Easing.OutQuint);
+        hitResults.ScaleTo(MathHelper.Clamp(hitResults.Scale.X + e.ScrollDelta.Y / 2f, 1f, max_zoom), 100, Easing.OutQuint);
         return true;
     }
 
@@ -238,49 +236,11 @@ public partial class ResultHitPoints : Container
     {
         if (e.Button == MouseButton.Right)
         {
-            hitPoints.ScaleTo(1f, 200, Easing.OutQuint);
-            hitPoints.MoveTo(Vector2.Zero, 200, Easing.OutQuint);
+            hitResults.ScaleTo(1f, 200, Easing.OutQuint);
+            hitResults.MoveTo(Vector2.Zero, 200, Easing.OutQuint);
             return true;
         }
 
         return false;
-    }
-
-    public partial class ResultHitPoint : CircularContainer, IHasTextTooltip
-    {
-        public string Tooltip => TimeUtils.Format(Stat.Time) + " | " + Stat.Difference + "ms";
-
-        public HitStat Stat { get; init; }
-        public MapInfo MapInfo { get; init; }
-
-        [BackgroundDependencyLoader]
-        private void load(SkinManager skinManager)
-        {
-            Size = new Vector2(3);
-            Masking = true;
-            RelativePositionAxes = Axes.X;
-            Anchor = Anchor.CentreLeft;
-            Origin = Anchor.Centre;
-
-            var statTime = Stat.Time - MapInfo.StartTime;
-            var endTime = MapInfo.EndTime - MapInfo.StartTime;
-
-            X = statTime == endTime ? .5f : statTime / endTime;
-            Y = Stat.Difference;
-
-            HitWindow hitWindow = HitWindow.FromKey(Stat.Judgement);
-
-            Children = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = skinManager.CurrentSkin.GetColorForJudgement(hitWindow.Key)
-                }
-            };
-        }
-
-        // required for tooltip
-        protected override bool OnHover(HoverEvent e) => true;
     }
 }

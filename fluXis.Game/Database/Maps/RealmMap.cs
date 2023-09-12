@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Audio.Track;
@@ -60,8 +61,10 @@ public class RealmMap : RealmObject
         {
             var path = RealmStorage.GetFullPath(File);
             var json = System.IO.File.ReadAllText(path);
+            var hash = MapUtils.GetHash(json);
             MapInfo map = JsonConvert.DeserializeObject<MapInfo>(json);
             map.Map = this;
+            map.Hash = hash;
             return map;
         }
         catch (Exception e)

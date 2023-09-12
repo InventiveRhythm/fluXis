@@ -38,7 +38,7 @@ public partial class QuickActionOverlay : FillFlowContainer
             else
             {
                 this.TransformTo(nameof(holdTime), 0d, 400, Easing.OutCirc);
-                this.FadeOut(800);
+                this.FadeOut(400);
             }
         }
     }

@@ -20,10 +20,13 @@ public partial class Playfield : Container
     [Resolved]
     private AudioClock clock { get; set; }
 
-    public FillFlowContainer<Receptor> Receptors;
-    public GameplayScreen Screen;
-    public HitObjectManager Manager;
-    public Stage Stage;
+    public GameplayScreen Screen { get; init; }
+
+    public FillFlowContainer<Receptor> Receptors { get; private set; }
+    public HitObjectManager Manager { get; private set; }
+    public Stage Stage { get; private set; }
+
+    public MapInfo Map => Screen.Map;
 
     private TimingLineManager timingLineManager;
     private Drawable hitLine;
@@ -38,15 +41,7 @@ public partial class Playfield : Container
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
-    public MapInfo Map { get; }
-
     private PlayfieldMoveEvent currentPlayfieldMoveEvent;
-
-    public Playfield(GameplayScreen screen)
-    {
-        Screen = screen;
-        Map = screen.Map;
-    }
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)

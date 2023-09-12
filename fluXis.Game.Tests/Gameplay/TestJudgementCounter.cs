@@ -1,5 +1,5 @@
-using fluXis.Game.Map;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Gameplay.HUD.Judgement;
 
 namespace fluXis.Game.Tests.Gameplay;
@@ -8,15 +8,15 @@ public partial class TestJudgementCounter : FluXisTestScene
 {
     public TestJudgementCounter()
     {
-        var performance = new Performance(new MapInfo(new MapMetadata()), 0, "");
-        Add(new JudgementCounter(performance));
+        var performance = new ScoreInfo();
+        Add(new JudgementCounter());
 
         int i = 0;
 
         Scheduler.AddDelayed(() =>
         {
             Judgement toAdd = (Judgement)i;
-            performance.AddJudgement(toAdd);
+            // performance.AddJudgement(toAdd);
 
             i++;
             if (i == 6) i = 0;

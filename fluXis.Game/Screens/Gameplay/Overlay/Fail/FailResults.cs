@@ -1,5 +1,6 @@
+using System.Linq;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,26 +14,27 @@ public partial class FailResults : Container
 {
     public FailOverlay FailOverlay { get; set; }
 
-    private readonly FluXisSpriteText title; // title - artist
-    private readonly FluXisSpriteText subtitle; // difficulty - mapper
-    private readonly FluXisSpriteText scoreText;
-    private readonly FluXisSpriteText accuracyText;
-    private readonly Box progressBar;
-    private readonly FluXisSpriteText progressText;
-    private readonly FillFlowContainer<FailResultsJudgement> judgements;
+    private FluXisSpriteText title; // title - artist
+    private FluXisSpriteText subtitle; // difficulty - mapper
+    private FluXisSpriteText scoreText;
+    private FluXisSpriteText accuracyText;
+    private Box progressBar;
+    private FluXisSpriteText progressText;
+    private FillFlowContainer<FailResultsJudgement> judgements;
 
     private float progress;
-    private int score;
+    private int totalScore;
     private float accuracy;
 
-    public FailResults()
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
         Padding = new MarginPadding(20);
 
         progress = 0;
-        score = 0;
+        totalScore = 0;
         accuracy = 0;
 
         InternalChildren = new Drawable[]
@@ -127,15 +129,7 @@ public partial class FailResults : Container
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         Spacing = new Vector2(10),
-                        Children = new[]
-                        {
-                            new FailResultsJudgement { HitWindow = HitWindow.FromKey(Judgement.Flawless) },
-                            new FailResultsJudgement { HitWindow = HitWindow.FromKey(Judgement.Perfect) },
-                            new FailResultsJudgement { HitWindow = HitWindow.FromKey(Judgement.Great) },
-                            new FailResultsJudgement { HitWindow = HitWindow.FromKey(Judgement.Alright) },
-                            new FailResultsJudgement { HitWindow = HitWindow.FromKey(Judgement.Okay) },
-                            new FailResultsJudgement { HitWindow = HitWindow.FromKey(Judgement.Miss) }
-                        }
+                        Children = FailOverlay.Screen.HitWindows.GetTimings().Select(t => new FailResultsJudgement { Judgement = t.Judgement }).ToArray()
                     }
                 }
             },
@@ -183,7 +177,7 @@ public partial class FailResults : Container
     {
         progressText.Text = $"{progress:P0}";
         progressBar.Width = progress;
-        scoreText.Text = $"{score:0000000}";
+        scoreText.Text = $"{totalScore:0000000}";
         accuracyText.Text = $"{accuracy / 100:P2}".Replace(",", ".");
     }
 
@@ -192,25 +186,32 @@ public partial class FailResults : Container
         this.FadeIn(200);
 
         var map = FailOverlay.Screen.Map;
-        var performance = FailOverlay.Screen.Performance;
+        var score = FailOverlay.Screen.ScoreProcessor.ToScoreInfo();
 
         title.Text = $"{map.Metadata.Title} - {map.Metadata.Artist}";
         subtitle.Text = $"[{map.Metadata.Difficulty}] mapped by {map.Metadata.Mapper}";
 
         float start = map.StartTime;
         float end = map.EndTime - start;
-        float current = FailOverlay.Screen.DeathTime - start;
+        float current = (float)FailOverlay.Screen.HealthProcessor.FailTime - start;
 
         float p = current / end;
         this.TransformTo(nameof(progress), p, 2000, Easing.OutQuint);
-        this.TransformTo(nameof(score), performance.Score, 2000, Easing.OutQuint);
-        this.TransformTo(nameof(accuracy), performance.Accuracy, 2000, Easing.OutQuint);
+        this.TransformTo(nameof(totalScore), score.Score, 2000, Easing.OutQuint);
+        this.TransformTo(nameof(accuracy), score.Accuracy, 2000, Easing.OutQuint);
 
         foreach (var judgement in judgements)
         {
-            judgement.JudgementCount = performance.Judgements.TryGetValue(judgement.HitWindow.Key, out var performanceJudgement)
-                ? performanceJudgement
-                : 0;
+            judgement.JudgementCount = judgement.Judgement switch
+            {
+                Judgement.Flawless => score.Flawless,
+                Judgement.Perfect => score.Perfect,
+                Judgement.Great => score.Great,
+                Judgement.Alright => score.Alright,
+                Judgement.Okay => score.Okay,
+                Judgement.Miss => score.Miss,
+                _ => 0
+            };
         }
     }
 
@@ -219,7 +220,7 @@ public partial class FailResults : Container
         private FluXisSpriteText countText;
         private int count = 0;
 
-        public HitWindow HitWindow { init; get; }
+        public Judgement Judgement { get; init; }
 
         public int JudgementCount
         {
@@ -238,8 +239,8 @@ public partial class FailResults : Container
                 new FluXisSpriteText
                 {
                     FontSize = 32,
-                    Text = HitWindow.Key.ToString(),
-                    Colour = skinManager.CurrentSkin.GetColorForJudgement(HitWindow.Key)
+                    Text = Judgement.ToString(),
+                    Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement)
                 },
                 countText = new FluXisSpriteText
                 {

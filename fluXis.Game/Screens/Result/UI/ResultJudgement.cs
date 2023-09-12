@@ -1,5 +1,5 @@
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -10,7 +10,7 @@ namespace fluXis.Game.Screens.Result.UI;
 
 public partial class ResultJudgement : FillFlowContainer
 {
-    public HitWindow HitWindow { get; init; }
+    public Judgement Judgement { get; init; }
     public new int Count { get; init; }
 
     [BackgroundDependencyLoader]
@@ -24,9 +24,9 @@ public partial class ResultJudgement : FillFlowContainer
         {
             new FluXisSpriteText
             {
-                Text = HitWindow.Key.ToString(),
+                Text = Judgement.ToString(),
                 FontSize = 24,
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(HitWindow.Key)
+                Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement)
             },
             new FluXisSpriteText
             {

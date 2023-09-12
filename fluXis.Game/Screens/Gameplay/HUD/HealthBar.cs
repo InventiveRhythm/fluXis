@@ -1,7 +1,7 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -80,25 +80,29 @@ public partial class HealthBar : GameplayHUDElement
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
+    }
+
     protected override void Update()
     {
         X = Screen.Playfield.Stage.Width / 2 + 20 + Screen.Playfield.X;
 
-        if (manager.Health != health)
-            this.TransformTo(nameof(health), manager.Health, 300, Easing.OutQuint);
-
         bar.Height = health / 100;
-        text.Text = $"{Math.Floor(manager.Health)}";
+        text.Text = $"{Math.Floor(health)}";
 
-        switch (manager.HealthMode)
+        switch (Screen.HealthProcessor)
         {
-            case HealthMode.Requirement:
-                bar.BorderColour = text.Colour = Colour4.FromHex(manager.Health >= 70 ? "#40aef8" : "#40f840");
+            case RequirementHeathProcessor requirement:
+                bar.BorderColour = text.Colour = Colour4.FromHex(requirement.RequirementReached ? "#40aef8" : "#40f840");
                 break;
 
-            case HealthMode.Drain:
+            case DrainHealthProcessor drain:
                 //smoothen the drain rate to avoid flickering
-                drainRate = Interpolation.Lerp(drainRate, manager.HealthDrainRate, Math.Exp(-0.001f * Clock.ElapsedFrameTime));
+                drainRate = Interpolation.Lerp(drainRate, drain.HealthDrainRate, Math.Exp(-0.001f * Clock.ElapsedFrameTime));
                 bar.BorderColour = text.Colour = drainGradient.Interpolate(new Vector2((Math.Clamp((float)drainRate, -1, 1) + 1) / 2f, 0));
                 break;
         }

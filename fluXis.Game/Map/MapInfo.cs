@@ -55,6 +55,9 @@ public class MapInfo
     [JsonIgnore]
     public RealmMap Map { get; set; }
 
+    [JsonIgnore]
+    public string Hash { get; set; }
+
     public MapInfo(MapMetadata metadata)
     {
         Metadata = metadata;

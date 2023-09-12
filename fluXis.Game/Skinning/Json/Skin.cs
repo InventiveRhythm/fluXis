@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 

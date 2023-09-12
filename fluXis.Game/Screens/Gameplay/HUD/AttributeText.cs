@@ -18,6 +18,7 @@ public partial class AttributeText : GameplayHUDElement
         Add(new FluXisSpriteText
         {
             FontSize = FontSize,
+            Shadow = true,
             Text = Text.Replace("{value}", getValue())
         });
     }

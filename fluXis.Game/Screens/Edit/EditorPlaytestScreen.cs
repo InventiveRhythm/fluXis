@@ -40,9 +40,8 @@ public partial class EditorPlaytestScreen : GameplayScreen
         this.Push(new EditorPlaytestScreen(RealmMap, map, events, GameplayStartTime));
     }
 
-    public override void Die()
+    public override void OnDeath()
     {
-        Playfield.Manager.Dead = true;
         AudioClock.Stop();
         this.Exit();
     }
