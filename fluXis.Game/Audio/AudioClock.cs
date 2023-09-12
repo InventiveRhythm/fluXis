@@ -81,6 +81,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     private readonly Bindable<Track> track = new();
     private Bindable<float> offset;
 
+    private const int limited_loop_time = 15000;
+    private const int limited_loop_fade = 2000;
+    private const int limited_loop_fade_in = 1000;
     private Bindable<LoopMode> loopMode;
     private bool loopEndReached;
     public bool AllowLimitedLoop { get; set; } = true;
@@ -193,14 +196,14 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     {
         base.Update();
 
-        if (Looping && AllowLimitedLoop && Track.Value.CurrentTime - RestartPoint >= 14000)
+        if (Looping && AllowLimitedLoop && Track.Value.CurrentTime - RestartPoint >= limited_loop_time - limited_loop_fade)
         {
             if (!loopEndReached && loopMode.Value == LoopMode.Limited)
             {
-                FadeOut(1000).OnComplete(_ =>
+                FadeOut(limited_loop_fade).OnComplete(_ =>
                 {
                     Seek(RestartPoint);
-                    FadeIn(1000);
+                    FadeIn(limited_loop_fade_in);
                 });
                 loopEndReached = true;
             }
