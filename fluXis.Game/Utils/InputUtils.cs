@@ -5,7 +5,7 @@ namespace fluXis.Game.Utils;
 
 public static class InputUtils
 {
-    public static string GetReadableString(KeyCombination combo)
+    public static string GetReadableCombination(KeyCombination combo)
     {
         var result = string.Empty;
         if (combo.Keys.Contains(InputKey.Control))
@@ -46,9 +46,68 @@ public static class InputUtils
             if (!result.EndsWith(" ") && !string.IsNullOrEmpty(result))
                 result += " + ";
 
-            result += $"{inputKey}";
+            result += $"{GetKeyShort(inputKey)}";
         }
 
         return result;
+    }
+
+    public static string GetKeyShort(InputKey key)
+    {
+        return key switch
+        {
+            InputKey.Escape => "Esc",
+            InputKey.Keypad0 => "KP0",
+            InputKey.Keypad1 => "KP1",
+            InputKey.Keypad2 => "KP2",
+            InputKey.Keypad3 => "KP3",
+            InputKey.Keypad4 => "KP4",
+            InputKey.Keypad5 => "KP5",
+            InputKey.Keypad6 => "KP6",
+            InputKey.Keypad7 => "KP7",
+            InputKey.Keypad8 => "KP8",
+            InputKey.Keypad9 => "KP9",
+            InputKey.KeypadDivide => "KP/",
+            InputKey.KeypadMultiply => "KP*",
+            InputKey.KeypadSubtract => "KP-",
+            InputKey.KeypadAdd => "KP+",
+            InputKey.KeypadDecimal => "KP.",
+            InputKey.KeypadEnter => "KPEnter",
+            InputKey.Number0 => "0",
+            InputKey.Number1 => "1",
+            InputKey.Number2 => "2",
+            InputKey.Number3 => "3",
+            InputKey.Number4 => "4",
+            InputKey.Number5 => "5",
+            InputKey.Number6 => "6",
+            InputKey.Number7 => "7",
+            InputKey.Number8 => "8",
+            InputKey.Number9 => "9",
+            InputKey.Tilde => "~",
+            InputKey.Minus => "-",
+            InputKey.Plus => "+",
+            InputKey.BracketLeft => "[",
+            InputKey.BracketRight => "]",
+            InputKey.Semicolon => ";",
+            InputKey.Quote => "\"",
+            InputKey.Comma => ",",
+            InputKey.Period => ".",
+            InputKey.Slash => "/",
+            InputKey.BackSlash => @"\",
+            InputKey.NonUSBackSlash => @"\",
+            InputKey.FirstMouseButton => "M1",
+            InputKey.MouseMiddle => "M3",
+            InputKey.MouseRight => "M2",
+            InputKey.ExtraMouseButton1 => "M4",
+            InputKey.ExtraMouseButton2 => "M5",
+            InputKey.ExtraMouseButton3 => "M6",
+            InputKey.ExtraMouseButton4 => "M7",
+            InputKey.ExtraMouseButton5 => "M8",
+            InputKey.ExtraMouseButton6 => "M9",
+            InputKey.ExtraMouseButton7 => "M10",
+            InputKey.ExtraMouseButton8 => "M11",
+            InputKey.ExtraMouseButton9 => "M12",
+            _ => key.ToString()
+        };
     }
 }

@@ -53,7 +53,7 @@ public partial class SettingsKeybind : SettingsItem
         {
             flow.Add(new KeybindContainer
             {
-                Keybind = InputUtils.GetReadableString(getBind(keybind)),
+                Keybind = InputUtils.GetReadableCombination(getBind(keybind)),
                 SettingsKeybind = this
             });
         }
@@ -174,7 +174,7 @@ public partial class SettingsKeybind : SettingsItem
 
             container.Reload();
 
-            flow.Children.ElementAt(index).Keybind = InputUtils.GetReadableString(combination);
+            flow.Children.ElementAt(index).Keybind = InputUtils.GetReadableCombination(combination);
             index++;
         }
         else index = -1;

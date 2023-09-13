@@ -41,7 +41,7 @@ public partial class KeyOverlay : Container
             Direction = FillDirection.Horizontal,
             Children = Keybinds.Select(x => new KeybindContainer
             {
-                Keybind = InputUtils.GetReadableString(getBind(x))
+                Keybind = InputUtils.GetReadableCombination(getBind(x))
             }).ToList()
         };
     }
