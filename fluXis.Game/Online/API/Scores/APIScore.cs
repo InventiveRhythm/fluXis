@@ -81,7 +81,7 @@ public class APIScore
             HitResults = null,
             MapID = Map.Id,
             MapHash = null,
-            Mods = Mods.Split(" ").ToList()
+            Mods = Mods.Split(",").ToList()
         };
     }
 }
