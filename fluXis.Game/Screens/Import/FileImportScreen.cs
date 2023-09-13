@@ -62,12 +62,11 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                 {
                     ColumnDimensions = new[]
                     {
-                        new Dimension(GridSizeMode.Absolute, 25),
                         new Dimension(GridSizeMode.AutoSize),
                         new Dimension(),
-                        new Dimension(GridSizeMode.AutoSize),
-                        new Dimension(GridSizeMode.Absolute, 25)
+                        new Dimension(GridSizeMode.AutoSize)
                     },
+                    RowDimensions = new[] { new Dimension() },
                     RelativeSizeAxes = Axes.Both,
                     Height = .1f,
                     Anchor = Anchor.BottomCentre,
@@ -76,12 +75,14 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                     {
                         new Drawable[]
                         {
-                            new Container(),
                             new FluXisButton
                             {
-                                Text = "Cancel",
+                                Width = 200,
+                                Height = 50,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
+                                Margin = new MarginPadding { Left = 25 },
+                                Text = "Cancel",
                                 Action = this.Exit
                             },
                             selectedFileText = new FluXisSpriteText
@@ -92,9 +93,12 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                             },
                             importButton = new FluXisButton
                             {
-                                Text = "Import",
+                                Width = 200,
+                                Height = 50,
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
+                                Margin = new MarginPadding { Right = 25 },
+                                Text = "Import",
                                 Action = () =>
                                 {
                                     if (fileSelect.CurrentFile.Value != null)
@@ -103,8 +107,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
                                         this.Exit();
                                     }
                                 }
-                            },
-                            new Container()
+                            }
                         }
                     }
                 }
