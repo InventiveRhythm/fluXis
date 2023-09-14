@@ -139,7 +139,7 @@ public partial class MapListEntry : Container
                     items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => parent.Screen.MapSet.Value = mapset));
 
                 items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)));
-                items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.DeleteMapSet(mapset)));
+                items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.OpenDeleteConfirm()));
 
                 if (FluXisGameBase.IsDebug)
                     items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => host.GetClipboard()?.SetText(mapset.ID.ToString())));

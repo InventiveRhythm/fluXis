@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Screens.Select.Footer.Options;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
@@ -33,6 +34,7 @@ public partial class SelectFooter : Container
     private CornerButton backButton;
     private CornerButton playButton;
     private SelectFooterButton randomButton;
+    private FooterOptions options;
 
     private InputManager inputManager;
 
@@ -62,6 +64,7 @@ public partial class SelectFooter : Container
                     Colour = FluXisColors.Background2
                 }
             },
+            options = new FooterOptions { Footer = this },
             keyboardContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -101,7 +104,7 @@ public partial class SelectFooter : Container
                                 Index = 1,
                                 Margin = new MarginPadding { Left = 160 }
                             },
-                            new SelectFooterButton
+                            options.Button = new SelectFooterButton
                             {
                                 Text = "Options",
                                 Icon = FontAwesome.Solid.Cog,
@@ -230,7 +233,10 @@ public partial class SelectFooter : Container
             Screen.RandomMap();
     }
 
-    public void OpenSettings() => Notifications.Post("This is still in development\nCome back later!");
+    public void OpenSettings()
+    {
+        options.ToggleVisibility();
+    }
 
     protected override bool OnClick(ClickEvent e) => true; // Prevents the click from going through to the map list
 }

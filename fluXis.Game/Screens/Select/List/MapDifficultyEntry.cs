@@ -3,7 +3,6 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
-using fluXis.Game.Screens.Edit;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,7 +11,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
-using osu.Framework.Screens;
 using osuTK;
 using Box = osu.Framework.Graphics.Shapes.Box;
 
@@ -34,19 +32,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                     screen.MapInfo.Value = map;
                     screen.Accept();
                 }),
-                new FluXisMenuItem("Edit", FontAwesome.Solid.Pen, MenuItemType.Normal, () =>
-                {
-                    var screen = mapListEntry.Screen;
-
-                    screen.MapSet.Value = map.MapSet;
-                    screen.MapInfo.Value = map;
-
-                    var loadedMap = map.GetMapInfo();
-                    if (loadedMap == null) return;
-
-                    var editor = new Editor(map, loadedMap);
-                    screen.Push(editor);
-                })
+                new FluXisMenuItem("Edit", FontAwesome.Solid.Pen, MenuItemType.Normal, () => mapListEntry.Screen.EditMapSet(map))
             };
 
             if (FluXisGameBase.IsDebug)

@@ -11,10 +11,12 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.Footer;
 using fluXis.Game.Screens.Select.Info;
@@ -386,6 +388,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         MapInfo.Value = listEntry.Maps[current];
     }
 
+    public void OpenDeleteConfirm()
+    {
+        Game.Overlay ??= new ConfirmDeletionPanel(() => DeleteMapSet(MapSet.Value), itemName: "MapSet") { ButtonWidth = 200 };
+    }
+
     public void DeleteMapSet(RealmMapSet set)
     {
         if (set == null)
@@ -684,5 +691,17 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
             backgrounds.SetBlur(BackgroundBlur, 500);
         else
             backgrounds.SetBlur(0, 500);
+    }
+
+    public void EditMapSet(RealmMap map)
+    {
+        MapSet.Value = map.MapSet;
+        MapInfo.Value = map;
+
+        var loadedMap = map.GetMapInfo();
+        if (loadedMap == null) return;
+
+        var editor = new Editor(map, loadedMap);
+        this.Push(editor);
     }
 }

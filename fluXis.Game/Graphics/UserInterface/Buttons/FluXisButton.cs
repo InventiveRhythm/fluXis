@@ -1,7 +1,9 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,6 +17,7 @@ public partial class FluXisButton : ClickableContainer
     public int FontSize { get; set; } = 24;
     public string Text { get; set; } = "Default Text";
     public Colour4 Color { get; set; } = FluXisColors.Background4;
+    public bool HoldToConfirm { get; set; }
 
     public ButtonData Data
     {
@@ -23,6 +26,7 @@ public partial class FluXisButton : ClickableContainer
             Text = value.Text;
             Action = value.Action;
             Color = value.Color;
+            HoldToConfirm = value.HoldToConfirm;
         }
     }
 
@@ -30,11 +34,14 @@ public partial class FluXisButton : ClickableContainer
     private UISamples samples { get; set; }
 
     private Box hoverBox;
+    private Box holdBox;
     private Box flashBox;
     private CircularContainer content;
 
+    private HoldToConfirmHandler holdToConfirmHandler;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
         InternalChild = content = new CircularContainer
         {
@@ -44,6 +51,13 @@ public partial class FluXisButton : ClickableContainer
             Masking = true,
             Children = new Drawable[]
             {
+                holdToConfirmHandler = new HoldToConfirmHandler
+                {
+                    Action = () => Action?.Invoke(),
+                    HoldTime = config.GetBindable<float>(FluXisSetting.HoldToConfirm),
+                    AutoActivate = false,
+                    Interpolate = true
+                },
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -53,6 +67,12 @@ public partial class FluXisButton : ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
+                },
+                holdBox = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = .4f,
+                    Width = 0
                 },
                 flashBox = new Box
                 {
@@ -75,12 +95,28 @@ public partial class FluXisButton : ClickableContainer
         };
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        holdBox.Width = (float)holdToConfirmHandler.Progress;
+    }
+
     protected override bool OnClick(ClickEvent e)
+    {
+        if (HoldToConfirm)
+        {
+            if (holdToConfirmHandler.Finished) triggerClick();
+        }
+        else triggerClick();
+
+        return true;
+    }
+
+    private void triggerClick(ClickEvent e = null)
     {
         flashBox.FadeOutFromOne(1000, Easing.OutQuint);
         base.OnClick(e);
         samples.Click();
-        return true;
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -98,12 +134,19 @@ public partial class FluXisButton : ClickableContainer
     protected override bool OnMouseDown(MouseDownEvent e)
     {
         content.ScaleTo(0.95f, 1000, Easing.OutQuint);
+
+        if (HoldToConfirm)
+            holdToConfirmHandler.StartHold();
+
         return true;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
         content.ScaleTo(1, 1000, Easing.OutElastic);
+
+        if (HoldToConfirm)
+            holdToConfirmHandler.StopHold();
     }
 }
 
@@ -112,4 +155,5 @@ public class ButtonData
     public string Text { get; init; } = "Default Text";
     public Colour4 Color { get; init; } = FluXisColors.Background2;
     public Action Action { get; init; } = () => { };
+    public bool HoldToConfirm { get; init; }
 }

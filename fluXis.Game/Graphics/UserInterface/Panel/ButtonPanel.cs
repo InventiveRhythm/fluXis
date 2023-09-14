@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,7 +12,9 @@ namespace fluXis.Game.Graphics.UserInterface.Panel;
 public partial class ButtonPanel : Panel
 {
     public string Text { get; set; }
+    public string SubText { get; set; }
     public ButtonData[] Buttons { get; set; }
+    public float ButtonWidth { get; init; } = 150;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -21,16 +24,34 @@ public partial class ButtonPanel : Panel
 
         Content.Children = new Drawable[]
         {
-            new FluXisTextFlow
+            new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Text = Text,
-                FontSize = 30,
-                TextAnchor = Anchor.TopCentre,
-                Shadow = true,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
+                {
+                    new FluXisTextFlow
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Text = Text,
+                        FontSize = 30,
+                        TextAnchor = Anchor.TopCentre,
+                        Shadow = true
+                    },
+                    new FluXisTextFlow
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Text = SubText,
+                        FontSize = 22,
+                        Colour = FluXisColors.Text2,
+                        TextAnchor = Anchor.TopCentre,
+                        Shadow = true
+                    }
+                }
             },
             new FillFlowContainer
             {
@@ -42,10 +63,9 @@ public partial class ButtonPanel : Panel
                 Spacing = new Vector2(20),
                 Children = Buttons.Select(b => new FluXisButton
                 {
+                    Width = ButtonWidth,
                     RelativeSizeAxes = Axes.Y,
-                    Width = 150,
-                    Text = b.Text,
-                    Color = b.Color,
+                    Data = b,
                     Action = () =>
                     {
                         b.Action?.Invoke();
