@@ -16,7 +16,6 @@ public class RealmMapSet : RealmObject
     public int OnlineID { get; set; } = -1;
     public string Cover { get; set; } = "cover.png";
     public IList<RealmMap> Maps { get; } = null!;
-    public IList<RealmFile> Files { get; } = null!;
 
     [Ignored]
     public RealmMapMetadata Metadata => Maps.FirstOrDefault()?.Metadata ?? new RealmMapMetadata();
@@ -28,11 +27,10 @@ public class RealmMapSet : RealmObject
     [CanBeNull]
     public MapResourceProvider Resources { get; set; }
 
-    public RealmMapSet([CanBeNull] List<RealmMap> maps = null, [CanBeNull] List<RealmFile> files = null)
+    public RealmMapSet([CanBeNull] List<RealmMap> maps = null)
     {
         ID = Guid.NewGuid();
         Maps = maps ?? new List<RealmMap>();
-        Files = files ?? new List<RealmFile>();
     }
 
     [UsedImplicitly]
@@ -45,20 +43,11 @@ public class RealmMapSet : RealmObject
         var backgrounds = Resources?.BackgroundStore;
         if (backgrounds == null) return null;
 
-        var coverFile = GetFile(Cover);
-
-        if (coverFile != null)
-        {
-            var texture = backgrounds.Get(coverFile.Path);
-            if (texture != null) return texture;
-        }
-
-        var backgroundFile = GetFile(Metadata.Background);
-        return backgroundFile == null ? null : backgrounds.Get(backgroundFile.Path);
+        var texture = backgrounds.Get(GetPathForFile(Cover));
+        return texture ?? backgrounds.Get(GetPathForFile(Metadata.Background));
     }
 
-    public RealmFile GetFile(string name) => Files.FirstOrDefault(setFile => setFile.Name == name);
-    public RealmFile GetFileFromHash(string hash) => Files.FirstOrDefault(setFile => setFile.Hash == hash);
+    public string GetPathForFile(string filename) => $"{ID.ToString()}/{filename}";
     public override string ToString() => ID.ToString();
 
     public void SetStatus(int status)

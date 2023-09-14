@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
-using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Map;
@@ -158,11 +157,11 @@ public partial class BackgroundStack : CompositeDrawable
 
     public void AddBackgroundFromMap(RealmMap map)
     {
-        RealmFile file = map?.MapSet?.GetFile(map.Metadata?.Background);
+        string file = map?.MapSet?.GetPathForFile(map.Metadata?.Background);
 
         if (map != null)
         {
-            string path = file?.Path ?? map.Hash;
+            string path = file ?? map.Hash;
 
             if (path == currentBackground && !string.IsNullOrEmpty(path))
                 return;

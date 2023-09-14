@@ -94,11 +94,23 @@ public class MapEvents
             }
         }
 
+        sort();
+
         return this;
+    }
+
+    private void sort()
+    {
+        LaneSwitchEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        FlashEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        PulseEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        PlayfieldMoveEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public string Save()
     {
+        sort();
+
         var content = "";
         content += LaneSwitchEvents.Aggregate(string.Empty, (current, laneSwitch) => current + (laneSwitch + Environment.NewLine));
         content += FlashEvents.Aggregate(string.Empty, (current, flash) => current + (flash + Environment.NewLine));

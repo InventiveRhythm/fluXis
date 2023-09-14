@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
@@ -32,14 +32,12 @@ public class RealmMap : RealmObject
      */
     public int Status { get; set; } = -2;
 
+    public string FileName { get; set; } = string.Empty;
     public int OnlineID { get; set; } = -1;
     public string Hash { get; set; } = string.Empty;
     public RealmMapFilters Filters { get; set; } = null!;
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
-
-    [Ignored]
-    public RealmFile File => MapSet.Files.FirstOrDefault(f => f.Hash == Hash);
 
     public RealmMap([CanBeNull] RealmMapMetadata meta = null)
     {
@@ -59,8 +57,8 @@ public class RealmMap : RealmObject
     {
         try
         {
-            var path = RealmStorage.GetFullPath(File);
-            var json = System.IO.File.ReadAllText(path);
+            var path = MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
+            var json = File.ReadAllText(path);
             var hash = MapUtils.GetHash(json);
             MapInfo map = JsonConvert.DeserializeObject<MapInfo>(json);
             map.Map = this;
@@ -69,7 +67,7 @@ public class RealmMap : RealmObject
         }
         catch (Exception e)
         {
-            Logger.Error(e, "Failed to load map from path: " + File.Path);
+            Logger.Error(e, "Failed to load map from path: " + MapSet.GetPathForFile(FileName));
             return null;
         }
     }
@@ -77,28 +75,19 @@ public class RealmMap : RealmObject
     public virtual Texture GetBackground()
     {
         var backgrounds = MapSet.Resources?.BackgroundStore;
-        if (backgrounds == null) return null;
-
-        var file = MapSet.GetFile(Metadata.Background);
-        return file == null ? null : backgrounds.Get(file.Path);
+        return backgrounds?.Get(MapSet.GetPathForFile(Metadata.Background));
     }
 
     public virtual Texture GetPanelBackground()
     {
         var croppedBackgrounds = MapSet.Resources?.CroppedBackgroundStore;
-        if (croppedBackgrounds == null) return null;
-
-        var file = MapSet.GetFile(Metadata.Background);
-        return file == null ? null : croppedBackgrounds.Get(file.Path);
+        return croppedBackgrounds?.Get(MapSet.GetPathForFile(Metadata.Background));
     }
 
     public virtual Track GetTrack()
     {
         var tracks = MapSet.Resources?.TrackStore;
-        if (tracks == null) return null;
-
-        var file = MapSet.GetFile(Metadata.Audio);
-        return file == null ? null : tracks.Get(file.Path);
+        return tracks?.Get(MapSet.GetPathForFile(Metadata.Audio));
     }
 
     public static RealmMap CreateNew()

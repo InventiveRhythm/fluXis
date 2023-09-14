@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -30,7 +29,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -95,6 +93,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private DependencyContainer dependencies;
     private bool exitConfirmed;
     private bool isNewMap;
+    private string effectHash;
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
@@ -123,7 +122,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         MapInfo.KeyCount = Map.KeyCount;
 
         backgrounds.AddBackgroundFromMap(Map);
-        trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("files")));
+        trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("maps")));
 
         dependencies.CacheAs(waveform = new Bindable<Waveform>());
         dependencies.CacheAs(changeHandler = new EditorChangeHandler());
@@ -133,6 +132,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             MapEvents = MapInfo.MapEvents ?? new EditorMapEvents(),
             Editor = this
         });
+
+        effectHash = MapUtils.GetHash(values.MapEvents.Save());
 
         changeHandler.OnTimingPointAdded += () => Logger.Log("Timing point added");
         changeHandler.OnTimingPointRemoved += () => Logger.Log("Timing point removed");
@@ -260,7 +261,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private Track loadMapTrack()
     {
-        string path = Map.MapSet?.GetFile(Map.Metadata?.Audio)?.Path;
+        string path = Map.MapSet?.GetPathForFile(Map.Metadata?.Audio);
 
         Waveform w = null;
 
@@ -428,28 +429,39 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         MapInfo.Sort();
 
         string effects = values.MapEvents.Save();
-        var effectsHash = MapUtils.GetHash(effects);
-        var effectsPath = storage.GetFullPath($"files/{PathUtils.HashToPath(effectsHash)}");
-        var effectsDir = Path.GetDirectoryName(effectsPath);
 
-        if (!Directory.Exists(effectsDir))
-            Directory.CreateDirectory(effectsDir);
+        if (string.IsNullOrEmpty(effects))
+            MapInfo.EffectFile = "";
+        else
+        {
+            var fileName = string.IsNullOrEmpty(MapInfo.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : MapInfo.EffectFile;
+            var effectsPath = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(fileName));
+            var effectsDir = Path.GetDirectoryName(effectsPath);
 
-        File.WriteAllText(effectsPath, effects);
-        MapInfo.EffectFile = string.IsNullOrEmpty(MapInfo.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : MapInfo.EffectFile;
+            if (!Directory.Exists(effectsDir))
+                Directory.CreateDirectory(effectsDir);
+
+            File.WriteAllText(effectsPath, effects);
+            MapInfo.EffectFile = fileName;
+        }
 
         // get map as json
         string json = JsonConvert.SerializeObject(MapInfo);
         string hash = MapUtils.GetHash(json);
+        string effHash = MapUtils.GetHash(values.MapEvents.Save());
 
-        if (hash == Map.Hash)
+        if (hash == Map.Hash && effHash == effectHash)
         {
             notifications.Post("Map is already up to date");
             return true;
         }
 
+        effectHash = MapUtils.GetHash(values.MapEvents.Save());
+
+        Map.FileName = string.IsNullOrEmpty(Map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : Map.FileName;
+
         // write to file
-        string path = storage.GetFullPath($"files/{PathUtils.HashToPath(hash)}");
+        string path = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(Map.FileName));
         string dir = Path.GetDirectoryName(path);
 
         if (!Directory.Exists(dir))
@@ -466,7 +478,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             {
                 var set = existingMap.MapSet;
                 if (setStatus) set.SetStatus(-2);
-                var prevFile = existingMap.MapSet.GetFileFromHash(existingMap.Hash);
+                var prevFile = existingMap.MapSet.GetPathForFile(existingMap.Hash);
 
                 if (prevFile == null)
                 {
@@ -474,34 +486,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     return;
                 }
 
-                var toRemove = new List<RealmFile>();
-
-                foreach (var file in Map.MapSet.Files)
-                {
-                    if (set.Files.Any(f => f.Hash == file.Hash))
-                        continue;
-
-                    if (file.Name.EndsWith(".fsc"))
-                    {
-                        if (set.Maps.All(m => m.Hash != file.Hash))
-                        {
-                            toRemove.Add(file);
-                            continue;
-                        }
-                    }
-
-                    set.Files.Add(file);
-                }
-
-                foreach (var file in toRemove)
-                {
-                    Map.MapSet.Files.Remove(file);
-
-                    var f = set.Files.FirstOrDefault(f => f.Hash == file.Hash);
-                    if (f != null) set.Files.Remove(f);
-                }
-
-                prevFile.Hash = hash;
                 existingMap.Hash = hash;
                 Map.Hash = hash;
                 r.Remove(existingMap.Filters);
@@ -522,32 +506,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     PreviewTime = MapInfo.Metadata.PreviewTime
                 };
 
-                var effectsFile = set.GetFile(MapInfo.EffectFile);
-
-                if (effectsFile == null)
-                {
-                    set.Files.Add(new RealmFile
-                    {
-                        Hash = effectsHash,
-                        Name = MapInfo.EffectFile
-                    });
-                }
-                else
-                    effectsFile.Hash = effectsHash;
-
                 mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), set.Detach());
             }
             else
             {
-                var time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-                var set = Map.MapSet;
-                set.Files.Add(new RealmFile
-                {
-                    Hash = hash,
-                    Name = $"{time}.fsc"
-                });
-
                 Map.Hash = hash;
                 Map.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
                 Map.Difficulty = MapInfo.Metadata.Difficulty;
@@ -563,8 +525,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     PreviewTime = MapInfo.Metadata.PreviewTime
                 };
 
-                r.Add(set);
-                mapStore.AddMapSet(set.Detach());
+                r.Add(Map.MapSet);
+                mapStore.AddMapSet(Map.MapSet.Detach());
             }
         });
 
@@ -638,41 +600,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
     private void copyFile(FileInfo file)
     {
-        Stream s = file.OpenRead();
-        string hash = MapUtils.GetHash(s);
-        string path = storage.GetFullPath($"files/{PathUtils.HashToPath(hash)}");
+        string path = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(file.Name));
+        var dir = Path.GetDirectoryName(path);
 
-        if (!File.Exists(path))
-        {
-            string dir = Path.GetDirectoryName(path);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
 
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-
-            File.Copy(file.FullName, path);
-        }
-
-        if (Map.MapSet.Files.Any(f => f.Hash == hash))
-            return;
-
-        bool found = false;
-
-        Map.MapSet.Files.ForEach(f =>
-        {
-            if (f.Name == file.Name)
-            {
-                found = true;
-                f.Hash = hash;
-            }
-        });
-
-        if (found) return;
-
-        Map.MapSet.Files.Add(new RealmFile
-        {
-            Hash = hash,
-            Name = file.Name
-        });
+        File.Copy(file.FullName, path, true);
     }
 
     private void startUpload() => Task.Run(uploadSet);

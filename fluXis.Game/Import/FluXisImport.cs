@@ -44,22 +44,15 @@ public class FluXisImport : MapImporter
 
             ZipArchive archive = ZipFile.OpenRead(path);
 
-            List<RealmFile> files = new();
             List<RealmMap> maps = new();
 
-            RealmMapSet mapSet = new(maps, files);
+            RealmMapSet mapSet = new(maps);
 
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
                 string hash = GetHash(entry);
 
                 string filename = entry.FullName;
-
-                files.Add(new RealmFile
-                {
-                    Hash = hash,
-                    Name = entry.FullName
-                });
 
                 if (filename.EndsWith(".fsc"))
                 {
@@ -103,7 +96,8 @@ public class FluXisImport : MapImporter
                         Hash = hash,
                         KeyCount = keys,
                         Rating = 0,
-                        Status = MapStatus
+                        Status = MapStatus,
+                        FileName = filename
                     };
 
                     MapEvents events = new MapEvents();
@@ -140,20 +134,22 @@ public class FluXisImport : MapImporter
                 }
             }
 
-            if (files.Count > 0 && maps.Count > 0)
+            if (maps.Count > 0)
             {
                 Realm.RunWrite(realm =>
                 {
                     realm.Add(mapSet);
 
-                    foreach (var file in files)
-                    {
-                        string filePath = Storage.GetStorageForDirectory("files").GetFullPath(file.Path);
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                        if (File.Exists(filePath)) continue;
+                    var fullPath = MapFiles.GetFullPath(mapSet.ID.ToString()) + "/";
 
-                        ZipArchiveEntry entry = archive.GetEntry(file.Name);
-                        entry.ExtractToFile(filePath);
+                    if (!Directory.Exists(fullPath))
+                        Directory.CreateDirectory(fullPath);
+
+                    foreach (var entry in archive.Entries)
+                    {
+                        var filePath = fullPath + entry.Name;
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                        entry.ExtractToFile(filePath, true);
                     }
 
                     archive.Dispose();

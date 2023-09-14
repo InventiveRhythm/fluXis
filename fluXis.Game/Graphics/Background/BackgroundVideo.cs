@@ -57,13 +57,13 @@ public partial class BackgroundVideo : CompositeDrawable
             return;
         }
 
-        var file = Map.MapSet.GetFile(Info.VideoFile);
+        var file = Map.MapSet.GetPathForFile(Info.VideoFile);
 
         if (file == null) return;
 
         try
         {
-            var path = RealmStorage.GetFullPath(file);
+            var path = MapFiles.GetFullPath(file);
             Logger.Log($"Loading video: {path}", LoggingTarget.Runtime, LogLevel.Debug);
             Stream stream = File.OpenRead(path);
 
@@ -85,7 +85,7 @@ public partial class BackgroundVideo : CompositeDrawable
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"Failed to load video: {file.Path}");
+            Logger.Error(e, $"Failed to load video: {file}");
         }
     }
 

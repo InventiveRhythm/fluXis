@@ -8,6 +8,7 @@ using fluXis.Game.Database.Score;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
 using osu.Framework.Development;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
 using Realms.Dynamic;
@@ -26,7 +27,7 @@ public class FluXisRealm : IDisposable
     /// 8 - Added PlayerID to RealmScore
     /// 9 - Removed RealmJudgements and moved to RealmScore
     /// </summary>
-    private const int schema_version = 9;
+    private const int schema_version = 10;
 
     private Realm updateRealm;
 
@@ -92,7 +93,7 @@ public class FluXisRealm : IDisposable
 
                     if (!string.IsNullOrEmpty(map.EffectFile))
                     {
-                        RealmFile effectFile = newMap.MapSet.GetFile(map.EffectFile);
+                        dynamic effectFile = newMap.MapSet.GetPathForFile(map.EffectFile);
                         string effectPath = storage.GetFullPath("files/" + PathUtils.HashToPath(effectFile.Hash));
                         string content = File.ReadAllText(effectPath);
                         events.Load(content);
@@ -137,6 +138,56 @@ public class FluXisRealm : IDisposable
                     newScore.Okay = (int)judgement.Okay;
                     newScore.Miss = (int)judgement.Miss;
                 }
+
+                break;
+
+            case 10:
+                var mapsets = migration.OldRealm.DynamicApi.All("RealmMapSet").ToList();
+                var newMapsets = migration.NewRealm.All<RealmMapSet>().ToList();
+
+                foreach (var mapset in mapsets)
+                {
+                    var guid = mapset.DynamicApi.Get<Guid>("ID");
+                    var newMapset = newMapsets.FirstOrDefault(m => m.ID == guid);
+                    if (newMapset == null) throw new Exception("Failed to find mapset");
+
+                    string folder = guid.ToString();
+                    var maps = (RealmList<dynamic>)mapset.DynamicApi.GetList<dynamic>("Maps");
+                    var files = (RealmList<dynamic>)mapset.DynamicApi.GetList<dynamic>("Files");
+
+                    foreach (var map in maps)
+                    {
+                        var id = map.DynamicApi.Get<Guid>("ID");
+                        var newMap = newMapset.Maps.FirstOrDefault(m => m.ID == id);
+                        if (newMap == null) throw new Exception("Failed to find map");
+
+                        var file = files.FirstOrDefault(f => f.DynamicApi.Get<string>("Hash") == newMap.Hash);
+                        if (file == null) throw new Exception("Failed to find file");
+
+                        newMap.FileName = file.DynamicApi.Get<string>("Name");
+                    }
+
+                    var fullFolder = storage.GetFullPath("maps/" + folder) + "/";
+                    Logger.Log($"Migrating mapset {folder} to {fullFolder}");
+
+                    foreach (var file in files)
+                    {
+                        var name = file.Name;
+                        var hash = file.Hash;
+
+                        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(hash)) continue;
+
+                        var path = PathUtils.HashToPath(hash);
+                        var fullPath = storage.GetFullPath("files/" + path);
+
+                        if (!File.Exists(fullPath)) continue;
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(fullFolder + name));
+                        File.Copy(fullPath, fullFolder + name, true);
+                    }
+                }
+
+                Directory.Delete(storage.GetFullPath("files"), true);
 
                 break;
         }

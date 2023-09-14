@@ -97,7 +97,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     [BackgroundDependencyLoader]
     private void load(Storage storage, FluXisConfig config)
     {
-        realmStorage = storage.GetStorageForDirectory("files");
+        realmStorage = storage.GetStorageForDirectory("maps");
         realmTrackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(realmStorage));
         AddInternal(LowPassFilter = new LowPassFilter(audioManager.TrackMixer));
         offset = config.GetBindable<float>(FluXisSetting.GlobalOffset);
@@ -109,22 +109,14 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         AllowLimitedLoop = true; // reset
         Volume = 1;
 
-        string hash = info.MapSet.GetFile(info.Metadata.Audio)?.Hash;
-        bool sameTrack = hash == trackHash && !string.IsNullOrEmpty(hash);
+        Stop();
+        Seek(0);
+        ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
 
-        if (!sameTrack)
-        {
-            Stop();
-            Seek(0);
-            ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
-            trackHash = hash;
+        Seek(usePreview ? info.Metadata.PreviewTime : 0);
+        game.OnSongChanged?.Invoke();
 
-            Seek(usePreview ? info.Metadata.PreviewTime : 0);
-            game.OnSongChanged?.Invoke();
-
-            if (start) Start();
-        }
-        else if (start && !IsRunning) Start();
+        if (start) Start();
 
         Task.Run(() =>
         {

@@ -50,7 +50,7 @@ public partial class MapStore : Component
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
     {
-        files = storage.GetStorageForDirectory("files");
+        files = storage.GetStorageForDirectory("maps");
 
         Logger.Log("Loading maps...");
 
@@ -130,9 +130,6 @@ public partial class MapStore : Component
             foreach (var map in mapSetToDelete.Maps)
                 r.Remove(map);
 
-            foreach (var file in mapSetToDelete.Files)
-                r.Remove(file);
-
             r.Remove(mapSetToDelete);
 
             MapSets.Remove(mapSet);
@@ -152,36 +149,38 @@ public partial class MapStore : Component
     {
         try
         {
-            string folder = storage.GetFullPath("export");
-            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            string exportFolder = storage.GetFullPath("export");
+            if (!Directory.Exists(exportFolder)) Directory.CreateDirectory(exportFolder);
 
-            string path = Path.Combine(folder, $"{set.Metadata.Title} - {set.Metadata.Artist}.fms");
+            string path = Path.Combine(exportFolder, $"{set.Metadata.Title} - {set.Metadata.Artist} [{set.Metadata.Mapper}].fms");
             if (File.Exists(path)) File.Delete(path);
             ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
 
-            int max = set.Files.Count;
+            var setFolder = MapFiles.GetFullPath(set.ID.ToString());
+            var setFiles = Directory.GetFiles(setFolder);
+
+            int max = setFiles.Length;
             int current = 0;
 
             var fileNames = new List<string>();
 
-            foreach (var file in set.Files)
+            foreach (var fullFilePath in setFiles)
             {
-                if ((file.Name.EndsWith(".fsc") && set.Maps.All(m => m.Hash != file.Hash)) || fileNames.Contains(file.Name)) continue;
+                var file = Path.GetFileName(fullFilePath);
+                Logger.Log($"Exporting {file}");
 
-                Logger.Log($"Exporting {file.Name}");
-
-                var entry = archive.CreateEntry(file.Name);
+                var entry = archive.CreateEntry(file);
                 using var stream = entry.Open();
-                using var fileStream = files.GetStream(file.Path);
+                using var fileStream = File.OpenRead(fullFilePath);
                 fileStream.CopyTo(stream);
-                fileNames.Add(file.Name);
+                fileNames.Add(file.Replace(setFolder, ""));
                 current++;
                 notification.Progress = (float)current / max;
             }
 
             archive.Dispose();
             notification.State = LoadingState.Loaded;
-            if (openFolder) PathUtils.OpenFolder(folder);
+            if (openFolder) PathUtils.OpenFolder(exportFolder);
             return path;
         }
         catch (Exception e)

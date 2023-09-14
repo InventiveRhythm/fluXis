@@ -121,10 +121,12 @@ public class MapInfo
         var events = new MapEvents();
         if (Map == null) return events;
 
-        var effectFile = Map.MapSet.GetFile(EffectFile);
-        if (effectFile == null) return events;
+        var effectFile = Map.MapSet.GetPathForFile(EffectFile);
+        if (string.IsNullOrEmpty(effectFile)) return events;
 
-        var content = File.ReadAllText(RealmStorage.GetFullPath(effectFile));
+        if (!File.Exists(MapFiles.GetFullPath(effectFile))) return events;
+
+        var content = File.ReadAllText(MapFiles.GetFullPath(effectFile));
         events.Load(content);
         return events;
     }
