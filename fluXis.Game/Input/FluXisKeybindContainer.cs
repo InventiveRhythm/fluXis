@@ -35,6 +35,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
     {
         getBinding(FluXisKeybind.Select, InputKey.Enter),
         getBinding(FluXisKeybind.Back, InputKey.Escape),
+        new KeyBinding(InputKey.ExtraMouseButton1, FluXisKeybind.Back),
         getBinding(FluXisKeybind.Previous, InputKey.Up),
         getBinding(FluXisKeybind.Next, InputKey.Down),
         getBinding(FluXisKeybind.PreviousGroup, InputKey.Left),
@@ -42,6 +43,7 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
         getBinding(FluXisKeybind.ToggleSettings, new KeyCombination(InputKey.Control, InputKey.O)),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.Shift, InputKey.S), FluXisKeybind.OpenSkinEditor),
         getBinding(FluXisKeybind.ToggleDashboard, new KeyCombination(InputKey.Control, InputKey.D)),
+        getBinding(FluXisKeybind.Home, new KeyCombination(InputKey.Control, InputKey.H)),
         getBinding(FluXisKeybind.Delete, InputKey.Delete),
         getBinding(FluXisKeybind.MusicPrevious, InputKey.F5),
         getBinding(FluXisKeybind.MusicPause, InputKey.F6),
@@ -187,6 +189,7 @@ public enum FluXisKeybind
     ToggleSettings,
     OpenSkinEditor,
     ToggleDashboard,
+    Home,
     Delete,
     MusicPrevious,
     MusicPause,

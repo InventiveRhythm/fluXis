@@ -14,6 +14,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game;
@@ -155,6 +156,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
 
             case FluXisKeybind.OpenSkinEditor:
                 OpenSkinEditor();
+                return true;
+
+            case FluXisKeybind.Home:
+                Toolbar.MenuScreen?.MakeCurrent(); // stupid to use it from Toolbar, but it works
                 return true;
         }
 
