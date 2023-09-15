@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
@@ -94,7 +95,7 @@ public partial class HitObject : CompositeDrawable
 
     protected override void Update()
     {
-        var missTime = 150 * clock.Rate;
+        var missTime = manager.Playfield.Screen.HitWindows.TimingFor(Judgement.Miss);
 
         Missed = (clock.CurrentTime - Data.Time > missTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && clock.CurrentTime - Data.HoldEndTime > missTime);
         Hitable = clock.CurrentTime - Data.Time > -missTime && !Missed;
