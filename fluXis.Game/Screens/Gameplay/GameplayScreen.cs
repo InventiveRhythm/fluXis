@@ -23,6 +23,7 @@ using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
 using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
+using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -87,6 +88,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     private static bool showDebug;
 
     private FailOverlay failOverlay;
+    private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
     private QuickActionOverlay quickActionOverlay;
 
@@ -216,6 +218,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             new LaneSwitchAlert { Playfield = Playfield },
             new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
             failOverlay = new FailOverlay { Screen = this },
+            failMenu = new FailMenu { Screen = this },
             fcOverlay = new FullComboOverlay(),
             quickActionOverlay = new QuickActionOverlay(),
             new GameplayTouchInput { Screen = this },
@@ -334,13 +337,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public virtual void OnDeath()
     {
-        failOverlay.Show();
-        AudioClock.RateTo(0f, 2000, Easing.OutQuart).OnComplete(_ =>
+        // failOverlay.Show();
+        failMenu.Show();
+        AudioClock.RateTo(.4f, 2000, Easing.OutQuart).OnComplete(_ =>
         {
-            AudioClock.PlayTrack("Gameplay/DeathLoop.mp3");
-            AudioClock.RestartPoint = 0;
-            AudioClock.Looping = true;
-            AudioClock.RateTo(1, 0);
+            // AudioClock.PlayTrack("Gameplay/DeathLoop.mp3");
+            // AudioClock.RestartPoint = 0;
+            // AudioClock.Looping = true;
+            // AudioClock.RateTo(1, 0);
             AudioClock.LowPassFilter.CutoffTo(0);
             ScheduleAfterChildren(AudioClock.Start);
         });
@@ -375,9 +379,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         if (HealthProcessor.Failed)
         {
-            AudioClock.LoadMap(RealmMap, true);
-            AudioClock.SeekForce(HealthProcessor.FailTime);
-            AudioClock.RateTo(0, 0);
+            // AudioClock.LoadMap(RealmMap, true);
+            // AudioClock.SeekForce(HealthProcessor.FailTime);
+            // AudioClock.RateTo(0, 0);
             AudioClock.LowPassFilter.CutoffTo(0);
         }
 
