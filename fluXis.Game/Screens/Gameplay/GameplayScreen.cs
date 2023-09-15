@@ -161,9 +161,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         InternalChildren = new Drawable[]
         {
             Input,
-            new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
-            new PulseEffect { ParentScreen = this },
-            Playfield = new Playfield { Screen = this },
+            new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()) { Clock = AudioClock },
+            new PulseEffect { ParentScreen = this, Clock = AudioClock },
+            Playfield = new Playfield { Screen = this, Clock = AudioClock },
             hud = new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -216,7 +216,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             new AutoPlayDisplay { Screen = this },
             new DangerHealthOverlay { Screen = this },
             new LaneSwitchAlert { Playfield = Playfield },
-            new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()),
+            new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = AudioClock },
             failOverlay = new FailOverlay { Screen = this },
             failMenu = new FailMenu { Screen = this },
             fcOverlay = new FullComboOverlay(),

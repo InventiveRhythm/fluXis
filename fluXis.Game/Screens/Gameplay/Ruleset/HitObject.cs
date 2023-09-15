@@ -1,4 +1,3 @@
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring.Enums;
@@ -16,9 +15,6 @@ public partial class HitObject : CompositeDrawable
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
-
-    [Resolved]
-    private AudioClock clock { get; set; }
 
     public HitObjectInfo Data;
     private double scrollVelocityTime { get; }
@@ -97,9 +93,9 @@ public partial class HitObject : CompositeDrawable
     {
         var missTime = manager.Playfield.Screen.HitWindows.TimingFor(Judgement.Miss);
 
-        Missed = (clock.CurrentTime - Data.Time > missTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && clock.CurrentTime - Data.HoldEndTime > missTime);
-        Hitable = clock.CurrentTime - Data.Time > -missTime && !Missed;
-        Releasable = Data.IsLongNote() && clock.CurrentTime - Data.HoldEndTime > -missTime && !Missed;
+        Missed = (Clock.CurrentTime - Data.Time > missTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Clock.CurrentTime - Data.HoldEndTime > missTime);
+        Hitable = Clock.CurrentTime - Data.Time > -missTime && !Missed;
+        Releasable = Data.IsLongNote() && Clock.CurrentTime - Data.HoldEndTime > -missTime && !Missed;
 
         var receptor = manager.Playfield.Receptors[Data.Lane - 1];
 

@@ -28,7 +28,7 @@ public partial class PulseEffect : Container
     {
         if (pulses.Count == 0) return;
 
-        var time = ParentScreen.AudioClock.CurrentTime;
+        var time = Clock.CurrentTime;
 
         if (time >= pulses[0].Time)
         {

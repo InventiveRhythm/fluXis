@@ -1,4 +1,3 @@
-using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
@@ -16,9 +15,6 @@ public partial class Playfield : Container
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
-
-    [Resolved]
-    private AudioClock clock { get; set; }
 
     public GameplayScreen Screen { get; init; }
 
@@ -126,7 +122,7 @@ public partial class Playfield : Container
 
         foreach (var pmEvent in Screen.MapEvents.PlayfieldMoveEvents)
         {
-            if (pmEvent.Time <= clock.CurrentTime) currentPlayfieldMoveEvent = pmEvent;
+            if (pmEvent.Time <= Clock.CurrentTime) currentPlayfieldMoveEvent = pmEvent;
         }
 
         if (ev != currentPlayfieldMoveEvent)

@@ -20,9 +20,6 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class HitObjectManager : Container<HitObject>
 {
-    [Resolved]
-    private AudioClock clock { get; set; }
-
     public int InternalChildCount => InternalChildren.Count;
 
     private Bindable<bool> useSnapColors;
@@ -64,8 +61,8 @@ public partial class HitObjectManager : Container<HitObject>
     public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
 
     public bool Break => timeUntilNextHitObject >= 2000;
-    private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - clock.CurrentTime;
-    private double maxHitObjectTime => PositionFromTime(clock.CurrentTime) + 2000 * Playfield.Screen.Rate / ScrollSpeed;
+    private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - Clock.CurrentTime;
+    private double maxHitObjectTime => PositionFromTime(Clock.CurrentTime) + 2000 * Playfield.Screen.Rate / ScrollSpeed;
 
     private HitObjectInfo nextHitObject
     {
@@ -101,7 +98,7 @@ public partial class HitObjectManager : Container<HitObject>
         newTime = Math.Max(newTime, 0);
 
         skipNextHitSounds = true;
-        clock.Seek(newTime);
+        (Clock as AudioClock)?.Seek(newTime);
 
         if (newTime < prevTime)
         {
@@ -197,16 +194,12 @@ public partial class HitObjectManager : Container<HitObject>
 
         foreach (var laneSwitchEvent in Playfield.Screen.MapEvents.LaneSwitchEvents)
         {
-            if (laneSwitchEvent.Time <= clock.CurrentTime)
+            if (laneSwitchEvent.Time <= Clock.CurrentTime)
             {
                 CurrentKeyCount = laneSwitchEvent.Count;
                 CurrentLaneSwitchEvent = laneSwitchEvent;
             }
         }
-
-        /*Health = Math.Clamp(Health, 0, 100);
-        if (Health == 0 && !Dead && HealthMode != HealthMode.Requirement && !Playfield.Screen.Mods.Any(m => m is NoFailMod))
-            Playfield.Screen.Die();*/
 
         base.Update();
     }
@@ -215,17 +208,17 @@ public partial class HitObjectManager : Container<HitObject>
     {
         int curSv = 0;
 
-        while (Map.ScrollVelocities != null && curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= clock.CurrentTime)
+        while (Map.ScrollVelocities != null && curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= Clock.CurrentTime)
             curSv++;
 
-        CurrentTime = PositionFromTime(clock.CurrentTime, curSv);
+        CurrentTime = PositionFromTime(Clock.CurrentTime, curSv);
     }
 
     private void updateAutoPlay()
     {
         bool[] pressed = new bool[Map.KeyCount];
 
-        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= clock.CurrentTime).ToList();
+        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Clock.CurrentTime).ToList();
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
@@ -241,7 +234,7 @@ public partial class HitObjectManager : Container<HitObject>
             hitObject.IsBeingHeld = true;
             pressed[hitObject.Data.Lane - 1] = true;
 
-            if (hitObject.Data.HoldEndTime <= clock.CurrentTime)
+            if (hitObject.Data.HoldEndTime <= Clock.CurrentTime)
                 hit(hitObject, true);
         }
 
@@ -310,7 +303,7 @@ public partial class HitObjectManager : Container<HitObject>
 
     private void hit(HitObject hitObject, bool isHoldEnd)
     {
-        double diff = isHoldEnd ? hitObject.Data.HoldEndTime - clock.CurrentTime : hitObject.Data.Time - clock.CurrentTime;
+        double diff = isHoldEnd ? hitObject.Data.HoldEndTime - Clock.CurrentTime : hitObject.Data.Time - Clock.CurrentTime;
         diff = AutoPlay ? 0 : diff;
         hitObject.GotHit = true;
 

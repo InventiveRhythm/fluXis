@@ -16,9 +16,6 @@ public partial class LaneSwitchAlert : Container
     [Resolved]
     private FluXisConfig config { get; set; }
 
-    [Resolved]
-    private AudioClock clock { get; set; }
-
     public Playfield Playfield { get; set; }
 
     private LaneSwitchEvent currentEvent;
@@ -74,6 +71,7 @@ public partial class LaneSwitchAlert : Container
 
     protected override void Update()
     {
+        if (Playfield.Clock is not AudioClock clock) return;
         if (Playfield.Screen.IsPaused.Value) return;
 
         leftContainer.X = -Playfield.Stage.Width / 2 - 100;

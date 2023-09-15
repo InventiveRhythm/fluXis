@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map.Events;
 using osu.Framework.Allocation;
@@ -11,9 +10,6 @@ namespace fluXis.Game.Screens.Gameplay.Overlay.Effect;
 
 public partial class FlashOverlay : Container
 {
-    [Resolved]
-    private AudioClock clock { get; set; }
-
     private readonly List<FlashEvent> flashes;
     private readonly Box flash;
 
@@ -38,7 +34,7 @@ public partial class FlashOverlay : Container
 
     protected override void Update()
     {
-        while (flashes.Count > 0 && flashes[0].Time <= clock.CurrentTime)
+        while (flashes.Count > 0 && flashes[0].Time <= Clock.CurrentTime)
         {
             var flashEvent = flashes[0];
 
