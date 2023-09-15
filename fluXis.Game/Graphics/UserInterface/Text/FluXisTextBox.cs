@@ -100,12 +100,19 @@ public partial class FluXisTextBox : BasicTextBox
         accept?.Play();
     }
 
+    private double lastSelectionTime;
+
     protected override void OnTextSelectionChanged(TextSelectionType selectionType)
     {
         switch (selectionType)
         {
             case TextSelectionType.Character:
-                selectChar?.Play();
+                if (Time.Current - lastSelectionTime > 50)
+                {
+                    selectChar?.Play();
+                    lastSelectionTime = Time.Current;
+                }
+
                 break;
 
             case TextSelectionType.Word:
