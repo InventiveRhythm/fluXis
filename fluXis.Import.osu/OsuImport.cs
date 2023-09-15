@@ -39,21 +39,45 @@ public class OsuImport : MapImporter
 
             ZipArchive osz = ZipFile.OpenRead(path);
 
+            var success = 0;
+            var failed = 0;
+
             foreach (var entry in osz.Entries)
             {
                 if (entry.FullName.EndsWith(".osu"))
                 {
-                    OsuMap map = parseOsuMap(entry);
-                    string json = JsonConvert.SerializeObject(map.ToMapInfo());
-                    WriteFile(json, folder + "/" + entry.FullName + ".fsc");
+                    try
+                    {
+                        OsuMap map = parseOsuMap(entry);
+                        string json = JsonConvert.SerializeObject(map.ToMapInfo());
+                        WriteFile(json, folder + "/" + entry.FullName + ".fsc");
 
-                    notification.TextSuccess = $"Imported osu! map: {map.Artist} - {map.Title}";
+                        notification.TextSuccess = $"Imported osu! map: {map.Artist} - {map.Title}";
+                        success++;
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e, "Error while importing osu! map");
+                        failed++;
+                    }
                 }
                 else
                     CopyFile(entry, folder);
             }
 
             osz.Dispose();
+
+            if (success == 0)
+            {
+                if (failed == 0)
+                    notification.TextFailure = "No osu!mania maps found in the .osz file";
+
+                notification.State = LoadingState.Failed;
+                return;
+            }
+
+            if (failed > 0)
+                notification.TextSuccess += $" ({failed} failed)";
 
             ZipArchive fms = ZipFile.Open(Path.Combine(Storage.GetFullPath("import"), folder + ".fms"), ZipArchiveMode.Create);
 
