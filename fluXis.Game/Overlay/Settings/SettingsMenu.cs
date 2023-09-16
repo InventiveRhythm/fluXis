@@ -110,7 +110,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
 
     private void createSection(SettingsSection section)
     {
-        Selector.AddTab(new SettingsCategoryTab(this, section));
+        Selector.AddTab(new SettingsCategoryTab(this) { Section = section });
         sectionContent.Add(section);
     }
 
@@ -198,11 +198,9 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
     {
         public SettingsMenu Menu { get; init; }
 
-        private CircularContainer line;
         public FillFlowContainer<SettingsCategoryTab> Tabs;
 
         private SettingsCategoryTab selectedTab;
-
         private Sample tabSwitch;
 
         [BackgroundDependencyLoader]
@@ -210,49 +208,30 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         {
             tabSwitch = samples.Get(@"UI/change-tab");
 
-            Height = 50;
+            Height = 70;
             AutoSizeAxes = Axes.X;
             Content.Origin = Content.Anchor = Anchor.TopCentre;
 
             InternalChildren = new Drawable[]
             {
+                new Box
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Width = 5f,
+                    Height = 3f,
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Colour = FluXisColors.Background4
+                },
                 Tabs = new FillFlowContainer<SettingsCategoryTab>
                 {
                     RelativeSizeAxes = Axes.Y,
                     AutoSizeAxes = Axes.X,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
+                    Margin = new MarginPadding { Top = 10 },
                     Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(10, 0)
-                },
-                new Box
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Width = 4,
-                    Height = 3,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Colour = FluXisColors.Background4
-                },
-                new Container
-                {
-                    Height = 5,
-                    RelativeSizeAxes = Axes.X,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Y = 1,
-                    Child = line = new CircularContainer
-                    {
-                        Height = 5,
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Masking = true,
-                        Child = new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.White
-                        }
-                    }
+                    Spacing = new Vector2(5, 0)
                 }
             };
         }
@@ -262,11 +241,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
             ScheduleAfterChildren(() => SelectTab());
         }
 
-        public void AddTab(SettingsCategoryTab tab)
-        {
-            tab.Index = Tabs.Children.Count;
-            Tabs.Add(tab);
-        }
+        public void AddTab(SettingsCategoryTab tab) => Tabs.Add(tab);
 
         public void SelectTab(SettingsCategoryTab tab = null)
         {
@@ -302,9 +277,6 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
             tab.Select();
             Menu.selectSection(tab.Section);
             tabSwitch?.Play();
-
-            line.ResizeWidthTo(tab.TabContent.DrawWidth + 10, 400, Easing.OutQuint)
-                .MoveToX(tab.Index * 60, 400, Easing.OutQuint);
 
             foreach (var child in Tabs.Children)
             {
