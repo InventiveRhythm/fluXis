@@ -6,8 +6,10 @@ namespace fluXis.Game.Audio;
 
 public partial class UISamples : Component
 {
-    private Sample hover { get; set; }
-    private Sample click { get; set; }
+    private Sample hover;
+    private Sample click;
+    private Sample dropdownOpen;
+    private Sample dropdownClose;
 
     private const int debounce_time = 50;
 
@@ -19,6 +21,8 @@ public partial class UISamples : Component
     {
         hover = samples.Get("UI/hover");
         click = samples.Get("UI/click");
+        dropdownOpen = samples.Get("UI/dropdown-open");
+        dropdownClose = samples.Get("UI/dropdown-close");
     }
 
     public void Hover()
@@ -37,5 +41,13 @@ public partial class UISamples : Component
 
         click?.Play();
         lastClickTime = Time.Current;
+    }
+
+    public void Dropdown(bool close)
+    {
+        if (close)
+            dropdownClose?.Play();
+        else
+            dropdownOpen?.Play();
     }
 }

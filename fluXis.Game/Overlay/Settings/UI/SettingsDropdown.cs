@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -105,6 +106,11 @@ public partial class SettingsDropdown<T> : SettingsItem
                 ScrollbarVisible = false
             };
 
+            [Resolved]
+            private UISamples samples { get; set; }
+
+            private bool justLoaded = true;
+
             public FluXisDropdownMenu()
             {
                 MaskingContainer.CornerRadius = 5;
@@ -129,11 +135,17 @@ public partial class SettingsDropdown<T> : SettingsItem
             protected override void AnimateClose()
             {
                 this.FadeOut(200);
+
+                if (!justLoaded) // AnimateClose is called on load, so we don't want to play the sound then
+                    samples.Dropdown(true);
+
+                justLoaded = false;
             }
 
             protected override void AnimateOpen()
             {
                 this.FadeIn(200);
+                samples.Dropdown(false);
             }
 
             private partial class DrawableFluXisDropdownMenuItem : DrawableDropdownMenuItem
