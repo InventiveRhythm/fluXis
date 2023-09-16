@@ -24,6 +24,7 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
 
+    private double lastSampleTime;
     private Sample valueChange;
     private Bindable<double> valueChangePitch;
     private bool firstPlay = true;
@@ -100,8 +101,12 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
 
         if (valueChange != null && PlaySample && !firstPlay)
         {
+            if (Time.Current - lastSampleTime < 50) return;
+
             valueChangePitch.Value = 1f + percent * .4f;
             valueChange.Play();
+
+            lastSampleTime = Time.Current;
         }
         else firstPlay = false;
     }
