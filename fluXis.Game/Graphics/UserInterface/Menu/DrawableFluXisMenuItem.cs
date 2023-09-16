@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
@@ -18,6 +19,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
 
     private bool shouldShowChevron => Item.Items.Count > 0 && ShowChevron;
     private bool shouldShowCheck => (Item as FluXisMenuItem)?.IsActive?.Invoke() ?? false;
+    private bool isSpacer => Item is FluXisMenuSpacer;
 
     private const int content_size = 20;
     private const int icon_size = 16;
@@ -37,12 +39,22 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
     [BackgroundDependencyLoader]
     private void load()
     {
-        BackgroundColour = Colour4.Transparent;
-        BackgroundColourHover = Colour4.White.Opacity(.2f);
         CornerRadius = 5;
         Masking = true;
         Foreground.Anchor = Anchor.CentreLeft;
         Foreground.Origin = Anchor.CentreLeft;
+
+        if (isSpacer)
+        {
+            BackgroundColour = Colour4.Transparent;
+            BackgroundColourHover = Colour4.Transparent;
+            Foreground.AutoSizeAxes = Axes.Y;
+            Foreground.RelativeSizeAxes = Axes.X;
+            return;
+        }
+
+        BackgroundColour = Colour4.Transparent;
+        BackgroundColourHover = Colour4.White.Opacity(.2f);
 
         AddRangeInternal(new[]
         {
@@ -83,23 +95,51 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
 
     protected override bool OnHover(HoverEvent e)
     {
-        samples.Hover();
+        if (!isSpacer)
+            samples.Hover();
+
         return base.OnHover(e);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        samples.Click();
+        if (!isSpacer)
+            samples.Click();
+
         return base.OnClick(e);
     }
 
     protected override Drawable CreateContent()
     {
+        if (isSpacer)
+        {
+            return new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Padding = new MarginPadding { Vertical = 5 },
+                Child = new CircularContainer
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 4,
+                    Masking = true,
+                    Children = new Drawable[]
+                    {
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background5
+                        }
+                    }
+                }
+            };
+        }
+
         return new FillFlowContainer
         {
             AutoSizeAxes = Axes.Both,
             Direction = FillDirection.Horizontal,
-            Alpha = (Item as FluXisMenuItem)?.Enabled ?? true ? 1f : .75f,
+            Alpha = (Item as FluXisMenuItem)?.Enabled?.Invoke() ?? true ? 1f : .75f,
             Spacing = new Vector2(5),
             Padding = new MarginPadding { Horizontal = 5, Vertical = 5 },
             Children = new Drawable[]

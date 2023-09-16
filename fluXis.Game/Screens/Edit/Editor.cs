@@ -175,9 +175,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Save", FontAwesome.Solid.Save, () => save()) { Enabled = HasChanges() },
+                            new("Save", FontAwesome.Solid.Save, () => save()) { Enabled = HasChanges },
+                            new FluXisMenuSpacer(),
                             new("Export", FontAwesome.Solid.BoxOpen, export),
                             new("Upload", FontAwesome.Solid.Upload, startUpload),
+                            new FluXisMenuSpacer(),
+                            new("Open Song Folder", FontAwesome.Solid.FolderOpen, () => PathUtils.OpenFolder(MapFiles.GetFullPath(Map.MapSet.GetPathForFile("")))),
+                            new FluXisMenuSpacer(),
                             new("Exit", FontAwesome.Solid.Times, MenuItemType.Dangerous, tryExit)
                         }
                     },
@@ -186,13 +190,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                         Items = new FluXisMenuItem[]
                         {
                             // why are arrow-rotate-left and arrow-rotate-right not in here???
-                            new("Undo", FontAwesome.Solid.ArrowCircleLeft, sendWipNotification) { Enabled = false },
-                            new("Redo", FontAwesome.Solid.ArrowCircleRight, sendWipNotification) { Enabled = false },
-                            new("Cut", FontAwesome.Solid.Cut, sendWipNotification) { Enabled = false },
-                            new("Copy", FontAwesome.Solid.Copy, sendWipNotification) { Enabled = false },
-                            new("Paste", FontAwesome.Solid.Paste, sendWipNotification) { Enabled = false },
-                            new("Delete", FontAwesome.Solid.Trash, sendWipNotification) { Enabled = false },
-                            new("Select all", FontAwesome.Solid.ObjectGroup, sendWipNotification) { Enabled = false }
+                            new("Undo", FontAwesome.Solid.ArrowCircleLeft, sendWipNotification) { Enabled = () => false },
+                            new("Redo", FontAwesome.Solid.ArrowCircleRight, sendWipNotification) { Enabled = () => false },
+                            new FluXisMenuSpacer(),
+                            new("Cut", FontAwesome.Solid.Cut, sendWipNotification) { Enabled = () => false },
+                            new("Copy", FontAwesome.Solid.Copy, sendWipNotification) { Enabled = () => false },
+                            new("Paste", FontAwesome.Solid.Paste, sendWipNotification) { Enabled = () => false },
+                            new FluXisMenuSpacer(),
+                            new("Delete", FontAwesome.Solid.Trash, sendWipNotification) { Enabled = () => false },
+                            new("Select all", FontAwesome.Solid.ObjectGroup, sendWipNotification) { Enabled = () => false }
                         }
                     },
                     new("View", FontAwesome.Solid.Eye)
@@ -541,7 +547,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         return hash != Map.Hash;
     }
 
-    private void export() => sendWipNotification();
+    private void export() => mapStore.Export(Map.MapSet, new LoadingNotification
+    {
+        TextLoading = "Exporting mapset...",
+        TextSuccess = "Exported!",
+        TextFailure = "Failed to export!"
+    });
+
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
     private void sendWipNotification() => notifications.Post("This is still in development\nCome back later!");
 

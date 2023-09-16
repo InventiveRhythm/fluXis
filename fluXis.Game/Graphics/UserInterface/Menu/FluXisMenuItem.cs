@@ -9,7 +9,7 @@ public class FluXisMenuItem : MenuItem
 {
     public MenuItemType Type { get; }
     public IconUsage Icon { get; } = FontAwesome.Solid.Circle;
-    public bool Enabled { get; set; } = true;
+    public Func<bool> Enabled { get; set; }
     public Func<bool> IsActive { get; set; }
 
     public FluXisMenuItem(LocalisableString text)
