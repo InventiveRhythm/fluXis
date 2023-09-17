@@ -8,4 +8,9 @@
     <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <PackageReference Include="HoLLy.osu.DatabaseReader" Version="3.1.0-alpha1" />
+  </ItemGroup>
+
 </Project>

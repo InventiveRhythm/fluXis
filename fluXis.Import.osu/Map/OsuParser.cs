@@ -9,6 +9,7 @@ public class OsuParser
 {
     private List<string> general { get; }
     private List<string> metadata { get; }
+    private List<string> difficulty { get; }
     private List<string> events { get; }
     private List<string> timingPoints { get; }
     private List<string> hitObjects { get; }
@@ -17,6 +18,7 @@ public class OsuParser
     {
         general = new List<string>();
         metadata = new List<string>();
+        difficulty = new List<string>();
         events = new List<string>();
         timingPoints = new List<string>();
         hitObjects = new List<string>();
@@ -32,6 +34,10 @@ public class OsuParser
 
             case OsuFileSection.Metadata:
                 metadata.Add(line);
+                break;
+
+            case OsuFileSection.Difficulty:
+                difficulty.Add(line);
                 break;
 
             case OsuFileSection.Events:
@@ -54,6 +60,7 @@ public class OsuParser
 
         parseGeneral(map);
         parseMetadata(map);
+        parseDifficulty(map);
         parseEvents(map);
         parseTimingPoints(map);
         parseHitObjects(map);
@@ -118,6 +125,23 @@ public class OsuParser
 
                 case "Tags":
                     map.Tags = value;
+                    break;
+            }
+        }
+    }
+
+    private void parseDifficulty(OsuMap map)
+    {
+        foreach (var line in difficulty)
+        {
+            string[] split = line.Split(':');
+            string key = split[0];
+            string value = split[1];
+
+            switch (key)
+            {
+                case "CircleSize":
+                    map.CircleSize = float.Parse(value, CultureInfo.InvariantCulture);
                     break;
             }
         }

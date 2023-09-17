@@ -4,18 +4,18 @@ using fluXis.Game.Map;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Import.Quaver.Map;
+namespace fluXis.Import.osu.AutoImport;
 
-public class QuaverRealmMap : RealmMap
+public class OsuRealmMap : RealmMap
 {
-    public string QuaverPath { get; init; } = string.Empty;
+    public string OsuPath { get; init; } = string.Empty;
     public string FolderPath { get; init; } = string.Empty;
 
     public override MapInfo GetMapInfo()
     {
-        var path = Path.Combine(QuaverPath, FolderPath, FileName);
-        string yaml = File.ReadAllText(path);
-        return QuaverImport.ParseFromYaml(yaml).ToMapInfo();
+        var path = Path.Combine(OsuPath, FolderPath, FileName);
+        string osu = File.ReadAllText(path);
+        return OsuImport.ParseOsuMap(osu).ToMapInfo();
     }
 
     public override Texture GetBackground()

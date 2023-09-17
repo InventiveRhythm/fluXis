@@ -1,13 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
 using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
 using fluXis.Game.Overlay.Notification;
+using fluXis.Import.osu.AutoImport;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using osu_database_reader.BinaryFiles;
 using osu.Framework.Logging;
+using osu.Shared;
 
 namespace fluXis.Import.osu;
 
@@ -17,8 +23,15 @@ public class OsuImport : MapImporter
     public override string[] FileExtensions => new[] { ".osz" };
     public override string Name => "osu!mania";
     public override string Author => "Flustix";
-    public override Version Version => new(1, 0, 0);
+    public override Version Version => new(1, 1, 0);
+    public override bool SupportsAutoImport => true;
     public override string Color => "#e7659f";
+    public override string StoragePath { get; } = string.Empty;
+
+    public OsuImport()
+    {
+        StoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "osu!", "Songs");
+    }
 
     public override void Import(string path)
     {
@@ -106,9 +119,10 @@ public class OsuImport : MapImporter
         }
     }
 
-    private OsuMap parseOsuMap(ZipArchiveEntry entry)
+    private OsuMap parseOsuMap(ZipArchiveEntry entry) => ParseOsuMap(new StreamReader(entry.Open()).ReadToEnd());
+
+    public static OsuMap ParseOsuMap(string fileContent)
     {
-        string fileContent = new StreamReader(entry.Open()).ReadToEnd();
         string[] lines = fileContent.Split(Environment.NewLine);
 
         OsuParser parser = new();
@@ -153,5 +167,93 @@ public class OsuImport : MapImporter
             "HitObjects" => OsuFileSection.HitObjects,
             _ => OsuFileSection.General
         };
+    }
+
+    public override List<RealmMapSet> GetMaps()
+    {
+        if (!File.Exists(StoragePath + "/../osu!.db"))
+            return new List<RealmMapSet>();
+
+        var db = OsuDb.Read(StoragePath + "/../osu!.db");
+
+        var maps = db.Beatmaps.Where(b => b.GameMode == GameMode.Mania);
+        var sets = maps.GroupBy(b => b.FolderName);
+
+        var mapSets = new List<RealmMapSet>();
+
+        foreach (var set in sets)
+        {
+            var mapList = new List<RealmMap>();
+
+            var realmMapSet = new OsuRealmMapSet(mapList)
+            {
+                Managed = true,
+                Resources = Resources
+            };
+
+            foreach (var map in set)
+            {
+                // an extremely stupid thing we need to do...
+                // to get the map background, we have to load the map,
+                // because for some reason the background is not in the .db file
+                // this increades the loading time by a lot, but there is no other way
+                var osuMap = ParseOsuMap(File.ReadAllText(StoragePath + "/" + map.FolderName + "/" + map.BeatmapFileName));
+
+                var realmMap = new OsuRealmMap
+                {
+                    OsuPath = StoragePath,
+                    FolderPath = map.FolderName,
+                    Difficulty = map.Version,
+                    Metadata = new RealmMapMetadata
+                    {
+                        Title = map.Title,
+                        Artist = map.Artist,
+                        Mapper = map.Creator,
+                        Source = map.SongSource,
+                        Tags = map.SongTags,
+                        Background = osuMap.GetBackground(),
+                        Audio = map.AudioFileName,
+                        PreviewTime = map.AudioPreviewTime
+                    },
+                    MapSet = realmMapSet,
+                    Status = ID,
+                    FileName = map.BeatmapFileName,
+                    OnlineID = 0,
+                    Hash = null,
+                    Filters = new RealmMapFilters
+                    {
+                        Length = map.TotalTime,
+                        BPMMin = 0,
+                        BPMMax = 0,
+                        NoteCount = map.CountHitCircles,
+                        LongNoteCount = map.CountSliders,
+                        NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (float)map.TotalTime,
+                        HasScrollVelocity = false,
+                        HasLaneSwitch = false,
+                        HasFlash = false
+                    },
+                    KeyCount = (int)map.CircleSize,
+                    Rating = 0
+                };
+
+                if (map.TimingPoints != null)
+                {
+                    try
+                    {
+                        realmMap.Filters.BPMMax = realmMap.Filters.BPMMin = (float)Math.Round(60000 / map.TimingPoints.Find(x => x.MsPerQuarter > 0).MsPerQuarter, 0);
+                    }
+                    catch (Exception)
+                    {
+                        realmMap.Filters.BPMMax = realmMap.Filters.BPMMin = 0;
+                    }
+                }
+
+                mapList.Add(realmMap);
+            }
+
+            mapSets.Add(realmMapSet);
+        }
+
+        return mapSets;
     }
 }

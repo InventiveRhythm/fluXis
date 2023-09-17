@@ -23,25 +23,34 @@ public class OsuMap
     public string Tags { get; set; }
 
     // [Difficulty]
-    // dont need this
+    public float CircleSize { get; set; }
 
     // [Events]
-    public List<OsuEvent> Events { get; init; }
+    public List<OsuEvent> Events { get; init; } = new();
 
     // [TimingPoints]
-    public List<OsuTimingPoint> TimingPoints { get; init; }
+    public List<OsuTimingPoint> TimingPoints { get; init; } = new();
 
     // [Colours]
     // dont need this
 
     // [HitObjects]
-    public List<OsuHitObject> HitObjects { get; init; }
+    public List<OsuHitObject> HitObjects { get; init; } = new();
 
-    public OsuMap()
+    public string GetBackground()
     {
-        Events = new List<OsuEvent>();
-        TimingPoints = new List<OsuTimingPoint>();
-        HitObjects = new List<OsuHitObject>();
+        foreach (var osuEvent in Events)
+        {
+            string param = osuEvent.Parameter.Trim().Replace("\"", "");
+
+            switch (osuEvent.EventType)
+            {
+                case "0":
+                    return param;
+            }
+        }
+
+        return "";
     }
 
     public MapInfo ToMapInfo()
@@ -65,8 +74,8 @@ public class OsuMap
             HitObjects = new List<HitObjectInfo>(),
             TimingPoints = new List<TimingPointInfo>(),
             ScrollVelocities = new List<ScrollVelocityInfo>(),
-            KeyCount = 4,
-            InitialKeyCount = 4
+            KeyCount = (int)CircleSize,
+            InitialKeyCount = (int)CircleSize
         };
 
         List<int> keyCounts = new();
