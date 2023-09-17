@@ -23,11 +23,13 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
+using osuTK.Graphics;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Menu;
@@ -59,8 +61,6 @@ public partial class MenuScreen : FluXisScreen
     [Resolved]
     private ActivityManager activity { get; set; }
 
-    private Container content;
-    private FluXisSpriteText fluXisText;
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
     private MenuVisualizer visualizer;
@@ -68,6 +68,9 @@ public partial class MenuScreen : FluXisScreen
     private Container textContainer;
     private Container buttonContainer;
     private FillFlowContainer linkContainer;
+
+    private FluXisSpriteText animationText;
+    private CircularContainer animationCircle;
 
     private MenuPlayButton playButton;
 
@@ -103,7 +106,7 @@ public partial class MenuScreen : FluXisScreen
                 RelativeSizeAxes = Axes.Both,
                 Strength = 5
             },
-            content = new Container
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -114,9 +117,10 @@ public partial class MenuScreen : FluXisScreen
                     textContainer = new Container
                     {
                         RelativeSizeAxes = Axes.Both,
+                        Alpha = 0,
                         Children = new Drawable[]
                         {
-                            fluXisText = new FluXisSpriteText
+                            new FluXisSpriteText
                             {
                                 Text = "fluXis",
                                 FontSize = 100,
@@ -128,19 +132,51 @@ public partial class MenuScreen : FluXisScreen
                                 FontSize = 32,
                                 RelativeSizeAxes = Axes.X,
                                 Margin = new MarginPadding { Top = 80 },
-                                Shadow = true,
-                                Alpha = 0,
-                                X = -200
-                            },
-                            pressAnyKeyText = new FluXisSpriteText
-                            {
-                                Text = "Press any key.",
-                                FontSize = 32,
-                                Shadow = true,
-                                Anchor = Anchor.BottomCentre,
-                                Origin = Anchor.BottomCentre
+                                Shadow = true
                             }
                         }
+                    },
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
+                        {
+                            animationCircle = new CircularContainer
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Masking = true,
+                                BorderColour = Color4.White,
+                                BorderThickness = 20,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        AlwaysPresent = true,
+                                        Alpha = 0
+                                    }
+                                }
+                            },
+                            animationText = new FluXisSpriteText
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Text = "fluXis",
+                                FontSize = 100,
+                                Shadow = true,
+                                ShadowOffset = new Vector2(0, 0.04f),
+                                Alpha = 0
+                            }
+                        }
+                    },
+                    pressAnyKeyText = new FluXisSpriteText
+                    {
+                        Text = "Press any key.",
+                        FontSize = 32,
+                        Shadow = true,
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre
                     },
                     new FillFlowContainer
                     {
@@ -173,20 +209,25 @@ public partial class MenuScreen : FluXisScreen
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
                         Alpha = 0,
+                        Shear = new Vector2(-.2f, 0),
+                        Margin = new MarginPadding { Left = 40 },
                         X = -200,
                         Children = new Drawable[]
                         {
+                            new MenuButtonBackground { Y = 30 },
+                            new MenuButtonBackground { Y = 110 },
+                            new MenuButtonBackground { Y = 190 },
                             playButton = new MenuPlayButton
                             {
                                 Description = $"{maps.MapSets.Count} maps loaded",
                                 Action = continueToPlay,
-                                Width = 710
+                                Width = 700
                             },
                             new SmallMenuButton
                             {
                                 Icon = FontAwesome.Solid.Cog,
                                 Action = settings.ToggleVisibility,
-                                Width = 100,
+                                Width = 90,
                                 Y = 80
                             },
                             new MenuButton
@@ -195,7 +236,7 @@ public partial class MenuScreen : FluXisScreen
                                 Description = "Play against other players",
                                 Icon = FontAwesome.Solid.Users,
                                 Action = continueToMultiplayer,
-                                Width = 300,
+                                Width = 290,
                                 X = 110,
                                 Y = 80
                             },
@@ -205,15 +246,15 @@ public partial class MenuScreen : FluXisScreen
                                 Description = "Check online leaderboards",
                                 Icon = FontAwesome.Solid.Trophy,
                                 Action = continueToRankings,
-                                Width = 290,
-                                X = 430,
+                                Width = 280,
+                                X = 420,
                                 Y = 80
                             },
                             new SmallMenuButton
                             {
                                 Icon = FontAwesome.Solid.Times,
                                 Action = Game.Exit,
-                                Width = 120,
+                                Width = 90,
                                 Y = 160
                             },
                             new MenuButton
@@ -221,8 +262,8 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Browse",
                                 Description = "Download community-made maps",
                                 Icon = FontAwesome.Solid.Download,
-                                Width = 340,
-                                X = 130,
+                                Width = 330,
+                                X = 110,
                                 Y = 160,
                                 Action = continueToBrowse
                             },
@@ -231,10 +272,9 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Edit",
                                 Description = "Create your own maps",
                                 Icon = FontAwesome.Solid.Pen,
-                                ShearAdjust = .05f,
                                 Action = () => this.Push(new Editor()),
-                                Width = 250,
-                                X = 490,
+                                Width = 240,
+                                X = 460,
                                 Y = 160
                             }
                         }
@@ -307,12 +347,14 @@ public partial class MenuScreen : FluXisScreen
         randomizeSplash();
         backgrounds.Zoom = 1f;
 
-        fluXisText.MoveTo(Vector2.Zero, 1000, Easing.InOutCirc);
-        fluXisText.Delay(800).FadeIn().OnComplete(_ =>
+        animationText.ScaleTo(1.2f, 800, Easing.OutQuint).FadeOut(600);
+        animationCircle.TransformTo(nameof(animationCircle.BorderThickness), 20f).ResizeTo(0)
+                       .TransformTo(nameof(animationCircle.BorderThickness), 0f, 1200, Easing.OutQuint).ResizeTo(400, 1000, Easing.OutQuint);
+
+        this.Delay(800).FadeIn().OnComplete(_ =>
         {
             Game.Toolbar.ShowToolbar.Value = true;
-            splashText.MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
-            showMenu(600);
+            showMenu(1000);
             login.Show();
         });
 
@@ -323,16 +365,12 @@ public partial class MenuScreen : FluXisScreen
     {
         Game.Toolbar.ShowToolbar.Value = false;
         backgrounds.Zoom = 1.2f;
-        splashText.MoveToX(-200, 600, Easing.InQuint).FadeOut(300);
-        buttonContainer.MoveToX(-200, 600, Easing.InQuint).FadeOut(300);
-        linkContainer.MoveToX(200, 600, Easing.InQuint).FadeOut(300);
+        hideMenu();
 
-        var vec = new Vector2(content.DrawWidth / 2 - fluXisText.DrawWidth / 2 - 40, (content.DrawHeight + 50) / 2 - fluXisText.DrawHeight / 2 - 40);
+        animationText.Delay(800).ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
+        this.Delay(800).FadeIn().OnComplete(_ => pressedStart = false);
 
-        fluXisText.MoveTo(vec, 1000, Easing.InOutCirc)
-                  .Delay(800).FadeIn().OnComplete(_ => pressedStart = false);
-
-        pressAnyKeyText.MoveToY(0, 800, Easing.OutQuint);
+        pressAnyKeyText.Delay(800).MoveToY(0, 800, Easing.OutQuint);
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
     }
 
@@ -359,9 +397,9 @@ public partial class MenuScreen : FluXisScreen
 
     private void hideMenu(int duration = 400)
     {
-        textContainer.MoveToX(-200, duration, Easing.OutQuint);
-        buttonContainer.MoveToX(-200, duration, Easing.OutQuint);
-        linkContainer.MoveToX(200, duration, Easing.OutQuint);
+        textContainer.MoveToX(-200, duration, Easing.OutQuint).FadeOut(duration / 2f);
+        buttonContainer.MoveToX(-200, duration, Easing.OutQuint).FadeOut(duration / 2f);
+        linkContainer.MoveToX(200, duration, Easing.OutQuint).FadeOut(duration / 2f);
     }
 
     private void randomizeSplash() => splashText.Text = MenuSplashes.RandomSplash;
@@ -371,8 +409,8 @@ public partial class MenuScreen : FluXisScreen
         activity.Update("In the menus", "Idle", "menu");
 
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
-        fluXisText.FadeInFromZero(800);
         visualizer.FadeInFromZero(2000);
+        animationText.FadeInFromZero(500);
         backgrounds.SetDim(1f, 0);
         backgrounds.SetDim(base.BackgroundDim, 2000);
         inactivityTime = 0;
@@ -396,12 +434,6 @@ public partial class MenuScreen : FluXisScreen
     protected override void Update()
     {
         if (clock.Finished) Game.NextSong();
-
-        if (!pressedStart)
-        {
-            fluXisText.X = content.DrawWidth / 2 - fluXisText.DrawWidth / 2 - 40;
-            fluXisText.Y = content.DrawHeight / 2 - fluXisText.DrawHeight / 2 - 40;
-        }
 
         inactivityTime += Time.Elapsed;
 

@@ -3,16 +3,19 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
-public partial class MenuPlayButton : CompositeDrawable
+public partial class MenuPlayButton : Container
 {
     public Action Action { get; set; }
 
@@ -29,7 +32,9 @@ public partial class MenuPlayButton : CompositeDrawable
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Container hover;
+    private Container content;
+    private Box hover;
+    private Box flash;
     private FluXisSpriteText spriteText;
     private string text;
 
@@ -37,99 +42,86 @@ public partial class MenuPlayButton : CompositeDrawable
     private void load()
     {
         Height = 60;
-        CornerRadius = 10;
-        Masking = true;
 
-        InternalChildren = new Drawable[]
+        Child = content = new Container
         {
-            new Container // Background
+            RelativeSizeAxes = Axes.Both,
+            CornerRadius = 10,
+            Masking = true,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            EdgeEffect = new EdgeEffectParameters
             {
-                RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]
+                Type = EdgeEffectType.Shadow,
+                Colour = Color4.Black.Opacity(.25f),
+                Radius = 5
+            },
+            Children = new Drawable[]
+            {
+                new Box
                 {
-                    new Box
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2
+                },
+                hover = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                flash = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Shear = new Vector2(.2f, 0),
+                    Padding = new MarginPadding { Left = 30 },
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Width = .5f,
-                        Colour = FluXisColors.Background2
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Width = .7f,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Shear = new Vector2(-.2f, 0),
-                        CornerRadius = 10,
-                        Masking = true,
-                        Child = new Box
+                        new SpriteIcon
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
+                            Size = new Vector2(30),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            Shadow = true,
+                            Icon = FontAwesome.Solid.Play
+                        },
+                        new FluXisSpriteText
+                        {
+                            FontSize = 30,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.BottomLeft,
+                            X = 40,
+                            Y = 8,
+                            Shadow = true,
+                            Text = "Play"
+                        },
+                        spriteText = new FluXisSpriteText
+                        {
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.TopLeft,
+                            X = 40,
+                            Colour = FluXisColors.Text2,
+                            Shadow = true,
+                            Text = text
                         }
                     }
                 }
-            },
-            hover = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Width = .5f
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Width = .7f,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Shear = new Vector2(-.2f, 0),
-                        CornerRadius = 10,
-                        Masking = true,
-                        Child = new Box
-                        {
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 355,
-                            Shear = new Vector2(.2f, 0),
-                            Anchor = Anchor.BottomRight,
-                            Origin = Anchor.BottomRight
-                        }
-                    }
-                }
-            },
-            new SpriteIcon
-            {
-                Size = new Vector2(30),
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Margin = new MarginPadding { Left = 20 },
-                Shadow = true,
-                Icon = FontAwesome.Solid.Play
-            },
-            new FluXisSpriteText
-            {
-                FontSize = 30,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.BottomLeft,
-                Margin = new MarginPadding { Left = 60 },
-                Y = 8,
-                Shadow = true,
-                Text = "Play"
-            },
-            spriteText = new FluXisSpriteText
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.TopLeft,
-                Margin = new MarginPadding { Left = 60 },
-                Colour = FluXisColors.Text2,
-                Shadow = true,
-                Text = text
             }
         };
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        content.ScaleTo(.95f, 1000, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        content.ScaleTo(1, 1000, Easing.OutElastic);
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -146,6 +138,7 @@ public partial class MenuPlayButton : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
+        flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
         samples.Click();
         return true;

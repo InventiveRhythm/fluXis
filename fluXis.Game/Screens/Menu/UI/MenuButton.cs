@@ -3,12 +3,15 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
@@ -22,69 +25,94 @@ public partial class MenuButton : Container
     [Resolved]
     private UISamples samples { get; set; }
 
-    private float shearAmount => Width / 250f * .2f + ShearAdjust;
-    public float ShearAdjust { get; init; }
-
+    private Container content;
     private Box hover;
+    private Box flash;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         Height = 60;
-        CornerRadius = 10;
-        Masking = true;
-        Shear = new Vector2(-shearAmount, 0);
 
-        Children = new Drawable[]
+        Child = content = new Container
         {
-            new Box
+            RelativeSizeAxes = Axes.Both,
+            CornerRadius = 10,
+            Masking = true,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            EdgeEffect = new EdgeEffectParameters
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
+                Type = EdgeEffectType.Shadow,
+                Colour = Color4.Black.Opacity(.25f),
+                Radius = 5
             },
-            hover = new Box
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Shear = new Vector2(shearAmount, 0),
-                Padding = new MarginPadding { Horizontal = Shear.X * -50 },
-                Children = new Drawable[]
+                new Box
                 {
-                    new SpriteIcon
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2
+                },
+                hover = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                flash = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Shear = new Vector2(.2f, 0),
+                    Padding = new MarginPadding { Left = 20 },
+                    Children = new Drawable[]
                     {
-                        Size = new Vector2(30),
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Margin = new MarginPadding { Left = 10 },
-                        Shadow = true,
-                        Icon = Icon
-                    },
-                    new FluXisSpriteText
-                    {
-                        FontSize = 30,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.BottomLeft,
-                        Margin = new MarginPadding { Left = 50 },
-                        Y = 8,
-                        Shadow = true,
-                        Text = Text
-                    },
-                    new FluXisSpriteText
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.TopLeft,
-                        Margin = new MarginPadding { Left = 50 },
-                        Colour = FluXisColors.Text2,
-                        Shadow = true,
-                        Text = Description
+                        new SpriteIcon
+                        {
+                            Size = new Vector2(30),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            Shadow = true,
+                            Icon = Icon
+                        },
+                        new FluXisSpriteText
+                        {
+                            FontSize = 30,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.BottomLeft,
+                            X = 40,
+                            Y = 8,
+                            Shadow = true,
+                            Text = Text
+                        },
+                        new FluXisSpriteText
+                        {
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.TopLeft,
+                            X = 40,
+                            Colour = FluXisColors.Text2,
+                            Shadow = true,
+                            Text = Description
+                        }
                     }
                 }
             }
         };
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        content.ScaleTo(.95f, 1000, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        content.ScaleTo(1, 1000, Easing.OutElastic);
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -101,6 +129,7 @@ public partial class MenuButton : Container
 
     protected override bool OnClick(ClickEvent e)
     {
+        flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
         samples.Click();
 
