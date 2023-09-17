@@ -26,6 +26,9 @@ public partial class SkinManager : Component
     [Resolved]
     private FluXisConfig config { get; set; }
 
+    [Resolved]
+    private TextureStore textures { get; set; }
+
     public Skin CurrentSkin { get; private set; }
     public string SkinFolder { get; private set; } = "Default";
     public bool CanChangeSkin { get; set; } = true;
@@ -107,6 +110,16 @@ public partial class SkinManager : Component
             CurrentSkin = new Skin();
             Logger.Error(e, "Failed to load skin");
         }
+    }
+
+    public Texture GetDefaultBackground()
+    {
+        var path = $"{SkinFolder}/UserInterface/background.png";
+
+        if (skinStorage?.Exists(path) ?? false)
+            return skinTextures.Get(path);
+
+        return textures.Get("Backgrounds/default.png");
     }
 
     public Drawable GetStageBorder(bool rightSide)

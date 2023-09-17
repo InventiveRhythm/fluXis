@@ -1,8 +1,8 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Graphics.Background;
 
@@ -15,11 +15,11 @@ public partial class MapBackground : Sprite
     public bool Cropped { get; set; }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures)
+    private void load(SkinManager skinManager)
     {
         if (Map == null)
-            Texture = textures.Get("Backgrounds/default.png");
+            Texture = skinManager.GetDefaultBackground();
         else
-            Texture = (Cropped ? Map.GetPanelBackground() : Map.GetBackground()) ?? textures.Get("Backgrounds/default.png");
+            Texture = (Cropped ? Map.GetPanelBackground() : Map.GetBackground()) ?? skinManager.GetDefaultBackground();
     }
 }
