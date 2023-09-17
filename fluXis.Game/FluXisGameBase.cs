@@ -174,9 +174,9 @@ public partial class FluXisGameBase : osu.Framework.Game
             }
             : new APIEndpointConfig
             {
-                APIUrl = "https://api.fluxis.fluxis-alt.foxgirl.wtf",
-                WebsocketUrl = "wss://fluxel.fluxis-alt.foxgirl.wtf",
-                WebsiteRootUrl = "https://fluxis.fluxis-alt.foxgirl.wtf"
+                APIUrl = "https://api.fluxis.foxes4life.net",
+                WebsocketUrl = "wss://fluxel.foxes4life.net",
+                WebsiteRootUrl = "https://fluxis.foxes4life.net"
             };
     }
 
