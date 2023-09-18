@@ -24,12 +24,17 @@ public partial class IntroScreen : FluXisScreen
     private BackgroundStack backgrounds { get; set; }
 
     private FillFlowContainer epilepsyContainer;
+    private FluXisTextFlow epilepsyText;
+
+    private FillFlowContainer earlyAccessContainer;
+    private FluXisTextFlow earlyAccessText;
+
     private bool shouldSkip;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
-        if (config.GetBindable<bool>(FluXisSetting.SkipIntro).Value)
+        if (config.Get<bool>(FluXisSetting.SkipIntro))
         {
             shouldSkip = true;
             return;
@@ -45,10 +50,12 @@ public partial class IntroScreen : FluXisScreen
             epilepsyContainer = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
+                AutoSizeDuration = 500,
+                AutoSizeEasing = Easing.OutQuint,
                 Direction = FillDirection.Vertical,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Scale = new Vector2(0.9f),
+                Spacing = new Vector2(0, 20),
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText
@@ -56,17 +63,51 @@ public partial class IntroScreen : FluXisScreen
                         Text = "Epilepsy warning!",
                         FontSize = 60,
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        Margin = new MarginPadding { Bottom = 20 }
+                        Origin = Anchor.TopCentre
                     },
-                    new FluXisTextFlow
+                    epilepsyText = new FluXisTextFlow
                     {
+                        AutoSizeAxes = Axes.Y,
                         Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
+                        TextAnchor = Anchor.TopCentre,
                         FontSize = 30,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         Width = 800,
-                        TextAnchor = Anchor.TopCentre
+                        Alpha = 0
+                    }
+                }
+            },
+            earlyAccessContainer = new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Both,
+                AutoSizeDuration = 500,
+                AutoSizeEasing = Easing.OutQuint,
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Spacing = new Vector2(0, 20),
+                Alpha = 0,
+                Y = 20,
+                Children = new Drawable[]
+                {
+                    new FluXisSpriteText
+                    {
+                        Text = "This game is currently in early access.",
+                        FontSize = 60,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
+                    },
+                    earlyAccessText = new FluXisTextFlow
+                    {
+                        AutoSizeAxes = Axes.Y,
+                        Text = "This means that the game is not finished yet and that you may encounter bugs and other issues.\n\nIf you encounter any issues, please report them on the GitHub repository or the Discord server.\n",
+                        TextAnchor = Anchor.TopCentre,
+                        FontSize = 30,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Width = 1400,
+                        Alpha = 0
                     }
                 }
             }
@@ -83,12 +124,25 @@ public partial class IntroScreen : FluXisScreen
 
         backgrounds.SetDim(1f, 0);
 
-        const int scale_duration = 700;
+        /*const int scale_duration = 700;
         const int fade_duration = 500;
 
         epilepsyContainer.FadeInFromZero(fade_duration).ScaleTo(1f, scale_duration, Easing.OutQuint)
                          .Then(6000).ScaleTo(1.1f, scale_duration, Easing.OutQuint).FadeOut(fade_duration)
-                         .OnComplete(_ => continueToMenu());
+                         .OnComplete(_ => continueToMenu());*/
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        epilepsyContainer.FadeInFromZero(400)
+                         .Then(5000).MoveToY(-20, 800, Easing.OutQuint).FadeOut(400);
+
+        epilepsyText.Delay(2000).FadeIn(400);
+
+        earlyAccessContainer.Delay(6000).FadeInFromZero(400).MoveToY(0, 800, Easing.OutQuint)
+                            .Then(5000).MoveToY(-20, 800, Easing.OutQuint).FadeOut(400).OnComplete(_ => continueToMenu());
+
+        earlyAccessText.Delay(7000).FadeIn(400);
     }
 
     private void continueToMenu()
