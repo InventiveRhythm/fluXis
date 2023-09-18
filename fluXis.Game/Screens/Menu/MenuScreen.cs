@@ -5,7 +5,6 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Map;
@@ -15,6 +14,7 @@ using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
+using fluXis.Game.Screens.Menu.UI.NowPlaying;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Multiplayer;
 using fluXis.Game.Screens.Ranking;
@@ -73,9 +73,6 @@ public partial class MenuScreen : FluXisScreen
     private CircularContainer animationCircle;
 
     private MenuPlayButton playButton;
-
-    private FluXisSpriteText titleText;
-    private FluXisSpriteText artistText;
 
     private bool pressedStart;
     private Sample menuStart;
@@ -178,31 +175,7 @@ public partial class MenuScreen : FluXisScreen
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre
                     },
-                    new FillFlowContainer
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Vertical,
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight,
-                        Children = new Drawable[]
-                        {
-                            titleText = new FluXisSpriteText
-                            {
-                                FontSize = 32,
-                                Shadow = true,
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight
-                            },
-                            artistText = new FluXisSpriteText
-                            {
-                                FontSize = 22,
-                                Colour = FluXisColors.Text2,
-                                Shadow = true,
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight
-                            }
-                        }
-                    },
+                    new MenuNowPlaying(),
                     buttonContainer = new Container
                     {
                         AutoSizeAxes = Axes.Both,
@@ -321,11 +294,6 @@ public partial class MenuScreen : FluXisScreen
         maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
     }
 
-    protected override void LoadComplete()
-    {
-        Game.OnSongChanged += songChanged;
-    }
-
     private void continueToPlay() => this.Push(new SelectScreen());
     private void continueToMultiplayer() => this.Push(new MultiplayerScreen());
     private void continueToRankings() => this.Push(new Rankings());
@@ -442,17 +410,5 @@ public partial class MenuScreen : FluXisScreen
             inactivityTime = 0;
             revertStartAnimation();
         }
-    }
-
-    private void songChanged()
-    {
-        titleText.Text = maps.CurrentMapSet.Metadata.Title;
-        artistText.Text = maps.CurrentMapSet.Metadata.Artist;
-
-        titleText.FadeInFromZero(400).MoveToX(200).MoveToX(0, 800, Easing.OutCirc)
-                 .Then(2000).FadeOut(400);
-
-        artistText.FadeInFromZero(400).MoveToX(200).MoveToX(0, 800, Easing.OutCirc)
-                  .Then(2000).FadeOut(400);
     }
 }

@@ -1,5 +1,4 @@
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Import;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -9,9 +8,6 @@ namespace fluXis.Game.Graphics.Cover;
 
 public partial class DrawableCover : Sprite
 {
-    [Resolved]
-    private ImportManager importManager { get; set; }
-
     [Resolved]
     private TextureStore textures { get; set; }
 
@@ -41,6 +37,6 @@ public partial class DrawableCover : Sprite
 
     private void setTexture()
     {
-        Texture = mapSet.GetCover() ?? textures.Get("Covers/default.png");
+        Texture = MapSet?.GetCover() ?? textures.Get("Covers/default.png");
     }
 }
