@@ -113,7 +113,7 @@ public partial class FooterOptions : VisibilityContainer
                                 Color = FluXisColors.Red,
                                 Action = () =>
                                 {
-                                    Footer.Screen.OpenDeleteConfirm();
+                                    Footer.Screen.OpenDeleteConfirm(Footer.Screen.MapSet.Value);
                                     State.Value = Visibility.Hidden;
                                 }
                             }

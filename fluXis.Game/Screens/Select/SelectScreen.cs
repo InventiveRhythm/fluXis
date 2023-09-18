@@ -388,9 +388,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         MapInfo.Value = listEntry.Maps[current];
     }
 
-    public void OpenDeleteConfirm()
+    public void OpenDeleteConfirm(RealmMapSet set)
     {
-        Game.Overlay ??= new ConfirmDeletionPanel(() => DeleteMapSet(MapSet.Value), itemName: "MapSet") { ButtonWidth = 200 };
+        Game.Overlay ??= new ConfirmDeletionPanel(() => DeleteMapSet(set), itemName: "MapSet") { ButtonWidth = 200 };
     }
 
     public void DeleteMapSet(RealmMapSet set)
