@@ -111,7 +111,7 @@ public partial class MenuNowPlaying : Container
         const int delay = 4000;
 
         this.MoveToX(50).MoveToX(0, 600, Easing.OutQuint).FadeInFromZero(400)
-            .Delay(delay).MoveToX(50, 600, Easing.OutQuint).FadeOut(400);
+            .Delay(delay).MoveToX(50, 800, Easing.OutQuint).FadeOut(400);
 
         coverContainer.RotateTo(-4).RotateTo(4, 600, Easing.OutQuint);
     }
