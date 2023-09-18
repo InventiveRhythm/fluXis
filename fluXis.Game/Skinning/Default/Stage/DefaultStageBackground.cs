@@ -10,7 +10,7 @@ public partial class DefaultStageBackground : Box
     private void load()
     {
         Colour = Colour4.Black;
-        Alpha = 0.5f;
+        Alpha = 0.8f;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         RelativeSizeAxes = Axes.Both;
