@@ -9,6 +9,7 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -47,14 +48,20 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
             },
             content = new ClickableContainer
             {
-                Width = 1200,
-                Height = 600,
+                Width = 1400,
+                Height = 800,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Scale = new Vector2(.95f),
                 Rotation = 2,
-                CornerRadius = 10,
+                CornerRadius = 20,
                 Masking = true,
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Colour4.Black.Opacity(.25f),
+                    Radius = 10
+                },
                 Children = new Drawable[]
                 {
                     background = new PanelBackground

@@ -21,7 +21,7 @@ public partial class DrawableImportPlugin : Container
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
-        CornerRadius = 5;
+        CornerRadius = 10;
         Masking = true;
 
         FillFlowContainer flow;
@@ -31,7 +31,7 @@ public partial class DrawableImportPlugin : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background1
+                Colour = FluXisColors.Background2
             },
             flow = new FillFlowContainer
             {

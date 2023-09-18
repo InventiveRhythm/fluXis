@@ -218,11 +218,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public void OpenSkinEditor()
     {
-        if (ScreenStack.CurrentScreen is not MenuScreen)
+        if (ScreenStack.CurrentScreen is SkinEditor)
         {
-            Notifications.Post(ScreenStack.CurrentScreen is SkinEditor
-                ? "You are already in the Skin editor."
-                : "You can only open the Skin editor from the main menu.");
+            Notifications.Post("You are already in the Skin editor.");
             return;
         }
 
