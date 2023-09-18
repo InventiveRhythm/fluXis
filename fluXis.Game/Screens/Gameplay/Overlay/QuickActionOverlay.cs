@@ -22,7 +22,7 @@ public partial class QuickActionOverlay : FillFlowContainer
     {
         set
         {
-            if (holdToConfirm.Value == 0)
+            if (holdToConfirm.Value == 0 && value)
             {
                 OnConfirm?.Invoke();
                 return;

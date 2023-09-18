@@ -450,7 +450,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
         switch (e.Action)
         {
-            case FluXisKeybind.QuickRestart:
+            case FluXisKeybind.QuickRestart when !starting && !restarting:
                 quickActionOverlay.OnConfirm = RestartMap;
                 quickActionOverlay.IsHolding = true;
                 return true;
