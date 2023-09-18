@@ -183,75 +183,82 @@ public class OsuImport : MapImporter
 
         foreach (var set in sets)
         {
-            var mapList = new List<RealmMap>();
-
-            var realmMapSet = new OsuRealmMapSet(mapList)
+            try
             {
-                Managed = true,
-                Resources = Resources
-            };
+                var mapList = new List<RealmMap>();
 
-            foreach (var map in set)
-            {
-                // an extremely stupid thing we need to do...
-                // to get the map background, we have to load the map,
-                // because for some reason the background is not in the .db file
-                // this increades the loading time by a lot, but there is no other way
-                var osuMap = ParseOsuMap(File.ReadAllText(StoragePath + "/" + map.FolderName + "/" + map.BeatmapFileName));
-
-                var realmMap = new OsuRealmMap
+                var realmMapSet = new OsuRealmMapSet(mapList)
                 {
-                    OsuPath = StoragePath,
-                    FolderPath = map.FolderName,
-                    Difficulty = map.Version,
-                    Metadata = new RealmMapMetadata
-                    {
-                        Title = map.Title,
-                        Artist = map.Artist,
-                        Mapper = map.Creator,
-                        Source = map.SongSource,
-                        Tags = map.SongTags,
-                        Background = osuMap.GetBackground(),
-                        Audio = map.AudioFileName,
-                        PreviewTime = map.AudioPreviewTime
-                    },
-                    MapSet = realmMapSet,
-                    Status = ID,
-                    FileName = map.BeatmapFileName,
-                    OnlineID = 0,
-                    Hash = null,
-                    Filters = new RealmMapFilters
-                    {
-                        Length = map.TotalTime,
-                        BPMMin = 0,
-                        BPMMax = 0,
-                        NoteCount = map.CountHitCircles,
-                        LongNoteCount = map.CountSliders,
-                        NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (float)map.TotalTime,
-                        HasScrollVelocity = false,
-                        HasLaneSwitch = false,
-                        HasFlash = false
-                    },
-                    KeyCount = (int)map.CircleSize,
-                    Rating = 0
+                    Managed = true,
+                    Resources = Resources
                 };
 
-                if (map.TimingPoints != null)
+                foreach (var map in set)
                 {
-                    try
+                    // an extremely stupid thing we need to do...
+                    // to get the map background, we have to load the map,
+                    // because for some reason the background is not in the .db file
+                    // this increades the loading time by a lot, but there is no other way
+                    var osuMap = ParseOsuMap(File.ReadAllText(StoragePath + "/" + map.FolderName + "/" + map.BeatmapFileName));
+
+                    var realmMap = new OsuRealmMap
                     {
-                        realmMap.Filters.BPMMax = realmMap.Filters.BPMMin = (float)Math.Round(60000 / map.TimingPoints.Find(x => x.MsPerQuarter > 0).MsPerQuarter, 0);
-                    }
-                    catch (Exception)
+                        OsuPath = StoragePath,
+                        FolderPath = map.FolderName,
+                        Difficulty = map.Version,
+                        Metadata = new RealmMapMetadata
+                        {
+                            Title = map.Title,
+                            Artist = map.Artist,
+                            Mapper = map.Creator,
+                            Source = map.SongSource,
+                            Tags = map.SongTags,
+                            Background = osuMap.GetBackground(),
+                            Audio = map.AudioFileName,
+                            PreviewTime = map.AudioPreviewTime
+                        },
+                        MapSet = realmMapSet,
+                        Status = ID,
+                        FileName = map.BeatmapFileName,
+                        OnlineID = 0,
+                        Hash = null,
+                        Filters = new RealmMapFilters
+                        {
+                            Length = map.TotalTime,
+                            BPMMin = 0,
+                            BPMMax = 0,
+                            NoteCount = map.CountHitCircles,
+                            LongNoteCount = map.CountSliders,
+                            NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (float)map.TotalTime,
+                            HasScrollVelocity = false,
+                            HasLaneSwitch = false,
+                            HasFlash = false
+                        },
+                        KeyCount = (int)map.CircleSize,
+                        Rating = 0
+                    };
+
+                    if (map.TimingPoints != null)
                     {
-                        realmMap.Filters.BPMMax = realmMap.Filters.BPMMin = 0;
+                        try
+                        {
+                            realmMap.Filters.BPMMax = realmMap.Filters.BPMMin = (float)Math.Round(60000 / map.TimingPoints.Find(x => x.MsPerQuarter > 0).MsPerQuarter, 0);
+                        }
+                        catch (Exception)
+                        {
+                            realmMap.Filters.BPMMax = realmMap.Filters.BPMMin = 0;
+                        }
                     }
+
+                    mapList.Add(realmMap);
                 }
 
-                mapList.Add(realmMap);
+                mapSets.Add(realmMapSet);
             }
-
-            mapSets.Add(realmMapSet);
+            catch (Exception e)
+            {
+                Logger.Error(e, "Error while importing osu! map");
+            }
         }
 
         return mapSets;
