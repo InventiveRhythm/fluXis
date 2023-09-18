@@ -124,10 +124,12 @@ public partial class FooterOptions : VisibilityContainer
         };
     }
 
-    protected override void LoadComplete()
+    protected override void Update()
     {
-        X = Button.ScreenSpaceDrawQuad.Centre.X;
-        base.LoadComplete();
+        base.Update();
+
+        var delta = Button.ScreenSpaceDrawQuad.Centre.X - ScreenSpaceDrawQuad.Centre.X;
+        X += delta;
     }
 
     protected override bool OnHover(HoverEvent e) => true;
