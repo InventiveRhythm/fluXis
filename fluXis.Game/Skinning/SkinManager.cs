@@ -9,6 +9,7 @@ using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
 using fluXis.Game.Skinning.Default.Stage;
 using fluXis.Game.Skinning.Json;
+using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -71,6 +72,8 @@ public partial class SkinManager : Component
         writer.Flush();
         stream.Flush();
     }
+
+    public void OpenFolder() => PathUtils.OpenFolder(skinStorage.GetFullPath(SkinFolder));
 
     protected override void Update()
     {

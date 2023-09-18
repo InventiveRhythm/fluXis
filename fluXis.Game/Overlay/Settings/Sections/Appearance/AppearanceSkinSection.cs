@@ -30,7 +30,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
             new SettingsButton
             {
                 Label = "Open Skin folder",
-                Enabled = false,
+                Action = skinManager.OpenFolder,
                 ButtonText = "Open"
             },
             new SettingsButton
