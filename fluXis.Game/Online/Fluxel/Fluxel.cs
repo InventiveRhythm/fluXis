@@ -203,12 +203,16 @@ public partial class Fluxel : Component
             try
             {
                 string message = "";
+                bool end = false;
 
-                while (!message.EndsWith("}")) // incomplete packet, wait for more data)
+                while (!end) // incomplete packet, wait for more data
                 {
                     // receive data
                     byte[] buffer = new byte[1024 * 1024 * 2]; // 2MB (some packets are big)
-                    await connection.ReceiveAsync(buffer, CancellationToken.None);
+                    var res = await connection.ReceiveAsync(buffer, CancellationToken.None);
+
+                    // check if end of message
+                    end = res.EndOfMessage;
 
                     // convert to string
                     string msg = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
