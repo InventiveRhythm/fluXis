@@ -237,7 +237,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 
             if (channel != Channel) return;
 
-            foreach (var message in response.Data) addMessage(message);
+            foreach (var message in data) addMessage(message);
         });
 
         fluxel.RegisterListener<string>(EventType.ChatMessageDelete, res =>
