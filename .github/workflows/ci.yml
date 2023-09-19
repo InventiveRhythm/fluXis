@@ -22,7 +22,7 @@ jobs:
           dotnet-version: "6.0.x"
 
       - name: build
-        run: dotnet publish -c Release fluXis.Desktop --output ./bin
+        run: dotnet publish fluXis.Desktop --output ./bin
 
       - name: upload build artifacts
         uses: actions/upload-artifact@v2
@@ -48,7 +48,7 @@ jobs:
           dotnet-version: "6.0.x"
 
       - name: build
-        run: dotnet publish -c Release fluXis.Desktop --output ./bin
+        run: dotnet publish fluXis.Desktop --output ./bin
 
       - name: upload build artifacts
         uses: actions/upload-artifact@v2
@@ -59,3 +59,26 @@ jobs:
             bin/*
             !bin/runtimes/osx*
             !bin/runtimes/linux*
+
+  build-android:
+    name: Build (Android)
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: install dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "6.0.x"
+
+      - name: build
+        run: dotnet publish fluXis.Android --output ./bin
+
+      - name: upload build artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: fluXis-ci-build-android
+          path: bin/flustix.fluXis.apk
