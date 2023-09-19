@@ -200,7 +200,8 @@ public partial class MapStore : Component
         if (json == null) return null;
 
         var map = JsonConvert.DeserializeObject<APIResponse<APIMap>>(json);
-        return map.Data;
+
+        return map.Status != 200 ? null : map.Data;
     }
 
     public RealmMap CreateNew()

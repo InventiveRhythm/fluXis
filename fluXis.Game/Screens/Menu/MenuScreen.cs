@@ -297,7 +297,7 @@ public partial class MenuScreen : FluXisScreen
     private void continueToPlay() => this.Push(new SelectScreen());
     private void continueToMultiplayer() => this.Push(new MultiplayerScreen());
     private void continueToRankings() => this.Push(new Rankings());
-    private void continueToBrowse() => this.Push(new Bluescreen());
+    private void continueToBrowse() => this.Push(new MapBrowser());
 
     private bool canPlayAnimation()
     {

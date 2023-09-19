@@ -25,6 +25,8 @@ public class APIUserShort
     public string GetAvatarUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/avatar/" + ID;
     public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/banner/" + ID;
 
+    public string GetName() => string.IsNullOrEmpty(DisplayName) ? Username : DisplayName;
+
     public static APIUserShort Dummy => new() { ID = -1, Username = "Dummy Player" };
 
     public class APIUserSocials

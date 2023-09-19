@@ -121,6 +121,7 @@ public class FluXisImport : MapImporter
                     try
                     {
                         var onlineMap = MapStore.LookUpHash(hash);
+                        Logger.Log(JsonConvert.SerializeObject(onlineMap));
                         if (onlineMap == null) continue;
 
                         map.OnlineID = onlineMap.Id;

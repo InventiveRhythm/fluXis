@@ -21,7 +21,7 @@ public class APIMap
     public string Difficulty { get; init; } = "";
 
     [JsonProperty("mode")]
-    public int Mode { get; init; }
+    public int KeyMode { get; init; }
 
     [JsonProperty("status")]
     public int Status { get; set; }

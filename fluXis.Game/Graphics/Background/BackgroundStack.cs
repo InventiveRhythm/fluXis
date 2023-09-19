@@ -127,7 +127,8 @@ public partial class BackgroundStack : CompositeDrawable
 
     protected override void Update()
     {
-        Padding = new MarginPadding { Top = toolbar.Height - 10 + toolbar.Y };
+        // this is EXTREMELY laggy, and i do not know why
+        // Padding = new MarginPadding { Top = toolbar.Height - 10 + toolbar.Y };
 
         while (scheduledBackgrounds.Count > 0)
         {

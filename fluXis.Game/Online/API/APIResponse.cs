@@ -5,13 +5,13 @@ namespace fluXis.Game.Online.API;
 public class APIResponse<T>
 {
     [JsonProperty("code")]
-    public int Status;
+    public int Status { get; init; }
 
     [JsonProperty("message")]
-    public string Message;
+    public string Message { get; init; }
 
     [JsonProperty("data")]
-    public T Data;
+    public T Data { get; init; }
 
     public APIResponse(int status, string message, T data)
     {

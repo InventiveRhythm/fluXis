@@ -77,4 +77,7 @@ public partial class LoadingIcon : Container
                  .ResizeWidthTo(.2f, duration, easing)
                  .Loop();
     }
+
+    public override void Show() => this.FadeIn(200);
+    public override void Hide() => this.FadeOut(200);
 }

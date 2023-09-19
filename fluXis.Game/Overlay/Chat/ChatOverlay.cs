@@ -220,9 +220,9 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 
         fluxel.RegisterListener<ChatMessage[]>(EventType.ChatHistory, response =>
         {
-            response.Data = response.Data.OrderBy(x => x.Timestamp).ToArray();
+            var data = response.Data.OrderBy(x => x.Timestamp).ToArray();
 
-            var first = response.Data.FirstOrDefault();
+            var first = data.FirstOrDefault();
 
             if (first == null)
                 return;
@@ -230,7 +230,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
             var channel = first.Channel;
 
             var list = messages.GetValueOrDefault(channel, new List<ChatMessage>());
-            list.AddRange(response.Data);
+            list.AddRange(data);
             messages[channel] = list;
 
             ScheduleAfterChildren(() => loading.FadeOut(200));
