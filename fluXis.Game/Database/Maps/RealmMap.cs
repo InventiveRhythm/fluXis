@@ -78,6 +78,12 @@ public class RealmMap : RealmObject
         return backgrounds?.Get(MapSet.GetPathForFile(Metadata.Background));
     }
 
+    public virtual Stream GetBackgroundStream()
+    {
+        var backgrounds = MapSet.Resources?.BackgroundStore;
+        return backgrounds?.GetStream(MapSet.GetPathForFile(Metadata.Background));
+    }
+
     public virtual Texture GetPanelBackground()
     {
         var croppedBackgrounds = MapSet.Resources?.CroppedBackgroundStore;

@@ -92,26 +92,31 @@ public partial class SelectMapInfo : GridContainer
                                     },
                                     new Container
                                     {
-                                        RelativeSizeAxes = Axes.Both,
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
                                         Padding = new MarginPadding(20),
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
                                         Children = new Drawable[]
                                         {
                                             titleText = new FluXisSpriteText
                                             {
-                                                Text = "No Map Selected",
-                                                FontSize = 60,
                                                 RelativeSizeAxes = Axes.X,
+                                                FontSize = 60,
+                                                Text = "No Map Selected",
                                                 Truncate = true,
+                                                Shadow = true,
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.BottomLeft,
                                                 Y = 10
                                             },
                                             artistText = new FluXisSpriteText
                                             {
-                                                Text = "Please select a map to view info",
-                                                FontSize = 32,
                                                 RelativeSizeAxes = Axes.X,
+                                                FontSize = 32,
+                                                Text = "Please select a map to view info",
                                                 Truncate = true,
+                                                Shadow = true,
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.TopLeft
                                             }
@@ -246,7 +251,7 @@ public partial class SelectMapInfo : GridContainer
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Bottom = 20, Right = 20 },
+                    Padding = new MarginPadding { Bottom = 20 },
                     Child = ScoreList = new ScoreList
                     {
                         MapInfo = this

@@ -1,5 +1,6 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
+using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Color;
 
@@ -49,6 +50,30 @@ public static class FluXisColors
     {
         var hsl = color.ToHSL();
         return hsl.Z > .5f;
+    }
+
+    public static Colour4 DifficultyZero => Colour4.FromHex("#888888");
+    public static Colour4 Difficulty0 => Colour4.FromHex("#3355FF");
+    public static Colour4 Difficulty5 => Colour4.FromHex("#3489FF");
+    public static Colour4 Difficulty10 => Colour4.FromHex("#35BCFF");
+    public static Colour4 Difficulty15 => Colour4.FromHex("#33FFDD");
+    public static Colour4 Difficulty20 => Colour4.FromHex("#55FF33");
+    public static Colour4 Difficulty25 => Colour4.FromHex("#FEFF33");
+    public static Colour4 Difficulty30 => Colour4.FromHex("#FF3333");
+
+    public static Colour4 GetDifficultyColor(float difficulty)
+    {
+        return difficulty switch
+        {
+            <= 0 => DifficultyZero,
+            <= 5 => ColourInfo.GradientHorizontal(Difficulty0, Difficulty5).Interpolate(new Vector2(difficulty / 5, 0)),
+            <= 10 => ColourInfo.GradientHorizontal(Difficulty5, Difficulty10).Interpolate(new Vector2((difficulty - 5) / 5, 0)),
+            <= 15 => ColourInfo.GradientHorizontal(Difficulty10, Difficulty15).Interpolate(new Vector2((difficulty - 10) / 5, 0)),
+            <= 20 => ColourInfo.GradientHorizontal(Difficulty15, Difficulty20).Interpolate(new Vector2((difficulty - 15) / 5, 0)),
+            <= 25 => ColourInfo.GradientHorizontal(Difficulty20, Difficulty25).Interpolate(new Vector2((difficulty - 20) / 5, 0)),
+            <= 30 => ColourInfo.GradientHorizontal(Difficulty25, Difficulty30).Interpolate(new Vector2((difficulty - 25) / 5, 0)),
+            _ => Difficulty30
+        };
     }
 
     public static Colour4 GetStatusColor(int status)

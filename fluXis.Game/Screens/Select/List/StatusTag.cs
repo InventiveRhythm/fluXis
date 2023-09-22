@@ -13,9 +13,15 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
-public partial class StatusTag : Container
+public partial class StatusTag : CircularContainer
 {
     private readonly RealmMapSet set;
+    private RealmMap map => set.Maps.First();
+
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    private FluXisSpriteText text;
 
     public StatusTag(RealmMapSet set)
     {
@@ -23,73 +29,81 @@ public partial class StatusTag : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load(FluXisRealm realm)
+    private void load()
     {
-        AutoSizeAxes = Axes.Both;
-        Anchor = Anchor.CentreRight;
-        Origin = Anchor.CentreRight;
-
-        RealmMap map = set.Maps[0];
-
-        var colour = FluXisColors.GetStatusColor(map.Status);
-
-        string text = map.Status switch
+        Width = 100;
+        Height = 20;
+        Masking = true;
+        EdgeEffect = new EdgeEffectParameters
         {
-            -2 => "LOCAL",
-            -1 => "UNSUBMITTED", // blacklisted, but we show it as "unsubmitted"
-            0 => "UNSUBMITTED",
-            1 => "PENDING",
-            2 => "IMPURE",
-            3 => "PURE",
-            _ => "UNKNOWN"
+            Type = EdgeEffectType.Shadow,
+            Colour = Colour4.Black.Opacity(.25f),
+            Radius = 5,
+            Offset = new Vector2(0, 2)
         };
 
-        if (map.Status >= 100)
-        {
-            realm.Run(r =>
-            {
-                var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == map.Status);
-
-                if (info != null)
-                {
-                    colour = Colour4.FromHex(info.Color);
-                    text = info.Name;
-                }
-                else Logger.Log($"ImporterInfo with id {map.Status} not found!", level: LogLevel.Error);
-            });
-        }
+        var (status, colour) = getStatus();
 
         Children = new Drawable[]
         {
-            new Container
+            new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Shear = new Vector2(.1f, 0),
-                Masking = true,
-                CornerRadius = 5,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = colour
-                },
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(0.2f),
-                    Radius = 5,
-                    Offset = new Vector2(0, 1)
-                }
+                Colour = colour
             },
-            new FluXisSpriteText
+            text = new FluXisSpriteText
             {
-                Text = text,
+                Text = status,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = FluXisColors.IsBright(colour) ? FluXisColors.TextDark : Colour4.White,
-                Margin = new MarginPadding { Horizontal = 8 }
+                Colour = FluXisColors.IsBright(colour) ? Colour4.Black : Colour4.White,
+                Alpha = .75f
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        var widthLeft = 50 - text.DrawWidth % 50;
+
+        if (widthLeft < 20)
+            widthLeft += 50;
+
+        Width = text.DrawWidth + widthLeft;
+    }
+
+    private (string, Colour4) getStatus()
+    {
+        var color = FluXisColors.GetStatusColor(map.Status);
+
+        switch (map.Status)
+        {
+            case < 100:
+                return map.Status switch
+                {
+                    -2 => ("LOCAL", color),
+                    -1 => ("UNSUBMITTED", color), // blacklisted, but we show it as "unsubmitted"
+                    0 => ("UNSUBMITTED", color),
+                    1 => ("PENDING", color),
+                    2 => ("IMPURE", color),
+                    3 => ("PURE", color),
+                    _ => ("UNKNOWN", color)
+                };
+
+            case >= 100:
+                return realm.Run(r =>
+                {
+                    var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == map.Status);
+
+                    if (info != null)
+                        return (info.Name, Colour4.TryParseHex(info.Color, out var c) ? c : color);
+
+                    Logger.Log($"ImporterInfo with id {map.Status} not found!", level: LogLevel.Error);
+
+                    return ("UNKNOWN", color);
+                });
+        }
     }
 }

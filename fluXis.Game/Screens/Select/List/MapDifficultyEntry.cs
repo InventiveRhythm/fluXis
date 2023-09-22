@@ -3,10 +3,13 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
@@ -50,9 +53,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
 
     private readonly MapListEntry mapListEntry;
     private readonly RealmMap map;
-
-    private Box wedge;
-    private Box wedge2;
+    private Container outline;
 
     public MapDifficultyEntry(MapListEntry parentEntry, RealmMap map)
     {
@@ -64,100 +65,156 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 40;
-        CornerRadius = 5;
-        Masking = true;
+        Height = 48;
 
         InternalChildren = new Drawable[]
         {
-            new Box
+            outline = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.GetKeyColor(map.KeyCount)
+                Padding = new MarginPadding(-2),
+                Child = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    CornerRadius = 12,
+                    Masking = true,
+                    Children = new Drawable[]
+                    {
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = ColourInfo.GradientVertical(FluXisColors.GetKeyColor(map.KeyCount).Lighten(1), FluXisColors.GetKeyColor(map.KeyCount))
+                        }
+                    }
+                }
             },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding(2),
-                Child = new GridContainer
+                CornerRadius = 10,
+                Masking = true,
+                EdgeEffect = new EdgeEffectParameters
                 {
-                    ColumnDimensions = new Dimension[]
+                    Type = EdgeEffectType.Shadow,
+                    Colour = Colour4.Black.Opacity(0.25f),
+                    Radius = 0,
+                    Offset = new Vector2(0, 2)
+                },
+                Children = new Drawable[]
+                {
+                    new Box
                     {
-                        new(),
-                        new(GridSizeMode.Absolute, 40)
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.GetKeyColor(map.KeyCount)
                     },
-                    RelativeSizeAxes = Axes.Both,
-                    Content = new[]
+                    new Container
                     {
-                        new Drawable[]
+                        RelativeSizeAxes = Axes.Both,
+                        Padding = new MarginPadding { Right = 35 },
+                        Child = new Container
                         {
-                            new Container
+                            RelativeSizeAxes = Axes.Both,
+                            CornerRadius = 10,
+                            Masking = true,
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable[]
+                                new Box
                                 {
-                                    new Container
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = FluXisColors.Background2
+                                },
+                                new FillFlowContainer
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Direction = FillDirection.Vertical,
+                                    Padding = new MarginPadding { Left = 10 },
+                                    Children = new Drawable[]
                                     {
-                                        RelativeSizeAxes = Axes.Both,
-                                        CornerRadius = 5,
-                                        Masking = true,
-                                        Child = new Box
+                                        new FillFlowContainer
                                         {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Colour = FluXisColors.Background1
-                                        }
-                                    },
-                                    wedge2 = new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Y,
-                                        Width = 30,
-                                        Colour = FluXisColors.GetKeyColor(map.KeyCount).Darken(.2f),
-                                        Anchor = Anchor.CentreRight,
-                                        Origin = Anchor.CentreLeft,
-                                        Shear = new Vector2(-.1f, 0)
-                                    },
-                                    wedge = new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Y,
-                                        Width = 45,
-                                        Colour = FluXisColors.GetKeyColor(map.KeyCount),
-                                        Anchor = Anchor.CentreRight,
-                                        Origin = Anchor.CentreLeft,
-                                        Shear = new Vector2(.15f, 0)
-                                    },
-                                    new FillFlowContainer
-                                    {
-                                        Direction = FillDirection.Horizontal,
-                                        RelativeSizeAxes = Axes.Both,
-                                        Spacing = new Vector2(3),
-                                        Padding = new MarginPadding { Left = 10 },
-                                        Children = new Drawable[]
+                                            AutoSizeAxes = Axes.Both,
+                                            Direction = FillDirection.Horizontal,
+                                            Spacing = new Vector2(10),
+                                            Children = new Drawable[]
+                                            {
+                                                new FluXisSpriteText
+                                                {
+                                                    Text = map.Difficulty,
+                                                    FontSize = 20,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft
+                                                },
+                                                new FluXisSpriteText
+                                                {
+                                                    Text = $"mapped by {map.Metadata.Mapper}",
+                                                    FontSize = 16,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft,
+                                                    Alpha = .8f
+                                                }
+                                            }
+                                        },
+                                        new CircularContainer
                                         {
-                                            new FluXisSpriteText
+                                            Width = 50,
+                                            Height = 14,
+                                            Masking = true,
+                                            Children = new Drawable[]
                                             {
-                                                Text = map.Difficulty,
-                                                Anchor = Anchor.CentreLeft,
-                                                Origin = Anchor.CentreLeft,
-                                                FontSize = 22
-                                            },
-                                            new FluXisSpriteText
-                                            {
-                                                Text = $"mapped by {map.Metadata.Mapper}",
-                                                Anchor = Anchor.CentreLeft,
-                                                Origin = Anchor.CentreLeft,
-                                                FontSize = 22,
-                                                Colour = FluXisColors.Text2
+                                                new Box
+                                                {
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    Colour = FluXisColors.GetDifficultyColor(map.Filters.NotesPerSecond)
+                                                },
+                                                new FluXisSpriteText
+                                                {
+                                                    Text = map.Filters.NotesPerSecond.ToStringInvariant("00.00"),
+                                                    FontSize = 14,
+                                                    Colour = Colour4.Black,
+                                                    Alpha = .75f,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            },
-                            new FluXisSpriteText
+                            }
+                        }
+                    },
+                    new Container
+                    {
+                        Width = 35,
+                        RelativeSizeAxes = Axes.Y,
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
+                        Colour = Colour4.Black,
+                        Alpha = .75f,
+                        Child = new FillFlowContainer
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Direction = FillDirection.Horizontal,
+                            Children = new Drawable[]
                             {
-                                Text = $"{map.KeyCount}K",
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Colour = FluXisColors.GetKeyColor(map.KeyCount).ToHSL().Z > 0.5f ? Colour4.FromHex("#1a1a20") : Colour4.White
+                                new FluXisSpriteText
+                                {
+                                    Text = map.KeyCount.ToString(),
+                                    FontSize = 20,
+                                    Anchor = Anchor.BottomLeft,
+                                    Origin = Anchor.BottomLeft,
+                                    Margin = new MarginPadding { Bottom = -1 }
+                                },
+                                new FluXisSpriteText
+                                {
+                                    Text = "K",
+                                    FontSize = 14,
+                                    Anchor = Anchor.BottomLeft,
+                                    Origin = Anchor.BottomLeft
+                                }
                             }
                         }
                     }
@@ -181,14 +238,8 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     private void updateSelected(RealmMap newMap)
     {
         if (Equals(newMap, map))
-        {
-            wedge.MoveToX(-40, 100, Easing.OutQuint);
-            wedge2.MoveToX(-42, 170, Easing.OutQuint);
-        }
+            outline.FadeIn(200);
         else
-        {
-            wedge.MoveToX(0, 100, Easing.InQuint);
-            wedge2.MoveToX(0, 160, Easing.InQuint);
-        }
+            outline.FadeOut(200);
     }
 }

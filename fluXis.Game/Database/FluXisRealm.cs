@@ -26,8 +26,10 @@ public class FluXisRealm : IDisposable
     /// 7 - Make RealmScore.Mods a string
     /// 8 - Added PlayerID to RealmScore
     /// 9 - Removed RealmJudgements and moved to RealmScore
+    /// 10 - Changed storage system
+    /// 11 - Added ColorHex to RealmMapMetadata
     /// </summary>
-    private const int schema_version = 10;
+    private const int schema_version = 11;
 
     private Realm updateRealm;
 

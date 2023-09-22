@@ -18,9 +18,10 @@ using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -43,7 +44,7 @@ public partial class ScoreList : GridContainer
 
     private FluXisSpriteText noScoresText;
     private FluXisScrollContainer scrollContainer;
-    private FillFlowContainer<ClickableText> typeSwitcher;
+    private FillFlowContainer<LeaderboardTypeButton> typeSwitcher;
     private LoadingIcon loadingIcon;
 
     [BackgroundDependencyLoader]
@@ -60,25 +61,49 @@ public partial class ScoreList : GridContainer
         {
             new Drawable[]
             {
-                typeSwitcher = new FillFlowContainer<ClickableText>
+                new Container
                 {
-                    AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(40),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.X,
+                    Height = 50,
+                    CornerRadius = 10,
+                    Masking = true,
+                    Shear = new Vector2(-.1f, 0),
                     Margin = new MarginPadding { Bottom = 10 },
-                    Children = new ClickableText[]
+                    EdgeEffect = new EdgeEffectParameters
                     {
-                        new()
+                        Type = EdgeEffectType.Shadow,
+                        Colour = Colour4.Black.Opacity(.25f),
+                        Radius = 5,
+                        Offset = new Vector2(0, 1)
+                    },
+                    Children = new Drawable[]
+                    {
+                        new Box
                         {
-                            ScoreList = this,
-                            Type = ScoreListType.Global
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background2
                         },
-                        new()
+                        new FluXisSpriteText
                         {
-                            ScoreList = this,
-                            Type = ScoreListType.Local
+                            Text = "Scores",
+                            FontSize = 32,
+                            Shear = new Vector2(.1f, 0),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            X = 20
+                        },
+                        typeSwitcher = new FillFlowContainer<LeaderboardTypeButton>
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Direction = FillDirection.Horizontal,
+                            Anchor = Anchor.CentreRight,
+                            Origin = Anchor.CentreRight,
+                            X = -40,
+                            Children = Enum.GetValues<ScoreListType>().Select(t => new LeaderboardTypeButton
+                            {
+                                Type = t,
+                                ScoreList = this
+                            }).ToList()
                         }
                     }
                 }
@@ -88,6 +113,7 @@ public partial class ScoreList : GridContainer
                 new FluXisContextMenuContainer
                 {
                     RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Right = 20 },
                     Children = new Drawable[]
                     {
                         noScoresText = new FluXisSpriteText
@@ -114,8 +140,6 @@ public partial class ScoreList : GridContainer
                 }
             }
         };
-
-        updateTabs();
     }
 
     public void Refresh()
@@ -124,10 +148,7 @@ public partial class ScoreList : GridContainer
             return;
 
         SetMap(map);
-        updateTabs();
     }
-
-    private void updateTabs() => typeSwitcher.Children.ForEach(c => c.Selected = c.Type == type);
 
     public void SetMap(RealmMap map)
     {
@@ -176,7 +197,7 @@ public partial class ScoreList : GridContainer
             case ScoreListType.Global:
                 if (map.OnlineID == -1)
                 {
-                    noScoresText.Text = "Scores are not available for this map!";
+                    noScoresText.Text = "This map is not submitted online!";
                     Schedule(() =>
                     {
                         noScoresText.FadeIn(200);
@@ -220,6 +241,15 @@ public partial class ScoreList : GridContainer
                 }
 
                 break;
+
+            default:
+                noScoresText.Text = $"{type} leaderboards are not available yet!";
+                Schedule(() =>
+                {
+                    noScoresText.FadeIn(200);
+                    loadingIcon.FadeOut(200);
+                });
+                return;
         }
 
         Schedule(() =>
@@ -246,30 +276,45 @@ public partial class ScoreList : GridContainer
         scrollContainer.ScrollContent.Add(entry);
     }
 
-    private partial class ClickableText : ClickableContainer
+    private partial class LeaderboardTypeButton : ClickableContainer
     {
         public ScoreListType Type { get; init; }
         public ScoreList ScoreList { get; init; }
-
-        public bool Selected
-        {
-            set => Schedule(() => text.FadeColour(value ? FluXisColors.Text : FluXisColors.Text2, 200));
-        }
 
         private FluXisSpriteText text;
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            AutoSizeAxes = Axes.Both;
-            Child = text = new FluXisSpriteText
+            Width = 100;
+            Height = 30;
+            Shear = new Vector2(.2f, 0);
+            CornerRadius = 5;
+            Masking = true;
+
+            InternalChildren = new Drawable[]
             {
-                Text = Type.ToString(),
-                FontSize = 32,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Colour = FluXisColors.Text2,
-                Shadow = true
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Type switch
+                    {
+                        ScoreListType.Local => Colour4.FromHSV(120f / 360f, .6f, 1f),
+                        ScoreListType.Global => Colour4.FromHSV(30f / 360f, .6f, 1f),
+                        ScoreListType.Country => Colour4.FromHSV(0f, .6f, 1f),
+                        ScoreListType.Friends => Colour4.FromHSV(210f / 360f, .6f, 1f),
+                        _ => FluXisColors.Background4
+                    }
+                },
+                text = new FluXisSpriteText
+                {
+                    Text = Type.ToString(),
+                    FontSize = 18,
+                    Shear = new Vector2(-.1f, 0),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Colour = FluXisColors.TextDark
+                }
             };
 
             Action = () =>
@@ -284,5 +329,7 @@ public partial class ScoreList : GridContainer
 public enum ScoreListType
 {
     Local,
-    Global
+    Global,
+    Country,
+    Friends
 }

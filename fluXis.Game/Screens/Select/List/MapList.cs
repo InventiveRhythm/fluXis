@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
@@ -23,6 +24,7 @@ public partial class MapList : FluXisScrollContainer
         {
             AutoSizeAxes = Axes.Y,
             RelativeSizeAxes = Axes.X,
+            Spacing = new Vector2(10),
             Direction = FillDirection.Vertical
         };
     }
