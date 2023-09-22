@@ -12,6 +12,11 @@ public static class MenuSplashes
     private static string[] splashes =
     {
         "Literally 1984.",
+        "We do a little bit of trolling",
+        "Nice pfc",
+        "The tiebreaker is undeniably the essence of all tournaments. It is the fruit of hard work, the culmination of a valiant effort to fight and the manifestation of absolute determination. It is the desperation that creates friendship, the flood of adrenaline that replenishes life and the myriad of emotions that make one feel ever so momentarily blissful, that they could relish in the very moment where everyone belongs in the game. I really love the tiebreaker.",
+        "assblaster371 strikes again",
+        "pudding deez nuts in your mouth",
         "What do you mean the chart is unreadable?",
         "*metal pipe sfx*",
         "Hey you wanna make a guest difficulty for my map?",
