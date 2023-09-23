@@ -12,7 +12,7 @@ public class ReleaseWindows : HitWindows
         new(Judgement.Flawless, 40),
         new(Judgement.Perfect, 73),
         new(Judgement.Great, 103),
-        new(Judgement.Miss, 164)
+        new(Judgement.Miss, 103)
     };
 
     public ReleaseWindows(float rate)

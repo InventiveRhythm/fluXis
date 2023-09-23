@@ -16,7 +16,7 @@ public partial class HitObject : CompositeDrawable
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public HitObjectInfo Data;
+    public HitObjectInfo Data { get; }
     private double scrollVelocityTime { get; }
     private double scrollVelocityEndTime { get; }
 
@@ -26,12 +26,12 @@ public partial class HitObject : CompositeDrawable
     private Drawable holdBodyPiece;
     private Drawable holdEndPiece;
 
-    public bool Hitable;
-    public bool Releasable;
-    public bool GotHit;
-    public bool Missed;
-    public bool IsBeingHeld;
-    public bool LongNoteMissed;
+    public bool Hitable { get; private set; }
+    public bool Releasable { get; private set; }
+    public bool GotHit { get; set; }
+    public bool Missed { get; private set; }
+    public bool IsBeingHeld { get; set; }
+    public bool LongNoteMissed { get; private set; }
 
     public HitObject(HitObjectManager manager, HitObjectInfo data)
     {
@@ -91,11 +91,13 @@ public partial class HitObject : CompositeDrawable
 
     protected override void Update()
     {
+        var lastHitableTime = manager.Playfield.Screen.HitWindows.TimingFor(manager.Playfield.Screen.HitWindows.LowestHitable);
         var missTime = manager.Playfield.Screen.HitWindows.TimingFor(Judgement.Miss);
+        var releaseMissTime = manager.Playfield.Screen.ReleaseWindows.TimingFor(Judgement.Miss);
 
-        Missed = (Clock.CurrentTime - Data.Time > missTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Clock.CurrentTime - Data.HoldEndTime > missTime);
+        Missed = (Clock.CurrentTime - Data.Time > lastHitableTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Clock.CurrentTime - Data.HoldEndTime > releaseMissTime);
         Hitable = Clock.CurrentTime - Data.Time > -missTime && !Missed;
-        Releasable = Data.IsLongNote() && Clock.CurrentTime - Data.HoldEndTime > -missTime && !Missed;
+        Releasable = Data.IsLongNote() && Clock.CurrentTime - Data.HoldEndTime > -releaseMissTime && !Missed;
 
         var receptor = manager.Playfield.Receptors[Data.Lane - 1];
 
