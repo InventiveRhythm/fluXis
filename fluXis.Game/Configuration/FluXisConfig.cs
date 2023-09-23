@@ -43,6 +43,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.SkipIntro, false);
         SetDefault(FluXisSetting.Parallax, true);
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
+        SetDefault(FluXisSetting.MainMenuVisualizerSway, false);
         SetDefault(FluXisSetting.SongSelectBlur, true);
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
 
@@ -91,6 +92,7 @@ public enum FluXisSetting
     SkipIntro,
     Parallax,
     MainMenuVisualizer,
+    MainMenuVisualizerSway,
     SongSelectBlur,
     LoopMode,
 

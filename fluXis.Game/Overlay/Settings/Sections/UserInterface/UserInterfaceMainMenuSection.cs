@@ -19,7 +19,13 @@ public partial class UserInterfaceMainMenuSection : SettingsSubSection
                 Label = "Bubble Visualizer",
                 Description = "Enable the bubble visualizer on the main menu.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer)
-            }
+            },
+            new SettingsToggle
+            {
+                Label = "Bubble Sway",
+                Description = "Moves the bubbles in a sine wave pattern.",
+                Bindable = Config.GetBindable<bool>(FluXisSetting.MainMenuVisualizerSway)
+            },
         });
     }
 }

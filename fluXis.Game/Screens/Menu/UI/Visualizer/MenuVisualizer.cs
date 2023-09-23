@@ -18,9 +18,12 @@ public partial class MenuVisualizer : Container
     private AudioClock clock { get; set; }
 
     private const int circle_count = 64;
+    private const int max_extra_speed = 2;
+    private const int max_extra_scale = 0;
 
     private bool loaded;
     private Bindable<bool> visualizerEnabled;
+    private Bindable<bool> swayEnabled;
 
     public MenuVisualizer()
     {
@@ -34,6 +37,7 @@ public partial class MenuVisualizer : Container
     private void load(FluXisConfig config)
     {
         visualizerEnabled = config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer);
+        swayEnabled = config.GetBindable<bool>(FluXisSetting.MainMenuVisualizerSway);
     }
 
     protected override void LoadComplete()
@@ -50,17 +54,14 @@ public partial class MenuVisualizer : Container
             this.FadeTo(e.NewValue ? 1 : 0, 500, Easing.OutQuint);
         }, true);
 
-        var rng = new Random();
-
         for (int i = 0; i < circle_count; i++)
         {
-            float x = DrawWidth * rng.NextSingle();
-
             Add(new DotCircle
             {
-                X = x,
-                Y = -DrawHeight * rng.NextSingle(),
-                RandomSpeed = 1 + rng.NextSingle() * 2
+                X = DrawWidth * RNG.NextSingle(),
+                Y = -DrawHeight * RNG.NextSingle(),
+                RandomSpeed = 1 + RNG.NextSingle() * max_extra_speed,
+                Scale = new Vector2(1 + RNG.NextSingle() * max_extra_scale)
             });
         }
 
@@ -70,25 +71,29 @@ public partial class MenuVisualizer : Container
 
     protected override void Update()
     {
+        float amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+
         foreach (var child in Children)
         {
-            float amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
-
             var circle = (DotCircle)child;
             float move = amplitude * .2f * circle.RandomSpeed;
             move *= (float)Time.Elapsed;
             circle.Y -= move;
 
-            /*float x = 40 * (float)Math.Sin(Time.Current * .1f) * .001f;
-            x *= amplitude * circle.RandomSpeed;
-            circle.X += x;*/
-
-            if (circle.Y < -DrawHeight - circle.Height / 2f)
+            if (swayEnabled.Value)
             {
-                circle.X = DrawWidth * RNG.NextSingle();
-                circle.Y += DrawHeight + circle.Height;
-                circle.RandomSpeed = 1 + RNG.NextSingle() * 2;
+                float x = 40 * (float)Math.Sin(Time.Current * .001f * circle.RandomSpeed) * .01f;
+                x *= amplitude * circle.RandomSpeed;
+                x *= (float)Time.Elapsed;
+                circle.X += x;
             }
+
+            if (!(circle.Y < -DrawHeight - circle.Height / 2f)) continue;
+
+            circle.X = DrawWidth * RNG.NextSingle();
+            circle.Y += DrawHeight + circle.Height;
+            circle.RandomSpeed = 1 + RNG.NextSingle() * max_extra_speed;
+            circle.Scale = new Vector2(1 + RNG.NextSingle() * max_extra_scale);
         }
 
         base.Update();
