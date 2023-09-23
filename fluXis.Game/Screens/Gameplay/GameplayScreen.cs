@@ -76,6 +76,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     public GameplayInput Input { get; private set; }
     public HitWindows HitWindows { get; }
+    public ReleaseWindows ReleaseWindows { get; }
     public MapInfo Map { get; private set; }
     public RealmMap RealmMap { get; }
     public MapEvents MapEvents { get; private set; }
@@ -113,6 +114,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         Rate = ((RateMod)Mods.Find(m => m is RateMod))?.Rate ?? 1f;
         Mods.RemoveAll(m => m is PausedMod);
         HitWindows = new HitWindows(Rate);
+        ReleaseWindows = new ReleaseWindows(Rate);
     }
 
     [BackgroundDependencyLoader]

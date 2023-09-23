@@ -328,7 +328,7 @@ public partial class HitObjectManager : Container<HitObject>
 
     private void judmentDisplay(HitObject hitObject, double difference, bool isHoldEnd = false)
     {
-        var hitWindows = Playfield.Screen.HitWindows;
+        var hitWindows = isHoldEnd ? Playfield.Screen.ReleaseWindows : Playfield.Screen.HitWindows;
         var judgement = hitWindows.JudgementFor(difference);
 
         if (Playfield.Screen.HealthProcessor.Failed)

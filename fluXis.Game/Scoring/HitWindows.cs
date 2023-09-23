@@ -14,7 +14,7 @@ public class HitWindows
     public Judgement ComboBreakJudgement => Judgement.Miss;
     public Judgement Lowest => Judgement.Miss;
 
-    private readonly Timing[] timings =
+    protected virtual Timing[] Timings { get; } =
     {
         new(Judgement.Flawless, 16),
         new(Judgement.Perfect, 40),
@@ -26,8 +26,8 @@ public class HitWindows
 
     public HitWindows(float multiplier = 1)
     {
-        for (var i = 0; i < timings.Length; ++i)
-            timings[i].Milliseconds *= multiplier;
+        for (var i = 0; i < Timings.Length; ++i)
+            Timings[i].Milliseconds *= multiplier;
     }
 
     public Judgement JudgementFor(double milliseconds)
@@ -43,9 +43,9 @@ public class HitWindows
         return Judgement.Miss;
     }
 
-    public float TimingFor(Judgement judgement) => timings.FirstOrDefault(x => x.Judgement == judgement).Milliseconds;
+    public float TimingFor(Judgement judgement) => Timings.FirstOrDefault(x => x.Judgement == judgement).Milliseconds;
 
-    public IEnumerable<Timing> GetTimings() => timings;
+    public IEnumerable<Timing> GetTimings() => Timings;
 }
 
 public struct Timing
