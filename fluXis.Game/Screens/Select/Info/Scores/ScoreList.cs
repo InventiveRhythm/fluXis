@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -18,10 +19,13 @@ using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -140,6 +144,17 @@ public partial class ScoreList : GridContainer
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        ScheduleAfterChildren(() => setType(ScoreListType.Local));
+    }
+
+    private void setType(ScoreListType type)
+    {
+        this.type = type;
+        typeSwitcher.Children.ForEach(c => c.Selected = c.Type == type);
     }
 
     public void Refresh()
@@ -281,7 +296,17 @@ public partial class ScoreList : GridContainer
         public ScoreListType Type { get; init; }
         public ScoreList ScoreList { get; init; }
 
-        private FluXisSpriteText text;
+        public bool Selected
+        {
+            set => content.BorderThickness = value ? 3 : 0;
+        }
+
+        [Resolved]
+        private UISamples samples { get; set; }
+
+        private Container content;
+        private Box hover;
+        private Box flash;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -289,39 +314,88 @@ public partial class ScoreList : GridContainer
             Width = 100;
             Height = 30;
             Shear = new Vector2(.2f, 0);
-            CornerRadius = 5;
-            Masking = true;
 
-            InternalChildren = new Drawable[]
+            var color = Type switch
             {
-                new Box
+                ScoreListType.Local => Colour4.FromHSV(120f / 360f, .6f, 1f),
+                ScoreListType.Global => Colour4.FromHSV(30f / 360f, .6f, 1f),
+                ScoreListType.Country => Colour4.FromHSV(0f, .6f, 1f),
+                ScoreListType.Friends => Colour4.FromHSV(210f / 360f, .6f, 1f),
+                _ => FluXisColors.Background4
+            };
+
+            InternalChild = content = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                CornerRadius = 5,
+                Masking = true,
+                BorderColour = ColourInfo.GradientVertical(color, color.Lighten(1)),
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Type switch
+                    new Box
                     {
-                        ScoreListType.Local => Colour4.FromHSV(120f / 360f, .6f, 1f),
-                        ScoreListType.Global => Colour4.FromHSV(30f / 360f, .6f, 1f),
-                        ScoreListType.Country => Colour4.FromHSV(0f, .6f, 1f),
-                        ScoreListType.Friends => Colour4.FromHSV(210f / 360f, .6f, 1f),
-                        _ => FluXisColors.Background4
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = color
+                    },
+                    hover = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0
+                    },
+                    flash = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0
+                    },
+                    new FluXisSpriteText
+                    {
+                        Text = Type.ToString(),
+                        FontSize = 18,
+                        Shear = new Vector2(-.1f, 0),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Colour = FluXisColors.TextDark
                     }
-                },
-                text = new FluXisSpriteText
-                {
-                    Text = Type.ToString(),
-                    FontSize = 18,
-                    Shear = new Vector2(-.1f, 0),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Colour = FluXisColors.TextDark
                 }
             };
 
             Action = () =>
             {
-                ScoreList.type = Type;
+                ScoreList.setType(Type);
                 ScoreList.Refresh();
             };
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            samples.Click();
+            return base.OnClick(e);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            hover.FadeTo(.2f, 50);
+            samples.Hover();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            hover.FadeOut(200);
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            content.ScaleTo(.9f, 1000, Easing.OutQuint);
+            return true;
+        }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            content.ScaleTo(1, 1000, Easing.OutElastic);
         }
     }
 }
