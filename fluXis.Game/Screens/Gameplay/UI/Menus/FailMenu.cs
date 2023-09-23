@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -21,9 +22,13 @@ public partial class FailMenu : Container
     private FluXisSpriteText text;
     private Container buttons;
 
+    private Sample failSample;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        failSample = samples.Get("Gameplay/fail");
+
         RelativeSizeAxes = Axes.Both;
         Alpha = 0.001f; // making sure the fillflow is centered
 
@@ -122,6 +127,7 @@ public partial class FailMenu : Container
     {
         this.FadeIn(200);
 
+        this.Delay(800).FadeIn().OnComplete(_ => failSample?.Play());
         text.ScaleTo(1, 800, Easing.InQuint).Delay(2500).FadeIn().OnComplete(_ => buttons.FadeIn(200));
         circle.Delay(800).ResizeTo(400, 400, Easing.OutQuint).TransformTo(nameof(circle.BorderThickness), 0f, 1200, Easing.OutQuint);
     }
