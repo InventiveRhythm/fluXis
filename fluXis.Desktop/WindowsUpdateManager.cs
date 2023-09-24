@@ -1,9 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using fluXis.Game;
 using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
@@ -19,23 +20,27 @@ public partial class WindowsUpdateManager : Component
     [Resolved]
     private NotificationOverlay notifications { get; set; }
 
+    private readonly Logger logger = Logger.GetLogger("update");
+
+    private const string updater_path = @"updater\fluXis.Updater.exe";
+
     [BackgroundDependencyLoader]
     private async void load()
     {
-        var logger = Logger.GetLogger("update");
-        var current = FluXisGameBase.Version;
+        // var current = FluXisGameBase.Version;
+        var current = new Version(0, 0, 0);
 
-        if (current == null)
+        /*if (current == null)
         {
             logger.Add("No version installed.");
             return;
-        }
+        }*/
 
-        if (FluXisGameBase.IsDebug)
+        /*if (FluXisGameBase.IsDebug)
         {
             logger.Add("Running in debug mode. Skipping update check.");
             return;
-        }
+        }*/
 
         logger.Add($"Current version: {current}");
         logger.Add("Checking for updates...");
@@ -56,29 +61,69 @@ public partial class WindowsUpdateManager : Component
             return;
         }
 
-        const string updater_path = "Updater.exe";
-
-        if (!System.IO.File.Exists(updater_path))
+        if (!File.Exists(updater_path))
         {
-            logger.Add("Updater.exe not found.");
-            notifications.PostError("There is an update available.\nBut the updater is missing.\nPlease download the latest version from GitHub or download the updater from the website.");
+            var notification = new LoadingNotification
+            {
+                TextLoading = "Downloading updater...",
+                TextFailure = "Failed to download updater. Check update.log for more information.",
+                TextSuccess = "Updater downloaded. Launching in 5 seconds.",
+            };
+            notifications.AddNotification(notification);
+
+            const string url = "https://dl.choccy.foxes4life.net/fluXis/updater.zip";
+            var request = new WebRequest(url);
+            request.DownloadProgress += (currentBytes, totalBytes) => notification.Progress = (float)currentBytes / totalBytes;
+            request.Failed += e =>
+            {
+                logger.Add($"Failed to download updater. {e.Message}");
+                notification.State = LoadingState.Failed;
+            };
+            request.Finished += () =>
+            {
+                Directory.CreateDirectory("updater");
+
+                var bytes = request.GetResponseData();
+                using var stream = new MemoryStream(bytes);
+
+                using var zip = new ZipArchive(stream);
+                zip.ExtractToDirectory("updater", true);
+
+                notification.State = LoadingState.Loaded;
+                Task.Delay(5000).ContinueWith(_ => startUpdater());
+            };
+
+            try { await request.PerformAsync(); }
+            catch (Exception e)
+            {
+                logger.Add("Failed to download updater.", LogLevel.Error, e);
+                notification.State = LoadingState.Failed;
+            }
         }
         else
         {
             notifications.Post("There is an update available.\nLaunching updater in 5 seconds.");
-
             await Task.Delay(5000);
+            startUpdater();
+        }
+    }
 
-            try
+    private void startUpdater()
+    {
+        try
+        {
+            // start in update folder
+            Process.Start(new ProcessStartInfo
             {
-                Process.Start("Updater.exe");
-                Environment.Exit(0);
-            }
-            catch (Exception e)
-            {
-                logger.Add($"Failed to launch updater. {e.Message}");
-                notifications.PostError("Failed to launch updater.\nPlease download the latest version from GitHub or download the updater from the website.");
-            }
+                FileName = @$"{Environment.CurrentDirectory}\{updater_path}",
+                WorkingDirectory = "updater"
+            });
+            Environment.Exit(0);
+        }
+        catch (Exception e)
+        {
+            logger.Add($"Failed to launch updater. {e.Message}");
+            notifications.PostError("Failed to launch updater.\nPlease download the latest version from GitHub or download the updater from the website.");
         }
     }
 
