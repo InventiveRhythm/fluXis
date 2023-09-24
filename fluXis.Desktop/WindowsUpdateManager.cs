@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using fluXis.Game;
 using fluXis.Game.Overlay.Notification;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
@@ -27,20 +28,19 @@ public partial class WindowsUpdateManager : Component
     [BackgroundDependencyLoader]
     private async void load()
     {
-        // var current = FluXisGameBase.Version;
-        var current = new Version(0, 0, 0);
+        var current = FluXisGameBase.Version;
 
-        /*if (current == null)
+        if (current == null)
         {
             logger.Add("No version installed.");
             return;
-        }*/
+        }
 
-        /*if (FluXisGameBase.IsDebug)
+        if (FluXisGameBase.IsDebug)
         {
             logger.Add("Running in debug mode. Skipping update check.");
             return;
-        }*/
+        }
 
         logger.Add($"Current version: {current}");
         logger.Add("Checking for updates...");
