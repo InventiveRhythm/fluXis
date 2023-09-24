@@ -28,7 +28,7 @@ public class QuaverImport : MapImporter
     public override string StoragePath => songsPath;
 
     private readonly string quaverPath;
-    private string songsPath => Path.Combine(quaverPath, "Songs");
+    private string songsPath => string.IsNullOrEmpty(quaverPath) ? "" : Path.Combine(quaverPath, "Songs");
 
     public QuaverImport()
     {
@@ -43,20 +43,30 @@ public class QuaverImport : MapImporter
                               .Where(Directory.Exists)
                               .ToArray();
 
-            const string drive_path = @"SteamLibrary\steamapps\common\Quaver\Quaver.exe";
+            const string steam_lib_path = @"SteamLibrary\steamapps\common\Quaver\Quaver.exe";
+            const string steam_path = @"Steam\steamapps\common\Quaver\Quaver.exe";
 
             foreach (var drive in drives)
             {
-                if (File.Exists($@"{drive}{drive_path}"))
+                if (File.Exists($@"{drive}{steam_lib_path}"))
                 {
-                    installPath = $@"{drive}{drive_path}";
+                    installPath = $@"{drive}{steam_lib_path}";
+                    break;
+                }
+
+                if (File.Exists($@"{drive}{steam_path}"))
+                {
+                    installPath = $@"{drive}{steam_path}";
                     break;
                 }
             }
         }
 
         if (string.IsNullOrEmpty(installPath))
+        {
             Logger.Log("Could not find Quaver install");
+            return;
+        }
 
         Logger.Log($"Found Quaver install at {installPath}");
         quaverPath = Path.GetDirectoryName(installPath);
