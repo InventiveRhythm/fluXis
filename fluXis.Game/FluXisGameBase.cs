@@ -239,6 +239,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private void changeSong(int change)
     {
+        if (mapStore.MapSets.Count <= 0)
+            return;
+
         int index = mapStore.MapSets.IndexOf(mapStore.CurrentMapSet);
 
         index += change;
