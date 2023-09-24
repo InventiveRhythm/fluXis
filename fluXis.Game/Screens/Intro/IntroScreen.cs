@@ -114,26 +114,16 @@ public partial class IntroScreen : FluXisScreen
         };
     }
 
-    protected override void LoadComplete()
+    public override void OnEntering(ScreenTransitionEvent e)
     {
+        backgrounds.SetDim(1f, 0);
+
         if (shouldSkip)
         {
             continueToMenu();
             return;
         }
 
-        backgrounds.SetDim(1f, 0);
-
-        /*const int scale_duration = 700;
-        const int fade_duration = 500;
-
-        epilepsyContainer.FadeInFromZero(fade_duration).ScaleTo(1f, scale_duration, Easing.OutQuint)
-                         .Then(6000).ScaleTo(1.1f, scale_duration, Easing.OutQuint).FadeOut(fade_duration)
-                         .OnComplete(_ => continueToMenu());*/
-    }
-
-    public override void OnEntering(ScreenTransitionEvent e)
-    {
         epilepsyContainer.FadeInFromZero(400)
                          .Then(5000).MoveToY(-20, 800, Easing.OutQuint).FadeOut(400);
 
