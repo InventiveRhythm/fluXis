@@ -49,7 +49,7 @@ public class MapInfo
     public int KeyCount;
 
     [JsonIgnore]
-    public int InitialKeyCount;
+    public int InitialKeyCount { get; set; }
 
     [CanBeNull]
     [JsonIgnore]
@@ -147,6 +147,11 @@ public class MapInfo
         }
 
         return timingPoint ?? TimingPoints[0];
+    }
+
+    public override string ToString()
+    {
+        return $"KeyCount: {KeyCount}, InitialKeyCount: {InitialKeyCount}";
     }
 
     public MapInfo Clone()

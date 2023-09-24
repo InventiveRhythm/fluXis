@@ -50,7 +50,10 @@ public partial class Receptor : CompositeDrawable
         {
             Bottom = skinManager.CurrentSkin.GetKeymode(Playfield.Map.KeyCount).HitPosition
         };
+    }
 
+    protected override void LoadComplete()
+    {
         updateKeyCount(true);
     }
 
@@ -89,7 +92,8 @@ public partial class Receptor : CompositeDrawable
 
         if (instant)
         {
-            this.ResizeWidthTo(width);
+            FinishTransforms();
+            Width = width;
         }
         else
         {
