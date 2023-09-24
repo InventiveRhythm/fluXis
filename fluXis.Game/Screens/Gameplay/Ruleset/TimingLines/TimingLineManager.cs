@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Configuration;
 using fluXis.Game.Map;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -9,6 +12,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 public partial class TimingLineManager : CompositeDrawable
 {
     public HitObjectManager HitObjectManager { get; }
+
+    private Bindable<bool> showTimingLines;
 
     private readonly List<TimingLine> timingLines = new();
     private readonly List<TimingLine> futureTimingLines = new();
@@ -19,6 +24,19 @@ public partial class TimingLineManager : CompositeDrawable
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        showTimingLines = config.GetBindable<bool>(FluXisSetting.TimingLines);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        showTimingLines.BindValueChanged(e => this.FadeTo(e.NewValue ? 1 : 0, 400), true);
     }
 
     public void CreateLines(MapInfo map)

@@ -29,6 +29,12 @@ public partial class GameplayGeneralSection : SettingsSubSection
             },
             new SettingsToggle
             {
+                Label = "Timing Lines",
+                Description = "Show a line every 4 beats.",
+                Bindable = Config.GetBindable<bool>(FluXisSetting.TimingLines)
+            },
+            new SettingsToggle
+            {
                 Label = "Hide Flawless Judgement",
                 Description = "Hides the best judgement (Flawless) from popping up during gameplay.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.HideFlawless)

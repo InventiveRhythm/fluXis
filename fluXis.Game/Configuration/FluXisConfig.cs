@@ -20,6 +20,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // Gameplay
         SetDefault(FluXisSetting.ScrollDirection, ScrollDirection.Down);
         SetDefault(FluXisSetting.SnapColoring, false);
+        SetDefault(FluXisSetting.TimingLines, true);
         SetDefault(FluXisSetting.HideFlawless, false);
         SetDefault(FluXisSetting.ShowEarlyLate, false);
         SetDefault(FluXisSetting.JudgementSplash, true);
@@ -69,6 +70,7 @@ public enum FluXisSetting
     // Gameplay
     ScrollDirection,
     SnapColoring,
+    TimingLines,
     HideFlawless,
     ShowEarlyLate,
     JudgementSplash,
