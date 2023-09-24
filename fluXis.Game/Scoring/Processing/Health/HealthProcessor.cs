@@ -14,6 +14,8 @@ public class HealthProcessor : JudgementDependant
     public GameplayScreen Screen { get; set; }
     protected AudioClock AudioClock => Screen.AudioClock;
 
+    public bool CanFail { get; set; } = true;
+
     public BindableFloat Health { get; }
     public bool Failed { get; private set; }
     public Action OnFail { get; set; }
@@ -26,7 +28,7 @@ public class HealthProcessor : JudgementDependant
 
     protected void TriggerFailure()
     {
-        if (Failed)
+        if (Failed || !CanFail)
             return;
 
         Failed = true;

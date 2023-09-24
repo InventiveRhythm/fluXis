@@ -148,6 +148,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             }
         });
 
+        HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
         Input = new GameplayInput(this, Map.KeyCount);
 
         HitSound = samples.Get("Gameplay/hitsound.mp3");
