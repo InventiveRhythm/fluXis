@@ -18,7 +18,8 @@ using fluXis.Game.Map;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
 using fluXis.Game.Screens.Edit.TabSwitcher;
@@ -50,13 +51,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     public override bool AllowMusicControl => false;
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private Storage storage { get; set; }
 
     [Resolved]
     private MapStore mapStore { get; set; }
@@ -433,19 +431,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         if (Map.Status >= 100)
         {
-            notifications.PostError("Map is from another game!");
+            notifications.SendError("Map is from another game!");
             return false;
         }
 
         if (MapInfo.HitObjects.Count == 0)
         {
-            notifications.PostError("Map has no hit objects!");
+            notifications.SendError("Map has no hit objects!");
             return false;
         }
 
         if (MapInfo.TimingPoints.Count == 0)
         {
-            notifications.PostError("Map has no timing points!");
+            notifications.SendError("Map has no timing points!");
             return false;
         }
 
@@ -475,7 +473,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         if (hash == Map.Hash && effHash == effectHash)
         {
-            notifications.Post("Map is already up to date");
+            notifications.SendText("Map is already up to date", "", FontAwesome.Solid.Check);
             return true;
         }
 
@@ -505,7 +503,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
                 if (prevFile == null)
                 {
-                    notifications.PostError("Failed to find previous map file!");
+                    notifications.SendError("Failed to find previous map file!");
                     return;
                 }
 
@@ -554,7 +552,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             }
         });
 
-        notifications.Post("Saved!");
+        notifications.SendText("Saved!", "", FontAwesome.Solid.Check);
         return true;
     }
 
@@ -565,7 +563,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         return hash != Map.Hash;
     }
 
-    private void export() => mapStore.Export(Map.MapSet, new LoadingNotification
+    private void export() => mapStore.Export(Map.MapSet, new LoadingNotificationData
     {
         TextLoading = "Exporting mapset...",
         TextSuccess = "Exported!",
@@ -573,7 +571,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     });
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
-    private void sendWipNotification() => notifications.Post("This is still in development\nCome back later!");
+    private void sendWipNotification() => notifications.SendText("This is still in development", "Come back later!");
 
     public void SetKeyMode(int keyMode)
     {
@@ -645,7 +643,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     {
         if (Map.Status >= 100)
         {
-            notifications.PostError("Map is from another game!");
+            notifications.SendError("Map is from another game!");
             return;
         }
 
@@ -663,7 +661,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         if (duplicate.Count > 0)
         {
-            notifications.PostError($"Cannot upload mapset!\nDuplicate difficulty names found: {string.Join(", ", duplicate)}");
+            notifications.SendError("Cannot upload mapset!", $"Duplicate difficulty names found: {string.Join(", ", duplicate)}");
             return;
         }
 
@@ -674,7 +672,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         overlay.SubText = "Uploading mapset...";
 
         var realmMapSet = mapStore.GetFromGuid(Map.MapSet.ID);
-        var path = mapStore.Export(realmMapSet.Detach(), new LoadingNotification(), false);
+        var path = mapStore.Export(realmMapSet.Detach(), new LoadingNotificationData(), false);
         var buffer = await File.ReadAllBytesAsync(path);
 
         var request = fluxel.CreateAPIRequest(Map.MapSet.OnlineID != -1 ? $"/map/{Map.MapSet.OnlineID}/update" : "/maps/upload", HttpMethod.Post);
@@ -689,7 +687,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         if (response.Status != 200)
         {
-            notifications.PostError(response.Message);
+            notifications.SendError(response.Message);
             Schedule(overlay.Hide);
             return;
         }

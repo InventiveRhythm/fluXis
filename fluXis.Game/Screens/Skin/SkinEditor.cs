@@ -2,7 +2,7 @@ using System.Globalization;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Skin.UI;
@@ -13,6 +13,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
@@ -43,7 +44,7 @@ public partial class SkinEditor : FluXisScreen
     private SkinEditorTextBox columnWidthTextBox;
 
     [BackgroundDependencyLoader]
-    private void load(NotificationOverlay notifications)
+    private void load(NotificationManager notifications)
     {
         skin = skinManager.CurrentSkin.Copy();
 
@@ -203,7 +204,7 @@ public partial class SkinEditor : FluXisScreen
                         {
                             new MenuItem("Save", () =>
                             {
-                                notifications.Post("Skin Saved");
+                                notifications.SendText("Skin Saved", "", FontAwesome.Solid.Check);
                                 skinManager.UpdateAndSave(skin);
                             }),
                             new MenuItem("Exit", this.Exit)

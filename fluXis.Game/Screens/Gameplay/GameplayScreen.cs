@@ -13,7 +13,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
@@ -56,7 +56,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     private Fluxel fluxel { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     public AudioClock AudioClock { get; private set; }

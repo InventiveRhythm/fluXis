@@ -5,7 +5,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -24,7 +24,7 @@ public partial class LaneSwtichEditorPanel : Panel
     public EditorClock EditorClock { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     private float beatLength => EditorClock.MapInfo.GetTimingPoint(Event.Time).MsPerBeat;
 
@@ -66,7 +66,7 @@ public partial class LaneSwtichEditorPanel : Panel
                             Icon = FontAwesome.Solid.Question,
                             Size = new Vector2(20),
                             Margin = new MarginPadding(5),
-                            Action = () => notifications.Post("Not implemented yet!")
+                            Action = () => notifications.SendText("Not implemented yet!")
                         }
                     }
                 },

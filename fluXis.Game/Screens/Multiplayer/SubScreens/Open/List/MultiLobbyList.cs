@@ -5,7 +5,7 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 using Newtonsoft.Json;
@@ -33,7 +33,7 @@ public partial class MultiLobbyList : MultiSubScreen
     private FluXisGameBase game { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     private LoadingPanel loadingPanel;
 
@@ -119,7 +119,7 @@ public partial class MultiLobbyList : MultiSubScreen
             else
             {
                 game.Overlay = null;
-                notifications.PostError($"Failed to join lobby {res.Message}");
+                notifications.SendError($"Failed to join lobby", res.Message);
             }
         });
     }

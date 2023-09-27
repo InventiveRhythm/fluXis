@@ -6,7 +6,8 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
@@ -22,20 +23,20 @@ public class FluXisImport : MapImporter
      */
     public int MapStatus { get; set; } = -2;
 
-    public LoadingNotification Notification { get; set; }
+    public LoadingNotificationData Notification { get; set; }
 
     public override void Import(string path)
     {
         if (Notification == null)
         {
-            Notification = new LoadingNotification
+            Notification = new LoadingNotificationData
             {
                 TextLoading = "Importing mapset...",
                 TextSuccess = "Imported mapset!",
                 TextFailure = "Failed to import mapset!"
             };
 
-            Notifications.AddNotification(Notification);
+            Notifications.Add(Notification);
         }
 
         try
@@ -161,7 +162,7 @@ public class FluXisImport : MapImporter
                 });
             }
 
-            Notification.State = LoadingState.Loaded;
+            Notification.State = LoadingState.Complete;
         }
         catch (Exception e)
         {

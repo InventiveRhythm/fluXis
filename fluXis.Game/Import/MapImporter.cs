@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Import;
@@ -33,7 +33,7 @@ public class MapImporter
     public FluXisRealm Realm { get; set; }
     public MapStore MapStore { get; set; }
     public Storage Storage { get; set; }
-    public NotificationOverlay Notifications { get; set; }
+    public NotificationManager Notifications { get; set; }
 
     public MapResourceProvider Resources { get; set; }
 

@@ -7,7 +7,8 @@ using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Import.Quaver.Map;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -74,14 +75,14 @@ public class QuaverImport : MapImporter
 
     public override void Import(string path)
     {
-        var notification = new LoadingNotification
+        var notification = new LoadingNotificationData
         {
             TextLoading = "Importing Quaver map...",
             TextSuccess = "Imported Quaver map!",
             TextFailure = "Failed to import Quaver map!"
         };
 
-        Notifications.AddNotification(notification);
+        Notifications.Add(notification);
 
         try
         {

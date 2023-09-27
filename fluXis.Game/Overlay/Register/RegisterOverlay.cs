@@ -6,7 +6,7 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Online.API.Account;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -21,7 +21,7 @@ namespace fluXis.Game.Overlay.Register;
 public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybind>
 {
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
@@ -241,7 +241,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybi
     {
         if (fluxel.Status == ConnectionStatus.Online)
         {
-            notifications.PostError("Already logged in!");
+            notifications.SendError("Already logged in!");
             return;
         }
 
@@ -268,7 +268,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybi
 
     private void onRegister(FluxelResponse<APIRegisterResponse> response)
     {
-        if (response.Status != 200) notifications.PostError(response.Message);
+        if (response.Status != 200) notifications.SendError("Failed to Register!", response.Message);
     }
 
     public override void Show()

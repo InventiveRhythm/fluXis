@@ -22,7 +22,7 @@ using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
@@ -34,6 +34,7 @@ using fluXis.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osuTK;
@@ -59,7 +60,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected ChatOverlay ChatOverlay;
     protected ProfileOverlay ProfileOverlay;
     protected RegisterOverlay RegisterOverlay;
-    protected NotificationOverlay Notifications;
+    protected NotificationManager NotificationManager;
     protected MusicPlayer MusicPlayer;
     protected Dashboard Dashboard;
     protected BackgroundStack BackgroundStack;
@@ -102,7 +103,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.CacheAs(this);
         dependencies.CacheAs(config = new FluXisConfig(storage));
         dependencies.Cache(realm = new FluXisRealm(storage));
-        dependencies.Cache(Notifications = new NotificationOverlay());
+        dependencies.Cache(NotificationManager = new NotificationManager());
         dependencies.Cache(fluxel = new Fluxel(config, getApiEndpoint()));
         UserCache.Init(fluxel);
 
@@ -205,7 +206,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             exceptionCount++;
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
-            Notifications.PostError($"An unhandled error occurred!\n{e.GetType().Name}:\n{e.Message}", 10000);
+            NotificationManager.SendError("An unhandled error occurred!", e.Message, FontAwesome.Solid.Bomb);
             return exceptionCount <= MaxExceptions;
         };
     }
@@ -220,13 +221,13 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         if (ScreenStack.CurrentScreen is SkinEditor)
         {
-            Notifications.Post("You are already in the Skin editor.");
+            NotificationManager.SendText("You are already in the Skin editor.", "", FontAwesome.Solid.Bomb);
             return;
         }
 
         if (skinManager.SkinFolder == "Default")
         {
-            Notifications.Post("You can't edit the Default skin.");
+            NotificationManager.SendError("You can't edit the Default skin.");
             return;
         }
 

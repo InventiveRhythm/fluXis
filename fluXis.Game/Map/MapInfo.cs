@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -66,17 +66,17 @@ public class MapInfo
         ScrollVelocities = new List<ScrollVelocityInfo>();
     }
 
-    public bool Validate(NotificationOverlay notifications = null)
+    public bool Validate(NotificationManager notifications = null)
     {
         if (HitObjects.Count == 0)
         {
-            notifications?.PostError("Map has no hit objects");
+            notifications?.SendError("Map has no hit objects");
             return false;
         }
 
         if (TimingPoints.Count == 0)
         {
-            notifications?.PostError("Map has no timing points");
+            notifications?.SendError("Map has no timing points");
             return false;
         }
 
@@ -89,20 +89,20 @@ public class MapInfo
         {
             if (timingPoint.BPM <= 0)
             {
-                notifications?.PostError("A timing point has an invalid BPM");
+                notifications?.SendError("A timing point has an invalid BPM");
                 return false;
             }
 
             if (timingPoint.Signature <= 0)
             {
-                notifications?.PostError("A timing point has an invalid signature");
+                notifications?.SendError("A timing point has an invalid signature");
                 return false;
             }
         }
 
         if (KeyCount is <= 0 or >= 11)
         {
-            notifications?.PostError("Map has an invalid key count");
+            notifications?.SendError("Map has an invalid key count");
             return false;
         }
 

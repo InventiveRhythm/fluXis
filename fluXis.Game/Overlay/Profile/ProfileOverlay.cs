@@ -13,7 +13,8 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Overlay.Profile.Stats;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Import;
@@ -376,7 +377,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
         private FluXisConfig config { get; set; }
 
         [Resolved]
-        private NotificationOverlay notifications { get; set; }
+        private NotificationManager notifications { get; set; }
 
         [Resolved]
         private Fluxel fluxel { get; set; }
@@ -423,14 +424,14 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
             {
                 OnFileSelected = file =>
                 {
-                    var notif = new LoadingNotification
+                    var notif = new LoadingNotificationData
                     {
                         TextLoading = "Uploading avatar...",
                         TextSuccess = "Avatar uploaded! Restart the game to see the changes.",
                         TextFailure = "Failed to upload avatar!"
                     };
 
-                    notifications.AddNotification(notif);
+                    notifications.Add(notif);
 
                     byte[] data = File.ReadAllBytes(file.FullName);
 
@@ -446,7 +447,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
                         var resp = JsonConvert.DeserializeObject<APIResponse<dynamic>>(request.GetResponseString() ?? string.Empty);
 
                         if (resp.Status == 200)
-                            notif.State = LoadingState.Loaded;
+                            notif.State = LoadingState.Complete;
                         else
                         {
                             Logger.Log($"Failed to upload avatar: {resp.Message}", LoggingTarget.Runtime, LogLevel.Error);
@@ -504,7 +505,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
         private FluXisConfig config { get; set; }
 
         [Resolved]
-        private NotificationOverlay notifications { get; set; }
+        private NotificationManager notifications { get; set; }
 
         [Resolved]
         private Fluxel fluxel { get; set; }
@@ -555,14 +556,14 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
             {
                 OnFileSelected = file =>
                 {
-                    var notif = new LoadingNotification
+                    var notif = new LoadingNotificationData
                     {
                         TextLoading = "Uploading banner...",
                         TextSuccess = "Banner uploaded! QuickRestart the game to see the changes.",
                         TextFailure = "Failed to upload banner!"
                     };
 
-                    notifications.AddNotification(notif);
+                    notifications.Add(notif);
 
                     byte[] data = File.ReadAllBytes(file.FullName);
 
@@ -578,7 +579,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
                         var resp = JsonConvert.DeserializeObject<APIResponse<dynamic>>(request.GetResponseString() ?? string.Empty);
 
                         if (resp.Status == 200)
-                            notif.State = LoadingState.Loaded;
+                            notif.State = LoadingState.Complete;
                         else
                         {
                             Logger.Log($"Failed to upload banner: {resp.Message}", LoggingTarget.Runtime, LogLevel.Error);

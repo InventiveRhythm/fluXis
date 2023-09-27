@@ -1,6 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Edit.Timeline;
 public partial class EditorBottomBar : Container
 {
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private EditorValues values { get; set; }
@@ -65,19 +65,19 @@ public partial class EditorBottomBar : Container
                                 {
                                     if (values.Editor.Map == null)
                                     {
-                                        notifications.PostError("There is no map...? how");
+                                        notifications.SendError("Map is null!", "i dont know how this happened but it did");
                                         return;
                                     }
 
                                     if (values.Editor.MapInfo?.HitObjects == null || values.Editor.MapInfo.HitObjects.Count == 0)
                                     {
-                                        notifications.PostError("This map has no hitobjects!");
+                                        notifications.SendError("This map has no hitobjects!");
                                         return;
                                     }
 
                                     if (values.Editor.MapInfo?.TimingPoints == null || values.Editor.MapInfo.TimingPoints.Count == 0)
                                     {
-                                        notifications.PostError("This map has no timing points!");
+                                        notifications.SendError("This map has no timing points!");
                                         return;
                                     }
 

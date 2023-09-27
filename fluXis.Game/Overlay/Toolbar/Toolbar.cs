@@ -2,7 +2,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Browse;
@@ -37,7 +37,7 @@ public partial class Toolbar : Container
     private ChatOverlay chat { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     public FluXisScreenStack ScreenStack { get; set; }
     public MenuScreen MenuScreen { get; set; }
@@ -168,7 +168,7 @@ public partial class Toolbar : Container
     {
         if (ScreenStack.CurrentScreen is not null && ScreenStack.CurrentScreen.GetType() == screen.GetType())
         {
-            notifications.Post("You are already on this screen.");
+            notifications.SendText("You are already on this screen.");
             return;
         }
 

@@ -12,7 +12,7 @@ using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
 using fluXis.Game.Overlay.Chat.UI;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -30,7 +30,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
     private Fluxel fluxel { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     public string Channel { get; set; } = "general";
 
@@ -120,7 +120,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Text = "Add Channel",
-                                            Action = () => notifications.Post("Not implemented yet!"),
+                                            Action = () => notifications.SendText("Not implemented yet!"),
                                         }
                                     }
                                 }
@@ -244,7 +244,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisKeybind>
         {
             if (res.Status != 200)
             {
-                notifications.PostError(res.Message);
+                notifications.SendError(res.Message);
                 return;
             }
 

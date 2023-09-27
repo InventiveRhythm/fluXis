@@ -8,7 +8,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -34,7 +34,7 @@ public partial class ImportManager : Component
     private Storage storage { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private AudioManager audio { get; set; }
@@ -81,7 +81,7 @@ public partial class ImportManager : Component
         catch (Exception e)
         {
             Logger.Error(e, "Error while importing mapset");
-            notifications.PostError("Error while importing mapset");
+            notifications.SendError("Error while importing mapset", e.Message);
         }
     }
 

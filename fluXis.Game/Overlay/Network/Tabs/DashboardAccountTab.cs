@@ -4,7 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Account;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -23,7 +23,7 @@ public partial class DashboardAccountTab : DashboardTab
     private Fluxel fluxel { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     private string twitter;
     private string youtube;
@@ -65,9 +65,10 @@ public partial class DashboardAccountTab : DashboardTab
                         var res = req.GetResponseString();
                         var json = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(res);
 
-                        var notification = json.Status == 200 ? new SimpleNotification() : new ErrorNotification();
-                        notification.Text = json.Message;
-                        notifications.AddNotification(notification);
+                        if (json.Status == 200)
+                            notifications.SendText("Successfully updated display name!");
+                        else
+                            notifications.SendError("Failed to update display name!", json.Message);
                     }
                 },
                 new FluXisSpriteText
@@ -122,9 +123,10 @@ public partial class DashboardAccountTab : DashboardTab
                         var res = req.GetResponseString();
                         var json = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(res);
 
-                        var notification = json.Status == 200 ? new SimpleNotification() : new ErrorNotification();
-                        notification.Text = json.Message;
-                        notifications.AddNotification(notification);
+                        if (json.Status == 200)
+                            notifications.SendText("Successfully updated socials!");
+                        else
+                            notifications.SendError("Failed to update socials!", json.Message);
                     }
                 }
             }

@@ -8,7 +8,8 @@ using fluXis.Game.Import;
 using fluXis.Game.Map.Drawables.Online;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -28,7 +29,7 @@ public partial class MapCard : Container
     private MapStore mapStore { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private Storage storage { get; set; }
@@ -226,14 +227,14 @@ public partial class MapCard : Container
 
         if (mapStore.MapSets.Any(x => x.OnlineID == MapSet.Id))
         {
-            notifications.Post("Mapset already downloaded.");
+            notifications.SendText("Mapset already downloaded.");
             return true;
         }
 
         if (downloading)
             return true;
 
-        var notification = new LoadingNotification
+        var notification = new LoadingNotificationData
         {
             TextLoading = "Downloading mapset...",
             TextSuccess = $"Downloaded {MapSet.Title} - {MapSet.Artist}.",
@@ -295,7 +296,7 @@ public partial class MapCard : Container
         downloading = true;
         req.PerformAsync();
 
-        notifications.AddNotification(notification);
+        notifications.Add(notification);
 
         return true;
     }

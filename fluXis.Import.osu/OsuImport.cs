@@ -5,9 +5,10 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Import.osu.AutoImport;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -35,14 +36,14 @@ public class OsuImport : MapImporter
 
     public override void Import(string path)
     {
-        var notification = new LoadingNotification
+        var notification = new LoadingNotificationData
         {
             TextLoading = "Importing osu! map...",
             TextSuccess = "Imported osu! map!",
             TextFailure = "Failed to import osu! map!"
         };
 
-        Notifications.AddNotification(notification);
+        Notifications.Add(notification);
 
         try
         {

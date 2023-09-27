@@ -2,7 +2,6 @@ using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
-using fluXis.Game.Overlay.Notification;
 using fluXis.Game.Screens.Select.Footer.Options;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
@@ -22,9 +21,6 @@ namespace fluXis.Game.Screens.Select.Footer;
 
 public partial class SelectFooter : Container
 {
-    [Resolved]
-    public NotificationOverlay Notifications { get; private set; }
-
     public SelectScreen Screen { get; init; }
     public Container<SelectFooterButton> ButtonContainer { get; private set; }
 

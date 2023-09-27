@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using fluXis.Game;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,7 +20,7 @@ namespace fluXis.Desktop;
 public partial class WindowsUpdateManager : Component
 {
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     private readonly Logger logger = Logger.GetLogger("update");
 
@@ -63,13 +64,14 @@ public partial class WindowsUpdateManager : Component
 
         if (!File.Exists(updater_path))
         {
-            var notification = new LoadingNotification
+            var notification = new LoadingNotificationData
             {
                 TextLoading = "Downloading updater...",
                 TextFailure = "Failed to download updater. Check update.log for more information.",
                 TextSuccess = "Updater downloaded. Launching in 5 seconds.",
             };
-            notifications.AddNotification(notification);
+
+            notifications.Add(notification);
 
             const string url = "https://dl.choccy.foxes4life.net/fluXis/updater.zip";
             var request = new WebRequest(url);
@@ -89,7 +91,7 @@ public partial class WindowsUpdateManager : Component
                 using var zip = new ZipArchive(stream);
                 zip.ExtractToDirectory("updater", true);
 
-                notification.State = LoadingState.Loaded;
+                notification.State = LoadingState.Complete;
                 Task.Delay(5000).ContinueWith(_ => startUpdater());
             };
 
@@ -102,7 +104,7 @@ public partial class WindowsUpdateManager : Component
         }
         else
         {
-            notifications.Post("There is an update available.\nLaunching updater in 5 seconds.");
+            notifications.SendText("There is an update available.", "Launching updater in 5 seconds.");
             await Task.Delay(5000);
             startUpdater();
         }
@@ -123,7 +125,7 @@ public partial class WindowsUpdateManager : Component
         catch (Exception e)
         {
             logger.Add($"Failed to launch updater. {e.Message}");
-            notifications.PostError("Failed to launch updater.\nPlease download the latest version from GitHub or download the updater from the website.");
+            notifications.SendError("Failed to launch updater.", "Please download the latest version from GitHub or download the updater from the website.");
         }
     }
 

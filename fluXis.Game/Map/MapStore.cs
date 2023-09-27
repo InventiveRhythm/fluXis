@@ -10,7 +10,8 @@ using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -145,7 +146,7 @@ public partial class MapStore : Component
     public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
     public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
 
-    public string Export(RealmMapSet set, LoadingNotification notification, bool openFolder = true)
+    public string Export(RealmMapSet set, LoadingNotificationData notification, bool openFolder = true)
     {
         try
         {
@@ -179,7 +180,7 @@ public partial class MapStore : Component
             }
 
             archive.Dispose();
-            notification.State = LoadingState.Loaded;
+            notification.State = LoadingState.Complete;
             if (openFolder) PathUtils.OpenFolder(exportFolder);
             return path;
         }

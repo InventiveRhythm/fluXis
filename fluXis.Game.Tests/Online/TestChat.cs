@@ -2,7 +2,6 @@ using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
 using fluXis.Game.Overlay.Login;
-using fluXis.Game.Overlay.Notification;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -12,10 +11,9 @@ namespace fluXis.Game.Tests.Online;
 public partial class TestChat : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(NotificationOverlay notifications, LoginOverlay login, Fluxel fluxel)
+    private void load(LoginOverlay login, Fluxel fluxel)
     {
         Add(login);
-        Add(notifications);
 
         var flow = new FillFlowContainer
         {

@@ -15,7 +15,8 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Select.Footer;
@@ -52,7 +53,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
     private MapStore mapStore { get; set; }
 
     [Resolved]
-    private NotificationOverlay notifications { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
     private LightController lightController { get; set; }
@@ -422,15 +423,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         if (set == null)
             return;
 
-        LoadingNotification notification = new LoadingNotification
+        var notification = new LoadingNotificationData
         {
             TextLoading = $"Exporting mapset {set.Metadata.Artist} - {set.Metadata.Title}...",
             TextSuccess = $"Exported mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
-            TextFailure = $"Failed to export mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
-            ShowProgress = true
+            TextFailure = $"Failed to export mapset {set.Metadata.Artist} - {set.Metadata.Title}!"
         };
 
-        notifications.AddNotification(notification);
+        notifications.Add(notification);
         Task.Run(() => mapStore.Export(set, notification));
     }
 

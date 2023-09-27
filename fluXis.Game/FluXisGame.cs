@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.FPS;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
 using JetBrains.Annotations;
@@ -31,6 +32,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     private Container overlayDim;
     private Container overlayContainer;
 
+    private FloatingNotificationContainer notificationContainer;
     private BufferedContainer buffer;
 
     public override Drawable Overlay
@@ -102,7 +104,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
             },
             Settings,
             new VolumeOverlay(),
-            Notifications,
+            NotificationManager.Floating = notificationContainer = new FloatingNotificationContainer(),
             new FpsOverlay(),
             CursorOverlay,
             exitContainer = new Container
@@ -190,6 +192,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
     protected override void Update()
     {
         screenContainer.Padding = new MarginPadding { Top = Toolbar.Height + Toolbar.Y };
+        notificationContainer.Y = Toolbar.Height + Toolbar.Y;
 
         if (Overlay is { IsLoaded: true, IsPresent: false } && !Overlay.Transforms.Any())
         {

@@ -9,7 +9,7 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
-using fluXis.Game.Overlay.Notification;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Profile;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -132,7 +132,7 @@ public partial class DrawableChatMessage : Container
         public Fluxel Fluxel { get; init; }
 
         [Resolved]
-        private NotificationOverlay notifications { get; set; }
+        private NotificationManager notifications { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -165,7 +165,7 @@ public partial class DrawableChatMessage : Container
 
         private /* async*/ void report()
         {
-            notifications.PostError("This feature is not yet implemented.");
+            notifications.SendText("This feature is not yet implemented.");
             // await Fluxel.SendPacket(new ChatMessageReportPacket { Id = Message.Id });
         }
     }
