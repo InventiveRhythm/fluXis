@@ -296,6 +296,12 @@ public partial class BlueprintContainer : Container, ICursorDrag
         float timeDelta = snappedTime - dragBlueprints.First().HitObject.Time;
         int laneDelta = lane - dragBlueprints.First().HitObject.Lane;
 
+        var minLane = dragBlueprints.Min(b => b.HitObject.Lane);
+        var maxLane = dragBlueprints.Max(b => b.HitObject.Lane);
+
+        if (minLane + laneDelta <= 0 || maxLane + laneDelta > values.MapInfo.KeyCount)
+            laneDelta = 0;
+
         foreach (var blueprint in dragBlueprints)
         {
             blueprint.HitObject.Time += timeDelta;

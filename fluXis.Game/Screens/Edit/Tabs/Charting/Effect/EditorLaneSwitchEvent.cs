@@ -55,12 +55,9 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
         count = Event.Count;
 
         var nextEvent = values.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
-        if (nextEvent != null)
-            length = nextEvent.Time - Event.Time;
-        else
-            length = clock.TrackLength - Event.Time;
+        length = (nextEvent?.Time ?? clock.TrackLength) - Event.Time;
 
-        if (Event.Count == Map.KeyCount)
+        if (Event.Count >= Map.KeyCount)
         {
             for (int i = 0; i < Map.KeyCount; i++)
             {

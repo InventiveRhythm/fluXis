@@ -358,19 +358,36 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
         {
             Game.Overlay ??= new ButtonPanel
             {
-                Text = "There are unsaved changes.\nAre you sure you want to exit?",
+                Text = "There are unsaved changes.",
+                SubText = "Are you sure you want to exit?",
+                Width = 800,
+                Height = 600,
+                ButtonWidth = 280,
                 Buttons = new ButtonData[]
                 {
                     new()
                     {
-                        Text = "Yes",
+                        Text = "Save and exit.",
+                        Color = FluXisColors.ButtonGreen,
+                        Action = () =>
+                        {
+                            if (!save()) return;
+
+                            exitConfirmed = true;
+                            this.Exit();
+                        }
+                    },
+                    new()
+                    {
+                        Text = "Exit without saving.",
+                        Color = FluXisColors.ButtonRed,
                         Action = () =>
                         {
                             exitConfirmed = true;
                             this.Exit();
                         }
                     },
-                    new() { Text = "Nevermind" }
+                    new() { Text = "Nevermind, back to editing." }
                 }
             };
 
@@ -533,6 +550,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
                 r.Add(Map.MapSet);
                 mapStore.AddMapSet(Map.MapSet.Detach());
+                Map = Map.Detach(); // unlink from realm again
             }
         });
 

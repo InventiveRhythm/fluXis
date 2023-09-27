@@ -16,12 +16,15 @@ public partial class ButtonPanel : Panel
     public ButtonData[] Buttons { get; set; }
     public float ButtonWidth { get; init; } = 150;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    public ButtonPanel()
     {
         Width = 600;
         Height = 400;
+    }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         Content.Children = new Drawable[]
         {
             new FillFlowContainer
@@ -55,16 +58,18 @@ public partial class ButtonPanel : Panel
             },
             new FillFlowContainer
             {
-                Height = 50,
-                AutoSizeAxes = Axes.X,
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
-                Direction = FillDirection.Horizontal,
+                Direction = FillDirection.Full,
                 Spacing = new Vector2(20),
                 Children = Buttons.Select(b => new FluXisButton
                 {
                     Width = ButtonWidth,
-                    RelativeSizeAxes = Axes.Y,
+                    Height = 50,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
                     Data = b,
                     Action = () =>
                     {

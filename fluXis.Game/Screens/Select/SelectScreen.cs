@@ -282,6 +282,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         Schedule(() =>
         {
             int index = mapStore.MapSetsSorted.IndexOf(set);
+            if (index == -1) return;
 
             MapListEntry entry = new(this, set);
             maps.Insert(index, set);
@@ -296,23 +297,18 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
 
     private void replaceMapSet(RealmMapSet oldSet, RealmMapSet newSet)
     {
-        void action()
+        Schedule(() =>
         {
-            if (!lookup.ContainsKey(oldSet))
+            if (lookup.ContainsKey(oldSet))
             {
-                Schedule(action); // do this in next frame
-                return;
+                mapList.Remove(lookup[oldSet], true);
+                maps.Remove(oldSet);
+                lookup.Remove(oldSet);
             }
 
-            mapList.Remove(lookup[oldSet], false);
-            maps.Remove(oldSet);
-            lookup.Remove(oldSet);
-            changeSelection(1);
             addMapSet(newSet);
             Schedule(() => { Schedule(() => selectMapSet(newSet)); }); // <- this looks stupid and probably is, but it works
-        }
-
-        Schedule(action);
+        });
     }
 
     private void selectMapSet(RealmMapSet set)
