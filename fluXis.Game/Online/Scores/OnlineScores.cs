@@ -6,7 +6,6 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Scoring;
 using Newtonsoft.Json;
-using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.Scores;
 
@@ -40,10 +39,7 @@ public static class OnlineScores
             miss = score.Miss
         };
 
-        var req = new WebRequest($"{fluxel.Endpoint.APIUrl}/scores/upload");
-        req.AddHeader("Authorization", fluxel.Token);
-        req.AllowInsecureRequests = true;
-        req.Method = HttpMethod.Post;
+        var req = fluxel.CreateAPIRequest("/scores/upload", HttpMethod.Post);
         req.AddRaw(JsonConvert.SerializeObject(submitScore));
         await req.PerformAsync();
 
