@@ -26,7 +26,8 @@ public partial class HitObjectManager : Container<HitObject>
     public bool UseSnapColors => useSnapColors.Value;
 
     private Bindable<float> scrollSpeed;
-    public float ScrollSpeed => scrollSpeed.Value;
+
+    public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * Playfield.Screen.Rate));
 
     public Playfield Playfield { get; }
     public MapInfo Map { get; private set; }
@@ -62,7 +63,7 @@ public partial class HitObjectManager : Container<HitObject>
 
     public bool Break => timeUntilNextHitObject >= 2000;
     private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - Clock.CurrentTime;
-    private double maxHitObjectTime => PositionFromTime(Clock.CurrentTime) + 2000 * Playfield.Screen.Rate / ScrollSpeed;
+    private double maxHitObjectTime => PositionFromTime(Clock.CurrentTime) + 2000 * Playfield.Screen.Rate;
 
     private HitObjectInfo nextHitObject
     {
