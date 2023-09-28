@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notifications.Floating;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Logging;
@@ -12,6 +13,12 @@ public partial class NotificationManager : Component
 
     public void Add(INotificationData notification)
     {
+        if (!ThreadSafety.IsUpdateThread)
+        {
+            Scheduler.Add(() => Add(notification));
+            return;
+        }
+
         Logger.Log($"Sending notification: {notification}");
         Floating?.Add(notification.CreateFloating());
     }
@@ -20,6 +27,12 @@ public partial class NotificationManager : Component
 
     public void SendText(string text, string subtext, IconUsage icon)
     {
+        if (!ThreadSafety.IsUpdateThread)
+        {
+            Scheduler.Add(() => SendText(text, subtext, icon));
+            return;
+        }
+
         Logger.Log($"Sending notification: {text}");
         Floating?.Add(new FloatingTextNotification
         {
@@ -33,6 +46,12 @@ public partial class NotificationManager : Component
 
     public void SendError(string text, string subtext, IconUsage icon)
     {
+        if (!ThreadSafety.IsUpdateThread)
+        {
+            Scheduler.Add(() => SendError(text, subtext, icon));
+            return;
+        }
+
         Logger.Log($"Sending error notification: {text}");
         Floating?.Add(new FloatingTextNotification
         {
