@@ -39,7 +39,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             };
 
             if (FluXisGameBase.IsDebug)
-                items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => host.GetClipboard()?.SetText(map.ID.ToString())));
+                items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
 
             return items.ToArray();
         }
@@ -49,7 +49,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     private Storage storage { get; set; }
 
     [Resolved]
-    private GameHost host { get; set; }
+    private Clipboard clipboard { get; set; }
 
     private readonly MapListEntry mapListEntry;
     private readonly RealmMap map;

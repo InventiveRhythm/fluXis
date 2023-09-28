@@ -12,8 +12,8 @@ public partial class FramedMapClock : Component, IFrameBasedClock, IAdjustableCl
     public double CurrentTime => decouple.CurrentTime;
     public bool IsRunning => decouple.IsRunning;
     public double ElapsedFrameTime => decouple.ElapsedFrameTime;
-    public double FramesPerSecond => decouple.FramesPerSecond;
-    public FrameTimeInfo TimeInfo => decouple.TimeInfo;
+    public double FramesPerSecond => 0;
+    public FrameTimeInfo TimeInfo => new() { Elapsed = ElapsedFrameTime, Current = CurrentTime };
 
     public double Rate { get => decouple.Rate; set => decouple.Rate = value; }
     public bool IsCoupled { get => decouple.IsCoupled; set => decouple.IsCoupled = value; }

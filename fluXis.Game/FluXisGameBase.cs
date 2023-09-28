@@ -148,13 +148,18 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    lightController,
-                    skinManager,
-                    content = new Container
+                    keybinds = new FluXisKeybindContainer(this, realm)
                     {
-                        RelativeSizeAxes = Axes.Both
+                        Children = new Drawable[]
+                        {
+                            lightController,
+                            skinManager,
+                            content = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both
+                            }
+                        }
                     },
-                    keybinds = new FluXisKeybindContainer(this, realm),
                     new GamepadHandler()
                 }
             }

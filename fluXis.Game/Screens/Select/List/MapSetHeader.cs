@@ -41,7 +41,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
             items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.OpenDeleteConfirm(mapset)));
 
             if (FluXisGameBase.IsDebug)
-                items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => host.GetClipboard()?.SetText(mapset.ID.ToString())));
+                items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.ID.ToString())));
 
             return items.ToArray();
         }
@@ -51,7 +51,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
     private UISamples samples { get; set; }
 
     [Resolved]
-    private GameHost host { get; set; }
+    private Clipboard clipboard { get; set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }

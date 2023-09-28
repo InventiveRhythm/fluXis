@@ -5,7 +5,6 @@ using fluXis.Game;
 using fluXis.Game.Integration;
 using fluXis.Game.IPC;
 using osu.Framework.Allocation;
-using osu.Framework.Input;
 using osu.Framework.Platform;
 
 namespace fluXis.Desktop;
@@ -16,9 +15,9 @@ public partial class FluXisGameDesktop : FluXisGame
     {
         base.SetHost(host);
 
-        var window = (SDL2DesktopWindow)host.Window;
+        var window = host.Window;
         window.Title = "fluXis " + VersionString;
-        window.ConfineMouseMode.Value = ConfineMouseMode.Never;
+        // window.ConfineMouseMode.Value = ConfineMouseMode.Never;
         window.CursorState = CursorState.Hidden;
         window.DragDrop += f => HandleDragDrop(new[] { f });
     }
