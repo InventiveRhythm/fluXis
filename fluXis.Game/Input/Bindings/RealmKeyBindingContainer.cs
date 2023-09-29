@@ -21,29 +21,24 @@ public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<
 
     protected override void ReloadMappings()
     {
-        IEnumerable<IKeyBinding> bindings = realm.Run(r => r.All<RealmKeybind>()).Select(b => convertKeybind(b)).AsEnumerable();
+        var realmBindings = realm.Run(r => r.All<RealmKeybind>()).AsEnumerable();
+        var bindings = convertKeybindings(realmBindings);
 
-        if (bindings.Count() == 0)
-        {
-            KeyBindings = DefaultKeyBindings;
-        } else {
-            KeyBindings = bindings;
-        }
+        KeyBindings = bindings.Any()
+            ? bindings
+            : DefaultKeyBindings;
     }
 
-    private IKeyBinding convertKeybind(RealmKeybind b)
+    private IEnumerable<IKeyBinding> convertKeybindings(IEnumerable<RealmKeybind> bindings)
     {
-        KeyBinding bind;
-
-        if (b.Key.Contains(","))
+        foreach (var binding in bindings)
         {
-            bind = new KeyBinding(b.Key.Split(',').Select(k => Enum.Parse<InputKey>(k)).ToArray(), b.Action);
+            if (Enum.TryParse(binding.Action, out T action))
+            {
+                yield return binding.Key.Contains(',')
+                    ? new KeyBinding(binding.Key.Split(',').Select(Enum.Parse<InputKey>).ToArray(), action)
+                    : new KeyBinding(Enum.Parse<InputKey>(binding.Key), action);
+            }
         }
-        else
-        {
-            bind = new KeyBinding(Enum.Parse<InputKey>(b.Key), b.Action);
-        }
-
-        return bind;
     }
 }
