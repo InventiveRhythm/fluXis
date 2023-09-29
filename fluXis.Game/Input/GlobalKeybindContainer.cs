@@ -12,6 +12,8 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
     {
     }
 
+    protected override bool Prioritised => true;
+
     public override IEnumerable<IKeyBinding> DefaultKeyBindings => GlobalKeyBindings
         .Concat(InGameKeyBindings);
 

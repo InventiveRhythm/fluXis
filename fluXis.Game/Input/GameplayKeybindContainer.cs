@@ -13,8 +13,6 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
 
     private InputManager inputManager;
 
-    protected override bool Prioritised => true;
-
     public GameplayKeybindContainer(FluXisGameBase game, FluXisRealm realm)
         : base(realm, SimultaneousBindingMode.All, KeyCombinationMatchingMode.Any)
     {
