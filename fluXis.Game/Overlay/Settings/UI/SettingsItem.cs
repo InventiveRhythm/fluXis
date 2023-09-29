@@ -16,6 +16,8 @@ public abstract partial class SettingsItem : Container
 
     public virtual bool IsDefault => true;
 
+    protected FillFlowContainer TextFlow { get; private set; }
+
     private bool isDefault;
     private CircularContainer resetButton;
 
@@ -48,7 +50,7 @@ public abstract partial class SettingsItem : Container
                     }
                 }
             },
-            new FillFlowContainer
+            TextFlow = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.CentreLeft,

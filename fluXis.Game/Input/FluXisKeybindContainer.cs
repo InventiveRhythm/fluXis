@@ -15,6 +15,8 @@ public partial class FluXisKeybindContainer : KeyBindingContainer<FluXisKeybind>
     private InputManager inputManager;
     private readonly FluXisRealm realm;
 
+    protected override bool Prioritised => true;
+
     public FluXisKeybindContainer(Drawable game, FluXisRealm realm)
         : base(matchingMode: KeyCombinationMatchingMode.Modifiers, simultaneousMode: SimultaneousBindingMode.All)
     {

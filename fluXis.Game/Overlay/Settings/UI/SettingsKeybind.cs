@@ -36,6 +36,8 @@ public partial class SettingsKeybind : SettingsItem
         this.realm = realm;
         this.container = container;
 
+        TextFlow.Padding = new MarginPadding { Left = 20 };
+
         Add(flow = new FillFlowContainer<KeybindContainer>
         {
             AutoSizeAxes = Axes.Both,
