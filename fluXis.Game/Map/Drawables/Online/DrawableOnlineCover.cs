@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
@@ -28,13 +29,22 @@ public partial class DrawableOnlineCover : Container
             Alpha = 0.5f
         };
 
-        LoadComponentAsync(new Sprite
+        Task.Run(() =>
         {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            RelativeSizeAxes = Axes.Both,
-            FillMode = FillMode.Fill,
-            Texture = textures.Get($"{fluxel.Endpoint.APIUrl}/assets/cover/{mapSet.Id}")
-        }, AddInternal);
+            var sprite = new Sprite
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                FillMode = FillMode.Fill,
+                Texture = textures.Get($"{fluxel.Endpoint.APIUrl}/assets/cover/{mapSet.Id}")
+            };
+
+            Schedule(() =>
+            {
+                AddInternal(sprite);
+                sprite.FadeInFromZero(400);
+            });
+        });
     }
 }
