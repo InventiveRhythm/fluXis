@@ -1,3 +1,5 @@
+using fluXis.Game.Utils;
+
 namespace fluXis.Game.Map.Events;
 
 public class LaneSwitchEvent : TimedObject
@@ -80,5 +82,5 @@ public class LaneSwitchEvent : TimedObject
         }
     };
 
-    public override string ToString() => $"LaneSwitch({Time},{Count},{Speed})";
+    public override string ToString() => $"LaneSwitch({Time.ToStringInvariant()},{Count},{Speed.ToStringInvariant()})";
 }

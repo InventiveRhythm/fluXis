@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Map;
 
@@ -37,8 +36,6 @@ public class MapEvents
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture),
                         Count = int.Parse(args[1])
                     };
-
-                    Logger.Log($"LaneSwitch: {laneSwitch.Time} {laneSwitch.Count}");
 
                     if (args.Length > 2)
                         laneSwitch.Speed = float.Parse(args[2], CultureInfo.InvariantCulture);
@@ -80,8 +77,6 @@ public class MapEvents
 
                 case "PlayfieldMove":
                     if (args.Length < 4) continue;
-
-                    Logger.Log($"PlayfieldMove: {args[0]} {args[1]} {args[2]} {args[3]}");
 
                     PlayfieldMoveEvents.Add(new PlayfieldMoveEvent
                     {
