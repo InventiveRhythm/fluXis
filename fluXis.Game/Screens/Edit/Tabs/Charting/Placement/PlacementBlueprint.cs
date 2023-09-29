@@ -10,10 +10,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 public partial class PlacementBlueprint : Container
 {
     [Resolved]
-    protected EditorPlayfield Playfield { get; set; }
+    protected EditorPlayfield Playfield { get; private set; }
 
     [Resolved]
-    protected EditorValues EditorValues { get; set; }
+    protected EditorValues EditorValues { get; private set; }
 
     public PlacementState State { get; set; }
     public TimedObject Object { get; set; }

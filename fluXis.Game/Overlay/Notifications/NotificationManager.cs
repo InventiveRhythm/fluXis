@@ -23,6 +23,24 @@ public partial class NotificationManager : Component
         Floating?.Add(notification.CreateFloating());
     }
 
+    public void SendSmallText(string text) => SendSmallText(text, FontAwesome.Solid.Info);
+
+    public void SendSmallText(string text, IconUsage icon)
+    {
+        if (!ThreadSafety.IsUpdateThread)
+        {
+            Scheduler.Add(() => SendSmallText(text, icon));
+            return;
+        }
+
+        Logger.Log($"Sending small notification: {text}");
+        Floating?.Add(new SmallFloatingTextNotification
+        {
+            Text = text,
+            Icon = icon
+        });
+    }
+
     public void SendText(string text, string subtext = "") => SendText(text, subtext, FontAwesome.Solid.Info);
 
     public void SendText(string text, string subtext, IconUsage icon)

@@ -22,6 +22,7 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
+using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Screens.Edit.Timeline;
 using fluXis.Game.Utils;
@@ -92,6 +93,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
     private bool exitConfirmed;
     private bool isNewMap;
     private string effectHash;
+
+    public ChartingContainer ChartingContainer { get; set; }
 
     public Editor(RealmMap realmMap = null, MapInfo map = null)
     {
@@ -191,12 +194,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
                             new("Undo", FontAwesome.Solid.ArrowCircleLeft, sendWipNotification) { Enabled = () => false },
                             new("Redo", FontAwesome.Solid.ArrowCircleRight, sendWipNotification) { Enabled = () => false },
                             new FluXisMenuSpacer(),
-                            new("Cut", FontAwesome.Solid.Cut, sendWipNotification) { Enabled = () => false },
-                            new("Copy", FontAwesome.Solid.Copy, sendWipNotification) { Enabled = () => false },
-                            new("Paste", FontAwesome.Solid.Paste, sendWipNotification) { Enabled = () => false },
+                            new("Copy", FontAwesome.Solid.Copy, () => ChartingContainer?.Copy()) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedHitObjects.Any() ?? false },
+                            new("Cut", FontAwesome.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedHitObjects.Any() ?? false },
+                            new("Paste", FontAwesome.Solid.Paste, () => ChartingContainer?.Paste()),
                             new FluXisMenuSpacer(),
-                            new("Delete", FontAwesome.Solid.Trash, sendWipNotification) { Enabled = () => false },
-                            new("Select all", FontAwesome.Solid.ObjectGroup, sendWipNotification) { Enabled = () => false }
+                            new("Delete", FontAwesome.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
+                            new("Select all", FontAwesome.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
                         }
                     },
                     new("View", FontAwesome.Solid.Eye)
@@ -473,7 +476,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
 
         if (hash == Map.Hash && effHash == effectHash)
         {
-            notifications.SendText("Map is already up to date", "", FontAwesome.Solid.Check);
+            notifications.SendSmallText("Map is already up to date", FontAwesome.Solid.Check);
             return true;
         }
 
@@ -552,7 +555,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
             }
         });
 
-        notifications.SendText("Saved!", "", FontAwesome.Solid.Check);
+        notifications.SendSmallText("Saved!", FontAwesome.Solid.Check);
         return true;
     }
 

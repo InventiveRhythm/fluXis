@@ -217,7 +217,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
         if (blueprint != null)
         {
             placementBlueprintContainer.Child = currentPlacementBlueprint = blueprint;
-            updatePlacementPosition();
+            // updatePlacementPosition();
         }
     }
 
@@ -257,6 +257,12 @@ public partial class BlueprintContainer : Container, ICursorDrag
                     break;
             }
         }
+    }
+
+    public void SelectAll()
+    {
+        foreach (var blueprint in SelectionBlueprints)
+            blueprint.Select();
     }
 
     private void onSelected(SelectionBlueprint blueprint)

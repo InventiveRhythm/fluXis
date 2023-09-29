@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
@@ -8,13 +10,16 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting;
 
-public partial class ChartingContainer : Container
+public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformAction>
 {
     public IReadOnlyList<ChartingTool> Tools { get; } = new ChartingTool[]
     {
@@ -40,6 +45,12 @@ public partial class ChartingContainer : Container
     [Resolved]
     private EditorChangeHandler changeHandler { get; set; }
 
+    [Resolved]
+    private Clipboard clipboard { get; set; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
+
     private DependencyContainer dependencies;
     private InputManager inputManager;
     private double scrollAccumulation;
@@ -53,8 +64,10 @@ public partial class ChartingContainer : Container
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        values.Editor.ChartingContainer = this;
 
         dependencies.Cache(this);
+        dependencies.CacheAs(Playfield = new EditorPlayfield());
 
         InternalChildren = new Drawable[]
         {
@@ -64,14 +77,12 @@ public partial class ChartingContainer : Container
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    Playfield = new EditorPlayfield(),
+                    Playfield,
                     BlueprintContainer = new BlueprintContainer { ChartingContainer = this }
                 }
             },
             new Toolbox.Toolbox()
         };
-
-        dependencies.Cache(Playfield);
     }
 
     protected override void LoadComplete()
@@ -181,5 +192,84 @@ public partial class ChartingContainer : Container
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
     {
         return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
+    {
+        switch (e.Action)
+        {
+            case PlatformAction.Copy:
+                Copy();
+                return true;
+
+            case PlatformAction.Paste:
+                Paste();
+                return true;
+
+            case PlatformAction.Cut:
+                Copy(true);
+                return true;
+
+            case PlatformAction.SelectAll:
+                BlueprintContainer.SelectAll();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e) { }
+
+    public void Copy(bool deleteAfter = false)
+    {
+        var hits = BlueprintContainer.SelectionHandler.SelectedHitObjects.Select(x => new HitObjectInfo
+        {
+            Time = x.Time,
+            Lane = x.Lane,
+            HoldTime = x.HoldTime
+        }).ToList();
+
+        if (!hits.Any())
+        {
+            notifications.SendSmallText("Nothing selected.", FontAwesome.Solid.Times);
+            return;
+        }
+
+        var minTime = hits.Min(x => x.Time);
+
+        foreach (var hit in hits)
+            hit.Time -= minTime;
+
+        var content = new EditorClipboardContent { HitObjects = hits };
+        clipboard.SetText(content.ToString() ?? string.Empty);
+
+        if (deleteAfter)
+        {
+            notifications.SendSmallText($"Cut {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
+            BlueprintContainer.SelectionHandler.DeleteSelected();
+        }
+        else
+            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
+    }
+
+    public void Paste()
+    {
+        var content = EditorClipboardContent.Deserialize(clipboard.GetText());
+
+        if (content == null)
+        {
+            notifications.SendSmallText("Clipboard is empty.", FontAwesome.Solid.Times);
+            return;
+        }
+
+        BlueprintContainer.SelectionHandler.DeselectAll();
+
+        foreach (var hitObject in content.HitObjects)
+        {
+            hitObject.Time += (float)clock.CurrentTime;
+            values.MapInfo.Add(hitObject);
+        }
+
+        notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
     }
 }

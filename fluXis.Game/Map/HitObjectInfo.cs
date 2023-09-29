@@ -5,8 +5,8 @@ namespace fluXis.Game.Map;
 
 public class HitObjectInfo : TimedObject
 {
-    public int Lane;
-    public float HoldTime;
+    public int Lane { get; set; }
+    public float HoldTime { get; set; }
 
     [JsonIgnore]
     public float HoldEndTime

@@ -13,7 +13,6 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 
-[Cached]
 public partial class EditorPlayfield : Container
 {
     [Resolved]
