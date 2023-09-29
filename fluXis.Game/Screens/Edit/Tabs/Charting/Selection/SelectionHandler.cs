@@ -79,13 +79,32 @@ public partial class SelectionHandler : Container, IHasContextMenu
 
     public bool SingleClickSelection(SelectionBlueprint blueprint, MouseButtonEvent e)
     {
-        if (e.Button == MouseButton.Right)
+        switch (e.Button)
         {
-            quickDelete(blueprint);
-            return true;
-        }
+            case MouseButton.Left:
+                if (e.ControlPressed)
+                {
+                    if (blueprint.IsSelected)
+                        blueprint.Deselect();
+                    else
+                        blueprint.Select();
 
-        return false;
+                    return true;
+                }
+
+                if (blueprint.IsSelected) return false;
+
+                DeselectAll();
+                blueprint.Select();
+                return true;
+
+            case MouseButton.Right:
+                quickDelete(blueprint);
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     private void quickDelete(SelectionBlueprint blueprint)
@@ -112,6 +131,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
 
     public void DeselectAll()
     {
+        selected.ToList().ForEach(b => b.Deselect());
         SelectedHitObjects.Clear();
     }
 }
