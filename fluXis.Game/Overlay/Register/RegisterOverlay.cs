@@ -18,7 +18,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Register;
 
-public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybind>
+public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -285,11 +285,11 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybi
     protected override bool OnKeyDown(KeyDownEvent e) => true;
     protected override bool OnScroll(ScrollEvent e) => true;
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 Hide();
                 break;
         }
@@ -297,5 +297,5 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisKeybi
         return true;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

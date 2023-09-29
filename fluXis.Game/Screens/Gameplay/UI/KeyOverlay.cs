@@ -23,7 +23,7 @@ public partial class KeyOverlay : Container
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public FluXisKeybind[] Keybinds => Screen.Input.Keys;
+    public FluXisGameplayKeybind[] Keybinds => Screen.Input.Keys;
 
     private FillFlowContainer flow;
     private int keyCount;
@@ -64,7 +64,7 @@ public partial class KeyOverlay : Container
         }
     }
 
-    private KeyCombination getBind(FluXisKeybind keybind)
+    private KeyCombination getBind(FluXisGameplayKeybind keybind)
     {
         KeyCombination combo = new KeyCombination();
 

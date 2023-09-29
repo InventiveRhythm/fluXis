@@ -31,7 +31,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Result;
 
-public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.2f;
     public override bool AllowMusicControl => false;
@@ -216,11 +216,11 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
         buttons.FadeTo(status ? 0 : 1);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 this.Exit();
                 return true;
         }
@@ -228,7 +228,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisKeyb
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     public override void OnEntering(ScreenTransitionEvent e)
     {

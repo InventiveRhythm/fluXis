@@ -137,7 +137,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
-        FluXisKeybindContainer keybinds;
+        GlobalKeybindContainer keybinds;
 
         base.Content.Add(new SafeAreaContainer
         {
@@ -148,7 +148,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    keybinds = new FluXisKeybindContainer(this, realm)
+                    keybinds = new GlobalKeybindContainer(realm)
                     {
                         Children = new Drawable[]
                         {

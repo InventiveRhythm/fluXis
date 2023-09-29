@@ -17,7 +17,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Offset;
 
-public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.4f;
     public override float ParallaxStrength => 4f;
@@ -205,15 +205,15 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisKeybin
         }
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Action != FluXisKeybind.Back) return false;
+        if (e.Action != FluXisGlobalKeybind.Back) return false;
 
         this.Exit();
         return true;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     protected override void Dispose(bool isDisposing)
     {

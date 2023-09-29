@@ -34,7 +34,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Profile;
 
-public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybind>
+public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     private bool isVisible { get; set; }
 
@@ -351,11 +351,11 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
     protected override bool OnKeyDown(KeyDownEvent e) => true;
     protected override bool OnScroll(ScrollEvent e) => true;
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 Hide();
                 break;
         }
@@ -363,7 +363,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisKeybin
         return true;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     private partial class AvatarEdit : Container
     {

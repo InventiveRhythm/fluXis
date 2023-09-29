@@ -23,7 +23,7 @@ public partial class SettingsKeybind : SettingsItem
 
     public override bool AcceptsFocus => true;
 
-    public FluXisKeybind[] Keybinds;
+    public object[] Keybinds;
 
     private FillFlowContainer<KeybindContainer> flow;
     private FluXisKeybindContainer container;
@@ -65,7 +65,7 @@ public partial class SettingsKeybind : SettingsItem
     {
     }
 
-    private KeyCombination getBind(FluXisKeybind keybind)
+    private KeyCombination getBind(object keybind)
     {
         KeyCombination combo = new KeyCombination();
 

@@ -11,7 +11,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer;
 
-public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisKeybind>
+public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public virtual string Title => "Screen";
     public virtual string SubTitle => "Screen";
@@ -101,11 +101,11 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         this.FadeOut(200);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 this.Exit();
                 return true;
         }
@@ -113,5 +113,5 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisKeybind>
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }
