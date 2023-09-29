@@ -41,7 +41,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public double ElapsedFrameTime => underlying.ElapsedFrameTime;
     public double FramesPerSecond => underlying.FramesPerSecond;
-    public FrameTimeInfo TimeInfo => underlying.TimeInfo;
+    public FrameTimeInfo TimeInfo => new() { Elapsed = ElapsedFrameTime, Current = CurrentTime };
 
     public override double CurrentTime => underlying.CurrentTime - offset.Value;
     public IClock Source => underlying.Source;
