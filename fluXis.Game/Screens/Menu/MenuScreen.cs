@@ -353,6 +353,7 @@ public partial class MenuScreen : FluXisScreen
         return canPlayAnimation();
     }
 
+    protected override bool OnMouseDown(MouseDownEvent e) => canPlayAnimation();
     protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
     protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
 
