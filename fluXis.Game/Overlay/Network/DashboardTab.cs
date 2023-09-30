@@ -77,4 +77,7 @@ public partial class DashboardTab : Container
             }
         };
     }
+
+    public virtual void Enter() { }
+    public virtual void Exit() { }
 }

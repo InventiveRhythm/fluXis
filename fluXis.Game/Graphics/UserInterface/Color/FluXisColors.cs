@@ -25,7 +25,7 @@ public static class FluXisColors
     public static Colour4 GetThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
 
     public static Colour4 Text => Colour4.FromHex("#ffffff");
-    public static Colour4 Text2 => Colour4.FromHex("#c8c8c8");
+    public static Colour4 Text2 => Colour4.FromHex("#cccccc");
     public static Colour4 TextDisabled => Colour4.FromHex("#646464");
     public static Colour4 TextDark => Background3;
 
@@ -40,7 +40,7 @@ public static class FluXisColors
     public static Colour4 RoleMod => Colour4.FromHex("#73d173");
     public static Colour4 RolePurifier => Colour4.FromHex("#55b2ff");
     public static Colour4 RoleFeatured => Colour4.FromHex("#ff7b74");
-    public static Colour4 RoleUser => Colour4.FromHex("#7455ff");
+    public static Colour4 RoleUser => Colour4.FromHex("#AA99FF");
     public static Colour4 RoleBot => Colour4.FromHex("#1f1e33");
 
     public static Colour4 SocialTwitter => Colour4.FromHex("#1da1f2");
@@ -102,6 +102,19 @@ public static class FluXisColors
             4 => RoleAdmin,
             5 => RoleBot,
             _ => RoleUser
+        };
+    }
+
+    public static Colour4 GetNameColor(int role)
+    {
+        return role switch
+        {
+            1 => RoleFeatured,
+            2 => RolePurifier,
+            3 => RoleMod,
+            4 => RoleAdmin,
+            5 => RoleBot,
+            _ => Colour4.White
         };
     }
 

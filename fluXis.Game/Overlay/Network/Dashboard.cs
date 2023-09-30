@@ -28,6 +28,7 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
     private Container content;
     private DashboardSidebar sidebar;
     private Container<DashboardTab> tabsContainer;
+    private DashboardTab selectedTab;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -135,7 +136,7 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
 
     private void selectTab(DashboardTab tab)
     {
-        if (tab == null)
+        if (tab == null || tab == selectedTab)
             return;
 
         if (!tabsContainer.Contains(tab))
@@ -167,6 +168,10 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
             else
                 drawable.FadeOut(200);
         }
+
+        selectedTab?.Exit();
+        selectedTab = tab;
+        selectedTab.Enter();
     }
 
     protected override void PopIn()
