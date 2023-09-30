@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
 using osu.Framework.Input.Bindings;
+using Realms;
 
 namespace fluXis.Game.Input;
 
@@ -19,9 +20,29 @@ public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<
         this.realm = realm;
     }
 
-    protected override void ReloadMappings()
+    protected override void LoadComplete()
     {
-        var realmBindings = realm.Run(r => r.All<RealmKeybind>()).AsEnumerable();
+        realm.Run(r =>
+        {
+            r.All<RealmKeybind>().SubscribeForNotifications((sender, changes, error) =>
+            {
+                if (changes == null)
+                {
+                    return;
+                }
+
+                ReloadMappings(sender.AsQueryable());
+            });
+        });
+
+        base.LoadComplete();
+    }
+
+    protected override void ReloadMappings() => ReloadMappings(realm.Run(r => r.All<RealmKeybind>()));
+
+    protected void ReloadMappings(IQueryable<RealmKeybind> keybindings)
+    {
+        var realmBindings = keybindings.AsEnumerable();
         var bindings = convertKeybindings(realmBindings);
 
         KeyBindings = bindings.Any()
