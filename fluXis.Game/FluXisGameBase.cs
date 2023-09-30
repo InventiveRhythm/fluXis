@@ -73,6 +73,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private FluXisRealm realm;
     private MapStore mapStore;
+    private KeybindStore keybindStore;
     private FluXisConfig config;
     private LightController lightController;
     private SkinManager skinManager;
@@ -164,6 +165,10 @@ public partial class FluXisGameBase : osu.Framework.Game
                 }
             }
         });
+
+        keybindStore = new KeybindStore(realm);
+        keybindStore.AssignDefaults(keybinds);
+        keybindStore.AssignDefaults(new GameplayKeybindContainer(this, realm));
 
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);
