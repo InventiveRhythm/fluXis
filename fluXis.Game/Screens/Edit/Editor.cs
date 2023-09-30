@@ -190,9 +190,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            // why are arrow-rotate-left and arrow-rotate-right not in here???
-                            new("Undo", FontAwesome.Solid.ArrowCircleLeft, sendWipNotification) { Enabled = () => false },
-                            new("Redo", FontAwesome.Solid.ArrowCircleRight, sendWipNotification) { Enabled = () => false },
+                            new("Undo", FontAwesome.Solid.Get(0xf0e2), sendWipNotification) { Enabled = () => false },
+                            new("Redo", FontAwesome.Solid.Get(0xf01e), sendWipNotification) { Enabled = () => false },
                             new FluXisMenuSpacer(),
                             new("Copy", FontAwesome.Solid.Copy, () => ChartingContainer?.Copy()) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedHitObjects.Any() ?? false },
                             new("Cut", FontAwesome.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedHitObjects.Any() ?? false },
