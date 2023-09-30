@@ -9,6 +9,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Online.API.Account;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.API.Multi;
+using fluXis.Game.Online.API.Other;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Online.Fluxel.Packets.Account;
@@ -243,6 +244,7 @@ public partial class Fluxel : Component
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUserShort>,
                     EventType.Register => handleListener<APIRegisterResponse>,
+                    EventType.ServerMessage => handleListener<ServerMessage>,
                     EventType.ChatMessage => handleListener<ChatMessage>,
                     EventType.ChatHistory => handleListener<ChatMessage[]>,
                     EventType.ChatMessageDelete => handleListener<string>,
@@ -417,6 +419,7 @@ public enum EventType
     Token = 0,
     Login = 1,
     Register = 2,
+    ServerMessage = 3,
 
     ChatMessage = 10,
     ChatHistory = 11,

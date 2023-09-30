@@ -66,6 +66,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected BackgroundStack BackgroundStack;
     protected ActivityManager ActivityManager;
     protected UISamples Samples;
+    protected Fluxel Fluxel;
 
     public SettingsMenu Settings;
     public Toolbar Toolbar;
@@ -78,7 +79,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     private LightController lightController;
     private SkinManager skinManager;
     private ImportManager importManager;
-    private Fluxel fluxel;
 
     public Action OnSongChanged { get; set; }
     public virtual Drawable Overlay { get; set; }
@@ -105,8 +105,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.CacheAs(config = new FluXisConfig(storage));
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
-        dependencies.Cache(fluxel = new Fluxel(config, getApiEndpoint()));
-        UserCache.Init(fluxel);
+        dependencies.Cache(Fluxel = new Fluxel(config, getApiEndpoint()));
+        UserCache.Init(Fluxel);
 
         dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));
         dependencies.Cache(new CroppedBackgroundStore(Host, storage.GetStorageForDirectory("maps")));
@@ -132,7 +132,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.CacheAs(lightController = CreateLightController());
         dependencies.Cache(skinManager = new SkinManager());
-        dependencies.Cache(ActivityManager = new ActivityManager(fluxel));
+        dependencies.Cache(ActivityManager = new ActivityManager(Fluxel));
         dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
         dependencies.Cache(Dashboard = new Dashboard());
 
@@ -200,7 +200,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public new virtual void Exit()
     {
-        fluxel.Close();
+        Fluxel.Close();
         base.Exit();
     }
 
@@ -223,7 +223,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected override bool OnExiting()
     {
-        fluxel.Close();
+        Fluxel.Close();
         return base.OnExiting();
     }
 

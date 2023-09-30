@@ -3,6 +3,8 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
+using fluXis.Game.Online.API.Other;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Volume;
@@ -137,6 +139,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         ScreenStack.Push(new IntroScreen());
         Toolbar.ScreenStack = ScreenStack;
+
+        Fluxel.RegisterListener<ServerMessage>(EventType.ServerMessage, res =>
+        {
+            var data = res.Data;
+
+            if (data.NonDisruptive)
+                NotificationManager.SendSmallText(data.Text);
+            else
+                NotificationManager.SendText(data.Text, data.SubText);
+        });
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

@@ -31,13 +31,15 @@ public partial class SmallFloatingTextNotification : FloatingNotification
                     Icon = Icon,
                     Size = new Vector2(12),
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft
+                    Origin = Anchor.CentreLeft,
+                    Shadow = true
                 },
                 new FluXisSpriteText
                 {
                     Text = Text,
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft
+                    Origin = Anchor.CentreLeft,
+                    Shadow = true
                 }
             }
         };
