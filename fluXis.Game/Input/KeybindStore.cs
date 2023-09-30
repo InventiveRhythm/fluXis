@@ -25,7 +25,7 @@ public class KeybindStore
                 if (existingBindings.Any(b => b.Action == binding.Action.ToString()))
                     continue;
 
-                var defaultBinding = container.DefaultKeyBindings.Select(k => new RealmKeybind()
+                var defaultBinding = container.DefaultKeyBindings.Where(k => k.Action == binding.Action && k.KeyCombination.ToString() == binding.KeyCombination.ToString()).Select(k => new RealmKeybind()
                 {
                     Action = k.Action.ToString(),
                     Key = k.KeyCombination.ToString()
