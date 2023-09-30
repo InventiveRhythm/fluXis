@@ -1,21 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Input;
 
-public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlobalKeybind>
+public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlobalKeybind>, IHandleGlobalKeyboardInput, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    public GlobalKeybindContainer(FluXisRealm realm)
-        : base(realm, SimultaneousBindingMode.All, KeyCombinationMatchingMode.Modifiers)
+    private readonly IKeyBindingHandler<FluXisGlobalKeybind> handler;
+    public GlobalKeybindContainer(FluXisGameBase game, FluXisRealm realm)
+        : base(realm, SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers)
     {
+        if (game is IKeyBindingHandler<FluXisGlobalKeybind> keyBindingHandler)
+            handler = keyBindingHandler;
     }
-
-    protected override bool Prioritised => true;
 
     public override IEnumerable<IKeyBinding> DefaultKeyBindings => GlobalKeyBindings
         .Concat(InGameKeyBindings);
+
+    protected override bool Prioritised => true;
 
     public IEnumerable<KeyBinding> GlobalKeyBindings = new[]
     {
@@ -52,6 +57,9 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(InputKey.F3, FluXisGlobalKeybind.ScrollSpeedDecrease),
         new KeyBinding(InputKey.F4, FluXisGlobalKeybind.ScrollSpeedIncrease),
     };
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e) => handler.OnPressed(e);
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) => handler.OnReleased(e);
 }
 
 public enum FluXisGlobalKeybind

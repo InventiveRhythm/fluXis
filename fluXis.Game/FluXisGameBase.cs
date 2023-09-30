@@ -149,7 +149,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    keybinds = new GlobalKeybindContainer(realm)
+                    keybinds = new GlobalKeybindContainer(this, realm)
                     {
                         Children = new Drawable[]
                         {
