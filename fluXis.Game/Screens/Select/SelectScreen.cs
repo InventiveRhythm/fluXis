@@ -341,7 +341,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public void Accept()
     {
-        if (MapInfo == null)
+        if (MapInfo.Value == null)
             return;
 
         menuAccept.Play();
@@ -702,8 +702,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public void EditMapSet(RealmMap map)
     {
+        if (map == null) return;
+
         MapSet.Value = map.MapSet;
         MapInfo.Value = map;
+
+        if (MapInfo.Value == null) return;
 
         var loadedMap = map.GetMapInfo();
         if (loadedMap == null) return;
