@@ -568,9 +568,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return true;
 
             case FluXisGlobalKeybind.Skip:
-                if (Map.StartTime - AudioClock.CurrentTime > 2000)
-                    AudioClock.Seek(Map.StartTime - 2000);
+                if (Map.StartTime - AudioClock.CurrentTime < 2000) return false;
 
+                AudioClock.Seek(Map.StartTime - 2000);
                 return true;
 
             case FluXisGlobalKeybind.ScrollSpeedIncrease:
