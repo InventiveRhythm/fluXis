@@ -15,7 +15,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
     private readonly MapEvents events;
 
     public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, MapEvents events, double startTime)
-        : base(realmMap, new List<IMod>())
+        : base(realmMap, new List<IMod> { new NoFailMod() })
     {
         map = info;
         this.events = events;
