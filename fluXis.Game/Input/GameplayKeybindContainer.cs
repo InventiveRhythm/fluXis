@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
-using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 
@@ -37,18 +36,18 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
                                                                    .Concat(KeyBindings9K)
                                                                    .Concat(KeyBindings10K);
 
-    protected override IEnumerable<Drawable> KeyBindingInputQueue
-    {
-        get
-        {
-            var queue = inputManager?.NonPositionalInputQueue ?? base.KeyBindingInputQueue;
-
-            if (handler != null)
-                queue = queue.Prepend(handler);
-
-            return queue;
-        }
-    }
+    // protected override IEnumerable<Drawable> KeyBindingInputQueue
+    // {
+    //     get
+    //     {
+    //         var queue = inputManager?.NonPositionalInputQueue ?? base.KeyBindingInputQueue;
+    //
+    //         if (handler != null)
+    //             queue = queue.Prepend(handler);
+    //
+    //         return queue;
+    //     }
+    // }
 
     public IEnumerable<KeyBinding> KeyBindings1K = new[]
     {
