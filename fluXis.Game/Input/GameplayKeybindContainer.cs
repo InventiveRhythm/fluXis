@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
+using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 
@@ -36,24 +37,23 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
                                                                    .Concat(KeyBindings9K)
                                                                    .Concat(KeyBindings10K);
 
-    // protected override IEnumerable<Drawable> KeyBindingInputQueue
-    // {
-    //     get
-    //     {
-    //         var queue = inputManager?.NonPositionalInputQueue ?? base.KeyBindingInputQueue;
-    //
-    //         if (handler != null)
-    //             queue = queue.Prepend(handler);
-    //
-    //         return queue;
-    //     }
-    // }
+    protected override IEnumerable<Drawable> KeyBindingInputQueue
+    {
+        get
+        {
+            var queue = inputManager?.NonPositionalInputQueue ?? base.KeyBindingInputQueue;
+
+            if (handler != null)
+                queue = queue.Prepend(handler);
+
+            return queue;
+        }
+    }
 
     public IEnumerable<KeyBinding> KeyBindings1K = new[]
     {
         new KeyBinding(InputKey.Space, FluXisGameplayKeybind.Key1k1),
     };
-
 
     public IEnumerable<KeyBinding> KeyBindings2K = new[]
     {
@@ -66,7 +66,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.D, FluXisGameplayKeybind.Key3k1),
         new KeyBinding(InputKey.Space, FluXisGameplayKeybind.Key3k2),
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key3k3)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings4K = new[]
     {
@@ -74,7 +74,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.D, FluXisGameplayKeybind.Key4k2),
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key4k3),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key4k4)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings5K = new[]
     {
@@ -83,7 +83,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.Space, FluXisGameplayKeybind.Key5k3),
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key5k4),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key5k5)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings6K = new[]
     {
@@ -93,7 +93,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key6k4),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key6k5),
         new KeyBinding(InputKey.L, FluXisGameplayKeybind.Key6k6)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings7K = new[]
     {
@@ -104,7 +104,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key7k5),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key7k6),
         new KeyBinding(InputKey.L, FluXisGameplayKeybind.Key7k7)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings8K = new[]
     {
@@ -116,7 +116,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key8k6),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key8k7),
         new KeyBinding(InputKey.L, FluXisGameplayKeybind.Key8k8)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings9K = new[]
     {
@@ -129,7 +129,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key9k7),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key9k8),
         new KeyBinding(InputKey.L, FluXisGameplayKeybind.Key9k9)
-        };
+    };
 
     public IEnumerable<KeyBinding> KeyBindings10K = new[]
     {
@@ -143,7 +143,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
         new KeyBinding(InputKey.J, FluXisGameplayKeybind.Key10k8),
         new KeyBinding(InputKey.K, FluXisGameplayKeybind.Key10k9),
         new KeyBinding(InputKey.L, FluXisGameplayKeybind.Key10k10)
-        };
+    };
 }
 
 public enum FluXisGameplayKeybind
