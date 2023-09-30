@@ -16,7 +16,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Import;
 
-public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.4f;
     public override float ParallaxStrength => 3f;
@@ -133,13 +133,13 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisK
         return base.OnExiting(e);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Action != FluXisKeybind.Back) return false;
+        if (e.Action != FluXisGlobalKeybind.Back) return false;
 
         this.Exit();
         return true;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

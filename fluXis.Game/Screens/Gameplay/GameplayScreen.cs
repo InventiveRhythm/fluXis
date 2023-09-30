@@ -5,6 +5,7 @@ using fluXis.Game.Activity;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
+using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.UserInterface.Text;
@@ -37,17 +38,26 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Gameplay;
 
-public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float ParallaxStrength => 0f;
+
     public override float BackgroundBlur => backgroundBlur?.Value ?? 0f;
+
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
+
     public override bool ShowToolbar => false;
+
     public override bool AllowMusicControl => false;
+
     public override bool ApplyValuesAfterLoad => true;
+
     public override bool AllowExit => false;
 
     protected virtual double GameplayStartTime => 0;
+
+    [Resolved]
+    private FluXisRealm realm { get; set; }
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
@@ -65,43 +75,63 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
     private ActivityManager activity { get; set; }
 
     private bool starting = true;
+
     private bool restarting;
 
     public BindableBool IsPaused { get; } = new();
+
     public Action<double, double> OnSeek { get; set; }
 
     public JudgementProcessor JudgementProcessor { get; } = new();
+
     public HealthProcessor HealthProcessor { get; private set; }
+
     public ScoreProcessor ScoreProcessor { get; private set; }
 
     public GameplayInput Input { get; private set; }
+
     public HitWindows HitWindows { get; }
+
     public ReleaseWindows ReleaseWindows { get; }
+
     public MapInfo Map { get; private set; }
+
     public RealmMap RealmMap { get; }
+
     public MapEvents MapEvents { get; private set; }
+
     public List<IMod> Mods { get; }
 
     public Playfield Playfield { get; private set; }
+
     private Container hud { get; set; }
 
     private FluXisTextFlow debugText;
+
     private static bool showDebug;
 
     private FailOverlay failOverlay;
+
     private FailMenu failMenu;
+
     private FullComboOverlay fcOverlay;
+
     private QuickActionOverlay quickActionOverlay;
 
     private FluXisConfig config;
+
     private Bindable<HudVisibility> hudVisibility;
+
     private Bindable<float> backgroundDim;
+
     private Bindable<float> backgroundBlur;
 
     private bool hudVisible = true;
 
     public Sample HitSound { get; private set; }
+
     public Sample Combobreak { get; private set; }
+
     public Sample Restart { get; private set; }
 
     public float Rate { get; }
@@ -141,10 +171,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
             HealthProcessor = CreateHealthProcessor(),
             ScoreProcessor = new ScoreProcessor
             {
-                HitWindows = HitWindows,
-                Map = RealmMap,
-                MapInfo = Map,
-                Mods = Mods
+                HitWindows = HitWindows, Map = RealmMap, MapInfo = Map, Mods = Mods
             }
         });
 
@@ -161,81 +188,139 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChildren = new Drawable[]
+        InternalChild = new GameplayKeybindContainer(Game, realm)
         {
-            Input,
-            new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()) { Clock = AudioClock },
-            new PulseEffect { ParentScreen = this, Clock = AudioClock },
-            Playfield = new Playfield { Screen = this, Clock = AudioClock },
-            hud = new Container
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Children = new Drawable[]
+                Input,
+                new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList())
                 {
-                    createHudElement(new ComboCounter()),
-                    createHudElement(new AccuracyDisplay()),
-                    createHudElement(new Progressbar()),
-                    createHudElement(new JudgementDisplay()),
-                    createHudElement(new JudgementCounter()),
-                    createHudElement(new HealthBar()),
-                    createHudElement(new HitErrorBar()),
-                    createHudElement(new AttributeText
+                    Clock = AudioClock
+                },
+                new PulseEffect
+                {
+                    ParentScreen = this, Clock = AudioClock
+                },
+                Playfield = new Playfield
+                {
+                    Screen = this, Clock = AudioClock
+                },
+                hud = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Children = new Drawable[]
                     {
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Margin = new MarginPadding(10) { Horizontal = 20 },
-                        AttributeType = AttributeType.Title,
-                        FontSize = 48
-                    }),
-                    createHudElement(new AttributeText
+                        createHudElement(new ComboCounter()),
+                        createHudElement(new AccuracyDisplay()),
+                        createHudElement(new Progressbar()),
+                        createHudElement(new JudgementDisplay()),
+                        createHudElement(new JudgementCounter()),
+                        createHudElement(new HealthBar()),
+                        createHudElement(new HitErrorBar()),
+                        createHudElement(new AttributeText
+                        {
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Margin = new MarginPadding(10)
+                            {
+                                Horizontal = 20
+                            },
+                            AttributeType = AttributeType.Title,
+                            FontSize = 48
+                        }),
+                        createHudElement(new AttributeText
+                        {
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
+                            Margin = new MarginPadding(10)
+                            {
+                                Bottom = 52, Horizontal = 20
+                            },
+                            AttributeType = AttributeType.Artist
+                        }),
+                        createHudElement(new AttributeText
+                        {
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            Margin = new MarginPadding(10)
+                            {
+                                Horizontal = 20
+                            },
+                            AttributeType = AttributeType.Difficulty,
+                            FontSize = 48
+                        }),
+                        createHudElement(new AttributeText
+                        {
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            Margin = new MarginPadding(10)
+                            {
+                                Bottom = 52, Horizontal = 20
+                            },
+                            AttributeType = AttributeType.Mapper,
+                            Text = "mapped by {value}"
+                        }),
+                        new ModsDisplay
+                        {
+                            Screen = this
+                        },
+                        new KeyOverlay
+                        {
+                            Screen = this
+                        }
+                    }
+                },
+                new AutoPlayDisplay
+                {
+                    Screen = this
+                },
+                new DangerHealthOverlay
+                {
+                    Screen = this
+                },
+                new LaneSwitchAlert
+                {
+                    Playfield = Playfield
+                },
+                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList())
+                {
+                    Clock = AudioClock
+                },
+                failOverlay = new FailOverlay
+                {
+                    Screen = this
+                },
+                failMenu = new FailMenu
+                {
+                    Screen = this
+                },
+                fcOverlay = new FullComboOverlay(),
+                quickActionOverlay = new QuickActionOverlay(),
+                new GameplayTouchInput
+                {
+                    Screen = this
+                },
+                new PauseMenu
+                {
+                    Screen = this
+                },
+                debugText = new FluXisTextFlow
+                {
+                    Anchor = Anchor.TopLeft,
+                    Origin = Anchor.TopLeft,
+                    RelativeSizeAxes = Axes.Both,
+                    Margin = new MarginPadding
                     {
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Margin = new MarginPadding(10) { Bottom = 52, Horizontal = 20 },
-                        AttributeType = AttributeType.Artist
-                    }),
-                    createHudElement(new AttributeText
-                    {
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Margin = new MarginPadding(10) { Horizontal = 20 },
-                        AttributeType = AttributeType.Difficulty,
-                        FontSize = 48
-                    }),
-                    createHudElement(new AttributeText
-                    {
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Margin = new MarginPadding(10) { Bottom = 52, Horizontal = 20 },
-                        AttributeType = AttributeType.Mapper,
-                        Text = "mapped by {value}"
-                    }),
-                    new ModsDisplay { Screen = this },
-                    new KeyOverlay { Screen = this }
+                        Top = 100, Left = 20
+                    },
+                    FontSize = 20,
+                    TextAnchor = Anchor.TopLeft,
+                    Text = "debug text",
+                    Alpha = showDebug ? 1 : 0
                 }
-            },
-            new AutoPlayDisplay { Screen = this },
-            new DangerHealthOverlay { Screen = this },
-            new LaneSwitchAlert { Playfield = Playfield },
-            new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = AudioClock },
-            failOverlay = new FailOverlay { Screen = this },
-            failMenu = new FailMenu { Screen = this },
-            fcOverlay = new FullComboOverlay(),
-            quickActionOverlay = new QuickActionOverlay(),
-            new GameplayTouchInput { Screen = this },
-            new PauseMenu { Screen = this },
-            debugText = new FluXisTextFlow
-            {
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                RelativeSizeAxes = Axes.Both,
-                Margin = new MarginPadding { Top = 100, Left = 20 },
-                FontSize = 20,
-                TextAnchor = Anchor.TopLeft,
-                Text = "debug text",
-                Alpha = showDebug ? 1 : 0
+
             }
         };
     }
@@ -286,7 +371,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         var processor = null as HealthProcessor;
 
         if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor();
-        else if (Mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
+        else if (Mods.Any(m => m is EasyMod))
+            processor = new RequirementHeathProcessor
+            {
+                HealthRequirement = EasyMod.HEALTH_REQUIREMENT
+            };
 
         processor ??= new HealthProcessor();
         processor.Screen = this;
@@ -355,7 +444,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
 
     protected virtual void End()
     {
-        var player = Playfield.Manager.AutoPlay ? new APIUserShort { Username = "AutoPlay", ID = 0 } : fluxel.LoggedInUser;
+        var player = Playfield.Manager.AutoPlay
+            ? new APIUserShort
+            {
+                Username = "AutoPlay", ID = 0
+            }
+            : fluxel.LoggedInUser;
 
         if (ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless)
             fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
@@ -447,23 +541,23 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         return false;
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         if (e.Repeat || Playfield.Manager.Finished) return false;
 
         switch (e.Action)
         {
-            case FluXisKeybind.QuickRestart when !starting && !restarting:
+            case FluXisGlobalKeybind.QuickRestart when !starting && !restarting:
                 quickActionOverlay.OnConfirm = RestartMap;
                 quickActionOverlay.IsHolding = true;
                 return true;
 
-            case FluXisKeybind.QuickExit:
+            case FluXisGlobalKeybind.QuickExit:
                 quickActionOverlay.OnConfirm = this.Exit;
                 quickActionOverlay.IsHolding = true;
                 return true;
 
-            case FluXisKeybind.GameplayPause:
+            case FluXisGlobalKeybind.GameplayPause:
                 if (HealthProcessor.Failed) return false;
 
                 // only add when we have hit at least one note
@@ -473,24 +567,25 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
                 IsPaused.Toggle();
                 return true;
 
-            case FluXisKeybind.Skip:
+            case FluXisGlobalKeybind.Skip:
                 if (Map.StartTime - AudioClock.CurrentTime > 2000)
                     AudioClock.Seek(Map.StartTime - 2000);
+
                 return true;
 
-            case FluXisKeybind.ScrollSpeedIncrease:
+            case FluXisGlobalKeybind.ScrollSpeedIncrease:
                 config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value += 0.1f;
                 return true;
 
-            case FluXisKeybind.ScrollSpeedDecrease:
+            case FluXisGlobalKeybind.ScrollSpeedDecrease:
                 config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
                 return true;
 
-            case FluXisKeybind.SeekBackward:
+            case FluXisGlobalKeybind.SeekBackward:
                 OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime - 5000);
                 return true;
 
-            case FluXisKeybind.SeekForward:
+            case FluXisGlobalKeybind.SeekForward:
                 OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime + 5000);
                 return true;
         }
@@ -498,9 +593,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisKey
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e)
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Action is FluXisKeybind.QuickRestart or FluXisKeybind.QuickExit)
+        if (e.Action is FluXisGlobalKeybind.QuickRestart or FluXisGlobalKeybind.QuickExit)
             quickActionOverlay.IsHolding = false;
     }
 

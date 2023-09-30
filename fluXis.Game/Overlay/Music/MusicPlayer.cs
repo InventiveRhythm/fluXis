@@ -22,7 +22,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Music;
 
-public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXisKeybind>
+public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
     private AudioClock audioClock { get; set; }
@@ -320,11 +320,11 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
         content.MoveToY(-50, 400, Easing.OutQuint);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 Hide();
                 return true;
         }
@@ -332,5 +332,5 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

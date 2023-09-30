@@ -11,7 +11,7 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens;
 
-public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 2f;
     public override bool ShowToolbar => false;
@@ -72,13 +72,13 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
         return base.OnExiting(e);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Action != FluXisKeybind.Back) return false;
+        if (e.Action != FluXisGlobalKeybind.Back) return false;
 
         this.Exit();
         return true;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

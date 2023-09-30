@@ -12,7 +12,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Overlay;
 
-public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
+public partial class FailOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public GameplayScreen Screen { get; set; }
 
@@ -75,11 +75,11 @@ public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
         wedgeRight.MoveToX(0, 2000, Easing.OutQuint);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 Screen.Exit();
                 return true;
         }
@@ -87,5 +87,5 @@ public partial class FailOverlay : Container, IKeyBindingHandler<FluXisKeybind>
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

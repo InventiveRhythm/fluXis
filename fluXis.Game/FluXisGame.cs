@@ -20,7 +20,7 @@ using osuTK;
 
 namespace fluXis.Game;
 
-public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybind>
+public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public static readonly string[] AUDIO_EXTENSIONS = { ".mp3", ".wav", ".ogg" };
     public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
@@ -139,29 +139,29 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         Toolbar.ScreenStack = ScreenStack;
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         if (e.Repeat) return false;
 
         switch (e.Action)
         {
-            case FluXisKeybind.ToggleSettings:
+            case FluXisGlobalKeybind.ToggleSettings:
                 Settings.ToggleVisibility();
                 return true;
 
-            case FluXisKeybind.ToggleDashboard:
+            case FluXisGlobalKeybind.ToggleDashboard:
                 Dashboard.ToggleVisibility();
                 return true;
 
-            case FluXisKeybind.ToggleMusicPlayer:
+            case FluXisGlobalKeybind.ToggleMusicPlayer:
                 MusicPlayer.ToggleVisibility();
                 return true;
 
-            case FluXisKeybind.OpenSkinEditor:
+            case FluXisGlobalKeybind.OpenSkinEditor:
                 OpenSkinEditor();
                 return true;
 
-            case FluXisKeybind.Home:
+            case FluXisGlobalKeybind.Home:
                 Toolbar.MenuScreen?.MakeCurrent(); // stupid to use it from Toolbar, but it works
                 return true;
         }
@@ -170,16 +170,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         {
             switch (e.Action)
             {
-                case FluXisKeybind.MusicPause:
+                case FluXisGlobalKeybind.MusicPause:
                     if (AudioClock.IsRunning) AudioClock.Stop();
                     else AudioClock.Start();
                     return true;
 
-                case FluXisKeybind.MusicPrevious:
+                case FluXisGlobalKeybind.MusicPrevious:
                     PreviousSong();
                     return true;
 
-                case FluXisKeybind.MusicNext:
+                case FluXisGlobalKeybind.MusicNext:
                     NextSong();
                     return true;
             }
@@ -188,7 +188,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisKeybi
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     protected override void Update()
     {

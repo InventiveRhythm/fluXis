@@ -3,7 +3,6 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Input;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -23,18 +22,16 @@ public partial class SettingsKeybind : SettingsItem
 
     public override bool AcceptsFocus => true;
 
-    public FluXisKeybind[] Keybinds;
+    public object[] Keybinds;
 
     private FillFlowContainer<KeybindContainer> flow;
-    private FluXisKeybindContainer container;
 
     private int index = -1;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisRealm realm, FluXisKeybindContainer container)
+    private void load(FluXisRealm realm)
     {
         this.realm = realm;
-        this.container = container;
 
         TextFlow.Padding = new MarginPadding { Left = 20 };
 
@@ -65,7 +62,7 @@ public partial class SettingsKeybind : SettingsItem
     {
     }
 
-    private KeyCombination getBind(FluXisKeybind keybind)
+    private KeyCombination getBind(object keybind)
     {
         KeyCombination combo = new KeyCombination();
 
@@ -173,8 +170,6 @@ public partial class SettingsKeybind : SettingsItem
                 }
                 else bind.Key = combination.ToString();
             });
-
-            container.Reload();
 
             flow.Children.ElementAt(index).Keybind = InputUtils.GetReadableCombination(combination);
             index++;

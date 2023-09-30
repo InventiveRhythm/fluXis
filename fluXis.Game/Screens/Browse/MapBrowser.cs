@@ -21,7 +21,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Browse;
 
-public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float BackgroundDim => 0.75f;
     public override float BackgroundBlur => 0.5f;
@@ -131,11 +131,11 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisKeybind
         return false;
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 this.Exit();
                 return true;
         }
@@ -143,5 +143,5 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisKeybind
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

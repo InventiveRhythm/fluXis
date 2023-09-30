@@ -28,8 +28,9 @@ public class FluXisRealm : IDisposable
     /// 9 - Removed RealmJudgements and moved to RealmScore
     /// 10 - Changed storage system
     /// 11 - Added ColorHex to RealmMapMetadata
+    /// 12 - Added ID to RealmKeybind
     /// </summary>
-    private const int schema_version = 11;
+    private const int schema_version = 12;
 
     private Realm updateRealm;
 
@@ -190,6 +191,16 @@ public class FluXisRealm : IDisposable
                 }
 
                 Directory.Delete(storage.GetFullPath("files"), true);
+
+                break;
+
+            case 12:
+                var newKeyBindings = migration.NewRealm.All<RealmKeybind>().ToList();
+
+                foreach (var keybind in newKeyBindings)
+                {
+                    keybind.ID = Guid.NewGuid();
+                }
 
                 break;
         }

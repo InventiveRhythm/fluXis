@@ -18,7 +18,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Settings;
 
-public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
+public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public CategorySelector Selector { get; private set; }
     private Container<SettingsSection> sectionContent { get; set; }
@@ -187,11 +187,11 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         return true;
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back or FluXisKeybind.ToggleSettings:
+            case FluXisGlobalKeybind.Back or FluXisGlobalKeybind.ToggleSettings:
                 Hide();
                 break;
         }
@@ -199,7 +199,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisKeybind>
         return true;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     public partial class CategorySelector : Container
     {

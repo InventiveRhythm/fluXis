@@ -17,7 +17,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Volume;
 
-public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisKeybind>
+public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     private const int max_inactive = 2000;
 
@@ -169,23 +169,23 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisKeybind
             content.MoveToX(-400, 500, Easing.InQuint);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.VolumeDecrease:
+            case FluXisGlobalKeybind.VolumeDecrease:
                 changeVolume(-.01f);
                 return true;
 
-            case FluXisKeybind.VolumeIncrease:
+            case FluXisGlobalKeybind.VolumeIncrease:
                 changeVolume(.01f);
                 return true;
 
-            case FluXisKeybind.VolumePreviousCategory:
+            case FluXisGlobalKeybind.VolumePreviousCategory:
                 changeCategory(-1);
                 return true;
 
-            case FluXisKeybind.VolumeNextCategory:
+            case FluXisGlobalKeybind.VolumeNextCategory:
                 changeCategory(1);
                 return true;
         }
@@ -193,5 +193,5 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisKeybind
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

@@ -16,7 +16,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Network;
 
-public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisKeybind>
+public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     protected override bool StartHidden => true;
 
@@ -181,11 +181,11 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisK
         content.ScaleTo(.9f, 400, Easing.OutQuint);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 Hide();
                 return true;
         }
@@ -193,5 +193,5 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisK
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

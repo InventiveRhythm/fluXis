@@ -63,32 +63,32 @@ public partial class GameplayTouchInput : Container
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
                     Y = -160,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key4k1),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key4k1)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key4k1),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key4k1)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
                     X = 220,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key4k2),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key4k2)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key4k2),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key4k2)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight,
                     X = -220,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key4k3),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key4k3)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key4k3),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key4k3)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight,
                     Y = -160,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key4k4),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key4k4)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key4k4),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key4k4)
                 }
             },
             5 => new Drawable[]
@@ -98,8 +98,8 @@ public partial class GameplayTouchInput : Container
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
                     Y = -320,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key5k1),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key5k1)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key5k1),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key5k1)
                 },
                 new TouchInputArea
                 {
@@ -107,16 +107,16 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomLeft,
                     X = 220,
                     Y = -160,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key5k2),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key5k2)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key5k2),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key5k2)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     IsSpaceBar = true,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key5k3),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key5k3)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key5k3),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key5k3)
                 },
                 new TouchInputArea
                 {
@@ -124,16 +124,16 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomRight,
                     X = -220,
                     Y = -160,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key5k4),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key5k4)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key5k4),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key5k4)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight,
                     Y = -320,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key5k5),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key5k5)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key5k5),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key5k5)
                 }
             },
             6 => new Drawable[]
@@ -143,8 +143,8 @@ public partial class GameplayTouchInput : Container
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
                     Y = -370,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key6k1),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key6k1)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key6k1),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key6k1)
                 },
                 new TouchInputArea
                 {
@@ -152,8 +152,8 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomLeft,
                     Y = -370,
                     X = 220,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key6k2),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key6k2)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key6k2),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key6k2)
                 },
                 new TouchInputArea
                 {
@@ -161,8 +161,8 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomLeft,
                     X = 220,
                     Y = -150,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key6k3),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key6k3)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key6k3),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key6k3)
                 },
                 new TouchInputArea
                 {
@@ -170,8 +170,8 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomRight,
                     X = -220,
                     Y = -150,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key6k4),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key6k4)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key6k4),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key6k4)
                 },
                 new TouchInputArea
                 {
@@ -179,16 +179,16 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomRight,
                     Y = -370,
                     X = -220,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key6k5),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key6k5)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key6k5),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key6k5)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight,
                     Y = -370,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key6k6),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key6k6)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key6k6),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key6k6)
                 }
             },
             7 => new Drawable[]
@@ -198,8 +198,8 @@ public partial class GameplayTouchInput : Container
                     Anchor = Anchor.BottomLeft,
                     Origin = Anchor.BottomLeft,
                     Y = -370,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k1),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k1)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k1),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k1)
                 },
                 new TouchInputArea
                 {
@@ -207,8 +207,8 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomLeft,
                     X = 220,
                     Y = -370,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k2),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k2)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k2),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k2)
                 },
                 new TouchInputArea
                 {
@@ -216,16 +216,16 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomLeft,
                     X = 220,
                     Y = -150,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k3),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k3)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k3),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k3)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     IsSpaceBar = true,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k4),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k4)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k4),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k4)
                 },
                 new TouchInputArea
                 {
@@ -233,8 +233,8 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomRight,
                     X = -220,
                     Y = -150,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k5),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k5)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k5),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k5)
                 },
                 new TouchInputArea
                 {
@@ -242,16 +242,16 @@ public partial class GameplayTouchInput : Container
                     Origin = Anchor.BottomRight,
                     X = -220,
                     Y = -370,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k6),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k6)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k6),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k6)
                 },
                 new TouchInputArea
                 {
                     Anchor = Anchor.BottomRight,
                     Origin = Anchor.BottomRight,
                     Y = -370,
-                    OnPressed = () => input.PressKey(FluXisKeybind.Key7k7),
-                    OnReleased = () => input.ReleaseKey(FluXisKeybind.Key7k7)
+                    OnPressed = () => input.PressKey(FluXisGameplayKeybind.Key7k7),
+                    OnReleased = () => input.ReleaseKey(FluXisGameplayKeybind.Key7k7)
                 }
             },
             _ => Array.Empty<Drawable>()

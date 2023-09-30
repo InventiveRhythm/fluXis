@@ -73,6 +73,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private FluXisRealm realm;
     private MapStore mapStore;
+    private KeybindStore keybindStore;
     private FluXisConfig config;
     private LightController lightController;
     private SkinManager skinManager;
@@ -137,7 +138,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
-        FluXisKeybindContainer keybinds;
+        GlobalKeybindContainer keybinds;
 
         base.Content.Add(new SafeAreaContainer
         {
@@ -148,7 +149,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    keybinds = new FluXisKeybindContainer(this, realm)
+                    keybinds = new GlobalKeybindContainer(this, realm)
                     {
                         Children = new Drawable[]
                         {
@@ -164,6 +165,10 @@ public partial class FluXisGameBase : osu.Framework.Game
                 }
             }
         });
+
+        keybindStore = new KeybindStore(realm);
+        keybindStore.AssignDefaults(keybinds);
+        keybindStore.AssignDefaults(new GameplayKeybindContainer(this, realm));
 
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);

@@ -6,108 +6,108 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Gameplay.Input;
 
-public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
+public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplayKeybind>
 {
-    private static readonly FluXisKeybind[] keys1 =
+    private static readonly FluXisGameplayKeybind[] keys1 =
     {
-        FluXisKeybind.Key1k1
+        FluXisGameplayKeybind.Key1k1
     };
 
-    private static readonly FluXisKeybind[] keys2 =
+    private static readonly FluXisGameplayKeybind[] keys2 =
     {
-        FluXisKeybind.Key2k1,
-        FluXisKeybind.Key2k2
+        FluXisGameplayKeybind.Key2k1,
+        FluXisGameplayKeybind.Key2k2
     };
 
-    private static readonly FluXisKeybind[] keys3 =
+    private static readonly FluXisGameplayKeybind[] keys3 =
     {
-        FluXisKeybind.Key3k1,
-        FluXisKeybind.Key3k2,
-        FluXisKeybind.Key3k3
+        FluXisGameplayKeybind.Key3k1,
+        FluXisGameplayKeybind.Key3k2,
+        FluXisGameplayKeybind.Key3k3
     };
 
-    private static readonly FluXisKeybind[] keys4 =
+    private static readonly FluXisGameplayKeybind[] keys4 =
     {
-        FluXisKeybind.Key4k1,
-        FluXisKeybind.Key4k2,
-        FluXisKeybind.Key4k3,
-        FluXisKeybind.Key4k4
+        FluXisGameplayKeybind.Key4k1,
+        FluXisGameplayKeybind.Key4k2,
+        FluXisGameplayKeybind.Key4k3,
+        FluXisGameplayKeybind.Key4k4
     };
 
-    private static readonly FluXisKeybind[] keys5 =
+    private static readonly FluXisGameplayKeybind[] keys5 =
     {
-        FluXisKeybind.Key5k1,
-        FluXisKeybind.Key5k2,
-        FluXisKeybind.Key5k3,
-        FluXisKeybind.Key5k4,
-        FluXisKeybind.Key5k5
+        FluXisGameplayKeybind.Key5k1,
+        FluXisGameplayKeybind.Key5k2,
+        FluXisGameplayKeybind.Key5k3,
+        FluXisGameplayKeybind.Key5k4,
+        FluXisGameplayKeybind.Key5k5
     };
 
-    private static readonly FluXisKeybind[] keys6 =
+    private static readonly FluXisGameplayKeybind[] keys6 =
     {
-        FluXisKeybind.Key6k1,
-        FluXisKeybind.Key6k2,
-        FluXisKeybind.Key6k3,
-        FluXisKeybind.Key6k4,
-        FluXisKeybind.Key6k5,
-        FluXisKeybind.Key6k6
+        FluXisGameplayKeybind.Key6k1,
+        FluXisGameplayKeybind.Key6k2,
+        FluXisGameplayKeybind.Key6k3,
+        FluXisGameplayKeybind.Key6k4,
+        FluXisGameplayKeybind.Key6k5,
+        FluXisGameplayKeybind.Key6k6
     };
 
-    private static readonly FluXisKeybind[] keys7 =
+    private static readonly FluXisGameplayKeybind[] keys7 =
     {
-        FluXisKeybind.Key7k1,
-        FluXisKeybind.Key7k2,
-        FluXisKeybind.Key7k3,
-        FluXisKeybind.Key7k4,
-        FluXisKeybind.Key7k5,
-        FluXisKeybind.Key7k6,
-        FluXisKeybind.Key7k7
+        FluXisGameplayKeybind.Key7k1,
+        FluXisGameplayKeybind.Key7k2,
+        FluXisGameplayKeybind.Key7k3,
+        FluXisGameplayKeybind.Key7k4,
+        FluXisGameplayKeybind.Key7k5,
+        FluXisGameplayKeybind.Key7k6,
+        FluXisGameplayKeybind.Key7k7
     };
 
-    private static readonly FluXisKeybind[] keys8 =
+    private static readonly FluXisGameplayKeybind[] keys8 =
     {
-        FluXisKeybind.Key8k1,
-        FluXisKeybind.Key8k2,
-        FluXisKeybind.Key8k3,
-        FluXisKeybind.Key8k4,
-        FluXisKeybind.Key8k5,
-        FluXisKeybind.Key8k6,
-        FluXisKeybind.Key8k7,
-        FluXisKeybind.Key8k8
+        FluXisGameplayKeybind.Key8k1,
+        FluXisGameplayKeybind.Key8k2,
+        FluXisGameplayKeybind.Key8k3,
+        FluXisGameplayKeybind.Key8k4,
+        FluXisGameplayKeybind.Key8k5,
+        FluXisGameplayKeybind.Key8k6,
+        FluXisGameplayKeybind.Key8k7,
+        FluXisGameplayKeybind.Key8k8
     };
 
-    private static readonly FluXisKeybind[] keys9 =
+    private static readonly FluXisGameplayKeybind[] keys9 =
     {
-        FluXisKeybind.Key9k1,
-        FluXisKeybind.Key9k2,
-        FluXisKeybind.Key9k3,
-        FluXisKeybind.Key9k4,
-        FluXisKeybind.Key9k5,
-        FluXisKeybind.Key9k6,
-        FluXisKeybind.Key9k7,
-        FluXisKeybind.Key9k8,
-        FluXisKeybind.Key9k9
+        FluXisGameplayKeybind.Key9k1,
+        FluXisGameplayKeybind.Key9k2,
+        FluXisGameplayKeybind.Key9k3,
+        FluXisGameplayKeybind.Key9k4,
+        FluXisGameplayKeybind.Key9k5,
+        FluXisGameplayKeybind.Key9k6,
+        FluXisGameplayKeybind.Key9k7,
+        FluXisGameplayKeybind.Key9k8,
+        FluXisGameplayKeybind.Key9k9
     };
 
-    private static readonly FluXisKeybind[] keys10 =
+    private static readonly FluXisGameplayKeybind[] keys10 =
     {
-        FluXisKeybind.Key10k1,
-        FluXisKeybind.Key10k2,
-        FluXisKeybind.Key10k3,
-        FluXisKeybind.Key10k4,
-        FluXisKeybind.Key10k5,
-        FluXisKeybind.Key10k6,
-        FluXisKeybind.Key10k7,
-        FluXisKeybind.Key10k8,
-        FluXisKeybind.Key10k9,
-        FluXisKeybind.Key10k10
+        FluXisGameplayKeybind.Key10k1,
+        FluXisGameplayKeybind.Key10k2,
+        FluXisGameplayKeybind.Key10k3,
+        FluXisGameplayKeybind.Key10k4,
+        FluXisGameplayKeybind.Key10k5,
+        FluXisGameplayKeybind.Key10k6,
+        FluXisGameplayKeybind.Key10k7,
+        FluXisGameplayKeybind.Key10k8,
+        FluXisGameplayKeybind.Key10k9,
+        FluXisGameplayKeybind.Key10k10
     };
 
     private readonly bool[] pressedStatus;
     public bool[] JustPressed { get; }
     public bool[] Pressed { get; }
     public bool[] JustReleased { get; }
-    public FluXisKeybind[] Keys { get; }
+    public FluXisGameplayKeybind[] Keys { get; }
 
     private readonly GameplayScreen screen;
 
@@ -127,7 +127,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
             8 => keys8,
             9 => keys9,
             10 => keys10,
-            _ => Array.Empty<FluXisKeybind>()
+            _ => Array.Empty<FluXisGameplayKeybind>()
         };
 
         pressedStatus = new bool[mode];
@@ -162,11 +162,11 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         }
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e) => PressKey(e.Action);
+    public bool OnPressed(KeyBindingPressEvent<FluXisGameplayKeybind> e) => PressKey(e.Action);
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) => ReleaseKey(e.Action);
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGameplayKeybind> e) => ReleaseKey(e.Action);
 
-    public bool PressKey(FluXisKeybind key)
+    public bool PressKey(FluXisGameplayKeybind key)
     {
         if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return false;
@@ -183,7 +183,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisKeybind>
         return false;
     }
 
-    public void ReleaseKey(FluXisKeybind key)
+    public void ReleaseKey(FluXisGameplayKeybind key)
     {
         if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
             return;

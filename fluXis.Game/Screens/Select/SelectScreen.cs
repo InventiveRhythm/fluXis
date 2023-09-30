@@ -43,7 +43,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select;
 
-public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybind>
+public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.1f;
     public override float BackgroundBlur => songSelectBlur.Value ? 0.25f : 0;
@@ -508,31 +508,31 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         return base.OnExiting(e);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {
-            case FluXisKeybind.PreviousGroup:
+            case FluXisGlobalKeybind.PreviousGroup:
                 changeSelection(-1);
                 return true;
 
-            case FluXisKeybind.Previous:
+            case FluXisGlobalKeybind.Previous:
                 changeMapSelection(-1);
                 return true;
 
-            case FluXisKeybind.NextGroup:
+            case FluXisGlobalKeybind.NextGroup:
                 changeSelection(1);
                 return true;
 
-            case FluXisKeybind.Next:
+            case FluXisGlobalKeybind.Next:
                 changeMapSelection(1);
                 return true;
 
-            case FluXisKeybind.Select:
+            case FluXisGlobalKeybind.Select:
                 Accept();
                 return true;
 
-            case FluXisKeybind.Back:
+            case FluXisGlobalKeybind.Back:
                 if (ModSelector.IsOpen.Value)
                 {
                     ModSelector.IsOpen.Value = false;
@@ -546,7 +546,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisKeybi
         return false;
     }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisKeybind> e) { }
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
