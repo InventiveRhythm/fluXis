@@ -284,6 +284,19 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     protected override void LoadComplete()
     {
         changeTab(isNewMap ? 0 : 1);
+
+        if (Map.Status >= 100)
+        {
+            Game.Overlay = new ButtonPanel
+            {
+                Text = "This map is from another game!",
+                SubText = "You can edit and playtest, but not save or upload.",
+                Buttons = new ButtonData[]
+                {
+                    new() { Text = "Okay" }
+                }
+            };
+        }
     }
 
     public void SortEverything()
@@ -354,7 +367,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        if (HasChanges() && !exitConfirmed)
+        if (HasChanges() && !exitConfirmed && Map.Status < 100)
         {
             Game.Overlay ??= new ButtonPanel
             {
