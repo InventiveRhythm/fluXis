@@ -132,10 +132,10 @@ public partial class ResultHitPoints : Container
 
         foreach (var result in Score.HitResults)
         {
-            var statTime = result.Time - MapInfo.StartTime;
+            var startTime = result.Time - MapInfo.StartTime;
             var endTime = MapInfo.EndTime - MapInfo.StartTime;
 
-            var x = (int)((image.Width - padding * 2) * (statTime == endTime ? .5f : statTime / endTime)) + padding;
+            var x = (int)((image.Width - padding * 2) * (startTime == endTime ? .5f : startTime / endTime)) + padding;
             var y = (int)(image.Height / 2f - result.Difference * max_zoom);
 
             var colour4 = skinManager.CurrentSkin.GetColorForJudgement(result.Judgement);
@@ -228,7 +228,21 @@ public partial class ResultHitPoints : Container
 
     protected override bool OnScroll(ScrollEvent e)
     {
-        hitResults.ScaleTo(MathHelper.Clamp(hitResults.Scale.X + e.ScrollDelta.Y / 2f, 1f, max_zoom), 100, Easing.OutQuint);
+        var scale = MathHelper.Clamp(hitResults.Scale.X + e.ScrollDelta.Y / 2f, 1f, max_zoom);
+        hitResults.ScaleTo(scale, 100, Easing.OutQuint);
+        float maxX = hitResults.DrawWidth / 2f * scale;
+        float maxY = hitResults.DrawHeight / 2f * scale;
+
+        if (Math.Abs(hitResults.X) >= maxX)
+        {
+            hitResults.MoveToX(MathHelper.Clamp(hitResults.X, -maxX, maxX), 100, Easing.OutQuint);
+        }
+
+        if (Math.Abs(hitResults.Y) >= maxY)
+        {
+            hitResults.MoveToY(MathHelper.Clamp(hitResults.Y, -maxY, maxY), 100, Easing.OutQuint);
+        }
+
         return true;
     }
 
