@@ -168,7 +168,7 @@ public class QuaverImport : MapImporter
 
     public override List<RealmMapSet> GetMaps()
     {
-        if (quaverPath == null)
+        if (string.IsNullOrEmpty(quaverPath))
         {
             return base.GetMaps();
         }
