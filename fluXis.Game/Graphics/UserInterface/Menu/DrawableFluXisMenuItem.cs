@@ -103,6 +103,8 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
 
     protected override bool OnClick(ClickEvent e)
     {
+        if (Item is FluXisMenuItem item && (!item.Enabled?.Invoke() ?? false)) return true;
+
         if (!isSpacer)
             samples.Click();
 

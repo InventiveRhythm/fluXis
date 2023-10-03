@@ -579,12 +579,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         return hash != Map.Hash;
     }
 
-    private void export() => mapStore.Export(Map.MapSet, new LoadingNotificationData
+    private void export()
     {
-        TextLoading = "Exporting mapset...",
-        TextSuccess = "Exported!",
-        TextFailure = "Failed to export!"
-    });
+        if (!save(false)) return;
+
+        mapStore.Export(Map.MapSet, new LoadingNotificationData
+        {
+            TextLoading = "Exporting mapset...",
+            TextSuccess = "Exported!",
+            TextFailure = "Failed to export!"
+        });
+    }
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
     private void sendWipNotification() => notifications.SendText("This is still in development", "Come back later!");

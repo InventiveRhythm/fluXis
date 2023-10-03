@@ -37,7 +37,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
             if (!Equals(parent.Screen.MapSet.Value, mapset))
                 items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => parent.Screen.MapSet.Value = mapset));
 
-            items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)));
+            items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)) { Enabled = () => !mapset.Managed });
             items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.OpenDeleteConfirm(mapset)));
 
             if (FluXisGameBase.IsDebug)
