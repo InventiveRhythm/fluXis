@@ -153,7 +153,10 @@ public partial class MapStore : Component
             string exportFolder = storage.GetFullPath("export");
             if (!Directory.Exists(exportFolder)) Directory.CreateDirectory(exportFolder);
 
-            string path = Path.Combine(exportFolder, $"{set.Metadata.Title} - {set.Metadata.Artist} [{set.Metadata.Mapper}].fms");
+            var fileName = $"{set.Metadata.Title} - {set.Metadata.Artist} [{set.Metadata.Mapper}].fms";
+            fileName = PathUtils.RemoveAllInvalidPathCharacters(fileName);
+
+            string path = Path.Combine(exportFolder, fileName);
             if (File.Exists(path)) File.Delete(path);
             ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
 
@@ -162,8 +165,6 @@ public partial class MapStore : Component
 
             int max = setFiles.Length;
             int current = 0;
-
-            var fileNames = new List<string>();
 
             foreach (var fullFilePath in setFiles)
             {
@@ -174,7 +175,6 @@ public partial class MapStore : Component
                 using var stream = entry.Open();
                 using var fileStream = File.OpenRead(fullFilePath);
                 fileStream.CopyTo(stream);
-                fileNames.Add(file.Replace(setFolder, ""));
                 current++;
                 notification.Progress = (float)current / max;
             }
