@@ -530,6 +530,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 r.Remove(existingMap.Metadata);
                 existingMap.Difficulty = MapInfo.Metadata.Difficulty;
                 existingMap.MapSet.Cover = Map.MapSet.Cover;
+                existingMap.KeyCount = Map.KeyCount;
                 existingMap.Metadata = new RealmMapMetadata
                 {
                     Title = MapInfo.Metadata.Title,
