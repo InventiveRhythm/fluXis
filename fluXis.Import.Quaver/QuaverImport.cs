@@ -168,6 +168,11 @@ public class QuaverImport : MapImporter
 
     public override List<RealmMapSet> GetMaps()
     {
+        if (string.IsNullOrEmpty(quaverPath))
+        {
+            return base.GetMaps();
+        }
+
         string dbPath = Path.Combine(quaverPath, "quaver.db");
 
         if (!File.Exists(dbPath))
