@@ -320,7 +320,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     Text = "debug text",
                     Alpha = showDebug ? 1 : 0
                 }
-
             }
         };
     }
@@ -583,11 +582,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             case FluXisGlobalKeybind.SeekBackward:
                 OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime - 5000);
-                return true;
+                return Playfield.Manager.AutoPlay;
 
             case FluXisGlobalKeybind.SeekForward:
                 OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime + 5000);
-                return true;
+                return Playfield.Manager.AutoPlay;
         }
 
         return false;
