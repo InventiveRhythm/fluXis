@@ -75,64 +75,44 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private ActivityManager activity { get; set; }
 
     private bool starting = true;
-
     private bool restarting;
 
     public BindableBool IsPaused { get; } = new();
+    public GameplaySamples Samples { get; } = new();
 
     public Action<double, double> OnSeek { get; set; }
 
     public JudgementProcessor JudgementProcessor { get; } = new();
-
     public HealthProcessor HealthProcessor { get; private set; }
-
     public ScoreProcessor ScoreProcessor { get; private set; }
 
     public GameplayInput Input { get; private set; }
-
     public HitWindows HitWindows { get; }
-
     public ReleaseWindows ReleaseWindows { get; }
 
     public MapInfo Map { get; private set; }
-
     public RealmMap RealmMap { get; }
-
     public MapEvents MapEvents { get; private set; }
-
     public List<IMod> Mods { get; }
 
     public Playfield Playfield { get; private set; }
-
     private Container hud { get; set; }
 
     private FluXisTextFlow debugText;
-
     private static bool showDebug;
 
     private FailOverlay failOverlay;
-
     private FailMenu failMenu;
-
     private FullComboOverlay fcOverlay;
-
     private QuickActionOverlay quickActionOverlay;
 
     private FluXisConfig config;
 
     private Bindable<HudVisibility> hudVisibility;
-
     private Bindable<float> backgroundDim;
-
     private Bindable<float> backgroundBlur;
 
     private bool hudVisible = true;
-
-    public Sample HitSound { get; private set; }
-
-    public Sample Combobreak { get; private set; }
-
-    public Sample Restart { get; private set; }
 
     public float Rate { get; }
 
@@ -178,10 +158,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
         Input = new GameplayInput(this, Map.KeyCount);
 
-        HitSound = samples.Get("Gameplay/hitsound.mp3");
-        Combobreak = samples.Get("Gameplay/combobreak.mp3");
-        Restart = samples.Get("Gameplay/restart.mp3");
-
         backgroundBlur = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
         backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
 
@@ -193,6 +169,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             Children = new Drawable[]
             {
                 Input,
+                Samples,
                 new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList())
                 {
                     Clock = AudioClock
@@ -328,6 +305,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         base.LoadComplete();
         JudgementProcessor.ApplyMap(Map);
+        ScoreProcessor.OnComboBreak += () => Samples.Miss();
 
         Playfield.Manager.OnFinished = () =>
         {
@@ -391,9 +369,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             starting = false;
             backgrounds.StartVideo();
         }
-
-        // normal bindings dont work for some reason
-        HitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
 
         var hudWasVisible = hudVisible;
 
@@ -459,7 +434,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual void RestartMap()
     {
         restarting = true;
-        Restart?.Play();
+        Samples.Restart();
         this.Push(new GameplayScreen(RealmMap, Mods));
     }
 

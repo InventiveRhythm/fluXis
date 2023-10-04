@@ -36,7 +36,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
 
     public override void RestartMap()
     {
-        Restart?.Play();
+        Samples.Restart();
         this.Push(new EditorPlaytestScreen(RealmMap, map, events, GameplayStartTime));
     }
 

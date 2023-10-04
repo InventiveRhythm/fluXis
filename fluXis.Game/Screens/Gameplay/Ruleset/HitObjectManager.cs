@@ -224,7 +224,7 @@ public partial class HitObjectManager : Container<HitObject>
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
             if (!skipNextHitSounds)
-                Playfield.Screen.HitSound.Play();
+                Playfield.Screen.Samples.Hit();
 
             hit(hitObject, false);
             pressed[hitObject.Data.Lane - 1] = true;
@@ -254,7 +254,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         if (input.JustPressed.Contains(true))
         {
-            Playfield.Screen.HitSound.Play();
+            Playfield.Screen.Samples.Hit();
 
             List<HitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
 

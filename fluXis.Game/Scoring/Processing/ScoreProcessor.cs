@@ -12,6 +12,8 @@ namespace fluXis.Game.Scoring.Processing;
 
 public class ScoreProcessor : JudgementDependant
 {
+    public event Action OnComboBreak;
+
     public HitWindows HitWindows { get; init; }
     public RealmMap Map { get; init; }
     public MapInfo MapInfo { get; init; }
@@ -54,10 +56,14 @@ public class ScoreProcessor : JudgementDependant
             _ => ScoreRank.D
         };
 
+        var curCombo = Combo.Value == 0 ? 1 : Combo.Value;
         int lastMissIndex = JudgementProcessor.Results.FindLastIndex(x => x.Judgement <= HitWindows.ComboBreakJudgement);
         Combo.Value = lastMissIndex == -1 ? JudgementProcessor.Results.Count : JudgementProcessor.Results.Count - lastMissIndex - 1;
         MaxCombo = Math.Max(Combo.Value, MaxCombo);
         Score = getScore();
+
+        if (curCombo > Combo.Value)
+            OnComboBreak?.Invoke();
     }
 
     private int getScore()
