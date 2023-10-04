@@ -1,6 +1,8 @@
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Utils;
 
 namespace fluXis.Game.Audio;
 
@@ -11,6 +13,9 @@ public partial class UISamples : Component
     private Sample dropdownOpen;
     private Sample dropdownClose;
 
+    private Bindable<double> hoverPitch;
+
+    private const float pitch_variation = 0.02f;
     private const int debounce_time = 50;
 
     private double lastHoverTime;
@@ -20,6 +25,8 @@ public partial class UISamples : Component
     private void load(ISampleStore samples)
     {
         hover = samples.Get("UI/hover");
+        hover.Frequency.BindTo(hoverPitch = new Bindable<double>());
+
         click = samples.Get("UI/click");
         dropdownOpen = samples.Get("UI/dropdown-open");
         dropdownClose = samples.Get("UI/dropdown-close");
@@ -29,6 +36,9 @@ public partial class UISamples : Component
     {
         if (Time.Current - lastHoverTime < debounce_time)
             return;
+
+        var rate = RNG.NextSingle(1 - pitch_variation, 1 + pitch_variation);
+        hoverPitch.Value = rate;
 
         hover?.Play();
         lastHoverTime = Time.Current;
