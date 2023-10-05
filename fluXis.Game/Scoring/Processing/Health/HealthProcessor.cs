@@ -16,6 +16,12 @@ public class HealthProcessor : JudgementDependant
 
     public bool CanFail { get; set; } = true;
 
+    /// <summary>
+    /// This is only really used for the health bar cross.
+    /// To actually check if the player has failed, use <see cref="Failed"/>.
+    /// </summary>
+    public bool FailedAlready { get; private set; }
+
     public BindableFloat Health { get; }
     public bool Failed { get; private set; }
     public Action OnFail { get; set; }
@@ -28,6 +34,8 @@ public class HealthProcessor : JudgementDependant
 
     protected void TriggerFailure()
     {
+        FailedAlready = true;
+
         if (Failed || !CanFail)
             return;
 
@@ -38,6 +46,8 @@ public class HealthProcessor : JudgementDependant
 
     public override void AddResult(HitResult result)
     {
+        if (FailedAlready) return;
+
         Health.Value += GetHealthIncreaseFor(result);
 
         if (Health.Value == 0)

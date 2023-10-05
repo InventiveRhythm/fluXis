@@ -78,7 +78,7 @@ public partial class DangerHealthOverlay : Container
         base.Update();
 
         // on easy health, this effect can only be seen at the very end of the song
-        if (Screen.Playfield.Manager.HealthMode == HealthMode.Requirement)
+        if (Screen.Playfield.Manager.HealthMode == HealthMode.Requirement || !Screen.HealthProcessor.CanFail)
             return;
 
         if (Screen.HealthProcessor.Failed)

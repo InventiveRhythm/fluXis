@@ -348,11 +348,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         var processor = null as HealthProcessor;
 
         if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor();
-        else if (Mods.Any(m => m is EasyMod))
-            processor = new RequirementHeathProcessor
-            {
-                HealthRequirement = EasyMod.HEALTH_REQUIREMENT
-            };
+        else if (Mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
 
         processor ??= new HealthProcessor();
         processor.Screen = this;
@@ -418,12 +414,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual void End()
     {
-        var player = Playfield.Manager.AutoPlay
-            ? new APIUserShort
-            {
-                Username = "AutoPlay", ID = 0
-            }
-            : fluxel.LoggedInUser;
+        // no fail was enabled, but the player never actually failed
+        // so we just remove the mod to make the score count normally
+        if (Mods.Any(m => m is NoFailMod) && !HealthProcessor.FailedAlready)
+        {
+            Mods.RemoveAll(m => m is NoFailMod);
+            ScoreProcessor.Recalculate();
+        }
+
+        var player = Playfield.Manager.AutoPlay ? APIUserShort.AutoPlay : fluxel.LoggedInUser;
 
         if (ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless)
             fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);

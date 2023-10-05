@@ -28,6 +28,7 @@ public class APIUserShort
     public string GetName() => string.IsNullOrEmpty(DisplayName) ? Username : DisplayName;
 
     public static APIUserShort Dummy => new() { ID = -1, Username = "Dummy Player" };
+    public static APIUserShort AutoPlay => new() { ID = 0, Username = "AutoPlay" };
 
     public class APIUserSocials
     {

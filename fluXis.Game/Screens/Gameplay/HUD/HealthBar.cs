@@ -8,6 +8,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -19,6 +20,9 @@ public partial class HealthBar : GameplayHUDElement
     private float health = 0;
     private Container bar;
     private FluXisSpriteText text;
+    private SpriteIcon icon;
+
+    private bool showingIcon;
 
     private readonly ColourInfo drainGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#40aef8"), Colour4.FromHex("#751010"));
     private double drainRate;
@@ -76,6 +80,14 @@ public partial class HealthBar : GameplayHUDElement
                         Y = 10
                     }
                 }
+            },
+            icon = new SpriteIcon
+            {
+                Size = new Vector2(30),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Icon = FontAwesome.Solid.Times,
+                Alpha = 0
             }
         };
     }
@@ -90,6 +102,12 @@ public partial class HealthBar : GameplayHUDElement
     protected override void Update()
     {
         X = Screen.Playfield.Stage.Width / 2 + 20 + Screen.Playfield.X;
+
+        if (!showingIcon && Screen.HealthProcessor.FailedAlready)
+        {
+            showingIcon = true;
+            icon.FadeIn(600).Then(400).FadeOut(600).Loop();
+        }
 
         bar.Height = health / 100;
         text.Text = $"{Math.Floor(health)}";
