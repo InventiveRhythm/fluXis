@@ -93,7 +93,7 @@ public partial class HitObject : CompositeDrawable
     {
         var lastHitableTime = manager.Playfield.Screen.HitWindows.TimingFor(manager.Playfield.Screen.HitWindows.LowestHitable);
         var missTime = manager.Playfield.Screen.HitWindows.TimingFor(Judgement.Miss);
-        var releaseMissTime = manager.Playfield.Screen.ReleaseWindows.TimingFor(Judgement.Miss);
+        var releaseMissTime = manager.Playfield.Screen.ReleaseWindows.TimingFor(manager.Playfield.Screen.ReleaseWindows.Lowest);
 
         Missed = (Clock.CurrentTime - Data.Time > lastHitableTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Clock.CurrentTime - Data.HoldEndTime > releaseMissTime);
         Hitable = Clock.CurrentTime - Data.Time > -missTime && !Missed;

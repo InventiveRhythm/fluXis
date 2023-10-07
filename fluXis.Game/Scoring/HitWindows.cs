@@ -5,14 +5,12 @@ using fluXis.Game.Scoring.Enums;
 
 namespace fluXis.Game.Scoring;
 
-// ReSharper disable MemberCanBeMadeStatic.Global
-#pragma warning disable CA1822
 public class HitWindows
 {
-    public Judgement HighestHitable => Judgement.Flawless;
-    public Judgement LowestHitable => Judgement.Okay;
-    public Judgement ComboBreakJudgement => Judgement.Miss;
-    public Judgement Lowest => Judgement.Miss;
+    public virtual Judgement HighestHitable => Judgement.Flawless;
+    public virtual Judgement LowestHitable => Judgement.Okay;
+    public virtual Judgement ComboBreakJudgement => Judgement.Miss;
+    public virtual Judgement Lowest => Judgement.Miss;
 
     protected virtual Timing[] Timings { get; } =
     {

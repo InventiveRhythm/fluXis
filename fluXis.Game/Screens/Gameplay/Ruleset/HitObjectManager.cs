@@ -185,7 +185,7 @@ public partial class HitObjectManager : Container<HitObject>
                 if (!hitObject.LongNoteMissed)
                 {
                     hitObject.MissLongNote();
-                    miss(hitObject);
+                    miss(hitObject, hitObject.GotHit);
                 }
 
                 if (hitObject.IsOffScreen()) removeHitObject(hitObject);
@@ -313,9 +313,10 @@ public partial class HitObjectManager : Container<HitObject>
         if (!hitObject.Data.IsLongNote() || isHoldEnd) removeHitObject(hitObject);
     }
 
-    private void miss(HitObject hitObject)
+    private void miss(HitObject hitObject, bool isHoldEnd = false)
     {
-        judmentDisplay(hitObject, -Playfield.Screen.HitWindows.TimingFor(Playfield.Screen.HitWindows.Lowest));
+        var windows = isHoldEnd ? Playfield.Screen.ReleaseWindows : Playfield.Screen.HitWindows;
+        judmentDisplay(hitObject, -windows.TimingFor(windows.Lowest), isHoldEnd);
 
         if (!hitObject.Data.IsLongNote()) removeHitObject(hitObject);
     }
