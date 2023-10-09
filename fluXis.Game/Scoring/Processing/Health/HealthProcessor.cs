@@ -72,7 +72,7 @@ public class HealthProcessor : JudgementDependant
             Judgement.Okay => -3f,
             Judgement.Alright => 0f,
             Judgement.Great => 0.025f,
-            Judgement.Perfect => 0.1f,
+            Judgement.Perfect => 0.2f,
             Judgement.Flawless => 0.3f,
             _ => 0f
         };
