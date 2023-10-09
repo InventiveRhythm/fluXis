@@ -2,6 +2,7 @@ using System.Globalization;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Input;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Edit.MenuBar;
@@ -15,13 +16,17 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Skin;
 
-public partial class SkinEditor : FluXisScreen
+public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+
     public override float Zoom => 1f;
     public override float ParallaxStrength => 1f;
     public override bool ShowToolbar => false;
@@ -32,6 +37,8 @@ public partial class SkinEditor : FluXisScreen
     [Resolved]
     private SkinManager skinManager { get; set; }
 
+    [Resolved]
+    private NotificationManager notifications { get; set; }
     private Skinning.Json.Skin skin { get; set; }
     private Bindable<int> keyMode { get; } = new(4);
 
@@ -202,11 +209,7 @@ public partial class SkinEditor : FluXisScreen
                     {
                         Items = new[]
                         {
-                            new MenuItem("Save", () =>
-                            {
-                                notifications.SendText("Skin Saved", "", FontAwesome.Solid.Check);
-                                skinManager.UpdateAndSave(skin);
-                            }),
+                            new MenuItem("Save", save),
                             new MenuItem("Exit", this.Exit)
                         }
                     },
@@ -240,6 +243,7 @@ public partial class SkinEditor : FluXisScreen
         content.ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutElastic);
     }
 
+
     public override bool OnExiting(ScreenExitEvent e)
     {
         skinManager.CanChangeSkin = true;
@@ -250,4 +254,41 @@ public partial class SkinEditor : FluXisScreen
 
         return base.OnExiting(e);
     }
+
+    private void save()
+    {
+        notifications.SendText("Skin Saved", "", FontAwesome.Solid.Check);
+        skinManager.UpdateAndSave(skin);
+    }
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.ControlPressed)
+        {
+            switch (e.Key)
+            {
+                case Key.S:
+                    save();
+                    return true;
+            }
+        }
+
+
+        return true;
+    }
+
+        public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+        {
+            switch (e.Action)
+            {
+                case FluXisGlobalKeybind.Back:
+                    this.Exit();
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e)
+        {
+        }
 }
