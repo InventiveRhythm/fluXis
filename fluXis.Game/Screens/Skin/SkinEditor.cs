@@ -26,7 +26,6 @@ namespace fluXis.Game.Screens.Skin;
 
 public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-
     public override float Zoom => 1f;
     public override float ParallaxStrength => 1f;
     public override bool ShowToolbar => false;
@@ -39,6 +38,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     [Resolved]
     private NotificationManager notifications { get; set; }
+
     private Skinning.Json.Skin skin { get; set; }
     private Bindable<int> keyMode { get; } = new(4);
 
@@ -243,7 +243,6 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         content.ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutElastic);
     }
 
-
     public override bool OnExiting(ScreenExitEvent e)
     {
         skinManager.CanChangeSkin = true;
@@ -260,6 +259,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         notifications.SendText("Skin Saved", "", FontAwesome.Solid.Check);
         skinManager.UpdateAndSave(skin);
     }
+
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         if (e.ControlPressed)
@@ -272,23 +272,22 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             }
         }
 
-
         return true;
     }
 
-        public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        switch (e.Action)
         {
-            switch (e.Action)
-            {
-                case FluXisGlobalKeybind.Back:
-                    this.Exit();
-                    return true;
-            }
-
-            return false;
+            case FluXisGlobalKeybind.Back:
+                this.Exit();
+                return true;
         }
 
-        public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e)
-        {
-        }
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e)
+    {
+    }
 }
