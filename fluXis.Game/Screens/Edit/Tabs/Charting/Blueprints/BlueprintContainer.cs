@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Selection.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
@@ -42,7 +44,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
     private ChartingTool currentTool;
 
-    protected readonly BindableList<HitObjectInfo> SelectedHitObjects = new();
+    protected readonly BindableList<TimedObject> SelectedObjects = new();
 
     public SelectionBox SelectionBox { get; private set; }
     public SelectionBlueprints SelectionBlueprints { get; private set; }
@@ -50,7 +52,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
     private InputManager inputManager;
     private MouseButtonEvent lastDragEvent;
-    private readonly Dictionary<HitObjectInfo, SelectionBlueprint> blueprints = new();
+    private readonly Dictionary<TimedObject, SelectionBlueprint> blueprints = new();
 
     // movement
     private bool isDragging;
@@ -67,7 +69,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
         currentTool = ChartingContainer.Tools[0] as SelectTool;
 
         SelectionHandler = new SelectionHandler();
-        SelectionHandler.SelectedHitObjects.BindTo(SelectedHitObjects);
+        SelectionHandler.SelectedObjects.BindTo(SelectedObjects);
 
         InternalChildren = new Drawable[]
         {
@@ -87,8 +89,14 @@ public partial class BlueprintContainer : Container, ICursorDrag
         values.MapInfo.HitObjectAdded += AddBlueprint;
         values.MapInfo.HitObjectRemoved += RemoveBlueprint;
 
+        values.MapEvents.FlashEventAdded += AddBlueprint;
+        values.MapEvents.FlashEventRemoved += RemoveBlueprint;
+
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
+
+        foreach (var flash in ChartingContainer.Playfield.Effects.Flashes)
+            AddBlueprint(flash.FlashEvent);
     }
 
     protected override bool OnDragStart(DragStartEvent e)
@@ -129,7 +137,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
         SelectionBox.Hide();
     }
 
-    public void AddBlueprint(HitObjectInfo info)
+    public void AddBlueprint(TimedObject info)
     {
         if (blueprints.ContainsKey(info))
             return;
@@ -141,9 +149,9 @@ public partial class BlueprintContainer : Container, ICursorDrag
         SelectionBlueprints.Add(blueprint);
     }
 
-    public void RemoveBlueprint(HitObjectInfo info)
+    public void RemoveBlueprint(TimedObject obj)
     {
-        if (!blueprints.Remove(info, out var blueprint))
+        if (!blueprints.Remove(obj, out var blueprint))
             return;
 
         blueprint.Deselect();
@@ -152,14 +160,29 @@ public partial class BlueprintContainer : Container, ICursorDrag
         SelectionBlueprints.Remove(blueprint, true);
     }
 
-    private SelectionBlueprint createBlueprint(HitObjectInfo info)
+    private SelectionBlueprint createBlueprint(TimedObject obj)
     {
-        var drawable = ChartingContainer.HitObjects.FirstOrDefault(d => d.Data == info);
+        SelectionBlueprint blueprint = null!;
 
-        if (drawable == null) return null;
+        switch (obj)
+        {
+            case HitObjectInfo hit:
+                var hitDrawable = ChartingContainer.HitObjects.FirstOrDefault(d => d.Data == obj);
+                if (hitDrawable == null) return null;
 
-        SelectionBlueprint blueprint = info.IsLongNote() ? new LongNoteSelectionBlueprint(info) : new SingleNoteSelectionBlueprint(info);
-        blueprint.Drawable = drawable;
+                blueprint = hit.IsLongNote() ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);
+                blueprint.Drawable = hitDrawable;
+                break;
+
+            case FlashEvent flash:
+                var flashDrawable = ChartingContainer.Playfield.Effects.Flashes.FirstOrDefault(d => d.FlashEvent == obj);
+                if (flashDrawable == null) return null;
+
+                blueprint = new FlashSelectionBlueprint(flash);
+                blueprint.Drawable = flashDrawable;
+                break;
+        }
+
         return blueprint;
     }
 
@@ -299,19 +322,28 @@ public partial class BlueprintContainer : Container, ICursorDrag
         int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(postition);
         float snappedTime = ChartingContainer.Playfield.HitObjectContainer.SnapTime(time);
 
-        float timeDelta = snappedTime - dragBlueprints.First().HitObject.Time;
-        int laneDelta = lane - dragBlueprints.First().HitObject.Lane;
+        float timeDelta = snappedTime - dragBlueprints.First().Object.Time;
+        int laneDelta = 0;
 
-        var minLane = dragBlueprints.Min(b => b.HitObject.Lane);
-        var maxLane = dragBlueprints.Max(b => b.HitObject.Lane);
+        if (dragBlueprints.Any(x => x is NoteSelectionBlueprint))
+        {
+            var hitBlueprints = dragBlueprints.OfType<NoteSelectionBlueprint>().ToArray();
 
-        if (minLane + laneDelta <= 0 || maxLane + laneDelta > values.MapInfo.KeyCount)
-            laneDelta = 0;
+            laneDelta = lane - hitBlueprints.First().Object.Lane;
+
+            var minLane = hitBlueprints.Min(b => b.Object.Lane);
+            var maxLane = hitBlueprints.Max(b => b.Object.Lane);
+
+            if (minLane + laneDelta <= 0 || maxLane + laneDelta > values.MapInfo.KeyCount)
+                laneDelta = 0;
+        }
 
         foreach (var blueprint in dragBlueprints)
         {
-            blueprint.HitObject.Time += timeDelta;
-            blueprint.HitObject.Lane += laneDelta;
+            blueprint.Object.Time += timeDelta;
+
+            if (blueprint is NoteSelectionBlueprint noteBlueprint)
+                noteBlueprint.Object.Lane += laneDelta;
         }
     }
 }

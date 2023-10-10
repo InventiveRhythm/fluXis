@@ -19,13 +19,13 @@ public partial class SelectionBlueprints : Container<SelectionBlueprint>
 
     protected override int Compare(Drawable a, Drawable b)
     {
-        var aHit = ((SelectionBlueprint)a).HitObject;
-        var bHit = ((SelectionBlueprint)b).HitObject;
+        var aHit = (SelectionBlueprint)a;
+        var bHit = (SelectionBlueprint)b;
 
-        int result = bHit.Time.CompareTo(aHit.Time);
+        int result = bHit.FirstComparer.CompareTo(aHit.FirstComparer);
         if (result != 0) return result;
 
-        result = bHit.HoldEndTime.CompareTo(aHit.HoldEndTime);
+        result = bHit.SecondComparer.CompareTo(aHit.SecondComparer);
         return result != 0 ? result : CompareReverseChildID(a, b);
     }
 }

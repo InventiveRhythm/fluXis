@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -24,7 +25,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
     public IReadOnlyList<SelectionBlueprint> Selected => selected;
     private readonly List<SelectionBlueprint> selected = new();
 
-    public readonly BindableList<HitObjectInfo> SelectedHitObjects = new();
+    public readonly BindableList<TimedObject> SelectedObjects = new();
 
     private SelectionOutline outline;
     private bool wasVisible;
@@ -36,7 +37,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
         AlwaysPresent = true;
         InternalChild = outline = new SelectionOutline();
 
-        SelectedHitObjects.BindCollectionChanged((_, _) => updateVisibility());
+        SelectedObjects.BindCollectionChanged((_, _) => updateVisibility());
     }
 
     protected override void Update()
@@ -58,23 +59,23 @@ public partial class SelectionHandler : Container, IHasContextMenu
 
     public void HandleSelection(SelectionBlueprint blueprint)
     {
-        if (!SelectedHitObjects.Contains(blueprint.HitObject))
-            SelectedHitObjects.Add(blueprint.HitObject);
+        if (!SelectedObjects.Contains(blueprint.Object))
+            SelectedObjects.Add(blueprint.Object);
 
         selected.Add(blueprint);
     }
 
     public void HandleDeselection(SelectionBlueprint blueprint)
     {
-        SelectedHitObjects.Remove(blueprint.HitObject);
+        SelectedObjects.Remove(blueprint.Object);
         selected.Remove(blueprint);
     }
 
     private void updateVisibility()
     {
-        outline.FadeTo(SelectedHitObjects.Count > 0 ? 1 : 0);
+        outline.FadeTo(SelectedObjects.Count > 0 ? 1 : 0);
 
-        if (SelectedHitObjects.Count == 0) wasVisible = false;
+        if (SelectedObjects.Count == 0) wasVisible = false;
     }
 
     public bool SingleClickSelection(SelectionBlueprint blueprint, MouseButtonEvent e)
@@ -112,26 +113,37 @@ public partial class SelectionHandler : Container, IHasContextMenu
         if (blueprint == null) return;
 
         if (!blueprint.IsSelected)
-            Delete(new[] { blueprint.HitObject });
+            Delete(new[] { blueprint.Object });
         else
             DeleteSelected();
     }
 
-    public void Delete(IEnumerable<HitObjectInfo> hitObjects)
+    public void Delete(IEnumerable<TimedObject> objects)
     {
-        foreach (HitObjectInfo hitObject in hitObjects)
-            values.MapInfo.Remove(hitObject);
+        foreach (TimedObject obj in objects)
+        {
+            switch (obj)
+            {
+                case HitObjectInfo hit:
+                    values.MapInfo.Remove(hit);
+                    break;
+
+                case FlashEvent flash:
+                    values.MapEvents.Remove(flash);
+                    break;
+            }
+        }
     }
 
     public void DeleteSelected()
     {
-        Delete(SelectedHitObjects.ToArray());
+        Delete(SelectedObjects.ToArray());
         DeselectAll();
     }
 
     public void DeselectAll()
     {
         selected.ToList().ForEach(b => b.Deselect());
-        SelectedHitObjects.Clear();
+        SelectedObjects.Clear();
     }
 }

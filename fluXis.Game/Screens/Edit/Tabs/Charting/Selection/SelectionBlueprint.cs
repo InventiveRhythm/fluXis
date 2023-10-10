@@ -17,11 +17,14 @@ public partial class SelectionBlueprint : Container
 
     protected EditorHitObjectContainer HitObjectContainer => playfield.HitObjectContainer;
 
-    public HitObjectInfo HitObject { get; }
-    public EditorHitObject Drawable { get; internal set; }
+    public TimedObject Object { get; }
+    public Drawable Drawable { get; internal set; }
 
     public event Action<SelectionBlueprint> Selected;
     public event Action<SelectionBlueprint> Deselected;
+
+    public virtual float FirstComparer => Object.Time;
+    public virtual float SecondComparer => Object.Time;
 
     private SelectedState state;
     public event Action<SelectedState> StateChanged;
@@ -32,20 +35,11 @@ public partial class SelectionBlueprint : Container
     public override bool HandlePositionalInput => ShouldBeAlive;
     public override bool RemoveWhenNotAlive => false;
 
-    protected SelectionBlueprint(HitObjectInfo info)
+    protected SelectionBlueprint(TimedObject info)
     {
-        HitObject = info;
+        Object = info;
         AlwaysPresent = true;
-        Width = EditorHitObjectContainer.NOTEWIDTH;
         Anchor = Origin = Anchor.BottomLeft;
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        if (Parent != null)
-            Position = Parent.ToLocalSpace(HitObjectContainer.ScreenSpacePositionAtTime(HitObject.Time, HitObject.Lane));
     }
 
     protected override void LoadComplete()

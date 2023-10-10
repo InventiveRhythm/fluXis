@@ -8,7 +8,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
 
-public partial class LongNoteSelectionBlueprint : SelectionBlueprint
+public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 {
     public override Vector2 ScreenSpaceSelectionPoint => head.ScreenSpaceDrawQuad.Centre;
 
@@ -57,7 +57,7 @@ public partial class LongNoteSelectionBlueprint : SelectionBlueprint
     {
         base.Update();
 
-        var delta = HitObjectContainer.PositionAtTime(HitObject.HoldEndTime) - HitObjectContainer.PositionAtTime(HitObject.Time);
+        var delta = HitObjectContainer.PositionAtTime(Object.HoldEndTime) - HitObjectContainer.PositionAtTime(Object.Time);
         end.Y = delta;
         Height = -(delta - Drawable.LongNoteEnd.DrawHeight / 2);
     }

@@ -222,7 +222,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
     public void Copy(bool deleteAfter = false)
     {
-        var hits = BlueprintContainer.SelectionHandler.SelectedHitObjects.Select(x => new HitObjectInfo
+        var hits = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObjectInfo>().Select(x => new HitObjectInfo
         {
             Time = x.Time,
             Lane = x.Lane,

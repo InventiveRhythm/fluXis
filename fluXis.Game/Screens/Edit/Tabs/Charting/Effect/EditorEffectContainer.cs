@@ -19,8 +19,8 @@ public partial class EditorEffectContainer : Container
 
     private Box flashUnderlay;
 
-    private Container<EditorFlashEvent> flashContainer;
-    private Container<EditorLaneSwitchEvent> lsContainer;
+    public Container<EditorFlashEvent> Flashes { get; private set; }
+    public Container<EditorLaneSwitchEvent> LaneSwitches { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -39,7 +39,7 @@ public partial class EditorEffectContainer : Container
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Left = 8 }
             },
-            flashContainer = new Container<EditorFlashEvent>
+            Flashes = new Container<EditorFlashEvent>
             {
                 AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
@@ -48,7 +48,7 @@ public partial class EditorEffectContainer : Container
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Left = 10 }
             },
-            lsContainer = new Container<EditorLaneSwitchEvent>
+            LaneSwitches = new Container<EditorLaneSwitchEvent>
             {
                 RelativeSizeAxes = Axes.Both,
                 Y = -EditorHitObjectContainer.HITPOSITION
@@ -76,16 +76,16 @@ public partial class EditorEffectContainer : Container
 
         values.MapEvents.FlashEventRemoved += flash =>
         {
-            var editorFlash = flashContainer.FirstOrDefault(f => f.FlashEvent == flash);
+            var editorFlash = Flashes.FirstOrDefault(f => f.FlashEvent == flash);
             if (editorFlash != null)
-                flashContainer.Remove(editorFlash, true);
+                Flashes.Remove(editorFlash, true);
         };
 
         values.MapEvents.LaneSwitchEventRemoved += ls =>
         {
-            var editorLs = lsContainer.FirstOrDefault(l => l.Event == ls);
+            var editorLs = LaneSwitches.FirstOrDefault(l => l.Event == ls);
             if (editorLs != null)
-                lsContainer.Remove(editorLs, true);
+                LaneSwitches.Remove(editorLs, true);
         };
     }
 
@@ -100,17 +100,17 @@ public partial class EditorEffectContainer : Container
 
     public void AddFlash(FlashEvent flash)
     {
-        flashContainer.Add(new EditorFlashEvent { FlashEvent = flash });
+        Flashes.Add(new EditorFlashEvent { FlashEvent = flash });
     }
 
     public void AddLaneSwitch(LaneSwitchEvent ls)
     {
-        lsContainer.Add(new EditorLaneSwitchEvent { Event = ls, Map = values.MapInfo });
+        LaneSwitches.Add(new EditorLaneSwitchEvent { Event = ls, Map = values.MapInfo });
     }
 
     public void ClearAll()
     {
-        flashContainer.Clear();
-        lsContainer.Clear();
+        Flashes.Clear();
+        LaneSwitches.Clear();
     }
 }

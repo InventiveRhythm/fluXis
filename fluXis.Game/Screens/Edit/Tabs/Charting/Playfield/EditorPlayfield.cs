@@ -28,6 +28,7 @@ public partial class EditorPlayfield : Container
     private FluXisConfig config { get; set; }
 
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
+    public EditorEffectContainer Effects { get; private set; }
     private EditorTimingLines timingLines;
     private WaveformGraph waveform;
 
@@ -54,7 +55,7 @@ public partial class EditorPlayfield : Container
                 Origin = Anchor.BottomLeft,
                 Rotation = -90,
             },
-            new EditorEffectContainer(),
+            Effects = new EditorEffectContainer(),
             timingLines = new EditorTimingLines(),
             HitObjectContainer = new EditorHitObjectContainer()
         };

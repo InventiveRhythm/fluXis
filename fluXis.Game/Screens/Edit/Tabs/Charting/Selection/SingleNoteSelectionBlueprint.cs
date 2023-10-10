@@ -5,7 +5,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
 
-public partial class SingleNoteSelectionBlueprint : SelectionBlueprint
+public partial class SingleNoteSelectionBlueprint : NoteSelectionBlueprint
 {
     public SingleNoteSelectionBlueprint(HitObjectInfo info)
         : base(info)
