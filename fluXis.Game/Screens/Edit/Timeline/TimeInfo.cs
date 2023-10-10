@@ -1,9 +1,12 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 
 namespace fluXis.Game.Screens.Edit.Timeline;
 
@@ -14,6 +17,12 @@ public partial class TimeInfo : Container
 
     [Resolved]
     private EditorValues values { get; set; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
+
+    [Resolved]
+    private Clipboard clipboard { get; set; }
 
     private FluXisSpriteText timeText;
     private FluXisSpriteText bpmText;
@@ -47,5 +56,12 @@ public partial class TimeInfo : Container
     {
         timeText.Text = TimeUtils.Format(clock.CurrentTime);
         bpmText.Text = $"{values.Editor.MapInfo.GetTimingPoint((float)clock.CurrentTime)?.BPM} BPM";
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        clipboard.SetText(((int)clock.CurrentTime).ToString());
+        notifications.SendSmallText("Copied current time to clipboard.");
+        return true;
     }
 }
