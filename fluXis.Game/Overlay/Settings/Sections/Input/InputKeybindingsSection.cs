@@ -46,10 +46,21 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = "Select",
                 Keybinds = new object[] { FluXisGlobalKeybind.Select }
             },
+            new KeybindSectionTitle { Text = "Editing" },
             new SettingsKeybind
             {
                 Label = "Delete Selected",
                 Keybinds = new object[] { FluXisGlobalKeybind.Delete }
+            },
+            new SettingsKeybind
+            {
+                Label = "Undo",
+                Keybinds = new object[] { FluXisGlobalKeybind.Undo }
+            },
+            new SettingsKeybind
+            {
+                Label = "Redo",
+                Keybinds = new object[] { FluXisGlobalKeybind.Redo }
             },
             new KeybindSectionTitle { Text = "Overlays" },
             new SettingsKeybind

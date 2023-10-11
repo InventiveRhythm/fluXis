@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Edit.Actions.Notes;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 
@@ -18,6 +19,7 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        if (commit) EditorValues.MapInfo.Add((HitObjectInfo)Object);
+        if (commit)
+            EditorValues.ActionStack.Add(new NotePlaceAction((HitObjectInfo)Object, EditorValues.MapInfo));
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Screens.Edit.Actions.Notes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -120,14 +121,22 @@ public partial class SelectionHandler : Container, IHasContextMenu
 
     public void Delete(IEnumerable<TimedObject> objects)
     {
-        foreach (TimedObject obj in objects)
+        if (objects == null) return;
+
+        var objs = objects.ToList();
+
+        if (objs.Any(o => o is HitObjectInfo))
+        {
+            var hits = objs.OfType<HitObjectInfo>().ToArray();
+
+            if (hits.Length > 0)
+                values.ActionStack.Add(new NoteRemoveAction(hits, values.MapInfo));
+        }
+
+        foreach (TimedObject obj in objs)
         {
             switch (obj)
             {
-                case HitObjectInfo hit:
-                    values.MapInfo.Remove(hit);
-                    break;
-
                 case FlashEvent flash:
                     values.MapEvents.Remove(flash);
                     break;

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Screens.Edit.Actions.Notes;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
@@ -19,7 +21,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting;
 
-public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformAction>
+public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public IReadOnlyList<ChartingTool> Tools { get; } = new ChartingTool[]
     {
@@ -267,9 +269,28 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
         foreach (var hitObject in content.HitObjects)
         {
             hitObject.Time += (float)clock.CurrentTime;
-            values.MapInfo.Add(hitObject);
         }
+
+        values.ActionStack.Add(new NotePasteAction(content.HitObjects.ToArray(), values.MapInfo));
 
         notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisGlobalKeybind.Undo:
+                values.ActionStack.Undo();
+                return true;
+
+            case FluXisGlobalKeybind.Redo:
+                values.ActionStack.Redo();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

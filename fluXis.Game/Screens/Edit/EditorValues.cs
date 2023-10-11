@@ -13,6 +13,7 @@ public class EditorValues
     public EditorMapInfo MapInfo { get; init; }
     public EditorMapEvents MapEvents { get; init; } = new();
     public Editor Editor { get; init; }
+    public EditorActionStack ActionStack { get; init; }
 
     public override string ToString()
     {
