@@ -181,13 +181,13 @@ public partial class FluXisGameBase : osu.Framework.Game
             {
                 APIUrl = "http://localhost:2434",
                 WebsocketUrl = "ws://localhost:2435",
-                WebsiteRootUrl = "https://fluxis.foxes4life.net"
+                WebsiteRootUrl = "https://fluxis.flux.moe"
             }
             : new APIEndpointConfig
             {
-                APIUrl = "https://api.fluxis.foxes4life.net",
-                WebsocketUrl = "wss://fluxel.foxes4life.net",
-                WebsiteRootUrl = "https://fluxis.foxes4life.net"
+                APIUrl = "https://api.fluxis.flux.moe",
+                WebsocketUrl = "wss://fluxel.flux.moe",
+                WebsiteRootUrl = "https://fluxis.flux.moe"
             };
     }
 
