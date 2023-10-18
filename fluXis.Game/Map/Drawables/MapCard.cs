@@ -1,15 +1,9 @@
 using System;
-using System.IO;
 using System.Linq;
-using fluXis.Game.Database;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Import;
 using fluXis.Game.Map.Drawables.Online;
 using fluXis.Game.Online.API.Maps;
-using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -17,35 +11,17 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
-using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Game.Map.Drawables;
 
 public partial class MapCard : Container
 {
-    [Resolved]
-    private MapStore mapStore { get; set; }
-
-    [Resolved]
-    private NotificationManager notifications { get; set; }
-
-    [Resolved]
-    private Storage storage { get; set; }
-
-    [Resolved]
-    private ImportManager importManager { get; set; }
-
-    [Resolved]
-    private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private Fluxel fluxel { get; set; }
-
     public APIMapSet MapSet { get; }
+    public Action<APIMapSet> OnClickAction { get; set; }
 
-    private bool downloading = false;
+    private Container background;
+    private Container cover;
 
     public MapCard(APIMapSet mapSet)
     {
@@ -86,9 +62,15 @@ public partial class MapCard : Container
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
-            new DrawableOnlineBackground(MapSet)
+            background = new Container
             {
                 RelativeSizeAxes = Axes.Both
+            },
+            new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Black,
+                Alpha = 0.5f
             },
             new FillFlowContainer
             {
@@ -98,7 +80,7 @@ public partial class MapCard : Container
                 Spacing = new Vector2(10),
                 Children = new Drawable[]
                 {
-                    new DrawableOnlineCover(MapSet)
+                    cover = new Container
                     {
                         Size = new Vector2(80),
                         CornerRadius = 10,
@@ -220,84 +202,17 @@ public partial class MapCard : Container
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        LoadComponentAsync(new DrawableOnlineBackground(MapSet), background.Add);
+        LoadComponentAsync(new DrawableOnlineCover(MapSet), cover.Add);
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
-        if (MapSet == null)
-            return true;
-
-        if (mapStore.MapSets.Any(x => x.OnlineID == MapSet.Id))
-        {
-            notifications.SendText("Mapset already downloaded.");
-            return true;
-        }
-
-        if (downloading)
-            return true;
-
-        var notification = new LoadingNotificationData
-        {
-            TextLoading = "Downloading mapset...",
-            TextSuccess = $"Downloaded {MapSet.Title} - {MapSet.Artist}.",
-            TextFailure = "Failed to download mapset."
-        };
-
-        var req = fluxel.CreateAPIRequest($"/mapset/{MapSet.Id}/download");
-        req.DownloadProgress += (current, total) => notification.Progress = (float)current / total;
-        req.Started += () => Logger.Log($"Downloading mapset: {MapSet.Title} - {MapSet.Artist}", LoggingTarget.Network);
-        req.Failed += exception =>
-        {
-            Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
-            notification.State = LoadingState.Failed;
-        };
-        req.Finished += () =>
-        {
-            notification.Progress = 1;
-
-            try
-            {
-                Logger.Log($"Finished downloading mapset: {MapSet.Title} - {MapSet.Artist}", LoggingTarget.Network);
-                var data = req.GetResponseData();
-
-                if (data == null)
-                {
-                    notification.State = LoadingState.Failed;
-                    return;
-                }
-
-                // write data to file
-                var path = storage.GetFullPath($"download/{MapSet.Id}.zip");
-                var dir = Path.GetDirectoryName(path);
-
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                if (File.Exists(path))
-                    File.Delete(path);
-
-                File.WriteAllBytes(path, data);
-
-                // import
-                new FluXisImport
-                {
-                    MapStore = mapStore,
-                    Storage = storage,
-                    Notifications = notifications,
-                    Realm = realm,
-                    Notification = notification
-                }.Import(path);
-            }
-            catch (Exception ex)
-            {
-                notification.State = LoadingState.Failed;
-                Logger.Log($"Failed to import mapset: {ex.Message}", LoggingTarget.Network);
-            }
-        };
-
-        downloading = true;
-        req.PerformAsync();
-
-        notifications.Add(notification);
-
+        OnClickAction?.Invoke(MapSet);
         return true;
     }
 

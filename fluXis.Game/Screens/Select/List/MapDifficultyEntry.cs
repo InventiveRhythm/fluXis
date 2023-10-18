@@ -3,7 +3,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
-using fluXis.Game.Utils;
+using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -156,28 +156,11 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                                 }
                                             }
                                         },
-                                        new CircularContainer
+                                        new DifficultyChip
                                         {
                                             Width = 50,
                                             Height = 14,
-                                            Masking = true,
-                                            Children = new Drawable[]
-                                            {
-                                                new Box
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Colour = FluXisColors.GetDifficultyColor(map.Filters.NotesPerSecond)
-                                                },
-                                                new FluXisSpriteText
-                                                {
-                                                    Text = map.Filters.NotesPerSecond.ToStringInvariant("00.00"),
-                                                    FontSize = 14,
-                                                    Colour = Colour4.Black,
-                                                    Alpha = .75f,
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre
-                                                }
-                                            }
+                                            Rating = map.Filters.NotesPerSecond
                                         }
                                     }
                                 }

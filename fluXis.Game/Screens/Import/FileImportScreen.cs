@@ -117,7 +117,7 @@ public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisG
         fileSelect.CurrentFile.BindValueChanged(file =>
         {
             selectedFileText.Text = file.NewValue != null ? file.NewValue.Name : "Select a file to import";
-            importButton.Enabled.Value = file.NewValue != null;
+            importButton.Enabled = file.NewValue != null;
         }, true);
     }
 

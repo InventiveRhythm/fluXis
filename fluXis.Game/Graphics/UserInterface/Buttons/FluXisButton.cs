@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -32,6 +33,23 @@ public partial class FluXisButton : ClickableContainer
 
     [Resolved]
     private UISamples samples { get; set; }
+
+    public new bool Enabled
+    {
+        get => EnabledBindable.Value;
+        set
+        {
+            base.Enabled.Value = value;
+            EnabledBindable.Value = value;
+
+            if (IsLoaded)
+                this.FadeTo(value ? 1 : 0.5f, 200);
+            else
+                Alpha = value ? 1 : 0.5f;
+        }
+    }
+
+    public Bindable<bool> EnabledBindable => base.Enabled;
 
     private Box hoverBox;
     private Box holdBox;
@@ -103,6 +121,8 @@ public partial class FluXisButton : ClickableContainer
 
     protected override bool OnClick(ClickEvent e)
     {
+        if (!Enabled) return false;
+
         if (HoldToConfirm)
         {
             if (holdToConfirmHandler.Finished) triggerClick();
@@ -121,6 +141,8 @@ public partial class FluXisButton : ClickableContainer
 
     protected override bool OnHover(HoverEvent e)
     {
+        if (!Enabled) return false;
+
         hoverBox.FadeTo(0.2f, 50);
         samples.Hover();
         return true;
@@ -133,6 +155,8 @@ public partial class FluXisButton : ClickableContainer
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (!Enabled) return false;
+
         content.ScaleTo(0.95f, 1000, Easing.OutQuint);
 
         if (HoldToConfirm)

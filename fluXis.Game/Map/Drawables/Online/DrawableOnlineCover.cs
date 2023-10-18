@@ -1,16 +1,13 @@
-using System.Threading.Tasks;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Map.Drawables.Online;
 
-public partial class DrawableOnlineCover : Container
+public partial class DrawableOnlineCover : Sprite
 {
     private readonly APIMapSet mapSet;
 
@@ -22,29 +19,16 @@ public partial class DrawableOnlineCover : Container
     [BackgroundDependencyLoader]
     private void load(TextureStore textures, Fluxel fluxel)
     {
-        InternalChild = new Box
-        {
-            RelativeSizeAxes = Axes.Both,
-            Colour = Colour4.Black,
-            Alpha = 0.5f
-        };
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+        RelativeSizeAxes = Axes.Both;
+        FillMode = FillMode.Fill;
+        Texture = textures.Get($"{fluxel.Endpoint.APIUrl}/assets/cover/{mapSet.Id}");
+    }
 
-        Task.Run(() =>
-        {
-            var sprite = new Sprite
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fill,
-                Texture = textures.Get($"{fluxel.Endpoint.APIUrl}/assets/cover/{mapSet.Id}")
-            };
-
-            Schedule(() =>
-            {
-                AddInternal(sprite);
-                sprite.FadeInFromZero(400);
-            });
-        });
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        this.FadeInFromZero(400);
     }
 }
