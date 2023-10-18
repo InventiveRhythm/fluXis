@@ -1,15 +1,13 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Browse.Search;
 
@@ -26,13 +24,7 @@ public partial class BrowserSearchBar : Container
         Height = 60;
         CornerRadius = 10;
         Masking = true;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Color4.Black.Opacity(0.25f),
-            Radius = 5,
-            Offset = new Vector2(0, 1)
-        };
+        EdgeEffect = FluXisStyles.ShadowSmall;
 
         InternalChildren = new Drawable[]
         {

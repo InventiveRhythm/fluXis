@@ -1,14 +1,12 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Select.Search.Dropdown;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Search;
 
@@ -26,13 +24,7 @@ public partial class SearchDropdown : Container
         Masking = true;
         Y = -30;
         Alpha = 0;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Color4.Black.Opacity(0.25f),
-            Radius = 10,
-            Offset = new Vector2(0, 1)
-        };
+        EdgeEffect = FluXisStyles.ShadowMedium;
 
         InternalChildren = new Drawable[]
         {

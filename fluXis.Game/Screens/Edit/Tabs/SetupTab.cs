@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Cover;
@@ -7,7 +8,6 @@ using fluXis.Game.Screens.Edit.Tabs.Metadata;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
@@ -98,13 +98,7 @@ public partial class SetupTab : EditorTab
                                         Size = new Vector2(150),
                                         CornerRadius = 20,
                                         Masking = true,
-                                        EdgeEffect = new EdgeEffectParameters
-                                        {
-                                            Type = EdgeEffectType.Shadow,
-                                            Colour = Colour4.Black.Opacity(0.25f),
-                                            Radius = 10,
-                                            Offset = new Vector2(0, 5)
-                                        },
+                                        EdgeEffect = FluXisStyles.ShadowMedium,
                                         Child = cover = new DrawableCover(Screen.Map.MapSet)
                                         {
                                             RelativeSizeAxes = Axes.Both,

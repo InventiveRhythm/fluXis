@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Cover;
@@ -13,7 +14,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
@@ -81,13 +81,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                     Masking = true,
                     CornerRadius = rounding,
                     Y = -50,
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(.25f),
-                        Radius = 20,
-                        Offset = new Vector2(0, 1)
-                    },
+                    EdgeEffect = FluXisStyles.ShadowLarge,
                     Children = new Drawable[]
                     {
                         new Box
@@ -152,13 +146,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                                             CornerRadius = 20,
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
-                                            EdgeEffect = new EdgeEffectParameters
-                                            {
-                                                Type = EdgeEffectType.Shadow,
-                                                Colour = Colour4.Black.Opacity(.25f),
-                                                Radius = 10,
-                                                Offset = new Vector2(0, 1)
-                                            },
+                                            EdgeEffect = FluXisStyles.ShadowMedium,
                                             Children = new Drawable[]
                                             {
                                                 new Box

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using fluXis.Game.Database;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
@@ -17,17 +18,14 @@ using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Browse.Info;
 
@@ -79,13 +77,7 @@ public partial class BrowseInfo : Container
         RelativeSizeAxes = Axes.Both;
         CornerRadius = 20;
         Masking = true;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Color4.Black.Opacity(0.25f),
-            Radius = 5,
-            Offset = new Vector2(0, 1)
-        };
+        EdgeEffect = FluXisStyles.ShadowMedium;
 
         InternalChildren = new Drawable[]
         {
@@ -128,13 +120,7 @@ public partial class BrowseInfo : Container
                                 CornerRadius = 20,
                                 Masking = true,
                                 Margin = new MarginPadding { Bottom = 10 },
-                                EdgeEffect = new EdgeEffectParameters
-                                {
-                                    Type = EdgeEffectType.Shadow,
-                                    Colour = Colour4.Black.Opacity(.25f),
-                                    Radius = 5,
-                                    Offset = new Vector2(0, 2)
-                                }
+                                EdgeEffect = FluXisStyles.ShadowSmall
                             },
                             title = new FluXisSpriteText
                             {

@@ -1,9 +1,7 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.UserInterface;
-using osuTK;
 
 namespace fluXis.Game.Graphics.Containers;
 
@@ -18,13 +16,7 @@ public partial class FluXisPopover : Popover
         Body.Masking = true;
         Body.CornerRadius = 20;
         Body.Margin = new MarginPadding(10);
-        Body.EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Offset = new Vector2(0, 2),
-            Radius = 5,
-            Colour = Colour4.Black.Opacity(0.3f)
-        };
+        Body.EdgeEffect = FluXisStyles.ShadowSmall;
     }
 
     protected override Drawable CreateArrow() => Empty();

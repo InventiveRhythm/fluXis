@@ -1,9 +1,9 @@
 using System;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -101,13 +101,7 @@ public partial class Cursor : Container
                 CornerRadius = 10,
                 Scale = new Vector2(.9f),
                 Masking = true,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(.2f),
-                    Radius = 5,
-                    Offset = new Vector2(0, 1)
-                },
+                EdgeEffect = FluXisStyles.ShadowSmall,
                 Children = new Drawable[]
                 {
                     new Box

@@ -4,15 +4,12 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics.UserInterface.Buttons;
 
@@ -39,12 +36,7 @@ public partial class CornerButton : Container
         Height = 80 + corner_radius;
         CornerRadius = corner_radius;
         Masking = true;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Color4.Black.Opacity(.25f),
-            Radius = 10
-        };
+        EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
 
         Anchor = Origin = Corner switch
         {

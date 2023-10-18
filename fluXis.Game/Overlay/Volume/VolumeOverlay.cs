@@ -1,19 +1,17 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Volume;
 
@@ -52,13 +50,7 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
             X = -400,
             CornerRadius = 10,
             Masking = true,
-            EdgeEffect = new EdgeEffectParameters
-            {
-                Type = EdgeEffectType.Shadow,
-                Colour = Color4.Black.Opacity(.4f),
-                Radius = 10,
-                Offset = new Vector2(0, 1)
-            },
+            EdgeEffect = FluXisStyles.ShadowMedium,
             Children = new Drawable[]
             {
                 new Box

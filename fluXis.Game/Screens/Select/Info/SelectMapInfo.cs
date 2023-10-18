@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -11,9 +12,7 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
-using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info;
 
@@ -58,13 +57,7 @@ public partial class SelectMapInfo : GridContainer
                     RelativeSizeAxes = Axes.Both,
                     CornerRadius = 20,
                     Masking = true,
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(.25f),
-                        Radius = 10,
-                        Offset = new Vector2(0, 2)
-                    },
+                    EdgeEffect = FluXisStyles.ShadowMedium,
                     Children = new Drawable[]
                     {
                         new Box

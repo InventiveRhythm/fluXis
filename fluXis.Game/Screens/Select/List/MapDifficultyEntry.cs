@@ -9,7 +9,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
@@ -93,13 +92,6 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 10,
                 Masking = true,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(0.25f),
-                    Radius = 0,
-                    Offset = new Vector2(0, 2)
-                },
                 Children = new Drawable[]
                 {
                     new Box

@@ -1,16 +1,14 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay.UI.Menus;
 
@@ -77,12 +75,7 @@ public partial class FailMenu : Container
                         CornerRadius = 20,
                         Masking = true,
                         Alpha = 0,
-                        EdgeEffect = new EdgeEffectParameters
-                        {
-                            Type = EdgeEffectType.Shadow,
-                            Colour = Color4.Black.Opacity(.25f),
-                            Radius = 10
-                        },
+                        EdgeEffect = FluXisStyles.ShadowMedium,
                         Children = new Drawable[]
                         {
                             new Box

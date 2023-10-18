@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Drawables;
@@ -15,7 +16,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
@@ -155,13 +155,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre
                                 },
-                                EdgeEffect = new EdgeEffectParameters
-                                {
-                                    Type = EdgeEffectType.Shadow,
-                                    Colour = Colour4.Black.Opacity(.2f),
-                                    Radius = 5,
-                                    Offset = new Vector2(0, 1)
-                                }
+                                EdgeEffect = FluXisStyles.ShadowSmall
                             }, 100, 200)
                             {
                                 Size = new Vector2(60)
@@ -242,13 +236,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Margin = new MarginPadding { Left = 4, Right = 2 },
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(.25f),
-                        Radius = 5,
-                        Offset = new Vector2(0, 2)
-                    },
+                    EdgeEffect = FluXisStyles.ShadowSmall,
                     Children = new Drawable[]
                     {
                         new Box
@@ -277,13 +265,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Colour = FluXisColors.GetDifficultyColor(map.Filters.NotesPerSecond),
-                        EdgeEffect = new EdgeEffectParameters
-                        {
-                            Type = EdgeEffectType.Shadow,
-                            Colour = Colour4.Black.Opacity(.25f),
-                            Radius = 5,
-                            Offset = new Vector2(0, 2)
-                        }
+                        EdgeEffect = FluXisStyles.ShadowSmall
                     });
                 }
             }
@@ -299,13 +281,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Colour = FluXisColors.GetDifficultyColor(map.Filters.NotesPerSecond),
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(.25f),
-                        Radius = 5,
-                        Offset = new Vector2(0, 2)
-                    }
+                    EdgeEffect = FluXisStyles.ShadowSmall
                 });
             }
         }

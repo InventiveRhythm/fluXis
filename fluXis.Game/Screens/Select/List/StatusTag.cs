@@ -1,15 +1,14 @@
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Logging;
-using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
@@ -34,13 +33,7 @@ public partial class StatusTag : CircularContainer
         Width = 100;
         Height = 20;
         Masking = true;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Colour4.Black.Opacity(.25f),
-            Radius = 5,
-            Offset = new Vector2(0, 2)
-        };
+        EdgeEffect = FluXisStyles.ShadowSmall;
 
         var (status, colour) = getStatus();
 

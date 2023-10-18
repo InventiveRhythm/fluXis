@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Music;
@@ -14,11 +15,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
@@ -63,13 +62,7 @@ public partial class Toolbar : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background2
                 },
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(0.2f),
-                    Radius = 5,
-                    Offset = new Vector2(0, 1)
-                }
+                EdgeEffect = FluXisStyles.ShadowMediumNoOffset
             },
             new Container
             {

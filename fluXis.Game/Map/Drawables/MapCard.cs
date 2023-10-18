@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Drawables.Online;
@@ -8,7 +9,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -132,12 +132,7 @@ public partial class MapCard : Container
                                         AutoSizeAxes = Axes.X,
                                         RelativeSizeAxes = Axes.Y,
                                         Masking = true,
-                                        EdgeEffect = new EdgeEffectParameters
-                                        {
-                                            Type = EdgeEffectType.Shadow,
-                                            Colour = Colour4.Black.Opacity(0.25f),
-                                            Radius = 5
-                                        },
+                                        EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
                                         Children = new Drawable[]
                                         {
                                             new Box
@@ -168,12 +163,7 @@ public partial class MapCard : Container
                                         AutoSizeAxes = Axes.X,
                                         RelativeSizeAxes = Axes.Y,
                                         Masking = true,
-                                        EdgeEffect = new EdgeEffectParameters
-                                        {
-                                            Type = EdgeEffectType.Shadow,
-                                            Colour = Colour4.Black.Opacity(0.25f),
-                                            Radius = 5
-                                        },
+                                        EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.CentreRight,
                                         Children = new Drawable[]

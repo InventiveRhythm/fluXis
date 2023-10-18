@@ -1,7 +1,6 @@
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
@@ -49,13 +48,7 @@ public partial class LoadingIcon : Container
                         RelativeSizeAxes = Axes.Both,
                         Colour = Colour4.White
                     },
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(0.25f),
-                        Radius = 5,
-                        Offset = new Vector2(0, 1)
-                    }
+                    EdgeEffect = FluXisStyles.ShadowSmall
                 }
             }
         };

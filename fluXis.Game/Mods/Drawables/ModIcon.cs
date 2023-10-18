@@ -1,9 +1,9 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
@@ -24,13 +24,7 @@ public partial class ModIcon : Container
         CornerRadius = 10;
         Masking = true;
         Shear = new Vector2(0.2f, 0);
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Colour4.Black.Opacity(0.25f),
-            Radius = 5,
-            Offset = new Vector2(0, 1)
-        };
+        EdgeEffect = FluXisStyles.ShadowSmall;
 
         var color = Mod.Type switch
         {

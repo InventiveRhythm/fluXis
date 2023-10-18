@@ -8,6 +8,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -23,7 +24,6 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -73,13 +73,7 @@ public partial class ScoreList : GridContainer
                     Masking = true,
                     Shear = new Vector2(-.1f, 0),
                     Margin = new MarginPadding { Bottom = 10 },
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(.25f),
-                        Radius = 5,
-                        Offset = new Vector2(0, 1)
-                    },
+                    EdgeEffect = FluXisStyles.ShadowSmall,
                     Children = new Drawable[]
                     {
                         new Box

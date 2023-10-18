@@ -1,15 +1,14 @@
 using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
-using osuTK;
 
 namespace fluXis.Game.Overlay.FPS;
 
@@ -37,13 +36,7 @@ public partial class FpsOverlay : Container
         CornerRadius = 5;
         Masking = true;
         Y = -80;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Colour4.Black.Opacity(0.25f),
-            Radius = 5,
-            Offset = new Vector2(0, 1)
-        };
+        EdgeEffect = FluXisStyles.ShadowSmall;
 
         InternalChildren = new Drawable[]
         {

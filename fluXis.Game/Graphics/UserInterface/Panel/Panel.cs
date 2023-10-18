@@ -1,6 +1,5 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Panel;
@@ -19,13 +18,7 @@ public partial class Panel : Container
         Scale = new Vector2(.95f);
         Rotation = 2;
         Alpha = 0;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Colour4.Black.Opacity(.25f),
-            Radius = 10,
-            Offset = new Vector2(0, 5)
-        };
+        EdgeEffect = FluXisStyles.ShadowMedium;
 
         Children = new Drawable[]
         {

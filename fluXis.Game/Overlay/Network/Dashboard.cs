@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
@@ -8,7 +9,6 @@ using fluXis.Game.Overlay.Network.Tabs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -65,13 +65,7 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Scale = new Vector2(.9f),
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Shadow,
-                        Colour = Colour4.Black.Opacity(.25f),
-                        Radius = 20,
-                        Offset = new Vector2(0, 1)
-                    },
+                    EdgeEffect = FluXisStyles.ShadowLarge,
                     Children = new Drawable[]
                     {
                         new Box

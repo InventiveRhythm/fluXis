@@ -1,15 +1,13 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Settings;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Footer.Options;
 
@@ -43,12 +41,7 @@ public partial class FooterOptions : VisibilityContainer
                 Y = 20,
                 Masking = true,
                 CornerRadius = 10,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Color4.Black.Opacity(.25f),
-                    Radius = 10
-                },
+                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -64,12 +57,7 @@ public partial class FooterOptions : VisibilityContainer
                 AutoSizeAxes = Axes.Y,
                 Masking = true,
                 CornerRadius = 20,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Color4.Black.Opacity(.25f),
-                    Radius = 10
-                },
+                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box

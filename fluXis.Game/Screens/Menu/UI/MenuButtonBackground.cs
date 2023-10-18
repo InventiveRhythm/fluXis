@@ -1,11 +1,9 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
@@ -22,12 +20,7 @@ public partial class MenuButtonBackground : Container
         X = 10;
         Masking = true;
         CornerRadius = 10;
-        EdgeEffect = new EdgeEffectParameters
-        {
-            Type = EdgeEffectType.Shadow,
-            Colour = Color4.Black.Opacity(.25f),
-            Radius = 5
-        };
+        EdgeEffect = FluXisStyles.ShadowSmall;
 
         InternalChild = new Box
         {

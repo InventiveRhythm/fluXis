@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Notifications.Floating;
 using osu.Framework.Allocation;
@@ -7,7 +8,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -54,13 +54,7 @@ public partial class FloatingLoadingNotification : FloatingNotification
         {
             Size = new Vector2(50),
             Masking = true,
-            EdgeEffect = new EdgeEffectParameters
-            {
-                Type = EdgeEffectType.Shadow,
-                Colour = Color4.Black.Opacity(0.25f),
-                Radius = 5,
-                Offset = new Vector2(0, 2)
-            },
+            EdgeEffect = FluXisStyles.ShadowSmall,
             Children = new Drawable[]
             {
                 background = new Box

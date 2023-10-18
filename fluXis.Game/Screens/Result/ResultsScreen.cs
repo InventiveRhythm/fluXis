@@ -2,6 +2,7 @@ using fluXis.Game.Activity;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.UserInterface.Buttons;
@@ -16,18 +17,14 @@ using fluXis.Game.Online.Scores;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Result;
 
@@ -103,13 +100,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
                 CornerRadius = 10,
                 MaskingSmoothness = 0,
                 Masking = true,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(.25f),
-                    Radius = 10,
-                    Offset = new Vector2(0, 2)
-                },
+                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -156,12 +147,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
                     {
                         RelativeSizeAxes = Axes.Both,
                         Masking = true,
-                        EdgeEffect = new EdgeEffectParameters
-                        {
-                            Type = EdgeEffectType.Shadow,
-                            Colour = Color4.Black.Opacity(.25f),
-                            Radius = 10
-                        },
+                        EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
                         Child = new Box
                         {
                             RelativeSizeAxes = Axes.Both,

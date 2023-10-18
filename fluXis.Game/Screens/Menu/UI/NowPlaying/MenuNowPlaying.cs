@@ -1,4 +1,5 @@
-﻿using fluXis.Game.Graphics.Cover;
+﻿using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
@@ -6,7 +7,6 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 using osuTK.Graphics;
@@ -53,12 +53,7 @@ public partial class MenuNowPlaying : Container
                 Origin = Anchor.Centre,
                 CornerRadius = 10,
                 Masking = true,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Color4.Black.Opacity(.25f),
-                    Radius = 5
-                },
+                EdgeEffect = FluXisStyles.ShadowSmall,
                 Child = cover = new DrawableCover(null)
                 {
                     RelativeSizeAxes = Axes.Both,

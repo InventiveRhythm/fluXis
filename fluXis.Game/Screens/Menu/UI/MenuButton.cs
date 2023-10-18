@@ -1,17 +1,15 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
@@ -41,12 +39,7 @@ public partial class MenuButton : Container
             Masking = true,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            EdgeEffect = new EdgeEffectParameters
-            {
-                Type = EdgeEffectType.Shadow,
-                Colour = Color4.Black.Opacity(.25f),
-                Radius = 5
-            },
+            EdgeEffect = FluXisStyles.ShadowSmall,
             Children = new Drawable[]
             {
                 new Box

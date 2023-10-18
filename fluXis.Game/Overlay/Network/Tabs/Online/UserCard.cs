@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -6,7 +7,6 @@ using fluXis.Game.Overlay.Profile;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -63,13 +63,7 @@ public partial class UserCard : Container
                         Masking = true,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        EdgeEffect = new EdgeEffectParameters
-                        {
-                            Type = EdgeEffectType.Shadow,
-                            Colour = Colour4.Black.Opacity(.25f),
-                            Radius = 5,
-                            Offset = new Vector2(0, 2)
-                        },
+                        EdgeEffect = FluXisStyles.ShadowSmall
                     },
                     new FillFlowContainer
                     {

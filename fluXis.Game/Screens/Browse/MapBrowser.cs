@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -14,17 +15,14 @@ using fluXis.Game.Screens.Browse.Search;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Browse;
 
@@ -193,13 +191,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Color4.Black.Opacity(0.25f),
-                    Radius = 5,
-                    Offset = new Vector2(0, 1)
-                },
+                EdgeEffect = FluXisStyles.ShadowSmall,
                 OnClickAction = set => selectedSet.Value = set
             });
         }

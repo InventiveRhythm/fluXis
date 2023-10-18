@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
@@ -9,7 +10,6 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -56,12 +56,7 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisGlobalKe
                 Rotation = 2,
                 CornerRadius = 20,
                 Masking = true,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Colour4.Black.Opacity(.25f),
-                    Radius = 10
-                },
+                EdgeEffect = FluXisStyles.ShadowLarge,
                 Children = new Drawable[]
                 {
                     background = new PanelBackground

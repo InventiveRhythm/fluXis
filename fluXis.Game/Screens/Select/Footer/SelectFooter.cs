@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -5,17 +6,14 @@ using fluXis.Game.Input;
 using fluXis.Game.Screens.Select.Footer.Options;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
@@ -48,12 +46,7 @@ public partial class SelectFooter : Container
                 RelativeSizeAxes = Axes.Both,
                 Masking = true,
                 Y = 80,
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Type = EdgeEffectType.Shadow,
-                    Colour = Color4.Black.Opacity(.25f),
-                    Radius = 10
-                },
+                EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
