@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -13,8 +14,11 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Graphics.UserInterface.Buttons;
 
-public partial class FluXisButton : ClickableContainer
+public partial class FluXisButton : ClickableContainer, IHasTextTooltip
 {
+    public string Tooltip => TooltipText;
+    public string TooltipText { get; set; }
+
     public int FontSize { get; set; } = 24;
     public string Text { get; set; } = "Default Text";
     public Colour4 Color { get; set; } = FluXisColors.Background4;

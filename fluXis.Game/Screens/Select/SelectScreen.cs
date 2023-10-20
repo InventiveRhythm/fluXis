@@ -707,7 +707,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         var loadedMap = map.GetMapInfo();
         if (loadedMap == null) return;
 
-        var editor = new Editor(map, loadedMap);
+        var editor = new EditorLoader(map, loadedMap);
         this.Push(editor);
     }
 }

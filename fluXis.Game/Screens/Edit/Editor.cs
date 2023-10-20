@@ -71,6 +71,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private ITrackStore trackStore { get; set; }
 
+    private EditorLoader loader { get; }
+
     public RealmMap Map;
     public EditorMapInfo MapInfo;
 
@@ -93,8 +95,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public ChartingContainer ChartingContainer { get; set; }
 
-    public Editor(RealmMap realmMap = null, MapInfo map = null)
+    public Editor(EditorLoader loader, RealmMap realmMap = null, MapInfo map = null)
     {
+        this.loader = loader;
+
         Map = realmMap;
         MapInfo = getEditorMapInfo(map);
     }
@@ -178,6 +182,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         Items = new FluXisMenuItem[]
                         {
                             new("Save", FontAwesome.Solid.Save, () => save()) { Enabled = HasChanges },
+                            new FluXisMenuSpacer(),
+                            new("Create new difficulty", FontAwesome.Solid.Plus, () => Game.Overlay = new EditorDifficultyCreationPanel
+                            {
+                                OnCreateNewDifficulty = diffname => createNewDiff(diffname, false),
+                                OnCopyDifficulty = diffname => createNewDiff(diffname, true)
+                            }),
+                            new("Switch to difficulty", FontAwesome.Solid.ExchangeAlt, () => { })
+                            {
+                                Enabled = () => Map.MapSet.Maps.Count > 1,
+                                Items = Map.MapSet.Maps.Where(x => x.ID != Map.ID).Select(x => new FluXisMenuItem(x.Difficulty, () => loader.SwitchTo(x))).ToList()
+                            },
+                            new("Delete difficulty", FontAwesome.Solid.Trash, sendWipNotification),
                             new FluXisMenuSpacer(),
                             new("Export", FontAwesome.Solid.BoxOpen, export),
                             new("Upload", FontAwesome.Solid.Upload, startUpload),
@@ -264,6 +280,22 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             },
             bottomBar = new EditorBottomBar()
         };
+    }
+
+    private void createNewDiff(string diffname, bool copy)
+    {
+        if (diffExists(diffname)) return;
+
+        Game.Overlay.Hide();
+        loader.CreateNewDifficulty(Map, MapInfo, diffname, copy);
+
+        bool diffExists(string name)
+        {
+            if (!Map.MapSet.Maps.Any(x => string.Equals(x.Difficulty, name, StringComparison.CurrentCultureIgnoreCase))) return false;
+
+            notifications.SendError("A difficulty with that name already exists!");
+            return true;
+        }
     }
 
     private Track loadMapTrack()

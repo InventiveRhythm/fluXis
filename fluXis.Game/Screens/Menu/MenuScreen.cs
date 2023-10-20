@@ -241,7 +241,7 @@ public partial class MenuScreen : FluXisScreen
                                 Text = "Edit",
                                 Description = "Create your own maps",
                                 Icon = FontAwesome.Solid.Pen,
-                                Action = () => this.Push(new Editor()),
+                                Action = () => this.Push(new EditorLoader()),
                                 Width = 240,
                                 X = 460,
                                 Y = 160

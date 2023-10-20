@@ -21,6 +21,7 @@ using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
+using Realms;
 
 namespace fluXis.Game.Map;
 
@@ -143,6 +144,9 @@ public partial class MapStore : Component
         return MapSets[rnd.Next(MapSets.Count)];
     }
 
+    public RealmMapSet QuerySet(Guid id) => realm.Run(r => QuerySetFromRealm(r, id)).Detach();
+    public RealmMapSet QuerySetFromRealm(Realm realm, Guid id) => realm.Find<RealmMapSet>(id);
+
     public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
     public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
 
@@ -211,5 +215,156 @@ public partial class MapStore : Component
         map.Metadata.Mapper = fluxel.LoggedInUser?.Username ?? "Me";
         map.MapSet.Resources = resources;
         return map;
+    }
+
+    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, string name, MapInfo refInfo = null)
+    {
+        var id = Guid.NewGuid();
+        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
+
+        var info = new MapInfo(new MapMetadata
+        {
+            Title = map.Metadata.Title,
+            Artist = map.Metadata.Artist,
+            Mapper = map.Metadata.Mapper,
+            Difficulty = name,
+            Source = map.Metadata.Source,
+            Tags = map.Metadata.Tags,
+            PreviewTime = map.Metadata.PreviewTime
+        })
+        {
+            AudioFile = map.Metadata.Audio,
+            BackgroundFile = map.Metadata.Background,
+            CoverFile = map.MapSet.Cover,
+            VideoFile = refInfo?.VideoFile ?? "",
+            TimingPoints = refInfo?.TimingPoints.Select(x => new TimingPointInfo
+            {
+                BPM = x.BPM,
+                Time = x.Time,
+                Signature = x.Signature,
+                HideLines = x.HideLines
+            }).ToList() ?? new List<TimingPointInfo> { new() { BPM = 120, Time = 0, Signature = 4 } }, // Add default timing point to avoid issues
+        };
+
+        var json = JsonConvert.SerializeObject(info);
+        var hash = MapUtils.GetHash(json);
+
+        var realmMap = new RealmMap
+        {
+            ID = id,
+            Difficulty = name,
+            Metadata = new RealmMapMetadata
+            {
+                Title = map.Metadata.Title,
+                Artist = map.Metadata.Artist,
+                Mapper = map.Metadata.Mapper,
+                Source = map.Metadata.Source,
+                Tags = map.Metadata.Tags,
+                Background = map.Metadata.Background,
+                Audio = map.Metadata.Audio,
+                PreviewTime = map.Metadata.PreviewTime,
+                ColorHex = map.Metadata.ColorHex
+            },
+            FileName = fileName,
+            OnlineID = 0,
+            Hash = hash,
+            Filters = MapUtils.GetMapFilters(info, new MapEvents()),
+            KeyCount = map.KeyCount,
+            MapSet = set
+        };
+
+        save(realmMap, info);
+        return addDifficultyToSet(set, realmMap);
+    }
+
+    public RealmMap CopyToNewDifficulty(RealmMapSet set, RealmMap map, MapInfo refInfo, string name)
+    {
+        var id = Guid.NewGuid();
+        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
+        string effectName = "";
+
+        var refEffect = refInfo.GetMapEvents();
+        var refEffectString = refEffect.Save();
+
+        if (!string.IsNullOrEmpty(refEffectString))
+        {
+            effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fse";
+            string effectPath = MapFiles.GetFullPath(set.GetPathForFile(effectName));
+            File.WriteAllText(effectPath, refEffectString);
+        }
+
+        var info = new MapInfo(new MapMetadata
+        {
+            Title = map.Metadata.Title,
+            Artist = map.Metadata.Artist,
+            Mapper = map.Metadata.Mapper,
+            Difficulty = name,
+            Source = map.Metadata.Source,
+            Tags = map.Metadata.Tags,
+            PreviewTime = map.Metadata.PreviewTime
+        })
+        {
+            AudioFile = map.Metadata.Audio,
+            BackgroundFile = map.Metadata.Background,
+            CoverFile = map.MapSet.Cover,
+            VideoFile = refInfo.VideoFile,
+            EffectFile = effectName,
+            HitObjects = refInfo.HitObjects.Select(x => x.Copy()).ToList(),
+            TimingPoints = refInfo.TimingPoints.Select(x => x.Copy()).ToList(),
+            ScrollVelocities = refInfo.ScrollVelocities.Select(x => x.Copy()).ToList()
+        };
+
+        var json = JsonConvert.SerializeObject(info);
+        var hash = MapUtils.GetHash(json);
+
+        var realmMap = new RealmMap
+        {
+            ID = id,
+            Difficulty = name,
+            Metadata = new RealmMapMetadata
+            {
+                Title = map.Metadata.Title,
+                Artist = map.Metadata.Artist,
+                Mapper = map.Metadata.Mapper,
+                Source = map.Metadata.Source,
+                Tags = map.Metadata.Tags,
+                Background = map.Metadata.Background,
+                Audio = map.Metadata.Audio,
+                PreviewTime = map.Metadata.PreviewTime,
+                ColorHex = map.Metadata.ColorHex
+            },
+            FileName = fileName,
+            Hash = hash,
+            Filters = MapUtils.GetMapFilters(info, refEffect),
+            KeyCount = map.KeyCount,
+            MapSet = set
+        };
+
+        save(realmMap, info);
+        return addDifficultyToSet(set, realmMap);
+    }
+
+    private RealmMap addDifficultyToSet(RealmMapSet set, RealmMap map)
+    {
+        return realm.RunWrite(r =>
+        {
+            var rSet = QuerySetFromRealm(r, set.ID);
+            map.MapSet = rSet;
+            rSet.Maps.Add(map);
+
+            var detached = rSet.Detach();
+            UpdateMapSet(set, detached);
+            set = detached;
+
+            return set.Maps.FirstOrDefault(m => m.ID == map.ID);
+        });
+    }
+
+    private void save(RealmMap map, MapInfo info)
+    {
+        var json = JsonConvert.SerializeObject(info);
+
+        string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(map.FileName));
+        File.WriteAllText(path, json);
     }
 }

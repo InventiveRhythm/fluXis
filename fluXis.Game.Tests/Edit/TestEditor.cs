@@ -18,7 +18,7 @@ public partial class TestEditor : FluXisTestScene
     private MapStore maps { get; set; }
 
     private ScreenStack screenStack { get; } = new() { RelativeSizeAxes = Axes.Both };
-    private Editor editor { get; set; }
+    private EditorLoader editor { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -29,7 +29,7 @@ public partial class TestEditor : FluXisTestScene
         var map = maps.MapSets.FirstOrDefault(s => s.ID == Guid.Parse("3238381d-f8f1-4d68-a88f-427ad9821eb1"))?
             .Maps.FirstOrDefault(m => m.ID == Guid.Parse("979702d3-e039-4b36-8f51-433ca28df679"));
 
-        editor = map is not null ? new Editor(map, map.GetMapInfo()) : new Editor();
+        editor = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
         screenStack.Push(editor);
     }
 }
