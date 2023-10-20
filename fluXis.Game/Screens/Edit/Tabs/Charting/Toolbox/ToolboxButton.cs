@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -17,12 +18,15 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox;
 public partial class ToolboxButton : Container, IHasTextTooltip
 {
     [Resolved]
-    private ChartingContainer chartingContainer { get; set; }
+    protected ChartingContainer ChartingContainer { get; private set; }
 
-    private BlueprintContainer blueprintContainer => chartingContainer.BlueprintContainer;
+    private BlueprintContainer blueprintContainer => ChartingContainer.BlueprintContainer;
 
     public ChartingTool Tool { get; init; }
-    public string Tooltip => Tool.Description;
+    public virtual string Tooltip => Tool.Description;
+
+    public virtual string Text => Tool.Name;
+    public virtual bool IsSelected => blueprintContainer.CurrentTool == Tool;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -77,24 +81,19 @@ public partial class ToolboxButton : Container, IHasTextTooltip
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Size = new Vector2(32),
-                                Child = icon = Tool.CreateIcon()?.With(i =>
-                                {
-                                    i.RelativeSizeAxes = Axes.Both;
-                                    i.Anchor = Anchor.Centre;
-                                    i.Origin = Anchor.Centre;
-                                }) ?? new SpriteIcon
+                                Child = icon = CreateIcon() ?? new SpriteIcon
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Icon = FontAwesome.Regular.QuestionCircle
-                                },
+                                }
                             },
                             new FluXisSpriteText
                             {
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
-                                Text = Tool.Name,
+                                Text = Text,
                                 FontSize = 28
                             }
                         }
@@ -104,19 +103,27 @@ public partial class ToolboxButton : Container, IHasTextTooltip
         };
     }
 
+    [CanBeNull]
+    protected virtual Drawable CreateIcon() => Tool.CreateIcon()?.With(i =>
+    {
+        i.RelativeSizeAxes = Axes.Both;
+        i.Anchor = Anchor.Centre;
+        i.Origin = Anchor.Centre;
+    });
+
+    public virtual void Select() => blueprintContainer.CurrentTool = Tool;
+
     protected override void LoadComplete()
     {
-        base.LoadComplete();
-
-        blueprintContainer.CurrentToolChanged += updateSelectionState;
-        updateSelectionState(null, blueprintContainer.CurrentTool);
+        blueprintContainer.CurrentToolChanged += UpdateSelectionState;
+        UpdateSelectionState();
     }
 
-    private void updateSelectionState(ChartingTool prev, ChartingTool current)
+    protected void UpdateSelectionState()
     {
-        hover.FadeTo(current == Tool ? .1f : 0, 200);
+        hover.FadeTo(IsSelected ? .1f : 0, 200);
 
-        if (current == Tool)
+        if (IsSelected)
             icon.ScaleTo(1, 800, Easing.OutElastic);
         else
             icon.ScaleTo(.8f, 200, Easing.OutQuint);
@@ -143,7 +150,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(blueprintContainer.CurrentTool == Tool ? .1f : 0, 200);
+        hover.FadeTo(IsSelected ? .1f : 0, 200);
         base.OnHoverLost(e);
     }
 
@@ -151,7 +158,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     {
         flash.FadeOutFromOne(400);
         samples.Click();
-        blueprintContainer.CurrentTool = Tool;
+        Select();
         return true;
     }
 }

@@ -77,12 +77,14 @@ public partial class ToolboxCategory : Container
                         AutoSizeAxes = Axes.Y,
                         Direction = FillDirection.Vertical,
                         Spacing = new Vector2(0, 5),
-                        Children = Tools.Select(t => new ToolboxButton { Tool = t }).ToList()
+                        Children = GetItems()
                     }
                 }
             }
         };
     }
+
+    protected virtual List<ToolboxButton> GetItems() => Tools.Select(t => new ToolboxButton { Tool = t }).ToList();
 
     public void OnSizeChanged(bool open)
     {

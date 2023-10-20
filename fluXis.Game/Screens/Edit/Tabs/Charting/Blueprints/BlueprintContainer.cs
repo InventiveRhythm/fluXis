@@ -32,15 +32,14 @@ public partial class BlueprintContainer : Container, ICursorDrag
         get => currentTool;
         set
         {
-            var previousTool = currentTool;
             currentTool = value;
             removePlacement();
 
-            CurrentToolChanged?.Invoke(previousTool, currentTool);
+            CurrentToolChanged?.Invoke();
         }
     }
 
-    public event Action<ChartingTool, ChartingTool> CurrentToolChanged;
+    public event Action CurrentToolChanged;
 
     private ChartingTool currentTool;
 

@@ -58,7 +58,8 @@ public partial class Toolbox : ExpandingContainer
                             Title = "Effects",
                             Icon = FontAwesome.Solid.Magic,
                             Tools = chartingContainer.EffectTools
-                        }
+                        },
+                        new ToolboxSnapCategory()
                     }
                 }
             }
