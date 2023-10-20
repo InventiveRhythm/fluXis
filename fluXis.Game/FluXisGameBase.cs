@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
@@ -15,6 +14,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Toolbar;
@@ -32,6 +32,7 @@ using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
 using fluXis.Resources;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -64,7 +65,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected MusicPlayer MusicPlayer;
     protected Dashboard Dashboard;
     protected BackgroundStack BackgroundStack;
-    protected ActivityManager ActivityManager;
     protected UISamples Samples;
     protected Fluxel Fluxel;
 
@@ -79,6 +79,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     private LightController lightController;
     private SkinManager skinManager;
     private ImportManager importManager;
+
+    protected Bindable<UserActivity> Activity { get; } = new();
 
     public Action OnSongChanged { get; set; }
     public virtual Drawable Overlay { get; set; }
@@ -128,11 +130,10 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(ChatOverlay = new ChatOverlay());
         dependencies.CacheAs(RegisterOverlay = new RegisterOverlay());
         dependencies.Cache(Toolbar = new Toolbar());
-        dependencies.Cache(ScreenStack = new FluXisScreenStack());
+        dependencies.Cache(ScreenStack = new FluXisScreenStack { Activity = Activity });
         dependencies.Cache(ProfileOverlay = new ProfileOverlay());
         dependencies.CacheAs(lightController = CreateLightController());
         dependencies.Cache(skinManager = new SkinManager());
-        dependencies.Cache(ActivityManager = new ActivityManager(Fluxel));
         dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
         dependencies.Cache(Dashboard = new Dashboard());
 

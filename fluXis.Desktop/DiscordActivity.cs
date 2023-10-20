@@ -1,33 +1,38 @@
-using System;
 using DiscordRPC;
 using fluXis.Game;
-using fluXis.Game.Activity;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
+using osu.Framework.Bindables;
+using osu.Framework.Logging;
 
 namespace fluXis.Desktop;
 
-public class DiscordActivity : IActivity
+public class DiscordActivity
 {
-    private static DiscordRpcClient client;
+    private Fluxel fluxel;
+    private DiscordRpcClient client;
 
-    public void Initialize()
+    public void Initialize(Fluxel fluxel, Bindable<UserActivity> bind)
     {
         client = new DiscordRpcClient("975141679583604767");
         client.Initialize();
+
+        this.fluxel = fluxel;
+
+        bind.BindValueChanged(e =>
+        {
+            var activity = e.NewValue;
+
+            if (activity == null) return;
+
+            activity.Fluxel = fluxel;
+            update(activity.Details, activity.Status, activity.Icon);
+        });
     }
 
-    public void OnRemove() => client?.Dispose();
-
-    public void Update(Fluxel fluxel, string details = "", string state = "", string largeImageKey = "", int timestamp = 0, int timeLeft = 0)
+    private void update(string state = "", string details = "", string largeImageKey = "")
     {
-        Timestamps timestamps = new Timestamps();
-
-        if (timestamp != 0)
-            timestamps.Start = DateTime.UtcNow.AddSeconds(timestamp);
-        else if (timeLeft != 0)
-            timestamps.End = DateTime.UtcNow.AddSeconds(timeLeft);
-
         Assets assets = new Assets
         {
             LargeImageKey = largeImageKey,
@@ -46,8 +51,9 @@ public class DiscordActivity : IActivity
         {
             Details = details,
             State = state,
-            Timestamps = timestamps,
             Assets = assets
         });
+
+        Logger.Log($"Discord Rich Presence updated: {state} {details} {largeImageKey}", LoggingTarget.Network);
     }
 }

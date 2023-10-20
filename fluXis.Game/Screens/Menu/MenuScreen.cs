@@ -1,5 +1,4 @@
 using System.Linq;
-using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -57,9 +56,6 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private Fluxel fluxel { get; set; }
-
-    [Resolved]
-    private ActivityManager activity { get; set; }
 
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
@@ -375,8 +371,6 @@ public partial class MenuScreen : FluXisScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        activity.Update("In the menus", "Idle", "menu");
-
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
         visualizer.FadeInFromZero(2000);
         animationText.FadeInFromZero(500);
@@ -396,7 +390,6 @@ public partial class MenuScreen : FluXisScreen
         randomizeSplash();
         showMenu();
         this.FadeIn(200);
-        activity.Update("In the menus", "Idle", "menu");
         inactivityTime = 0;
     }
 

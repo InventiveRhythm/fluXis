@@ -1,6 +1,8 @@
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Overlay.Toolbar;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -16,6 +18,8 @@ public partial class FluXisScreenStack : ScreenStack
 
     public bool AllowMusicControl => CurrentScreen is FluXisScreen { AllowMusicControl: true };
 
+    public Bindable<UserActivity> Activity { get; init; } = new();
+
     public FluXisScreenStack()
     {
         RelativeSizeAxes = Axes.Both;
@@ -25,10 +29,17 @@ public partial class FluXisScreenStack : ScreenStack
 
     private void updateScreen(IScreen last, IScreen next)
     {
-        if (next is FluXisScreen fluXisScreen)
+        if (last is FluXisScreen lastScreen)
         {
-            if (fluXisScreen.ApplyValuesAfterLoad && !fluXisScreen.IsLoaded) fluXisScreen.OnLoadComplete += _ => updateValues(fluXisScreen);
-            else updateValues(fluXisScreen);
+            Activity.UnbindFrom(lastScreen.Activity);
+        }
+
+        if (next is FluXisScreen nextScreen)
+        {
+            Activity.BindTo(nextScreen.Activity);
+
+            if (nextScreen.ApplyValuesAfterLoad && !nextScreen.IsLoaded) nextScreen.OnLoadComplete += _ => updateValues(nextScreen);
+            else updateValues(nextScreen);
         }
         else
         {

@@ -7,6 +7,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Input;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -30,6 +31,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 {
     public override float BackgroundDim => 0.75f;
     public override float BackgroundBlur => 0.5f;
+    public override UserActivity InitialActivity => new UserActivity.BrowsingMaps();
 
     [Resolved]
     private Fluxel fluxel { get; set; }

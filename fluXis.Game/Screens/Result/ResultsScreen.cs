@@ -1,4 +1,3 @@
-using fluXis.Game.Activity;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -9,6 +8,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.API.Users;
@@ -32,15 +32,13 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
 {
     public override float Zoom => 1.2f;
     public override bool AllowMusicControl => false;
+    public override UserActivity InitialActivity => new UserActivity.Results();
 
     [Resolved]
     private FluXisRealm realm { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
-
-    [Resolved]
-    private ActivityManager activity { get; set; }
 
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
@@ -183,7 +181,6 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
             }
         };
 
-        activity.Update("Viewing Results", "", "results");
         GamepadHandler.OnGamepadStatusChanged += onGamepadStatusChanged;
         onGamepadStatusChanged(GamepadHandler.GamepadConnected);
 

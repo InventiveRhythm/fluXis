@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Activity;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
@@ -12,6 +11,7 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
@@ -70,9 +70,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     public AudioClock AudioClock { get; private set; }
-
-    [Resolved]
-    private ActivityManager activity { get; set; }
 
     private bool starting = true;
     private bool restarting;
@@ -318,13 +315,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     private void updateRpc()
     {
-        string details = $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Metadata.Difficulty}]";
-        string icon = RealmMap.MapSet.OnlineID <= 0 ? "playing" : $"{fluxel.Endpoint.APIUrl}/assets/cover/{RealmMap.MapSet.OnlineID}";
-
         if (!IsPaused.Value)
-            activity.Update(Playfield.Manager.AutoPlay ? "Watching auto-play" : "Playing a map", details, icon, 0, (int)((Map.EndTime / Rate - AudioClock.CurrentTime) / 1000));
-        else
-            activity.Update("Paused", details, icon);
+        {
+            Activity.Value = Playfield.Manager.AutoPlay ? new UserActivity.WatchingReplay(RealmMap, APIUserShort.AutoPlay) : new UserActivity.Playing(RealmMap);
+        }
+        else Activity.Value = new UserActivity.Paused(RealmMap);
     }
 
     private T createHudElement<T>(T hudElement) where T : GameplayHUDElement

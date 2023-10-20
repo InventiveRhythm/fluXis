@@ -29,12 +29,12 @@ public partial class FluXisGameDesktop : FluXisGame
             LoadComponentAsync(new WindowsUpdateManager());
 
         new IPCImportChannel(Host, this);
-        ActivityManager.Add(new DiscordActivity());
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+        new DiscordActivity().Initialize(Fluxel, Activity);
 
         var args = Program.Args.ToList();
         args.RemoveAll(a => a.StartsWith("-"));

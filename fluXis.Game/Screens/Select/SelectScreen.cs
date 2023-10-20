@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
@@ -15,6 +14,7 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Screens.Edit;
@@ -49,6 +49,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     public override float BackgroundBlur => songSelectBlur.Value ? 0.25f : 0;
     public override bool ApplyValuesAfterLoad => true;
 
+    public override UserActivity InitialActivity => new UserActivity.SongSelect();
+
     [Resolved]
     private MapStore mapStore { get; set; }
 
@@ -60,9 +62,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     [Resolved]
     private AudioClock clock { get; set; }
-
-    [Resolved]
-    private ActivityManager activity { get; set; }
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
@@ -457,8 +456,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         searchBar.Show();
         footer.Show();
 
-        activity.Update("Selecting a map", "", "songselect");
-
         if (MapInfo.Value != null)
         {
             clock.RestartPoint = MapInfo.Value.Metadata.PreviewTime;
@@ -483,8 +480,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         searchBar.Show();
         footer.Show();
-
-        activity.Update("Selecting a map", "", "songselect");
 
         if (MapInfo.Value != null)
             clock.RestartPoint = MapInfo.Value.Metadata.PreviewTime;

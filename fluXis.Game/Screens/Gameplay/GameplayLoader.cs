@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.Activity;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -22,6 +23,7 @@ public partial class GameplayLoader : FluXisScreen
     public override float BackgroundDim => 0.5f;
     public override float BackgroundBlur => 0.5f;
     public override bool AllowMusicControl => false;
+    public override UserActivity InitialActivity => new UserActivity.LoadingGameplay();
 
     [Resolved]
     private AudioClock clock { get; set; }

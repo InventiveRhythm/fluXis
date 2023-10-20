@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using fluXis.Game.Activity;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -15,6 +14,7 @@ using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -69,9 +69,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     [Resolved]
     private Fluxel fluxel { get; set; }
 
-    [Resolved]
-    private ActivityManager activity { get; set; }
-
     private ITrackStore trackStore { get; set; }
 
     public RealmMap Map;
@@ -119,7 +116,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             Map.MapSet.Resources = resources;
         }
 
-        MapInfo ??= new EditorMapInfo(new MapMetadata());
+        MapInfo ??= new EditorMapInfo(new MapMetadata { Mapper = Map.Metadata.Mapper });
         MapInfo.KeyCount = Map.KeyCount;
 
         backgrounds.AddBackgroundFromMap(Map);
@@ -438,7 +435,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         bottomBar.MoveToY(0, 300, Easing.OutQuint);
         tabs.ScaleTo(1, 300, Easing.OutQuint);
 
-        activity.Update("Editing a map", "", "editor");
+        // this check wont work 100% of the time, we need a better way of storing the mappers
+        if (Map.Metadata.Mapper == fluxel.LoggedInUser?.Username)
+            Activity.Value = new UserActivity.Editing();
+        else
+            Activity.Value = new UserActivity.Modding();
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

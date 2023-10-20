@@ -208,6 +208,7 @@ public partial class MapStore : Component
     public RealmMap CreateNew()
     {
         var map = RealmMap.CreateNew();
+        map.Metadata.Mapper = fluxel.LoggedInUser?.Username ?? "Me";
         map.MapSet.Resources = resources;
         return map;
     }
