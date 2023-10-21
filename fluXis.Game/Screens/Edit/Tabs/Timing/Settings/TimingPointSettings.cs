@@ -9,9 +9,6 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
 public partial class TimingPointSettings : PointSettings<TimingPointInfo>
 {
-    [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
-
     private BasicPointSettingsField bpmField;
     private BasicPointSettingsField signatureField;
 
@@ -66,6 +63,6 @@ public partial class TimingPointSettings : PointSettings<TimingPointInfo>
         Point.BPM = bpm;
         Point.Signature = signature;
 
-        changeHandler.OnTimingPointChanged();
+        Values.MapInfo.Change(Point);
     }
 }

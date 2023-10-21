@@ -27,9 +27,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
         };
 
         AddEntry(new TimingPointEntry(point));
-        EditorValues.MapInfo.TimingPoints.Add(point);
-
-        ChangeHandler.OnTimingPointAdded();
+        EditorValues.MapInfo.Add(point);
 
         base.OnAdd();
     }
@@ -44,8 +42,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
     public override void Remove(TimingPointEntry entry)
     {
-        EditorValues.MapInfo.TimingPoints.Remove(entry.PointInfo);
-        ChangeHandler.OnTimingPointRemoved();
+        EditorValues.MapInfo.Remove(entry.PointInfo);
         base.Remove(entry);
     }
 

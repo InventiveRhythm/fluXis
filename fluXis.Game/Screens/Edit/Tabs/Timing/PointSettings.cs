@@ -1,6 +1,7 @@
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
 using fluXis.Game.Utils;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -13,6 +14,9 @@ public partial class PointSettings<T> : PointSettings
     public T Point { get; }
 
     public BasicPointSettingsField TimeField { get; }
+
+    [Resolved]
+    protected EditorValues Values { get; private set; }
 
     public PointSettings(T point)
     {

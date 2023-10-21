@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -28,13 +29,13 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
         RelativeSizeAxes = Axes.Both;
         createLines();
 
-        changeHandler.SnapDivisorChanged += scheduleRedraw;
-        changeHandler.OnTimingPointAdded += scheduleRedraw;
-        changeHandler.OnTimingPointRemoved += scheduleRedraw;
-        changeHandler.OnTimingPointChanged += scheduleRedraw;
+        changeHandler.SnapDivisorChanged += () => scheduleRedraw(null);
+        values.MapInfo.TimingPointAdded += scheduleRedraw;
+        values.MapInfo.TimingPointRemoved += scheduleRedraw;
+        values.MapInfo.TimingPointChanged += scheduleRedraw;
     }
 
-    private void scheduleRedraw()
+    private void scheduleRedraw(TimingPointInfo _)
     {
         Schedule(() =>
         {

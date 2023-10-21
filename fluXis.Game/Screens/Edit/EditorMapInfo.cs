@@ -14,6 +14,14 @@ public class EditorMapInfo : MapInfo
     public event Action<HitObjectInfo> HitObjectAdded;
     public event Action<HitObjectInfo> HitObjectRemoved;
 
+    public event Action<TimingPointInfo> TimingPointAdded;
+    public event Action<TimingPointInfo> TimingPointRemoved;
+    public event Action<TimingPointInfo> TimingPointChanged;
+
+    public event Action<ScrollVelocityInfo> ScrollVelocityAdded;
+    public event Action<ScrollVelocityInfo> ScrollVelocityRemoved;
+    public event Action<ScrollVelocityInfo> ScrollVelocityChanged;
+
     public EditorMapInfo(MapMetadata metadata)
         : base(metadata)
     {
@@ -55,6 +63,40 @@ public class EditorMapInfo : MapInfo
     {
         HitObjects.Remove(hitObject);
         HitObjectRemoved?.Invoke(hitObject);
+    }
+
+    public void Add(TimingPointInfo timingPoint)
+    {
+        TimingPoints.Add(timingPoint);
+        TimingPointAdded?.Invoke(timingPoint);
+    }
+
+    public void Remove(TimingPointInfo timingPoint)
+    {
+        TimingPoints.Remove(timingPoint);
+        TimingPointRemoved?.Invoke(timingPoint);
+    }
+
+    public void Change(TimingPointInfo timingPoint)
+    {
+        TimingPointChanged?.Invoke(timingPoint);
+    }
+
+    public void Add(ScrollVelocityInfo scrollVelocity)
+    {
+        ScrollVelocities.Add(scrollVelocity);
+        ScrollVelocityAdded?.Invoke(scrollVelocity);
+    }
+
+    public void Remove(ScrollVelocityInfo scrollVelocity)
+    {
+        ScrollVelocities.Remove(scrollVelocity);
+        ScrollVelocityRemoved?.Invoke(scrollVelocity);
+    }
+
+    public void Change(ScrollVelocityInfo scrollVelocity)
+    {
+        ScrollVelocityChanged?.Invoke(scrollVelocity);
     }
 
     public override MapEvents GetMapEvents() => MapEvents;

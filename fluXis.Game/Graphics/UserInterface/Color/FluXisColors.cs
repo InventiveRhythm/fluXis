@@ -51,7 +51,7 @@ public static class FluXisColors
     public static bool IsBright(Colour4 color)
     {
         var hsl = color.ToHSL();
-        return hsl.Z > .5f;
+        return hsl.Z >= .5f;
     }
 
     public static Colour4 DifficultyZero => Colour4.FromHex("#888888");

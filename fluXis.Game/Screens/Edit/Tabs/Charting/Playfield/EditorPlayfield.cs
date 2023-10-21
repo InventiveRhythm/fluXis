@@ -2,6 +2,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -57,7 +58,8 @@ public partial class EditorPlayfield : Container
             },
             Effects = new EditorEffectContainer(),
             timingLines = new EditorTimingLines(),
-            HitObjectContainer = new EditorHitObjectContainer()
+            HitObjectContainer = new EditorHitObjectContainer(),
+            new EditorTagContainer()
         };
 
         changeHandler.OnKeyModeChanged += count =>

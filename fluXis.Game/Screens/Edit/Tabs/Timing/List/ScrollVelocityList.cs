@@ -26,7 +26,7 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
         };
 
         AddEntry(new ScrollVelocityEntry(point));
-        EditorValues.MapInfo.ScrollVelocities.Add(point);
+        EditorValues.MapInfo.Add(point);
 
         base.OnAdd();
     }
@@ -41,7 +41,7 @@ public partial class ScrollVelocityList : TimingCategoryList<ScrollVelocityList.
 
     public override void Remove(ScrollVelocityEntry entry)
     {
-        EditorValues.MapInfo.ScrollVelocities.Remove(entry.VelocityInfo);
+        EditorValues.MapInfo.Remove(entry.VelocityInfo);
         base.Remove(entry);
     }
 

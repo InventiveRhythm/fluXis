@@ -38,7 +38,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK.Input;
@@ -140,10 +139,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         });
 
         effectHash = MapUtils.GetHash(values.MapEvents.Save());
-
-        changeHandler.OnTimingPointAdded += () => Logger.Log("Timing point added");
-        changeHandler.OnTimingPointRemoved += () => Logger.Log("Timing point removed");
-        changeHandler.OnTimingPointChanged += () => Logger.Log("Timing point changed");
 
         clock = new EditorClock(MapInfo);
         clock.ChangeSource(loadMapTrack());
