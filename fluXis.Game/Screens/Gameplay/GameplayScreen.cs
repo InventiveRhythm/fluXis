@@ -262,6 +262,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 {
                     Clock = AudioClock
                 },
+                new SkipOverlay(this),
                 failOverlay = new FailOverlay
                 {
                     Screen = this
