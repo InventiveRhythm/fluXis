@@ -39,6 +39,9 @@ public partial class MapStore : Component
     [Resolved]
     private AudioManager audio { get; set; }
 
+    [Resolved]
+    private NotificationManager notifications { get; set; }
+
     private Storage files;
     private MapResourceProvider resources;
 
@@ -366,5 +369,33 @@ public partial class MapStore : Component
 
         string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(map.FileName));
         File.WriteAllText(path, json);
+    }
+
+    public void DeleteDifficultyFromMapSet(RealmMapSet set, RealmMap map)
+    {
+        realm.RunWrite(r =>
+        {
+            var rSet = QuerySetFromRealm(r, set.ID);
+            var rMap = rSet.Maps.FirstOrDefault(m => m.ID == map.ID);
+            if (rMap == null) return;
+
+            r.Remove(rMap);
+
+            try
+            {
+                var path = rSet.GetPathForFile(map.FileName);
+                var fullPath = MapFiles.GetFullPath(path);
+                if (File.Exists(fullPath)) File.Delete(fullPath);
+            }
+            catch (Exception e)
+            {
+                notifications.SendError($"Could not delete difficulty file: {e.Message}");
+                Logger.Error(e, "Could not delete difficulty");
+            }
+
+            var oldSet = GetFromGuid(set.ID);
+            var detached = rSet.Detach();
+            UpdateMapSet(oldSet, detached);
+        });
     }
 }

@@ -188,7 +188,24 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 Enabled = () => Map.MapSet.Maps.Count > 1,
                                 Items = Map.MapSet.Maps.Where(x => x.ID != Map.ID).Select(x => new FluXisMenuItem(x.Difficulty, () => loader.SwitchTo(x))).ToList()
                             },
-                            new("Delete difficulty", FontAwesome.Solid.Trash, sendWipNotification),
+                            new("Delete difficulty", FontAwesome.Solid.Trash, () =>
+                            {
+                                Game.Overlay = new ConfirmDeletionPanel(() =>
+                                {
+                                    // delete diff
+                                    mapStore.DeleteDifficultyFromMapSet(Map.MapSet, Map);
+
+                                    // requery mapset
+                                    var set = mapStore.GetFromGuid(Map.MapSet.ID);
+
+                                    // switch to other diff
+                                    var other = set.Maps.FirstOrDefault(x => x.ID != Map.ID);
+                                    loader.SwitchTo(other);
+                                }, itemName: "difficulty");
+                            })
+                            {
+                                Enabled = () => Map.MapSet.Maps.Count > 1
+                            },
                             new FluXisMenuSpacer(),
                             new("Export", FontAwesome.Solid.BoxOpen, export),
                             new("Upload", FontAwesome.Solid.Upload, startUpload),
