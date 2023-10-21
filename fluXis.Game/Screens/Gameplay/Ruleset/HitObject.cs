@@ -106,7 +106,7 @@ public partial class HitObject : CompositeDrawable
 
         var scrollSpeed = manager.ScrollSpeed;
 
-        float hitY = receptor.Y - skinManager.CurrentSkin.GetKeymode(manager.Map.KeyCount).HitPosition;
+        float hitY = receptor.Y - skinManager.Skin.GetKeymode(manager.Map.KeyCount).HitPosition;
         notePiece.Y = (float)(hitY - .5f * ((scrollVelocityTime - manager.CurrentTime) * scrollSpeed));
 
         if (IsBeingHeld) notePiece.Y = hitY;

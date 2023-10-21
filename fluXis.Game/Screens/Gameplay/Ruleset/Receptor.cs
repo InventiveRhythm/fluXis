@@ -43,12 +43,12 @@ public partial class Receptor : CompositeDrawable
         {
             up = skinManager.GetReceptor(id + 1, Playfield.Map.KeyCount, false),
             down = skinManager.GetReceptor(id + 1, Playfield.Map.KeyCount, true),
-            hitLighting = skinManager.GetColumLighing(id + 1, Playfield.Map.KeyCount)
+            hitLighting = skinManager.GetColumnLighting(id + 1, Playfield.Map.KeyCount)
         };
 
         hitLighting.Margin = new MarginPadding
         {
-            Bottom = skinManager.CurrentSkin.GetKeymode(Playfield.Map.KeyCount).HitPosition
+            Bottom = skinManager.Skin.GetKeymode(Playfield.Map.KeyCount).HitPosition
         };
     }
 
@@ -88,7 +88,7 @@ public partial class Receptor : CompositeDrawable
             visible = current[id];
         }
 
-        var width = visible ? skinManager.CurrentSkin.GetKeymode(currentKeyCount).ColumnWidth : 0;
+        var width = visible ? skinManager.Skin.GetKeymode(currentKeyCount).ColumnWidth : 0;
 
         if (instant)
         {

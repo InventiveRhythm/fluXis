@@ -53,7 +53,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     [BackgroundDependencyLoader]
     private void load(NotificationManager notifications)
     {
-        skin = skinManager.CurrentSkin.Copy();
+        skin = skinManager.Skin.Copy();
 
         keyMode.BindValueChanged(e =>
         {

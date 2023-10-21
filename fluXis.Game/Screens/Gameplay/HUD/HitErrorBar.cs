@@ -102,7 +102,7 @@ public partial class HitErrorBar : GameplayHUDElement
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = skinManager.CurrentSkin.GetColorForJudgement(timing.Judgement)
+                    Colour = skinManager.Skin.GetColorForJudgement(timing.Judgement)
                 }
             });
         }
@@ -131,7 +131,7 @@ public partial class HitErrorBar : GameplayHUDElement
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement)
+                Colour = skinManager.Skin.GetColorForJudgement(judgement)
             }
         };
 
@@ -152,6 +152,6 @@ public partial class HitErrorBar : GameplayHUDElement
         avg /= Screen.Rate;
 
         average.MoveToX(-avg, 100, Easing.OutQuint);
-        average.Colour = skinManager.CurrentSkin.GetColorForJudgement(judgement);
+        average.Colour = skinManager.Skin.GetColorForJudgement(judgement);
     }
 }

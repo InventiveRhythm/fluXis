@@ -83,7 +83,7 @@ public partial class ResultScore : FillFlowContainer
                     comboText = new FluXisSpriteText
                     {
                         FontSize = 24,
-                        Colour = Score.FullFlawless ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Flawless) : Score.FullCombo ? skinManager.CurrentSkin.GetColorForJudgement(Judgement.Great) : Color4.White
+                        Colour = Score.FullFlawless ? skinManager.Skin.GetColorForJudgement(Judgement.Flawless) : Score.FullCombo ? skinManager.Skin.GetColorForJudgement(Judgement.Great) : Color4.White
                     }
                 }
             }

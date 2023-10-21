@@ -240,7 +240,7 @@ public partial class FailResults : Container
                 {
                     FontSize = 32,
                     Text = Judgement.ToString(),
-                    Colour = skinManager.CurrentSkin.GetColorForJudgement(Judgement)
+                    Colour = skinManager.Skin.GetColorForJudgement(Judgement)
                 },
                 countText = new FluXisSpriteText
                 {

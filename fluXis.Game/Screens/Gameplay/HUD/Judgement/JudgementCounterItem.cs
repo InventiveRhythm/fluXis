@@ -35,7 +35,7 @@ public partial class JudgementCounterItem : Container
         {
             background = new Box
             {
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(timing.Judgement),
+                Colour = skinManager.Skin.GetColorForJudgement(timing.Judgement),
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
@@ -45,7 +45,7 @@ public partial class JudgementCounterItem : Container
                 FontSize = 24,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = skinManager.CurrentSkin.GetColorForJudgement(timing.Judgement)
+                Colour = skinManager.Skin.GetColorForJudgement(timing.Judgement)
             }
         };
     }
