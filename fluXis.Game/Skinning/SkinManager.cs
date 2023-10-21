@@ -9,6 +9,8 @@ using fluXis.Game.Skinning.Json;
 using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
@@ -27,6 +29,9 @@ public partial class SkinManager : Component, ISkin
     private TextureStore textures { get; set; }
 
     [Resolved]
+    private AudioManager audio { get; set; }
+
+    [Resolved]
     private GameHost host { get; set; }
 
     private DefaultSkin defaultSkin { get; set; }
@@ -34,7 +39,7 @@ public partial class SkinManager : Component, ISkin
 
     private const string default_skin_name = "Default";
 
-    public Skin Skin => currentSkin.Skin;
+    public SkinJson SkinJson => currentSkin.SkinJson;
     public string SkinFolder { get; private set; } = default_skin_name;
     public bool CanChangeSkin { get; set; } = true;
 
@@ -49,18 +54,18 @@ public partial class SkinManager : Component, ISkin
     }
 
     [BackgroundDependencyLoader]
-    private void load(Storage storage)
+    private void load(Storage storage, ISampleStore samples)
     {
-        currentSkin = defaultSkin = new DefaultSkin(textures);
+        currentSkin = defaultSkin = new DefaultSkin(textures, samples);
         skinStorage = storage.GetStorageForDirectory("skins");
         skinName = config.GetBindable<string>(FluXisSetting.SkinName);
     }
 
-    public void UpdateAndSave(Skin newSkin)
+    public void UpdateAndSave(SkinJson newSkinJson)
     {
-        currentSkin = createCustomSkin(newSkin, SkinFolder);
+        currentSkin = createCustomSkin(newSkinJson, SkinFolder);
 
-        var json = JsonConvert.SerializeObject(Skin, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(SkinJson, Formatting.Indented);
         var path = $"{SkinFolder}/skin.json";
         skinStorage.Delete(path);
         var stream = skinStorage.GetStream(path, FileAccess.Write);
@@ -85,16 +90,31 @@ public partial class SkinManager : Component, ISkin
                 return;
             }
 
+            if (currentSkin is not DefaultSkin)
+                currentSkin.Dispose();
+
             SkinFolder = skinName.Value;
             loadConfig();
         }
     }
 
-    private LargeTextureStore createTextureStore(string folder) => new(host.Renderer, host.CreateTextureLoaderStore(new StorageBackedResourceStore(skinStorage.GetStorageForDirectory(folder))));
-    private ISkin createCustomSkin(Skin skin, string folder) => new CustomSkin(skin, createTextureStore(folder), skinStorage.GetStorageForDirectory(folder));
+    private ISkin createCustomSkin(SkinJson skinJson, string folder)
+    {
+        var storage = skinStorage.GetStorageForDirectory(folder);
+        var resources = new StorageBackedResourceStore(storage);
+        var textureStore = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(resources));
+        var sampleStore = audio.GetSampleStore(resources);
+        sampleStore.AddExtension("mp3");
+        sampleStore.AddExtension("ogg");
+        sampleStore.AddExtension("wav");
+
+        return new CustomSkin(skinJson, textureStore, storage, sampleStore);
+    }
 
     private void loadConfig()
     {
+        var skinJson = new SkinJson();
+
         try
         {
             if (skinStorage.Exists($"{SkinFolder}/skin.json"))
@@ -102,20 +122,20 @@ public partial class SkinManager : Component, ISkin
                 var stream = skinStorage.GetStream($"{SkinFolder}/skin.json");
                 var reader = new StreamReader(stream);
                 var json = reader.ReadToEnd();
-                currentSkin = createCustomSkin(JsonConvert.DeserializeObject<Skin>(json), SkinFolder);
+                skinJson = JsonConvert.DeserializeObject<SkinJson>(json);
                 Logger.Log("Loaded skin.json", LoggingTarget.Information);
             }
             else
             {
                 Logger.Log("No skin.json found, using default skin", LoggingTarget.Information);
-                currentSkin = defaultSkin;
             }
         }
         catch (Exception e)
         {
-            currentSkin = defaultSkin;
             Logger.Error(e, "Failed to load skin");
         }
+
+        currentSkin = createCustomSkin(skinJson, SkinFolder);
     }
 
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
@@ -129,4 +149,9 @@ public partial class SkinManager : Component, ISkin
     public Drawable GetReceptor(int lane, int keyCount, bool down) => currentSkin.GetReceptor(lane, keyCount, down) ?? defaultSkin.GetReceptor(lane, keyCount, down);
     public Drawable GetHitLine() => currentSkin.GetHitLine() ?? defaultSkin.GetHitLine();
     public Drawable GetJudgement(Judgement judgement) => currentSkin.GetJudgement(judgement) ?? defaultSkin.GetJudgement(judgement);
+
+    public Sample GetHitSample() => currentSkin.GetHitSample() ?? defaultSkin.GetHitSample();
+    public Sample[] GetMissSamples() => currentSkin.GetMissSamples() ?? defaultSkin.GetMissSamples();
+    public Sample GetFailSample() => currentSkin.GetFailSample() ?? defaultSkin.GetFailSample();
+    public Sample GetRestartSample() => currentSkin.GetRestartSample() ?? defaultSkin.GetRestartSample();
 }

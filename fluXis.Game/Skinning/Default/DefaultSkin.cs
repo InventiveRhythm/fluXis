@@ -1,9 +1,11 @@
+using System;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
 using fluXis.Game.Skinning.Default.Stage;
 using fluXis.Game.Skinning.Json;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 
@@ -11,16 +13,18 @@ namespace fluXis.Game.Skinning.Default;
 
 public class DefaultSkin : ISkin
 {
-    public Skin Skin { get; init; }
-    public TextureStore Textures { get; }
+    public SkinJson SkinJson { get; init; }
+    private TextureStore textures { get; }
+    private ISampleStore samples { get; }
 
-    public DefaultSkin(TextureStore textures)
+    public DefaultSkin(TextureStore textures, ISampleStore samples)
     {
-        Skin = new Skin();
-        Textures = textures;
+        SkinJson = new SkinJson();
+        this.textures = textures;
+        this.samples = samples;
     }
 
-    public Texture GetDefaultBackground() => Textures.Get("Backgrounds/default.png");
+    public Texture GetDefaultBackground() => textures.Get("Backgrounds/default.png");
     public Drawable GetStageBackground() => new DefaultStageBackground();
     public Drawable GetStageBorder(bool right) => right ? new DefaultStageBorderRight() : new DefaultStageBorderLeft();
     public Drawable GetLaneCover(bool bottom) => bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();
@@ -57,10 +61,22 @@ public class DefaultSkin : ISkin
     {
         var receptor = down ? new DefaultReceptorDown() : new DefaultReceptorUp();
         receptor.UpdateColor(lane, keyCount);
-        receptor.Height = Skin.GetKeymode(keyCount).HitPosition;
+        receptor.Height = SkinJson.GetKeymode(keyCount).HitPosition;
         return receptor;
     }
 
     public Drawable GetHitLine() => new DefaultHitLine();
     public Drawable GetJudgement(Judgement judgement) => null;
+
+    public Sample GetHitSample() => samples.Get("Gameplay/hitsound");
+    public Sample[] GetMissSamples() => new[] { samples.Get("Gameplay/combobreak") };
+    public Sample GetFailSample() => samples.Get("Gameplay/fail");
+    public Sample GetRestartSample() => samples.Get("Gameplay/restart");
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        textures?.Dispose();
+        samples?.Dispose();
+    }
 }

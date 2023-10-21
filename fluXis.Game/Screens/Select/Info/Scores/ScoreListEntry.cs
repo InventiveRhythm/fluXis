@@ -337,32 +337,32 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
                         new FluXisSpriteText
                         {
                             Text = $"FLAWLESS {ScoreInfo.Flawless}",
-                            Colour = skinManager.Skin.GetColorForJudgement(Judgement.Flawless)
+                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Flawless)
                         },
                         new FluXisSpriteText
                         {
                             Text = $"PERFECT {ScoreInfo.Perfect}",
-                            Colour = skinManager.Skin.GetColorForJudgement(Judgement.Perfect)
+                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Perfect)
                         },
                         new FluXisSpriteText
                         {
                             Text = $"GREAT {ScoreInfo.Great}",
-                            Colour = skinManager.Skin.GetColorForJudgement(Judgement.Great)
+                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Great)
                         },
                         new FluXisSpriteText
                         {
                             Text = $"ALRIGHT {ScoreInfo.Alright}",
-                            Colour = skinManager.Skin.GetColorForJudgement(Judgement.Alright)
+                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Alright)
                         },
                         new FluXisSpriteText
                         {
                             Text = $"OKAY {ScoreInfo.Okay}",
-                            Colour = skinManager.Skin.GetColorForJudgement(Judgement.Okay)
+                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Okay)
                         },
                         new FluXisSpriteText
                         {
                             Text = $"MISS {ScoreInfo.Miss}",
-                            Colour = skinManager.Skin.GetColorForJudgement(Judgement.Miss)
+                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Miss)
                         }
                     }
                 }

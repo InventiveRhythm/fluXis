@@ -121,7 +121,7 @@ public partial class JudgementDisplay : GameplayHUDElement
             skinnableTextContainer.FadeOut();
 
             text.Text = judgement.ToString();
-            text.Colour = skinManager.Skin.GetColorForJudgement(judgement);
+            text.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
             text.RotateTo(rotation).ScaleTo(1f).FadeIn().TransformSpacingTo(new Vector2(0, 0))
                 .ScaleTo(scale, 1000, Easing.OutQuint)
                 .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
@@ -130,7 +130,7 @@ public partial class JudgementDisplay : GameplayHUDElement
 
         if (judgementSplash.Value)
         {
-            circle.BorderColour = skinManager.Skin.GetColorForJudgement(judgement);
+            circle.BorderColour = skinManager.SkinJson.GetColorForJudgement(judgement);
             circle.FadeInFromZero(200)
                   .TransformTo(nameof(circle.BorderThickness), 20f)
                   .TransformTo(nameof(circle.BorderThickness), 0f, 700, Easing.OutQuint)
@@ -139,12 +139,12 @@ public partial class JudgementDisplay : GameplayHUDElement
 
             if (judgement != Scoring.Enums.Judgement.Miss)
             {
-                splash.Colour = skinManager.Skin.GetColorForJudgement(judgement);
+                splash.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
                 splash.Splat();
             }
         }
 
-        lightController.FadeColour(skinManager.Skin.GetColorForJudgement(judgement))
+        lightController.FadeColour(skinManager.SkinJson.GetColorForJudgement(judgement))
                        .FadeColour(Color4.Black, 400);
 
         if (showEarlyLate.Value && judgement != Scoring.Enums.Judgement.Flawless && judgement != Scoring.Enums.Judgement.Miss)

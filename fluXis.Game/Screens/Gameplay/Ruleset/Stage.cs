@@ -25,7 +25,7 @@ public partial class Stage : Container
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Width = skinManager.Skin.GetKeymode(playfield.Map.InitialKeyCount).ColumnWidth * playfield.Map.InitialKeyCount;
+        Width = skinManager.SkinJson.GetKeymode(playfield.Map.InitialKeyCount).ColumnWidth * playfield.Map.InitialKeyCount;
 
         currentKeyCount = playfield.Map.InitialKeyCount;
 
@@ -43,7 +43,7 @@ public partial class Stage : Container
         {
             var currentEvent = playfield.Manager.CurrentLaneSwitchEvent;
             currentKeyCount = currentEvent.Count;
-            this.ResizeWidthTo(skinManager.Skin.GetKeymode(playfield.Manager.CurrentKeyCount).ColumnWidth * playfield.Manager.CurrentKeyCount, currentEvent.Speed, Easing.OutQuint);
+            this.ResizeWidthTo(skinManager.SkinJson.GetKeymode(playfield.Manager.CurrentKeyCount).ColumnWidth * playfield.Manager.CurrentKeyCount, currentEvent.Speed, Easing.OutQuint);
         }
     }
 }

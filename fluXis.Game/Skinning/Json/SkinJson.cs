@@ -5,7 +5,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Skinning.Json;
 
-public class Skin
+public class SkinJson
 {
     [JsonProperty("1k")]
     public SkinKeymode OneKey { get; set; } = new() { ColumnWidth = 132 };
@@ -75,5 +75,5 @@ public class Skin
         catch { return Colour4.White; }
     }
 
-    public Skin Copy() => (Skin)MemberwiseClone();
+    public SkinJson Copy() => (SkinJson)MemberwiseClone();
 }

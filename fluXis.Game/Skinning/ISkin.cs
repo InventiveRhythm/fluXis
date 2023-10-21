@@ -1,13 +1,15 @@
+using System;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning.Json;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Skinning;
 
-public interface ISkin
+public interface ISkin : IDisposable
 {
-    public Skin Skin { get; }
+    public SkinJson SkinJson { get; }
 
     public Texture GetDefaultBackground();
 
@@ -24,4 +26,9 @@ public interface ISkin
     public Drawable GetHitLine();
 
     public Drawable GetJudgement(Judgement judgement);
+
+    public Sample GetHitSample();
+    public Sample[] GetMissSamples();
+    public Sample GetFailSample();
+    public Sample GetRestartSample();
 }

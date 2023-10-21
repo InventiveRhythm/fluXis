@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -13,16 +14,18 @@ public partial class GameplaySamples : Component
 
     private Sample hitSample;
     private Sample restartSample;
-    private Sample[] missSamples; // yes this is supposed to be an array, skinning will allow for multiple miss sounds
+    private Sample[] missSamples;
+    private Sample failSample;
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples, FluXisConfig config)
+    private void load(SkinManager skins, FluXisConfig config)
     {
         hitSoundVolume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
 
-        hitSample = samples.Get("Gameplay/hitsound");
-        restartSample = samples.Get("Gameplay/restart");
-        missSamples = new[] { samples.Get("Gameplay/combobreak") };
+        hitSample = skins.GetHitSample();
+        restartSample = skins.GetRestartSample();
+        missSamples = skins.GetMissSamples();
+        failSample = skins.GetFailSample();
     }
 
     protected override void LoadComplete()
@@ -35,4 +38,5 @@ public partial class GameplaySamples : Component
     public void Hit() => hitSample?.Play();
     public void Restart() => restartSample?.Play();
     public void Miss() => missSamples?[RNG.Next(0, missSamples.Length)]?.Play();
+    public void Fail() => failSample?.Play();
 }

@@ -54,7 +54,7 @@ public partial class KeyOverlay : Container
             flow.FadeIn(200).Delay(1200).FadeOut(200);
         }
 
-        Y = -skinManager.Skin.GetKeymode(keyCount).HitPosition - 50;
+        Y = -skinManager.SkinJson.GetKeymode(keyCount).HitPosition - 50;
 
         for (var i = 0; i < flow.Count; i++)
         {

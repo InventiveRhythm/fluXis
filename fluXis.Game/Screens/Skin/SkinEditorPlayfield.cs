@@ -7,7 +7,7 @@ namespace fluXis.Game.Screens.Skin;
 
 public partial class SkinEditorPlayfield : Container
 {
-    public Skinning.Json.Skin Skin { get; set; }
+    public Skinning.Json.SkinJson SkinJson { get; set; }
     public SkinManager SkinManager { get; set; }
     public int KeyMode { get; set; }
 
@@ -76,7 +76,7 @@ public partial class SkinEditorPlayfield : Container
 
     protected override void Update()
     {
-        var width = Skin.GetKeymode(KeyMode).ColumnWidth * KeyMode;
+        var width = SkinJson.GetKeymode(KeyMode).ColumnWidth * KeyMode;
         stageContainer.Width = width;
         receptorContainer.Width = width;
         hitObjectContainer.Width = width;
@@ -86,10 +86,10 @@ public partial class SkinEditorPlayfield : Container
             int index = hitObjectContainer.IndexOf(drawable);
 
             drawable.Width = 1f / KeyMode;
-            drawable.X = index * Skin.GetKeymode(KeyMode).ColumnWidth;
+            drawable.X = index * SkinJson.GetKeymode(KeyMode).ColumnWidth;
 
             float time = index * 100;
-            drawable.Y = -Skin.GetKeymode(KeyMode).HitPosition - .5f * (time * 3);
+            drawable.Y = -SkinJson.GetKeymode(KeyMode).HitPosition - .5f * (time * 3);
         }
     }
 }

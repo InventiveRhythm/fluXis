@@ -39,7 +39,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     [Resolved]
     private NotificationManager notifications { get; set; }
 
-    private Skinning.Json.Skin skin { get; set; }
+    private Skinning.Json.SkinJson skinJson { get; set; }
     private Bindable<int> keyMode { get; } = new(4);
 
     private EditorMenuBar menuBar;
@@ -53,15 +53,15 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     [BackgroundDependencyLoader]
     private void load(NotificationManager notifications)
     {
-        skin = skinManager.Skin.Copy();
+        skinJson = skinManager.SkinJson.Copy();
 
         keyMode.BindValueChanged(e =>
         {
             playfield.KeyMode = e.NewValue;
             playfield.Reload();
 
-            hitPositionTextBox.TextBox.Text = skin.GetKeymode(keyMode.Value).HitPosition.ToString();
-            columnWidthTextBox.TextBox.Text = skin.GetKeymode(keyMode.Value).ColumnWidth.ToString();
+            hitPositionTextBox.TextBox.Text = skinJson.GetKeymode(keyMode.Value).HitPosition.ToString();
+            columnWidthTextBox.TextBox.Text = skinJson.GetKeymode(keyMode.Value).ColumnWidth.ToString();
         });
 
         InternalChildren = new Drawable[]
@@ -90,7 +90,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                             {
                                 playfield = new SkinEditorPlayfield
                                 {
-                                    Skin = skin,
+                                    SkinJson = skinJson,
                                     SkinManager = skinManager,
                                     KeyMode = keyMode.Value
                                 },
@@ -128,11 +128,11 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                     hitPositionTextBox = new SkinEditorTextBox
                                                     {
                                                         Text = "Hit Position",
-                                                        DefaultText = skin.GetKeymode(keyMode.Value).HitPosition.ToString(),
+                                                        DefaultText = skinJson.GetKeymode(keyMode.Value).HitPosition.ToString(),
                                                         OnTextChanged = () =>
                                                         {
                                                             if (int.TryParse(hitPositionTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int y))
-                                                                skin.GetKeymode(keyMode.Value).HitPosition = y;
+                                                                skinJson.GetKeymode(keyMode.Value).HitPosition = y;
                                                             else
                                                                 hitPositionTextBox.TextBox.NotifyError();
                                                         }
@@ -140,11 +140,11 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                     columnWidthTextBox = new SkinEditorTextBox
                                                     {
                                                         Text = "Column Width",
-                                                        DefaultText = skin.GetKeymode(keyMode.Value).ColumnWidth.ToString(),
+                                                        DefaultText = skinJson.GetKeymode(keyMode.Value).ColumnWidth.ToString(),
                                                         OnTextChanged = () =>
                                                         {
                                                             if (int.TryParse(columnWidthTextBox.TextBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int w))
-                                                                skin.GetKeymode(keyMode.Value).ColumnWidth = w;
+                                                                skinJson.GetKeymode(keyMode.Value).ColumnWidth = w;
                                                             else
                                                                 columnWidthTextBox.TextBox.NotifyError();
                                                         }
@@ -157,39 +157,39 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = skin.GetColorForJudgement(Judgement.Flawless),
+                                                        Color = skinJson.GetColorForJudgement(Judgement.Flawless),
                                                         Text = "Flawless",
-                                                        OnColorChanged = c => skin.Judgements.Flawless = c.ToHex()
+                                                        OnColorChanged = c => skinJson.Judgements.Flawless = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = skin.GetColorForJudgement(Judgement.Perfect),
+                                                        Color = skinJson.GetColorForJudgement(Judgement.Perfect),
                                                         Text = "Perfect",
-                                                        OnColorChanged = c => skin.Judgements.Perfect = c.ToHex()
+                                                        OnColorChanged = c => skinJson.Judgements.Perfect = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = skin.GetColorForJudgement(Judgement.Great),
+                                                        Color = skinJson.GetColorForJudgement(Judgement.Great),
                                                         Text = "Great",
-                                                        OnColorChanged = c => skin.Judgements.Great = c.ToHex()
+                                                        OnColorChanged = c => skinJson.Judgements.Great = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = skin.GetColorForJudgement(Judgement.Alright),
+                                                        Color = skinJson.GetColorForJudgement(Judgement.Alright),
                                                         Text = "Alright",
-                                                        OnColorChanged = c => skin.Judgements.Alright = c.ToHex()
+                                                        OnColorChanged = c => skinJson.Judgements.Alright = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = skin.GetColorForJudgement(Judgement.Okay),
+                                                        Color = skinJson.GetColorForJudgement(Judgement.Okay),
                                                         Text = "Okay",
-                                                        OnColorChanged = c => skin.Judgements.Okay = c.ToHex()
+                                                        OnColorChanged = c => skinJson.Judgements.Okay = c.ToHex()
                                                     },
                                                     new SkinEditorColor
                                                     {
-                                                        Color = skin.GetColorForJudgement(Judgement.Miss),
+                                                        Color = skinJson.GetColorForJudgement(Judgement.Miss),
                                                         Text = "Miss",
-                                                        OnColorChanged = c => skin.Judgements.Miss = c.ToHex()
+                                                        OnColorChanged = c => skinJson.Judgements.Miss = c.ToHex()
                                                     }
                                                 }
                                             }
@@ -257,7 +257,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private void save()
     {
         notifications.SendText("Skin Saved", "", FontAwesome.Solid.Check);
-        skinManager.UpdateAndSave(skin);
+        skinManager.UpdateAndSave(skinJson);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

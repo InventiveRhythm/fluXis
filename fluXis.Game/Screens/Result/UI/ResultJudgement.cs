@@ -26,7 +26,7 @@ public partial class ResultJudgement : FillFlowContainer
             {
                 Text = Judgement.ToString(),
                 FontSize = 24,
-                Colour = skinManager.Skin.GetColorForJudgement(Judgement)
+                Colour = skinManager.SkinJson.GetColorForJudgement(Judgement)
             },
             new FluXisSpriteText
             {

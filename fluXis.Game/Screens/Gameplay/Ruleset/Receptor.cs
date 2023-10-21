@@ -48,7 +48,7 @@ public partial class Receptor : CompositeDrawable
 
         hitLighting.Margin = new MarginPadding
         {
-            Bottom = skinManager.Skin.GetKeymode(Playfield.Map.KeyCount).HitPosition
+            Bottom = skinManager.SkinJson.GetKeymode(Playfield.Map.KeyCount).HitPosition
         };
     }
 
@@ -88,7 +88,7 @@ public partial class Receptor : CompositeDrawable
             visible = current[id];
         }
 
-        var width = visible ? skinManager.Skin.GetKeymode(currentKeyCount).ColumnWidth : 0;
+        var width = visible ? skinManager.SkinJson.GetKeymode(currentKeyCount).ColumnWidth : 0;
 
         if (instant)
         {

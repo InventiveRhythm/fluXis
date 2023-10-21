@@ -138,7 +138,7 @@ public partial class ResultHitPoints : Container
             var x = (int)((image.Width - padding * 2) * (startTime == endTime ? .5f : startTime / endTime)) + padding;
             var y = (int)(image.Height / 2f - result.Difference * max_zoom);
 
-            var colour4 = skinManager.Skin.GetColorForJudgement(result.Judgement);
+            var colour4 = skinManager.SkinJson.GetColorForJudgement(result.Judgement);
             var rgb = new Rgba32(colour4.R, colour4.G, colour4.B);
 
             const int radius = 3 * max_zoom;
