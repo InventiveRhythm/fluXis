@@ -12,6 +12,7 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
@@ -57,6 +58,10 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     private InputManager inputManager;
     private double scrollAccumulation;
 
+    private Container playfieldContainer;
+    private Box dim;
+    private Toolbox.Toolbox toolbox;
+
     public EditorPlayfield Playfield { get; private set; }
     public BlueprintContainer BlueprintContainer { get; private set; }
     public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
@@ -73,7 +78,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         InternalChildren = new Drawable[]
         {
-            new Container
+            playfieldContainer = new Container
             {
                 Name = "Playfield",
                 RelativeSizeAxes = Axes.Both,
@@ -83,7 +88,13 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
                     BlueprintContainer = new BlueprintContainer { ChartingContainer = this }
                 }
             },
-            new Toolbox.Toolbox()
+            dim = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Black.Opacity(.4f),
+                Alpha = 0
+            },
+            toolbox = new Toolbox.Toolbox()
         };
     }
 
@@ -92,6 +103,12 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
         base.LoadComplete();
 
         inputManager = GetContainingInputManager();
+
+        toolbox.Expanded.BindValueChanged(e =>
+        {
+            dim.FadeTo(e.NewValue ? 1 : 0, 400, Easing.OutCubic);
+            playfieldContainer.MoveToX(e.NewValue ? 40 : 0, 500, Easing.OutCubic);
+        });
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

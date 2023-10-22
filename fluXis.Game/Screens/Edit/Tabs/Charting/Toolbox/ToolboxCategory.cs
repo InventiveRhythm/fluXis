@@ -18,6 +18,7 @@ public partial class ToolboxCategory : Container
     public IconUsage Icon { get; init; }
     public IReadOnlyList<ChartingTool> Tools { get; init; }
 
+    private Container titleWrapper;
     private FillFlowContainer title;
 
     [BackgroundDependencyLoader]
@@ -46,28 +47,33 @@ public partial class ToolboxCategory : Container
                 AutoSizeEasing = Easing.OutQuint,
                 Children = new Drawable[]
                 {
-                    title = new FillFlowContainer
+                    titleWrapper = new Container
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 30,
-                        Direction = FillDirection.Horizontal,
-                        Padding = new MarginPadding(5),
-                        Spacing = new Vector2(10),
-                        Children = new Drawable[]
+                        Child = title = new FillFlowContainer
                         {
-                            new SpriteIcon
+                            RelativeSizeAxes = Axes.X,
+                            Height = 30,
+                            Direction = FillDirection.Horizontal,
+                            Padding = new MarginPadding(5),
+                            Spacing = new Vector2(10),
+                            Children = new Drawable[]
                             {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Icon = Icon,
-                                Size = new Vector2(20)
-                            },
-                            new FluXisSpriteText
-                            {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Text = Title,
-                                FontSize = 24
+                                new SpriteIcon
+                                {
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Icon = Icon,
+                                    Size = new Vector2(20)
+                                },
+                                new FluXisSpriteText
+                                {
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Text = Title,
+                                    FontSize = 24
+                                }
                             }
                         }
                     },
@@ -88,6 +94,10 @@ public partial class ToolboxCategory : Container
 
     public void OnSizeChanged(bool open)
     {
-        title.FadeTo(open ? 1 : 0, 500, Easing.OutQuint);
+        titleWrapper.FadeIn().ResizeHeightTo(open ? 30 : 0, 200).OnComplete(_ =>
+        {
+            if (!open) titleWrapper.FadeOut();
+        });
+        title.FadeTo(open ? 1 : 0, 400);
     }
 }

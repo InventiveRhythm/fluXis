@@ -39,6 +39,7 @@ public partial class Toolbox : ExpandingContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding(padding),
+                ScrollbarVisible = false,
                 Child = categories = new FillFlowContainer<ToolboxCategory>
                 {
                     RelativeSizeAxes = Axes.X,
