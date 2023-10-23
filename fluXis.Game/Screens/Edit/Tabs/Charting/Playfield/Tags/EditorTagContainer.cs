@@ -30,6 +30,8 @@ public partial class EditorTagContainer : Container<EditorTag>
         Origin = Anchor.CentreRight;
         X = -20;
 
+        tags.Add(new PreviewPointTag(this));
+
         foreach (var timingPoint in values.MapInfo.TimingPoints)
             addTimingPoint(timingPoint);
 
