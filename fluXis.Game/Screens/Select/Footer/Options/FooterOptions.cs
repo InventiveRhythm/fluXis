@@ -11,7 +11,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Footer.Options;
 
-public partial class FooterOptions : VisibilityContainer
+public partial class FooterOptions : FocusedOverlayContainer
 {
     protected override bool StartHidden => true;
     public SelectFooterButton Button { get; set; }
@@ -124,6 +124,8 @@ public partial class FooterOptions : VisibilityContainer
     protected override bool OnClick(ClickEvent e) => true;
     protected override bool OnDragStart(DragStartEvent e) => true;
     protected override bool OnScroll(ScrollEvent e) => true;
+
+    protected override void OnFocusLost(FocusLostEvent e) => Hide();
 
     protected override void PopIn()
     {
