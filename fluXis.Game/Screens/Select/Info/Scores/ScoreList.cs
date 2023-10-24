@@ -18,6 +18,7 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Scores;
 using fluXis.Game.Online.Fluxel;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -26,6 +27,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -206,49 +208,40 @@ public partial class ScoreList : GridContainer
             case ScoreListType.Global:
                 if (map.OnlineID == -1)
                 {
-                    noScoresText.Text = "This map is not submitted online!";
-                    Schedule(() =>
-                    {
-                        noScoresText.FadeIn(200);
-                        loadingIcon.FadeOut(200);
-                    });
+                    showNotSubmittedError();
                     return;
                 }
 
-                var request = fluxel.CreateAPIRequest($"/map/{map.OnlineID}/scores", HttpMethod.Get);
-                request.Perform();
+                var globalScores = getScores($"/map/{map.OnlineID}/scores");
+                if (globalScores == null) return;
 
-                var json = request.GetResponseString();
-                var rsp = JsonConvert.DeserializeObject<APIResponse<APIScores>>(json);
+                scores.AddRange(globalScores);
+                break;
 
-                if (rsp.Status != 200)
+            case ScoreListType.Country:
+                if (map.OnlineID == -1)
                 {
-                    noScoresText.Text = "Something went wrong!";
-                    Schedule(() => noScoresText.FadeTo(1, 200));
+                    showNotSubmittedError();
                     return;
                 }
 
-                if (map.Status != rsp.Data.Map.Status)
+                var countryScores = getScores($"/map/{map.OnlineID}/scores/country");
+                if (countryScores == null) return;
+
+                scores.AddRange(countryScores);
+                break;
+
+            case ScoreListType.Club:
+                if (map.OnlineID == -1)
                 {
-                    map.MapSet.SetStatus(rsp.Data.Map.Status);
-                    realm?.RunWrite(r =>
-                    {
-                        var m = r.Find<RealmMap>(map.ID);
-                        m.MapSet.SetStatus(rsp.Data.Map.Status);
-                    });
+                    showNotSubmittedError();
+                    return;
                 }
 
-                foreach (var score in rsp.Data.Scores)
-                {
-                    scores.Add(new ScoreListEntry
-                    {
-                        ScoreInfo = score.ToScoreInfo(),
-                        Map = map,
-                        Player = UserCache.GetUser(score.UserId),
-                        Date = DateTimeOffset.FromUnixTimeSeconds(score.Time)
-                    });
-                }
+                var clubScores = getScores($"/map/{map.OnlineID}/scores/club");
+                if (clubScores == null) return;
 
+                scores.AddRange(clubScores);
                 break;
 
             default:
@@ -275,6 +268,56 @@ public partial class ScoreList : GridContainer
             noScoresText.FadeTo(scrollContainer.ScrollContent.Children.Count == 0 ? 1 : 0, 200);
             loadingIcon.FadeOut(200);
         });
+    }
+
+    private void showNotSubmittedError()
+    {
+        noScoresText.Text = "This map is not submitted online!";
+        Schedule(() =>
+        {
+            noScoresText.FadeIn(200);
+            loadingIcon.FadeOut(200);
+        });
+    }
+
+    [CanBeNull]
+    private List<ScoreListEntry> getScores(string path)
+    {
+        var request = fluxel.CreateAPIRequest(path, HttpMethod.Get);
+        request.Perform();
+
+        var json = request.GetResponseString();
+        Logger.Log(json);
+        var rsp = JsonConvert.DeserializeObject<APIResponse<APIScores>>(json);
+
+        if (rsp.Status != 200)
+        {
+            noScoresText.Text = rsp.Message;
+            Schedule(() =>
+            {
+                noScoresText.FadeTo(1, 200);
+                loadingIcon.FadeOut(200);
+            });
+            return null;
+        }
+
+        if (map.Status != rsp.Data.Map.Status)
+        {
+            map.MapSet.SetStatus(rsp.Data.Map.Status);
+            realm?.RunWrite(r =>
+            {
+                var m = r.Find<RealmMap>(map.ID);
+                m.MapSet.SetStatus(rsp.Data.Map.Status);
+            });
+        }
+
+        return rsp.Data.Scores.Select(x => new ScoreListEntry
+        {
+            ScoreInfo = x.ToScoreInfo(),
+            Map = map,
+            Player = UserCache.GetUser(x.UserId),
+            Date = DateTimeOffset.FromUnixTimeSeconds(x.Time)
+        }).ToList();
     }
 
     private void addScore(ScoreListEntry entry, int index = -1)
@@ -315,6 +358,7 @@ public partial class ScoreList : GridContainer
                 ScoreListType.Global => Colour4.FromHSV(30f / 360f, .6f, 1f),
                 ScoreListType.Country => Colour4.FromHSV(0f, .6f, 1f),
                 ScoreListType.Friends => Colour4.FromHSV(210f / 360f, .6f, 1f),
+                ScoreListType.Club => Colour4.FromHSV(270f / 360f, .6f, 1f),
                 _ => FluXisColors.Background4
             };
 
@@ -350,7 +394,8 @@ public partial class ScoreList : GridContainer
                         Shear = new Vector2(-.1f, 0),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Colour = FluXisColors.TextDark
+                        Colour = Colour4.Black,
+                        Alpha = .75f
                     }
                 }
             };
@@ -399,5 +444,6 @@ public enum ScoreListType
     Local,
     Global,
     Country,
-    Friends
+    Friends,
+    Club
 }
