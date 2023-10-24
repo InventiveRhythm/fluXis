@@ -27,13 +27,13 @@ public class CustomSkin : ISkin
 
     public Texture GetDefaultBackground()
     {
-        const string path = "UserInterface/background.png";
+        string path = SkinJson.GetOverriderOrDefault("UserInterface/background") + ".png";
         return storage.Exists(path) ? textures.Get(path) : null;
     }
 
     public Drawable GetStageBackground()
     {
-        const string path = "Stage/background.png";
+        string path = SkinJson.GetOverriderOrDefault("Stage/background") + ".png";
 
         if (storage.Exists(path))
         {
@@ -52,7 +52,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetStageBorder(bool right)
     {
-        var path = $"Stage/border-{(right ? "right" : "left")}.png";
+        var path = SkinJson.GetOverriderOrDefault($"Stage/border-{(right ? "right" : "left")}") + ".png";
 
         if (storage.Exists(path))
         {
@@ -71,7 +71,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetLaneCover(bool bottom)
     {
-        var path = $"Stage/lane-cover-{(bottom ? "bottom" : "top")}.png";
+        var path = SkinJson.GetOverriderOrDefault($"Stage/lane-cover-{(bottom ? "bottom" : "top")}") + ".png";
 
         if (storage.Exists(path))
         {
@@ -90,7 +90,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetHitObject(int lane, int keyCount)
     {
-        var path = $"HitObjects/Note/{keyCount}k-{lane}.png";
+        var path = SkinJson.GetOverriderOrDefault($"HitObjects/Note/{keyCount}k-{lane}") + ".png";
 
         if (storage.Exists(path))
         {
@@ -109,7 +109,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetLongNoteBody(int lane, int keyCount)
     {
-        var path = $"HitObjects/LongNoteBody/{keyCount}k-{lane}.png";
+        var path = SkinJson.GetOverriderOrDefault($"HitObjects/LongNoteBody/{keyCount}k-{lane}") + ".png";
 
         if (storage.Exists(path))
         {
@@ -128,7 +128,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetLongNoteEnd(int lane, int keyCount)
     {
-        var path = $"HitObjects/LongNoteEnd/{keyCount}k-{lane}.png";
+        var path = SkinJson.GetOverriderOrDefault($"HitObjects/LongNoteEnd/{keyCount}k-{lane}") + ".png";
 
         if (storage.Exists(path))
         {
@@ -147,7 +147,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetColumnLighting(int lane, int keyCount)
     {
-        const string path = "Lighting/column-lighting.png";
+        string path = SkinJson.GetOverriderOrDefault("Lighting/column-lighting") + ".png";
 
         if (storage.Exists(path))
         {
@@ -166,7 +166,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetReceptor(int lane, int keyCount, bool down)
     {
-        var path = $"Receptor/{keyCount}k-{lane}-{(down ? "down" : "up")}.png";
+        var path = SkinJson.GetOverriderOrDefault($"Receptor/{keyCount}k-{lane}-{(down ? "down" : "up")}") + ".png";
 
         if (storage.Exists(path))
         {
@@ -185,7 +185,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetHitLine()
     {
-        const string path = "Stage/hitline.png";
+        string path = SkinJson.GetOverriderOrDefault("Stage/hitline") + ".png";
 
         if (storage.Exists(path))
         {
@@ -202,7 +202,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetJudgement(Judgement judgement)
     {
-        var path = $"Judgement/{judgement.ToString().ToLower()}.png";
+        var path = SkinJson.GetOverriderOrDefault($"Judgement/{judgement.ToString().ToLower()}") + ".png";
         return storage.Exists(path) ? new Sprite { Texture = textures.Get(path) } : null;
     }
 

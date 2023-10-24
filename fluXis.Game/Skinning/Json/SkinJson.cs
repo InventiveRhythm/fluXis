@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Scoring.Enums;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
@@ -40,6 +42,9 @@ public class SkinJson
     [JsonProperty("judgements")]
     public SkinJudgements Judgements { get; set; } = new();
 
+    [JsonProperty("overrides")]
+    public Dictionary<string, string> Overrides { get; set; } = new();
+
     public SkinKeymode GetKeymode(int keyCount)
     {
         return keyCount switch
@@ -74,6 +79,11 @@ public class SkinJson
         try { return Colour4.FromHex(hex); }
         catch { return Colour4.White; }
     }
+
+    [CanBeNull]
+    public string GetOverride(string key) => Overrides.TryGetValue(key, out var value) ? value : null;
+
+    public string GetOverriderOrDefault(string key) => GetOverride(key) ?? key;
 
     public SkinJson Copy() => (SkinJson)MemberwiseClone();
 }
