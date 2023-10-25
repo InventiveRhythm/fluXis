@@ -46,6 +46,17 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = "Select",
                 Keybinds = new object[] { FluXisGlobalKeybind.Select }
             },
+            new KeybindSectionTitle { Text = "Song Select" },
+            new SettingsKeybind
+            {
+                Label = "Decrease Rate",
+                Keybinds = new object[] { FluXisGlobalKeybind.DecreaseRate }
+            },
+            new SettingsKeybind
+            {
+                Label = "Increase Rate",
+                Keybinds = new object[] { FluXisGlobalKeybind.IncreaseRate }
+            },
             new KeybindSectionTitle { Text = "Editing" },
             new SettingsKeybind
             {

@@ -10,6 +10,7 @@ namespace fluXis.Game.Input;
 public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlobalKeybind>, IHandleGlobalKeyboardInput, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     private readonly IKeyBindingHandler<FluXisGlobalKeybind> handler;
+
     public GlobalKeybindContainer(FluXisGameBase game, FluXisRealm realm)
         : base(realm, SimultaneousBindingMode.None, KeyCombinationMatchingMode.Modifiers)
     {
@@ -42,6 +43,8 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(InputKey.F6, FluXisGlobalKeybind.MusicPause),
         new KeyBinding(InputKey.F7, FluXisGlobalKeybind.MusicNext),
         new KeyBinding(InputKey.F8, FluXisGlobalKeybind.ToggleMusicPlayer),
+        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.Minus), FluXisGlobalKeybind.DecreaseRate),
+        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.Plus), FluXisGlobalKeybind.IncreaseRate),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Left), FluXisGlobalKeybind.VolumeDecrease),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Right), FluXisGlobalKeybind.VolumeIncrease),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Up), FluXisGlobalKeybind.VolumePreviousCategory),
@@ -85,6 +88,11 @@ public enum FluXisGlobalKeybind
     MusicNext,
     ToggleMusicPlayer,
 
+    // SongSelect Keybinds
+    DecreaseRate,
+    IncreaseRate,
+
+    // Volume Keybinds
     VolumeDecrease,
     VolumeIncrease,
     VolumePreviousCategory,

@@ -26,6 +26,7 @@ public partial class ModSelector : Container
     private readonly Dictionary<IMod, ModEntry> mappings = new();
 
     public List<IMod> SelectedMods { get; } = new();
+    public ModSelectRate RateMod { get; private set; }
 
     private ClickableContainer background;
     private ClickableContainer content;
@@ -149,7 +150,7 @@ public partial class ModSelector : Container
                                                         AutoSizeAxes = Axes.Y,
                                                         Padding = new MarginPadding { Horizontal = 5 },
                                                         Margin = new MarginPadding { Bottom = 10 },
-                                                        Child = new ModSelectRate { Selector = this }
+                                                        Child = RateMod = new ModSelectRate { Selector = this }
                                                     },
                                                     new FillFlowContainer<FillFlowContainer<ModCategory>>
                                                     {

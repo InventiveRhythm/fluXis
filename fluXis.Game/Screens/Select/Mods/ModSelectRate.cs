@@ -21,7 +21,7 @@ public partial class ModSelectRate : Container
 
     public ModSelector Selector { get; set; }
 
-    private BindableFloat rateBindable;
+    public BindableFloat RateBindable { get; private set; }
     private RateMod mod;
 
     private FluXisSpriteText rateText;
@@ -30,7 +30,7 @@ public partial class ModSelectRate : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        rateBindable = new BindableFloat(1f)
+        RateBindable = new BindableFloat(1f)
         {
             MinValue = 0.5f,
             MaxValue = 3f,
@@ -117,9 +117,9 @@ public partial class ModSelectRate : Container
                                 },
                                 new FluXisSlider<float>
                                 {
-                                    Bindable = rateBindable,
+                                    Bindable = RateBindable,
                                     RelativeSizeAxes = Axes.X,
-                                    Step = rateBindable.Precision,
+                                    Step = RateBindable.Precision,
                                     Margin = new MarginPadding { Top = 35 }
                                 },
                                 new Container
@@ -142,11 +142,8 @@ public partial class ModSelectRate : Container
                 }
             }
         };
-    }
 
-    protected override void LoadComplete()
-    {
-        rateBindable.BindValueChanged(e =>
+        RateBindable.BindValueChanged(e =>
         {
             var rate = e.NewValue;
 
@@ -163,7 +160,7 @@ public partial class ModSelectRate : Container
 
             int multiplier = (int)Math.Round(mod.ScoreMultiplier * 100) - 100;
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
-        }, true);
+        });
     }
 
     private partial class SliderTickMark : Container

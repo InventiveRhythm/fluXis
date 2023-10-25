@@ -536,10 +536,20 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
                 this.Exit();
                 return true;
+
+            case FluXisGlobalKeybind.DecreaseRate:
+                changeRate(-.05f);
+                return true;
+
+            case FluXisGlobalKeybind.IncreaseRate:
+                changeRate(.05f);
+                return true;
         }
 
         return false;
     }
+
+    private void changeRate(float by) => ModSelector.RateMod.RateBindable.Value += by;
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
