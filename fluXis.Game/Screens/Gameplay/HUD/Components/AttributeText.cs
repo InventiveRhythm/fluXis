@@ -10,7 +10,7 @@ public partial class AttributeText : GameplayHUDComponent
     private void load()
     {
         var type = Settings.GetSetting("type", AttributeType.Title);
-        var size = Settings.GetSetting("size", 32f);
+        var size = (float)Settings.GetSetting("size", 32d); // the json gets parsed as a double
         var text = Settings.GetSetting("text", "{value}");
 
         AutoSizeAxes = Axes.Both;
@@ -36,10 +36,10 @@ public partial class AttributeText : GameplayHUDComponent
     }
 }
 
-public enum AttributeType
+public enum AttributeType : long
 {
-    Title,
-    Artist,
-    Difficulty,
-    Mapper
+    Title = 0,
+    Artist = 1,
+    Difficulty = 2,
+    Mapper = 3
 }
