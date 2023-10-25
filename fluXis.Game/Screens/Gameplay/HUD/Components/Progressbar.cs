@@ -7,9 +7,9 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class Progressbar : GameplayHUDElement
+public partial class Progressbar : GameplayHUDComponent
 {
     [Resolved]
     private AudioClock clock { get; set; }
@@ -22,8 +22,6 @@ public partial class Progressbar : GameplayHUDElement
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.TopLeft;
-        Origin = Anchor.TopLeft;
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Padding = new MarginPadding(20);
@@ -99,9 +97,9 @@ public partial class Progressbar : GameplayHUDElement
         [BackgroundDependencyLoader]
         private void load()
         {
-            Masking = true;
-            Height = 10;
             RelativeSizeAxes = Axes.X;
+            Height = 10;
+            Masking = true;
 
             InternalChildren = new[]
             {

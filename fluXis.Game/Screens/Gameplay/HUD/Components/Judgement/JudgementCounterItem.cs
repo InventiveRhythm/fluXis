@@ -7,7 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Screens.Gameplay.HUD.Judgement;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components.Judgement;
 
 public partial class JudgementCounterItem : Container
 {

@@ -2,30 +2,30 @@ using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class AttributeText : GameplayHUDElement
+public partial class AttributeText : GameplayHUDComponent
 {
-    public string Text { get; init; } = "{value}";
-    public float FontSize { get; init; } = 32;
-    public AttributeType AttributeType { get; init; } = AttributeType.Title;
-
     [BackgroundDependencyLoader]
     private void load()
     {
+        var type = Settings.GetSetting("type", AttributeType.Title);
+        var size = Settings.GetSetting("size", 32f);
+        var text = Settings.GetSetting("text", "{value}");
+
         AutoSizeAxes = Axes.Both;
 
         Add(new FluXisSpriteText
         {
-            FontSize = FontSize,
+            FontSize = size,
             Shadow = true,
-            Text = Text.Replace("{value}", getValue())
+            Text = text.Replace("{value}", getValue(type))
         });
     }
 
-    private string getValue()
+    private string getValue(AttributeType type)
     {
-        return AttributeType switch
+        return type switch
         {
             AttributeType.Title => Screen.RealmMap.Metadata.Title,
             AttributeType.Artist => Screen.RealmMap.Metadata.Artist,

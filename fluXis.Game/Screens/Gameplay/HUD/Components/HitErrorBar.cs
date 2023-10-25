@@ -10,9 +10,9 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class HitErrorBar : GameplayHUDElement
+public partial class HitErrorBar : GameplayHUDComponent
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
@@ -28,11 +28,8 @@ public partial class HitErrorBar : GameplayHUDElement
     {
         scaleBind = config.GetBindable<float>(FluXisSetting.HitErrorScale);
 
-        Anchor = Anchor.Centre;
-        Origin = Anchor.TopCentre;
         AutoSizeAxes = Axes.Y;
         Width = Screen.HitWindows.TimingFor(Screen.HitWindows.LowestHitable) * 2f / Screen.Rate;
-        Y = 50;
 
         Screen.JudgementProcessor.ResultAdded += addHit;
 

@@ -4,9 +4,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class AccuracyDisplay : GameplayHUDElement
+public partial class AccuracyDisplay : GameplayHUDComponent
 {
     private FluXisSpriteText accuracyText;
     private DrawableScoreRank drawableScoreRank;
@@ -15,15 +15,12 @@ public partial class AccuracyDisplay : GameplayHUDElement
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.Centre;
-        Origin = Anchor.TopCentre;
+        AutoSizeAxes = Axes.Both;
 
         InternalChild = new FillFlowContainer
         {
             AutoSizeAxes = Axes.Both,
             Direction = FillDirection.Horizontal,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.TopCentre,
             Children = new Drawable[]
             {
                 drawableScoreRank = new DrawableScoreRank { Size = 32 },

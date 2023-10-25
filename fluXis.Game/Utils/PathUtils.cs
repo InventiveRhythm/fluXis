@@ -36,4 +36,22 @@ public static class PathUtils
                 break;
         }
     }
+
+    public static void OpenFile(string path)
+    {
+        switch (RuntimeInfo.OS)
+        {
+            case RuntimeInfo.Platform.Windows:
+                Process.Start("explorer.exe", "/select, " + path);
+                break;
+
+            case RuntimeInfo.Platform.macOS:
+                Process.Start("open", path);
+                break;
+
+            case RuntimeInfo.Platform.Linux:
+                Process.Start("xdg-open", path);
+                break;
+        }
+    }
 }

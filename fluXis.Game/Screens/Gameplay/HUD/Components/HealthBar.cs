@@ -12,9 +12,9 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Utils;
 using osuTK;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class HealthBar : GameplayHUDElement
+public partial class HealthBar : GameplayHUDComponent
 {
     private HitObjectManager manager => Screen.Playfield.Manager;
     private float health = 0;
@@ -30,11 +30,8 @@ public partial class HealthBar : GameplayHUDElement
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomLeft;
         Width = 40;
         Height = 500;
-        Y = -40;
 
         InternalChildren = new Drawable[]
         {
@@ -101,8 +98,6 @@ public partial class HealthBar : GameplayHUDElement
 
     protected override void Update()
     {
-        X = Screen.Playfield.Stage.Width / 2 + 20 + Screen.Playfield.X;
-
         if (!showingIcon && Screen.HealthProcessor.FailedAlready)
         {
             showingIcon = true;

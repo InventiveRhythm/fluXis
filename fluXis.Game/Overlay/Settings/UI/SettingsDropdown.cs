@@ -19,10 +19,23 @@ namespace fluXis.Game.Overlay.Settings.UI;
 
 public partial class SettingsDropdown<T> : SettingsItem
 {
+    private IEnumerable<T> items = Enumerable.Empty<T>();
     public Bindable<T> Bindable { get; set; }
-    public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
+
+    public IEnumerable<T> Items
+    {
+        get => items;
+        set
+        {
+            items = value;
+
+            if (menu != null) menu.Items = items;
+        }
+    }
 
     public override bool IsDefault => Bindable.IsDefault;
+
+    private SettingsDropdownMenu menu;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -31,7 +44,7 @@ public partial class SettingsDropdown<T> : SettingsItem
         Content.RelativeSizeAxes = Axes.X;
         Content.AutoSizeAxes = Axes.Y;
 
-        Add(new SettingsDropdownMenu
+        Add(menu = new SettingsDropdownMenu
         {
             Items = Items,
             Current = Bindable

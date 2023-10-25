@@ -19,7 +19,6 @@ using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.HUD;
-using fluXis.Game.Screens.Gameplay.HUD.Judgement;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
 using fluXis.Game.Screens.Gameplay.Overlay.Effect;
@@ -70,6 +69,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     public AudioClock AudioClock { get; private set; }
+
+    private DependencyContainer dependencies;
 
     private bool starting = true;
     private bool restarting;
@@ -124,9 +125,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         ReleaseWindows = new ReleaseWindows(Rate);
     }
 
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples, FluXisConfig config)
     {
+        dependencies.CacheAs(this);
+
         this.config = config;
         hudVisibility = config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
 
@@ -186,56 +191,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
-                        createHudElement(new ComboCounter()),
-                        createHudElement(new AccuracyDisplay()),
-                        createHudElement(new Progressbar()),
-                        createHudElement(new JudgementDisplay()),
-                        createHudElement(new JudgementCounter()),
-                        createHudElement(new HealthBar()),
-                        createHudElement(new HitErrorBar()),
-                        createHudElement(new AttributeText
-                        {
-                            Anchor = Anchor.BottomLeft,
-                            Origin = Anchor.BottomLeft,
-                            Margin = new MarginPadding(10)
-                            {
-                                Horizontal = 20
-                            },
-                            AttributeType = AttributeType.Title,
-                            FontSize = 48
-                        }),
-                        createHudElement(new AttributeText
-                        {
-                            Anchor = Anchor.BottomLeft,
-                            Origin = Anchor.BottomLeft,
-                            Margin = new MarginPadding(10)
-                            {
-                                Bottom = 52, Horizontal = 20
-                            },
-                            AttributeType = AttributeType.Artist
-                        }),
-                        createHudElement(new AttributeText
-                        {
-                            Anchor = Anchor.BottomRight,
-                            Origin = Anchor.BottomRight,
-                            Margin = new MarginPadding(10)
-                            {
-                                Horizontal = 20
-                            },
-                            AttributeType = AttributeType.Difficulty,
-                            FontSize = 48
-                        }),
-                        createHudElement(new AttributeText
-                        {
-                            Anchor = Anchor.BottomRight,
-                            Origin = Anchor.BottomRight,
-                            Margin = new MarginPadding(10)
-                            {
-                                Bottom = 52, Horizontal = 20
-                            },
-                            AttributeType = AttributeType.Mapper,
-                            Text = "mapped by {value}"
-                        }),
+                        new GameplayHUD(),
                         new ModsDisplay
                         {
                             Screen = this
@@ -323,9 +279,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         else Activity.Value = new UserActivity.Paused(RealmMap);
     }
 
-    private T createHudElement<T>(T hudElement) where T : GameplayHUDElement
+    private T createHudElement<T>(T hudElement) where T : GameplayHUDComponent
     {
-        hudElement.Screen = this;
         return hudElement;
     }
 

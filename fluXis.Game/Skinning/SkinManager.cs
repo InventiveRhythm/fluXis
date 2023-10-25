@@ -48,7 +48,7 @@ public partial class SkinManager : Component, ISkin
 
     public IEnumerable<string> GetSkinNames()
     {
-        string[] skinNames = { "Default" };
+        string[] skinNames = { default_skin_name };
         skinNames = skinNames.Concat(skinStorage.GetDirectories("")).ToArray();
         return skinNames;
     }

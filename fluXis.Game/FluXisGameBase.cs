@@ -27,6 +27,7 @@ using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
+using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
@@ -136,6 +137,10 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(skinManager = new SkinManager());
         dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
         dependencies.Cache(Dashboard = new Dashboard());
+
+        var layoutManager = new LayoutManager();
+        LoadComponent(layoutManager);
+        dependencies.Cache(layoutManager);
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 

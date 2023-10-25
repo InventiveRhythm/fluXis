@@ -2,19 +2,16 @@ using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class ComboCounter : GameplayHUDElement
+public partial class ComboCounter : GameplayHUDComponent
 {
     private FluXisSpriteText text;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        AutoSizeAxes = Axes.X;
-        Height = 64;
-        Anchor = Anchor.Centre;
-        Origin = Anchor.BottomCentre;
+        AutoSizeAxes = Axes.Both;
 
         InternalChild = text = new FluXisSpriteText
         {

@@ -13,9 +13,9 @@ using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Screens.Gameplay.HUD;
+namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
-public partial class JudgementDisplay : GameplayHUDElement
+public partial class JudgementDisplay : GameplayHUDComponent
 {
     [Resolved]
     private LightController lightController { get; set; }
@@ -42,10 +42,6 @@ public partial class JudgementDisplay : GameplayHUDElement
         judgementSplash = config.GetBindable<bool>(FluXisSetting.JudgementSplash);
 
         Screen.JudgementProcessor.ResultAdded += popUp;
-
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
-        Y = 150;
 
         InternalChildren = new Drawable[]
         {
