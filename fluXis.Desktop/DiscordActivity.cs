@@ -1,3 +1,4 @@
+using System;
 using DiscordRPC;
 using fluXis.Game;
 using fluXis.Game.Online.Activity;
@@ -49,8 +50,8 @@ public class DiscordActivity
 
         client?.SetPresence(new RichPresence
         {
-            Details = details,
-            State = state,
+            Details = details.Substring(0, Math.Min(128, details.Length)),
+            State = state.Substring(0, Math.Min(128, state.Length)),
             Assets = assets
         });
 
