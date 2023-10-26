@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -148,11 +149,22 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                                 }
                                             }
                                         },
-                                        new DifficultyChip
+                                        new FillFlowContainer
                                         {
-                                            Width = 50,
-                                            Height = 14,
-                                            Rating = map.Filters.NotesPerSecond
+                                            AutoSizeAxes = Axes.Both,
+                                            Direction = FillDirection.Horizontal,
+                                            Children = new Drawable[]
+                                            {
+                                                new DifficultyChip
+                                                {
+                                                    Width = 50,
+                                                    Height = 14,
+                                                    Rating = map.Filters.NotesPerSecond,
+                                                    Margin = new MarginPadding { Right = 5 }
+                                                },
+                                                new GimmickIcon(FluXisIconType.LaneSwitch, "Contains lane switches", map.Filters.HasLaneSwitch),
+                                                new GimmickIcon(FluXisIconType.Flash, "Contains flashes", map.Filters.HasFlash)
+                                            }
                                         }
                                     }
                                 }
@@ -216,5 +228,21 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             outline.FadeIn(200);
         else
             outline.FadeOut(200);
+    }
+
+    private partial class GimmickIcon : FluXisIcon, IHasTextTooltip
+    {
+        public string Tooltip { get; }
+
+        public GimmickIcon(FluXisIconType type, string tooltip, bool show)
+            : base()
+        {
+            Size = new Vector2(14);
+            Type = type;
+            Tooltip = tooltip;
+            Alpha = show ? 1 : 0;
+        }
+
+        protected override bool OnHover(HoverEvent e) => true;
     }
 }
