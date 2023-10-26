@@ -129,7 +129,7 @@ public partial class LayoutManager : Component
                         Settings = new Dictionary<string, object>
                         {
                             { "type", AttributeType.Title },
-                            { "size", 48f }
+                            { "size", 48d }
                         }
                     }
                 },
@@ -157,7 +157,7 @@ public partial class LayoutManager : Component
                         Settings = new Dictionary<string, object>
                         {
                             { "type", AttributeType.Difficulty },
-                            { "size", 48f }
+                            { "size", 48d }
                         }
                     }
                 },
