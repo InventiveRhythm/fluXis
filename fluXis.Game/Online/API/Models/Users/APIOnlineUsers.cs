@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Users;
+namespace fluXis.Game.Online.API.Models.Users;
 
 public class APIOnlineUsers
 {

@@ -9,7 +9,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Map;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;

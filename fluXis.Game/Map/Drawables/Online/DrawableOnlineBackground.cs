@@ -1,4 +1,4 @@
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

@@ -1,7 +1,7 @@
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Account;
+namespace fluXis.Game.Online.API.Models.Account;
 
 public class APIRegisterResponse
 {

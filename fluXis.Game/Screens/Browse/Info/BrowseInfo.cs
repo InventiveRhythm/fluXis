@@ -10,7 +10,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Import;
 using fluXis.Game.Map;
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;

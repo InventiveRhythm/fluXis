@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Multi;
+using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Notifications;

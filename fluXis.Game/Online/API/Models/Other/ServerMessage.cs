@@ -1,7 +1,7 @@
 ﻿using fluXis.Game.Overlay.Notifications.Floating;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Other;
+namespace fluXis.Game.Online.API.Models.Other;
 
 public class ServerMessage
 {

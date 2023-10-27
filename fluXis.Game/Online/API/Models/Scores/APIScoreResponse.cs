@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Scores;
+namespace fluXis.Game.Online.API.Models.Scores;
 
 public class APIScoreResponse
 {

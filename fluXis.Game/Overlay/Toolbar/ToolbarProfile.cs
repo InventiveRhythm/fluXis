@@ -1,7 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Profile;

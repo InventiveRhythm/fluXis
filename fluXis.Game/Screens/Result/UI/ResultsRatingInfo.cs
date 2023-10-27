@@ -2,7 +2,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;

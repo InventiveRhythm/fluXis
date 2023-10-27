@@ -4,7 +4,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Drawables.Online;
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;

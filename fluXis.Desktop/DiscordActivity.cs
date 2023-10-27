@@ -2,7 +2,7 @@ using System;
 using DiscordRPC;
 using fluXis.Game;
 using fluXis.Game.Online.Activity;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;

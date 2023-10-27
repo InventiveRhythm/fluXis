@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using fluXis.Game.Online.API.Maps;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Models.Users;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Multi;
+namespace fluXis.Game.Online.API.Models.Multi;
 
 public class MultiplayerRoom
 {

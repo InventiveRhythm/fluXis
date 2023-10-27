@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Multi;
+namespace fluXis.Game.Online.API.Models.Multi;
 
 public class MultiplayerRoomSettings
 {

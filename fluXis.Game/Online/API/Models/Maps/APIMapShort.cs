@@ -1,7 +1,7 @@
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Maps;
+namespace fluXis.Game.Online.API.Models.Maps;
 
 public class APIMapShort
 {

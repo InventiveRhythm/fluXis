@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Scores;
+namespace fluXis.Game.Online.API.Models.Scores;
 
 public class APIScores
 {

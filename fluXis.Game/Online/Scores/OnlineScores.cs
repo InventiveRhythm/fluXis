@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Scoring;
 using Newtonsoft.Json;
 

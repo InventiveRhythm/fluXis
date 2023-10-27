@@ -1,8 +1,8 @@
-using fluXis.Game.Online.API.Maps;
-using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Models.Scores;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Users;
+namespace fluXis.Game.Online.API.Models.Users;
 
 public class APIUser : APIUserShort
 {

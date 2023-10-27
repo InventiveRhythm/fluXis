@@ -1,5 +1,5 @@
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using JetBrains.Annotations;
 
 namespace fluXis.Game.Online.Activity;

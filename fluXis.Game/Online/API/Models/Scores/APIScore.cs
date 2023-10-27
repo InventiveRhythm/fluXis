@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Scores;
+namespace fluXis.Game.Online.API.Models.Scores;
 
 public class APIScore
 {

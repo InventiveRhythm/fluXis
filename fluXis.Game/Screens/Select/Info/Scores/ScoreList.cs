@@ -16,7 +16,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.Fluxel;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

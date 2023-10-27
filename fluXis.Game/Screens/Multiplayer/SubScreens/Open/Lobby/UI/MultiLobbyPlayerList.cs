@@ -1,8 +1,8 @@
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Online.API.Users;
-using fluXis.Game.Online.API.Multi;
+using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

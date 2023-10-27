@@ -9,7 +9,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Screens.Browse.Info;
 using fluXis.Game.Screens.Browse.Search;

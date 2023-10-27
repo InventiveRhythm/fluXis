@@ -1,6 +1,6 @@
 ﻿using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;

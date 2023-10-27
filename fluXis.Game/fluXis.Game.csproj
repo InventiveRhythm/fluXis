@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Stores\" />
+    <Folder Include="Online\API\Models\" />
     <Folder Include="Screens\Edit\Tabs\Charting\UI\" />
   </ItemGroup>
 </Project>

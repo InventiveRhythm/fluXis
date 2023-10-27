@@ -1,6 +1,6 @@
 using System;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Online;
 using Newtonsoft.Json;

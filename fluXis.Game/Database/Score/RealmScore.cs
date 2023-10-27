@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Users;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using JetBrains.Annotations;

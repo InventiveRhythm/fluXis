@@ -3,7 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
-using fluXis.Game.Online.API.Other;
+using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;

@@ -1,5 +1,5 @@
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Scores;
+using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Screens.Result.UI;
 using osu.Framework.Allocation;
 

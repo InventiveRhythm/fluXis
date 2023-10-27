@@ -4,7 +4,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
-using fluXis.Game.Online.API.Account;
+using fluXis.Game.Online.API.Models.Account;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using osu.Framework.Allocation;
