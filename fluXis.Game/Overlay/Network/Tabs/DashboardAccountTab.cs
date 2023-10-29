@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Net.Http;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Online.API.Requests.Account;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Account;
 using fluXis.Game.Overlay.Notifications;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -58,17 +56,13 @@ public partial class DashboardAccountTab : DashboardTab
                     ShowSaveButton = true,
                     OnSave = val =>
                     {
-                        var req = fluxel.CreateAPIRequest("/account/update/displayname", HttpMethod.Post);
-                        req.AddRaw(val);
-                        req.Perform();
+                        var req = new DisplayNameUpdateRequest(val);
+                        req.Perform(fluxel);
 
-                        var res = req.GetResponseString();
-                        var json = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(res);
-
-                        if (json.Status == 200)
+                        if (req.Response.Status == 200)
                             notifications.SendText("Successfully updated display name!");
                         else
-                            notifications.SendError("Failed to update display name!", json.Message);
+                            notifications.SendError("Failed to update display name!", req.Response.Message);
                     }
                 },
                 new FluXisSpriteText
@@ -110,23 +104,13 @@ public partial class DashboardAccountTab : DashboardTab
                     Height = 32,
                     Action = () =>
                     {
-                        var req = fluxel.CreateAPIRequest("/account/update/socials", HttpMethod.Post);
-                        req.AddRaw(JsonConvert.SerializeObject(new Dictionary<string, string>
-                        {
-                            { "twitter", twitter },
-                            { "youtube", youtube },
-                            { "twitch", twitch },
-                            { "discord", discord }
-                        }));
-                        req.Perform();
+                        var req = new SocialUpdateRequest(twitter, youtube, twitch, discord);
+                        req.Perform(fluxel);
 
-                        var res = req.GetResponseString();
-                        var json = JsonConvert.DeserializeObject<FluxelResponse<dynamic>>(res);
-
-                        if (json.Status == 200)
+                        if (req.Response.Status == 200)
                             notifications.SendText("Successfully updated socials!");
                         else
-                            notifications.SendError("Failed to update socials!", json.Message);
+                            notifications.SendError("Failed to update socials!", req.Response.Message);
                     }
                 }
             }

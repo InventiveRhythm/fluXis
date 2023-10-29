@@ -355,6 +355,8 @@ public partial class Fluxel : Component
         return request;
     }
 
+    internal new void Schedule(Action action) => base.Schedule(action);
+
     private void onAuthResponse(FluxelResponse<string> response)
     {
         if (response.Status == 200)

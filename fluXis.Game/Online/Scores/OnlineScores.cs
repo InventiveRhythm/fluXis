@@ -1,11 +1,10 @@
 using System;
 using System.Linq;
-using System.Net.Http;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Scores;
+using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Scoring;
-using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.Scores;
 
@@ -15,7 +14,7 @@ public static class OnlineScores
     {
         if (fluxel.Token == null)
         {
-            callback(new APIResponse<APIScoreResponse>(401, "No token", null));
+            callback(new APIResponse<APIScoreResponse>(401, "Not logged in.", null));
             return;
         }
 
@@ -25,24 +24,8 @@ public static class OnlineScores
             return;
         }
 
-        var submitScore = new
-        {
-            hash = score.MapHash,
-            mods = score.Mods,
-            scrollSpeed = fluxel.Config.Get<float>(FluXisSetting.ScrollSpeed),
-            maxCombo = score.MaxCombo,
-            flawless = score.Flawless,
-            perfect = score.Perfect,
-            great = score.Great,
-            alright = score.Alright,
-            okay = score.Okay,
-            miss = score.Miss
-        };
-
-        var req = fluxel.CreateAPIRequest("/scores/upload", HttpMethod.Post);
-        req.AddRaw(JsonConvert.SerializeObject(submitScore));
-        await req.PerformAsync();
-
-        callback(JsonConvert.DeserializeObject<APIResponse<APIScoreResponse>>(req.GetResponseString()));
+        var req = new ScoreSubmitRequest(score, fluxel.Config.Get<float>(FluXisSetting.ScrollSpeed));
+        await req.PerformAsync(fluxel);
+        callback(req.Response);
     }
 }

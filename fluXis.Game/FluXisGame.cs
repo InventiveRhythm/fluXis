@@ -55,6 +55,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         Children = new Drawable[]
         {
+            Fluxel,
             AudioClock,
             Samples,
             NotificationManager,

@@ -1,9 +1,7 @@
 using System;
-using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Online;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -42,19 +40,16 @@ public partial class DashboardOnlineTab : DashboardWipTab
 
         try
         {
-            var req = fluxel.CreateAPIRequest("/users/online");
-            req.Perform();
+            var req = new OnlineUsersRequest();
+            req.Perform(fluxel);
 
-            var json = JsonConvert.DeserializeObject<APIResponse<APIOnlineUsers>>(req.GetResponseString());
-
-            if (json.Status == 200)
+            if (req.Response.Status == 200)
             {
-                foreach (var user in json.Data.Users)
+                foreach (var user in req.Response.Data.Users)
                 {
                     Schedule(() =>
                     {
                         if (!visible) return;
-
                         flow.Add(new UserCard(user));
                     });
                 }

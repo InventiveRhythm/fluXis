@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
@@ -15,11 +14,9 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Online;
-using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Models.Scores;
+using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -27,7 +24,6 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -205,43 +201,17 @@ public partial class ScoreList : GridContainer
                 }));
                 break;
 
-            case ScoreListType.Global:
+            case ScoreListType.Global or ScoreListType.Country or ScoreListType.Club:
                 if (map.OnlineID == -1)
                 {
                     showNotSubmittedError();
                     return;
                 }
 
-                var globalScores = getScores($"/map/{map.OnlineID}/scores");
-                if (globalScores == null) return;
+                var onlineScores = getScores();
+                if (onlineScores == null) return;
 
-                scores.AddRange(globalScores);
-                break;
-
-            case ScoreListType.Country:
-                if (map.OnlineID == -1)
-                {
-                    showNotSubmittedError();
-                    return;
-                }
-
-                var countryScores = getScores($"/map/{map.OnlineID}/scores/country");
-                if (countryScores == null) return;
-
-                scores.AddRange(countryScores);
-                break;
-
-            case ScoreListType.Club:
-                if (map.OnlineID == -1)
-                {
-                    showNotSubmittedError();
-                    return;
-                }
-
-                var clubScores = getScores($"/map/{map.OnlineID}/scores/club");
-                if (clubScores == null) return;
-
-                scores.AddRange(clubScores);
+                scores.AddRange(onlineScores);
                 break;
 
             default:
@@ -281,18 +251,14 @@ public partial class ScoreList : GridContainer
     }
 
     [CanBeNull]
-    private List<ScoreListEntry> getScores(string path)
+    private List<ScoreListEntry> getScores()
     {
-        var request = fluxel.CreateAPIRequest(path, HttpMethod.Get);
-        request.Perform();
+        var req = new MapLeaderboardRequest(type, map.OnlineID);
+        req.Perform(fluxel);
 
-        var json = request.GetResponseString();
-        Logger.Log(json);
-        var rsp = JsonConvert.DeserializeObject<APIResponse<APIScores>>(json);
-
-        if (rsp.Status != 200)
+        if (req.Response.Status != 200)
         {
-            noScoresText.Text = rsp.Message;
+            noScoresText.Text = req.Response.Message;
             Schedule(() =>
             {
                 noScoresText.FadeTo(1, 200);
@@ -301,17 +267,17 @@ public partial class ScoreList : GridContainer
             return null;
         }
 
-        if (map.Status != rsp.Data.Map.Status)
+        if (map.Status != req.Response.Data.Map.Status)
         {
-            map.MapSet.SetStatus(rsp.Data.Map.Status);
+            map.MapSet.SetStatus(req.Response.Data.Map.Status);
             realm?.RunWrite(r =>
             {
                 var m = r.Find<RealmMap>(map.ID);
-                m.MapSet.SetStatus(rsp.Data.Map.Status);
+                m.MapSet.SetStatus(req.Response.Data.Map.Status);
             });
         }
 
-        return rsp.Data.Scores.Select(x => new ScoreListEntry
+        return req.Response.Data.Scores.Select(x => new ScoreListEntry
         {
             ScoreInfo = x.ToScoreInfo(),
             Map = map,

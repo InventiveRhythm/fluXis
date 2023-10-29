@@ -7,8 +7,8 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
-using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
@@ -202,14 +202,9 @@ public partial class MapStore : Component
     [CanBeNull]
     public APIMap LookUpHash(string hash)
     {
-        var req = fluxel.CreateAPIRequest($"/map/hash/{hash}");
-        req.Perform();
-        var json = req.GetResponseString();
-        if (json == null) return null;
-
-        var map = JsonConvert.DeserializeObject<APIResponse<APIMap>>(json);
-
-        return map.Status != 200 ? null : map.Data;
+        var req = new MapHashLookupRequest(hash);
+        req.Perform(fluxel);
+        return req.Response.Status != 200 ? null : req.Response.Data;
     }
 
     public RealmMap CreateNew()

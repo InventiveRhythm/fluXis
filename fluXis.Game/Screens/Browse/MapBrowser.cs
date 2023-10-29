@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
@@ -8,12 +7,11 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Input;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.Activity;
-using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Screens.Browse.Info;
 using fluXis.Game.Screens.Browse.Search;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -172,33 +170,32 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         loadMapsets();
     }
 
-    private async void loadMapsets()
+    private void loadMapsets()
     {
-        var req = fluxel.CreateAPIRequest("/mapsets");
-        await req.PerformAsync();
-
-        var json = req.GetResponseString();
-        var mapsets = JsonConvert.DeserializeObject<APIResponse<List<APIMapSet>>>(json);
-
-        if (mapsets.Status != 200)
+        var req = new MapSetsRequest();
+        req.PerformAsync(fluxel);
+        req.Success += response =>
         {
-            Logger.Log($"Failed to load mapsets: {mapsets.Status} {mapsets.Message}", LoggingTarget.Network);
-            Schedule(loadingIcon.Hide);
-            return;
-        }
-
-        foreach (var mapSet in mapsets.Data)
-        {
-            Maps.Add(new MapCard(mapSet)
+            if (response.Status != 200)
             {
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre,
-                EdgeEffect = FluXisStyles.ShadowSmall,
-                OnClickAction = set => selectedSet.Value = set
-            });
-        }
+                Logger.Log($"Failed to load mapsets: {response.Status} {response.Message}", LoggingTarget.Network);
+                loadingIcon.Hide();
+                return;
+            }
 
-        Schedule(loadingIcon.Hide);
+            foreach (var mapSet in response.Data)
+            {
+                Maps.Add(new MapCard(mapSet)
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    EdgeEffect = FluXisStyles.ShadowSmall,
+                    OnClickAction = set => selectedSet.Value = set
+                });
+            }
+
+            loadingIcon.Hide();
+        };
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

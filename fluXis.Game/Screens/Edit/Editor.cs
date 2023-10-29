@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
@@ -15,8 +14,7 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
-using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
@@ -745,19 +743,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         var path = mapStore.Export(realmMapSet.Detach(), new LoadingNotificationData(), false);
         var buffer = await File.ReadAllBytesAsync(path);
 
-        var request = fluxel.CreateAPIRequest(Map.MapSet.OnlineID != -1 ? $"/map/{Map.MapSet.OnlineID}/update" : "/maps/upload", HttpMethod.Post);
-        request.AddFile("file", buffer);
-        request.UploadProgress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
-        await request.PerformAsync();
+        var request = new MapSetUploadRequest(buffer, Map.MapSet);
+        request.Progress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
+        await request.PerformAsync(fluxel);
 
         overlay.SubText = "Reading server response...";
 
-        var json = request.GetResponseString();
-        var response = JsonConvert.DeserializeObject<APIResponse<APIMapSet>>(json);
-
-        if (response.Status != 200)
+        if (request.Response.Status != 200)
         {
-            notifications.SendError(response.Message);
+            notifications.SendError(request.Response.Message);
             Schedule(overlay.Hide);
             return;
         }
@@ -767,13 +761,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         realm.RunWrite(r =>
         {
             var set = r.Find<RealmMapSet>(Map.MapSet.ID);
-            set.OnlineID = Map.MapSet.OnlineID = response.Data.Id;
-            set.SetStatus(response.Data.Status);
-            Map.MapSet.SetStatus(response.Data.Status);
+            set.OnlineID = Map.MapSet.OnlineID = request.Response.Data.Id;
+            set.SetStatus(request.Response.Data.Status);
+            Map.MapSet.SetStatus(request.Response.Data.Status);
 
             for (var index = 0; index < set.Maps.Count; index++)
             {
-                var onlineMap = response.Data.Maps[index];
+                var onlineMap = request.Response.Data.Maps[index];
                 var map = set.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
                 var loadedMap = Map.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
 
