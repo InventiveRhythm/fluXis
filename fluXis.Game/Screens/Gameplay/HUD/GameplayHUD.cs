@@ -28,7 +28,7 @@ public partial class GameplayHUD : Container
         componentLookup.Add("Accuracy", typeof(AccuracyDisplay));
         componentLookup.Add("AttributeText", typeof(AttributeText));
         componentLookup.Add("Combo", typeof(ComboCounter));
-        componentLookup.Add("Health", typeof(ComboCounter));
+        componentLookup.Add("Health", typeof(HealthBar));
         componentLookup.Add("HitError", typeof(HitErrorBar));
         componentLookup.Add("Judgement", typeof(JudgementDisplay));
         componentLookup.Add("JudgementCounter", typeof(JudgementCounter));
@@ -48,7 +48,7 @@ public partial class GameplayHUD : Container
             },
             playfieldComponents = new Container
             {
-                RelativeSizeAxes = Axes.Both,
+                RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             }
@@ -77,7 +77,7 @@ public partial class GameplayHUD : Container
     {
         base.Update();
 
-        playfieldComponents.Width = screen.Playfield.DrawWidth;
+        playfieldComponents.Width = screen.Playfield.Stage.DrawWidth;
     }
 
     private void bindableRefreshLayout(ValueChangedEvent<HUDLayout> _)
