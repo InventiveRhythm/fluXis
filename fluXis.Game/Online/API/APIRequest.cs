@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using osu.Framework.IO.Network;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.API;
 
@@ -14,16 +15,17 @@ public class APIRequest<T> where T : class
     public event Action<Exception> Failure;
     public event Action<long, long> Progress;
 
-    public APIResponse<T> Response { get; private set; }
+    public APIResponse<T> Response { get; protected set; }
 
     private Fluxel.Fluxel fluxel;
     private APIEndpointConfig config => fluxel.Endpoint;
 
-    public void Perform(Fluxel.Fluxel fluxel)
+    public virtual void Perform(Fluxel.Fluxel fluxel)
     {
         this.fluxel = fluxel;
 
-        var request = new JsonWebRequest<APIResponse<T>>($"{config.APIUrl}{Path}", Method);
+        var request = new JsonWebRequest<APIResponse<T>>($"{config.APIUrl}{Path}");
+        request.Method = Method;
         request.AllowInsecureRequests = true;
         request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
 
@@ -34,15 +36,22 @@ public class APIRequest<T> where T : class
         {
             CreatePostData(request);
             request.Perform();
-            Response = request.ResponseObject;
+            Logger.Log($"API request performed: {request.GetResponseString()}", LoggingTarget.Network);
+            TriggerSuccess(request.ResponseObject);
         }
         catch (Exception e)
         {
+            Logger.Error(e, $"API request failed: {e.Message}", LoggingTarget.Network);
             Response = new APIResponse<T>(400, e.Message, null);
             Failure?.Invoke(e);
         }
+    }
 
-        if (Response != null)
+    protected void TriggerSuccess(APIResponse<T> res)
+    {
+        Response = res;
+
+        if (res != null)
             fluxel.Schedule(() => Success?.Invoke(Response));
     }
 

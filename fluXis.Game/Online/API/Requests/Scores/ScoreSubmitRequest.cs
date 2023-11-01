@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Scoring;
@@ -12,12 +13,27 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
     protected override HttpMethod Method => HttpMethod.Post;
 
     private ScoreInfo score { get; }
-    private float scrollspeed { get; }
 
-    public ScoreSubmitRequest(ScoreInfo score, float scrollspeed)
+    public ScoreSubmitRequest(ScoreInfo score)
     {
         this.score = score;
-        this.scrollspeed = scrollspeed;
+    }
+
+    public override void Perform(Fluxel.Fluxel fluxel)
+    {
+        if (fluxel.Token == null)
+        {
+            TriggerSuccess(new APIResponse<APIScoreResponse>(401, "Not logged in.", null));
+            return;
+        }
+
+        if (score.Mods.Any(m => m == "PA"))
+        {
+            TriggerSuccess(new APIResponse<APIScoreResponse>(400, "Score not submittable.", null));
+            return;
+        }
+
+        base.Perform(fluxel);
     }
 
     protected override void CreatePostData(JsonWebRequest<APIResponse<APIScoreResponse>> request)
@@ -26,7 +42,7 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
         {
             hash = score.MapHash,
             mods = score.Mods,
-            scrollSpeed = scrollspeed,
+            scrollSpeed = score.ScrollSpeed,
             maxCombo = score.MaxCombo,
             flawless = score.Flawless,
             perfect = score.Perfect,

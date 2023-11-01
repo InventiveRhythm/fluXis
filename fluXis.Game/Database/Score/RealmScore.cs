@@ -44,13 +44,32 @@ public class RealmScore : RealmObject
     public RealmScore(RealmMap map)
     {
         ID = Guid.NewGuid();
-        Date = DateTimeOffset.Now;
+        Date = DateTimeOffset.UtcNow;
         MapID = map.ID;
     }
 
     [UsedImplicitly]
     private RealmScore()
     {
+    }
+
+    public static RealmScore Create(RealmMap map, APIUserShort player, ScoreInfo score)
+    {
+        return new RealmScore(map)
+        {
+            PlayerID = player?.ID ?? -1,
+            Accuracy = score.Accuracy,
+            Rank = score.Rank,
+            Score = score.Score,
+            MaxCombo = score.MaxCombo,
+            Flawless = score.Flawless,
+            Perfect = score.Perfect,
+            Great = score.Great,
+            Alright = score.Alright,
+            Okay = score.Okay,
+            Miss = score.Miss,
+            Mods = string.Join(' ', score.Mods)
+        };
     }
 
     public ScoreInfo ToScoreInfo()
@@ -71,6 +90,7 @@ public class RealmScore : RealmObject
             HitResults = null,
             MapID = -1,
             MapHash = null,
+            Timestamp = Date.ToUnixTimeSeconds(),
             Mods = Mods.Split(' ').ToList()
         };
     }

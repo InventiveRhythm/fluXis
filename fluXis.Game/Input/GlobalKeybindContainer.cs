@@ -63,8 +63,8 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(InputKey.F4, FluXisGlobalKeybind.ScrollSpeedIncrease),
     };
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e) => handler.OnPressed(e);
-    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) => handler.OnReleased(e);
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e) => handler?.OnPressed(e) ?? false;
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) => handler?.OnReleased(e);
 }
 
 public enum FluXisGlobalKeybind

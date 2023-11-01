@@ -10,9 +10,15 @@ public class APIScoreResponse
     [JsonProperty("ptr")]
     public double PotentialRating { get; init; }
 
+    [JsonProperty("rank")]
+    public int Rank { get; init; }
+
     [JsonProperty("ovrChange")]
     public double OverallRatingChange { get; init; }
 
     [JsonProperty("ptrChange")]
     public double PotentialRatingChange { get; init; }
+
+    [JsonProperty("rankChange")]
+    public int RankChange { get; init; }
 }

@@ -25,6 +25,8 @@ public partial class DifficultyChip : CircularContainer
         }
     }
 
+    public float FontSize { get; set; } = 18;
+
     private float rating;
 
     private Box box;
@@ -45,7 +47,7 @@ public partial class DifficultyChip : CircularContainer
             text = new FluXisSpriteText
             {
                 Text = Rating.ToStringInvariant("00.00"),
-                FontSize = 14,
+                FontSize = FontSize,
                 Colour = Colour4.Black,
                 Alpha = .75f,
                 Anchor = Anchor.Centre,

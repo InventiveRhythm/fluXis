@@ -6,6 +6,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
@@ -13,6 +14,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring;
@@ -378,7 +380,30 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless)
             fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
 
-        this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, ScoreProcessor.ToScoreInfo(), player, true, Mods.All(m => m.Rankable))));
+        var bestScore = realm.Run(r =>
+        {
+            var onMap = r.All<RealmScore>().Where(s => s.MapID == RealmMap.ID).ToList();
+            var best = onMap.MaxBy(s => s.Score);
+            return best;
+        });
+
+        var score = ScoreProcessor.ToScoreInfo();
+        score.ScrollSpeed = config.Get<float>(FluXisSetting.ScrollSpeed);
+
+        var screen = new SoloResults(RealmMap, score, player, true);
+        if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
+
+        if (Mods.All(m => m.Rankable))
+        {
+            realm.RunWrite(r => r.Add(RealmScore.Create(RealmMap, player, score)));
+
+            var request = new ScoreSubmitRequest(score);
+            screen.SubmitRequest = request;
+            request.PerformAsync(fluxel);
+        }
+
+        // this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, ScoreProcessor.ToScoreInfo(), player, true, Mods.All(m => m.Rankable))));
+        this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(screen));
     }
 
     public virtual void RestartMap()

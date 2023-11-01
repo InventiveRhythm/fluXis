@@ -4,6 +4,12 @@ namespace fluXis.Game.Utils;
 
 public static class TimeUtils
 {
+    public static DateTimeOffset GetFromSeconds(long seconds)
+    {
+        var utc = DateTimeOffset.FromUnixTimeSeconds(seconds);
+        return utc.ToLocalTime();
+    }
+
     public static string Format(double time, bool showMs = true)
     {
         time /= 1000f;

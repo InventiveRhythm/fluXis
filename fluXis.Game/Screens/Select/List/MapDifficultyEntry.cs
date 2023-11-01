@@ -159,6 +159,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                                 {
                                                     Width = 50,
                                                     Height = 14,
+                                                    FontSize = 14,
                                                     Rating = map.Filters.NotesPerSecond,
                                                     Margin = new MarginPadding { Right = 5 }
                                                 },

@@ -16,6 +16,10 @@ public partial class ModList : FillFlowContainer<ModIcon>
         get => mods;
         set
         {
+            if (mods == null) return;
+
+            mods.RemoveAll(mod => mod is null);
+
             mods = value;
 
             if (IsLoaded) ReloadList();
@@ -24,10 +28,14 @@ public partial class ModList : FillFlowContainer<ModIcon>
 
     public int ModSpacing { get; set; } = 10;
 
+    public ModList()
+    {
+        AutoSizeAxes = Axes.Both;
+    }
+
     [BackgroundDependencyLoader]
     private void load()
     {
-        AutoSizeAxes = Axes.Both;
         Direction = FillDirection.Horizontal;
         Spacing = new Vector2(ModSpacing);
 

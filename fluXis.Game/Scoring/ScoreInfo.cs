@@ -52,6 +52,12 @@ public class ScoreInfo
     [JsonProperty("mods")]
     public List<string> Mods { get; set; }
 
+    [JsonProperty("scrollspeed")]
+    public float ScrollSpeed { get; set; }
+
+    [JsonProperty("time")]
+    public long Timestamp { get; set; }
+
     [JsonIgnore]
     public bool FullFlawless => Flawless == MaxCombo;
 

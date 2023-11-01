@@ -19,6 +19,8 @@ public partial class ModIcon : Container
     [BackgroundDependencyLoader]
     private void load()
     {
+        if (Mod is null) return;
+
         Width = 80;
         Height = 40;
         CornerRadius = 10;
