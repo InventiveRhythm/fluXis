@@ -307,7 +307,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
         MapInfo mapInfo = Map.GetMapInfo();
         if (mapInfo == null) return;
 
-        ScoreList.MapInfo.Screen.Push(new SoloResults(Map, ScoreInfo, Player, false));
+        ScoreList.MapInfo.Screen.Push(new SoloResults(Map, ScoreInfo, Player));
     }
 
     public Drawable GetTooltip()

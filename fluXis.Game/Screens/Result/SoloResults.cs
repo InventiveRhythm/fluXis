@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
@@ -39,7 +40,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
 
     private DependencyContainer dependencies;
 
-    private bool canRetry { get; }
+    public Action OnRestart;
     private bool extendedState;
 
     private NormalResults normal;
@@ -48,13 +49,11 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     private CornerButton backButton;
     private CornerButton retryButton;
 
-    public SoloResults(RealmMap map, ScoreInfo score, APIUserShort player, bool allowRetry)
+    public SoloResults(RealmMap map, ScoreInfo score, APIUserShort player)
     {
         Map = map;
         Score = score;
         Player = player;
-
-        canRetry = allowRetry;
     }
 
     [BackgroundDependencyLoader]
@@ -94,14 +93,14 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                         Icon = FontAwesome.Solid.ChevronLeft,
                         Action = this.Exit
                     },
-                    retryButton = new CornerButton // yes, the button exists, but we dont even have a proper way of retrying from here yet
+                    retryButton = new CornerButton
                     {
                         ButtonText = "Retry",
                         Corner = Corner.BottomRight,
                         Icon = FontAwesome.Solid.Get(0xf0e2),
                         ButtonColor = FluXisColors.Accent2,
-                        Alpha = 0,
-                        Action = () => { }
+                        Alpha = OnRestart is not null ? 1f : 0f,
+                        Action = () => OnRestart?.Invoke()
                     }
                 }
             }

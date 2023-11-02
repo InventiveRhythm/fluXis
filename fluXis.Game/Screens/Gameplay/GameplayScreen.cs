@@ -90,6 +90,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public HitWindows HitWindows { get; }
     public ReleaseWindows ReleaseWindows { get; }
 
+    public GameplayLoader Loader { get; set; }
+    public Action OnRestart { get; set; }
+
     public MapInfo Map { get; private set; }
     public RealmMap RealmMap { get; }
     public MapEvents MapEvents { get; private set; }
@@ -139,9 +142,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Map = LoadMap();
 
-        if (Map == null)
+        if (Map == null || !Map.Validate(notifications))
         {
-            this.Exit();
+            ValidForPush = false;
             return;
         }
 
@@ -289,10 +292,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected virtual MapInfo LoadMap()
     {
         var map = RealmMap.GetMapInfo();
-
-        // map is null or invalid, leave
-        if (map == null || !map.Validate(notifications)) return null;
-
         return map;
     }
 
@@ -390,7 +389,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         var score = ScoreProcessor.ToScoreInfo();
         score.ScrollSpeed = config.Get<float>(FluXisSetting.ScrollSpeed);
 
-        var screen = new SoloResults(RealmMap, score, player, true);
+        var screen = new SoloResults(RealmMap, score, player);
+        screen.OnRestart = OnRestart;
         if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 
         if (Mods.All(m => m.Rankable))
@@ -410,7 +410,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         restarting = true;
         Samples.Restart();
-        this.Push(new GameplayScreen(RealmMap, Mods));
+        OnRestart?.Invoke();
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)

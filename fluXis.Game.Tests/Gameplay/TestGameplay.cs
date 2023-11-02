@@ -35,11 +35,7 @@ public partial class TestGameplay : FluXisTestScene
         {
             if (screenStack.CurrentScreen is not null) return;
 
-            screenStack.Push(new GameplayLoader
-            {
-                Map = map,
-                Mods = new List<IMod> { new AutoPlayMod(), new HardMod() }
-            });
+            screenStack.Push(new GameplayLoader(map, () => new GameplayScreen(map, new List<IMod> { new AutoPlayMod(), new HardMod() })));
         });
     }
 }

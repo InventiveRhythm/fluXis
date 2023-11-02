@@ -1,10 +1,9 @@
-using System.Collections.Generic;
+using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
-using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -28,11 +27,19 @@ public partial class GameplayLoader : FluXisScreen
     [Resolved]
     private AudioClock clock { get; set; }
 
+    public GameplayScreen GameplayScreen { get; set; }
+    private readonly Func<GameplayScreen> createFunc;
+
     public RealmMap Map { get; set; }
-    public List<IMod> Mods { get; set; }
 
     private Container loadingContainer;
     private FillFlowContainer content;
+
+    public GameplayLoader(RealmMap map, Func<GameplayScreen> create)
+    {
+        Map = map;
+        createFunc = create;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -110,31 +117,50 @@ public partial class GameplayLoader : FluXisScreen
                 }
             }
         };
+    }
 
-        LoadComponentAsync(new GameplayScreen(Map, Mods), screen =>
+    private void loadGameplay()
+    {
+        GameplayScreen = createFunc();
+        GameplayScreen.Loader = this;
+        GameplayScreen.OnRestart += requestRestart;
+
+        LoadComponentAsync(GameplayScreen, _ =>
         {
-            if (this.IsCurrentScreen())
+            if (!this.IsCurrentScreen())
+                GameplayScreen.Dispose();
+            else
             {
+                ValidForResume = false;
                 loadingContainer.FadeOut(200);
                 clock.Delay(400).Schedule(() => clock.FadeOut(400));
-                this.Delay(800).Schedule(() => this.Push(screen));
+                this.Delay(800).Schedule(() => this.Push(GameplayScreen));
             }
-            else screen.Dispose();
         });
     }
 
-    public override void OnEntering(ScreenTransitionEvent e)
+    private void requestRestart()
     {
-        this.ScaleTo(.9f).ScaleTo(1, 400, Easing.OutQuint).FadeInFromZero(200);
+        ValidForResume = true;
+        this.MakeCurrent();
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e) => contentIn();
+    public override void OnSuspending(ScreenTransitionEvent e) => contentOut();
+    public override void OnResuming(ScreenTransitionEvent e) => contentIn();
+
+    private void contentIn()
+    {
+        this.ScaleTo(.9f).ScaleTo(1, 400, Easing.OutQuint).FadeInFromZero(200).Then().Schedule(loadGameplay);
+        content.MoveToY(0);
+        loadingContainer.FadeIn(200);
         clock.LowPassFilter.CutoffTo(1000, 400, Easing.OutQuint);
     }
 
-    public override void OnSuspending(ScreenTransitionEvent e)
+    private void contentOut()
     {
         this.FadeIn(800).Then().FadeOut(200);
         content.MoveToY(800, 1200, Easing.InQuint);
         clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
     }
-
-    public override void OnResuming(ScreenTransitionEvent e) => this.Exit();
 }
