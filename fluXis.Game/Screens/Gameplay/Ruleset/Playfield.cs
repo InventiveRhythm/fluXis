@@ -43,7 +43,8 @@ public partial class Playfield : Container
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
-        RelativeSizeAxes = Axes.Both;
+        AutoSizeAxes = Axes.X;
+        RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
