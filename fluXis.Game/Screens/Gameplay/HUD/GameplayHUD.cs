@@ -78,7 +78,7 @@ public partial class GameplayHUD : Container
         base.Update();
 
         playfieldComponents.Position = screen.Playfield.Position;
-        playfieldComponents.Width = screen.Playfield.DrawWidth;
+        playfieldComponents.Width = screen.Playfield.DrawWidth * screen.Playfield.Scale.X;
     }
 
     private void bindableRefreshLayout(ValueChangedEvent<HUDLayout> _)
