@@ -13,7 +13,7 @@ public class RateMod : IMod
     public bool Rankable => true;
     public string[] IncompatibleMods => Array.Empty<string>();
 
-    public string Acronym => $"{Rate.ToStringInvariant()}x";
+    public string Acronym => $"{Math.Round(Rate, 2).ToStringInvariant()}x";
     public float ScoreMultiplier => 1f + (Rate - 1f) * 0.4f;
     public float Rate { get; set; } = 1f;
 }
