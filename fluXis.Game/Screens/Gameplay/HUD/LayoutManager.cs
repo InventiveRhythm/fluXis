@@ -117,6 +117,7 @@ public partial class LayoutManager : Component
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.TopCentre,
+                        AnchorToPlayfield = true
                     }
                 },
                 {
@@ -179,6 +180,7 @@ public partial class LayoutManager : Component
                     "Combo",
                     new HUDComponentSettings
                     {
+                        AnchorToPlayfield = true,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Position = new Vector2(0, -32)
@@ -198,6 +200,7 @@ public partial class LayoutManager : Component
                     "HitError",
                     new HUDComponentSettings
                     {
+                        AnchorToPlayfield = true,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.TopCentre,
                         Position = new Vector2(0, 50)
@@ -207,6 +210,7 @@ public partial class LayoutManager : Component
                     "Judgement",
                     new HUDComponentSettings
                     {
+                        AnchorToPlayfield = true,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Position = new Vector2(0, 150)
