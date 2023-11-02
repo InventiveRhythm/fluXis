@@ -13,6 +13,7 @@ public class MapEvents
     public List<FlashEvent> FlashEvents = new();
     public List<PulseEvent> PulseEvents = new();
     public List<PlayfieldMoveEvent> PlayfieldMoveEvents = new();
+    public List<PlayfieldScaleEvent> PlayfieldScaleEvents = new();
 
     public MapEvents Load(string content)
     {
@@ -81,9 +82,22 @@ public class MapEvents
                     PlayfieldMoveEvents.Add(new PlayfieldMoveEvent
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture),
-                        OffsetX = float.Parse(args[1]),
+                        OffsetX = float.Parse(args[1], CultureInfo.InvariantCulture),
                         Duration = float.Parse(args[2], CultureInfo.InvariantCulture),
                         Easing = Enum.TryParse<Easing>(args[3], out var ease) ? ease : Easing.None
+                    });
+                    break;
+
+                case "PlayfieldScale":
+                    if (args.Length < 5) continue;
+
+                    PlayfieldScaleEvents.Add(new PlayfieldScaleEvent
+                    {
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
+                        ScaleX = float.Parse(args[1], CultureInfo.InvariantCulture),
+                        ScaleY = float.Parse(args[2], CultureInfo.InvariantCulture),
+                        Duration = float.Parse(args[3], CultureInfo.InvariantCulture),
+                        Easing = Enum.TryParse<Easing>(args[4], out var ease2) ? ease2 : Easing.None
                     });
                     break;
             }
@@ -100,6 +114,7 @@ public class MapEvents
         FlashEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PulseEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PlayfieldMoveEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        PlayfieldScaleEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public string Save()

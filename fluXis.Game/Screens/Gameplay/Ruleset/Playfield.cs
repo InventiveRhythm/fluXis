@@ -38,6 +38,7 @@ public partial class Playfield : Container
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
     private PlayfieldMoveEvent currentPlayfieldMoveEvent;
+    private PlayfieldScaleEvent currentPlayfieldScaleEvent;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
@@ -101,12 +102,16 @@ public partial class Playfield : Container
     {
         timingLineManager.CreateLines(Map);
         base.LoadComplete();
+
+        scrollDirection.BindValueChanged(_ =>
+        {
+            if (IsUpScroll)
+                Scale *= new Vector2(1, -1);
+        }, true);
     }
 
     protected override void Update()
     {
-        Scale = new Vector2(1, IsUpScroll ? -1 : 1);
-
         hitLine.Width = Stage.Width;
         laneCovers.Width = Stage.Width;
 
@@ -114,6 +119,25 @@ public partial class Playfield : Container
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
 
         updateOffset();
+        updateScale();
+    }
+
+    private void updateScale()
+    {
+        var ev = currentPlayfieldScaleEvent;
+
+        foreach (var psEvent in Screen.MapEvents.PlayfieldScaleEvents)
+        {
+            if (psEvent.Time <= Clock.CurrentTime)
+                currentPlayfieldScaleEvent = psEvent;
+        }
+
+        if (ev == currentPlayfieldScaleEvent) return;
+
+        var yScale = currentPlayfieldScaleEvent.ScaleY;
+        if (IsUpScroll) yScale *= -1;
+
+        this.ScaleTo(new Vector2(currentPlayfieldScaleEvent.ScaleX, yScale), currentPlayfieldScaleEvent.Duration, currentPlayfieldScaleEvent.Easing);
     }
 
     private void updateOffset()
