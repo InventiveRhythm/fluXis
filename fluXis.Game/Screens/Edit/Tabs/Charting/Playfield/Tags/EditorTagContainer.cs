@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TagTypes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,49 +10,38 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
 public partial class EditorTagContainer : Container<EditorTag>
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    protected EditorValues Values { get; private set; }
 
     [Resolved]
-    private EditorClock clock { get; set; }
+    protected EditorClock EditorClock { get; private set; }
 
-    [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
-
-    private readonly List<EditorTag> tags = new();
+    protected List<EditorTag> Tags { get; } = new();
+    protected virtual bool RightSide => false;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         AutoSizeAxes = Axes.X;
         RelativeSizeAxes = Axes.Y;
-        Anchor = Anchor.CentreLeft;
-        Origin = Anchor.CentreRight;
-        X = -20;
-
-        tags.Add(new PreviewPointTag(this));
-
-        foreach (var timingPoint in values.MapInfo.TimingPoints)
-            addTimingPoint(timingPoint);
-
-        foreach (var sv in values.MapInfo.ScrollVelocities)
-            addScrollVelocity(sv);
-
-        values.MapInfo.TimingPointAdded += addTimingPoint;
-        values.MapInfo.TimingPointRemoved += removeTag;
-        values.MapInfo.ScrollVelocityAdded += addScrollVelocity;
-        values.MapInfo.ScrollVelocityRemoved += removeTag;
+        Anchor = RightSide ? Anchor.CentreRight : Anchor.CentreLeft;
+        Origin = RightSide ? Anchor.CentreLeft : Anchor.CentreRight;
+        X = RightSide ? 20 : -20;
     }
 
-    private void removeTag(TimedObject obj)
+    protected void AddTag(EditorTag tag)
     {
-        var tag = tags.FirstOrDefault(t => t.TimedObject == obj);
+        tag.RightSide = RightSide;
+        Tags.Add(tag);
+    }
+
+    protected void RemoveTag(TimedObject obj)
+    {
+        var tag = Tags.FirstOrDefault(t => t.TimedObject == obj);
+        tag ??= Children.FirstOrDefault(t => t.TimedObject == obj);
 
         if (tag != null)
-            tags.Remove(tag);
+            Tags.Remove(tag);
     }
-
-    private void addTimingPoint(TimingPointInfo tp) => tags.Add(new TimingPointTag(this, tp));
-    private void addScrollVelocity(ScrollVelocityInfo sv) => tags.Add(new ScrollVelocityTag(this, sv));
 
     protected override void Update()
     {
@@ -63,15 +51,15 @@ public partial class EditorTagContainer : Container<EditorTag>
 
         foreach (var tag in tagsToHide)
         {
-            tags.Add(tag);
+            Tags.Add(tag);
             Remove(tag, false);
         }
 
-        var tagsToDisplay = tags.Where(t => t.TimedObject.Time < clock.CurrentTime + 1000 && t.TimedObject.Time > clock.CurrentTime - 1000).ToList();
+        var tagsToDisplay = Tags.Where(t => t.TimedObject.Time < EditorClock.CurrentTime + 1000 && t.TimedObject.Time > EditorClock.CurrentTime - 1000).ToList();
 
         foreach (var tag in tagsToDisplay)
         {
-            tags.Remove(tag);
+            Tags.Remove(tag);
             Add(tag);
         }
 

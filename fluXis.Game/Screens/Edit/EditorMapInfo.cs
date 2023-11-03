@@ -47,7 +47,9 @@ public class EditorMapInfo : MapInfo
                 LaneSwitchEvents = events.LaneSwitchEvents ?? new List<LaneSwitchEvent>(),
                 FlashEvents = events.FlashEvents ?? new List<FlashEvent>(),
                 PulseEvents = events.PulseEvents ?? new List<PulseEvent>(),
-                PlayfieldMoveEvents = events.PlayfieldMoveEvents ?? new List<PlayfieldMoveEvent>()
+                PlayfieldMoveEvents = events.PlayfieldMoveEvents ?? new List<PlayfieldMoveEvent>(),
+                PlayfieldScaleEvents = events.PlayfieldScaleEvents ?? new List<PlayfieldScaleEvent>(),
+                ShakeEvents = events.ShakeEvents ?? new List<ShakeEvent>()
             }
         };
     }

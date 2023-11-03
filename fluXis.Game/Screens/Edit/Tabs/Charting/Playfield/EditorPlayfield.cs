@@ -59,7 +59,8 @@ public partial class EditorPlayfield : Container
             Effects = new EditorEffectContainer(),
             timingLines = new EditorTimingLines(),
             HitObjectContainer = new EditorHitObjectContainer(),
-            new EditorTagContainer()
+            new TimingTagContainer(),
+            new EffectTagContainer()
         };
 
         changeHandler.OnKeyModeChanged += count =>

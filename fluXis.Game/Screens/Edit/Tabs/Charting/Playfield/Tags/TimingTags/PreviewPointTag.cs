@@ -2,7 +2,7 @@ using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TagTypes;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 public partial class PreviewPointTag : EditorTag
 {

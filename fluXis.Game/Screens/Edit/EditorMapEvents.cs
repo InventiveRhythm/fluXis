@@ -15,6 +15,8 @@ public class EditorMapEvents : MapEvents
     public event Action<PulseEvent> PulseEventRemoved;
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventAdded;
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventRemoved;
+    public event Action<ShakeEvent> ShakeEventAdded;
+    public event Action<ShakeEvent> ShakeEventRemoved;
 
     public EditorMapEvents()
     {
@@ -70,5 +72,17 @@ public class EditorMapEvents : MapEvents
     {
         PlayfieldMoveEvents.Remove(playfieldMoveEvent);
         PlayfieldMoveEventRemoved?.Invoke(playfieldMoveEvent);
+    }
+
+    public void Add(ShakeEvent shakeEvent)
+    {
+        ShakeEvents.Add(shakeEvent);
+        ShakeEventAdded?.Invoke(shakeEvent);
+    }
+
+    public void Remove(ShakeEvent shakeEvent)
+    {
+        ShakeEvents.Remove(shakeEvent);
+        ShakeEventRemoved?.Invoke(shakeEvent);
     }
 }

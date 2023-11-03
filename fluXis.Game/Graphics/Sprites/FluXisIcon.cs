@@ -38,5 +38,7 @@ public enum FluXisIconType
     LaneSwitch,
     Flash,
     Pulse,
-    PlayfieldMove
+    PlayfieldMove,
+    PlayfieldScale,
+    Shake
 }

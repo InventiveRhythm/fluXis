@@ -12,6 +12,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
 public partial class EditorTag : Container
 {
     public virtual Colour4 TagColour => Colour4.White;
+    public virtual int TagWidth => 80;
 
     [Resolved]
     private EditorPlayfield playfield { get; set; }
@@ -20,6 +21,7 @@ public partial class EditorTag : Container
 
     public TimedObject TimedObject { get; }
     protected FluXisSpriteText Text { get; private set; }
+    public bool RightSide { get; set; }
 
     public EditorTag(EditorTagContainer parent, TimedObject timedObject)
     {
@@ -30,7 +32,7 @@ public partial class EditorTag : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = 86;
+        Width = TagWidth + 6;
         Height = 20;
         Anchor = Anchor.TopRight;
         Origin = Anchor.CentreRight;
@@ -39,10 +41,10 @@ public partial class EditorTag : Container
         {
             new Container
             {
-                Width = 80,
+                Width = TagWidth,
                 RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
+                Anchor = RightSide ? Anchor.CentreRight : Anchor.CentreLeft,
+                Origin = RightSide ? Anchor.CentreRight : Anchor.CentreLeft,
                 CornerRadius = 5,
                 Masking = true,
                 Children = new Drawable[]
@@ -65,8 +67,8 @@ public partial class EditorTag : Container
             new Container
             {
                 Size = new Vector2(12),
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.TopRight,
+                Anchor = RightSide ? Anchor.CentreLeft : Anchor.CentreRight,
+                Origin = RightSide ? Anchor.BottomLeft : Anchor.TopRight,
                 Rotation = 45,
                 CornerRadius = 2,
                 Masking = true,

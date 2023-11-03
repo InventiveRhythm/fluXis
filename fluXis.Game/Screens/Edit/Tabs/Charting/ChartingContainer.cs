@@ -34,7 +34,8 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     public IReadOnlyList<EffectTool> EffectTools { get; } = new EffectTool[]
     {
         new LaneSwitchTool(),
-        new FlashTool()
+        new FlashTool(),
+        new ShakeTool()
     };
 
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };

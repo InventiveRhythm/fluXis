@@ -5,7 +5,7 @@ namespace fluXis.Game.Map.Events;
 public class ShakeEvent : TimedObject
 {
     public float Duration { get; set; }
-    public float Magnitude { get; set; }
+    public float Magnitude { get; set; } = 10;
 
     public override string ToString()
     {
