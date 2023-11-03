@@ -14,6 +14,7 @@ public class MapEvents
     public List<PulseEvent> PulseEvents = new();
     public List<PlayfieldMoveEvent> PlayfieldMoveEvents = new();
     public List<PlayfieldScaleEvent> PlayfieldScaleEvents = new();
+    public List<ShakeEvent> ShakeEvents = new();
 
     public MapEvents Load(string content)
     {
@@ -100,6 +101,17 @@ public class MapEvents
                         Easing = Enum.TryParse<Easing>(args[4], out var ease2) ? ease2 : Easing.None
                     });
                     break;
+
+                case "Shake":
+                    if (args.Length < 3) continue;
+
+                    ShakeEvents.Add(new ShakeEvent
+                    {
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
+                        Duration = float.Parse(args[1], CultureInfo.InvariantCulture),
+                        Magnitude = float.Parse(args[2], CultureInfo.InvariantCulture)
+                    });
+                    break;
             }
         }
 
@@ -115,6 +127,7 @@ public class MapEvents
         PulseEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PlayfieldMoveEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PlayfieldScaleEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        ShakeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public string Save()
@@ -126,6 +139,8 @@ public class MapEvents
         content += FlashEvents.Aggregate(string.Empty, (current, flash) => current + (flash + Environment.NewLine));
         content += PulseEvents.Aggregate(string.Empty, (current, pulse) => current + (pulse + Environment.NewLine));
         content += PlayfieldMoveEvents.Aggregate(string.Empty, (current, playfieldMove) => current + (playfieldMove + Environment.NewLine));
+        content += PlayfieldScaleEvents.Aggregate(string.Empty, (current, playfieldScale) => current + (playfieldScale + Environment.NewLine));
+        content += ShakeEvents.Aggregate(string.Empty, (current, shake) => current + (shake + Environment.NewLine));
         return content;
     }
 }

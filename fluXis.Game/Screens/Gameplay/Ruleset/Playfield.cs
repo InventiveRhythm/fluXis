@@ -5,6 +5,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -43,6 +44,7 @@ public partial class Playfield : Container
 
     private PlayfieldMoveEvent currentPlayfieldMoveEvent;
     private PlayfieldScaleEvent currentPlayfieldScaleEvent;
+    private ShakeEvent shakeEvent;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
@@ -111,6 +113,7 @@ public partial class Playfield : Container
 
         updateOffset();
         updateScale();
+        updateShake();
     }
 
     private void updateScale()
@@ -142,5 +145,18 @@ public partial class Playfield : Container
 
         if (ev != currentPlayfieldMoveEvent)
             this.MoveToX(currentPlayfieldMoveEvent.OffsetX, currentPlayfieldMoveEvent.Duration, Easing.OutQuint);
+    }
+
+    private void updateShake()
+    {
+        var ev = shakeEvent;
+
+        foreach (var shake in screen.MapEvents.ShakeEvents)
+        {
+            if (shake.Time <= Clock.CurrentTime) shakeEvent = shake;
+        }
+
+        if (ev != shakeEvent)
+            screen.Shake(shakeEvent.Duration, shakeEvent.Magnitude);
     }
 }
