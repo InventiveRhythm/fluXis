@@ -15,7 +15,8 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class KeyOverlay : Container
 {
-    public GameplayScreen Screen { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -23,7 +24,7 @@ public partial class KeyOverlay : Container
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public FluXisGameplayKeybind[] Keybinds => Screen.Input.Keys;
+    public FluXisGameplayKeybind[] Keybinds => screen.Input.Keys;
 
     private FillFlowContainer flow;
     private int keyCount;
@@ -48,9 +49,9 @@ public partial class KeyOverlay : Container
 
     protected override void Update()
     {
-        if (keyCount != Screen.Playfield.Manager.CurrentKeyCount)
+        if (keyCount != screen.Playfield.Manager.CurrentKeyCount)
         {
-            keyCount = Screen.Playfield.Manager.CurrentKeyCount;
+            keyCount = screen.Playfield.Manager.CurrentKeyCount;
             flow.FadeIn(200).Delay(1200).FadeOut(200);
         }
 
@@ -59,7 +60,7 @@ public partial class KeyOverlay : Container
         for (var i = 0; i < flow.Count; i++)
         {
             var con = flow[i];
-            con.Width = Screen.Playfield.Receptors[i].Width;
+            con.Width = screen.Playfield.Receptors[i].Width;
             con.Alpha = con.Width == 0 ? 0 : 1;
         }
     }

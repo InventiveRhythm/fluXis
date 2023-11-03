@@ -8,7 +8,6 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -28,31 +27,23 @@ using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Gameplay;
 
 public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float ParallaxStrength => 0f;
-
     public override float BackgroundBlur => backgroundBlur?.Value ?? 0f;
-
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
-
     public override bool ShowToolbar => false;
-
     public override bool AllowMusicControl => false;
-
     public override bool ApplyValuesAfterLoad => true;
-
     public override bool AllowExit => false;
 
     protected virtual double GameplayStartTime => 0;
@@ -101,10 +92,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public Playfield Playfield { get; private set; }
     private Container hud { get; set; }
 
-    private FluXisTextFlow debugText;
-    private static bool showDebug;
-
-    private FailOverlay failOverlay;
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
     private QuickActionOverlay quickActionOverlay;
@@ -133,7 +120,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples, FluXisConfig config)
+    private void load(FluXisConfig config)
     {
         dependencies.CacheAs(this);
 
@@ -158,12 +145,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             HealthProcessor = CreateHealthProcessor(),
             ScoreProcessor = new ScoreProcessor
             {
-                HitWindows = HitWindows, Map = RealmMap, MapInfo = Map, Mods = Mods
+                HitWindows = HitWindows,
+                Map = RealmMap,
+                MapInfo = Map,
+                Mods = Mods
             }
         });
 
         HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
-        Input = new GameplayInput(this, Map.KeyCount);
+        Input = new GameplayInput(this, RealmMap.KeyCount);
 
         backgroundBlur = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
         backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
@@ -171,23 +161,26 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
+        Playfield = new Playfield();
+        dependencies.Cache(Playfield);
+
         InternalChild = new GameplayKeybindContainer(Game, realm)
         {
             Children = new Drawable[]
             {
                 Input,
                 Samples,
-                new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList())
+                new Container
                 {
-                    Clock = AudioClock
-                },
-                new PulseEffect
-                {
-                    ParentScreen = this, Clock = AudioClock
-                },
-                Playfield = new Playfield
-                {
-                    Screen = this, Clock = AudioClock
+                    RelativeSizeAxes = Axes.Both,
+                    Clock = AudioClock,
+                    Children = new Drawable[]
+                    {
+                        new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
+                        new PulseEffect(),
+                        Playfield,
+                        new LaneSwitchAlert()
+                    }
                 },
                 hud = new Container
                 {
@@ -197,65 +190,19 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     Children = new Drawable[]
                     {
                         new GameplayHUD(),
-                        new ModsDisplay
-                        {
-                            Screen = this
-                        },
-                        new KeyOverlay
-                        {
-                            Screen = this
-                        }
+                        new ModsDisplay(),
+                        new KeyOverlay()
                     }
                 },
-                new AutoPlayDisplay
-                {
-                    Screen = this
-                },
-                new DangerHealthOverlay
-                {
-                    Screen = this
-                },
-                new LaneSwitchAlert
-                {
-                    Playfield = Playfield
-                },
-                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList())
-                {
-                    Clock = AudioClock
-                },
-                new SkipOverlay(this),
-                failOverlay = new FailOverlay
-                {
-                    Screen = this
-                },
-                failMenu = new FailMenu
-                {
-                    Screen = this
-                },
+                new AutoPlayDisplay(),
+                new DangerHealthOverlay(),
+                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = AudioClock },
+                new SkipOverlay(),
+                failMenu = new FailMenu(),
                 fcOverlay = new FullComboOverlay(),
                 quickActionOverlay = new QuickActionOverlay(),
-                new GameplayTouchInput
-                {
-                    Screen = this
-                },
-                new PauseMenu
-                {
-                    Screen = this
-                },
-                debugText = new FluXisTextFlow
-                {
-                    Anchor = Anchor.TopLeft,
-                    Origin = Anchor.TopLeft,
-                    RelativeSizeAxes = Axes.Both,
-                    Margin = new MarginPadding
-                    {
-                        Top = 100, Left = 20
-                    },
-                    FontSize = 20,
-                    TextAnchor = Anchor.TopLeft,
-                    Text = "debug text",
-                    Alpha = showDebug ? 1 : 0
-                }
+                new GameplayTouchInput(),
+                new PauseMenu()
             }
         };
     }
@@ -278,22 +225,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private void updateRpc()
     {
         if (!IsPaused.Value)
-        {
             Activity.Value = Playfield.Manager.AutoPlay ? new UserActivity.WatchingReplay(RealmMap, APIUserShort.AutoPlay) : new UserActivity.Playing(RealmMap);
-        }
-        else Activity.Value = new UserActivity.Paused(RealmMap);
+        else
+            Activity.Value = new UserActivity.Paused(RealmMap);
     }
 
-    private T createHudElement<T>(T hudElement) where T : GameplayHUDComponent
-    {
-        return hudElement;
-    }
-
-    protected virtual MapInfo LoadMap()
-    {
-        var map = RealmMap.GetMapInfo();
-        return map;
-    }
+    protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo();
 
     protected HealthProcessor CreateHealthProcessor()
     {
@@ -330,38 +267,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (hudVisible != hudWasVisible)
             hud.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
 
-        if (showDebug)
-        {
-            string text = "HitObjects";
-
-            text += $"\n HitObjects: {Playfield.Manager.HitObjects.Count}";
-            text += $"\n Future HitObjects: {Playfield.Manager.FutureHitObjects.Count}";
-            text += $"\n Internal Child Count: {Playfield.Manager.InternalChildCount}";
-            text += "\nTime";
-            text += $"\n Current Time: {AudioClock.CurrentTime}";
-            text += $"\n Current Rate: {Rate}";
-            text += "\nProcessors";
-            text += $"\n Health: {HealthProcessor.Health.Value}";
-
-            debugText.Text = text;
-        }
-
         base.Update();
     }
 
     public virtual void OnDeath()
     {
-        // failOverlay.Show();
         failMenu.Show();
-        AudioClock.RateTo(.4f, 2000, Easing.OutQuart).OnComplete(_ =>
-        {
-            // AudioClock.PlayTrack("Gameplay/DeathLoop.mp3");
-            // AudioClock.RestartPoint = 0;
-            // AudioClock.Looping = true;
-            // AudioClock.RateTo(1, 0);
-            AudioClock.LowPassFilter.CutoffTo(0);
-            ScheduleAfterChildren(AudioClock.Start);
-        });
+        AudioClock.RateTo(.4f, 2000, Easing.OutQuart);
     }
 
     protected virtual void End()
@@ -402,7 +314,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             request.PerformAsync(fluxel);
         }
 
-        // this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(new ResultsScreen(RealmMap, Map, ScoreProcessor.ToScoreInfo(), player, true, Mods.All(m => m.Rankable))));
         this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(screen));
     }
 
@@ -417,19 +328,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         fadeOut();
         backgrounds.StopVideo();
+        ValidForResume = false;
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         fadeOut();
-
-        if (HealthProcessor.Failed)
-        {
-            // AudioClock.LoadMap(RealmMap, true);
-            // AudioClock.SeekForce(HealthProcessor.FailTime);
-            // AudioClock.RateTo(0, 0);
-            AudioClock.LowPassFilter.CutoffTo(0);
-        }
 
         AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500);
         ScheduleAfterChildren(() => AudioClock.RateTo(Rate, 500, Easing.InQuint));
@@ -446,49 +350,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         IsPaused.BindValueChanged(_ => updateRpc(), true);
 
-        this.ScaleTo(1.2f)
-            .FadeOut()
-            .ScaleTo(1f, 750, Easing.OutQuint)
-            .Delay(250)
-            .FadeIn(250);
-
-        base.OnEntering(e);
+        this.ScaleTo(1.2f).FadeOut()
+            .ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
     }
 
-    private void fadeOut()
-    {
-        if (HealthProcessor.Failed)
-        {
-            hud.FadeOut();
-            Playfield.FadeOut();
-            this.FadeOut(500);
-        }
-        else
-            this.FadeOut(restarting ? 0 : 250);
-    }
-
-    public override void OnResuming(ScreenTransitionEvent e)
-    {
-        // probably coming back from results screen
-        // so just go to song select
-        this.Exit();
-
-        base.OnResuming(e);
-    }
-
-    protected override bool OnKeyDown(KeyDownEvent e)
-    {
-        if (Playfield.Manager.Finished) return false;
-
-        if (e.ControlPressed && e.AltPressed && e.ShiftPressed && e.Key == Key.D)
-        {
-            showDebug = !showDebug;
-            debugText.FadeTo(showDebug ? 1 : 0, 250, Easing.OutQuint);
-            return true;
-        }
-
-        return false;
-    }
+    private void fadeOut() => this.FadeOut(restarting ? 100 : 300);
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
@@ -554,11 +420,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             if (Map.InitialKeyCount == 0)
                 Map.InitialKeyCount = switchEvent.Count;
-
-            Map.KeyCount = Math.Max(Map.KeyCount, switchEvent.Count);
         }
 
         if (Map.InitialKeyCount == 0)
-            Map.InitialKeyCount = Map.KeyCount;
+            Map.InitialKeyCount = RealmMap.KeyCount;
     }
 }

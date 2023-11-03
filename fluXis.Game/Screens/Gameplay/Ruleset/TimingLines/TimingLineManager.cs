@@ -11,17 +11,17 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 
 public partial class TimingLineManager : CompositeDrawable
 {
-    public HitObjectManager HitObjectManager { get; }
+    [Resolved]
+    private Playfield playfield { get; set; }
 
     private Bindable<bool> showTimingLines;
 
     private readonly List<TimingLine> timingLines = new();
     private readonly List<TimingLine> futureTimingLines = new();
 
-    public TimingLineManager(HitObjectManager hitObjectManager)
+    public TimingLineManager()
     {
-        HitObjectManager = hitObjectManager;
-        RelativeSizeAxes = Axes.Y;
+        RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
     }
@@ -54,17 +54,17 @@ public partial class TimingLineManager : CompositeDrawable
 
             while (position < target)
             {
-                futureTimingLines.Add(new TimingLine(this, HitObjectManager.PositionFromTime(position)));
+                futureTimingLines.Add(new TimingLine(position));
                 position += increase;
             }
         }
 
-        futureTimingLines.Sort((a, b) => a.ScrollVelocityTime.CompareTo(b.ScrollVelocityTime));
+        futureTimingLines.Sort((a, b) => a.OriginalTime.CompareTo(b.OriginalTime));
     }
 
     protected override void Update()
     {
-        while (futureTimingLines is { Count: > 0 } && futureTimingLines[0].ScrollVelocityTime <= HitObjectManager.CurrentTime + 2000 * HitObjectManager.Playfield.Screen.Rate / HitObjectManager.ScrollSpeed)
+        while (futureTimingLines is { Count: > 0 } && playfield.Manager.ShouldDisplay(futureTimingLines[0].OriginalTime))
         {
             TimingLine line = futureTimingLines[0];
             futureTimingLines.RemoveAt(0);
@@ -78,7 +78,6 @@ public partial class TimingLineManager : CompositeDrawable
             RemoveInternal(line, true);
         }
 
-        Width = HitObjectManager.Playfield.Stage.Width;
         base.Update();
     }
 }

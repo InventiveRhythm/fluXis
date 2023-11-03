@@ -14,8 +14,10 @@ public partial class GameplayTouchInput : Container
     public override bool PropagatePositionalInputSubTree => true;
     public override bool PropagateNonPositionalInputSubTree => true;
 
-    public GameplayScreen Screen { get; init; }
-    private GameplayInput input => Screen.Input;
+    [Resolved]
+    private GameplayScreen screen { get; init; }
+
+    private GameplayInput input => screen.Input;
 
     private Container mainContainer;
 
@@ -32,7 +34,7 @@ public partial class GameplayTouchInput : Container
             Alpha = 0,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Children = getInputsForKeyCount(Screen.Map.KeyCount)
+            Children = getInputsForKeyCount(screen.RealmMap.KeyCount)
         };
     }
 

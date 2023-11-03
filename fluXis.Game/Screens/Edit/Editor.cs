@@ -118,7 +118,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         MapInfo ??= new EditorMapInfo(new MapMetadata { Mapper = Map.Metadata.Mapper });
-        MapInfo.KeyCount = Map.KeyCount;
 
         backgrounds.AddBackgroundFromMap(Map);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("maps")));
@@ -649,7 +648,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         Map.KeyCount = keyMode;
-        MapInfo.KeyCount = keyMode;
         changeHandler.OnKeyModeChanged.Invoke(keyMode);
     }
 

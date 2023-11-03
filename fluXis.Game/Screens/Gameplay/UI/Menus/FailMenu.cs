@@ -13,8 +13,10 @@ namespace fluXis.Game.Screens.Gameplay.UI.Menus;
 
 public partial class FailMenu : Container
 {
-    public GameplayScreen Screen { get; init; }
-    private GameplaySamples samples => Screen.Samples;
+    [Resolved]
+    private GameplayScreen screen { get; init; }
+
+    private GameplaySamples samples => screen.Samples;
 
     private CircularContainer circle;
     private FluXisSpriteText text;
@@ -93,7 +95,7 @@ public partial class FailMenu : Container
                                         Text = "Restart",
                                         SubText = "Try again?",
                                         Icon = FontAwesome.Solid.Redo,
-                                        Action = () => Screen?.RestartMap()
+                                        Action = () => screen?.RestartMap()
                                     },
                                     new GameplayMenuButton
                                     {
@@ -101,7 +103,7 @@ public partial class FailMenu : Container
                                         Color = FluXisColors.Red,
                                         SubText = "Bye bye",
                                         Icon = FontAwesome.Solid.DoorOpen,
-                                        Action = () => Screen?.Exit()
+                                        Action = () => screen?.Exit()
                                     }
                                 }
                             }

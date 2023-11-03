@@ -1,5 +1,4 @@
 using System.Linq;
-using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
@@ -25,7 +24,6 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
     [Resolved]
     private ChartingContainer chartingContainer { get; set; }
 
-    public MapInfo Map { get; set; }
     public LaneSwitchEvent Event { get; set; }
 
     private float length;
@@ -45,7 +43,8 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
                 game.Overlay = new LaneSwtichEditorPanel
                 {
                     Event = Event,
-                    MapInfo = Map,
+                    MapInfo = values.MapInfo,
+                    RealmMap = values.Editor.Map,
                     EditorClock = clock,
                     MapEvents = values.MapEvents
                 };
@@ -57,9 +56,9 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
         var nextEvent = values.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
         length = (nextEvent?.Time ?? clock.TrackLength) - Event.Time;
 
-        if (Event.Count >= Map.KeyCount)
+        if (Event.Count >= values.Editor.Map.KeyCount)
         {
-            for (int i = 0; i < Map.KeyCount; i++)
+            for (int i = 0; i < values.Editor.Map.KeyCount; i++)
             {
                 Add(new Box
                 {
@@ -73,10 +72,10 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
         }
         else
         {
-            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Map.KeyCount - 2];
+            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[values.Editor.Map.KeyCount - 2];
             bool[] current = mode[Event.Count - 1];
 
-            for (int i = 0; i < Map.KeyCount; i++)
+            for (int i = 0; i < values.Editor.Map.KeyCount; i++)
             {
                 Add(new Box
                 {
@@ -106,9 +105,9 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
 
         if (Event.Count != count)
         {
-            if (Event.Count == Map.KeyCount)
+            if (Event.Count == values.Editor.Map.KeyCount)
             {
-                for (int i = 0; i < Map.KeyCount; i++)
+                for (int i = 0; i < values.Editor.Map.KeyCount; i++)
                 {
                     var box = Children[i];
                     if (box != null)
@@ -117,10 +116,10 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
             }
             else
             {
-                bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Map.KeyCount - 2];
+                bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[values.Editor.Map.KeyCount - 2];
                 bool[] current = mode[Event.Count - 1];
 
-                for (int i = 0; i < Map.KeyCount; i++)
+                for (int i = 0; i < values.Editor.Map.KeyCount; i++)
                 {
                     var box = Children[i];
                     if (box != null)

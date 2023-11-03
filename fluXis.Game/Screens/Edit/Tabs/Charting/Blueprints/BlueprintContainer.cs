@@ -333,7 +333,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
             var minLane = hitBlueprints.Min(b => b.Object.Lane);
             var maxLane = hitBlueprints.Max(b => b.Object.Lane);
 
-            if (minLane + laneDelta <= 0 || maxLane + laneDelta > values.MapInfo.KeyCount)
+            if (minLane + laneDelta <= 0 || maxLane + laneDelta > values.Editor.Map.KeyCount)
                 laneDelta = 0;
         }
 

@@ -74,7 +74,6 @@ public class OsuMap
             HitObjects = new List<HitObjectInfo>(),
             TimingPoints = new List<TimingPointInfo>(),
             ScrollVelocities = new List<ScrollVelocityInfo>(),
-            KeyCount = (int)CircleSize,
             InitialKeyCount = (int)CircleSize
         };
 

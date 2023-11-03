@@ -41,7 +41,6 @@ public class EditorMapInfo : MapInfo
             HitObjects = info.HitObjects,
             TimingPoints = info.TimingPoints,
             ScrollVelocities = info.ScrollVelocities,
-            KeyCount = info.KeyCount,
             InitialKeyCount = info.InitialKeyCount,
             MapEvents = new EditorMapEvents
             {
@@ -113,7 +112,6 @@ public class EditorMapInfo : MapInfo
             HitObjects = HitObjects,
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
-            KeyCount = KeyCount,
             InitialKeyCount = InitialKeyCount,
             Map = Map,
             MapEvents = MapEvents

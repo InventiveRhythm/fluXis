@@ -7,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
@@ -15,6 +14,12 @@ public partial class HitObject : CompositeDrawable
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
+
+    [Resolved]
+    private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private Playfield playfield { get; set; }
 
     public HitObjectInfo Data { get; }
     private double scrollVelocityTime { get; }
@@ -37,21 +42,21 @@ public partial class HitObject : CompositeDrawable
     {
         this.manager = manager;
         Data = data;
-        scrollVelocityTime = manager.PositionFromTime(data.Time);
-        scrollVelocityEndTime = manager.PositionFromTime(data.HoldEndTime);
+        scrollVelocityTime = manager.ScrollVelocityPositionFromTime(data.Time);
+        scrollVelocityEndTime = manager.ScrollVelocityPositionFromTime(data.HoldEndTime);
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Anchor = Anchor.BottomCentre;
-        Origin = Anchor.BottomCentre;
+        AutoSizeAxes = Axes.Y;
+        Origin = Anchor.BottomLeft;
 
         InternalChildren = new[]
         {
-            holdBodyPiece = skinManager.GetLongNoteBody(Data.Lane, manager.Map.KeyCount),
-            holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.Map.KeyCount),
-            notePiece = skinManager.GetHitObject(Data.Lane, manager.Map.KeyCount)
+            holdBodyPiece = skinManager.GetLongNoteBody(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.IsLongNote() ? 1 : 0),
+            holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.IsLongNote() ? 1 : 0),
+            notePiece = skinManager.GetHitObject(Data.Lane, manager.KeyCount)
         };
 
         if (manager.UseSnapColors)
@@ -68,62 +73,59 @@ public partial class HitObject : CompositeDrawable
             if (holdEndPiece is DefaultHitObjectEnd defaultEnd) defaultEnd.SetColor(colorEnd.Darken(.4f));
             else holdEndPiece.Colour = colorEnd.Darken(.4f);
         }
-
-        if (!Data.IsLongNote())
-        {
-            holdBodyPiece.Alpha = 0;
-            holdEndPiece.Alpha = 0;
-        }
     }
 
     public void MissLongNote()
     {
         LongNoteMissed = true;
-        this.FadeTo(.5f, 100).FadeColour(Colour4.Red, 100);
+        this.FadeColour(Colour4.Red, 100);
     }
 
     public bool IsOffScreen()
     {
         return Data.IsLongNote()
             ? holdEndPiece.Y - holdEndPiece.Height > 0
-            : notePiece.Y - notePiece.Height > manager.Playfield.Receptors[0].Y;
+            : notePiece.Y - notePiece.Height > playfield.Receptors[0].Y;
     }
 
     protected override void Update()
     {
-        var lastHitableTime = manager.Playfield.Screen.HitWindows.TimingFor(manager.Playfield.Screen.HitWindows.LowestHitable);
-        var missTime = manager.Playfield.Screen.HitWindows.TimingFor(Judgement.Miss);
-        var releaseMissTime = manager.Playfield.Screen.ReleaseWindows.TimingFor(manager.Playfield.Screen.ReleaseWindows.Lowest);
+        base.Update();
+
+        updateTiming();
+        updatePositioning();
+
+        // reset for next frame
+        IsBeingHeld = false;
+    }
+
+    private void updateTiming()
+    {
+        var lastHitableTime = screen.HitWindows.TimingFor(screen.HitWindows.LowestHitable);
+        var missTime = screen.HitWindows.TimingFor(Judgement.Miss);
+        var releaseMissTime = screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest);
 
         Missed = (Clock.CurrentTime - Data.Time > lastHitableTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Clock.CurrentTime - Data.HoldEndTime > releaseMissTime);
         Hitable = Clock.CurrentTime - Data.Time > -missTime && !Missed;
         Releasable = Data.IsLongNote() && Clock.CurrentTime - Data.HoldEndTime > -releaseMissTime && !Missed;
+    }
 
-        var receptor = manager.Playfield.Receptors[Data.Lane - 1];
+    private void updatePositioning()
+    {
+        X = manager.PositionAtLane(Data.Lane);
+        Y = manager.PositionAtTime(scrollVelocityTime);
+        Width = manager.WidthOfLane(Data.Lane);
 
-        X = receptor.X;
-        Width = receptor.Width;
+        if (IsBeingHeld)
+            Y = manager.HitPosition;
 
-        var scrollSpeed = manager.ScrollSpeed;
+        if (!Data.IsLongNote()) return;
 
-        float hitY = receptor.Y - skinManager.SkinJson.GetKeymode(manager.Map.KeyCount).HitPosition;
-        notePiece.Y = (float)(hitY - .5f * ((scrollVelocityTime - manager.CurrentTime) * scrollSpeed));
+        var endY = manager.PositionAtTime(scrollVelocityEndTime);
+        var diff = Y - endY;
 
-        if (IsBeingHeld) notePiece.Y = hitY;
-
-        if (Data.IsLongNote())
-        {
-            var endY = hitY - .5f * ((scrollVelocityEndTime - manager.CurrentTime) * scrollSpeed);
-
-            var height = notePiece.Y - endY;
-            holdBodyPiece.Size = new Vector2(holdBodyPiece.Width, (float)height);
-            holdBodyPiece.Y = notePiece.Y - notePiece.Height / 2;
-
-            holdEndPiece.Y = (float)endY;
-        }
-
-        IsBeingHeld = false;
-
-        base.Update();
+        holdBodyPiece.Height = diff;
+        holdBodyPiece.Y = -holdEndPiece.Height / 2;
+        holdEndPiece.Y = -diff;
     }
 }

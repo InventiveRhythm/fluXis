@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Overlay.Notifications;
@@ -46,9 +46,6 @@ public class MapInfo
     }
 
     [JsonIgnore]
-    public int KeyCount;
-
-    [JsonIgnore]
     public int InitialKeyCount { get; set; }
 
     [CanBeNull]
@@ -80,11 +77,6 @@ public class MapInfo
             return false;
         }
 
-        foreach (var hitObject in HitObjects)
-        {
-            KeyCount = Math.Max(KeyCount, hitObject.Lane);
-        }
-
         foreach (var timingPoint in TimingPoints)
         {
             if (timingPoint.BPM <= 0)
@@ -100,7 +92,7 @@ public class MapInfo
             }
         }
 
-        if (KeyCount is <= 0 or >= 11)
+        if (HitObjects.Any(hitObject => hitObject.Lane < 1))
         {
             notifications?.SendError("Map has an invalid key count");
             return false;
@@ -149,11 +141,6 @@ public class MapInfo
         return timingPoint ?? TimingPoints[0];
     }
 
-    public override string ToString()
-    {
-        return $"KeyCount: {KeyCount}, InitialKeyCount: {InitialKeyCount}";
-    }
-
     public MapInfo Clone()
     {
         return new MapInfo(Metadata)
@@ -166,7 +153,6 @@ public class MapInfo
             HitObjects = HitObjects,
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
-            KeyCount = KeyCount,
             InitialKeyCount = InitialKeyCount,
             Map = Map
         };

@@ -9,16 +9,12 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class SkipOverlay : Container
 {
-    private GameplayScreen gameplayScreen { get; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
     private bool visible;
     private FillFlowContainer content;
     private CircularContainer bar;
-
-    public SkipOverlay(GameplayScreen gameplayScreen)
-    {
-        this.gameplayScreen = gameplayScreen;
-    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -78,7 +74,7 @@ public partial class SkipOverlay : Container
     {
         base.Update();
 
-        switch (gameplayScreen.Map.StartTime - gameplayScreen.AudioClock.CurrentTime > 2000)
+        switch (screen.Map.StartTime - screen.AudioClock.CurrentTime > 2000)
         {
             case true when !visible:
                 visible = true;
@@ -93,8 +89,8 @@ public partial class SkipOverlay : Container
 
         if (!visible) return;
 
-        double timeLeft = gameplayScreen.Map.StartTime - (gameplayScreen.AudioClock.CurrentTime + 2000);
-        var progress = (float)(timeLeft / gameplayScreen.Map.StartTime);
+        double timeLeft = screen.Map.StartTime - (screen.AudioClock.CurrentTime + 2000);
+        var progress = (float)(timeLeft / screen.Map.StartTime);
 
         if (float.IsFinite(progress))
             bar.ResizeWidthTo(progress, 400, Easing.OutQuint);

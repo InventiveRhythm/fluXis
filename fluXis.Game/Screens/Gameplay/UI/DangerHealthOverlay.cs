@@ -12,7 +12,8 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class DangerHealthOverlay : Container
 {
-    public GameplayScreen Screen { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
     [Resolved]
     private AudioClock clock { get; set; }
@@ -57,7 +58,7 @@ public partial class DangerHealthOverlay : Container
     {
         base.LoadComplete();
 
-        Screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
+        screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
     }
 
     private void onDimOnLowHealthChanged(ValueChangedEvent<bool> e)
@@ -78,10 +79,10 @@ public partial class DangerHealthOverlay : Container
         base.Update();
 
         // on easy health, this effect can only be seen at the very end of the song
-        if (Screen.Playfield.Manager.HealthMode == HealthMode.Requirement || !Screen.HealthProcessor.CanFail)
+        if (screen.Playfield.Manager.HealthMode == HealthMode.Requirement || !screen.HealthProcessor.CanFail)
             return;
 
-        if (Screen.HealthProcessor.Failed)
+        if (screen.HealthProcessor.Failed)
             return;
 
         if (health < threshold && dimOnLowHealth.Value)

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Map.Events;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -9,7 +11,11 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class PulseEffect : Container
 {
-    public GameplayScreen ParentScreen { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private AudioClock clock { get; set; }
 
     private List<PulseEvent> pulses = new();
 
@@ -20,7 +26,7 @@ public partial class PulseEffect : Container
 
     protected override void LoadComplete()
     {
-        pulses = ParentScreen.MapEvents.PulseEvents.ToList();
+        pulses = screen.MapEvents.PulseEvents.ToList();
         pulses.Sort((x, y) => x.Time.CompareTo(y.Time));
     }
 
@@ -34,7 +40,7 @@ public partial class PulseEffect : Container
         {
             pulses.RemoveAt(0);
 
-            var width = ParentScreen.Playfield.Stage.Width;
+            var width = screen.Playfield.Stage.Width;
 
             var left = new Box
             {
@@ -57,8 +63,8 @@ public partial class PulseEffect : Container
             Add(left);
             Add(right);
 
-            left.MoveToX(-width / 2 - 400, ParentScreen.AudioClock.BeatTime, Easing.OutQuint).FadeOut(ParentScreen.AudioClock.BeatTime).Expire();
-            right.MoveToX(width / 2 + 400, ParentScreen.AudioClock.BeatTime, Easing.OutQuint).FadeOut(ParentScreen.AudioClock.BeatTime).Expire();
+            left.MoveToX(-width / 2 - 400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
+            right.MoveToX(width / 2 + 400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
         }
     }
 }

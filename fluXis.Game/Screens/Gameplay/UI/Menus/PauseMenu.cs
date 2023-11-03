@@ -17,7 +17,8 @@ public partial class PauseMenu : CompositeDrawable
     [Resolved]
     private AudioClock clock { get; set; }
 
-    public GameplayScreen Screen { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
     private Container background;
     private Container content;
@@ -94,14 +95,14 @@ public partial class PauseMenu : CompositeDrawable
                                 Text = "Resume",
                                 SubText = "Continue playing",
                                 Icon = FontAwesome.Solid.Play,
-                                Action = () => Screen.IsPaused.Value = false
+                                Action = () => screen.IsPaused.Value = false
                             },
                             new GameplayMenuButton
                             {
                                 Text = "Restart",
                                 SubText = "Try again?",
                                 Icon = FontAwesome.Solid.Redo,
-                                Action = () => Screen.RestartMap()
+                                Action = () => screen.RestartMap()
                             },
                             new GameplayMenuButton
                             {
@@ -109,7 +110,7 @@ public partial class PauseMenu : CompositeDrawable
                                 Color = FluXisColors.Red,
                                 SubText = "Bye bye",
                                 Icon = FontAwesome.Solid.DoorOpen,
-                                Action = () => Screen.Exit()
+                                Action = () => screen.Exit()
                             }
                         }
                     }
@@ -117,7 +118,7 @@ public partial class PauseMenu : CompositeDrawable
             }
         };
 
-        Screen.IsPaused.BindValueChanged(e =>
+        screen.IsPaused.BindValueChanged(e =>
         {
             if (e.NewValue)
                 Show();
@@ -128,7 +129,7 @@ public partial class PauseMenu : CompositeDrawable
 
     public override void Hide()
     {
-        clock.RateTo(Screen.Rate, 400, Easing.InQuint);
+        clock.RateTo(screen.Rate, 400, Easing.InQuint);
 
         background.MoveToX(1.2f, 500, Easing.InQuint);
         content.ScaleTo(.8f, 400, Easing.InQuint).Delay(100).FadeOut(200);

@@ -14,7 +14,7 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
     public override void UpdatePlacement(float time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        ((HitObjectInfo)Object).Lane = Math.Clamp(lane, 1, EditorValues.MapInfo.KeyCount);
+        ((HitObjectInfo)Object).Lane = Math.Clamp(lane, 1, EditorValues.Editor.Map.KeyCount);
     }
 
     public override void OnPlacementFinished(bool commit)

@@ -8,7 +8,8 @@ namespace fluXis.Game.Screens.Gameplay.UI;
 
 public partial class AutoPlayDisplay : Container
 {
-    public GameplayScreen Screen { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
     private FluXisSpriteText text;
     private readonly Bindable<bool> autoPlay = new();
@@ -35,8 +36,8 @@ public partial class AutoPlayDisplay : Container
 
     protected override void Update()
     {
-        if (Screen.Playfield.Manager.AutoPlay != autoPlay.Value)
-            autoPlay.Value = Screen.Playfield.Manager.AutoPlay;
+        if (screen.Playfield.Manager.AutoPlay != autoPlay.Value)
+            autoPlay.Value = screen.Playfield.Manager.AutoPlay;
     }
 
     private void onAutoPlayChanged(ValueChangedEvent<bool> v)

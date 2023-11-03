@@ -1,4 +1,6 @@
+using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
@@ -16,13 +18,15 @@ public partial class Playfield : Container
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public GameplayScreen Screen { get; init; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager Manager { get; private set; }
     public Stage Stage { get; private set; }
 
-    public MapInfo Map => Screen.Map;
+    public MapInfo Map => screen.Map;
+    public RealmMap RealmMap => screen.RealmMap;
 
     private TimingLineManager timingLineManager;
     private Drawable hitLine;
@@ -52,50 +56,36 @@ public partial class Playfield : Container
         bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
 
-        Stage = new Stage(this);
-        Receptors = new FillFlowContainer<Receptor>
-        {
-            AutoSizeAxes = Axes.X,
-            RelativeSizeAxes = Axes.Y,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Direction = FillDirection.Horizontal
-        };
-
-        hitLine = skinManager.GetHitLine();
-        hitLine.Y = -skinManager.SkinJson.GetKeymode(Map.KeyCount).HitPosition;
-
-        Manager = new HitObjectManager(this);
-        Manager.LoadMap(Map);
-
-        timingLineManager = new TimingLineManager(Manager);
-
-        for (int i = 0; i < Map.KeyCount; i++)
-        {
-            Receptor receptor = new Receptor(i) { Playfield = this };
-            Receptors.Add(receptor);
-        }
-
-        laneCovers = new Container
-        {
-            RelativeSizeAxes = Axes.Y,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Children = new[]
-            {
-                topCover = skinManager.GetLaneCover(false),
-                bottomCover = skinManager.GetLaneCover(true)
-            }
-        };
-
         InternalChildren = new[]
         {
-            Stage,
-            timingLineManager,
-            Manager,
-            Receptors,
-            hitLine,
-            laneCovers
+            Stage = new Stage(),
+            timingLineManager = new TimingLineManager(),
+            Manager = new HitObjectManager(),
+            Receptors = new FillFlowContainer<Receptor>
+            {
+                AutoSizeAxes = Axes.X,
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Direction = FillDirection.Horizontal,
+                ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i))
+            },
+            hitLine = skinManager.GetHitLine().With(d =>
+            {
+                d.RelativeSizeAxes = Axes.X;
+                d.Y = -skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).HitPosition;
+            }),
+            laneCovers = new Container
+            {
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Children = new[]
+                {
+                    topCover = skinManager.GetLaneCover(false),
+                    bottomCover = skinManager.GetLaneCover(true)
+                }
+            }
         };
     }
 
@@ -127,7 +117,7 @@ public partial class Playfield : Container
     {
         var ev = currentPlayfieldScaleEvent;
 
-        foreach (var psEvent in Screen.MapEvents.PlayfieldScaleEvents)
+        foreach (var psEvent in screen.MapEvents.PlayfieldScaleEvents)
         {
             if (psEvent.Time <= Clock.CurrentTime)
                 currentPlayfieldScaleEvent = psEvent;
@@ -145,7 +135,7 @@ public partial class Playfield : Container
     {
         var ev = currentPlayfieldMoveEvent;
 
-        foreach (var pmEvent in Screen.MapEvents.PlayfieldMoveEvents)
+        foreach (var pmEvent in screen.MapEvents.PlayfieldMoveEvents)
         {
             if (pmEvent.Time <= Clock.CurrentTime) currentPlayfieldMoveEvent = pmEvent;
         }

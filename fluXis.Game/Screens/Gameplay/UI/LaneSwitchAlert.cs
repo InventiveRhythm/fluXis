@@ -16,7 +16,11 @@ public partial class LaneSwitchAlert : Container
     [Resolved]
     private FluXisConfig config { get; set; }
 
-    public Playfield Playfield { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private Playfield playfield { get; set; }
 
     private LaneSwitchEvent currentEvent;
 
@@ -71,24 +75,24 @@ public partial class LaneSwitchAlert : Container
 
     protected override void Update()
     {
-        if (Playfield.Clock is not AudioClock clock) return;
-        if (Playfield.Screen.IsPaused.Value) return;
+        if (playfield.Clock is not AudioClock clock) return;
+        if (screen.IsPaused.Value) return;
 
-        leftContainer.X = -Playfield.Stage.Width / 2 - 100;
-        rightContainer.X = Playfield.Stage.Width / 2 + 100;
+        leftContainer.X = -playfield.DrawWidth / 2 - 100;
+        rightContainer.X = playfield.DrawWidth / 2 + 100;
 
         if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts)) return;
 
         if (currentEvent == null)
-            currentEvent = Playfield.Manager.CurrentLaneSwitchEvent;
+            currentEvent = playfield.Manager.CurrentLaneSwitchEvent;
         else
         {
             var time = clock.BeatTime;
             var fadeTime = time / 2;
 
-            if (Math.Abs(clock.Rate - Playfield.Screen.Rate) >= .1f) return;
+            if (Math.Abs(clock.Rate - screen.Rate) >= .1f) return;
 
-            var nextEvent = Playfield.Screen.MapEvents.LaneSwitchEvents.Find(e => e.Time > clock.CurrentTime);
+            var nextEvent = screen.MapEvents.LaneSwitchEvents.Find(e => e.Time > clock.CurrentTime);
 
             if (nextEvent == null || nextEvent.Time - clock.CurrentTime > time)
                 return;

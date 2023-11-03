@@ -38,7 +38,7 @@ public partial class EditorPlayfield : Container
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
     {
-        Width = EditorHitObjectContainer.NOTEWIDTH * values.MapInfo.KeyCount;
+        Width = EditorHitObjectContainer.NOTEWIDTH * values.Editor.Map.KeyCount;
         RelativeSizeAxes = Axes.Y;
         Anchor = Origin = Anchor.Centre;
 
@@ -51,7 +51,7 @@ public partial class EditorPlayfield : Container
             new DefaultStageBorderRight(),
             waveform = new WaveformGraph
             {
-                Height = EditorHitObjectContainer.NOTEWIDTH * values.MapInfo.KeyCount,
+                Height = EditorHitObjectContainer.NOTEWIDTH * values.Editor.Map.KeyCount,
                 Anchor = Anchor.BottomRight,
                 Origin = Anchor.BottomLeft,
                 Rotation = -90,

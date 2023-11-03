@@ -1,4 +1,5 @@
 using System.Globalization;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -20,6 +21,7 @@ public partial class LaneSwtichEditorPanel : Panel
 {
     public LaneSwitchEvent Event { get; set; }
     public MapInfo MapInfo { get; init; }
+    public RealmMap RealmMap { get; init; }
     public EditorMapEvents MapEvents { get; init; }
     public EditorClock EditorClock { get; set; }
 
@@ -102,7 +104,7 @@ public partial class LaneSwtichEditorPanel : Panel
                     {
                         if (int.TryParse(textBox.Text, out var result))
                         {
-                            if (result > MapInfo.KeyCount || result < 1)
+                            if (result > RealmMap.KeyCount || result < 1)
                                 textBox.NotifyError();
                             else
                                 Event.Count = result;

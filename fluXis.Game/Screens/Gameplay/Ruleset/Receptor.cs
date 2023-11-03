@@ -11,9 +11,13 @@ public partial class Receptor : CompositeDrawable
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public Playfield Playfield { get; set; }
+    [Resolved]
+    private GameplayScreen screen { get; set; }
 
-    private readonly int id;
+    [Resolved]
+    private Playfield playfield { get; set; }
+
+    private readonly int idx;
 
     private Drawable up;
     private Drawable down;
@@ -24,31 +28,29 @@ public partial class Receptor : CompositeDrawable
 
     public bool IsDown;
 
-    public Receptor(int id)
+    public Receptor(int idx)
     {
-        this.id = id;
+        this.idx = idx;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        currentKeyCount = Playfield.Map.InitialKeyCount;
+        currentKeyCount = playfield.Map.InitialKeyCount;
 
-        Origin = Anchor.BottomCentre;
-        Anchor = Anchor.BottomCentre;
         RelativeSizeAxes = Axes.Y;
         Masking = true;
 
         InternalChildren = new[]
         {
-            up = skinManager.GetReceptor(id + 1, Playfield.Map.KeyCount, false),
-            down = skinManager.GetReceptor(id + 1, Playfield.Map.KeyCount, true),
-            hitLighting = skinManager.GetColumnLighting(id + 1, Playfield.Map.KeyCount)
+            up = skinManager.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, false),
+            down = skinManager.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, true),
+            hitLighting = skinManager.GetColumnLighting(idx + 1, playfield.RealmMap.KeyCount)
         };
 
         hitLighting.Margin = new MarginPadding
         {
-            Bottom = skinManager.SkinJson.GetKeymode(Playfield.Map.KeyCount).HitPosition
+            Bottom = skinManager.SkinJson.GetKeymode(playfield.RealmMap.KeyCount).HitPosition
         };
     }
 
@@ -59,8 +61,8 @@ public partial class Receptor : CompositeDrawable
 
     protected override void Update()
     {
-        if (!Playfield.Manager.AutoPlay)
-            IsDown = Playfield.Screen.Input.Pressed[id];
+        if (!playfield.Manager.AutoPlay)
+            IsDown = screen.Input.Pressed[idx];
 
         up.Alpha = IsDown ? 0 : 1;
         down.Alpha = IsDown ? 1 : 0;
@@ -68,9 +70,9 @@ public partial class Receptor : CompositeDrawable
         if (visible)
             hitLighting.FadeTo(IsDown ? 0.5f : 0, IsDown ? 0 : 100);
 
-        if (currentKeyCount != Playfield.Manager.CurrentKeyCount)
+        if (currentKeyCount != playfield.Manager.CurrentKeyCount)
         {
-            currentKeyCount = Playfield.Manager.CurrentKeyCount;
+            currentKeyCount = playfield.Manager.CurrentKeyCount;
             updateKeyCount(false);
         }
     }
@@ -79,13 +81,13 @@ public partial class Receptor : CompositeDrawable
     {
         // Since the current count is the same as the maximum,
         // every receptor should be visible
-        if (currentKeyCount == Playfield.Map.KeyCount)
+        if (currentKeyCount == playfield.RealmMap.KeyCount)
             visible = true;
         else
         {
-            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[Playfield.Map.KeyCount - 2];
+            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[playfield.RealmMap.KeyCount - 2];
             bool[] current = mode[currentKeyCount - 1];
-            visible = current[id];
+            visible = current[idx];
         }
 
         var width = visible ? skinManager.SkinJson.GetKeymode(currentKeyCount).ColumnWidth : 0;
@@ -97,7 +99,7 @@ public partial class Receptor : CompositeDrawable
         }
         else
         {
-            float duration = Playfield.Manager.CurrentLaneSwitchEvent?.Speed ?? 200;
+            float duration = playfield.Manager.CurrentLaneSwitchEvent?.Speed ?? 200;
             this.ResizeWidthTo(width, duration, Easing.OutQuint);
         }
     }

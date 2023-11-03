@@ -105,7 +105,7 @@ public partial class EditorEffectContainer : Container
 
     public void AddLaneSwitch(LaneSwitchEvent ls)
     {
-        LaneSwitches.Add(new EditorLaneSwitchEvent { Event = ls, Map = values.MapInfo });
+        LaneSwitches.Add(new EditorLaneSwitchEvent { Event = ls });
     }
 
     public void ClearAll()

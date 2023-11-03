@@ -10,27 +10,33 @@ using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay.Input;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset;
 
 public partial class HitObjectManager : Container<HitObject>
 {
-    public int InternalChildCount => InternalChildren.Count;
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
+    [Resolved]
+    private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private Playfield playfield { get; set; }
 
     private Bindable<bool> useSnapColors;
     public bool UseSnapColors => useSnapColors.Value;
 
     private Bindable<float> scrollSpeed;
+    public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * screen.Rate));
 
-    public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * Playfield.Screen.Rate));
-
-    public Playfield Playfield { get; }
-    public MapInfo Map { get; private set; }
+    public MapInfo Map => playfield.Map;
+    public int KeyCount => playfield.RealmMap.KeyCount;
     public List<HitObjectInfo> PastHitObjects { get; } = new();
     public List<HitObjectInfo> FutureHitObjects { get; } = new();
     public List<HitObject> HitObjects { get; } = new();
@@ -45,13 +51,13 @@ public partial class HitObjectManager : Container<HitObject>
     {
         get
         {
-            if (Playfield.Screen.Mods.Any(m => m is HardMod)) return HealthMode.Drain;
+            if (screen.Mods.Any(m => m is HardMod)) return HealthMode.Drain;
 
-            return Playfield.Screen.Mods.Any(m => m is EasyMod) ? HealthMode.Requirement : HealthMode.Normal;
+            return screen.Mods.Any(m => m is EasyMod) ? HealthMode.Requirement : HealthMode.Normal;
         }
     }
 
-    private JudgementProcessor judgementProcessor => Playfield.Screen.JudgementProcessor;
+    private JudgementProcessor judgementProcessor => screen.JudgementProcessor;
 
     private List<float> scrollVelocityMarks { get; } = new();
     private Dictionary<int, int> snapIndicies { get; } = new();
@@ -59,11 +65,10 @@ public partial class HitObjectManager : Container<HitObject>
     public Action OnFinished { get; set; }
     public bool Finished { get; private set; }
 
-    public bool AutoPlay => Playfield.Screen.Mods.Any(m => m is AutoPlayMod);
+    public bool AutoPlay => screen.Mods.Any(m => m is AutoPlayMod);
 
     public bool Break => timeUntilNextHitObject >= 2000;
     private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - Clock.CurrentTime;
-    private double maxHitObjectTime => PositionFromTime(Clock.CurrentTime) + 2000 * Playfield.Screen.Rate;
 
     private HitObjectInfo nextHitObject
     {
@@ -76,20 +81,16 @@ public partial class HitObjectManager : Container<HitObject>
         }
     }
 
-    public HitObjectManager(Playfield playfield)
-    {
-        Playfield = playfield;
-    }
-
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         RelativeSizeAxes = Axes.Both;
-        Size = new Vector2(1, 1);
+
+        loadMap();
 
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         useSnapColors = config.GetBindable<bool>(FluXisSetting.SnapColoring);
-        Playfield.Screen.OnSeek += onSeek;
+        screen.OnSeek += onSeek;
     }
 
     private void onSeek(double prevTime, double newTime)
@@ -165,7 +166,7 @@ public partial class HitObjectManager : Container<HitObject>
             OnFinished?.Invoke();
         }
 
-        while (FutureHitObjects is { Count: > 0 } && PositionFromTime(FutureHitObjects[0].Time) <= maxHitObjectTime)
+        while (FutureHitObjects is { Count: > 0 } && ShouldDisplay(FutureHitObjects[0].Time))
         {
             HitObject hitObject = new HitObject(this, FutureHitObjects[0]);
             FutureHitObjects.RemoveAt(0);
@@ -193,7 +194,7 @@ public partial class HitObjectManager : Container<HitObject>
             else miss(hitObject);
         }
 
-        foreach (var laneSwitchEvent in Playfield.Screen.MapEvents.LaneSwitchEvents)
+        foreach (var laneSwitchEvent in screen.MapEvents.LaneSwitchEvents)
         {
             if (laneSwitchEvent.Time <= Clock.CurrentTime)
             {
@@ -205,26 +206,58 @@ public partial class HitObjectManager : Container<HitObject>
         base.Update();
     }
 
+    public float HitPosition => DrawHeight - skinManager.SkinJson.GetKeymode(CurrentKeyCount).HitPosition;
+
+    public bool ShouldDisplay(float time) => ScrollVelocityPositionFromTime(time) <= ScrollVelocityPositionFromTime(Clock.CurrentTime) + DrawHeight * screen.Rate;
+    public float PositionAtTime(double time) => PositionAtTime((float)time);
+    public float PositionAtTime(float time) => HitPosition - .5f * ((time - (float)CurrentTime) * ScrollSpeed);
+
+    public float PositionAtLane(int lane)
+    {
+        var receptors = playfield.Receptors;
+        var x = 0f;
+
+        for (int i = 1; i < lane; i++)
+        {
+            if (i > receptors.Count)
+                x += skinManager.SkinJson.GetKeymode(KeyCount).ColumnWidth;
+            else
+                x += receptors[i - 1].Width;
+        }
+
+        return x;
+    }
+
+    public float WidthOfLane(int lane)
+    {
+        var receptors = playfield.Receptors;
+
+        if (lane > receptors.Count)
+            return skinManager.SkinJson.GetKeymode(KeyCount).ColumnWidth;
+
+        return receptors[lane - 1].Width;
+    }
+
     private void updateTime()
     {
-        int curSv = 0;
+        int svIndex = 0;
 
-        while (Map.ScrollVelocities != null && curSv < Map.ScrollVelocities.Count && Map.ScrollVelocities[curSv].Time <= Clock.CurrentTime)
-            curSv++;
+        while (Map.ScrollVelocities != null && svIndex < Map.ScrollVelocities.Count && Map.ScrollVelocities[svIndex].Time <= Clock.CurrentTime)
+            svIndex++;
 
-        CurrentTime = PositionFromTime(Clock.CurrentTime, curSv);
+        CurrentTime = ScrollVelocityPositionFromTime(Clock.CurrentTime, svIndex);
     }
 
     private void updateAutoPlay()
     {
-        bool[] pressed = new bool[Map.KeyCount];
+        bool[] pressed = new bool[KeyCount];
 
         List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Clock.CurrentTime).ToList();
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
             if (!skipNextHitSounds)
-                Playfield.Screen.Samples.Hit();
+                screen.Samples.Hit();
 
             hit(hitObject, false);
             pressed[hitObject.Data.Lane - 1] = true;
@@ -240,25 +273,25 @@ public partial class HitObjectManager : Container<HitObject>
         }
 
         for (var i = 0; i < pressed.Length; i++)
-            Playfield.Receptors[i].IsDown = pressed[i];
+            playfield.Receptors[i].IsDown = pressed[i];
 
         skipNextHitSounds = false;
     }
 
     private void updateInput()
     {
-        if (Playfield.Screen.HealthProcessor.Failed)
+        if (screen.HealthProcessor.Failed)
             return;
 
-        GameplayInput input = Playfield.Screen.Input;
+        GameplayInput input = screen.Input;
 
         if (input.JustPressed.Contains(true))
         {
-            Playfield.Screen.Samples.Hit();
+            screen.Samples.Hit();
 
             List<HitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
 
-            bool[] pressed = new bool[Map.KeyCount];
+            bool[] pressed = new bool[KeyCount];
 
             if (hitable.Count > 0)
             {
@@ -286,7 +319,7 @@ public partial class HitObjectManager : Container<HitObject>
         {
             List<HitObject> releaseable = HitObjects.Where(hit => hit.Releasable && input.JustReleased[hit.Data.Lane - 1]).ToList();
 
-            bool[] pressed = new bool[Map.KeyCount];
+            bool[] pressed = new bool[KeyCount];
 
             if (releaseable.Count > 0)
             {
@@ -315,7 +348,7 @@ public partial class HitObjectManager : Container<HitObject>
 
     private void miss(HitObject hitObject, bool isHoldEnd = false)
     {
-        var windows = isHoldEnd ? Playfield.Screen.ReleaseWindows : Playfield.Screen.HitWindows;
+        var windows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
         judmentDisplay(hitObject, -windows.TimingFor(windows.Lowest), isHoldEnd);
 
         if (!hitObject.Data.IsLongNote()) removeHitObject(hitObject);
@@ -330,10 +363,10 @@ public partial class HitObjectManager : Container<HitObject>
 
     private void judmentDisplay(HitObject hitObject, double difference, bool isHoldEnd = false)
     {
-        var hitWindows = isHoldEnd ? Playfield.Screen.ReleaseWindows : Playfield.Screen.HitWindows;
+        var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
         var judgement = hitWindows.JudgementFor(difference);
 
-        if (Playfield.Screen.HealthProcessor.Failed)
+        if (screen.HealthProcessor.Failed)
             return;
 
         var result = new HitResult(hitObject.Data.Time, (float)difference, judgement);
@@ -344,23 +377,22 @@ public partial class HitObjectManager : Container<HitObject>
         else
             hitObject.Data.Result = result;
 
-        if (judgement == hitWindows.ComboBreakJudgement && Playfield.Screen.Mods.Any(m => m is FragileMod))
-            Playfield.Screen.OnDeath();
+        if (judgement == hitWindows.ComboBreakJudgement && screen.Mods.Any(m => m is FragileMod))
+            screen.OnDeath();
 
-        if (judgement != hitWindows.HighestHitable && Playfield.Screen.Mods.Any(m => m is FlawlessMod))
-            Playfield.Screen.OnDeath();
+        if (judgement != hitWindows.HighestHitable && screen.Mods.Any(m => m is FlawlessMod))
+            screen.OnDeath();
     }
 
-    public void LoadMap(MapInfo map)
+    private void loadMap()
     {
-        Map = map;
-        CurrentKeyCount = map.InitialKeyCount;
+        CurrentKeyCount = Map.InitialKeyCount;
         initScrollVelocityMarks();
         initSnapIndicies();
 
-        foreach (var hit in map.HitObjects)
+        foreach (var hit in Map.HitObjects)
         {
-            if (Playfield.Screen.Mods.Any(m => m is NoLnMod))
+            if (screen.Mods.Any(m => m is NoLnMod))
                 hit.HoldTime = 0;
 
             FutureHitObjects.Add(hit);
@@ -369,7 +401,7 @@ public partial class HitObjectManager : Container<HitObject>
 
     private void initScrollVelocityMarks()
     {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || Playfield.Screen.Mods.Any(m => m is NoSvMod))
+        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || screen.Mods.Any(m => m is NoSvMod))
             return;
 
         ScrollVelocityInfo first = Map.ScrollVelocities[0];
@@ -426,9 +458,9 @@ public partial class HitObjectManager : Container<HitObject>
         return -1;
     }
 
-    public double PositionFromTime(double time, int index = -1)
+    public double ScrollVelocityPositionFromTime(double time, int index = -1)
     {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || Playfield.Screen.Mods.Any(m => m is NoSvMod))
+        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || screen.Mods.Any(m => m is NoSvMod))
             return time;
 
         if (index == -1)
