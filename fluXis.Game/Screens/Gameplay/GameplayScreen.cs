@@ -253,6 +253,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             starting = false;
             backgrounds.StartVideo();
+            AudioClock.Volume = 1; // just in case it was muted
         }
 
         var hudWasVisible = hudVisible;
