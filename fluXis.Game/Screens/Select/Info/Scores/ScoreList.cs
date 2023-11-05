@@ -23,6 +23,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -44,6 +45,7 @@ public partial class ScoreList : GridContainer
     private CancellationTokenSource cancellationTokenSource;
     private CancellationToken cancellationToken;
 
+    private FillFlowContainer outOfDateContainer;
     private FluXisSpriteText noScoresText;
     private FluXisScrollContainer scrollContainer;
     private FillFlowContainer<LeaderboardTypeButton> typeSwitcher;
@@ -131,6 +133,35 @@ public partial class ScoreList : GridContainer
                             Origin = Anchor.Centre,
                             Size = new Vector2(50),
                             Alpha = 0
+                        },
+                        outOfDateContainer = new FillFlowContainer
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Direction = FillDirection.Horizontal,
+                            Spacing = new Vector2(5),
+                            Alpha = 0,
+                            Children = new Drawable[]
+                            {
+                                new SpriteIcon
+                                {
+                                    Icon = FontAwesome.Solid.ExclamationTriangle,
+                                    Colour = Colour4.FromHex("#ffd500"),
+                                    Size = new Vector2(20),
+                                    Shadow = true,
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft
+                                },
+                                new FluXisSpriteText
+                                {
+                                    Text = "Your local version of this map is out of date!",
+                                    FontSize = 24,
+                                    Shadow = true,
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft
+                                }
+                            }
                         }
                     }
                 }
@@ -166,6 +197,7 @@ public partial class ScoreList : GridContainer
         }
 
         loadingIcon.FadeIn(200);
+        outOfDateContainer.FadeOut(200);
 
         cancellationTokenSource?.Cancel();
         cancellationTokenSource = new CancellationTokenSource();
@@ -276,6 +308,9 @@ public partial class ScoreList : GridContainer
                 m.MapSet.SetStatus(req.Response.Data.Map.Status);
             });
         }
+
+        if (map.Hash != req.Response.Data.Map.Hash)
+            Schedule(() => outOfDateContainer.FadeIn(200));
 
         return req.Response.Data.Scores.Select(x => new ScoreListEntry
         {
