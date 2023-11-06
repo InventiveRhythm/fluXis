@@ -15,7 +15,7 @@ public partial class GameplayTouchInput : Container
     public override bool PropagateNonPositionalInputSubTree => true;
 
     [Resolved]
-    private GameplayScreen screen { get; init; }
+    private GameplayScreen screen { get; set; }
 
     private GameplayInput input => screen.Input;
 

@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Gameplay.UI.Menus;
 public partial class FailMenu : Container
 {
     [Resolved]
-    private GameplayScreen screen { get; init; }
+    private GameplayScreen screen { get; set; }
 
     private GameplaySamples samples => screen.Samples;
 
