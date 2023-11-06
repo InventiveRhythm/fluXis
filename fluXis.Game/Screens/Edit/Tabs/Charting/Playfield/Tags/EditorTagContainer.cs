@@ -39,8 +39,10 @@ public partial class EditorTagContainer : Container<EditorTag>
         var tag = Tags.FirstOrDefault(t => t.TimedObject == obj);
         tag ??= Children.FirstOrDefault(t => t.TimedObject == obj);
 
-        if (tag != null)
-            Tags.Remove(tag);
+        if (tag == null) return;
+
+        Tags.Remove(tag);
+        Remove(tag, true);
     }
 
     protected override void Update()
