@@ -42,10 +42,6 @@ public partial class Playfield : Container
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
-    private PlayfieldMoveEvent currentPlayfieldMoveEvent;
-    private PlayfieldScaleEvent currentPlayfieldScaleEvent;
-    private ShakeEvent shakeEvent;
-
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
@@ -87,7 +83,16 @@ public partial class Playfield : Container
                     topCover = skinManager.GetLaneCover(false),
                     bottomCover = skinManager.GetLaneCover(true)
                 }
-            }
+            },
+            new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents, move => this.MoveToX(move.OffsetX, move.Duration, move.Easing)),
+            new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents, scale =>
+            {
+                var yScale = scale.ScaleY;
+                if (IsUpScroll) yScale *= -1;
+
+                this.ScaleTo(new Vector2(scale.ScaleX, yScale), scale.Duration, scale.Easing);
+            }),
+            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude))
         };
     }
 
@@ -110,53 +115,5 @@ public partial class Playfield : Container
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
-
-        updateOffset();
-        updateScale();
-        updateShake();
-    }
-
-    private void updateScale()
-    {
-        var ev = currentPlayfieldScaleEvent;
-
-        foreach (var psEvent in screen.MapEvents.PlayfieldScaleEvents)
-        {
-            if (psEvent.Time <= Clock.CurrentTime)
-                currentPlayfieldScaleEvent = psEvent;
-        }
-
-        if (ev == currentPlayfieldScaleEvent) return;
-
-        var yScale = currentPlayfieldScaleEvent.ScaleY;
-        if (IsUpScroll) yScale *= -1;
-
-        this.ScaleTo(new Vector2(currentPlayfieldScaleEvent.ScaleX, yScale), currentPlayfieldScaleEvent.Duration, currentPlayfieldScaleEvent.Easing);
-    }
-
-    private void updateOffset()
-    {
-        var ev = currentPlayfieldMoveEvent;
-
-        foreach (var pmEvent in screen.MapEvents.PlayfieldMoveEvents)
-        {
-            if (pmEvent.Time <= Clock.CurrentTime) currentPlayfieldMoveEvent = pmEvent;
-        }
-
-        if (ev != currentPlayfieldMoveEvent)
-            this.MoveToX(currentPlayfieldMoveEvent.OffsetX, currentPlayfieldMoveEvent.Duration, Easing.OutQuint);
-    }
-
-    private void updateShake()
-    {
-        var ev = shakeEvent;
-
-        foreach (var shake in screen.MapEvents.ShakeEvents)
-        {
-            if (shake.Time <= Clock.CurrentTime) shakeEvent = shake;
-        }
-
-        if (ev != shakeEvent)
-            screen.Shake(shakeEvent.Duration, shakeEvent.Magnitude);
     }
 }
