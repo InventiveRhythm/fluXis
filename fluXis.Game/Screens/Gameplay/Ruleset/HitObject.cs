@@ -81,13 +81,6 @@ public partial class HitObject : CompositeDrawable
         this.FadeColour(Colour4.Red, 100);
     }
 
-    public bool IsOffScreen()
-    {
-        return Data.IsLongNote()
-            ? holdEndPiece.Y - holdEndPiece.Height > 0
-            : notePiece.Y - notePiece.Height > playfield.Receptors[0].Y;
-    }
-
     protected override void Update()
     {
         base.Update();

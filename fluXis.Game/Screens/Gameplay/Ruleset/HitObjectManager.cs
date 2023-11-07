@@ -189,7 +189,8 @@ public partial class HitObjectManager : Container<HitObject>
                     miss(hitObject, hitObject.GotHit);
                 }
 
-                if (hitObject.IsOffScreen()) removeHitObject(hitObject);
+                if (hitObject.Data.HoldEndTime - Clock.CurrentTime <= screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest))
+                    removeHitObject(hitObject);
             }
             else miss(hitObject);
         }
