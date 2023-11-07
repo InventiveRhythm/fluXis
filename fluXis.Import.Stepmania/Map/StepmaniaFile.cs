@@ -206,13 +206,34 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Tail:
-                                var longNote = map.HitObjects.FindLast(x => x.Lane == i + 1 && x.HoldTime == int.MinValue);
+                                var note = map.HitObjects.FindLast(x => x.Lane == i + 1);
 
-                                if (longNote != null)
-                                    longNote.HoldEndTime = (int)Math.Round(time, MidpointRounding.AwayFromZero);
+                                if (note is StepRollNote roll)
+                                {
+                                    var timeDiff = time - roll.Time;
+                                    var distance = map.GetTimingPoint(time).MsPerBeat / 2;
+                                    var notes = (int)(timeDiff / distance);
+
+                                    for (int j = 0; j < notes; j++)
+                                    {
+                                        map.HitObjects.Add(new HitObjectInfo
+                                        {
+                                            Time = (int)Math.Round(roll.Time + distance * (j + 1), MidpointRounding.AwayFromZero),
+                                            Lane = i + 1
+                                        });
+                                    }
+                                }
+                                else if (note != null)
+                                    note.HoldEndTime = (int)Math.Round(time, MidpointRounding.AwayFromZero);
+
                                 break;
 
                             case StepNote.Roll:
+                                map.HitObjects.Add(new StepRollNote()
+                                {
+                                    Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
+                                    Lane = i + 1
+                                });
                                 break;
 
                             case StepNote.Mine:
