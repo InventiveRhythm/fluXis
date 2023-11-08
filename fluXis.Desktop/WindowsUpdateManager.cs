@@ -24,7 +24,8 @@ public partial class WindowsUpdateManager : Component
 
     private readonly Logger logger = Logger.GetLogger("update");
 
-    private const string updater_path = @"updater\fluXis.Updater.exe";
+    private string updaterFolder => @$"{Path.GetDirectoryName(Environment.CommandLine)}\updater";
+    private string updaterFile => @$"{updaterFolder}\fluXis.Updater.exe";
 
     [BackgroundDependencyLoader]
     private async void load()
@@ -62,7 +63,7 @@ public partial class WindowsUpdateManager : Component
             return;
         }
 
-        if (!File.Exists(updater_path))
+        if (!File.Exists(updaterFile))
         {
             var notification = new LoadingNotificationData
             {
@@ -83,13 +84,13 @@ public partial class WindowsUpdateManager : Component
             };
             request.Finished += () =>
             {
-                Directory.CreateDirectory("updater");
+                Directory.CreateDirectory(updaterFolder);
 
                 var bytes = request.GetResponseData();
                 using var stream = new MemoryStream(bytes);
 
                 using var zip = new ZipArchive(stream);
-                zip.ExtractToDirectory("updater", true);
+                zip.ExtractToDirectory(updaterFolder, true);
 
                 notification.State = LoadingState.Complete;
                 Task.Delay(5000).ContinueWith(_ => startUpdater());
@@ -117,8 +118,8 @@ public partial class WindowsUpdateManager : Component
             // start in update folder
             Process.Start(new ProcessStartInfo
             {
-                FileName = @$"{Environment.CurrentDirectory}\{updater_path}",
-                WorkingDirectory = "updater"
+                FileName = updaterFile,
+                WorkingDirectory = updaterFolder
             });
             Environment.Exit(0);
         }
