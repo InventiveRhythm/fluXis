@@ -137,6 +137,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     protected override void LoadComplete()
     {
         base.LoadComplete();
+        PerformUpdateCheck(true);
 
         ScreenStack.Push(new IntroScreen());
         Toolbar.ScreenStack = ScreenStack;

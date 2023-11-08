@@ -38,6 +38,21 @@ public partial class DebugSection : SettingsSection
                         }
                     });
                 }
+            },
+            new SettingsButton
+            {
+                Label = "Install Update From File",
+                Description = "Installs an update from a .zip file. Be careful from where you download the file from though!",
+                ButtonText = "Find",
+                Action = () =>
+                {
+                    game.Settings.Hide();
+                    game.ScreenStack.Push(new FileImportScreen
+                    {
+                        AllowedExtensions = new[] { ".zip" },
+                        OnFileSelected = file => game.CreateUpdateManager()?.UpdateFromFile(file)
+                    });
+                }
             }
         });
     }

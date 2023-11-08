@@ -31,6 +31,7 @@ using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
+using fluXis.Game.Updater;
 using fluXis.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -91,6 +92,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
     public virtual LightController CreateLightController() => new();
+    public virtual IUpdateManager CreateUpdateManager() => null;
 
     protected FluXisGameBase()
     {
@@ -179,6 +181,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);
     }
+
+    public void PerformUpdateCheck(bool silent, bool forceUpdate = false) => Task.Run(() => CreateUpdateManager()?.Perform(silent, forceUpdate));
 
     private APIEndpointConfig getApiEndpoint()
     {

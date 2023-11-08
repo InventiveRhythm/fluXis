@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.Settings.Sections;
@@ -14,16 +15,19 @@ public partial class GeneralSection : SettingsSection
     public override IconUsage Icon => FontAwesome.Solid.Cog;
     public override string Title => "General";
 
+    private InputManager inputManager;
+
     [BackgroundDependencyLoader]
-    private void load(Storage storage)
+    private void load(Storage storage, FluXisGameBase game)
     {
         AddRange(new Drawable[]
         {
             new SettingsButton
             {
                 Label = "Check for updates",
-                Enabled = false,
-                ButtonText = "Check"
+                Description = "Checks for updates and downloads them if available.",
+                ButtonText = "Check",
+                Action = () => game.PerformUpdateCheck(false, inputManager.CurrentState.Keyboard.AltPressed)
             },
             new SettingsButton
             {
@@ -61,5 +65,11 @@ public partial class GeneralSection : SettingsSection
                 }
             }
         });
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        inputManager = GetContainingInputManager();
     }
 }
