@@ -48,7 +48,7 @@ public partial class EditorBottomBar : Container
                     {
                         new(GridSizeMode.Absolute, 200),
                         new(),
-                        new(GridSizeMode.Absolute, 200),
+                        new(GridSizeMode.Absolute, 250),
                         new(GridSizeMode.Absolute, 100)
                     },
                     Content = new[]
@@ -57,7 +57,7 @@ public partial class EditorBottomBar : Container
                         {
                             new TimeInfo(),
                             new EditorTimeline(),
-                            new PlaybackControl(),
+                            new VariableControl(),
                             new EditorPlayTestButton
                             {
                                 Action = () =>
