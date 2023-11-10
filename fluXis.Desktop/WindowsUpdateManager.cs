@@ -102,13 +102,19 @@ public partial class WindowsUpdateManager : IUpdateManager
             return;
 
         if (!File.Exists(patcher))
-            getPatcher(latestVersion);
+            getPatcher(() => startUpdate(latestVersion));
         else
             startUpdate(latestVersion);
     }
 
     public void UpdateFromFile(FileInfo file)
     {
+        if (!File.Exists(patcher))
+        {
+            getPatcher(() => UpdateFromFile(file));
+            return;
+        }
+
         try
         {
             // open the as zip and check if it contains a fluXis.exe
@@ -184,7 +190,7 @@ public partial class WindowsUpdateManager : IUpdateManager
         }
     }
 
-    private async void getPatcher(string latestVersion)
+    private async void getPatcher(Action callback)
     {
         var notification = new LoadingNotificationData
         {
@@ -212,7 +218,7 @@ public partial class WindowsUpdateManager : IUpdateManager
             File.WriteAllBytes(patcher, bytes);
 
             notification.State = LoadingState.Complete;
-            startUpdate(latestVersion);
+            callback?.Invoke();
         };
 
         try { await request.PerformAsync(); }
