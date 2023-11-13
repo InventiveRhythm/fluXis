@@ -52,6 +52,10 @@ public partial class MapStore : Component
     public Action<RealmMapSet> MapSetAdded;
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
 
+    public List<APIMapSet> DownloadQueue { get; } = new();
+    public Action<APIMapSet> DownloadStarted { get; set; }
+    public Action<APIMapSet> DownloadFinished { get; set; }
+
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
     {
@@ -392,5 +396,17 @@ public partial class MapStore : Component
             var detached = rSet.Detach();
             UpdateMapSet(oldSet, detached);
         });
+    }
+
+    public void StartDownload(APIMapSet mapSet)
+    {
+        DownloadQueue.Add(mapSet);
+        DownloadStarted?.Invoke(mapSet);
+    }
+
+    public void FinishDownload(APIMapSet mapSet)
+    {
+        DownloadQueue.Remove(mapSet);
+        DownloadFinished?.Invoke(mapSet);
     }
 }

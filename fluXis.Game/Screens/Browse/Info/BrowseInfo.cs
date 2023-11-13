@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -54,8 +53,6 @@ public partial class BrowseInfo : Container
     private ProfileOverlay profileOverlay { get; set; }
 
     public Bindable<APIMapSet> BindableSet { get; set; } = new();
-
-    private List<APIMapSet> downloadQueue = new();
 
     private Container background;
     private Container cover;
@@ -331,7 +328,7 @@ public partial class BrowseInfo : Container
             return;
         }
 
-        if (downloadQueue.Any(x => x.Id == BindableSet.Value.Id))
+        if (mapStore.DownloadQueue.Any(x => x.Id == BindableSet.Value.Id))
             return;
 
         var notification = new LoadingNotificationData
@@ -349,12 +346,12 @@ public partial class BrowseInfo : Container
             Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
             notification.State = LoadingState.Failed;
 
-            downloadQueue.Remove(BindableSet.Value);
+            mapStore.FinishDownload(BindableSet.Value);
         };
         req.Finished += () =>
         {
             notification.Progress = 1;
-            downloadQueue.Remove(BindableSet.Value);
+            mapStore.FinishDownload(BindableSet.Value);
 
             try
             {
@@ -396,7 +393,7 @@ public partial class BrowseInfo : Container
             }
         };
 
-        downloadQueue.Add(BindableSet.Value);
+        mapStore.StartDownload(BindableSet.Value);
         req.PerformAsync();
 
         notifications.Add(notification);
