@@ -7,6 +7,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
+using fluXis.Game.Import;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -408,5 +409,87 @@ public partial class MapStore : Component
     {
         DownloadQueue.Remove(mapSet);
         DownloadFinished?.Invoke(mapSet);
+    }
+
+    public void DownloadMapSet(APIMapSet set)
+    {
+        if (set == null)
+            return;
+
+        if (MapSets.Any(x => x.OnlineID == set.Id))
+        {
+            notifications.SendText("Mapset already downloaded.");
+            return;
+        }
+
+        if (DownloadQueue.Any(x => x.Id == set.Id))
+            return;
+
+        var notification = new LoadingNotificationData
+        {
+            TextLoading = "Downloading mapset...",
+            TextSuccess = $"Downloaded {set.Title} - {set.Artist}.",
+            TextFailure = "Failed to download mapset."
+        };
+
+        var req = fluxel.CreateAPIRequest($"/mapset/{set.Id}/download");
+        req.DownloadProgress += (current, total) => notification.Progress = (float)current / total;
+        req.Started += () => Logger.Log($"Downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
+        req.Failed += exception =>
+        {
+            Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
+            notification.State = LoadingState.Failed;
+
+            FinishDownload(set);
+        };
+        req.Finished += () =>
+        {
+            notification.Progress = 1;
+            FinishDownload(set);
+
+            try
+            {
+                Logger.Log($"Finished downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
+                var data = req.GetResponseData();
+
+                if (data == null)
+                {
+                    notification.State = LoadingState.Failed;
+                    return;
+                }
+
+                // write data to file
+                var path = storage.GetFullPath($"download/{set.Id}.zip");
+                var dir = Path.GetDirectoryName(path);
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                File.WriteAllBytes(path, data);
+
+                // import
+                new FluXisImport
+                {
+                    MapStore = this,
+                    Storage = storage,
+                    Notifications = notifications,
+                    Realm = realm,
+                    Notification = notification
+                }.Import(path);
+            }
+            catch (Exception ex)
+            {
+                notification.State = LoadingState.Failed;
+                Logger.Log($"Failed to import mapset: {ex.Message}", LoggingTarget.Network);
+            }
+        };
+
+        StartDownload(set);
+        req.PerformAsync();
+
+        notifications.Add(notification);
     }
 }

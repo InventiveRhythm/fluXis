@@ -1,25 +1,63 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Map.Drawables.Online;
 using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Screens.Select;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Map.Drawables;
 
-public partial class MapCard : Container
+public partial class MapCard : Container, IHasContextMenu
 {
     [Resolved]
     private MapStore maps { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
+    public MenuItem[] ContextMenuItems
+    {
+        get
+        {
+            var list = new List<MenuItem>
+            {
+                new FluXisMenuItem("Select", MenuItemType.Highlighted, () => OnClickAction?.Invoke(MapSet))
+            };
+
+            if (downloaded)
+            {
+                list.Add(new FluXisMenuItem("Show in Song Select", FontAwesome.Solid.Eye, () =>
+                {
+                    if (localSet == null) return;
+
+                    game.SelectMapSet(localSet);
+                    game.MenuScreen.MakeCurrent();
+                    game.MenuScreen.Push(new SelectScreen());
+                }));
+            }
+            else
+                list.Add(new FluXisMenuItem("Download", FontAwesome.Solid.Download, () => maps.DownloadMapSet(MapSet)));
+
+            return list.ToArray();
+        }
+    }
 
     public APIMapSet MapSet { get; }
     public Action<APIMapSet> OnClickAction { get; set; }
@@ -27,6 +65,12 @@ public partial class MapCard : Container
 
     private Box background;
     private Container content;
+
+    private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.Id);
+    private bool downloading => maps.DownloadQueue.Any(x => x.Id == MapSet.Id);
+
+    [CanBeNull]
+    private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet.Id);
 
     public MapCard(APIMapSet mapSet)
     {
@@ -287,8 +331,6 @@ public partial class MapCard : Container
 
     private void updateState()
     {
-        bool downloading = maps.DownloadQueue.Any(x => x.Id == MapSet.Id);
-        bool downloaded = maps.MapSets.Any(x => x.OnlineID == MapSet.Id);
         bool shouldShow = downloading || downloaded;
 
         content.ResizeWidthTo(shouldShow ? 420 : 430, 400, Easing.OutQuint);

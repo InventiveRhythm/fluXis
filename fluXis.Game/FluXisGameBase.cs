@@ -57,22 +57,23 @@ public partial class FluXisGameBase : osu.Framework.Game
     private int exceptionCount;
     protected virtual int MaxExceptions => IsDebug ? 5 : 1;
 
-    protected AudioClock AudioClock;
-    protected GlobalCursorOverlay CursorOverlay;
-    protected LoginOverlay LoginOverlay;
-    protected ChatOverlay ChatOverlay;
-    protected ProfileOverlay ProfileOverlay;
-    protected RegisterOverlay RegisterOverlay;
-    protected NotificationManager NotificationManager;
-    protected MusicPlayer MusicPlayer;
-    protected Dashboard Dashboard;
-    protected BackgroundStack BackgroundStack;
-    protected UISamples Samples;
-    protected Fluxel Fluxel;
+    protected AudioClock AudioClock { get; private set; }
+    protected GlobalCursorOverlay CursorOverlay { get; private set; }
+    protected LoginOverlay LoginOverlay { get; private set; }
+    protected ChatOverlay ChatOverlay { get; private set; }
+    protected ProfileOverlay ProfileOverlay { get; private set; }
+    protected RegisterOverlay RegisterOverlay { get; private set; }
+    protected NotificationManager NotificationManager { get; private set; }
+    protected MusicPlayer MusicPlayer { get; private set; }
+    protected Dashboard Dashboard { get; private set; }
+    protected BackgroundStack BackgroundStack { get; private set; }
+    protected UISamples Samples { get; private set; }
+    protected Fluxel Fluxel { get; private set; }
 
-    public SettingsMenu Settings;
-    public Toolbar Toolbar;
-    public FluXisScreenStack ScreenStack;
+    public SettingsMenu Settings { get; private set; }
+    public Toolbar Toolbar { get; private set; }
+    public FluXisScreenStack ScreenStack { get; private set; }
+    public MenuScreen MenuScreen { get; protected set; }
 
     private FluXisRealm realm;
     private MapStore mapStore;
@@ -272,10 +273,14 @@ public partial class FluXisGameBase : osu.Framework.Game
         else if (index < 0)
             index = mapStore.MapSets.Count - 1;
 
-        RealmMapSet mapSet = mapStore.MapSets[index];
-        RealmMap map = mapSet.Maps.First();
+        RealmMapSet set = mapStore.MapSets[index];
+        SelectMapSet(set);
+    }
 
-        mapStore.CurrentMapSet = mapSet;
+    public void SelectMapSet(RealmMapSet set)
+    {
+        mapStore.CurrentMapSet = set;
+        var map = set.Maps.First();
         BackgroundStack.AddBackgroundFromMap(map);
         AudioClock.LoadMap(map, true);
     }

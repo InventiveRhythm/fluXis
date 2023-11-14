@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using fluXis.Game.Database;
@@ -8,12 +7,10 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Import;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -23,7 +20,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
 
@@ -151,7 +147,7 @@ public partial class BrowseInfo : Container
                                         Height = 40,
                                         FontSize = 20,
                                         Text = "Download",
-                                        Action = download,
+                                        Action = () => mapStore.DownloadMapSet(BindableSet.Value),
                                         Enabled = false
                                     }
                                 }
@@ -315,88 +311,6 @@ public partial class BrowseInfo : Container
                 });
             }, token);
         }, true);
-    }
-
-    private void download()
-    {
-        if (BindableSet.Value == null)
-            return;
-
-        if (mapStore.MapSets.Any(x => x.OnlineID == BindableSet.Value.Id))
-        {
-            notifications.SendText("Mapset already downloaded.");
-            return;
-        }
-
-        if (mapStore.DownloadQueue.Any(x => x.Id == BindableSet.Value.Id))
-            return;
-
-        var notification = new LoadingNotificationData
-        {
-            TextLoading = "Downloading mapset...",
-            TextSuccess = $"Downloaded {BindableSet.Value.Title} - {BindableSet.Value.Artist}.",
-            TextFailure = "Failed to download mapset."
-        };
-
-        var req = fluxel.CreateAPIRequest($"/mapset/{BindableSet.Value.Id}/download");
-        req.DownloadProgress += (current, total) => notification.Progress = (float)current / total;
-        req.Started += () => Logger.Log($"Downloading mapset: {BindableSet.Value.Title} - {BindableSet.Value.Artist}", LoggingTarget.Network);
-        req.Failed += exception =>
-        {
-            Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
-            notification.State = LoadingState.Failed;
-
-            mapStore.FinishDownload(BindableSet.Value);
-        };
-        req.Finished += () =>
-        {
-            notification.Progress = 1;
-            mapStore.FinishDownload(BindableSet.Value);
-
-            try
-            {
-                Logger.Log($"Finished downloading mapset: {BindableSet.Value.Title} - {BindableSet.Value.Artist}", LoggingTarget.Network);
-                var data = req.GetResponseData();
-
-                if (data == null)
-                {
-                    notification.State = LoadingState.Failed;
-                    return;
-                }
-
-                // write data to file
-                var path = storage.GetFullPath($"download/{BindableSet.Value.Id}.zip");
-                var dir = Path.GetDirectoryName(path);
-
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                if (File.Exists(path))
-                    File.Delete(path);
-
-                File.WriteAllBytes(path, data);
-
-                // import
-                new FluXisImport
-                {
-                    MapStore = mapStore,
-                    Storage = storage,
-                    Notifications = notifications,
-                    Realm = realm,
-                    Notification = notification
-                }.Import(path);
-            }
-            catch (Exception ex)
-            {
-                notification.State = LoadingState.Failed;
-                Logger.Log($"Failed to import mapset: {ex.Message}", LoggingTarget.Network);
-            }
-        };
-
-        mapStore.StartDownload(BindableSet.Value);
-        req.PerformAsync();
-
-        notifications.Add(notification);
     }
 
     private partial class Cover : Sprite

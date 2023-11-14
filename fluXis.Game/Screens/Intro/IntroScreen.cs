@@ -2,8 +2,6 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Text;
-using fluXis.Game.Overlay.Toolbar;
-using fluXis.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,7 +16,7 @@ public partial class IntroScreen : FluXisScreen
     public override bool ShowToolbar => false;
 
     [Resolved]
-    private Toolbar toolbar { get; set; }
+    private FluXisGameBase game { get; set; }
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }
@@ -137,8 +135,6 @@ public partial class IntroScreen : FluXisScreen
 
     private void continueToMenu()
     {
-        var screen = new MenuScreen();
-        toolbar.MenuScreen = screen;
-        this.Push(screen);
+        this.Push(game.MenuScreen);
     }
 }

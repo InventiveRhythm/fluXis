@@ -9,6 +9,7 @@ using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
+using fluXis.Game.Screens.Menu;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -140,7 +141,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         PerformUpdateCheck(true);
 
         ScreenStack.Push(new IntroScreen());
-        Toolbar.ScreenStack = ScreenStack;
+        MenuScreen = new MenuScreen();
 
         Fluxel.RegisterListener<ServerMessage>(EventType.ServerMessage, res =>
         {
@@ -176,7 +177,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 return true;
 
             case FluXisGlobalKeybind.Home:
-                Toolbar.MenuScreen?.MakeCurrent(); // stupid to use it from Toolbar, but it works
+                MenuScreen?.MakeCurrent(); // stupid to use it from Toolbar, but it works
                 return true;
         }
 

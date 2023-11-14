@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Input;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.Activity;
@@ -107,18 +108,20 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                     new[] { Empty() },
                                     new Drawable[]
                                     {
-                                        new FluXisScrollContainer
+                                        new FluXisContextMenuContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
-                                            ScrollbarAnchor = Anchor.TopLeft,
-                                            Child = Maps = new FillFlowContainer<MapCard>
+                                            Child = new FluXisScrollContainer
                                             {
-                                                RelativeSizeAxes = Axes.X,
-                                                AutoSizeAxes = Axes.Y,
-                                                Direction = FillDirection.Full,
-                                                Spacing = new Vector2(20)
+                                                RelativeSizeAxes = Axes.Both,
+                                                ScrollbarAnchor = Anchor.TopLeft,
+                                                Child = Maps = new FillFlowContainer<MapCard>
+                                                {
+                                                    RelativeSizeAxes = Axes.X,
+                                                    AutoSizeAxes = Axes.Y,
+                                                    Direction = FillDirection.Full,
+                                                    Spacing = new Vector2(20)
+                                                }
                                             }
                                         }
                                     }

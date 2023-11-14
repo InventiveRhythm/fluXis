@@ -7,7 +7,6 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Browse;
-using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Wiki;
@@ -38,8 +37,8 @@ public partial class Toolbar : Container
     [Resolved]
     private NotificationManager notifications { get; set; }
 
-    public FluXisScreenStack ScreenStack { get; set; }
-    public MenuScreen MenuScreen { get; set; }
+    [Resolved]
+    private FluXisGameBase game { get; set; }
 
     public BindableBool ShowToolbar = new();
 
@@ -83,7 +82,7 @@ public partial class Toolbar : Container
                             {
                                 Name = "Home",
                                 Icon = FontAwesome.Solid.Home,
-                                Action = () => MenuScreen?.MakeCurrent()
+                                Action = () => game.MenuScreen?.MakeCurrent()
                             },
                             new ToolbarSeperator(),
                             new ToolbarButton
@@ -159,16 +158,16 @@ public partial class Toolbar : Container
 
     private void goToScreen(IScreen screen)
     {
-        if (ScreenStack.CurrentScreen is not null && ScreenStack.CurrentScreen.GetType() == screen.GetType())
+        if (game.ScreenStack.CurrentScreen is not null && game.ScreenStack.CurrentScreen.GetType() == screen.GetType())
         {
             notifications.SendText("You are already on this screen.");
             return;
         }
 
-        if (ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false }) return;
+        if (game.ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false }) return;
 
-        MenuScreen.MakeCurrent();
-        ScreenStack.Push(screen);
+        game.MenuScreen.MakeCurrent();
+        game.ScreenStack.Push(screen);
     }
 
     private void OnShowToolbarChanged(ValueChangedEvent<bool> e)
