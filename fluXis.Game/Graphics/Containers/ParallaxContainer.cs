@@ -4,7 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Events;
+using osu.Framework.Input;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -12,30 +12,59 @@ namespace fluXis.Game.Graphics.Containers;
 
 public partial class ParallaxContainer : Container
 {
-    public float Strength
-    {
-        get => strength;
-        set
-        {
-            strength = value;
-            updatePosition();
-        }
-    }
+    public float Strength { get; set; } = 10;
 
-    private Vector2 lastMousePos;
+    protected override Container<Drawable> Content => content;
+    private readonly Container content;
+
+    private InputManager input;
     private Bindable<bool> parallaxEnabled;
-    private float strength = 10;
 
     public ParallaxContainer()
     {
+        RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
+
+        InternalChild = content = new Container
+        {
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        };
     }
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         parallaxEnabled = config.GetBindable<bool>(FluXisSetting.Parallax);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        input = GetContainingInputManager();
         parallaxEnabled.BindValueChanged(onChange, true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!parallaxEnabled.Value) return;
+        if (input?.CurrentState.Mouse is null) return;
+
+        var half = DrawSize / 2;
+        var relative = ToLocalSpace(input.CurrentState.Mouse.Position) - half;
+
+        relative.X = (float)(Math.Sign(relative.X) * Interpolation.Damp(0, 1, .999f, Math.Abs(relative.X)));
+        relative.Y = (float)(Math.Sign(relative.Y) * Interpolation.Damp(0, 1, .999f, Math.Abs(relative.Y)));
+
+        const int duration = 500;
+
+        var elapsed = Math.Clamp(Clock.ElapsedFrameTime, 0, duration);
+        content.Position = Interpolation.ValueAt(elapsed, content.Position, relative * half * Strength, 0, duration, Easing.Out);
+        content.Scale = Interpolation.ValueAt(elapsed, content.Scale, new Vector2(1 + Math.Abs(Strength)), 0, duration, Easing.Out);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -46,37 +75,6 @@ public partial class ParallaxContainer : Container
 
     private void onChange(ValueChangedEvent<bool> enabled)
     {
-        if (enabled.NewValue)
-            updatePosition();
-        else
-            this.MoveTo(Vector2.Zero, 400, Easing.OutQuint);
-    }
-
-    protected override void Update()
-    {
-        updatePosition();
-    }
-
-    protected override bool OnMouseMove(MouseMoveEvent e)
-    {
-        lastMousePos = ToLocalSpace(e.ScreenSpaceMousePosition);
-        return false;
-    }
-
-    private Vector2 getParallaxPosition(Vector2 mousepos)
-    {
-        float x = (mousepos.X - DrawSize.X / 2) / (DrawSize.X / 2);
-        float y = (mousepos.Y - DrawSize.Y / 2) / (DrawSize.Y / 2);
-        return new Vector2(x * Strength, y * Strength);
-    }
-
-    private void updatePosition()
-    {
-        if ((!parallaxEnabled?.Value ?? false) || !IsLoaded)
-            return;
-
-        var pos = getParallaxPosition(lastMousePos);
-        X = (float)Interpolation.Lerp(pos.X, X, Math.Exp(-0.01f * Time.Elapsed));
-        Y = (float)Interpolation.Lerp(pos.Y, Y, Math.Exp(-0.01f * Time.Elapsed));
+        this.MoveTo(Vector2.Zero, 400, Easing.OutQuint);
     }
 }

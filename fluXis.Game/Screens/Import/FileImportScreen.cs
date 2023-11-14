@@ -19,7 +19,7 @@ namespace fluXis.Game.Screens.Import;
 public partial class FileImportScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.4f;
-    public override float ParallaxStrength => 3f;
+    public override float ParallaxStrength => .2f;
     public override bool ShowToolbar => false;
     public override float BackgroundBlur => 0.2f;
     public override bool AllowMusicControl => false;

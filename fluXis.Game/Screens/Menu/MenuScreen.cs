@@ -97,7 +97,7 @@ public partial class MenuScreen : FluXisScreen
             {
                 Child = visualizer = new MenuVisualizer(),
                 RelativeSizeAxes = Axes.Both,
-                Strength = 5
+                Strength = .1f
             },
             new Container
             {

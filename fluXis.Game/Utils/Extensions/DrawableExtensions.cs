@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
+using osu.Framework.Threading;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -24,5 +27,13 @@ public static class DrawableExtensions
             sequence = sequence.MoveTo(rngPositions[i + 1], shakeDuration / 5, Easing.InOutSine).Then();
 
         sequence.MoveTo(Vector2.Zero, shakeDuration / 5, Easing.InSine);
+    }
+
+    public static void RunOnUpdate(this Drawable _, Scheduler scheduler, Action action)
+    {
+        if (ThreadSafety.IsUpdateThread)
+            action.Invoke();
+        else
+            scheduler.Add(action.Invoke);
     }
 }

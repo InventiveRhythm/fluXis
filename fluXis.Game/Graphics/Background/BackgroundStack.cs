@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Map;
-using fluXis.Game.Overlay.Toolbar;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -20,39 +19,24 @@ public partial class BackgroundStack : CompositeDrawable
     [Resolved]
     private AudioClock clock { get; set; }
 
-    [Resolved]
-    private Toolbar toolbar { get; set; }
-
-    private readonly List<Background> scheduledBackgrounds = new();
-    private readonly Container backgroundContainer;
-    private readonly ParallaxContainer parallaxContainer;
-    private readonly BackgroundVideo backgroundVideo;
-    private readonly Box swipeAnimation;
-    private readonly Box backgroundDim;
+    private Container backgroundContainer;
+    private ParallaxContainer parallaxContainer;
+    private BackgroundVideo backgroundVideo;
+    private Box swipeAnimation;
+    private Box backgroundDim;
     private string currentBackground;
-    private float zoom = 1;
     private float blur;
 
     private Bindable<bool> backgroundPulse;
 
-    public float Zoom
-    {
-        get => zoom;
-        set
-        {
-            backgroundContainer.ScaleTo(value + .05f, 1000, Easing.OutQuint);
-            zoom = value;
-        }
-    }
+    public float Zoom { set => backgroundContainer.ScaleTo(value, 1000, Easing.OutQuint); }
+    public float ParallaxStrength { set => parallaxContainer.Strength = value; }
 
-    public float ParallaxStrength
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
     {
-        get => parallaxContainer.Strength;
-        set => parallaxContainer.Strength = value;
-    }
+        backgroundPulse = config.GetBindable<bool>(FluXisSetting.BackgroundPulse);
 
-    public BackgroundStack()
-    {
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
 
@@ -60,14 +44,13 @@ public partial class BackgroundStack : CompositeDrawable
         {
             parallaxContainer = new ParallaxContainer
             {
+                RelativeSizeAxes = Axes.Both,
                 Child = backgroundContainer = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Scale = new Vector2(1.05f)
-                },
-                RelativeSizeAxes = Axes.Both
+                    Origin = Anchor.Centre
+                }
             },
             backgroundVideo = new BackgroundVideo(),
             backgroundDim = new Box
@@ -89,16 +72,16 @@ public partial class BackgroundStack : CompositeDrawable
         };
     }
 
-    [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
-    {
-        backgroundPulse = config.GetBindable<bool>(FluXisSetting.BackgroundPulse);
-    }
-
     protected override void LoadComplete()
     {
         blur = 0.01f;
         AddBackgroundFromMap(null);
+
+        backgroundPulse.BindValueChanged(e =>
+        {
+            if (!e.NewValue)
+                this.ScaleTo(1, 500, Easing.OutQuint);
+        }, true);
     }
 
     public void SetDim(float alpha, float duration = 200) => backgroundDim.FadeTo(alpha, duration);
@@ -114,7 +97,7 @@ public partial class BackgroundStack : CompositeDrawable
 
         if (last is Background background) // 🧀 transforming blur is laggy so we just replace the background
         {
-            Schedule(() =>
+            this.RunOnUpdate(Scheduler, () =>
             {
                 backgroundContainer.Add(new Background(background.Map)
                 {
@@ -130,13 +113,6 @@ public partial class BackgroundStack : CompositeDrawable
         // this is EXTREMELY laggy, and i do not know why
         // Padding = new MarginPadding { Top = toolbar.Height - 10 + toolbar.Y };
 
-        while (scheduledBackgrounds.Count > 0)
-        {
-            var background = scheduledBackgrounds[0];
-            scheduledBackgrounds.RemoveAt(0);
-            backgroundContainer.Add(background);
-        }
-
         while (backgroundContainer.Children.Count > 1)
         {
             if (backgroundContainer.Children[1].Alpha == 1)
@@ -150,8 +126,6 @@ public partial class BackgroundStack : CompositeDrawable
             var amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
             Scale = new Vector2(1 + amplitude * .02f);
         }
-        else if (Scale.X != 1)
-            Scale = new Vector2(1);
 
         base.Update();
     }
@@ -171,7 +145,7 @@ public partial class BackgroundStack : CompositeDrawable
         }
         else currentBackground = null;
 
-        scheduledBackgrounds.Add(new Background(map) { Blur = blur });
+        this.RunOnUpdate(Scheduler, () => backgroundContainer.Add(new Background(map) { Blur = blur }));
     }
 
     public void SetVideoBackground(RealmMap map, MapInfo info)

@@ -17,7 +17,7 @@ namespace fluXis.Game.Screens.Gameplay;
 public partial class GameplayLoader : FluXisScreen
 {
     public override float Zoom => 1.3f;
-    public override float ParallaxStrength => 10f;
+    public override float ParallaxStrength => .1f;
     public override bool ShowToolbar => false;
     public override float BackgroundDim => 0.5f;
     public override float BackgroundBlur => 0.5f;

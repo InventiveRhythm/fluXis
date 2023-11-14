@@ -20,7 +20,7 @@ namespace fluXis.Game.Screens.Offset;
 public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.4f;
-    public override float ParallaxStrength => 4f;
+    public override float ParallaxStrength => .1f;
     public override bool ShowToolbar => false;
     public override float BackgroundDim => .6f;
     public override float BackgroundBlur => .4f;

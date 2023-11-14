@@ -44,7 +44,7 @@ public partial class FluXisScreenStack : ScreenStack
         else
         {
             backgrounds.Zoom = 1f;
-            backgrounds.ParallaxStrength = 10f;
+            backgrounds.ParallaxStrength = .05f;
             backgrounds.SetBlur(0f);
             backgrounds.SetDim(0.25f);
         }

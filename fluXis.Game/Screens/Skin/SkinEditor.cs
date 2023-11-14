@@ -27,7 +27,7 @@ namespace fluXis.Game.Screens.Skin;
 public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1f;
-    public override float ParallaxStrength => 1f;
+    public override float ParallaxStrength => .05f;
     public override bool ShowToolbar => false;
     public override float BackgroundDim => .5f;
     public override float BackgroundBlur => .3f;
