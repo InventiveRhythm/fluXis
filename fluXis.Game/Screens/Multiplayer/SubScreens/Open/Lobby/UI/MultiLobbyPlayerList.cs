@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -57,6 +58,12 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
         {
             playerList.Add(new PlayerListEntry { User = user });
         }
+    }
+
+    [CanBeNull]
+    public PlayerListEntry GetPlayer(int id)
+    {
+        return playerList.Children.FirstOrDefault(p => p.User.ID == id);
     }
 
     public void AddPlayer(APIUserShort user)

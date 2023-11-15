@@ -226,6 +226,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             lowpass = LowPassFilter.MAX - lowpass;
             AudioClock.LowPassFilter.Cutoff = (int)lowpass;
         }
+        else if (buffer.BlurSigma != Vector2.Zero || overlayDim.Alpha != 0)
+        {
+            overlayDim.Alpha = 0;
+            buffer.BlurSigma = new Vector2(0);
+        }
     }
 
     public override void Exit()

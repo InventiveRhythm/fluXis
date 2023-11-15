@@ -17,7 +17,20 @@ public partial class CornerButton : Container
 {
     private const int corner_radius = 20;
 
-    public virtual string ButtonText { get; set; } = "Button";
+    private string buttonText;
+
+    public virtual string ButtonText
+    {
+        get => buttonText;
+        set
+        {
+            buttonText = value;
+
+            if (text != null)
+                text.Text = value;
+        }
+    }
+
     public virtual IconUsage Icon { get; set; } = FontAwesome.Solid.Question;
     public virtual Colour4 ButtonColor { get; set; } = FluXisColors.Background4;
     public Corner Corner { get; set; } = Corner.BottomLeft;
@@ -28,6 +41,8 @@ public partial class CornerButton : Container
 
     private Box hover;
     private Box flash;
+
+    private FluXisSpriteText text;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -94,7 +109,7 @@ public partial class CornerButton : Container
                             Icon = Icon,
                             Size = new Vector2(24)
                         },
-                        new FluXisSpriteText
+                        text = new FluXisSpriteText
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,

@@ -13,6 +13,7 @@ using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Online.Fluxel.Packets.Account;
+using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
@@ -95,6 +96,9 @@ public partial class Fluxel : Component
     {
         while (true)
         {
+            if (Status == ConnectionStatus.Closed)
+                break;
+
             if (Status == ConnectionStatus.Failing)
                 Thread.Sleep(5000);
 
@@ -148,12 +152,7 @@ public partial class Fluxel : Component
                 if (string.IsNullOrEmpty(email))
                     throw new Exception("Email is required for registration!");
 
-                await SendPacket(new RegisterPacket
-                {
-                    Username = username,
-                    Password = password,
-                    Email = email
-                });
+                await SendPacket(new RegisterPacket(username, password, email));
             }
 
             // ReSharper disable once AsyncVoidLambda
@@ -220,6 +219,8 @@ public partial class Fluxel : Component
                     message += msg;
                 }
 
+                if (string.IsNullOrEmpty(message)) return;
+
                 Logger.Log(message, LoggingTarget.Network);
 
                 // handler logic
@@ -248,8 +249,10 @@ public partial class Fluxel : Component
                     EventType.ChatMessage => handleListener<ChatMessage>,
                     EventType.ChatHistory => handleListener<ChatMessage[]>,
                     EventType.ChatMessageDelete => handleListener<string>,
-                    EventType.MultiplayerJoinLobby => handleListener<MultiplayerRoom>,
+                    EventType.MultiplayerJoin => handleListener<MultiplayerJoinPacket>,
+                    EventType.MultiplayerLeave => handleListener<MultiplayerLeavePacket>,
                     EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
+                    EventType.MultiplayerReady => handleListener<MultiplayerReadyUpdate>,
                     _ => _ => { }
                 };
 
@@ -322,10 +325,10 @@ public partial class Fluxel : Component
         responseListeners.GetOrAdd(id, _ => new List<Action<object>>()).Add(response => listener((FluxelResponse<T>)response));
     }
 
-    public void UnregisterListener(EventType id)
+    public void UnregisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
     {
-        responseListeners.Remove(id, out var listeners);
-        listeners?.Clear();
+        if (responseListeners.TryGetValue(id, out var listeners))
+            listeners.Remove(response => listener((FluxelResponse<T>)response));
     }
 
     public void Reset()
@@ -339,15 +342,19 @@ public partial class Fluxel : Component
     {
         if (connection is { State: WebSocketState.Open })
             connection?.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
+
+        Status = ConnectionStatus.Closed;
     }
 
     public WebRequest CreateAPIRequest(string url, HttpMethod method = null)
     {
         method ??= HttpMethod.Get;
 
-        var request = new WebRequest($"{Endpoint.APIUrl}{url}");
-        request.AllowInsecureRequests = true;
-        request.Method = method;
+        var request = new WebRequest($"{Endpoint.APIUrl}{url}")
+        {
+            AllowInsecureRequests = true,
+            Method = method
+        };
 
         if (!string.IsNullOrEmpty(Token))
             request.AddHeader("Authorization", Token);
@@ -413,7 +420,8 @@ public enum ConnectionStatus
     Connecting,
     Online,
     Reconnecting,
-    Failing
+    Failing,
+    Closed
 }
 
 public enum EventType
@@ -428,6 +436,8 @@ public enum EventType
     ChatMessageDelete = 12,
 
     MultiplayerCreateLobby = 20,
-    MultiplayerJoinLobby = 21, // 22 is the leave packet, but it never gets sent to the client
+    MultiplayerJoin = 21,
+    MultiplayerLeave = 22,
     MultiplayerRoomUpdate = 23,
+    MultiplayerReady = 24,
 }

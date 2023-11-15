@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
 using fluXis.Game.Updater;
 using fluXis.Resources;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -187,19 +189,25 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private APIEndpointConfig getApiEndpoint()
     {
-        return config.Get<bool>(FluXisSetting.UseDebugServer)
-            ? new APIEndpointConfig
-            {
-                APIUrl = "http://localhost:2434",
-                WebsocketUrl = "ws://localhost:2435",
-                WebsiteRootUrl = "https://fluxis.flux.moe"
-            }
-            : new APIEndpointConfig
-            {
-                APIUrl = "https://api.fluxis.flux.moe",
-                WebsocketUrl = "wss://fluxel.flux.moe",
-                WebsiteRootUrl = "https://fluxis.flux.moe"
-            };
+        var path = Host.Storage.GetFullPath("server.json");
+
+        if (File.Exists(path))
+        {
+            var json = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<APIEndpointConfig>(json);
+        }
+
+        var endpoint = new APIEndpointConfig
+        {
+            APIUrl = "https://api.fluxis.flux.moe",
+            WebsocketUrl = "wss://fluxel.flux.moe",
+            WebsiteRootUrl = "https://fluxis.flux.moe"
+        };
+
+        var json2 = JsonConvert.SerializeObject(endpoint, Formatting.Indented);
+        File.WriteAllText(path, json2);
+
+        return getApiEndpoint();
     }
 
     private void initFonts()

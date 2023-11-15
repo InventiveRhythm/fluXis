@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
@@ -12,6 +13,8 @@ namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
 public partial class PlayerListEntry : Container
 {
     public APIUserShort User { get; set; }
+
+    private SpriteIcon readyIcon;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -71,9 +74,25 @@ public partial class PlayerListEntry : Container
                                 FontSize = 30
                             }
                         }
+                    },
+                    readyIcon = new SpriteIcon
+                    {
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
+                        Icon = FontAwesome.Solid.Check,
+                        Size = new Vector2(20),
+                        Shadow = true,
+                        Margin = new MarginPadding { Right = 10 },
+                        Alpha = 0,
+                        Colour = Colour4.FromHex("#7BE87B")
                     }
                 }
             }
         };
+    }
+
+    public void SetReady(bool ready)
+    {
+        readyIcon.Alpha = ready ? 1 : 0;
     }
 }

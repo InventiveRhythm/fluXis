@@ -160,7 +160,7 @@ public partial class DrawableChatMessage : Container
 
         private async void delete()
         {
-            await Fluxel.SendPacket(new ChatMessageDeletePacket { Id = Message.Id });
+            await Fluxel.SendPacket(new ChatMessageDeletePacket(Message.Id));
         }
 
         private /* async*/ void report()

@@ -32,10 +32,6 @@ public partial class TestChat : FluXisTestScene
         });
 
         AddStep("Show login", login.Show);
-        AddStep("Send message", () => fluxel.SendPacketAsync(new ChatMessagePacket
-        {
-            Channel = "general",
-            Content = "test"
-        }));
+        AddStep("Send message", () => fluxel.SendPacketAsync(new ChatMessagePacket("test", "general")));
     }
 }

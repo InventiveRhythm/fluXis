@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
 using WebRequest = osu.Framework.IO.Network.WebRequest;
@@ -66,7 +67,7 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         base.LoadComplete();
 
-        fluxel.RegisterListener<MultiplayerRoom>(EventType.MultiplayerJoinLobby, onLobbyJoin);
+        fluxel.RegisterListener<MultiplayerJoinPacket>(EventType.MultiplayerJoin, onLobbyJoin);
 
         loadLobbies();
     }
@@ -100,26 +101,26 @@ public partial class MultiLobbyList : MultiSubScreen
             Text = "Joining lobby...",
         };
 
-        fluxel.SendPacketAsync(new MultiplayerJoinPacket
-        {
-            LobbyId = room.RoomID,
-            Password = ""
-        });
+        fluxel.SendPacketAsync(new MultiplayerJoinPacket(room.RoomID, ""));
     }
 
-    private void onLobbyJoin(FluxelResponse<MultiplayerRoom> res)
+    private void onLobbyJoin(FluxelResponse<MultiplayerJoinPacket> res)
     {
+        if (res.Status == -1) return;
+        if (!res.Data.JoinRequest) return;
+
         Schedule(() =>
         {
             if (res.Status == 200)
             {
                 loadingPanel?.Hide();
-                this.Push(new MultiLobby { Room = res.Data });
+                this.Push(new MultiLobby { Room = res.Data.Room });
             }
             else
             {
-                game.Overlay = null;
+                loadingPanel?.Hide();
                 notifications.SendError($"Failed to join lobby", res.Message);
+                Logger.Log(JsonConvert.SerializeObject(res));
             }
         });
     }

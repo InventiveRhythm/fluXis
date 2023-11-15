@@ -7,10 +7,10 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API.Models.Multi;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
+using fluXis.Game.UI;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -47,6 +47,7 @@ public partial class MultiLobby : MultiSubScreen
     private bool confirmExit;
 
     private MultiLobbyPlayerList playerList;
+    private CornerButton readyButton;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -59,6 +60,7 @@ public partial class MultiLobby : MultiSubScreen
                 Direction = FillDirection.Vertical,
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight,
+                Margin = new MarginPadding(30),
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText
@@ -107,14 +109,40 @@ public partial class MultiLobby : MultiSubScreen
                     }
                 }
             },
+            readyButton = new CornerButton
+            {
+                Corner = Corner.BottomRight,
+                ButtonText = "Ready",
+                Action = () =>
+                {
+                    ready = !ready;
+                    fluxel.SendPacketAsync(new MultiplayerReadyPacket(ready));
+                    readyButton.ButtonText = ready ? "Unready" : "Ready";
+                }
+            }
         };
     }
+
+    private bool ready;
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
         fluxel.RegisterListener<MultiplayerRoomUpdate>(EventType.MultiplayerRoomUpdate, onRoomUpdate);
+        fluxel.RegisterListener<MultiplayerJoinPacket>(EventType.MultiplayerJoin, onPlayerJoin);
+        fluxel.RegisterListener<MultiplayerLeavePacket>(EventType.MultiplayerLeave, onPlayerLeave);
+        fluxel.RegisterListener<MultiplayerReadyUpdate>(EventType.MultiplayerReady, onReadyUpdate);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        fluxel.UnregisterListener<MultiplayerRoomUpdate>(EventType.MultiplayerRoomUpdate, onRoomUpdate);
+        fluxel.UnregisterListener<MultiplayerJoinPacket>(EventType.MultiplayerJoin, onPlayerJoin);
+        fluxel.UnregisterListener<MultiplayerLeavePacket>(EventType.MultiplayerLeave, onPlayerLeave);
+        fluxel.UnregisterListener<MultiplayerReadyUpdate>(EventType.MultiplayerReady, onReadyUpdate);
     }
 
     private void onRoomUpdate(FluxelResponse<MultiplayerRoomUpdate> response)
@@ -123,17 +151,44 @@ public partial class MultiLobby : MultiSubScreen
         {
             string json = JsonConvert.SerializeObject(response.Data.Data);
 
+            /*
             switch (response.Data.Type)
             {
                 case "player/join":
                     var player = JsonConvert.DeserializeObject<APIUserShort>(json);
                     playerList.AddPlayer(player);
                     break;
+            }
+            */
+        });
+    }
 
-                case "player/leave":
-                    var remPlayer = int.Parse(json);
-                    playerList.RemovePlayer(remPlayer);
-                    break;
+    private void onPlayerJoin(FluxelResponse<MultiplayerJoinPacket> response)
+    {
+        if (!response.Data.SomeoneJoined) return;
+
+        Schedule(() => playerList.AddPlayer(response.Data.Player));
+    }
+
+    private void onPlayerLeave(FluxelResponse<MultiplayerLeavePacket> response)
+    {
+        Schedule(() => playerList.RemovePlayer(response.Data.UserID));
+    }
+
+    private void onReadyUpdate(FluxelResponse<MultiplayerReadyUpdate> response)
+    {
+        Schedule(() =>
+        {
+            if (response.Data.AllReady)
+            {
+                // TODO: start game
+            }
+            else
+            {
+                var player = playerList.GetPlayer(response.Data.PlayerID);
+                if (player is null) return;
+
+                player.SetReady(response.Data.Ready);
             }
         });
     }
@@ -146,6 +201,7 @@ public partial class MultiLobby : MultiSubScreen
             stopClockMusic();
             backgroundStack.AddBackgroundFromMap(null);
             fluxel.SendPacketAsync(new MultiplayerLeavePacket());
+            readyButton.Hide();
             return false;
         }
 
@@ -202,6 +258,7 @@ public partial class MultiLobby : MultiSubScreen
             startClockMusic();
         }
 
+        readyButton.Show();
         base.OnEntering(e);
     }
 }

@@ -2,13 +2,8 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.Fluxel.Packets;
 
-public class Packet
+public abstract class Packet
 {
     [JsonIgnore]
-    public int ID { get; }
-
-    public Packet(int id)
-    {
-        ID = id;
-    }
+    public abstract int ID { get; }
 }

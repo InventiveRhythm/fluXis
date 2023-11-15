@@ -4,17 +4,18 @@ namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 
 public class MultiplayerCreateRoomPacket : Packet
 {
+    public override int ID => 20;
+
     [JsonProperty("name")]
-    public string Name;
+    public string Name { get; init; }
 
     [JsonProperty("password")]
-    public string Password;
+    public string Password { get; init; }
 
     [JsonProperty("max")]
-    public int MaxPlayers;
+    public int MaxPlayers { get; init; }
 
     public MultiplayerCreateRoomPacket(string name, string password, int maxPlayers)
-        : base(20)
     {
         Name = name;
         Password = password;

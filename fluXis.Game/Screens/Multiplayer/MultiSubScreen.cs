@@ -23,7 +23,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     public MultiSubScreen()
     {
-        Padding = new MarginPadding(30);
+        // Padding = new MarginPadding(30);
     }
 
     protected override void LoadComplete()
@@ -33,6 +33,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
             titleContainer = new Container
             {
                 AutoSizeAxes = Axes.Both,
+                Margin = new MarginPadding(30),
                 Children = new Drawable[]
                 {
                     new Container

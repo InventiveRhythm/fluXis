@@ -4,11 +4,13 @@ namespace fluXis.Game.Online.Fluxel.Packets.Chat;
 
 public class ChatMessageDeletePacket : Packet
 {
-    [JsonProperty("id")]
-    public string Id { get; set; }
+    public override int ID => 12;
 
-    public ChatMessageDeletePacket()
-        : base(12)
+    [JsonProperty("id")]
+    public string Id { get; init; }
+
+    public ChatMessageDeletePacket(string id)
     {
+        Id = id;
     }
 }

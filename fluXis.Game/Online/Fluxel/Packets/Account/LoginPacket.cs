@@ -4,11 +4,12 @@ namespace fluXis.Game.Online.Fluxel.Packets.Account;
 
 public class LoginPacket : Packet
 {
+    public override int ID => 1;
+
     [JsonProperty("token")]
-    public string Token;
+    public string Token { get; init; }
 
     public LoginPacket(string token)
-        : base(1)
     {
         Token = token;
     }

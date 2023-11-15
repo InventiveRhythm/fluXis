@@ -177,11 +177,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
     {
         textBox.OnCommit += (sender, _) =>
         {
-            fluxel.SendPacketAsync(new ChatMessagePacket
-            {
-                Channel = "general",
-                Content = sender.Text
-            });
+            fluxel.SendPacketAsync(new ChatMessagePacket(sender.Text, Channel));
 
             sender.Text = "";
         };
@@ -193,7 +189,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
                 switch (status)
                 {
                     case ConnectionStatus.Online:
-                        fluxel.SendPacketAsync(new ChatHistoryPacket { Channel = Channel });
+                        fluxel.SendPacketAsync(new ChatHistoryPacket(Channel));
                         break;
 
                     case ConnectionStatus.Offline:
@@ -258,7 +254,7 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
         });
 
         if (fluxel.Status == ConnectionStatus.Online)
-            fluxel.SendPacketAsync(new ChatHistoryPacket { Channel = Channel });
+            fluxel.SendPacketAsync(new ChatHistoryPacket(Channel));
     }
 
     private void addMessage(ChatMessage message)

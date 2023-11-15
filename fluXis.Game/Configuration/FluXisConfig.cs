@@ -58,7 +58,6 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Account
         SetDefault(FluXisSetting.Token, string.Empty);
-        SetDefault(FluXisSetting.UseDebugServer, false);
     }
 }
 
@@ -108,6 +107,5 @@ public enum FluXisSetting
     ShowFps,
 
     // Account
-    Token,
-    UseDebugServer
+    Token
 }
