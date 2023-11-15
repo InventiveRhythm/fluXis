@@ -76,8 +76,15 @@ public partial class MultiRankedMain : MultiSubScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        this.MoveToY(100).MoveToY(0, 400, Easing.OutQuint);
         menuMusic.GoToLayer(0, 0);
         base.OnEntering(e);
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        this.MoveToY(100, 400, Easing.OutQuint);
+        return base.OnExiting(e);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)

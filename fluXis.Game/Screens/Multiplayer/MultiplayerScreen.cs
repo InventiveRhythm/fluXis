@@ -78,6 +78,7 @@ public partial class MultiplayerScreen : FluXisScreen
         if (!canExit()) return true;
 
         menuMusic.StopAll();
+        this.Delay(200).FadeOut();
 
         audioClock.Start();
         audioClock.FadeIn(400);

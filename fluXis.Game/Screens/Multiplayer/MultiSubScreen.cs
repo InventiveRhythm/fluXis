@@ -102,7 +102,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
         this.FadeOut(200);
     }
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         switch (e.Action)
         {

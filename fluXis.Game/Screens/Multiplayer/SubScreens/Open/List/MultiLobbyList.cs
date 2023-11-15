@@ -128,7 +128,14 @@ public partial class MultiLobbyList : MultiSubScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         menuMusic.GoToLayer(0, 1);
+        this.MoveToY(-100).MoveToY(0, 400, Easing.OutQuint);
         base.OnEntering(e);
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        this.MoveToY(-100, 400, Easing.OutQuint);
+        return base.OnExiting(e);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
