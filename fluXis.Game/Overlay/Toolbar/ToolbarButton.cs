@@ -1,5 +1,7 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,12 +13,11 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarButton : Container, IHasTextTooltip
+public partial class ToolbarButton : Container, IHasDrawableTooltip
 {
-    public IconUsage Icon = FontAwesome.Solid.Question;
-    public new string Name = "";
-
-    public string Tooltip => Name;
+    public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
+    public string Title { get; init; }
+    public string Description { get; init; }
 
     public Action Action;
 
@@ -76,5 +77,44 @@ public partial class ToolbarButton : Container, IHasTextTooltip
         Action?.Invoke();
         samples.Click();
         return true;
+    }
+
+    public Drawable GetTooltip()
+    {
+        return new FillFlowContainer
+        {
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Vertical,
+            Margin = new MarginPadding { Horizontal = 10, Vertical = 6 },
+            Children = new Drawable[]
+            {
+                new FillFlowContainer
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(5),
+                    Children = new Drawable[]
+                    {
+                        new SpriteIcon
+                        {
+                            Icon = Icon,
+                            Size = new Vector2(16),
+                            Margin = new MarginPadding(4)
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = Title,
+                            FontSize = 24
+                        }
+                    }
+                },
+                new FluXisTextFlow
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Text = Description,
+                    FontSize = 18
+                }
+            }
+        };
     }
 }

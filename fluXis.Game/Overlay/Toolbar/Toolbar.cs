@@ -80,57 +80,66 @@ public partial class Toolbar : Container
                         {
                             new ToolbarButton
                             {
-                                Name = "Home",
+                                Title = "Home",
+                                Description = "Return to the main menu.",
                                 Icon = FontAwesome.Solid.Home,
                                 Action = () => game.MenuScreen?.MakeCurrent()
                             },
                             new ToolbarSeperator(),
                             new ToolbarButton
                             {
-                                Name = "Maps",
+                                Title = "Maps",
+                                Description = "Browse your maps.",
                                 Icon = FontAwesome.Solid.Map,
                                 Action = () => goToScreen(new SelectScreen())
                             },
                             new ToolbarButton
                             {
-                                Name = "Settings",
+                                Title = "Settings",
+                                Description = "Change your settings.",
                                 Icon = FontAwesome.Solid.Cog,
                                 Action = () => settings.ToggleVisibility()
                             },
                             new ToolbarSeperator(),
                             new ToolbarButton
                             {
-                                Name = "Chat",
+                                Title = "Chat",
+                                Description = "Talk to other players.",
                                 Icon = FontAwesome.Solid.Comment,
                                 Action = chat.Show
                             },
                             new ToolbarButton
                             {
-                                Name = "Ranking",
+                                Title = "Ranking",
+                                Description = "See the top players.",
                                 Icon = FontAwesome.Solid.Trophy,
                                 Action = () => goToScreen(new Rankings())
                             },
                             new ToolbarButton
                             {
-                                Name = "Download Maps",
+                                Title = "Download Maps",
+                                Description = "Download new maps.",
                                 Icon = FontAwesome.Solid.Download,
                                 Action = () => goToScreen(new MapBrowser())
                             },
                             new ToolbarButton
                             {
-                                Name = "Dashboard",
+                                Title = "Dashboard",
+                                Description = "See news, updates, and more.",
                                 Icon = FontAwesome.Solid.ChartLine,
                                 Action = dashboard.ToggleVisibility
                             },
                             new ToolbarButton
                             {
-                                Name = "Wiki",
+                                Title = "Wiki",
+                                Description = "Learn about the game.",
                                 Icon = FontAwesome.Solid.Book,
                                 Action = () => goToScreen(new Wiki())
                             },
                             new ToolbarButton
                             {
-                                Name = "Music Player",
+                                Title = "Music Player",
+                                Description = "Listen to your music.",
                                 Icon = FontAwesome.Solid.Music,
                                 Action = musicPlayer.ToggleVisibility
                             }
