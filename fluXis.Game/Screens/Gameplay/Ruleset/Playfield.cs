@@ -75,7 +75,7 @@ public partial class Playfield : Container
             }),
             laneCovers = new Container
             {
-                RelativeSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = new[]
@@ -110,9 +110,6 @@ public partial class Playfield : Container
 
     protected override void Update()
     {
-        hitLine.Width = Stage.Width;
-        laneCovers.Width = Stage.Width;
-
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
     }
