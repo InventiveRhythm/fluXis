@@ -40,8 +40,8 @@ public partial class SkinManager : Component, ISkin
     private DefaultSkin defaultSkin { get; set; }
     private ISkin currentSkin { get; set; }
 
-    private const string default_skin_name = "default";
-    private const string default_bright_skin_name = "default-bright";
+    private const string default_skin_name = "Default";
+    private const string default_bright_skin_name = "Default Bright";
 
     public SkinJson SkinJson => currentSkin.SkinJson;
     public string SkinFolder { get; private set; } = default_skin_name;
