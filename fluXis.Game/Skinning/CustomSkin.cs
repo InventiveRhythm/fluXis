@@ -157,6 +157,7 @@ public class CustomSkin : ISkin
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,
+                Colour = SkinJson.GetLaneColor(lane, keyCount),
                 Width = 1
             };
         }

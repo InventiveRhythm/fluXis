@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -7,10 +7,13 @@ namespace fluXis.Game.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectPiece : Container
 {
+    private readonly SkinJson skinJson;
     private readonly Box box;
 
-    public DefaultHitObjectPiece()
+    public DefaultHitObjectPiece(SkinJson skinJson)
     {
+        this.skinJson = skinJson;
+
         CornerRadius = 10;
         Masking = true;
         Height = 42;
@@ -29,6 +32,6 @@ public partial class DefaultHitObjectPiece : Container
         Height = 42f * factor;
     }
 
-    public void UpdateColor(int lane, int keyCount) => SetColor(FluXisColors.GetLaneColor(lane, keyCount));
+    public void UpdateColor(int lane, int keyCount) => SetColor(skinJson.GetLaneColor(lane, keyCount));
     public void SetColor(Colour4 color) => box.Colour = color;
 }

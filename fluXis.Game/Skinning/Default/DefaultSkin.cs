@@ -13,16 +13,18 @@ namespace fluXis.Game.Skinning.Default;
 
 public class DefaultSkin : ISkin
 {
-    public SkinJson SkinJson { get; init; }
+    public SkinJson SkinJson { get; protected set; }
     private TextureStore textures { get; }
     private ISampleStore samples { get; }
 
     public DefaultSkin(TextureStore textures, ISampleStore samples)
     {
-        SkinJson = new SkinJson();
+        SkinJson = CreateJson();
         this.textures = textures;
         this.samples = samples;
     }
+
+    protected virtual SkinJson CreateJson() => new DefaultSkinJson();
 
     public Texture GetDefaultBackground() => textures.Get("Backgrounds/default.png");
     public Drawable GetStageBackground() => new DefaultStageBackground();
@@ -31,35 +33,35 @@ public class DefaultSkin : ISkin
 
     public Drawable GetHitObject(int lane, int keyCount)
     {
-        var piece = new DefaultHitObjectPiece();
+        var piece = new DefaultHitObjectPiece(SkinJson);
         piece.UpdateColor(lane, keyCount);
         return piece;
     }
 
     public Drawable GetLongNoteBody(int lane, int keyCount)
     {
-        var body = new DefaultHitObjectBody();
+        var body = new DefaultHitObjectBody(SkinJson);
         body.UpdateColor(lane, keyCount);
         return body;
     }
 
     public Drawable GetLongNoteEnd(int lane, int keyCount)
     {
-        var end = new DefaultHitObjectEnd();
+        var end = new DefaultHitObjectEnd(SkinJson);
         end.UpdateColor(lane, keyCount);
         return end;
     }
 
     public Drawable GetColumnLighting(int lane, int keyCount)
     {
-        var lighting = new DefaultColumnLighing();
+        var lighting = new DefaultColumnLighing(SkinJson);
         lighting.UpdateColor(lane, keyCount);
         return lighting;
     }
 
     public Drawable GetReceptor(int lane, int keyCount, bool down)
     {
-        var receptor = down ? new DefaultReceptorDown() : new DefaultReceptorUp();
+        var receptor = down ? new DefaultReceptorDown(SkinJson) : new DefaultReceptorUp(SkinJson);
         receptor.UpdateColor(lane, keyCount);
         receptor.Height = SkinJson.GetKeymode(keyCount).HitPosition;
         return receptor;

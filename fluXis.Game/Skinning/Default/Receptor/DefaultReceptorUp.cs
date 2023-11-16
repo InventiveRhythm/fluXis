@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -9,9 +10,12 @@ namespace fluXis.Game.Skinning.Default.Receptor;
 public partial class DefaultReceptorUp : Container
 {
     protected readonly Container Diamond;
+    protected SkinJson SkinJson { get; }
 
-    public DefaultReceptorUp()
+    public DefaultReceptorUp(SkinJson skinJson)
     {
+        SkinJson = skinJson;
+
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;

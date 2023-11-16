@@ -33,13 +33,13 @@ public partial class EditorHitObject : Container
 
         Children = new[]
         {
-            HitObjectPiece = new DefaultHitObjectPiece(),
-            longNoteBody = new DefaultHitObjectBody().With(b =>
+            HitObjectPiece = new DefaultHitObjectPiece(null),
+            longNoteBody = new DefaultHitObjectBody(null).With(b =>
             {
                 b.Anchor = Anchor.BottomCentre;
                 b.Origin = Anchor.BottomCentre;
             }),
-            LongNoteEnd = new DefaultHitObjectEnd().With(e =>
+            LongNoteEnd = new DefaultHitObjectEnd(null).With(e =>
             {
                 e.Anchor = Anchor.BottomCentre;
                 e.Origin = Anchor.BottomCentre;

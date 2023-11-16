@@ -254,9 +254,9 @@ public partial class FluXisGameBase : osu.Framework.Game
             return;
         }
 
-        if (skinManager.SkinFolder == "Default")
+        if (skinManager.IsDefault)
         {
-            NotificationManager.SendError("You can't edit the Default skin.");
+            NotificationManager.SendError("You can't edit Default skins.");
             return;
         }
 

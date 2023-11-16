@@ -32,29 +32,44 @@ public partial class SkinManager : Component, ISkin
     private AudioManager audio { get; set; }
 
     [Resolved]
+    private ISampleStore samples { get; set; }
+
+    [Resolved]
     private GameHost host { get; set; }
 
     private DefaultSkin defaultSkin { get; set; }
     private ISkin currentSkin { get; set; }
 
-    private const string default_skin_name = "Default";
+    private const string default_skin_name = "default";
+    private const string default_bright_skin_name = "default-bright";
 
     public SkinJson SkinJson => currentSkin.SkinJson;
     public string SkinFolder { get; private set; } = default_skin_name;
     public bool CanChangeSkin { get; set; } = true;
+
+    public bool IsDefault => isDefault(SkinFolder);
 
     private Bindable<string> skinName;
     private Storage skinStorage;
 
     public IEnumerable<string> GetSkinNames()
     {
-        string[] skinNames = { default_skin_name };
-        skinNames = skinNames.Concat(skinStorage.GetDirectories("")).ToArray();
-        return skinNames;
+        string[] defaultSkins =
+        {
+            default_skin_name,
+            default_bright_skin_name
+        };
+
+        var custom = skinStorage.GetDirectories("").ToArray();
+
+        // remove default skin from customs if it exists
+        custom = custom.Where(x => !isDefault(x)).ToArray();
+
+        return defaultSkins.Concat(custom).ToArray();
     }
 
     [BackgroundDependencyLoader]
-    private void load(Storage storage, ISampleStore samples)
+    private void load(Storage storage)
     {
         currentSkin = defaultSkin = new DefaultSkin(textures, samples);
         skinStorage = storage.GetStorageForDirectory("skins");
@@ -75,10 +90,7 @@ public partial class SkinManager : Component, ISkin
         stream.Flush();
     }
 
-    public void OpenFolder()
-    {
-        PathUtils.OpenFolder(SkinFolder == default_skin_name ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
-    }
+    public void OpenFolder() => PathUtils.OpenFolder(isDefault(SkinFolder) ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
 
     protected override void Update()
     {
@@ -113,6 +125,12 @@ public partial class SkinManager : Component, ISkin
 
     private void loadConfig()
     {
+        if (SkinFolder == default_bright_skin_name)
+        {
+            currentSkin = new DefaultBrightSkin(textures, samples);
+            return;
+        }
+
         var skinJson = new SkinJson();
 
         try
@@ -137,6 +155,8 @@ public partial class SkinManager : Component, ISkin
 
         currentSkin = createCustomSkin(skinJson, SkinFolder);
     }
+
+    private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase) || string.Equals(skinName, default_bright_skin_name, StringComparison.CurrentCultureIgnoreCase);
 
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
     public Drawable GetStageBackground() => currentSkin.GetStageBackground() ?? defaultSkin.GetStageBackground();

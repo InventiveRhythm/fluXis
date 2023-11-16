@@ -80,6 +80,19 @@ public class SkinJson
         catch { return Colour4.White; }
     }
 
+    public virtual Colour4 GetLaneColor(int lane, int maxLanes)
+    {
+        var colors = GetKeymode(maxLanes).Colors;
+
+        if (colors.Count == 0)
+            return Colour4.White;
+
+        var color = colors[lane % colors.Count];
+
+        try { return Colour4.FromHex(color); }
+        catch { return Colour4.White; }
+    }
+
     [CanBeNull]
     public string GetOverride(string key) => Overrides.TryGetValue(key, out var value) ? value : null;
 

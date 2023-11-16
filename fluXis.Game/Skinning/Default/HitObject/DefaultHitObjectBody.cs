@@ -1,4 +1,4 @@
-using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -9,10 +9,13 @@ namespace fluXis.Game.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectBody : Container
 {
+    private readonly SkinJson skinJson;
     private readonly Box box;
 
-    public DefaultHitObjectBody()
+    public DefaultHitObjectBody(SkinJson skinJson)
     {
+        this.skinJson = skinJson;
+
         RelativeSizeAxes = Axes.X;
         Width = 0.9f;
         Anchor = Anchor.BottomCentre;
@@ -25,7 +28,7 @@ public partial class DefaultHitObjectBody : Container
 
     public void UpdateColor(int lane, int keyCount)
     {
-        var color = FluXisColors.GetLaneColor(lane, keyCount);
+        var color = skinJson.GetLaneColor(lane, keyCount);
         SetColor(color, color.Darken(.4f));
     }
 
