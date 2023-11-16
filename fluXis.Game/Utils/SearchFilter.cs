@@ -99,12 +99,12 @@ public class SearchFilters
             string tags = map.Metadata.Tags.ToLower();
             string difficulty = map.Difficulty.ToLower();
 
-            termMatches |= title.Contains(Query);
-            termMatches |= artist.Contains(Query);
-            termMatches |= mapper.Contains(Query);
-            termMatches |= source.Contains(Query);
-            termMatches |= tags.Contains(Query);
-            termMatches |= difficulty.Contains(Query);
+            termMatches |= title.Contains(Query.ToLower());
+            termMatches |= artist.Contains(Query.ToLower());
+            termMatches |= mapper.Contains(Query.ToLower());
+            termMatches |= source.Contains(Query.ToLower());
+            termMatches |= tags.Contains(Query.ToLower());
+            termMatches |= difficulty.Contains(Query.ToLower());
 
             if (!termMatches)
                 matches = false;
