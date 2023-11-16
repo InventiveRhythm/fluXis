@@ -62,7 +62,7 @@ public partial class SkinManager : Component, ISkin
 
         var custom = skinStorage.GetDirectories("").ToArray();
 
-        // remove default skin from customs if it exists
+        // remove default skins from customs if they exist
         custom = custom.Where(x => !isDefault(x)).ToArray();
 
         return defaultSkins.Concat(custom).ToArray();
@@ -76,39 +76,37 @@ public partial class SkinManager : Component, ISkin
         skinName = config.GetBindable<string>(FluXisSetting.SkinName);
     }
 
-    public void UpdateAndSave(SkinJson newSkinJson)
+    protected override void LoadComplete()
     {
-        currentSkin = createCustomSkin(newSkinJson, SkinFolder);
+        base.LoadComplete();
 
-        var json = JsonConvert.SerializeObject(SkinJson, Formatting.Indented);
-        var path = $"{SkinFolder}/skin.json";
-        skinStorage.Delete(path);
-        var stream = skinStorage.GetStream(path, FileAccess.Write);
-        var writer = new StreamWriter(stream);
-        writer.Write(json);
-        writer.Flush();
-        stream.Flush();
-    }
-
-    public void OpenFolder() => PathUtils.OpenFolder(isDefault(SkinFolder) ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
-
-    protected override void Update()
-    {
-        if (skinName.Value != SkinFolder) // i dont know why normal bindables dont work
+        skinName.BindValueChanged(e =>
         {
             if (!CanChangeSkin)
             {
-                skinName.Value = SkinFolder;
+                skinName.Value = e.OldValue;
                 return;
             }
 
             if (currentSkin is not DefaultSkin)
                 currentSkin.Dispose();
 
-            SkinFolder = skinName.Value;
-            loadConfig();
-        }
+            SkinFolder = e.NewValue;
+            currentSkin = loadSkin(SkinFolder);
+            Logger.Log($"Switched skin to '{SkinFolder}'", LoggingTarget.Information);
+        }, true);
     }
+
+    public void UpdateAndSave(SkinJson newSkinJson)
+    {
+        currentSkin = createCustomSkin(newSkinJson, SkinFolder);
+
+        var json = JsonConvert.SerializeObject(SkinJson, Formatting.Indented);
+        var path = skinStorage.GetFullPath($"{SkinFolder}/skin.json");
+        File.WriteAllText(path, json);
+    }
+
+    public void OpenFolder() => PathUtils.OpenFolder(isDefault(SkinFolder) ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
 
     private ISkin createCustomSkin(SkinJson skinJson, string folder)
     {
@@ -123,37 +121,37 @@ public partial class SkinManager : Component, ISkin
         return new CustomSkin(skinJson, textureStore, storage, sampleStore);
     }
 
-    private void loadConfig()
+    private ISkin loadSkin(string folder)
     {
-        if (SkinFolder == default_bright_skin_name)
+        switch (folder)
         {
-            currentSkin = new DefaultBrightSkin(textures, samples);
-            return;
+            case default_skin_name:
+                return defaultSkin;
+
+            case default_bright_skin_name:
+                return new DefaultBrightSkin(textures, samples);
         }
 
         var skinJson = new SkinJson();
 
         try
         {
-            if (skinStorage.Exists($"{SkinFolder}/skin.json"))
+            if (skinStorage.Exists($"{folder}/skin.json"))
             {
-                var stream = skinStorage.GetStream($"{SkinFolder}/skin.json");
-                var reader = new StreamReader(stream);
-                var json = reader.ReadToEnd();
+                var path = skinStorage.GetFullPath($"{folder}/skin.json");
+                var json = File.ReadAllText(path);
                 skinJson = JsonConvert.DeserializeObject<SkinJson>(json);
-                Logger.Log("Loaded skin.json", LoggingTarget.Information);
+                Logger.Log($"Loaded skin.json from '{folder}'", LoggingTarget.Information);
             }
             else
-            {
-                Logger.Log("No skin.json found, using default skin", LoggingTarget.Information);
-            }
+                Logger.Log($"No skin.json in folder '{folder}' found, using default skin.json", LoggingTarget.Information);
         }
         catch (Exception e)
         {
-            Logger.Error(e, "Failed to load skin");
+            Logger.Error(e, $"Failed to load skin.json '{folder}'");
         }
 
-        currentSkin = createCustomSkin(skinJson, SkinFolder);
+        return createCustomSkin(skinJson, folder);
     }
 
     private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase) || string.Equals(skinName, default_bright_skin_name, StringComparison.CurrentCultureIgnoreCase);

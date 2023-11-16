@@ -96,7 +96,7 @@ public class SkinJson
     [CanBeNull]
     public string GetOverride(string key) => Overrides.TryGetValue(key, out var value) ? value : null;
 
-    public string GetOverriderOrDefault(string key) => GetOverride(key) ?? key;
+    public string GetOverrideOrDefault(string key) => GetOverride(key) ?? key;
 
     public SkinJson Copy() => (SkinJson)MemberwiseClone();
 }
