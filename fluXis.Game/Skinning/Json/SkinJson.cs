@@ -87,7 +87,7 @@ public class SkinJson
         if (colors.Count == 0)
             return Colour4.White;
 
-        var color = colors[lane % colors.Count];
+        var color = colors[(lane - 1) % colors.Count];
 
         try { return Colour4.FromHex(color); }
         catch { return Colour4.White; }
