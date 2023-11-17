@@ -27,6 +27,8 @@ public partial class DashboardSidebar : ExpandingContainer
     {
         Width = 64;
         RelativeSizeAxes = Axes.Y;
+        CornerRadius = 20;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {

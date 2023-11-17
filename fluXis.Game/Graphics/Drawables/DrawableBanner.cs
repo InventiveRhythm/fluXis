@@ -1,9 +1,9 @@
+using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Graphics.Drawables;
 
@@ -12,8 +12,10 @@ public partial class DrawableBanner : Sprite
     [Resolved]
     private Fluxel fluxel { get; set; }
 
+    [Resolved]
+    private OnlineTextureStore store { get; set; }
+
     private APIUserShort user;
-    private TextureStore textures;
 
     public DrawableBanner(APIUserShort user)
     {
@@ -23,20 +25,48 @@ public partial class DrawableBanner : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures)
+    private void load()
     {
-        this.textures = textures;
-        Texture = textures.Get(user.GetBannerUrl(fluxel.Endpoint));
+        Texture = store.Get(user.GetBannerUrl(fluxel.Endpoint));
     }
 
     protected override void LoadComplete()
     {
-        this.FadeInFromZero(200);
+        this.FadeInFromZero(400);
+
+        UserCache.GetBannerUpdateCallbacks(user.ID).Add(reload);
+    }
+
+    private void reload()
+    {
+        // clear from texture store
+        Texture = null;
+
+        // wait 2 frames to allow texture store to clear
+        Schedule(() => Schedule(() =>
+        {
+            Texture = store.Get(user.GetBannerUrl(fluxel.Endpoint));
+            this.FadeInFromZero(400);
+        }));
     }
 
     public void UpdateUser(APIUserShort newUser)
     {
+        if (user.ID == newUser?.ID) return;
+
+        UserCache.GetBannerUpdateCallbacks(user.ID).Remove(reload);
+
         user = newUser ?? APIUserShort.Dummy;
-        Texture = textures.Get(user.GetBannerUrl(fluxel.Endpoint));
+        Texture = store.Get(user.GetBannerUrl(fluxel.Endpoint));
+        Schedule(() => this.FadeInFromZero(400));
+
+        UserCache.GetBannerUpdateCallbacks(user.ID).Add(reload);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        UserCache.GetBannerUpdateCallbacks(user.ID).Remove(reload);
     }
 }

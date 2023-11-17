@@ -9,6 +9,9 @@ public class APIUser : APIUserShort
     [JsonProperty("aboutme")]
     public string AboutMe { get; set; } = string.Empty;
 
+    [JsonProperty("social")]
+    public APIUserSocials Socials { get; set; } = new();
+
     [JsonProperty("created")]
     public long Created { get; set; }
 

@@ -13,9 +13,6 @@ public class APIUserShort
     [JsonProperty("country")]
     public string CountryCode { get; set; } = string.Empty;
 
-    [JsonProperty("social")]
-    public APIUserSocials Socials { get; set; } = new();
-
     [JsonProperty("displayname")]
     public string DisplayName { get; set; } = "";
 

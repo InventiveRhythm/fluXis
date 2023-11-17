@@ -115,6 +115,8 @@ public partial class FloatingLoadingNotification : FloatingNotification
                 background.Colour = backgroundComplete;
                 foreground.ResizeWidthTo(0, 200, Easing.OutQuint);
                 text.Text = data.TextSuccess;
+                text.FadeInFromZero(400).MoveToY(0);
+                icon.FadeOut(400);
                 maximize();
                 Hide(5000);
                 break;
@@ -152,8 +154,8 @@ public partial class FloatingLoadingNotification : FloatingNotification
         this.ResizeHeightTo(50, 400, Easing.OutQuint).FadeInFromZero(400);
         animationContainer.MoveToY(-70).MoveToY(0, 400, Easing.OutQuint);
         animationContainer.Delay(900).ResizeWidthTo(text.DrawWidth + 40, 400, Easing.OutQuint);
-        text.Delay(900).FadeInFromZero(400, Easing.OutQuint).MoveToY(0);
-        icon.Delay(900).FadeOut(400, Easing.OutQuint);
+        text.Delay(900).FadeInFromZero(400).MoveToY(0);
+        icon.Delay(900).FadeOut(400);
 
         this.Delay(1000).Schedule(() => canMinimize = true);
     }

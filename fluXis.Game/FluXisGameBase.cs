@@ -67,7 +67,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected RegisterOverlay RegisterOverlay { get; private set; }
     protected NotificationManager NotificationManager { get; private set; }
     protected MusicPlayer MusicPlayer { get; private set; }
-    protected Dashboard Dashboard { get; private set; }
     protected BackgroundStack BackgroundStack { get; private set; }
     protected UISamples Samples { get; private set; }
     protected Fluxel Fluxel { get; private set; }
@@ -76,6 +75,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public Toolbar Toolbar { get; private set; }
     public FluXisScreenStack ScreenStack { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
+    public Dashboard Dashboard { get; private set; }
 
     private FluXisRealm realm;
     private MapStore mapStore;
@@ -118,6 +118,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));
         dependencies.Cache(new CroppedBackgroundStore(Host, storage.GetStorageForDirectory("maps")));
+        dependencies.Cache(new OnlineTextureStore(Host));
 
         LoadComponent(mapStore = new MapStore());
         dependencies.Cache(mapStore);

@@ -13,6 +13,9 @@ public static class UserCache
     private static readonly Dictionary<int, APIUser> users = new();
     private static Fluxel.Fluxel fluxel;
 
+    private static readonly Dictionary<int, List<Action>> avatar_update_callbacks = new();
+    private static readonly Dictionary<int, List<Action>> banner_update_callbacks = new();
+
     public static void Init(Fluxel.Fluxel api)
     {
         fluxel = api;
@@ -60,5 +63,37 @@ public static class UserCache
             Logger.Error(e, "Failed to load user from API");
             return null;
         }
+    }
+
+    public static List<Action> GetAvatarUpdateCallbacks(int id)
+    {
+        if (!avatar_update_callbacks.ContainsKey(id))
+            avatar_update_callbacks[id] = new List<Action>();
+
+        return avatar_update_callbacks[id];
+    }
+
+    public static void TriggerAvatarUpdate(int id)
+    {
+        if (!avatar_update_callbacks.ContainsKey(id)) return;
+
+        foreach (var callback in avatar_update_callbacks[id])
+            callback.Invoke();
+    }
+
+    public static List<Action> GetBannerUpdateCallbacks(int id)
+    {
+        if (!banner_update_callbacks.ContainsKey(id))
+            banner_update_callbacks[id] = new List<Action>();
+
+        return banner_update_callbacks[id];
+    }
+
+    public static void TriggerBannerUpdate(int id)
+    {
+        if (!banner_update_callbacks.ContainsKey(id)) return;
+
+        foreach (var callback in banner_update_callbacks[id])
+            callback.Invoke();
     }
 }

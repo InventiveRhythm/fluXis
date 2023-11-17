@@ -76,7 +76,6 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding { Top = 30 },
                             Child = new GridContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -100,7 +99,7 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
                                         tabsContainer = new Container<DashboardTab>
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Padding = new MarginPadding(10)
+                                            Padding = new MarginPadding(10) { Top = 40 },
                                         }
                                     }
                                 }
