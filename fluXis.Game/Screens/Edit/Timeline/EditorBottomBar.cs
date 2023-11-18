@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Gameplay;
@@ -32,8 +33,8 @@ public partial class EditorBottomBar : Container
         Child = new Container
         {
             RelativeSizeAxes = Axes.Both,
-            // Masking = true,
-            // CornerRadius = 10,
+            Masking = true,
+            EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
             Children = new Drawable[]
             {
                 new Box

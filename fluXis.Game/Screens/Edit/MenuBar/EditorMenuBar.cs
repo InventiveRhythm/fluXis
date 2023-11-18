@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
 using osu.Framework.Graphics;
@@ -13,6 +14,7 @@ public partial class EditorMenuBar : FluXisMenu
     {
         RelativeSizeAxes = Axes.X;
         MaskingContainer.CornerRadius = 0;
+        MaskingContainer.EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
         BackgroundColour = FluXisColors.Background1;
         ItemsContainer.Spacing = new Vector2(10, 0);
     }

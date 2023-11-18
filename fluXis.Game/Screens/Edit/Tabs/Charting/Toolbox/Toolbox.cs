@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -27,6 +28,8 @@ public partial class Toolbox : ExpandingContainer
     private void load()
     {
         RelativeSizeAxes = Axes.Y;
+        Masking = true;
+        EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
 
         InternalChildren = new Drawable[]
         {
