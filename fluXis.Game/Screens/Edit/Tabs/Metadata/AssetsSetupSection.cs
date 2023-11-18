@@ -3,10 +3,13 @@ using System.IO;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Import;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
@@ -19,54 +22,102 @@ public partial class AssetsSetupSection : SetupSection
     public Action BackgroundChanged { get; set; }
     public Action CoverChanged { get; set; }
 
+    private AssetsSetupTextBox audioTextBox;
+    private AssetsSetupTextBox backgroundTextBox;
+    private AssetsSetupTextBox coverTextBox;
+    private AssetsSetupTextBox videoTextBox;
+
     public AssetsSetupSection()
         : base("Assets")
     {
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         AddRange(new Drawable[]
         {
-            new AssetsSetupTextBox
+            audioTextBox = new AssetsSetupTextBox
             {
                 Label = "Audio",
                 AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
-                OnFileSelected = file => values.Editor.SetAudio(file)
+                FileName = values.MapInfo.AudioFile,
+                OnFileSelected = file =>
+                {
+                    values.Editor.SetAudio(file);
+                    audioTextBox!.FileName = values.MapInfo.AudioFile;
+                }
             },
-            new AssetsSetupTextBox
+            backgroundTextBox = new AssetsSetupTextBox
             {
                 Label = "Background",
                 AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                FileName = values.MapInfo.BackgroundFile,
                 OnFileSelected = file =>
                 {
                     values.Editor.SetBackground(file);
                     BackgroundChanged?.Invoke();
+                    backgroundTextBox!.FileName = values.MapInfo.BackgroundFile;
                 }
             },
-            new AssetsSetupTextBox
+            coverTextBox = new AssetsSetupTextBox
             {
                 Label = "Cover",
                 AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                FileName = values.MapInfo.CoverFile,
                 OnFileSelected = file =>
                 {
                     values.Editor.SetCover(file);
                     CoverChanged?.Invoke();
+                    coverTextBox!.FileName = values.MapInfo.CoverFile;
                 }
             },
-            new AssetsSetupTextBox
+            videoTextBox = new AssetsSetupTextBox
             {
                 Label = "Video",
                 AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
-                OnFileSelected = file => values.Editor.SetVideo(file)
+                FileName = values.MapInfo.VideoFile,
+                OnFileSelected = file =>
+                {
+                    values.Editor.SetVideo(file);
+                    videoTextBox!.FileName = values.MapInfo.VideoFile;
+                }
             }
         });
     }
 
-    private partial class AssetsSetupTextBox : Container
+    private partial class AssetsSetupTextBox : Container, IDragDropHandler
     {
+        public string[] AllowedExtensions { get; init; }
+
+        [Resolved]
+        private FluXisGameBase game { get; set; }
+
         [Resolved]
         private EditorValues values { get; set; }
 
         public string Label { get; init; }
         public Action<FileInfo> OnFileSelected { get; init; }
-        public string[] AllowedExtensions { get; init; }
+
+        private string fileName;
+
+        public string FileName
+        {
+            get => fileName;
+            set
+            {
+                fileName = value;
+
+                if (clickText is null) return;
+
+                clickText.Text = string.IsNullOrEmpty(fileName) ? "Click to select file..." : fileName;
+                clickText.Colour = string.IsNullOrEmpty(FileName) ? FluXisColors.Text2 : FluXisColors.Text;
+            }
+        }
+
+        private FluXisSpriteText clickText;
+
+        private InputManager inputManager;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -80,8 +131,8 @@ public partial class AssetsSetupSection : SetupSection
                 {
                     Text = Label,
                     FontSize = 24,
-                    Margin = new MarginPadding { Top = 5 },
-                    Origin = Anchor.TopRight,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreRight,
                     X = 140
                 },
                 new ClickableContainer
@@ -101,13 +152,13 @@ public partial class AssetsSetupSection : SetupSection
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = FluXisColors.Background3
                             },
-                            new FluXisSpriteText
+                            clickText = new FluXisSpriteText
                             {
-                                Text = "Click to select file",
-                                Colour = FluXisColors.Text2,
+                                Text = string.IsNullOrEmpty(FileName) ? "Click to select file..." : FileName,
+                                Colour = string.IsNullOrEmpty(FileName) ? FluXisColors.Text2 : FluXisColors.Text,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
-                                Padding = new MarginPadding { Left = 5 }
+                                Padding = new MarginPadding { Left = 8 }
                             }
                         }
                     },
@@ -124,6 +175,33 @@ public partial class AssetsSetupSection : SetupSection
                     }
                 }
             };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            game.AddDragDropHandler(this);
+            inputManager = GetContainingInputManager();
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            game.RemoveDragDropHandler(this);
+        }
+
+        public bool OnDragDrop(string file)
+        {
+            var pos = inputManager.CurrentState.Mouse.Position;
+            var quad = ScreenSpaceDrawQuad;
+
+            Logger.Log($"pos: {pos}, quad: {quad}", LoggingTarget.Runtime, LogLevel.Debug);
+
+            if (!quad.Contains(pos)) return false;
+
+            Schedule(() => OnFileSelected?.Invoke(new FileInfo(file)));
+
+            return true;
         }
     }
 }

@@ -85,11 +85,6 @@ public partial class ImportManager : Component
         }
     }
 
-    public void ImportMultiple(string[] paths)
-    {
-        foreach (var path in paths) Import(path);
-    }
-
     private void loadSingle(Assembly assembly)
     {
         string name = assembly.GetName().Name;
