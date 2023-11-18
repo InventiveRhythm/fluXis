@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -45,8 +46,10 @@ namespace fluXis.Game.Screens.Edit;
 public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override bool ShowToolbar => false;
-    public override float BackgroundDim => 0.4f;
+    public override float BackgroundDim => backgroundDim.Value;
+    public override float BackgroundBlur => backgroundBlur.Value;
     public override bool AllowMusicControl => false;
+    public override bool ApplyValuesAfterLoad => true;
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -90,6 +93,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private bool isNewMap;
     private string effectHash;
 
+    private Bindable<float> backgroundDim;
+    private Bindable<float> backgroundBlur;
+
     public ChartingContainer ChartingContainer { get; set; }
 
     public Editor(EditorLoader loader, RealmMap realmMap = null, MapInfo map = null)
@@ -101,8 +107,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     }
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager audioManager, Storage storage)
+    private void load(AudioManager audioManager, Storage storage, FluXisConfig config)
     {
+        backgroundDim = config.GetBindable<float>(FluXisSetting.EditorDim);
+        backgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
+
         audioClock.Looping = false;
         audioClock.Stop(); // the editor clock will handle this
 
@@ -231,6 +240,29 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     {
                         Items = new FluXisMenuItem[]
                         {
+                            new("Background Dim", FontAwesome.Solid.Percentage)
+                            {
+                                Items = new FluXisMenuItem[]
+                                {
+                                    new("0%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = 0) { IsActive = () => backgroundDim.Value == 0f },
+                                    new("20%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .2f) { IsActive = () => backgroundDim.Value == .2f },
+                                    new("40%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .4f) { IsActive = () => backgroundDim.Value == .4f },
+                                    new("60%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .6f) { IsActive = () => backgroundDim.Value == .6f },
+                                    new("80%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .8f) { IsActive = () => backgroundDim.Value == .8f },
+                                }
+                            },
+                            new("Background Blur", FontAwesome.Solid.Percentage)
+                            {
+                                Items = new FluXisMenuItem[]
+                                {
+                                    new("0%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = 0) { IsActive = () => backgroundBlur.Value == 0f },
+                                    new("20%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .2f) { IsActive = () => backgroundBlur.Value == .2f },
+                                    new("40%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .4f) { IsActive = () => backgroundBlur.Value == .4f },
+                                    new("60%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .6f) { IsActive = () => backgroundBlur.Value == .6f },
+                                    new("80%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .8f) { IsActive = () => backgroundBlur.Value == .8f },
+                                    new("100%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = 1f) { IsActive = () => backgroundBlur.Value == 1f }
+                                }
+                            },
                             new("Waveform opacity", FontAwesome.Solid.Percentage)
                             {
                                 Items = new FluXisMenuItem[]
@@ -339,7 +371,21 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             };
         }
+
+        backgroundDim.BindValueChanged(updateDim);
+        backgroundBlur.BindValueChanged(updateBlur);
     }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        backgroundDim.UnbindAll();
+        backgroundBlur.UnbindAll();
+    }
+
+    private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue, 400);
+    private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue, 400);
 
     public void SortEverything()
     {

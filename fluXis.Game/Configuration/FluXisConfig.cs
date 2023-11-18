@@ -46,8 +46,14 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.Parallax, true);
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
         SetDefault(FluXisSetting.MainMenuVisualizerSway, false);
+
+        // UI // Song Select
         SetDefault(FluXisSetting.SongSelectBlur, true);
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
+
+        // UI // Editor
+        SetDefault(FluXisSetting.EditorDim, 0.4f, 0f, .8f, 0.2f);
+        SetDefault(FluXisSetting.EditorBlur, 0f, 0f, 1f, 0.2f);
 
         // Audio
         SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
@@ -96,8 +102,14 @@ public enum FluXisSetting
     Parallax,
     MainMenuVisualizer,
     MainMenuVisualizerSway,
+
+    // UI // Song Select
     SongSelectBlur,
     LoopMode,
+
+    // UI // Editor
+    EditorDim,
+    EditorBlur,
 
     // Audio
     HitSoundVolume,
