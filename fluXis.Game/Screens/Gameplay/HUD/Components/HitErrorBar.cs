@@ -1,9 +1,7 @@
 using System.Linq;
-using fluXis.Game.Configuration;
 using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -17,17 +15,13 @@ public partial class HitErrorBar : GameplayHUDComponent
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    private Bindable<float> scaleBind;
-
     private SpriteIcon icon;
     private Container hits;
     private CircularContainer average;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
-        scaleBind = config.GetBindable<float>(FluXisSetting.HitErrorScale);
-
         AutoSizeAxes = Axes.Y;
         Width = Screen.HitWindows.TimingFor(Screen.HitWindows.LowestHitable) * 2f / Screen.Rate;
 
@@ -103,11 +97,6 @@ public partial class HitErrorBar : GameplayHUDComponent
                 }
             });
         }
-    }
-
-    protected override void LoadComplete()
-    {
-        scaleBind.BindValueChanged(e => Scale = new Vector2(e.NewValue), true);
     }
 
     private void addHit(HitResult result)

@@ -37,7 +37,7 @@ public static class PathUtils
         }
     }
 
-    public static void OpenFile(string path)
+    public static void ShowFile(string path)
     {
         switch (RuntimeInfo.OS)
         {
@@ -46,7 +46,7 @@ public static class PathUtils
                 break;
 
             case RuntimeInfo.Platform.macOS:
-                Process.Start("open", path);
+                Process.Start("open", "-R " + path);
                 break;
 
             case RuntimeInfo.Platform.Linux:

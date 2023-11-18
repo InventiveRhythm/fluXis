@@ -73,7 +73,7 @@ public partial class LayoutManager : Component
         Layout.Value = layout;
         Reloaded?.Invoke();
 
-        PathUtils.OpenFile(path);
+        PathUtils.ShowFile(path);
     }
 
     private void loadLayouts()

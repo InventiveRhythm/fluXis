@@ -1,8 +1,9 @@
-using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Screens.Gameplay.HUD;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 
@@ -11,7 +12,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
     public override string Title => "HUD Layout";
 
     [BackgroundDependencyLoader]
-    private void load(LayoutManager layouts)
+    private void load(LayoutManager layouts, Storage storage)
     {
         SettingsDropdown<HUDLayout> layoutDropdown;
 
@@ -37,11 +38,19 @@ public partial class AppearanceLayoutSection : SettingsSubSection
                 ButtonText = "Create",
                 Action = layouts.CreateNewLayout
             },
-            new SettingsSlider<float>
+            new SettingsButton
             {
-                Label = "Hit Error Bar Scale",
-                Bindable = Config.GetBindable<float>(FluXisSetting.HitErrorScale),
-                DisplayAsPercentage = true
+                Label = "Show layout file in explorer",
+                Description = "Opens the folder containing the layout file in your file explorer. (This is temporary until the layout editor is finished)",
+                Enabled = true,
+                ButtonText = "Show",
+                Action = () =>
+                {
+                    if (layouts.Layout.Value is LayoutManager.DefaultLayout)
+                        PathUtils.OpenFolder(storage.GetFullPath("layouts"));
+                    else
+                        PathUtils.ShowFile(storage.GetFullPath($"layouts/{layouts.Layout.Value.ID}.json"));
+                }
             },
             new SettingsButton
             {

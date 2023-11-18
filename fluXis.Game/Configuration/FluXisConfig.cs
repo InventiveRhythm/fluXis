@@ -15,7 +15,6 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
     {
         // Appearance
         SetDefault(FluXisSetting.SkinName, "Default");
-        SetDefault(FluXisSetting.HitErrorScale, 1f, 0.5f, 1.2f, 0.01f);
         SetDefault(FluXisSetting.LayoutName, "Default");
 
         // Gameplay
@@ -71,7 +70,6 @@ public enum FluXisSetting
 {
     // Appearance
     SkinName,
-    HitErrorScale,
     LayoutName,
 
     // Gameplay
