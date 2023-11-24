@@ -7,6 +7,7 @@ using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Types.Image;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Intro;
 using fluXis.Game.Screens.Menu;
@@ -147,10 +148,25 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         {
             var data = res.Data;
 
-            if (data.NonDisruptive)
-                NotificationManager.SendSmallText(data.Text);
-            else
-                NotificationManager.SendText(data.Text, data.SubText);
+            switch (data.Type)
+            {
+                case "normal":
+                    NotificationManager.SendText(data.Text, data.SubText);
+                    break;
+
+                case "small":
+                    NotificationManager.SendSmallText(data.Text);
+                    break;
+
+                case "image":
+                    NotificationManager.Add(new ImageNotificationData
+                    {
+                        Text = data.Text,
+                        Path = data.Path,
+                        Location = ImageNotificationData.ImageLocation.Online
+                    });
+                    break;
+            }
         });
     }
 
