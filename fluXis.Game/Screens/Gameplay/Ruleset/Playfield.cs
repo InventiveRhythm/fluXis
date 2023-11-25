@@ -49,6 +49,7 @@ public partial class Playfield : Container
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        AlwaysPresent = true;
 
         topCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverTop);
         bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
@@ -92,7 +93,8 @@ public partial class Playfield : Container
 
                 this.ScaleTo(new Vector2(scale.ScaleX, yScale), scale.Duration, scale.Easing);
             }),
-            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude))
+            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
+            new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents, fade => this.FadeTo(fade.Alpha, fade.FadeTime))
         };
     }
 

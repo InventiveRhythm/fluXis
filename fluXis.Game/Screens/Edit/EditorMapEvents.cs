@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 
@@ -17,14 +16,6 @@ public class EditorMapEvents : MapEvents
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventRemoved;
     public event Action<ShakeEvent> ShakeEventAdded;
     public event Action<ShakeEvent> ShakeEventRemoved;
-
-    public EditorMapEvents()
-    {
-        LaneSwitchEvents = new List<LaneSwitchEvent>();
-        FlashEvents = new List<FlashEvent>();
-        PulseEvents = new List<PulseEvent>();
-        PlayfieldMoveEvents = new List<PlayfieldMoveEvent>();
-    }
 
     public void Add(LaneSwitchEvent laneSwitchEvent)
     {

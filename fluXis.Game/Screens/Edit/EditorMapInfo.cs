@@ -49,7 +49,8 @@ public class EditorMapInfo : MapInfo
                 PulseEvents = events.PulseEvents ?? new List<PulseEvent>(),
                 PlayfieldMoveEvents = events.PlayfieldMoveEvents ?? new List<PlayfieldMoveEvent>(),
                 PlayfieldScaleEvents = events.PlayfieldScaleEvents ?? new List<PlayfieldScaleEvent>(),
-                ShakeEvents = events.ShakeEvents ?? new List<ShakeEvent>()
+                ShakeEvents = events.ShakeEvents ?? new List<ShakeEvent>(),
+                PlayfieldFadeEvents = events.PlayfieldFadeEvents ?? new List<PlayfieldFadeEvent>()
             }
         };
     }

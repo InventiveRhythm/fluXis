@@ -9,12 +9,13 @@ namespace fluXis.Game.Map;
 
 public class MapEvents
 {
-    public List<LaneSwitchEvent> LaneSwitchEvents = new();
-    public List<FlashEvent> FlashEvents = new();
-    public List<PulseEvent> PulseEvents = new();
-    public List<PlayfieldMoveEvent> PlayfieldMoveEvents = new();
-    public List<PlayfieldScaleEvent> PlayfieldScaleEvents = new();
-    public List<ShakeEvent> ShakeEvents = new();
+    public List<LaneSwitchEvent> LaneSwitchEvents { get; init; } = new();
+    public List<FlashEvent> FlashEvents { get; init; } = new();
+    public List<PulseEvent> PulseEvents { get; init; } = new();
+    public List<PlayfieldMoveEvent> PlayfieldMoveEvents { get; init; } = new();
+    public List<PlayfieldScaleEvent> PlayfieldScaleEvents { get; init; } = new();
+    public List<ShakeEvent> ShakeEvents { get; init; } = new();
+    public List<PlayfieldFadeEvent> PlayfieldFadeEvents { get; init; } = new();
 
     public MapEvents Load(string content)
     {
@@ -112,6 +113,17 @@ public class MapEvents
                         Magnitude = float.Parse(args[2], CultureInfo.InvariantCulture)
                     });
                     break;
+
+                case "PlayfieldFade":
+                    if (args.Length < 3) continue;
+
+                    PlayfieldFadeEvents.Add(new PlayfieldFadeEvent
+                    {
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
+                        FadeTime = float.Parse(args[1], CultureInfo.InvariantCulture),
+                        Alpha = float.Parse(args[2], CultureInfo.InvariantCulture)
+                    });
+                    break;
             }
         }
 
@@ -128,6 +140,7 @@ public class MapEvents
         PlayfieldMoveEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PlayfieldScaleEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         ShakeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        PlayfieldFadeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public string Save()
@@ -141,6 +154,7 @@ public class MapEvents
         content += PlayfieldMoveEvents.Aggregate(string.Empty, (current, playfieldMove) => current + (playfieldMove + Environment.NewLine));
         content += PlayfieldScaleEvents.Aggregate(string.Empty, (current, playfieldScale) => current + (playfieldScale + Environment.NewLine));
         content += ShakeEvents.Aggregate(string.Empty, (current, shake) => current + (shake + Environment.NewLine));
+        content += PlayfieldFadeEvents.Aggregate(string.Empty, (current, playfieldFade) => current + (playfieldFade + Environment.NewLine));
         return content;
     }
 }
