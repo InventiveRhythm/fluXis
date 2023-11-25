@@ -1,0 +1,142 @@
+using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
+using osuTK;
+
+namespace fluXis.Game.Graphics.UserInterface.Files.Entry;
+
+public abstract partial class GenericEntry : Container
+{
+    protected abstract IconUsage Icon { get; }
+    public abstract string Text { get; }
+    protected abstract string SubText { get; }
+    protected abstract Colour4 Color { get; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
+
+    private Container contentWrapper { get; set; }
+
+    private float contentPadding
+    {
+        get => contentWrapper.Padding.Left;
+        set => contentWrapper.Padding = new MarginPadding { Left = value };
+    }
+
+    private Box background { get; set; }
+    private Box hover { get; set; }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        RelativeSizeAxes = Axes.X;
+        Height = 40;
+        CornerRadius = 5;
+        Masking = true;
+        Children = new Drawable[]
+        {
+            background = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Color,
+                Alpha = 0
+            },
+            contentWrapper = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    CornerRadius = 5,
+                    Masking = true,
+                    Children = new Drawable[]
+                    {
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background3
+                        },
+                        hover = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Color,
+                            Alpha = 0
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Padding = new MarginPadding(10),
+                            Children = new Drawable[]
+                            {
+                                new SpriteIcon
+                                {
+                                    Icon = Icon,
+                                    Colour = Color,
+                                    Size = new Vector2(20),
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft
+                                },
+                                new FluXisSpriteText
+                                {
+                                    Text = Text,
+                                    Colour = Color,
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    X = 30
+                                },
+                                new FluXisSpriteText
+                                {
+                                    Text = SubText,
+                                    Colour = Color,
+                                    Alpha = .8f,
+                                    Anchor = Anchor.CentreRight,
+                                    Origin = Anchor.CentreRight
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        samples.Click();
+        return true;
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        samples.Hover();
+        hover.FadeTo(.2f, 50);
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        hover.FadeOut(200);
+    }
+
+    protected void SetSelected(bool selected)
+    {
+        if (selected)
+        {
+            this.TransformTo(nameof(contentPadding), 10f, 400, Easing.OutQuint);
+            background.FadeIn();
+        }
+        else
+        {
+            this.TransformTo(nameof(contentPadding), 0f, 400, Easing.OutQuint).OnComplete(_ =>
+            {
+                background.FadeOut(200);
+            });
+        }
+    }
+}

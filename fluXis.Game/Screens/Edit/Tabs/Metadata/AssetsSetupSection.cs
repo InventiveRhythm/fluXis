@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Screens.Import;
+using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -10,7 +10,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Logging;
-using osu.Framework.Screens;
+using osu.Framework.Platform;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
@@ -96,6 +96,9 @@ public partial class AssetsSetupSection : SetupSection
         [Resolved]
         private EditorValues values { get; set; }
 
+        [Resolved]
+        private Storage storage { get; set; }
+
         public string Label { get; init; }
         public Action<FileInfo> OnFileSelected { get; init; }
 
@@ -165,13 +168,12 @@ public partial class AssetsSetupSection : SetupSection
                     Padding = new MarginPadding { Left = 150 },
                     Action = () =>
                     {
-                        var screen = new FileImportScreen
+                        game.Overlay = new FileSelect
                         {
                             AllowedExtensions = AllowedExtensions,
-                            OnFileSelected = OnFileSelected
+                            MapDirectory = storage.GetFullPath($"maps/{values.Editor.Map.MapSet.ID}"),
+                            OnFileSelected = file => OnFileSelected?.Invoke(file)
                         };
-
-                        values.Editor.Push(screen);
                     }
                 }
             };

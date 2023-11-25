@@ -73,8 +73,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private EditorLoader loader { get; }
 
-    public RealmMap Map;
-    public EditorMapInfo MapInfo;
+    public RealmMap Map { get; private set; }
+    public EditorMapInfo MapInfo { get; private set; }
 
     private Container tabs;
     private int currentTab;
@@ -498,6 +498,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         exitAnimation();
         clock.Stop();
         audioClock.Seek((float)clock.CurrentTime);
+        Game.Overlay?.Hide();
         return base.OnExiting(e);
     }
 
@@ -740,6 +741,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void copyFile(FileInfo file)
     {
+        var mapDir = new DirectoryInfo(MapFiles.GetFullPath(Map.MapSet.ID.ToString()));
+
+        if (file.Directory != null && file.Directory.FullName == mapDir.FullName)
+            return;
+
         string path = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(file.Name));
         var dir = Path.GetDirectoryName(path);
 

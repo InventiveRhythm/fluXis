@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Account;
@@ -7,7 +8,6 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Account;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
-using fluXis.Game.Screens.Import;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -105,8 +105,7 @@ public partial class DashboardAccountTab : DashboardTab
                             },
                             Action = () =>
                             {
-                                game.Dashboard.Hide();
-                                game.ScreenStack.Push(new FileImportScreen
+                                game.Overlay = new FileSelect
                                 {
                                     OnFileSelected = file =>
                                     {
@@ -134,7 +133,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         req.PerformAsync(fluxel);
                                     },
                                     AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
-                                });
+                                };
                             }
                         },
                         new ClickableContainer
@@ -153,8 +152,7 @@ public partial class DashboardAccountTab : DashboardTab
                             },
                             Action = () =>
                             {
-                                game.Dashboard.Hide();
-                                game.ScreenStack.Push(new FileImportScreen
+                                game.Overlay = new FileSelect
                                 {
                                     OnFileSelected = file =>
                                     {
@@ -182,7 +180,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         req.PerformAsync(fluxel);
                                     },
                                     AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
-                                });
+                                };
                             }
                         }
                     }

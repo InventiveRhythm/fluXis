@@ -1,5 +1,5 @@
+using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Overlay.Settings.UI;
-using fluXis.Game.Screens.Import;
 using osu.Framework.Allocation;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
@@ -28,15 +28,10 @@ public partial class DebugSection : SettingsSection
                 ButtonText = "Import",
                 Action = () =>
                 {
-                    game.Settings.Hide();
-                    game.ScreenStack.Push(new FileImportScreen
+                    game.Overlay = new FileSelect
                     {
-                        OnFileSelected = file =>
-                        {
-                            game.HandleDragDrop(file.FullName);
-                            game.Settings.Show();
-                        }
-                    });
+                        OnFileSelected = file => game.HandleDragDrop(file.FullName)
+                    };
                 }
             },
             new SettingsButton
@@ -46,12 +41,11 @@ public partial class DebugSection : SettingsSection
                 ButtonText = "Find",
                 Action = () =>
                 {
-                    game.Settings.Hide();
-                    game.ScreenStack.Push(new FileImportScreen
+                    game.Overlay = new FileSelect
                     {
                         AllowedExtensions = new[] { ".zip" },
                         OnFileSelected = file => game.CreateUpdateManager()?.UpdateFromFile(file)
-                    });
+                    };
                 }
             }
         });
