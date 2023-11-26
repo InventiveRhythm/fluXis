@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
@@ -78,5 +79,18 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
             hit.HoldTime = Math.Abs(time - originalStartTime);
         }
         else originalStartTime = hit.Time = time;
+    }
+
+    public override void OnPlacementFinished(bool commit)
+    {
+        var notesBetween = EditorValues.MapInfo.HitObjects.Where(h => h.Time > Hit.Time && h.Time < Hit.HoldEndTime && h.Lane == Hit.Lane).ToList();
+
+        if (notesBetween.Count > 0)
+        {
+            foreach (var note in notesBetween)
+                EditorValues.MapInfo.Remove(note);
+        }
+
+        base.OnPlacementFinished(commit);
     }
 }

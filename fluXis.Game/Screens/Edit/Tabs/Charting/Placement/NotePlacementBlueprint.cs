@@ -6,6 +6,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 
 public partial class NotePlacementBlueprint : PlacementBlueprint
 {
+    protected HitObjectInfo Hit => Object as HitObjectInfo;
+
     protected NotePlacementBlueprint()
         : base(new HitObjectInfo())
     {
