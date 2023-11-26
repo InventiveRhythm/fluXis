@@ -6,6 +6,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Search;
@@ -42,8 +43,9 @@ public partial class SearchDropdown : Container
                 Padding = new MarginPadding(10) { Left = 30, Top = 20 },
                 Children = new Drawable[]
                 {
+                    new SearchDropdownKeymode(Filters),
                     new SearchDropdownBPM { Filters = Filters },
-                    new SearchDropdownStatus { Filters = Filters },
+                    new SearchDropdownStatus { Filters = Filters }
                 }
             }
         };
@@ -51,4 +53,6 @@ public partial class SearchDropdown : Container
 
     public override void Show() => this.FadeIn(200).MoveToY(-10, 400, Easing.OutQuint);
     public override void Hide() => this.FadeOut(200).MoveToY(-30, 400, Easing.OutQuint);
+
+    protected override bool OnClick(ClickEvent e) => true;
 }

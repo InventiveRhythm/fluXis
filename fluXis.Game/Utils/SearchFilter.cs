@@ -38,11 +38,22 @@ public class SearchFilters
         }
     }
 
+    public int KeyMode
+    {
+        get => keymode;
+        set
+        {
+            keymode = value;
+            OnChange.Invoke();
+        }
+    }
+
     public List<int> Status { get; set; } = new();
 
     private int bpm;
     private Type bpmType;
     private string query = string.Empty;
+    private int keymode;
 
     public bool Matches(RealmMap map)
     {
@@ -107,6 +118,12 @@ public class SearchFilters
             termMatches |= difficulty.Contains(Query.ToLower());
 
             if (!termMatches)
+                matches = false;
+        }
+
+        if (KeyMode > 0)
+        {
+            if (map.KeyCount != KeyMode)
                 matches = false;
         }
 
