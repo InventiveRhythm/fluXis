@@ -1,7 +1,10 @@
+using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
+using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Input;
@@ -9,6 +12,26 @@ namespace fluXis.Game.Overlay.Settings.Sections.Input;
 public partial class InputKeybindingsSection : SettingsSubSection
 {
     public override string Title => "Keybindings";
+
+    [Resolved]
+    private MapStore mapStore { get; set; }
+
+    private Drawable[] otherKeymodesSection => new Drawable[]
+    {
+        otherKeymodesTitle,
+        oneKeyLayout,
+        twoKeyLayout,
+        threeKeyLayout,
+        nineKeyLayout,
+        tenKeyLayout
+    };
+
+    private KeybindSectionTitle otherKeymodesTitle;
+    private SettingsKeybind oneKeyLayout;
+    private SettingsKeybind twoKeyLayout;
+    private SettingsKeybind threeKeyLayout;
+    private SettingsKeybind nineKeyLayout;
+    private SettingsKeybind tenKeyLayout;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -118,33 +141,6 @@ public partial class InputKeybindingsSection : SettingsSubSection
             new KeybindSectionTitle { Text = "Keymodes" },
             new SettingsKeybind
             {
-                Label = "1 Key Layout",
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key1k1
-                }
-            },
-            new SettingsKeybind
-            {
-                Label = "2 Key Layout",
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key2k1,
-                    FluXisGameplayKeybind.Key2k2
-                }
-            },
-            new SettingsKeybind
-            {
-                Label = "3 Key Layout",
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key3k1,
-                    FluXisGameplayKeybind.Key3k2,
-                    FluXisGameplayKeybind.Key3k3
-                }
-            },
-            new SettingsKeybind
-            {
                 Label = "4 Key Layout",
                 Keybinds = new object[]
                 {
@@ -208,7 +204,35 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key8k8
                 }
             },
-            new SettingsKeybind
+            otherKeymodesTitle = new KeybindSectionTitle { Text = "Other Keymodes" },
+            oneKeyLayout = new SettingsKeybind
+            {
+                Label = "1 Key Layout",
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key1k1
+                }
+            },
+            twoKeyLayout = new SettingsKeybind
+            {
+                Label = "2 Key Layout",
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key2k1,
+                    FluXisGameplayKeybind.Key2k2
+                }
+            },
+            threeKeyLayout = new SettingsKeybind
+            {
+                Label = "3 Key Layout",
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key3k1,
+                    FluXisGameplayKeybind.Key3k2,
+                    FluXisGameplayKeybind.Key3k3
+                }
+            },
+            nineKeyLayout = new SettingsKeybind
             {
                 Label = "9 Key Layout",
                 Keybinds = new object[]
@@ -224,7 +248,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key9k9
                 }
             },
-            new SettingsKeybind
+            tenKeyLayout = new SettingsKeybind
             {
                 Label = "10 Key Layout",
                 Keybinds = new object[]
@@ -278,6 +302,21 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Keybinds = new object[] { FluXisGlobalKeybind.SeekForward }
             }
         });
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        mapStore.CollectionUpdated += () => Schedule(updateOtherKeymodes);
+        updateOtherKeymodes();
+    }
+
+    private void updateOtherKeymodes()
+    {
+        if (mapStore.MapSets.Any(x => x.Maps.Any(y => y.KeyCount is > 8 or < 4)))
+            otherKeymodesSection.ForEach(x => x.Show());
+        else
+            otherKeymodesSection.ForEach(x => x.Hide());
     }
 
     private partial class KeybindSectionTitle : FluXisSpriteText

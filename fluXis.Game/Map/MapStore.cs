@@ -43,6 +43,7 @@ public partial class MapStore : Component
     [Resolved]
     private NotificationManager notifications { get; set; }
 
+    private bool initialLoad;
     private Storage files;
     private MapResourceProvider resources;
 
@@ -52,6 +53,7 @@ public partial class MapStore : Component
 
     public Action<RealmMapSet> MapSetAdded;
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
+    public Action CollectionUpdated;
 
     public List<APIMapSet> DownloadQueue { get; } = new();
     public Action<APIMapSet> DownloadStarted { get; set; }
@@ -60,6 +62,7 @@ public partial class MapStore : Component
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
     {
+        initialLoad = true;
         files = storage.GetStorageForDirectory("maps");
 
         Logger.Log("Loading maps...");
@@ -103,6 +106,8 @@ public partial class MapStore : Component
         Logger.Log($"Found {sets.Count()} maps");
 
         foreach (var set in sets) AddMapSet(set.Detach());
+
+        initialLoad = false;
     }
 
     public void AddMapSet(RealmMapSet mapSet)
@@ -111,6 +116,8 @@ public partial class MapStore : Component
 
         MapSets.Add(mapSet);
         MapSetAdded?.Invoke(mapSet);
+
+        if (!initialLoad) CollectionUpdated?.Invoke();
     }
 
     public void UpdateMapSet(RealmMapSet oldMapSet, RealmMapSet newMapSet)
@@ -144,6 +151,8 @@ public partial class MapStore : Component
 
             MapSets.Remove(mapSet);
         });
+
+        CollectionUpdated?.Invoke();
     }
 
     public RealmMapSet GetRandom()
