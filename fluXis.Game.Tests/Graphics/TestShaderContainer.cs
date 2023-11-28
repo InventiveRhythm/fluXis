@@ -2,6 +2,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Shaders.Bloom;
 using fluXis.Game.Graphics.Shaders.Chromatic;
+using fluXis.Game.Graphics.Shaders.Greyscale;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,6 +19,7 @@ public partial class TestShaderContainer : FluXisTestScene
         AddStep("Clear", Clear);
         AddStep("Add Chromatic", () => createContainer(new ChromaticContainer()));
         AddStep("Add Bloom", () => createContainer(new BufferedBloomContainer()));
+        AddStep("Add Greyscale", () => createContainer(new GreyscaleContainer()));
     }
 
     private void createContainer(Container<Drawable> shader)
