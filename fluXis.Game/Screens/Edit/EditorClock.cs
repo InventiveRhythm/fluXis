@@ -38,7 +38,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public EditorClock(MapInfo mapInfo)
     {
         MapInfo = mapInfo;
-        underlying = new FramedMapClock { IsCoupled = false };
+        underlying = new FramedMapClock();
         AddInternal(underlying);
     }
 

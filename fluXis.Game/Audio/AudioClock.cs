@@ -90,7 +90,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
 
     public AudioClock()
     {
-        underlying = new FramedMapClock { IsCoupled = false };
+        underlying = new FramedMapClock();
         AddInternal(underlying);
     }
 
@@ -113,10 +113,10 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         Seek(0);
         ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
 
-        Seek(usePreview ? info.Metadata.PreviewTime : 0);
         game.OnSongChanged?.Invoke();
 
         if (start) Start();
+        Seek(usePreview ? info.Metadata.PreviewTime : 0);
 
         Task.Run(() =>
         {

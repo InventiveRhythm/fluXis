@@ -16,14 +16,8 @@ public partial class FramedMapClock : Component, IFrameBasedClock, IAdjustableCl
     public FrameTimeInfo TimeInfo => new() { Elapsed = ElapsedFrameTime, Current = CurrentTime };
 
     public double Rate { get => decouple.Rate; set => decouple.Rate = value; }
-    public bool IsCoupled { get => decouple.IsCoupled; set => decouple.IsCoupled = value; }
 
-    private readonly DecoupleableInterpolatingFramedClock decouple;
-
-    public FramedMapClock()
-    {
-        decouple = new DecoupleableInterpolatingFramedClock { IsCoupled = true };
-    }
+    private readonly DecouplingFramedClock decouple = new() { AllowDecoupling = true };
 
     protected override void Update()
     {
