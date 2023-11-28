@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Tests.Graphics;
 
@@ -18,8 +17,9 @@ public partial class TestChromaticShader : FluXisTestScene
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(0.5f),
-                Colour = Color4.Red
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(0.5f)
             }
         });
     }

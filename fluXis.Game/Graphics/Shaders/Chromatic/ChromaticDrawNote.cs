@@ -69,11 +69,7 @@ public partial class ChromaticContainer<T>
             base.DrawContents(renderer);
 
             renderer.SetBlend(BlendingParameters.Inherit);
-
-            ColourInfo finalEffectColour = DrawColourInfo.Colour;
-            finalEffectColour.ApplyChild(Colour4.White);
-
-            renderer.DrawFrameBuffer(SharedData.CurrentEffectBuffer, DrawRectangle, finalEffectColour);
+            renderer.DrawFrameBuffer(SharedData.CurrentEffectBuffer, DrawRectangle, Colour4.White);
         }
 
         private void drawFrameBuffer(IRenderer renderer, float strength)
@@ -83,7 +79,7 @@ public partial class ChromaticContainer<T>
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
 
-            renderer.SetBlend(BlendingParameters.None);
+            renderer.SetBlend(BlendingParameters.Inherit);
 
             using (BindFrameBuffer(target))
             {
@@ -112,6 +108,7 @@ public partial class ChromaticContainer<T>
             public UniformVector2 TexSize;
             public UniformFloat Radius;
             private readonly UniformPadding8 pad1;
+            private readonly UniformPadding12 pad2;
         }
     }
 

@@ -26,7 +26,7 @@ public partial class ChromaticContainer<T> : Container<T>, IBufferedDrawable whe
     protected override bool RequiresChildrenUpdate => base.RequiresChildrenUpdate && childrenUpdateVersion != updateVersion;
 
     public IShader TextureShader { get; private set; }
-    public Color4 BackgroundColour => Colour4.Transparent;
+    public Color4 BackgroundColour => Colour4.White;
     public DrawColourInfo? FrameBufferDrawColour => base.DrawColourInfo;
     public Vector2 FrameBufferScale => Vector2.One;
 
