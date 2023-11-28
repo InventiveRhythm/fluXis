@@ -14,7 +14,7 @@ void main(void)
     mediump vec2 uv = gl_FragCoord.xy / g_TexSize;
     mediump vec4 colour = texture(sampler2D(m_Texture, m_Sampler), uv);
 
-    mediump vec2 offset = vec2(0.001, 0.001) * g_Strength;
+    mediump vec2 offset = vec2(0.001, 0) * g_Strength;
     colour.r = texture(sampler2D(m_Texture, m_Sampler), uv + offset).r;
     colour.b = texture(sampler2D(m_Texture, m_Sampler), uv - offset).b;
 

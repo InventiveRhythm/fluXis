@@ -1,41 +1,22 @@
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
-using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
-using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics.Shaders.Chromatic;
 
-public partial class ChromaticContainer<T>
+public partial class ChromaticContainer
 {
-    private class ChromaticContainerDrawNode : BufferedDrawNode, ICompositeDrawNode
+    private class ChromaticContainerDrawNode : ShaderDrawNode<ChromaticContainer>
     {
-        protected new ChromaticContainer<T> Source => (ChromaticContainer<T>)base.Source;
-        protected new CompositeDrawableDrawNode Child => (CompositeDrawableDrawNode)base.Child;
-
-        public List<DrawNode> Children
-        {
-            get => Child.Children;
-            set => Child.Children = value;
-        }
-
-        public bool AddChildDrawNodes => RequiresRedraw;
-
         private float strength;
-
-        private long updateVersion;
-
-        private IShader chromaticShader;
-
         private IUniformBuffer<ChromaticParameters> chromaticParametersBuffer;
 
-        public ChromaticContainerDrawNode(ChromaticContainer<T> source, ChromaticDrawData sharedData)
-            : base(source, new CompositeDrawableDrawNode(source), sharedData)
+        public ChromaticContainerDrawNode(ChromaticContainer source, BufferedDrawNodeSharedData sharedData)
+            : base(source, sharedData)
         {
         }
 
@@ -43,33 +24,15 @@ public partial class ChromaticContainer<T>
         {
             base.ApplyState();
 
-            updateVersion = Source.updateVersion;
-
             strength = Source.Strength;
-
-            chromaticShader = Source.chromaticShader;
         }
-
-        protected override long GetDrawVersion() => updateVersion;
 
         protected override void PopulateContents(IRenderer renderer)
         {
             base.PopulateContents(renderer);
 
             if (strength > 0)
-            {
-                renderer.PushScissorState(false);
                 drawFrameBuffer(renderer, strength);
-                renderer.PopScissorState();
-            }
-        }
-
-        protected override void DrawContents(IRenderer renderer)
-        {
-            base.DrawContents(renderer);
-
-            renderer.SetBlend(BlendingParameters.Inherit);
-            renderer.DrawFrameBuffer(SharedData.CurrentEffectBuffer, DrawRectangle, Colour4.White);
         }
 
         private void drawFrameBuffer(IRenderer renderer, float strength)
@@ -79,20 +42,20 @@ public partial class ChromaticContainer<T>
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
 
-            renderer.SetBlend(BlendingParameters.Inherit);
+            renderer.SetBlend(BlendingParameters.None);
 
             using (BindFrameBuffer(target))
             {
                 chromaticParametersBuffer.Data = chromaticParametersBuffer.Data with
                 {
-                    TexSize = new Vector2(current.Texture.Width, current.Texture.Height),
+                    TexSize = current.Size,
                     Radius = strength
                 };
 
-                chromaticShader.BindUniformBlock("m_ChromaticParameters", chromaticParametersBuffer);
-                chromaticShader.Bind();
+                Shader.BindUniformBlock("m_ChromaticParameters", chromaticParametersBuffer);
+                Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
-                chromaticShader.Unbind();
+                Shader.Unbind();
             }
         }
 
@@ -109,14 +72,6 @@ public partial class ChromaticContainer<T>
             public UniformFloat Radius;
             private readonly UniformPadding8 pad1;
             private readonly UniformPadding12 pad2;
-        }
-    }
-
-    private class ChromaticDrawData : BufferedDrawNodeSharedData
-    {
-        public ChromaticDrawData(RenderBufferFormat[] mainBufferFormats, bool pixelSnapping, bool clipToRootNode)
-            : base(2, mainBufferFormats, pixelSnapping, clipToRootNode)
-        {
         }
     }
 }

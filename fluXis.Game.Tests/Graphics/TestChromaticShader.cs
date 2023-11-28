@@ -11,7 +11,7 @@ public partial class TestChromaticShader : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
-        Add(new ChromaticContainer<Drawable>
+        Add(new ChromaticContainer
         {
             RelativeSizeAxes = Axes.Both,
             Child = new Box
