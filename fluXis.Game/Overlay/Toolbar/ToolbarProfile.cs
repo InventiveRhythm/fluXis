@@ -1,9 +1,11 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Drawables;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Profile;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -15,8 +17,10 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarProfile : Container
+public partial class ToolbarProfile : Container, IHasTextTooltip
 {
+    public string Tooltip => loadingContainer.Alpha > 0 ? "Connecting..." : "";
+
     [Resolved]
     private ProfileOverlay profileOverlay { get; set; }
 
@@ -32,6 +36,7 @@ public partial class ToolbarProfile : Container
     private Container container;
     private Container avatarContainer;
     private DrawableAvatar avatar;
+    private Container loadingContainer;
     private Box hover;
     private Box flash;
     private SpriteIcon arrow;
@@ -75,11 +80,38 @@ public partial class ToolbarProfile : Container
                         Padding = new MarginPadding(10) { Top = 20 },
                         Children = new Drawable[]
                         {
-                            avatarContainer = new Container
+                            new Container
                             {
                                 Size = new Vector2(40),
-                                CornerRadius = 5,
-                                Masking = true
+                                Children = new Drawable[]
+                                {
+                                    avatarContainer = new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        CornerRadius = 5,
+                                        Masking = true
+                                    },
+                                    loadingContainer = new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Alpha = 0,
+                                        Children = new Drawable[]
+                                        {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = FluXisColors.Background4,
+                                                Alpha = .5f
+                                            },
+                                            new LoadingIcon
+                                            {
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Size = new Vector2(20)
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             arrow = new SpriteIcon
                             {
@@ -98,10 +130,38 @@ public partial class ToolbarProfile : Container
 
         LoadComponentAsync(avatar = new DrawableAvatar(user)
         {
-            RelativeSizeAxes = Axes.Both
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
         }, avatarContainer.Add);
 
         fluxel.OnUserLoggedIn += updateUser;
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        fluxel.OnStatusChanged += status =>
+        {
+            Schedule(() =>
+            {
+                switch (status)
+                {
+                    case ConnectionStatus.Offline:
+                    case ConnectionStatus.Online:
+                    case ConnectionStatus.Closed:
+                        loadingContainer.FadeOut(200);
+                        break;
+
+                    case ConnectionStatus.Reconnecting:
+                    case ConnectionStatus.Connecting:
+                    case ConnectionStatus.Failing:
+                        loadingContainer.FadeIn(200);
+                        break;
+                }
+            });
+        };
     }
 
     private void updateUser(APIUserShort user)
