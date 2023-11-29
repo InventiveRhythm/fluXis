@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Users;
@@ -13,6 +14,9 @@ public class APIUserShort
     [JsonProperty("country")]
     public string CountryCode { get; set; } = string.Empty;
 
+    [JsonIgnore]
+    public CountryCode Country => GetCountryCode(CountryCode);
+
     [JsonProperty("displayname")]
     public string DisplayName { get; set; } = "";
 
@@ -23,6 +27,14 @@ public class APIUserShort
     public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/banner/" + ID;
 
     public string GetName() => string.IsNullOrEmpty(DisplayName) ? Username : DisplayName;
+
+    public static CountryCode GetCountryCode(string code)
+    {
+        if (string.IsNullOrEmpty(code))
+            return Online.CountryCode.Unknown;
+
+        return Enum.TryParse(code, out CountryCode cc) ? cc : Online.CountryCode.Unknown;
+    }
 
     public static APIUserShort Dummy => new() { ID = -1, Username = "Dummy Player" };
     public static APIUserShort AutoPlay => new() { ID = 0, Username = "AutoPlay" };
