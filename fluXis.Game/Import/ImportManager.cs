@@ -4,7 +4,9 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Map;
@@ -42,10 +44,18 @@ public partial class ImportManager : Component
     [Resolved]
     private GameHost host { get; set; }
 
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
     private List<ImportPlugin> plugins { get; } = new();
     public IEnumerable<ImportPlugin> Plugins => plugins.ToImmutableArray();
 
+    private Dictionary<ImportPlugin, MapImporter> importersByPlugin { get; } = new();
+    private Dictionary<MapImporter, List<RealmMapSet>> importedMaps { get; } = new();
+
     private List<MapImporter> importers { get; } = new();
+
+    public List<Task> TaskQueue { get; } = new();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -54,14 +64,90 @@ public partial class ImportManager : Component
         loadFromRunFolder();
         loadFromPlugins();
 
-        foreach (var importer in importers)
+        Logger.Log($"Loaded {importers.Count} importers");
+
+        Schedule(() =>
+        {
+            setToolbarText("Checking for auto-imports...");
+
+            foreach (var importer in importers)
+                ImportMapsFrom(importer);
+
+            setToolbarText("");
+        });
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (TaskQueue.Count <= 0) return;
+
+        var task = TaskQueue[0];
+
+        if (task.Status == TaskStatus.Created)
+            task.Start();
+
+        if (task.IsCompleted)
+            TaskQueue.RemoveAt(0);
+    }
+
+    private void setToolbarText(string text)
+    {
+        Schedule(() =>
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                game.Toolbar.CenterText.FadeOut(200);
+                return;
+            }
+
+            game.Toolbar.CenterText.Text = text;
+            game.Toolbar.CenterText.FadeIn(200);
+        });
+    }
+
+    public MapImporter GetImporter(ImportPlugin plugin) => importersByPlugin[plugin];
+
+    public void ImportMapsFrom(MapImporter importer)
+    {
+        TaskQueue.Add(new Task(() =>
         {
             var shouldImport = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == importer.ID)?.AutoImport ?? false);
-            if (!shouldImport || !importer.SupportsAutoImport) continue;
+            if (!shouldImport || !importer.SupportsAutoImport) return;
+
+            Logger.Log($"Auto-importing {importer.Name} maps...");
+            long time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            setToolbarText($"Importing {importer.Name} maps...");
 
             var maps = importer.GetMaps();
-            foreach (var map in maps) mapStore.AddMapSet(map);
-        }
+
+            foreach (var map in maps)
+            {
+                mapStore.AddMapSet(map, false);
+
+                if (!importedMaps.ContainsKey(importer))
+                    importedMaps.Add(importer, new List<RealmMapSet>());
+
+                importedMaps[importer].Add(map);
+            }
+
+            mapStore.CollectionUpdated?.Invoke();
+            Logger.Log($"Imported {maps.Count} {importer.Name} maps in {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - time}ms");
+            setToolbarText("");
+        }));
+    }
+
+    public void RemoveImportedMaps(MapImporter importer)
+    {
+        if (!importedMaps.ContainsKey(importer))
+            return;
+
+        foreach (var map in importedMaps[importer])
+            mapStore.Remove(map);
+
+        importedMaps.Remove(importer);
     }
 
     public void Import(string path)
@@ -133,14 +219,17 @@ public partial class ImportManager : Component
                         }
                     });
 
-                    plugins.Add(new ImportPlugin
+                    var plugin = new ImportPlugin
                     {
                         Name = importer.Name,
                         Author = importer.Author,
                         Version = importer.Version,
                         HasAutoImport = importer.SupportsAutoImport,
                         ImporterId = importer.ID
-                    });
+                    };
+
+                    plugins.Add(plugin);
+                    importersByPlugin.Add(plugin, importer);
 
                     if (!string.IsNullOrEmpty(importer.StoragePath))
                     {

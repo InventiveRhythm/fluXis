@@ -165,6 +165,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                     {
                         Children = new Drawable[]
                         {
+                            importManager,
                             lightController,
                             skinManager,
                             content = new Container

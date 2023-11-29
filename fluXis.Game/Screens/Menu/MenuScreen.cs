@@ -69,6 +69,7 @@ public partial class MenuScreen : FluXisScreen
     private CircularContainer animationCircle;
 
     private MenuPlayButton playButton;
+    private int mapCount;
 
     private bool pressedStart;
     private Sample menuStart;
@@ -287,7 +288,8 @@ public partial class MenuScreen : FluXisScreen
             }
         };
 
-        maps.MapSetAdded += _ => playButton.Description = $"{maps.MapSets.Count} maps loaded";
+        mapCount = maps.MapSets.Count;
+        maps.CollectionUpdated += () => Schedule(() => this.TransformTo(nameof(mapCount), maps.MapSets.Count, 500, Easing.OutQuint));
     }
 
     private void continueToPlay() => this.Push(new SelectScreen());
@@ -395,6 +397,8 @@ public partial class MenuScreen : FluXisScreen
 
     protected override void Update()
     {
+        playButton.Description = $"{mapCount} maps loaded";
+
         if (clock.Finished) Game.NextSong();
 
         inactivityTime += Time.Elapsed;

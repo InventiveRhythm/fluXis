@@ -17,7 +17,7 @@ public partial class DrawableImportPlugin : Container
     public ImportPlugin Plugin { get; init; }
 
     [BackgroundDependencyLoader]
-    private void load(FluXisRealm realm)
+    private void load(FluXisRealm realm, ImportManager importManager)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
@@ -81,14 +81,15 @@ public partial class DrawableImportPlugin : Container
 
         if (Plugin.HasAutoImport)
         {
-            Bindable<bool> autoImport = new Bindable<bool>(realm.Run(r =>
-                r.All<ImporterInfo>().FirstOrDefault(i => i.Id == Plugin.ImporterId)?.AutoImport ?? false));
+            var autoImport = new Bindable<bool>
+            {
+                Value = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == Plugin.ImporterId)?.AutoImport ?? false)
+            };
 
             flow.Add(new SettingsDivider());
             flow.Add(new SettingsToggle
             {
                 Label = "Auto Import Maps",
-                Description = "Requires a restart to take effect.",
                 Bindable = autoImport
             });
 
@@ -101,6 +102,11 @@ public partial class DrawableImportPlugin : Container
                     if (info is not null)
                         info.AutoImport = e.NewValue;
                 });
+
+                if (e.NewValue)
+                    importManager.ImportMapsFrom(importManager.GetImporter(Plugin));
+                else
+                    importManager.RemoveImportedMaps(importManager.GetImporter(Plugin));
             });
         }
     }

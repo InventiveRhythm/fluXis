@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Music;
@@ -39,6 +40,8 @@ public partial class Toolbar : Container
 
     [Resolved]
     private FluXisGameBase game { get; set; }
+
+    public FluXisSpriteText CenterText { get; private set; }
 
     public BindableBool ShowToolbar = new();
 
@@ -144,6 +147,11 @@ public partial class Toolbar : Container
                                 Action = musicPlayer.ToggleVisibility
                             }
                         }
+                    },
+                    CenterText = new FluXisSpriteText
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
                     },
                     new FillFlowContainer
                     {

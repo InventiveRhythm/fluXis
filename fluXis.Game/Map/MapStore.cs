@@ -110,13 +110,15 @@ public partial class MapStore : Component
         initialLoad = false;
     }
 
-    public void AddMapSet(RealmMapSet mapSet)
+    public void AddMapSet(RealmMapSet mapSet, bool notify = true)
     {
         mapSet.Resources ??= resources;
 
         MapSets.Add(mapSet);
-        MapSetAdded?.Invoke(mapSet);
 
+        if (!notify) return;
+
+        MapSetAdded?.Invoke(mapSet);
         if (!initialLoad) CollectionUpdated?.Invoke();
     }
 
@@ -500,5 +502,11 @@ public partial class MapStore : Component
         req.PerformAsync();
 
         notifications.Add(notification);
+    }
+
+    public void Remove(RealmMapSet map)
+    {
+        MapSets.Remove(map);
+        CollectionUpdated?.Invoke();
     }
 }
