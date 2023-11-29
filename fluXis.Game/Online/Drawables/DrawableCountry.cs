@@ -36,12 +36,12 @@ public partial class DrawableCountry : Container
     public DrawableCountry(CountryCode code)
     {
         Code = code;
+        CornerRadius = 5;
     }
 
     [BackgroundDependencyLoader]
     private void load(TextureStore textures)
     {
-        CornerRadius = 10;
         Masking = true;
 
         InternalChildren = new Drawable[]

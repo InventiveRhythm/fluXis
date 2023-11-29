@@ -33,7 +33,7 @@ public class APIUserShort
         if (string.IsNullOrEmpty(code))
             return Online.CountryCode.Unknown;
 
-        return Enum.TryParse(code, out CountryCode cc) ? cc : Online.CountryCode.Unknown;
+        return Enum.TryParse(code.ToUpper(), out CountryCode cc) ? cc : Online.CountryCode.Unknown;
     }
 
     public static APIUserShort Dummy => new() { ID = -1, Username = "Dummy Player" };
