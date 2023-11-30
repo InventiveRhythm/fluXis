@@ -27,6 +27,9 @@ public class RealmMapSet : RealmObject
     [CanBeNull]
     public MapResourceProvider Resources { get; set; }
 
+    [Ignored]
+    public Action StatusChanged { get; set; } = null!;
+
     public RealmMapSet([CanBeNull] List<RealmMap> maps = null)
     {
         ID = Guid.NewGuid();
@@ -52,6 +55,9 @@ public class RealmMapSet : RealmObject
 
     public void SetStatus(int status)
     {
-        foreach (RealmMap map in Maps) map.Status = status;
+        foreach (RealmMap map in Maps)
+            map.Status = status;
+
+        StatusChanged?.Invoke();
     }
 }

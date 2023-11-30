@@ -20,6 +20,7 @@ public partial class StatusTag : CircularContainer
     [Resolved]
     private FluXisRealm realm { get; set; }
 
+    private Box box;
     private FluXisSpriteText text;
 
     public StatusTag(RealmMapSet set)
@@ -35,30 +36,51 @@ public partial class StatusTag : CircularContainer
         Masking = true;
         EdgeEffect = FluXisStyles.ShadowSmall;
 
-        var (status, colour) = getStatus();
-
         Children = new Drawable[]
         {
-            new Box
+            box = new Box
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = colour
+                RelativeSizeAxes = Axes.Both
             },
             text = new FluXisSpriteText
             {
-                Text = status,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = FluXisColors.IsBright(colour) ? Colour4.Black : Colour4.White,
                 Alpha = .75f
             }
         };
+
+        updateStatus();
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
+        set.StatusChanged += updateStatus;
+        updateSize();
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        set.StatusChanged -= updateStatus;
+    }
+
+    private void updateStatus()
+    {
+        var (status, colour) = getStatus();
+
+        text.Text = status;
+        box.Colour = colour;
+        text.Colour = FluXisColors.IsBright(colour) ? Colour4.Black : Colour4.White;
+
+        updateSize();
+    }
+
+    private void updateSize()
+    {
         var widthLeft = 50 - text.DrawWidth % 50;
 
         if (widthLeft < 20)
