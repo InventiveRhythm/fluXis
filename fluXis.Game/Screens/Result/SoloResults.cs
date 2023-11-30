@@ -62,7 +62,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
         dependencies.CacheAs(this);
         dependencies.CacheAs(Score);
         dependencies.CacheAs(Map);
-        dependencies.CacheAs(Player);
+        dependencies.CacheAs(Player ?? APIUserShort.Default);
 
         InternalChildren = new Drawable[]
         {

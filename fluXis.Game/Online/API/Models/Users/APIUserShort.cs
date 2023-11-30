@@ -37,6 +37,7 @@ public class APIUserShort
     }
 
     public static APIUserShort Dummy => new() { ID = -1, Username = "Dummy Player" };
+    public static APIUserShort Default => new() { ID = -1, Username = "Player" };
     public static APIUserShort AutoPlay => new() { ID = 0, Username = "AutoPlay" };
 
     public class APIUserSocials
