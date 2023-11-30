@@ -122,7 +122,7 @@ public class OsuImport : MapImporter
 
     private OsuMap parseOsuMap(ZipArchiveEntry entry) => ParseOsuMap(new StreamReader(entry.Open()).ReadToEnd());
 
-    public static OsuMap ParseOsuMap(string fileContent)
+    public static OsuMap ParseOsuMap(string fileContent, bool eventsOnly = false)
     {
         string[] lines = fileContent.Split(Environment.NewLine);
 
@@ -149,7 +149,7 @@ public class OsuImport : MapImporter
             parser.AddLine(line, section);
         }
 
-        return parser.Parse();
+        return parser.Parse(eventsOnly);
     }
 
     private static OsuFileSection sectionFromString(string line)
@@ -200,7 +200,7 @@ public class OsuImport : MapImporter
                     // to get the map background, we have to load the map,
                     // because for some reason the background is not in the .db file
                     // this increades the loading time by a lot, but there is no other way
-                    var osuMap = ParseOsuMap(File.ReadAllText(StoragePath + "/" + map.FolderName + "/" + map.BeatmapFileName));
+                    var osuMap = ParseOsuMap(File.ReadAllText(StoragePath + "/" + map.FolderName + "/" + map.BeatmapFileName), true);
 
                     var realmMap = new OsuRealmMap
                     {

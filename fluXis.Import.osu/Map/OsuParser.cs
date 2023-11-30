@@ -55,9 +55,15 @@ public class OsuParser
         }
     }
 
-    public OsuMap Parse()
+    public OsuMap Parse(bool eventsOnly = false)
     {
         OsuMap map = new();
+
+        if (eventsOnly)
+        {
+            parseEvents(map);
+            return map;
+        }
 
         parseGeneral(map);
         parseMetadata(map);
