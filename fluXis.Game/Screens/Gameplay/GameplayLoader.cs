@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Online.Activity;
+using fluXis.Game.UI.Tips;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -34,6 +35,7 @@ public partial class GameplayLoader : FluXisScreen
 
     private Container loadingContainer;
     private FillFlowContainer content;
+    private FluXisSpriteText tip;
 
     public GameplayLoader(RealmMap map, Func<GameplayScreen> create)
     {
@@ -48,73 +50,83 @@ public partial class GameplayLoader : FluXisScreen
         Origin = Anchor.Centre;
         Depth = -1;
 
-        InternalChild = content = new FillFlowContainer
+        InternalChildren = new Drawable[]
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Children = new Drawable[]
+            content = new FillFlowContainer
             {
-                new Container
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
                 {
-                    Size = new Vector2(250),
-                    CornerRadius = 20,
-                    Masking = true,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Children = new Drawable[]
+                    new Container
                     {
-                        new DrawableCover(Map.MapSet)
+                        Size = new Vector2(250),
+                        CornerRadius = 20,
+                        Masking = true,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            FillMode = FillMode.Fill
-                        },
-                        loadingContainer = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Children = new Drawable[]
+                            new DrawableCover(Map.MapSet)
                             {
-                                new Box
+                                RelativeSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                FillMode = FillMode.Fill
+                            },
+                            loadingContainer = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Children = new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Colour4.Black,
-                                    Alpha = 0.5f
-                                },
-                                new LoadingIcon
-                                {
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    Size = new Vector2(100)
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Colour4.Black,
+                                        Alpha = 0.5f
+                                    },
+                                    new LoadingIcon
+                                    {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Size = new Vector2(100)
+                                    }
                                 }
                             }
                         }
+                    },
+                    new FluXisSpriteText
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Text = Map.Metadata.Artist,
+                        FontSize = 22,
+                        Margin = new MarginPadding { Top = 20 }
+                    },
+                    new FluXisSpriteText
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Text = Map.Metadata.Title,
+                        FontSize = 40
+                    },
+                    new FluXisSpriteText
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Text = $"[{Map.Difficulty}] mapped by {Map.Metadata.Mapper}",
+                        FontSize = 28
                     }
-                },
-                new FluXisSpriteText
-                {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Text = Map.Metadata.Artist,
-                    FontSize = 22,
-                    Margin = new MarginPadding { Top = 20 }
-                },
-                new FluXisSpriteText
-                {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Text = Map.Metadata.Title,
-                    FontSize = 40
-                },
-                new FluXisSpriteText
-                {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Text = $"[{Map.Difficulty}] mapped by {Map.Metadata.Mapper}",
-                    FontSize = 28
                 }
+            },
+            tip = new FluXisSpriteText
+            {
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft,
+                FontSize = 36,
+                Margin = new MarginPadding { Left = 40, Bottom = 35 }
             }
         };
     }
@@ -151,15 +163,19 @@ public partial class GameplayLoader : FluXisScreen
 
     private void contentIn()
     {
+        tip.FadeIn();
         this.ScaleTo(.9f).ScaleTo(1, 400, Easing.OutQuint).FadeInFromZero(200).Then().Schedule(loadGameplay);
         content.MoveToY(0);
         loadingContainer.FadeIn(200);
         clock.LowPassFilter.CutoffTo(1000, 400, Easing.OutQuint);
+
+        tip.Text = LoadingTips.RandomTip;
     }
 
     private void contentOut()
     {
-        this.FadeIn(800).Then().FadeOut(200);
+        tip.FadeOut(400);
+        this.Delay(800).FadeOut(200);
         content.MoveToY(800, 1200, Easing.InQuint);
         clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
     }

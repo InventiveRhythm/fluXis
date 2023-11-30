@@ -32,6 +32,7 @@ using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
+using fluXis.Game.UI.Tips;
 using fluXis.Game.Updater;
 using fluXis.Resources;
 using Newtonsoft.Json;
@@ -185,6 +186,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);
+        LoadingTips.Load(storage);
     }
 
     public void PerformUpdateCheck(bool silent, bool forceUpdate = false) => Task.Run(() => CreateUpdateManager()?.Perform(silent, forceUpdate));
