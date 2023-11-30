@@ -1,7 +1,9 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
@@ -14,6 +16,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
@@ -29,6 +32,9 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -135,7 +141,7 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
             Origin = Anchor.Centre
         }, avatarContainer.Add);
 
-        fluxel.OnUserLoggedIn += updateUser;
+        fluxel.OnUserChanged += updateUser;
     }
 
     protected override void LoadComplete()
@@ -166,9 +172,33 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
 
     private void updateUser(APIUserShort user)
     {
-        if (user == null) return;
-
         avatar.UpdateUser(user);
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Right) return false;
+
+        game.Overlay = new ButtonPanel
+        {
+            Text = "Are you sure you want to log out?",
+            ButtonWidth = 200,
+            Buttons = new ButtonData[]
+            {
+                new()
+                {
+                    Text = "Yes, do it",
+                    Action = () => fluxel.Logout(),
+                    Color = FluXisColors.ButtonRed
+                },
+                new()
+                {
+                    Text = "No, nevermind"
+                }
+            }
+        };
+
+        return true;
     }
 
     protected override bool OnClick(ClickEvent e)

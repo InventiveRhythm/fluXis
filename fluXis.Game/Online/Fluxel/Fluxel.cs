@@ -39,7 +39,7 @@ public partial class Fluxel : Component
     private ConnectionStatus status = ConnectionStatus.Offline;
     private APIUserShort loggedInUser;
 
-    public Action<APIUserShort> OnUserLoggedIn { get; set; }
+    public Action<APIUserShort> OnUserChanged { get; set; }
 
     public ConnectionStatus Status
     {
@@ -63,14 +63,10 @@ public partial class Fluxel : Component
         get => loggedInUser;
         private set
         {
-            if (value == null)
-                Logger.Log("Logged out", LoggingTarget.Network);
-            else
-            {
-                loggedInUser = value;
-                OnUserLoggedIn?.Invoke(loggedInUser);
-                Logger.Log($"Logged in as {value.Username}", LoggingTarget.Network);
-            }
+            loggedInUser = value;
+            OnUserChanged?.Invoke(loggedInUser);
+
+            Logger.Log(value == null ? "Logged out" : $"Logged in as {value.Username}", LoggingTarget.Network);
         }
     }
 
@@ -167,7 +163,7 @@ public partial class Fluxel : Component
                 if (Status != ConnectionStatus.Connecting) return;
 
                 Logger.Log("Login timed out!", LoggingTarget.Network);
-                logout();
+                Logout();
 
                 LastError = "Login timed out!";
                 Status = ConnectionStatus.Failing;
@@ -288,15 +284,16 @@ public partial class Fluxel : Component
         registering = true;
     }
 
-    private async void logout()
+    public async void Logout()
     {
         await connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Logout Requested", CancellationToken.None);
         LoggedInUser = null;
-        Token = null;
-        username = null;
-        password = null;
+        Token = "";
+        username = "";
+        password = "";
 
         Config.GetBindable<string>(FluXisSetting.Token).Value = "";
+        Status = ConnectionStatus.Offline;
     }
 
     private async Task send(string message)
@@ -375,7 +372,7 @@ public partial class Fluxel : Component
         }
         else
         {
-            logout();
+            Logout();
             LastError = response.Message;
             Status = ConnectionStatus.Failing;
         }
@@ -390,7 +387,7 @@ public partial class Fluxel : Component
         }
         else
         {
-            logout();
+            Logout();
             LastError = response.Message;
             Status = ConnectionStatus.Failing;
         }
@@ -400,7 +397,7 @@ public partial class Fluxel : Component
     {
         if (response.Status != 200)
         {
-            logout();
+            Logout();
             LastError = response.Message;
             Status = ConnectionStatus.Failing;
             return;
