@@ -1,16 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -36,14 +33,7 @@ public partial class FluXisTextBox : BasicTextBox
         set => BackgroundFocused = value;
     }
 
-    private List<Sample> textAdded;
-    private List<Sample> textAddedCaps;
-    private Sample accept;
-    private Sample delete;
-    private Sample error;
-    private Sample selectChar;
-    private Sample selectWord;
-    private Sample selectAll;
+    private KeyboardSamples samples { get; set; }
 
     public FluXisTextBox()
     {
@@ -56,49 +46,30 @@ public partial class FluXisTextBox : BasicTextBox
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore samples)
+    private void load()
     {
         BackgroundCommit = BorderColour = FluXisColors.Highlight;
         Placeholder.Font = FluXisSpriteText.GetFont();
         Placeholder.Colour = FluXisColors.Foreground;
 
-        textAdded = new List<Sample>(3);
-        textAddedCaps = new List<Sample>(3);
-
-        for (int i = 0; i < textAdded.Capacity; i++)
-            textAdded.Add(samples.Get($"UI/Keyboard/tap-{i + 1}"));
-
-        for (int i = 0; i < textAddedCaps.Capacity; i++)
-            textAddedCaps.Add(samples.Get($"UI/Keyboard/caps-{i + 1}"));
-
-        accept = samples.Get("UI/Keyboard/confirm");
-        delete = samples.Get("UI/Keyboard/delete");
-        error = samples.Get("UI/Keyboard/error");
-        selectChar = samples.Get("UI/Keyboard/select-char");
-        selectWord = samples.Get("UI/Keyboard/select-word");
-        selectAll = samples.Get("UI/Keyboard/select-all");
+        Add(samples = new KeyboardSamples());
     }
 
     protected override Caret CreateCaret() => new FluXisCaret { SelectionColour = SelectionColour };
 
     protected override void OnUserTextAdded(string added)
     {
-        if (added.Any(char.IsUpper)) textAddedCaps[RNG.Next(textAddedCaps.Count)]?.Play();
-        else textAdded[RNG.Next(textAdded.Count)]?.Play();
-
+        samples.Tap(added.Any(char.IsUpper) && !IsPassword);
         OnTextChanged?.Invoke();
     }
 
     protected override void OnUserTextRemoved(string removed)
     {
-        delete?.Play();
+        samples.Delete();
         OnTextChanged?.Invoke();
     }
 
-    protected override void OnTextCommitted(bool textChanged)
-    {
-        accept?.Play();
-    }
+    protected override void OnTextCommitted(bool textChanged) => samples.Accept();
 
     private double lastSelectionTime;
 
@@ -109,18 +80,18 @@ public partial class FluXisTextBox : BasicTextBox
             case TextSelectionType.Character:
                 if (Time.Current - lastSelectionTime > 50)
                 {
-                    selectChar?.Play();
+                    samples.SelectChar();
                     lastSelectionTime = Time.Current;
                 }
 
                 break;
 
             case TextSelectionType.Word:
-                selectWord?.Play();
+                samples.SelectWord();
                 break;
 
             case TextSelectionType.All:
-                selectAll?.Play();
+                samples.SelectAll();
                 break;
         }
     }
@@ -129,7 +100,7 @@ public partial class FluXisTextBox : BasicTextBox
 
     protected override void NotifyInputError()
     {
-        error?.Play();
+        samples.Error();
         base.NotifyInputError();
     }
 
