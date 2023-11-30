@@ -7,6 +7,7 @@ public class OsuHitObject
     public int X { get; init; }
     public int StartTime { get; init; }
     public int EndTime { get; init; }
+    public string HitSound { get; init; }
 
     public HitObjectInfo ToHitObjectInfo(int keyCount)
     {
@@ -21,7 +22,8 @@ public class OsuHitObject
         {
             Lane = key + 1,
             Time = StartTime,
-            HoldTime = holdTime
+            HoldTime = holdTime,
+            HitSound = HitSound
         };
     }
 }

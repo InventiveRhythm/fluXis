@@ -25,7 +25,7 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
         set => RateBindable.Value = value;
     }
 
-    protected Bindable<double> RateBindable = new(1);
+    public Bindable<double> RateBindable { get; } = new(1);
 
     public TransformSequence<TransformableClock> TimeTo(double newTime, double duration = 0, Easing easing = Easing.None)
         => this.TransformTo(this.PopulateTransform(new TimeTransform(), newTime, duration, easing));

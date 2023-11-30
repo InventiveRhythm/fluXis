@@ -71,7 +71,8 @@ public partial class MapStore : Component
         {
             BackgroundStore = backgroundStore,
             CroppedBackgroundStore = croppedBackgroundStore,
-            TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(files))
+            TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(files)),
+            SampleStore = audio.GetSampleStore(new StorageBackedResourceStore(files))
         };
 
         realm.RunWrite(r =>

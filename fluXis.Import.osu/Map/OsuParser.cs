@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Import.osu.Map.Enums;
 
@@ -184,12 +185,14 @@ public class OsuParser
         foreach (var line in hitObjects)
         {
             string[] split = line.Split(',');
+            string[] colonSplit = split[5].Split(":");
 
             map.HitObjects.Add(new OsuHitObject
             {
                 X = int.Parse(split[0]),
                 StartTime = int.Parse(split[2]),
-                EndTime = int.Parse(split[5].Split(":")[0])
+                EndTime = int.Parse(colonSplit[0]),
+                HitSound = colonSplit.LastOrDefault() ?? ""
             });
         }
     }

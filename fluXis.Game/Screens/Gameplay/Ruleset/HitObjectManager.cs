@@ -11,6 +11,7 @@ using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Skinning;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -258,7 +259,10 @@ public partial class HitObjectManager : Container<HitObject>
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
             if (!skipNextHitSounds)
-                screen.Samples.Hit();
+            {
+                var sample = screen.Hitsounding.GetSample(hitObject.Data.HitSound) ?? screen.Samples.HitSample;
+                sample?.Play();
+            }
 
             hit(hitObject, false);
             pressed[hitObject.Data.Lane - 1] = true;
@@ -288,7 +292,16 @@ public partial class HitObjectManager : Container<HitObject>
 
         if (input.JustPressed.Contains(true))
         {
-            screen.Samples.Hit();
+            for (var i = 0; i < input.JustPressed.Length; i++)
+            {
+                if (!input.JustPressed[i]) continue;
+
+                var next = nextInLane(i + 1);
+                if (next == null) continue;
+
+                var sample = screen.Hitsounding.GetSample(next.HitSound) ?? screen.Samples.HitSample;
+                sample?.Play();
+            }
 
             List<HitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
 
@@ -481,5 +494,13 @@ public partial class HitObjectManager : Container<HitObject>
         double position = scrollVelocityMarks[index - 1];
         position += (time - prev.Time) * prev.Multiplier;
         return position;
+    }
+
+    [CanBeNull]
+    private HitObjectInfo nextInLane(int lane)
+    {
+        var hit = HitObjects.FirstOrDefault(h => h.Data.Lane == lane && !h.GotHit)?.Data;
+        hit ??= FutureHitObjects.FirstOrDefault(h => h.Lane == lane);
+        return hit;
     }
 }

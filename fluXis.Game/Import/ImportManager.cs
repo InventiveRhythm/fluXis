@@ -238,6 +238,7 @@ public partial class ImportManager : Component
                         importer.Resources = new MapResourceProvider
                         {
                             TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(storageFor)),
+                            SampleStore = audio.GetSampleStore(new StorageBackedResourceStore(storageFor)),
                             BackgroundStore = new BackgroundTextureStore(host, storageFor),
                             CroppedBackgroundStore = new CroppedBackgroundStore(host, storageFor)
                         };

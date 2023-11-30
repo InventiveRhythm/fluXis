@@ -12,7 +12,7 @@ public partial class GameplaySamples : Component
 {
     private Bindable<double> hitSoundVolume;
 
-    private Sample hitSample;
+    public Sample HitSample { get; private set; }
     private Sample restartSample;
     private Sample[] missSamples;
     private Sample failSample;
@@ -22,7 +22,7 @@ public partial class GameplaySamples : Component
     {
         hitSoundVolume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
 
-        hitSample = skins.GetHitSample();
+        HitSample = skins.GetHitSample();
         restartSample = skins.GetRestartSample();
         missSamples = skins.GetMissSamples();
         failSample = skins.GetFailSample();
@@ -32,10 +32,10 @@ public partial class GameplaySamples : Component
     {
         base.LoadComplete();
 
-        hitSoundVolume.BindValueChanged(_ => hitSample.Volume.Value = hitSoundVolume.Value, true);
+        hitSoundVolume.BindValueChanged(_ => HitSample.Volume.Value = hitSoundVolume.Value, true);
     }
 
-    public void Hit() => hitSample?.Play();
+    public void Hit() => HitSample?.Play();
     public void Restart() => restartSample?.Play();
     public void Miss() => missSamples?[RNG.Next(0, missSamples.Length)]?.Play();
     public void Fail() => failSample?.Play();

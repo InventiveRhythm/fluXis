@@ -25,7 +25,6 @@ using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Screens.Edit.Timeline;
 using fluXis.Game.Utils;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -575,7 +574,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         // get map as json
-        string json = JsonConvert.SerializeObject(MapInfo);
+        string json = MapInfo.Serialize();
         string hash = MapUtils.GetHash(json);
         string effHash = MapUtils.GetHash(values.MapEvents.Save());
 
@@ -667,7 +666,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public bool HasChanges()
     {
-        string json = JsonConvert.SerializeObject(MapInfo);
+        string json = MapInfo.Serialize();
         string hash = MapUtils.GetHash(json);
         return hash != Map.Hash;
     }

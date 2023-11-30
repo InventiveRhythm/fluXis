@@ -9,9 +9,9 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Utils;
 using fluXis.Import.osu.AutoImport;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu_database_reader.BinaryFiles;
 using osu.Framework.Logging;
 using osu.Shared;
@@ -63,7 +63,7 @@ public class OsuImport : MapImporter
                     try
                     {
                         OsuMap map = parseOsuMap(entry);
-                        string json = JsonConvert.SerializeObject(map.ToMapInfo());
+                        string json = map.ToMapInfo().Serialize(true);
                         WriteFile(json, folder + "/" + entry.FullName + ".fsc");
 
                         notification.TextSuccess = $"Imported osu! map: {map.Artist} - {map.Title}";

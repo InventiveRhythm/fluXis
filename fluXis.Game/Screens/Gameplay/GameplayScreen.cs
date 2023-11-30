@@ -70,6 +70,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public BindableBool IsPaused { get; } = new();
     public GameplaySamples Samples { get; } = new();
+    public Hitsounding Hitsounding { get; private set; }
 
     public Action<double, double> OnSeek { get; set; }
 
@@ -170,6 +171,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             {
                 Input,
                 Samples,
+                Hitsounding = new Hitsounding(RealmMap.MapSet, AudioClock.RateBindable),
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,

@@ -7,6 +7,7 @@ public class HitObjectInfo : TimedObject
 {
     public int Lane { get; set; }
     public float HoldTime { get; set; }
+    public string HitSound { get; set; }
 
     [JsonIgnore]
     public float HoldEndTime

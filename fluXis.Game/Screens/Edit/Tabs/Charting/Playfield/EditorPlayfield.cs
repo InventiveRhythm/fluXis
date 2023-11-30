@@ -3,6 +3,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
+using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -34,6 +35,7 @@ public partial class EditorPlayfield : Container
     private WaveformGraph waveform;
 
     private Sample hitSound;
+    private Hitsounding hitsounding;
 
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
@@ -46,6 +48,7 @@ public partial class EditorPlayfield : Container
 
         InternalChildren = new Drawable[]
         {
+            hitsounding = new Hitsounding(values.Editor.Map.MapSet, clock.RateBindable),
             new DefaultStageBackground(),
             new DefaultStageBorderLeft(),
             new DefaultStageBorderRight(),
@@ -88,6 +91,7 @@ public partial class EditorPlayfield : Container
 
     public void PlayHitSound(HitObjectInfo info)
     {
-        hitSound?.Play();
+        var sample = hitsounding.GetSample(info.HitSound) ?? hitSound;
+        sample?.Play();
     }
 }
