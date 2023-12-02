@@ -47,10 +47,12 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
         {
             var items = new List<MenuItem>();
 
-            if (!deleted)
-                items.Add(new FluXisMenuItem("View Details", FontAwesome.Solid.InfoCircle, MenuItemType.Highlighted, viewDetails));
+            if (deleted)
+                return items.ToArray();
 
-            if (Deletable && !deleted && RealmScoreId != null)
+            items.Add(new FluXisMenuItem("View Details", FontAwesome.Solid.InfoCircle, MenuItemType.Highlighted, viewDetails));
+
+            if (Deletable && RealmScoreId != null)
             {
                 items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Trash, MenuItemType.Dangerous, () =>
                 {
@@ -312,6 +314,8 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
 
     public Drawable GetTooltip()
     {
+        if (deleted) return null;
+
         var date = Date;
 
         return new FillFlowContainer
