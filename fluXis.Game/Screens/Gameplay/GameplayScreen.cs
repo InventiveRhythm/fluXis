@@ -345,6 +345,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500);
         ScheduleAfterChildren(() => AudioClock.RateTo(Rate, 500, Easing.InQuint));
         backgrounds.StopVideo();
+        Samples.CancelFail();
 
         return base.OnExiting(e);
     }
