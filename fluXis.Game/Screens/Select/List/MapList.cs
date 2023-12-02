@@ -4,7 +4,6 @@ using fluXis.Game.Graphics.Containers;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
@@ -54,9 +53,7 @@ public partial class MapList : FluXisScrollContainer
         Content.AddRange(entries);
     }
 
-    protected override bool OnHover(HoverEvent e) => true;
-
-    protected override void OnHoverLost(HoverLostEvent e)
+    public void ScrollToSelected()
     {
         var selected = Content.Children.FirstOrDefault(c => c.Selected);
         if (selected != null) ScrollTo(selected);

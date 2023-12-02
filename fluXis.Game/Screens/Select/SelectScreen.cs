@@ -136,7 +136,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         }
                     },
                     searchBar = new SearchBar { Filters = Filters },
-                    selectMapInfo = new SelectMapInfo { Screen = this },
+                    selectMapInfo = new SelectMapInfo
+                    {
+                        Screen = this,
+                        HoverAction = mapList.ScrollToSelected
+                    },
                     new Container
                     {
                         Anchor = Anchor.CentreLeft,

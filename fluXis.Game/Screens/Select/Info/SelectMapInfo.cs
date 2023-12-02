@@ -13,6 +13,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Select.Info;
 
@@ -23,6 +24,8 @@ public partial class SelectMapInfo : GridContainer
 
     public SelectScreen Screen { get; set; }
     public ScoreList ScoreList { get; set; }
+
+    public Action HoverAction { get; set; }
 
     private BackgroundStack backgroundStack;
     private FluXisSpriteText titleText;
@@ -290,6 +293,12 @@ public partial class SelectMapInfo : GridContainer
     private void OnBeat(int beat)
     {
         bpmText.FadeIn().FadeTo(.6f, clock.BeatTime);
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        HoverAction?.Invoke();
+        return true;
     }
 
     protected override void Dispose(bool isDisposing)
