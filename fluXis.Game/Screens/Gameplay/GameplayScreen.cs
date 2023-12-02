@@ -213,7 +213,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         base.LoadComplete();
         JudgementProcessor.ApplyMap(Map);
-        ScoreProcessor.OnComboBreak += () => Samples.Miss();
+        ScoreProcessor.OnComboBreak += () =>
+        {
+            if (!Playfield.Manager.Seeking)
+                Samples.Miss();
+        };
 
         Playfield.Manager.OnFinished = () =>
         {

@@ -46,7 +46,7 @@ public partial class HitObjectManager : Container<HitObject>
     public int CurrentKeyCount { get; private set; }
     public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
-    private bool skipNextHitSounds { get; set; }
+    public bool Seeking { get; private set; }
 
     public HealthMode HealthMode
     {
@@ -100,7 +100,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         newTime = Math.Max(newTime, 0);
 
-        skipNextHitSounds = true;
+        Seeking = true;
         (Clock as AudioClock)?.Seek(newTime);
 
         if (newTime < prevTime)
@@ -258,7 +258,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
-            if (!skipNextHitSounds)
+            if (!Seeking)
             {
                 var sample = screen.Hitsounding.GetSample(hitObject.Data.HitSound) ?? screen.Samples.HitSample;
                 sample?.Play();
@@ -280,7 +280,7 @@ public partial class HitObjectManager : Container<HitObject>
         for (var i = 0; i < pressed.Length; i++)
             playfield.Receptors[i].IsDown = pressed[i];
 
-        skipNextHitSounds = false;
+        ScheduleAfterChildren(() => Seeking = false);
     }
 
     private void updateInput()

@@ -54,11 +54,6 @@ public class HealthProcessor : JudgementDependant
             TriggerFailure();
     }
 
-    public override void RevertResult(HitResult result)
-    {
-        Health.Value -= GetHealthIncreaseFor(result);
-    }
-
     /// <returns>True if gameplay should exit normally.</returns>
     public virtual bool OnComplete() => true;
 
