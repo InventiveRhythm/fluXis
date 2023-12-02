@@ -6,6 +6,7 @@ namespace fluXis.Game.Scoring.Processing.Health;
 public class RequirementHeathProcessor : HealthProcessor
 {
     protected override float DefaultHealth => 0f;
+    protected override bool ClearHealthOnFail => false;
 
     public float HealthRequirement { get; init; }
     public bool RequirementReached => Health.Value >= HealthRequirement;

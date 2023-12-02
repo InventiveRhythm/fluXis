@@ -10,11 +10,14 @@ namespace fluXis.Game.Scoring.Processing.Health;
 public class HealthProcessor : JudgementDependant
 {
     protected virtual float DefaultHealth => 100f;
+    protected virtual bool DefaultFailCondition => Health.Value <= Health.MinValue;
+    protected virtual bool ClearHealthOnFail => true;
 
     public GameplayScreen Screen { get; set; }
     protected AudioClock AudioClock => Screen.AudioClock;
 
     public bool CanFail { get; set; } = true;
+    public Func<HitResult, bool> ExtraFailCondition { get; set; }
 
     /// <summary>
     /// This is only really used for the health bar cross.
@@ -42,6 +45,9 @@ public class HealthProcessor : JudgementDependant
         Failed = true;
         FailTime = AudioClock.CurrentTime;
         OnFail?.Invoke();
+
+        if (ClearHealthOnFail)
+            Health.Value = Health.MinValue;
     }
 
     public override void AddResult(HitResult result)
@@ -50,8 +56,16 @@ public class HealthProcessor : JudgementDependant
 
         Health.Value += GetHealthIncreaseFor(result);
 
-        if (Health.Value == 0)
+        if (meetsFailCondition(result))
             TriggerFailure();
+    }
+
+    private bool meetsFailCondition(HitResult result)
+    {
+        if (DefaultFailCondition)
+            return true;
+
+        return ExtraFailCondition != null && ExtraFailCondition.Invoke(result);
     }
 
     /// <returns>True if gameplay should exit normally.</returns>

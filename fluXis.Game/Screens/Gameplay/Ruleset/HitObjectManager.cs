@@ -390,12 +390,6 @@ public partial class HitObjectManager : Container<HitObject>
             hitObject.Data.HoldEndResult = result;
         else
             hitObject.Data.Result = result;
-
-        if (judgement == hitWindows.ComboBreakJudgement && screen.Mods.Any(m => m is FragileMod))
-            screen.OnDeath();
-
-        if (judgement != hitWindows.HighestHitable && screen.Mods.Any(m => m is FlawlessMod))
-            screen.OnDeath();
     }
 
     private void loadMap()

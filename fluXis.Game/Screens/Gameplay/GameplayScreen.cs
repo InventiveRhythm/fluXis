@@ -17,6 +17,7 @@ using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.HUD;
@@ -248,6 +249,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         processor ??= new HealthProcessor();
         processor.Screen = this;
         processor.OnFail = OnDeath;
+
+        if (Mods.Any(m => m is FragileMod))
+            processor.ExtraFailCondition = r => r.Judgement == Judgement.Miss;
+
+        if (Mods.Any(m => m is FlawlessMod))
+            processor.ExtraFailCondition = r => r.Judgement < Judgement.Flawless;
+
         return processor;
     }
 
