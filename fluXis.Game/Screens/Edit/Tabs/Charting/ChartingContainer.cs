@@ -233,6 +233,10 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             case PlatformAction.SelectAll:
                 BlueprintContainer.SelectAll();
                 return true;
+
+            case PlatformAction.Delete:
+                BlueprintContainer.SelectionHandler.DeleteSelected();
+                return true;
         }
 
         return false;
