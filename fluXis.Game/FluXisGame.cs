@@ -84,6 +84,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                     RegisterOverlay,
                     ChatOverlay,
                     ProfileOverlay,
+                    Settings
                 }
             },
             new PopoverContainer
@@ -108,7 +109,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                     }
                 }
             },
-            Settings,
             new VolumeOverlay(),
             NotificationManager.Floating = notificationContainer = new FloatingNotificationContainer(),
             new FpsOverlay(),
