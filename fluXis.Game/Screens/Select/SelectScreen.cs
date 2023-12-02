@@ -320,14 +320,16 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (set == null || !lookup.ContainsKey(set))
             return;
 
+        var previous = mapStore.CurrentMapSet;
+
         RealmMap map = set.Maps.First();
         MapInfo.Value = lookup[set].Maps.First();
+        mapStore.CurrentMapSet = set;
 
-        if (!Equals(mapStore.CurrentMapSet, set) || !clock.IsRunning)
+        if (!Equals(previous, set) || !clock.IsRunning)
             clock.LoadMap(map, true, true);
 
         clock.RestartPoint = map.Metadata.PreviewTime;
-        mapStore.CurrentMapSet = set;
     }
 
     private void selectMap(RealmMap map)

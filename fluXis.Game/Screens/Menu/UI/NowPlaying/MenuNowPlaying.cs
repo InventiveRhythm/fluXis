@@ -8,6 +8,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osuTK;
 using osuTK.Graphics;
 
@@ -99,6 +100,8 @@ public partial class MenuNowPlaying : Container
 
     private void onSongChanged()
     {
+        Logger.Log("Song changed to " + mapStore.CurrentMapSet?.Metadata, LoggingTarget.Runtime, LogLevel.Debug);
+
         cover.MapSet = mapStore.CurrentMapSet;
         title.Text = mapStore.CurrentMapSet?.Metadata.Title ?? "Unknown Title";
         artist.Text = mapStore.CurrentMapSet?.Metadata.Artist ?? "Unknown Artist";
