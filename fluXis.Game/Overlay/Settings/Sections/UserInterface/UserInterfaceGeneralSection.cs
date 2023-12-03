@@ -22,7 +22,7 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
             },
             new SettingsToggle
             {
-                Label = "Skip Intro",
+                Label = "Skip Warning",
                 Description = "Skips the epliepsy warning at the start of the game.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SkipIntro)
             },

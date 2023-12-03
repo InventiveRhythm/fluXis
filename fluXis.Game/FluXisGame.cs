@@ -9,8 +9,8 @@ using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Image;
 using fluXis.Game.Overlay.Volume;
-using fluXis.Game.Screens.Intro;
 using fluXis.Game.Screens.Menu;
+using fluXis.Game.Screens.Warning;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -141,8 +141,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         base.LoadComplete();
         PerformUpdateCheck(true);
 
-        ScreenStack.Push(new IntroScreen());
+        ScreenStack.Push(new WarningScreen());
         MenuScreen = new MenuScreen();
+        LoadComponent(MenuScreen);
 
         Fluxel.RegisterListener<ServerMessage>(EventType.ServerMessage, res =>
         {

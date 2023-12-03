@@ -24,6 +24,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
@@ -36,7 +37,6 @@ namespace fluXis.Game.Screens.Menu;
 public partial class MenuScreen : FluXisScreen
 {
     public override float Zoom => pressedStart ? 1f : 1.2f;
-    public override float BackgroundDim => pressedStart ? base.BackgroundDim : 1f;
     public override bool ShowToolbar => pressedStart;
 
     [Resolved]
@@ -65,7 +65,7 @@ public partial class MenuScreen : FluXisScreen
     private Container buttonContainer;
     private FillFlowContainer linkContainer;
 
-    private FluXisSpriteText animationText;
+    private Sprite logoText;
     private CircularContainer animationCircle;
 
     private MenuPlayButton playButton;
@@ -77,20 +77,9 @@ public partial class MenuScreen : FluXisScreen
     private const double inactivity_timeout = 60 * 1000;
 
     [BackgroundDependencyLoader]
-    private void load(GameHost host, ISampleStore samples)
+    private void load(GameHost host, ISampleStore samples, TextureStore textures)
     {
         menuStart = samples.Get("UI/accept");
-
-        // load a random map
-        if (maps.MapSets.Count > 0)
-        {
-            maps.CurrentMapSet = maps.GetRandom();
-
-            RealmMap map = maps.CurrentMapSet.Maps.First();
-            clock.LoadMap(map, true, true);
-        }
-
-        backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
 
         InternalChildren = new Drawable[]
         {
@@ -152,15 +141,11 @@ public partial class MenuScreen : FluXisScreen
                                     }
                                 }
                             },
-                            animationText = new FluXisSpriteText
+                            logoText = new Sprite
                             {
+                                Texture = textures.Get("Logos/logo-text-shadow"),
                                 Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Text = "fluXis",
-                                FontSize = 100,
-                                Shadow = true,
-                                ShadowOffset = new Vector2(0, 0.04f),
-                                Alpha = 0
+                                Origin = Anchor.Centre
                             }
                         }
                     },
@@ -313,7 +298,7 @@ public partial class MenuScreen : FluXisScreen
         randomizeSplash();
         backgrounds.Zoom = 1f;
 
-        animationText.ScaleTo(1.2f, 800, Easing.OutQuint).FadeOut(600);
+        logoText.ScaleTo(1.1f, 800, Easing.OutQuint).FadeOut(600);
         animationCircle.TransformTo(nameof(animationCircle.BorderThickness), 20f).ResizeTo(0)
                        .TransformTo(nameof(animationCircle.BorderThickness), 0f, 1200, Easing.OutQuint).ResizeTo(400, 1000, Easing.OutQuint);
 
@@ -333,7 +318,7 @@ public partial class MenuScreen : FluXisScreen
         backgrounds.Zoom = 1.2f;
         hideMenu();
 
-        animationText.Delay(800).ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
+        logoText.Delay(800).ScaleTo(.9f).ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
         this.Delay(800).FadeIn().OnComplete(_ => pressedStart = false);
 
         pressAnyKeyText.Delay(800).MoveToY(0, 800, Easing.OutQuint);
@@ -371,13 +356,32 @@ public partial class MenuScreen : FluXisScreen
 
     private void randomizeSplash() => splashText.Text = MenuSplashes.RandomSplash;
 
+    public void PreEnter()
+    {
+        // load a random map
+        if (maps.MapSets.Count > 0)
+        {
+            maps.CurrentMapSet = maps.GetRandom();
+
+            RealmMap map = maps.CurrentMapSet.Maps.First();
+            clock.LoadMap(map, false, true);
+            clock.Volume = 0;
+        }
+
+        backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
+    }
+
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        if (maps.MapSets.Count > 0)
+        {
+            clock.FadeIn(500);
+            clock.Seek(maps.CurrentMapSet.Metadata.PreviewTime);
+            clock.Start();
+        }
+
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
         visualizer.FadeInFromZero(2000);
-        animationText.FadeInFromZero(500);
-        backgrounds.SetDim(1f, 0);
-        backgrounds.SetDim(base.BackgroundDim, 2000);
         inactivityTime = 0;
     }
 
