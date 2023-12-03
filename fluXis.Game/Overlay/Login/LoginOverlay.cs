@@ -56,11 +56,12 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
             },
             content = new ClickableContainer
             {
+                Width = 340,
+                AutoSizeAxes = Axes.Y,
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight,
-                Margin = new MarginPadding { Top = 20, Right = 80 },
-                Width = 300,
-                CornerRadius = 10,
+                Margin = new MarginPadding { Top = -20, Right = -20 },
+                CornerRadius = 20,
                 Masking = true,
                 Children = new Drawable[]
                 {
@@ -77,7 +78,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         Spacing = new Vector2(10),
-                        Padding = new MarginPadding { Top = 40, Bottom = 10, Horizontal = 10 },
+                        Padding = new MarginPadding { Top = 80, Bottom = 10, Left = 10, Right = 30 },
                         Children = new Drawable[]
                         {
                             errorText = new FluXisSpriteText
@@ -208,14 +209,14 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
             return;
 
         this.FadeIn(200);
-        content.ResizeHeightTo(200, 400, Easing.OutQuint);
+        content.MoveToY(0, 400, Easing.OutQuint);
         Schedule(() => GetContainingInputManager().ChangeFocus(string.IsNullOrEmpty(username.Text) ? username : password));
     }
 
     public override void Hide()
     {
         this.FadeOut(200);
-        content.ResizeHeightTo(0, 200, Easing.InQuint);
+        content.MoveToY(-20, 400, Easing.OutQuint);
     }
 
     protected override bool OnHover(HoverEvent e) => true;
