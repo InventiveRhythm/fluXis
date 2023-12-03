@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.Exit;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Image;
@@ -31,8 +31,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
 
     private Container screenContainer;
-    private Container exitContainer;
-    private FluXisSpriteText seeyaText;
+    private ExitAnimation exitAnimation;
     private Container overlayDim;
     private Container overlayContainer;
 
@@ -113,26 +112,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             NotificationManager.Floating = notificationContainer = new FloatingNotificationContainer(),
             new FpsOverlay(),
             CursorOverlay,
-            exitContainer = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black
-                    },
-                    seeyaText = new FluXisSpriteText
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Text = "Goodbye!",
-                        FontSize = 32
-                    }
-                }
-            }
+            exitAnimation = new ExitAnimation()
         };
     }
 
@@ -255,6 +235,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         CursorOverlay.FadeOut(600);
         Toolbar.ShowToolbar.Value = false;
         AudioClock.FadeOut(1500);
-        exitContainer.FadeIn(1000).OnComplete(_ => seeyaText.FadeOut(1000).OnComplete(_ => base.Exit()));
+        exitAnimation.Show(buffer.Hide, base.Exit);
     }
 }
