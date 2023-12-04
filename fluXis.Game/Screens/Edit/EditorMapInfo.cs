@@ -13,6 +13,7 @@ public class EditorMapInfo : MapInfo
 
     public event Action<HitObjectInfo> HitObjectAdded;
     public event Action<HitObjectInfo> HitObjectRemoved;
+    public event Action HitSoundsChanged;
 
     public event Action<TimingPointInfo> TimingPointAdded;
     public event Action<TimingPointInfo> TimingPointRemoved;
@@ -66,6 +67,9 @@ public class EditorMapInfo : MapInfo
         HitObjects.Remove(hitObject);
         HitObjectRemoved?.Invoke(hitObject);
     }
+
+    public void ChangeHitSounds() =>
+        HitSoundsChanged?.Invoke();
 
     public void Add(TimingPointInfo timingPoint)
     {

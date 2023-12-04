@@ -11,10 +11,27 @@ namespace fluXis.Game.Screens.Gameplay;
 
 public partial class Hitsounding : Component
 {
+    public const string DEFAULT_PREFIX = ":";
+
+    private string[] defaults { get; } =
+    {
+        "drum",
+        "clap"
+    };
+
     private Dictionary<string, Sample> samples { get; } = new();
 
-    public Hitsounding(RealmMapSet set, Bindable<double> rate)
+    public Hitsounding(ISampleStore defaultSamples, RealmMapSet set, Bindable<double> rate)
     {
+        foreach (var sample in defaults)
+        {
+            var s = defaultSamples.Get($"Gameplay/{sample}");
+            if (s == null) continue;
+
+            s.Frequency.BindTo(rate);
+            samples.Add($"{DEFAULT_PREFIX}{sample}", s);
+        }
+
         var dir = MapFiles.GetFullPath(set.ID.ToString());
 
         if (!Directory.Exists(dir))
@@ -23,12 +40,12 @@ public partial class Hitsounding : Component
         foreach (var file in Directory.GetFiles(dir, "*.wav"))
         {
             var name = Path.GetFileNameWithoutExtension(file);
-            var channel = set.Resources?.SampleStore?.Get($"{set.ID}/{name}");
+            var s = set.Resources?.SampleStore?.Get($"{set.ID}/{name}");
 
-            if (channel == null) continue;
+            if (s == null) continue;
 
-            channel.Frequency.BindTo(rate);
-            samples.Add(name, channel);
+            s.Frequency.BindTo(rate);
+            samples.Add(name, s);
         }
     }
 
@@ -39,17 +56,17 @@ public partial class Hitsounding : Component
             return null;
 
         var name = sample.ToLower().EndsWith(".wav") ? Path.GetFileNameWithoutExtension(sample) : sample;
-        return samples.TryGetValue(name, out var channel) ? channel : null;
+        return samples.TryGetValue(name, out var s) ? s : null;
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        foreach (var sample in samples.Values)
+        foreach (var s in samples.Values)
         {
-            sample.Frequency.UnbindAll();
-            sample.Dispose();
+            s.Frequency.UnbindAll();
+            s.Dispose();
         }
     }
 }

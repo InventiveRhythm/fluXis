@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox.Hitsound;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -63,6 +64,7 @@ public partial class Toolbox : ExpandingContainer
                             Icon = FontAwesome.Solid.Magic,
                             Tools = chartingContainer.EffectTools
                         },
+                        new ToolboxHitsoundCategory(),
                         new ToolboxSnapCategory()
                     }
                 }

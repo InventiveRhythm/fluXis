@@ -48,7 +48,7 @@ public partial class EditorPlayfield : Container
 
         InternalChildren = new Drawable[]
         {
-            hitsounding = new Hitsounding(values.Editor.Map.MapSet, clock.RateBindable),
+            hitsounding = new Hitsounding(samples, values.Editor.Map.MapSet, clock.RateBindable),
             new DefaultStageBackground(),
             new DefaultStageBorderLeft(),
             new DefaultStageBorderRight(),

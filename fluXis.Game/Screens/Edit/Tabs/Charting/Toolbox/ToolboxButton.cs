@@ -20,13 +20,13 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     [Resolved]
     protected ChartingContainer ChartingContainer { get; private set; }
 
-    private BlueprintContainer blueprintContainer => ChartingContainer.BlueprintContainer;
+    public BlueprintContainer BlueprintContainer => ChartingContainer.BlueprintContainer;
 
     public ChartingTool Tool { get; init; }
     public virtual string Tooltip => Tool.Description;
 
     public virtual string Text => Tool.Name;
-    public virtual bool IsSelected => blueprintContainer.CurrentTool == Tool;
+    public virtual bool IsSelected => BlueprintContainer.CurrentTool == Tool;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -111,11 +111,11 @@ public partial class ToolboxButton : Container, IHasTextTooltip
         i.Origin = Anchor.Centre;
     });
 
-    public virtual void Select() => blueprintContainer.CurrentTool = Tool;
+    public virtual void Select() => BlueprintContainer.CurrentTool = Tool;
 
     protected override void LoadComplete()
     {
-        blueprintContainer.CurrentToolChanged += UpdateSelectionState;
+        BlueprintContainer.CurrentToolChanged += UpdateSelectionState;
         UpdateSelectionState();
     }
 

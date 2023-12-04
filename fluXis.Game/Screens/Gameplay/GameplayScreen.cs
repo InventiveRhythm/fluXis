@@ -28,6 +28,7 @@ using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -122,7 +123,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load(FluXisConfig config, ISampleStore samples)
     {
         dependencies.CacheAs(this);
 
@@ -172,7 +173,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             {
                 Input,
                 Samples,
-                Hitsounding = new Hitsounding(RealmMap.MapSet, AudioClock.RateBindable),
+                Hitsounding = new Hitsounding(samples, RealmMap.MapSet, AudioClock.RateBindable),
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
