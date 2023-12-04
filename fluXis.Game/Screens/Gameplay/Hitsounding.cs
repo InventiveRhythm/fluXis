@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using JetBrains.Annotations;
+using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -21,8 +23,22 @@ public partial class Hitsounding : Component
 
     private Dictionary<string, Sample> samples { get; } = new();
 
-    public Hitsounding(ISampleStore defaultSamples, RealmMapSet set, Bindable<double> rate)
+    private RealmMapSet set { get; }
+    private Bindable<double> rate { get; }
+
+    private Bindable<double> volume;
+
+    public Hitsounding(RealmMapSet set, Bindable<double> rate)
     {
+        this.set = set;
+        this.rate = rate;
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(ISampleStore defaultSamples, FluXisConfig config)
+    {
+        volume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
+
         foreach (var sample in defaults)
         {
             var s = defaultSamples.Get($"Gameplay/{sample}");
@@ -47,6 +63,21 @@ public partial class Hitsounding : Component
             s.Frequency.BindTo(rate);
             samples.Add(name, s);
         }
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        volume.BindValueChanged(v =>
+        {
+            foreach (var s in samples.Values)
+            {
+                if (s == null) continue;
+
+                s.Volume.Value = v.NewValue;
+            }
+        }, true);
     }
 
     [CanBeNull]

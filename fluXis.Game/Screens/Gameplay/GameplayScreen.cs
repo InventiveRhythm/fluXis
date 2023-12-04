@@ -173,7 +173,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             {
                 Input,
                 Samples,
-                Hitsounding = new Hitsounding(samples, RealmMap.MapSet, AudioClock.RateBindable),
+                Hitsounding = new Hitsounding(RealmMap.MapSet, AudioClock.RateBindable),
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
