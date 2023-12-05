@@ -15,8 +15,9 @@ public partial class ToolboxHitsoundCategory : ToolboxCategory
         items = new List<ToolboxButton>
         {
             new ToolboxHitsoundButton("Normal", "normal"),
-            new ToolboxHitsoundButton("Drum", "drum"),
-            new ToolboxHitsoundButton("Clap", "clap")
+            new ToolboxHitsoundButton("Kick", "kick"),
+            new ToolboxHitsoundButton("Clap", "clap"),
+            new ToolboxHitsoundButton("Snare", "snare"),
         };
     }
 

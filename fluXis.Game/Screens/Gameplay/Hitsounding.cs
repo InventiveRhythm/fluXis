@@ -17,8 +17,9 @@ public partial class Hitsounding : Component
 
     private string[] defaults { get; } =
     {
-        "drum",
-        "clap"
+        "kick",
+        "clap",
+        "snare"
     };
 
     private Dictionary<string, Sample> samples { get; } = new();
