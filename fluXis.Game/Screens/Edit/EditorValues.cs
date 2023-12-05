@@ -15,6 +15,8 @@ public class EditorValues
     public Bindable<float> WaveformOpacity { get; } = new(.25f);
     public BindableBool FlashUnderlay { get; } = new();
     public BindableColour4 FlashUnderlayColor { get; } = new(FluXisColors.Background1);
+    public BindableBool ShowSamples { get; } = new();
+
     public EditorMapInfo MapInfo { get; init; }
     public EditorMapEvents MapEvents { get; init; } = new();
     public Editor Editor { get; init; }

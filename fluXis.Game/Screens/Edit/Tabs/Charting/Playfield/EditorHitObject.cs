@@ -1,3 +1,5 @@
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
@@ -15,11 +17,16 @@ public partial class EditorHitObject : Container
     [Resolved]
     private EditorClock clock { get; set; }
 
+    [Resolved]
+    private EditorValues values { get; set; }
+
     public HitObjectInfo Data { get; init; }
 
     public Drawable HitObjectPiece { get; private set; }
     private Drawable longNoteBody { get; set; }
     public Drawable LongNoteEnd { get; private set; }
+
+    private FluXisSpriteText text { get; set; }
 
     private bool overZero = true;
     private const int max_distance = 100;
@@ -43,13 +50,30 @@ public partial class EditorHitObject : Container
             {
                 e.Anchor = Anchor.BottomCentre;
                 e.Origin = Anchor.BottomCentre;
-            })
+            }),
+            new Container
+            {
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                RelativeSizeAxes = Axes.X,
+                Height = 36,
+                Child = text = new FluXisSpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Colour = FluXisColors.Background2,
+                    Alpha = 0
+                }
+            }
         };
     }
 
     protected override void Update()
     {
         base.Update();
+
+        text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
+        text.Alpha = values.ShowSamples.Value ? 1 : 0;
 
         X = playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = playfield.HitObjectContainer.PositionAtTime(Data.Time);

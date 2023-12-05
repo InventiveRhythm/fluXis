@@ -281,7 +281,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new("Dark", () => values.FlashUnderlayColor.Value = FluXisColors.Background1) { IsActive = () => values.FlashUnderlayColor.Value == FluXisColors.Background1 },
                                     new("Light", () => values.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => values.FlashUnderlayColor.Value == Colour4.White }
                                 }
-                            }
+                            },
+                            new("Show sample on notes", FontAwesome.Solid.LayerGroup, values.ShowSamples.Toggle) { IsActive = () => values.ShowSamples.Value }
                         }
                     },
                     new("Timing", FontAwesome.Solid.Clock)
