@@ -27,7 +27,7 @@ public partial class DrawableBanner : Sprite
     [BackgroundDependencyLoader]
     private void load()
     {
-        Texture = store.Get(user.GetBannerUrl(fluxel.Endpoint));
+        Texture = store.GetBanner(user.ID);
     }
 
     protected override void LoadComplete()
@@ -45,7 +45,7 @@ public partial class DrawableBanner : Sprite
         // wait 2 frames to allow texture store to clear
         Schedule(() => Schedule(() =>
         {
-            Texture = store.Get(user.GetBannerUrl(fluxel.Endpoint));
+            Texture = store.GetBanner(user.ID);
             this.FadeInFromZero(400);
         }));
     }
@@ -57,7 +57,7 @@ public partial class DrawableBanner : Sprite
         UserCache.GetBannerUpdateCallbacks(user.ID).Remove(reload);
 
         user = newUser ?? APIUserShort.Dummy;
-        Texture = store.Get(user.GetBannerUrl(fluxel.Endpoint));
+        Texture = store.GetBanner(user.ID);
         Schedule(() => this.FadeInFromZero(400));
 
         UserCache.GetBannerUpdateCallbacks(user.ID).Add(reload);

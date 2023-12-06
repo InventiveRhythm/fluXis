@@ -110,16 +110,18 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         MapFiles.Initialize(storage.GetStorageForDirectory("maps"));
 
+        var endpoint = getApiEndpoint();
+
         dependencies.CacheAs(this);
         dependencies.CacheAs(config = new FluXisConfig(storage));
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
-        dependencies.Cache(Fluxel = new Fluxel(config, getApiEndpoint()));
+        dependencies.Cache(Fluxel = new Fluxel(config, endpoint));
         UserCache.Init(Fluxel);
 
         dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));
         dependencies.Cache(new CroppedBackgroundStore(Host, storage.GetStorageForDirectory("maps")));
-        dependencies.Cache(new OnlineTextureStore(Host));
+        dependencies.Cache(new OnlineTextureStore(Host, endpoint));
 
         LoadComponent(mapStore = new MapStore());
         dependencies.Cache(mapStore);

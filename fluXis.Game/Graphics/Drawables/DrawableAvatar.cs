@@ -32,7 +32,7 @@ public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
     [BackgroundDependencyLoader]
     private void load()
     {
-        Texture = store.Get(user.GetAvatarUrl(fluxel.Endpoint));
+        Texture = store.GetAvatar(user.ID);
     }
 
     protected override void LoadComplete()
@@ -50,7 +50,7 @@ public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
         // wait 2 frames to allow texture store to clear
         Schedule(() => Schedule(() =>
         {
-            Texture = store.Get(user.GetAvatarUrl(fluxel.Endpoint));
+            Texture = store.GetAvatar(user.ID);
             this.FadeInFromZero(400);
         }));
     }
@@ -60,7 +60,7 @@ public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
         UserCache.GetAvatarUpdateCallbacks(user.ID).Remove(reload);
 
         user = newUser ?? APIUserShort.Dummy;
-        Texture = store.Get(user.GetAvatarUrl(fluxel.Endpoint));
+        Texture = store.GetAvatar(user.ID);
         Schedule(() => this.FadeInFromZero(400));
 
         UserCache.GetAvatarUpdateCallbacks(user.ID).Add(reload);

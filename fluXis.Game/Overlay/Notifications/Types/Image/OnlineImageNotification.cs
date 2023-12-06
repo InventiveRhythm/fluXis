@@ -1,7 +1,7 @@
-using fluXis.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Overlay.Notifications.Types.Image;
 
@@ -26,7 +26,7 @@ public partial class OnlineImageNotification : FloatingImageNotification
         }
 
         [BackgroundDependencyLoader]
-        private void load(OnlineTextureStore textures)
+        private void load(TextureStore textures)
         {
             var tex = textures.Get(path);
 
