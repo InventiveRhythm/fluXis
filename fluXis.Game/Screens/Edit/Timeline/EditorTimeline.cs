@@ -64,6 +64,9 @@ public partial class EditorTimeline : Container
 
         foreach (var timingPoint in values.Editor.MapInfo.TimingPoints)
         {
+            var x = timingPoint.Time == 0 ? 0 : timingPoint.Time / clock.TrackLength;
+            if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
+
             timingPoints.Add(new CircularContainer
             {
                 Width = 5,
@@ -72,7 +75,7 @@ public partial class EditorTimeline : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 RelativePositionAxes = Axes.X,
-                X = timingPoint.Time == 0 ? 0 : timingPoint.Time / clock.TrackLength,
+                X = x,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both
@@ -111,6 +114,9 @@ public partial class EditorTimeline : Container
 
     protected override void Update()
     {
-        currentTimeIndicator.X = (float)(clock.CurrentTime / clock.TrackLength);
+        var x = clock.CurrentTime / clock.TrackLength;
+        if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
+
+        currentTimeIndicator.X = (float)x;
     }
 }
