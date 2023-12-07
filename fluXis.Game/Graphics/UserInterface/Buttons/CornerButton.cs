@@ -35,6 +35,7 @@ public partial class CornerButton : Container
     public virtual Colour4 ButtonColor { get; set; } = FluXisColors.Background4;
     public Corner Corner { get; set; } = Corner.BottomLeft;
     public Action Action { get; set; }
+    public bool ShowImmediately { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -120,6 +121,14 @@ public partial class CornerButton : Container
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        if (ShowImmediately)
+            Show();
     }
 
     protected override bool OnClick(ClickEvent e)

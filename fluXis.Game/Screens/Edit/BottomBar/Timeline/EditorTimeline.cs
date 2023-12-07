@@ -7,7 +7,7 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Timeline;
+namespace fluXis.Game.Screens.Edit.BottomBar.Timeline;
 
 public partial class EditorTimeline : Container
 {
@@ -17,49 +17,43 @@ public partial class EditorTimeline : Container
     [Resolved]
     private EditorValues values { get; set; }
 
-    private CircularContainer currentTimeIndicator;
+    private TimelineIndicator indicator;
+    private Container chorusPoints;
     private Container timingPoints;
+    private TimelineDensity densityContainer;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        Padding = new MarginPadding { Left = 10, Right = 10 };
 
         Children = new Drawable[]
         {
-            new CircularContainer
+            new Circle
             {
                 RelativeSizeAxes = Axes.X,
                 Height = 5,
-                Masking = true,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
+            chorusPoints = new Container
+            {
+                RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both
-                }
-            },
-            currentTimeIndicator = new CircularContainer
-            {
-                Width = 3,
-                Height = 30,
-                Masking = true,
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.Centre,
-                RelativePositionAxes = Axes.X,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both
-                }
+                Height = 8,
+                Y = -20
             },
             timingPoints = new Container
             {
-                RelativeSizeAxes = Axes.Both,
+                RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Y = -7
-            }
+                Height = 8,
+                Y = -8
+            },
+            densityContainer = new TimelineDensity(),
+            indicator = new TimelineIndicator()
         };
 
         foreach (var timingPoint in values.Editor.MapInfo.TimingPoints)
@@ -67,19 +61,14 @@ public partial class EditorTimeline : Container
             var x = timingPoint.Time == 0 ? 0 : timingPoint.Time / clock.TrackLength;
             if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
 
-            timingPoints.Add(new CircularContainer
+            timingPoints.Add(new Triangle
             {
-                Width = 5,
-                Height = 5,
-                Masking = true,
+                RelativePositionAxes = Axes.X,
+                Size = new Vector2(8),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
-                RelativePositionAxes = Axes.X,
-                X = x,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both
-                }
+                Rotation = 180,
+                X = x
             });
         }
     }
@@ -106,10 +95,10 @@ public partial class EditorTimeline : Container
 
     private void seekToMousePosition(Vector2 position)
     {
-        float x = Math.Clamp(position.X, 0, DrawWidth);
+        // why is there a 20px offset??
+        float x = Math.Clamp(position.X - 20, 0, DrawWidth);
         float progress = x / DrawWidth;
-        float time = progress * clock.TrackLength;
-        clock.SeekSmoothly(time);
+        clock.SeekSmoothly(progress * clock.TrackLength);
     }
 
     protected override void Update()
@@ -117,6 +106,6 @@ public partial class EditorTimeline : Container
         var x = clock.CurrentTime / clock.TrackLength;
         if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;
 
-        currentTimeIndicator.X = (float)x;
+        indicator.X = (float)x;
     }
 }

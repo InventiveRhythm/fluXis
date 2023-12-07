@@ -16,6 +16,8 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public IBindable<Track> Track => track;
     public float TrackLength => (float)(track.Value?.Length ?? 10000);
 
+    public event Action<Track> TrackChanged;
+
     public MapInfo MapInfo { get; set; }
 
     public double ElapsedFrameTime => underlying.ElapsedFrameTime;
@@ -175,5 +177,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         track.Value = source as Track;
         Track.Value.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
+
+        TrackChanged?.Invoke(Track.Value);
     }
 }

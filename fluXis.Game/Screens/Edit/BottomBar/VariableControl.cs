@@ -11,7 +11,7 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Timeline;
+namespace fluXis.Game.Screens.Edit.BottomBar;
 
 public partial class VariableControl : FillFlowContainer
 {
@@ -27,7 +27,7 @@ public partial class VariableControl : FillFlowContainer
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        Padding = new MarginPadding(5);
+        Padding = new MarginPadding(10);
         Spacing = new Vector2(5);
 
         Children = new Drawable[]

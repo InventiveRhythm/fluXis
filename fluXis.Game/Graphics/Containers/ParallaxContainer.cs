@@ -12,7 +12,7 @@ namespace fluXis.Game.Graphics.Containers;
 
 public partial class ParallaxContainer : Container
 {
-    public float Strength { get; set; } = 10;
+    public float Strength { get; set; } = .05f;
 
     protected override Container<Drawable> Content => content;
     private readonly Container content;

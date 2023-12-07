@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 
-namespace fluXis.Game.Screens.Edit.Timeline;
+namespace fluXis.Game.Screens.Edit.BottomBar;
 
 public partial class EditorPlayTestButton : ClickableContainer
 {
