@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Input;
 using fluXis.Game.Online.API.Models.Other;
@@ -12,6 +14,7 @@ using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Warning;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -149,6 +152,26 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                     break;
             }
         });
+
+        if (!Config.Get<bool>(FluXisSetting.NowPlaying)) return;
+
+        OnSongChanged += () =>
+        {
+            var song = MapStore.CurrentMapSet;
+            if (song == null) return;
+
+            var data = new
+            {
+                player = "fluXis",
+                title = song.Metadata.Title,
+                artist = song.Metadata.Artist,
+                cover = $"{Fluxel.Endpoint.APIUrl}/assets/cover/{song.OnlineID}",
+                background = $"{Fluxel.Endpoint.APIUrl}/assets/background/{song.OnlineID}",
+            };
+
+            var json = JsonConvert.SerializeObject(data);
+            File.WriteAllText($"{Host.Storage.GetFullPath("nowplaying.json")}", json);
+        };
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

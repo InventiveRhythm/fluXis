@@ -63,6 +63,9 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Account
         SetDefault(FluXisSetting.Token, string.Empty);
+
+        // Misc
+        SetDefault(FluXisSetting.NowPlaying, false);
     }
 }
 
@@ -117,5 +120,8 @@ public enum FluXisSetting
     ShowFps,
 
     // Account
-    Token
+    Token,
+
+    // Misc
+    NowPlaying, // saves the current song to a json file
 }

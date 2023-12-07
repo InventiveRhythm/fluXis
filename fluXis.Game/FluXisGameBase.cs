@@ -71,6 +71,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected BackgroundStack BackgroundStack { get; private set; }
     protected UISamples Samples { get; private set; }
     protected Fluxel Fluxel { get; private set; }
+    protected FluXisConfig Config { get; private set; }
+    protected MapStore MapStore { get; private set; }
 
     public SettingsMenu Settings { get; private set; }
     public Toolbar Toolbar { get; private set; }
@@ -79,9 +81,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public Dashboard Dashboard { get; private set; }
 
     private FluXisRealm realm;
-    private MapStore mapStore;
     private KeybindStore keybindStore;
-    private FluXisConfig config;
     private LightController lightController;
     private SkinManager skinManager;
     private ImportManager importManager;
@@ -113,18 +113,18 @@ public partial class FluXisGameBase : osu.Framework.Game
         var endpoint = getApiEndpoint();
 
         dependencies.CacheAs(this);
-        dependencies.CacheAs(config = new FluXisConfig(storage));
+        dependencies.CacheAs(Config = new FluXisConfig(storage));
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
-        dependencies.Cache(Fluxel = new Fluxel(config, endpoint));
+        dependencies.Cache(Fluxel = new Fluxel(Config, endpoint));
         UserCache.Init(Fluxel);
 
         dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));
         dependencies.Cache(new CroppedBackgroundStore(Host, storage.GetStorageForDirectory("maps")));
         dependencies.Cache(new OnlineTextureStore(Host, endpoint));
 
-        LoadComponent(mapStore = new MapStore());
-        dependencies.Cache(mapStore);
+        LoadComponent(MapStore = new MapStore());
+        dependencies.Cache(MapStore);
 
         LoadComponent(importManager = new ImportManager());
         dependencies.Cache(importManager);
@@ -272,25 +272,25 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private void changeSong(int change)
     {
-        if (mapStore.MapSets.Count <= 0)
+        if (MapStore.MapSets.Count <= 0)
             return;
 
-        int index = mapStore.MapSets.IndexOf(mapStore.CurrentMapSet);
+        int index = MapStore.MapSets.IndexOf(MapStore.CurrentMapSet);
 
         index += change;
 
-        if (index >= mapStore.MapSets.Count)
+        if (index >= MapStore.MapSets.Count)
             index = 0;
         else if (index < 0)
-            index = mapStore.MapSets.Count - 1;
+            index = MapStore.MapSets.Count - 1;
 
-        RealmMapSet set = mapStore.MapSets[index];
+        RealmMapSet set = MapStore.MapSets[index];
         SelectMapSet(set);
     }
 
     public void SelectMapSet(RealmMapSet set)
     {
-        mapStore.CurrentMapSet = set;
+        MapStore.CurrentMapSet = set;
         var map = set.Maps.First();
         BackgroundStack.AddBackgroundFromMap(map);
         AudioClock.LoadMap(map, true);
