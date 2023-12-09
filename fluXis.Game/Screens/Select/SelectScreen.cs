@@ -631,6 +631,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (maps.Count <= 1) // no need to change letter if there's only one map
             return;
 
+        var current = getLetter(MapSet.Value.Metadata.Title[0]);
+
+        if (current == letter)
+        {
+            cycleLetter(letter);
+            return;
+        }
+
         Logger.Log($"Changing letter to {letter}");
 
         var first = maps.FirstOrDefault(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter);
@@ -643,6 +651,22 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         {
             currentLetter.FadeColour(Colour4.FromHex("#FF5555")).FadeColour(Colour4.White, 1000);
         }
+    }
+
+    private void cycleLetter(char letter)
+    {
+        if (maps.Count <= 1) // no need to change letter if there's only one map
+            return;
+
+        var startingWith = maps.Where(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter).ToList();
+        var idx = startingWith.IndexOf(MapSet.Value);
+
+        if (idx == -1) return;
+
+        idx++;
+        if (idx >= startingWith.Count) idx = 0;
+
+        MapSet.Value = startingWith[idx];
     }
 
     private void updateSearch()
