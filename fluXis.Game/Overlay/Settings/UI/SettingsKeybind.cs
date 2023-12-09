@@ -58,7 +58,7 @@ public partial class SettingsKeybind : SettingsItem
         }
     }
 
-    public override void Reset()
+    protected override void Reset()
     {
     }
 

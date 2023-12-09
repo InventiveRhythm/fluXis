@@ -23,6 +23,18 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
 
     public bool AllowDragScrolling = true;
 
+    public float ScrollbarMargin
+    {
+        get => Scrollbar.Margin.Left + Scrollbar.Margin.Right;
+        set => Scrollbar.Margin = new MarginPadding { Horizontal = value };
+    }
+
+    public Anchor ScrollbarOrigin
+    {
+        get => Scrollbar.Origin;
+        set => Scrollbar.Origin = value;
+    }
+
     private bool isDragging;
     private bool shouldDrag(MouseButtonEvent e) => e.Button == MouseButton.Middle && AllowDragScrolling;
 
@@ -35,7 +47,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
     {
         base.LoadComplete();
         Scrollbar.Anchor = ScrollbarAnchor;
-        Scrollbar.Origin = ScrollbarAnchor;
+        Scrollbar.Origin = ScrollbarOrigin;
     }
 
     public void ScrollTo(T entry)

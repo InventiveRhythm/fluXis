@@ -44,10 +44,11 @@ public partial class SettingsSlider<T> : SettingsItem
         });
     }
 
-    public override void Reset() => Bindable.SetDefault();
+    protected override void Reset() => Bindable.SetDefault();
 
     protected override void LoadComplete()
     {
+        base.LoadComplete();
         Bindable.BindValueChanged(onValueChanged, true);
     }
 

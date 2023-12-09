@@ -1,37 +1,60 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Settings.Sections;
+using fluXis.Game.Overlay.Settings.Sidebar;
+using fluXis.Game.Overlay.Settings.Tabs;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
-using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Settings;
 
-public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    public CategorySelector Selector { get; private set; }
-    private Container<SettingsSection> sectionContent { get; set; }
+    protected override bool StartHidden => true;
 
-    private bool visible;
+    private Bindable<SettingsSection> currentSection { get; } = new();
+
+    private List<SettingsSection> sections { get; } = new()
+    {
+        new GeneralSection(),
+        new AppearanceSection(),
+        new InputSection(),
+        new UserInterfaceSection(),
+        new GameplaySection(),
+        new AudioSection(),
+        new GraphicsSection(),
+        new PluginsSection(),
+        new MaintenanceSection(),
+        new DebugSection()
+    };
+
     private ClickableContainer content;
-    private PanelBackground background;
+    private FluXisScrollContainer scrollContainer;
+
+    private Container gearContainer;
+    private Container settingsContainer;
+
+    private Sample tabSwitch;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
+
+        tabSwitch = samples.Get(@"UI/change-tab");
 
         InternalChildren = new Drawable[]
         {
@@ -46,49 +69,101 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisGlobalKe
                     Alpha = .5f
                 }
             },
-            content = new ClickableContainer
+            new Container
             {
-                Width = 1400,
-                Height = 800,
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Scale = new Vector2(.95f),
-                Rotation = 2,
-                CornerRadius = 20,
-                Masking = true,
-                EdgeEffect = FluXisStyles.ShadowLarge,
-                Children = new Drawable[]
+                Padding = new MarginPadding(100),
+                Child = content = new ClickableContainer
                 {
-                    background = new PanelBackground
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    CornerRadius = 20,
+                    Masking = true,
+                    EdgeEffect = FluXisStyles.ShadowLarge,
+                    Children = new Drawable[]
                     {
-                        Width = 1.2f,
-                        RelativePositionAxes = Axes.X
-                    },
-                    new GridContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        RowDimensions = new Dimension[]
+                        new Box
                         {
-                            new(GridSizeMode.AutoSize),
-                            new()
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = FluXisColors.Background1
                         },
-                        Content = new[]
+                        gearContainer = new Container
                         {
-                            new Drawable[]
+                            Size = new Vector2(200),
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Child = new SpriteIcon
                             {
-                                Selector = new CategorySelector { Menu = this }
-                            },
-                            new Drawable[]
+                                RelativeSizeAxes = Axes.Both,
+                                Size = new Vector2(.5f),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Icon = FontAwesome.Solid.Cog
+                            }
+                        },
+                        settingsContainer = new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Child = new GridContainer
                             {
-                                new FluXisScrollContainer
+                                RelativeSizeAxes = Axes.Both,
+                                RowDimensions = new Dimension[]
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    ScrollbarAnchor = Anchor.TopRight,
-                                    Child = sectionContent = new Container<SettingsSection>
+                                    new(GridSizeMode.AutoSize),
+                                    new()
+                                },
+                                Content = new[]
+                                {
+                                    new Drawable[]
                                     {
-                                        RelativeSizeAxes = Axes.X,
-                                        AutoSizeAxes = Axes.Y,
-                                        Padding = new MarginPadding { Horizontal = 50, Top = 20, Bottom = 50 }
+                                        new SettingsCategorySelector(sections, currentSection) { CloseAction = Hide }
+                                    },
+                                    new Drawable[]
+                                    {
+                                        new GridContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            ColumnDimensions = new Dimension[]
+                                            {
+                                                new(GridSizeMode.Absolute, 300),
+                                                new()
+                                            },
+                                            Content = new[]
+                                            {
+                                                new Drawable[]
+                                                {
+                                                    new SettingsSidebar(currentSection)
+                                                    {
+                                                        ScrollToSection = s => scrollContainer.ScrollTo(s)
+                                                    },
+                                                    new Container
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Padding = new MarginPadding { Horizontal = 50, Top = 20, Bottom = 50 },
+                                                        Masking = true,
+                                                        Child = scrollContainer = new FluXisScrollContainer
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            ScrollbarAnchor = Anchor.TopRight,
+                                                            ScrollbarOrigin = Anchor.TopLeft,
+                                                            ScrollbarMargin = 5,
+                                                            Masking = false,
+                                                            Child = new Container<SettingsSection>
+                                                            {
+                                                                RelativeSizeAxes = Axes.X,
+                                                                AutoSizeAxes = Axes.Y,
+                                                                ChildrenEnumerable = sections
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -97,87 +172,98 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisGlobalKe
                 }
             }
         };
-
-        createSection(new GeneralSection());
-        createSection(new AppearanceSection());
-        createSection(new InputSection());
-        createSection(new UserInterfaceSection());
-        createSection(new GameplaySection());
-        createSection(new AudioSection());
-        createSection(new GraphicsSection());
-        createSection(new PluginsSection());
-        createSection(new MaintenanceSection());
-        createSection(new DebugSection());
     }
 
-    private void createSection(SettingsSection section)
+    protected override void LoadComplete()
     {
-        Selector.AddTab(new SettingsCategoryTab(this) { Section = section });
-        sectionContent.Add(section);
+        base.LoadComplete();
+
+        currentSection.BindValueChanged(sectionChanged);
+
+        if (sections.Count > 0)
+            currentSection.Value = sections[0];
     }
 
-    private void selectSection(SettingsSection section)
+    private void sectionChanged(ValueChangedEvent<SettingsSection> e)
     {
-        sectionContent.Children.ForEach(s => s.FadeOut(200));
-        section.FadeIn(200);
+        var prev = e.OldValue;
+        var next = e.NewValue;
 
-        int index = sectionContent.IndexOf(section);
-        background.MoveToX(index * -0.002f, 600, Easing.OutQuint);
+        if (prev != null)
+        {
+            int index = sections.IndexOf(next);
+            int previousIndex = sections.IndexOf(prev);
+
+            prev.FadeOut(200);
+
+            if (previousIndex > index)
+            {
+                next.X = -60;
+                prev.MoveToX(60, 400, Easing.OutQuint);
+            }
+            else if (previousIndex < index)
+            {
+                next.X = 60;
+                prev.MoveToX(-60, 400, Easing.OutQuint);
+            }
+        }
+
+        next.MoveToX(0, 400, Easing.OutQuint).FadeIn(200);
+
+        if (prev != null)
+            tabSwitch?.Play();
     }
 
-    public void ToggleVisibility()
+    protected override void PopIn()
     {
-        visible = !visible;
+        const int size = 200;
+        const int scale_duration = 400;
 
-        if (visible)
-            Show();
-        else
-            Hide();
+        var widthFactor = size / DrawSize.X;
+        var heightFactor = size / DrawSize.Y;
+
+        content.ScaleTo(.8f)
+               .ResizeTo(new Vector2(widthFactor, heightFactor))
+               .ScaleTo(1, scale_duration, Easing.OutQuint)
+               .Delay(scale_duration)
+               .ResizeTo(1, 600, Easing.OutQuint);
+
+        gearContainer.FadeIn().RotateTo(-80)
+                     .RotateTo(0, scale_duration, Easing.OutQuint)
+                     .Delay(scale_duration)
+                     .FadeOut(200).RotateTo(80, scale_duration, Easing.OutQuint);
+
+        settingsContainer.FadeOut().Then(scale_duration + 400).FadeIn(200);
+        this.FadeInFromZero(200);
     }
 
-    public override void Hide()
+    protected override void PopOut()
     {
-        visible = false;
-
-        content.ScaleTo(.95f, 400, Easing.OutQuint)
-               .RotateTo(2, 400, Easing.OutQuint);
-
         this.FadeOut(200);
-    }
-
-    public override void Show()
-    {
-        visible = true;
-
-        content.RotateTo(0)
-               .ScaleTo(1f, 800, Easing.OutElastic);
-
-        this.FadeIn(200);
+        content.ScaleTo(.95f, 400, Easing.OutQuint);
     }
 
     protected override bool OnDragStart(DragStartEvent e) => true;
     protected override bool OnScroll(ScrollEvent e) => true;
-
-    protected override bool OnHover(HoverEvent e)
-    {
-        return true;
-    }
+    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnMouseDown(MouseDownEvent e) => true;
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         var keyStr = e.Key.ToString();
 
-        if (keyStr.StartsWith("Number"))
-        {
-            keyStr = keyStr.Replace("Number", "");
+        if (!keyStr.StartsWith("Number")) return true;
 
-            if (!int.TryParse(keyStr, out var num)) return true;
+        keyStr = keyStr.Replace("Number", "");
 
-            if (num == 0) num = 10;
+        if (!int.TryParse(keyStr, out var num)) return true;
 
-            var tab = Selector.Tabs.ElementAtOrDefault(num - 1);
-            Selector.SelectTab(tab);
-        }
+        if (num == 0) num = 10;
+
+        var tab = sections.ElementAtOrDefault(num - 1);
+
+        if (tab != null)
+            currentSection.Value = tab;
 
         return true;
     }
@@ -195,96 +281,4 @@ public partial class SettingsMenu : Container, IKeyBindingHandler<FluXisGlobalKe
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
-
-    public partial class CategorySelector : Container
-    {
-        public SettingsMenu Menu { get; init; }
-
-        public FillFlowContainer<SettingsCategoryTab> Tabs;
-
-        private SettingsCategoryTab selectedTab;
-        private Sample tabSwitch;
-
-        [BackgroundDependencyLoader]
-        private void load(ISampleStore samples)
-        {
-            tabSwitch = samples.Get(@"UI/change-tab");
-
-            Height = 70;
-            AutoSizeAxes = Axes.X;
-            Content.Origin = Content.Anchor = Anchor.TopCentre;
-
-            InternalChildren = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Width = 5f,
-                    Height = 3f,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Colour = FluXisColors.Background4
-                },
-                Tabs = new FillFlowContainer<SettingsCategoryTab>
-                {
-                    RelativeSizeAxes = Axes.Y,
-                    AutoSizeAxes = Axes.X,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Margin = new MarginPadding { Top = 10 },
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(5, 0)
-                }
-            };
-        }
-
-        protected override void LoadComplete()
-        {
-            ScheduleAfterChildren(() => SelectTab());
-        }
-
-        public void AddTab(SettingsCategoryTab tab) => Tabs.Add(tab);
-
-        public void SelectTab(SettingsCategoryTab tab = null)
-        {
-            tab ??= Tabs.Children[0];
-
-            // if still null, return
-            if (tab == null)
-                return;
-
-            if (selectedTab == tab)
-                return;
-
-            if (selectedTab != null)
-            {
-                int index = Tabs.IndexOf(tab);
-                int previousIndex = Tabs.IndexOf(selectedTab);
-
-                if (previousIndex > index)
-                {
-                    tab.Section.X = -60;
-                    selectedTab.Section.MoveToX(60, 400, Easing.OutQuint);
-                }
-                else if (previousIndex < index)
-                {
-                    tab.Section.X = 60;
-                    selectedTab.Section.MoveToX(-60, 400, Easing.OutQuint);
-                }
-            }
-            else Logger.Log("selectedTab is null", LoggingTarget.Runtime, LogLevel.Error);
-
-            selectedTab = tab;
-            tab.Section.MoveToX(0, 400, Easing.OutQuint);
-            tab.Select();
-            Menu.selectSection(tab.Section);
-            tabSwitch?.Play();
-
-            foreach (var child in Tabs.Children)
-            {
-                if (child != tab)
-                    child.Deselect();
-            }
-        }
-    }
 }

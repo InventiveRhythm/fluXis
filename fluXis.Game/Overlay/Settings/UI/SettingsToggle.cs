@@ -34,7 +34,7 @@ public partial class SettingsToggle : SettingsItem
         icon.UpdateHover(false);
     }
 
-    public override void Reset() => Bindable.SetDefault();
+    protected override void Reset() => Bindable.SetDefault();
 
     protected override bool OnClick(ClickEvent e)
     {

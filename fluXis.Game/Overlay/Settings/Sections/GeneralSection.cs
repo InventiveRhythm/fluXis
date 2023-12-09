@@ -1,12 +1,10 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Overlay.Settings.Sections.General;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Input;
-using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.Settings.Sections;
 
@@ -15,32 +13,14 @@ public partial class GeneralSection : SettingsSection
     public override IconUsage Icon => FontAwesome.Solid.Cog;
     public override string Title => "General";
 
-    private InputManager inputManager;
-
     [BackgroundDependencyLoader]
-    private void load(Storage storage, FluXisGameBase game)
+    private void load()
     {
         AddRange(new Drawable[]
         {
-            new SettingsButton
-            {
-                Label = "Check for updates",
-                Description = "Checks for updates and downloads them if available.",
-                ButtonText = "Check",
-                Action = () => game.PerformUpdateCheck(false, inputManager.CurrentState.Keyboard.AltPressed)
-            },
-            new SettingsButton
-            {
-                Label = "Open fluXis folder",
-                ButtonText = "Open",
-                Action = () => storage.OpenFileExternally(".")
-            },
-            new SettingsButton
-            {
-                Label = "Change folder location",
-                Enabled = false,
-                ButtonText = "Change"
-            },
+            new GeneralUpdatesSection(),
+            Divider,
+            new GeneralFoldersSection(),
             new Container
             {
                 RelativeSizeAxes = Axes.X,
@@ -65,11 +45,5 @@ public partial class GeneralSection : SettingsSection
                 }
             }
         });
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        inputManager = GetContainingInputManager();
     }
 }

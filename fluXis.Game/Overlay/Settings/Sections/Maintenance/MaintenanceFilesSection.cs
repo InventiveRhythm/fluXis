@@ -15,6 +15,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Maintenance;
 public partial class MaintenanceFilesSection : SettingsSubSection
 {
     public override string Title => "Files";
+    public override IconUsage Icon => FontAwesome.Solid.File;
 
     [BackgroundDependencyLoader]
     private void load(Storage storage, MapStore store, NotificationManager notifications)

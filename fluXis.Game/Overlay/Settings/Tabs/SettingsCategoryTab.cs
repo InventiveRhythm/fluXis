@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -8,12 +9,12 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Game.Overlay.Settings;
+namespace fluXis.Game.Overlay.Settings.Tabs;
 
 public partial class SettingsCategoryTab : Container
 {
-    public SettingsSection Section { get; init; }
-    private readonly SettingsMenu menu;
+    private SettingsSection section { get; }
+    private Bindable<SettingsSection> currentSection { get; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -23,15 +24,16 @@ public partial class SettingsCategoryTab : Container
     private Box hover;
     private Box flash;
 
-    public SettingsCategoryTab(SettingsMenu menu)
+    public SettingsCategoryTab(SettingsSection section, Bindable<SettingsSection> bind)
     {
-        this.menu = menu;
+        this.section = section;
+        currentSection = bind;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(50);
+        Size = new Vector2(70);
 
         InternalChild = scalingContainer = new Container
         {
@@ -55,23 +57,22 @@ public partial class SettingsCategoryTab : Container
                 content = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.X,
-                    Height = 50,
+                    RelativeSizeAxes = Axes.Y,
                     Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(5, 0),
-                    Padding = new MarginPadding(5) { Right = 10 },
+                    Spacing = new Vector2(20),
+                    Padding = new MarginPadding(20),
                     Children = new Drawable[]
                     {
                         new SpriteIcon
                         {
                             Size = new Vector2(30),
-                            Icon = Section.Icon,
+                            Icon = section.Icon,
                             Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            Margin = new MarginPadding { Horizontal = 5 }
+                            Origin = Anchor.CentreLeft
                         },
                         new FluXisSpriteText
                         {
-                            Text = Section.Title,
+                            Text = section.Title,
                             FontSize = 24,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft
@@ -82,9 +83,28 @@ public partial class SettingsCategoryTab : Container
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        currentSection.BindValueChanged(e =>
+        {
+            ScheduleAfterChildren(() =>
+            {
+                if (e.NewValue == section)
+                    select();
+                else
+                    deselect();
+            });
+        }, true);
+    }
+
+    private void select() => this.ResizeWidthTo(content.DrawWidth, 400, Easing.OutQuint);
+    private void deselect() => this.ResizeWidthTo(70, 400, Easing.OutQuint);
+
     protected override bool OnClick(ClickEvent e)
     {
-        menu.Selector.SelectTab(this);
+        currentSection.Value = section;
         samples.Click();
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         return true;
@@ -112,7 +132,4 @@ public partial class SettingsCategoryTab : Container
     {
         hover.FadeOut(200);
     }
-
-    public void Select() => this.ResizeWidthTo(content.DrawWidth, 400, Easing.OutQuint);
-    public void Deselect() => this.ResizeWidthTo(50, 400, Easing.OutQuint);
 }

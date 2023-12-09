@@ -3,6 +3,7 @@ using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
@@ -10,6 +11,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 public partial class AppearanceLayoutSection : SettingsSubSection
 {
     public override string Title => "HUD Layout";
+    public override IconUsage Icon => FontAwesome.Solid.LayerGroup;
 
     [BackgroundDependencyLoader]
     private void load(LayoutManager layouts, Storage storage)

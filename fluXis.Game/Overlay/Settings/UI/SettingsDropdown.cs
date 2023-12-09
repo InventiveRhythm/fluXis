@@ -51,7 +51,7 @@ public partial class SettingsDropdown<T> : SettingsItem
         });
     }
 
-    public override void Reset() => Bindable.SetDefault();
+    protected override void Reset() => Bindable.SetDefault();
 
     private partial class SettingsDropdownMenu : Dropdown<T>
     {

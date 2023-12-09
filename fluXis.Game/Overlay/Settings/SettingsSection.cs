@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -8,8 +10,10 @@ namespace fluXis.Game.Overlay.Settings;
 
 public partial class SettingsSection : FillFlowContainer
 {
-    public virtual IconUsage Icon { get; } = FontAwesome.Solid.Cog;
-    public virtual string Title { get; } = "Section";
+    public virtual IconUsage Icon => FontAwesome.Solid.Cog;
+    public virtual string Title => "Section";
+
+    public IEnumerable<SettingsSubSection> SubSections => InternalChildren.OfType<SettingsSubSection>().ToList();
 
     protected static SettingsDivider Divider => new();
 

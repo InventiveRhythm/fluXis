@@ -4,12 +4,14 @@ using fluXis.Game.Screens;
 using fluXis.Game.Screens.Offset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Audio;
 
 public partial class AudioOffsetSection : SettingsSubSection
 {
     public override string Title => "Offset";
+    public override IconUsage Icon => FontAwesome.Solid.Clock;
 
     [BackgroundDependencyLoader]
     private void load(FluXisGameBase game)

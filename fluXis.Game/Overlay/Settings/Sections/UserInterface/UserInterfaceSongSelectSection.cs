@@ -3,12 +3,14 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections.UserInterface;
 
 public partial class UserInterfaceSongSelectSection : SettingsSubSection
 {
     public override string Title => "Song Select";
+    public override IconUsage Icon => FontAwesome.Solid.Map;
 
     [BackgroundDependencyLoader]
     private void load()

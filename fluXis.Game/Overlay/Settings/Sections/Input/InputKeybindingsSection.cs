@@ -6,12 +6,14 @@ using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Input;
 
 public partial class InputKeybindingsSection : SettingsSubSection
 {
     public override string Title => "Keybindings";
+    public override IconUsage Icon => FontAwesome.Solid.Keyboard;
 
     [Resolved]
     private MapStore mapStore { get; set; }

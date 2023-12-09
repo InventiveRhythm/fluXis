@@ -2,12 +2,14 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Gameplay;
 
 public partial class GameplayEffectsSection : SettingsSubSection
 {
     public override string Title => "Effects";
+    public override IconUsage Icon => FontAwesome.Solid.Star;
 
     [BackgroundDependencyLoader]
     private void load()

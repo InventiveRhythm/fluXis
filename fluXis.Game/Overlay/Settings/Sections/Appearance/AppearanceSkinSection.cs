@@ -3,12 +3,14 @@ using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 
 public partial class AppearanceSkinSection : SettingsSubSection
 {
     public override string Title => "Skin";
+    public override IconUsage Icon => FontAwesome.Solid.PaintBrush;
 
     [BackgroundDependencyLoader]
     private void load(SkinManager skinManager, FluXisGameBase gameBase)
