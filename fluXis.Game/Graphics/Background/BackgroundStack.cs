@@ -28,6 +28,7 @@ public partial class BackgroundStack : CompositeDrawable
     private float blur;
 
     private Bindable<bool> backgroundPulse;
+    private Bindable<bool> backgroundVideoEnabled;
 
     public float Zoom { set => backgroundContainer.ScaleTo(value, 1000, Easing.OutQuint); }
     public float ParallaxStrength { set => parallaxContainer.Strength = value; }
@@ -36,6 +37,7 @@ public partial class BackgroundStack : CompositeDrawable
     private void load(FluXisConfig config)
     {
         backgroundPulse = config.GetBindable<bool>(FluXisSetting.BackgroundPulse);
+        backgroundVideoEnabled = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
@@ -81,6 +83,14 @@ public partial class BackgroundStack : CompositeDrawable
         {
             if (!e.NewValue)
                 this.ScaleTo(1, 500, Easing.OutQuint);
+        }, true);
+
+        backgroundVideoEnabled.BindValueChanged(e =>
+        {
+            if (e.NewValue)
+                backgroundVideo.FadeIn(200);
+            else
+                backgroundVideo.FadeOut(200);
         }, true);
     }
 

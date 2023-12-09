@@ -13,6 +13,7 @@ using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Skinning;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -35,6 +36,8 @@ public partial class HitObjectManager : Container<HitObject>
 
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * screen.Rate));
+
+    private Bindable<bool> hitsounds;
 
     public MapInfo Map => playfield.Map;
     public int KeyCount => playfield.RealmMap.KeyCount;
@@ -91,6 +94,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         useSnapColors = config.GetBindable<bool>(FluXisSetting.SnapColoring);
+        hitsounds = config.GetBindable<bool>(FluXisSetting.Hitsounding);
         screen.OnSeek += onSeek;
     }
 
@@ -259,10 +263,7 @@ public partial class HitObjectManager : Container<HitObject>
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
             if (!Seeking)
-            {
-                var sample = screen.Hitsounding.GetSample(hitObject.Data.HitSound) ?? screen.Samples.HitSample;
-                sample?.Play();
-            }
+                playHitSound(hitObject.Data);
 
             hit(hitObject, false);
             pressed[hitObject.Data.Lane - 1] = true;
@@ -299,8 +300,7 @@ public partial class HitObjectManager : Container<HitObject>
                 var next = nextInLane(i + 1);
                 if (next == null) continue;
 
-                var sample = screen.Hitsounding.GetSample(next.HitSound) ?? screen.Samples.HitSample;
-                sample?.Play();
+                playHitSound(next);
             }
 
             List<HitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
@@ -373,6 +373,27 @@ public partial class HitObjectManager : Container<HitObject>
         HitObjects.Remove(hitObject);
         PastHitObjects.Add(hitObject.Data);
         RemoveInternal(hitObject, false);
+    }
+
+    private void playHitSound(HitObjectInfo hitObject)
+    {
+        Sample sample = null;
+
+        if (hitObject != null && !string.IsNullOrEmpty(hitObject.HitSound))
+        {
+            var isCustom = !hitObject.HitSound.StartsWith(Hitsounding.DEFAULT_PREFIX);
+
+            // its more readable this way
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (!isCustom) // default hitsounds
+                sample = screen.Hitsounding.GetSample(hitObject.HitSound);
+
+            if (isCustom && hitsounds.Value) // custom hitsounds and hitsounding is enabled
+                sample = screen.Hitsounding.GetSample(hitObject.HitSound);
+        }
+
+        sample ??= screen.Samples.HitSample;
+        sample?.Play();
     }
 
     private void judmentDisplay(HitObject hitObject, double difference, bool isHoldEnd = false)

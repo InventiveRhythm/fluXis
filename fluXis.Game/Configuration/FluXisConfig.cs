@@ -30,6 +30,9 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         SetDefault(FluXisSetting.ScrollSpeed, 2f, 1f, 10f, 0.1f);
 
+        SetDefault(FluXisSetting.Hitsounding, true);
+        SetDefault(FluXisSetting.BackgroundVideo, true);
+
         SetDefault(FluXisSetting.BackgroundDim, 0.4f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.BackgroundBlur, 0f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.BackgroundPulse, false);
@@ -87,6 +90,9 @@ public enum FluXisSetting
     DimAndFade,
 
     ScrollSpeed,
+
+    Hitsounding,
+    BackgroundVideo,
 
     BackgroundDim,
     BackgroundBlur,

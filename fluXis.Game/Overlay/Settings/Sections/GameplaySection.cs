@@ -19,6 +19,8 @@ public partial class GameplaySection : SettingsSection
             Divider,
             new GameplayScrollSpeedSection(),
             Divider,
+            new GameplayMapSection(),
+            Divider,
             new GameplayBackgroundSection(),
             Divider,
             new GameplayEffectsSection(),
