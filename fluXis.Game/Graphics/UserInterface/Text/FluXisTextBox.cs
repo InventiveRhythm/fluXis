@@ -33,7 +33,7 @@ public partial class FluXisTextBox : BasicTextBox
         set => BackgroundFocused = value;
     }
 
-    private KeyboardSamples samples { get; set; }
+    private KeyboardSamples samples { get; set; } = new();
 
     public FluXisTextBox()
     {
@@ -52,7 +52,7 @@ public partial class FluXisTextBox : BasicTextBox
         Placeholder.Font = FluXisSpriteText.GetFont();
         Placeholder.Colour = FluXisColors.Foreground;
 
-        Add(samples = new KeyboardSamples());
+        Add(samples);
     }
 
     protected override Caret CreateCaret() => new FluXisCaret { SelectionColour = SelectionColour };
