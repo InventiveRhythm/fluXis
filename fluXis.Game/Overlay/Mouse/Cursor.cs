@@ -14,7 +14,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Mouse;
 
-public partial class Cursor : Container
+public partial class Cursor : CompositeDrawable
 {
     private readonly GlobalCursorOverlay overlay;
 
@@ -153,10 +153,10 @@ public partial class Cursor : Container
 
     private void updateTooltipPosition()
     {
-        Quad tooltipScreenSpace = ToScreenSpace(tooltipContainer.DrawRectangle);
+        Quad tooltipScreenSpace = overlay.ToLocalSpace(ToScreenSpace(tooltipContainer.DrawRectangle));
 
         if (tooltipScreenSpace.BottomRight.X > overlay.DrawWidth - 40)
-            tooltipContainer.X = overlay.DrawWidth - tooltipScreenSpace.BottomRight.X - 10;
+            tooltipContainer.X = overlay.DrawWidth - tooltipScreenSpace.BottomRight.X - 20;
         else
             tooltipContainer.X = 30;
 
@@ -166,7 +166,7 @@ public partial class Cursor : Container
             tooltipContainer.Y = 20;
     }
 
-    public override void Show()
+    public void ShowOutline()
     {
         borderClick.FadeIn(200);
         fillClick.FadeIn(200);
@@ -174,7 +174,7 @@ public partial class Cursor : Container
         mouseDownPosition = inputManager.CurrentState.Mouse.Position;
     }
 
-    public override void Hide()
+    public void HideOutline()
     {
         borderClick.FadeOut(200);
         fillClick.FadeOut(200);

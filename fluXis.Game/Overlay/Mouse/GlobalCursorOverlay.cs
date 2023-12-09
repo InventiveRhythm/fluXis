@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Overlay.Mouse;
 
@@ -15,6 +16,10 @@ public partial class GlobalCursorOverlay : Container
     private bool isHidden;
     private string tooltipText;
     private IHasDrawableTooltip lastHoveredDrawable;
+
+    // tracking stuff when hidden
+    private Vector2 firstMove;
+    private double firstMoveTime;
 
     public GlobalCursorOverlay()
     {
@@ -32,6 +37,8 @@ public partial class GlobalCursorOverlay : Container
 
     protected override void Update()
     {
+        cursor.Position = ToLocalSpace(inputManager.CurrentState.Mouse.Position);
+
         bool foundHovered = false;
 
         foreach (var drawable in inputManager.HoveredDrawables)
@@ -100,19 +107,30 @@ public partial class GlobalCursorOverlay : Container
 
     protected override bool OnMouseMove(MouseMoveEvent e)
     {
-        cursor.Position = e.MousePosition;
+        if (!isHidden) return false;
+
+        if (firstMoveTime == 0 || Time.Current - firstMoveTime > 1000)
+        {
+            firstMove = e.MousePosition;
+            firstMoveTime = Time.Current;
+        }
+
+        if (Vector2Extensions.Distance(firstMove, e.MousePosition) < 50) return false;
+
         timeInactive = 0;
-        return base.OnMouseMove(e);
+        firstMoveTime = 0;
+
+        return false;
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        cursor.Show();
+        cursor.ShowOutline();
         return false;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        cursor.Hide();
+        cursor.HideOutline();
     }
 }
