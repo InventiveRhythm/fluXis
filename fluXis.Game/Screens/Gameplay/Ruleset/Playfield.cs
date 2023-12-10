@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
@@ -18,6 +19,9 @@ public partial class Playfield : Container
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
+
+    [Resolved]
+    private BackgroundStack backgrounds { get; set; }
 
     [Resolved]
     private GameplayScreen screen { get; set; }
@@ -93,7 +97,11 @@ public partial class Playfield : Container
 
                 this.ScaleTo(new Vector2(scale.ScaleX, yScale), scale.Duration, scale.Easing);
             }),
-            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
+            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake =>
+            {
+                screen.Shake(shake.Duration, shake.Magnitude);
+                backgrounds.Shake(shake.Duration, shake.Magnitude);
+            }),
             new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents, fade => this.FadeTo(fade.Alpha, fade.FadeTime))
         };
     }
