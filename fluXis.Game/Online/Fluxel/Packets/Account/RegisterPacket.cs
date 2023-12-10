@@ -4,7 +4,7 @@ namespace fluXis.Game.Online.Fluxel.Packets.Account;
 
 public class RegisterPacket : Packet
 {
-    public override int ID => 2;
+    public override string ID => "account/register";
 
     [JsonProperty("username")]
     public string Username { get; init; }

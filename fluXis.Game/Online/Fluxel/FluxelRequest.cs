@@ -6,12 +6,12 @@ namespace fluXis.Game.Online.Fluxel;
 public class FluxelRequest
 {
     [JsonProperty("id")]
-    public int ID;
+    public string ID;
 
     [JsonProperty("data")]
     public Packet Data;
 
-    public FluxelRequest(int id, Packet data)
+    public FluxelRequest(string id, Packet data)
     {
         ID = id;
         Data = data;

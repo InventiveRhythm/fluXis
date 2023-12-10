@@ -6,7 +6,7 @@ namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 
 public class MultiplayerJoinPacket : Packet
 {
-    public override int ID => 21;
+    public override string ID => "multi/join";
 
     [JsonProperty("lobbyId")]
     public int LobbyId { get; init; }

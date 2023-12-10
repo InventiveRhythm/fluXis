@@ -4,7 +4,7 @@ namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 
 public class MultiplayerReadyPacket : Packet
 {
-    public override int ID => 24;
+    public override string ID => "multi/ready";
 
     [JsonProperty("ready")]
     public bool Ready { get; set; }

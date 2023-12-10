@@ -224,19 +224,23 @@ public partial class Fluxel : Component
                 {
                     var response = FluxelResponse<T>.Parse(msg);
 
-                    if (responseListeners.ContainsKey(response.Type))
+                    var type = getType(response.Type);
+
+                    if (!responseListeners.ContainsKey(type)) return;
+
+                    foreach (var listener
+                             in (IEnumerable<Action<object>>)responseListeners.GetValueOrDefault(type)
+                                ?? ArraySegment<Action<object>>.Empty)
                     {
-                        foreach (var listener
-                                 in (IEnumerable<Action<object>>)responseListeners.GetValueOrDefault(response.Type)
-                                    ?? ArraySegment<Action<object>>.Empty)
-                        {
-                            listener(response);
-                        }
+                        listener(response);
                     }
                 }
 
+                var idString = JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<string>();
+                Logger.Log($"Received packet {idString}", LoggingTarget.Network, LogLevel.Debug);
+
                 // find right handler
-                Action<string> handler = (EventType)JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<int>() switch
+                Action<string> handler = getType(idString) switch
                 {
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUserShort>,
@@ -409,6 +413,30 @@ public partial class Fluxel : Component
         registering = false;
         Status = ConnectionStatus.Online;
     }
+
+    private EventType getType(string id)
+    {
+        return id switch
+        {
+            "account/auth" => EventType.Token,
+            "account/login" => EventType.Login,
+            "account/register" => EventType.Register,
+
+            "server/message" => EventType.ServerMessage,
+
+            "chat/message" => EventType.ChatMessage,
+            "chat/history" => EventType.ChatHistory,
+            "chat/delete" => EventType.ChatMessageDelete,
+
+            "multi/create" => EventType.MultiplayerCreateLobby,
+            "multi/join" => EventType.MultiplayerJoin,
+            "multi/leave" => EventType.MultiplayerLeave,
+            "multi/update" => EventType.MultiplayerRoomUpdate,
+            "multi/ready" => EventType.MultiplayerReady,
+
+            _ => throw new ArgumentOutOfRangeException(nameof(id), id, null)
+        };
+    }
 }
 
 public enum ConnectionStatus
@@ -423,18 +451,19 @@ public enum ConnectionStatus
 
 public enum EventType
 {
-    Token = 0,
-    Login = 1,
-    Register = 2,
-    ServerMessage = 3,
+    Token,
+    Login,
+    Register,
 
-    ChatMessage = 10,
-    ChatHistory = 11,
-    ChatMessageDelete = 12,
+    ServerMessage,
 
-    MultiplayerCreateLobby = 20,
-    MultiplayerJoin = 21,
-    MultiplayerLeave = 22,
-    MultiplayerRoomUpdate = 23,
-    MultiplayerReady = 24,
+    ChatMessage,
+    ChatHistory,
+    ChatMessageDelete,
+
+    MultiplayerCreateLobby,
+    MultiplayerJoin,
+    MultiplayerLeave,
+    MultiplayerRoomUpdate,
+    MultiplayerReady,
 }

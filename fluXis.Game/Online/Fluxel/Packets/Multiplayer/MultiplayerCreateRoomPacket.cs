@@ -4,7 +4,7 @@ namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 
 public class MultiplayerCreateRoomPacket : Packet
 {
-    public override int ID => 20;
+    public override string ID => "multi/create";
 
     [JsonProperty("name")]
     public string Name { get; init; }

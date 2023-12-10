@@ -4,7 +4,7 @@ namespace fluXis.Game.Online.Fluxel.Packets.Chat;
 
 public class ChatMessagePacket : Packet
 {
-    public override int ID => 10;
+    public override string ID => "chat/message";
 
     [JsonProperty("content")]
     public string Content { get; init; }
