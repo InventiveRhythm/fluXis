@@ -3,7 +3,6 @@ using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Utils;
 
@@ -44,14 +43,4 @@ public partial class GameplaySamples : Component
 
     public void Fail() => failChannel = failSample?.Play();
     public void CancelFail() => failChannel?.Stop();
-
-    protected override void Dispose(bool isDisposing)
-    {
-        base.Dispose(isDisposing);
-
-        HitSample?.Dispose();
-        restartSample?.Dispose();
-        failSample?.Dispose();
-        missSamples?.ForEach(s => s?.Dispose());
-    }
 }
