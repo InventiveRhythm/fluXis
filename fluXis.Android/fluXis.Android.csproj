@@ -12,6 +12,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
-    <PackageReference Include="ppy.osu.Framework.Android" Version="2023.506.0" />
+    <PackageReference Include="ppy.osu.Framework.Android" Version="2023.1113.0" />
   </ItemGroup>
 </Project>
