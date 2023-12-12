@@ -10,6 +10,7 @@ namespace fluXis.Game.Screens.Edit;
 public partial class EditorPlaytestScreen : GameplayScreen
 {
     protected override double GameplayStartTime { get; }
+    protected override bool InstantlyExitOnPause => true;
 
     private readonly MapInfo map;
     private readonly MapEvents events;

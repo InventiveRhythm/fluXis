@@ -49,6 +49,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override bool AllowExit => false;
 
     protected virtual double GameplayStartTime => 0;
+    protected virtual bool InstantlyExitOnPause => Playfield.Manager.AutoPlay;
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -391,6 +392,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             case FluXisGlobalKeybind.GameplayPause:
                 if (HealthProcessor.Failed) return false;
+
+                if (InstantlyExitOnPause)
+                {
+                    this.Exit();
+                    return true;
+                }
 
                 // only add when we have hit at least one note
                 if (!Mods.Any(m => m is PausedMod) && AudioClock.CurrentTime > Map.StartTime)
