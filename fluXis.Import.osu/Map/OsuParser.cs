@@ -79,9 +79,9 @@ public class OsuParser
     {
         foreach (var line in general)
         {
-            string[] split = line.Split(':');
-            string key = split[0];
-            string value = split[1];
+            var splitIdx = line.IndexOf(':');
+            string key = line.Substring(0, splitIdx);
+            string value = line.Substring(splitIdx + 1);
 
             switch (key)
             {
@@ -104,9 +104,9 @@ public class OsuParser
     {
         foreach (var line in metadata)
         {
-            string[] split = line.Split(':');
-            string key = split[0];
-            string value = split[1];
+            var splitIdx = line.IndexOf(':');
+            string key = line.Substring(0, splitIdx);
+            string value = line.Substring(splitIdx + 1);
 
             switch (key)
             {
@@ -141,9 +141,9 @@ public class OsuParser
     {
         foreach (var line in difficulty)
         {
-            string[] split = line.Split(':');
-            string key = split[0];
-            string value = split[1];
+            var splitIdx = line.IndexOf(':');
+            string key = line.Substring(0, splitIdx);
+            string value = line.Substring(splitIdx + 1);
 
             switch (key)
             {
