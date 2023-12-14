@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -24,6 +25,9 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
 {
     protected override bool StartHidden => true;
 
+    [Resolved]
+    private UISamples samples { get; set; }
+
     private Bindable<SettingsSection> currentSection { get; } = new();
 
     private List<SettingsSection> sections { get; } = new()
@@ -46,6 +50,8 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
     private Container gearContainer;
     private Container settingsContainer;
 
+    private Sample open;
+    private Sample close;
     private Sample tabSwitch;
 
     [BackgroundDependencyLoader]
@@ -54,7 +60,9 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        tabSwitch = samples.Get(@"UI/change-tab");
+        open = samples.Get(@"UI/Settings/open");
+        close = samples.Get(@"UI/Settings/close");
+        tabSwitch = samples.Get(@"UI/Settings/change-tab");
 
         InternalChildren = new Drawable[]
         {
@@ -216,6 +224,8 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
 
     protected override void PopIn()
     {
+        open?.Play();
+
         const int size = 200;
         const int scale_duration = 400;
 
@@ -239,6 +249,7 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
 
     protected override void PopOut()
     {
+        close?.Play();
         this.FadeOut(200);
         content.ScaleTo(.95f, 400, Easing.OutQuint);
     }

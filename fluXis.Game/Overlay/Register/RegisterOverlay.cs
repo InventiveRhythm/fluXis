@@ -1,3 +1,4 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
@@ -25,6 +26,9 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private FillFlowContainer entry;
     private FillFlowContainer form;
@@ -276,9 +280,14 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         entry.FadeIn();
         form.FadeOut();
         this.FadeIn(200);
+        samples.Overlay(false);
     }
 
-    public override void Hide() => this.FadeOut(200);
+    public override void Hide()
+    {
+        this.FadeOut(200);
+        samples.Overlay(true);
+    }
 
     protected override bool OnHover(HoverEvent e) => true;
     protected override bool OnDragStart(DragStartEvent e) => true;

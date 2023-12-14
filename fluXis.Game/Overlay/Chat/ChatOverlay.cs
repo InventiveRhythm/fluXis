@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -31,6 +32,9 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
 
     [Resolved]
     private NotificationManager notifications { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     public string Channel { get; set; } = "general";
 
@@ -276,12 +280,14 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
     {
         this.FadeOut(200);
         content.MoveToY(50, 400, Easing.OutQuint);
+        samples.Overlay(true);
     }
 
     public override void Show()
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
+        samples.Overlay(false);
     }
 
     protected override bool OnHover(HoverEvent e) => true;

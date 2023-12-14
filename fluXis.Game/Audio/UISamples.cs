@@ -12,6 +12,8 @@ public partial class UISamples : Component
     private Sample click;
     private Sample dropdownOpen;
     private Sample dropdownClose;
+    private Sample overlayOpen;
+    private Sample overlayClose;
 
     private Bindable<double> hoverPitch;
 
@@ -30,6 +32,8 @@ public partial class UISamples : Component
         click = samples.Get("UI/click");
         dropdownOpen = samples.Get("UI/dropdown-open");
         dropdownClose = samples.Get("UI/dropdown-close");
+        overlayOpen = samples.Get("UI/Overlay/open");
+        overlayClose = samples.Get("UI/Overlay/close");
     }
 
     public void Hover()
@@ -59,5 +63,13 @@ public partial class UISamples : Component
             dropdownClose?.Play();
         else
             dropdownOpen?.Play();
+    }
+
+    public void Overlay(bool close)
+    {
+        if (close)
+            overlayClose?.Play();
+        else
+            overlayOpen?.Play();
     }
 }

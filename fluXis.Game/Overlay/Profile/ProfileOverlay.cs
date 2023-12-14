@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
@@ -24,6 +25,9 @@ namespace fluXis.Game.Overlay.Profile;
 
 public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    [Resolved]
+    private UISamples samples { get; set; }
+
     private bool isVisible { get; set; }
 
     private APIUser user = APIUser.DummyUser(-1);
@@ -303,6 +307,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisGlobal
         this.FadeOut(200);
         content.ScaleTo(0.9f, 400, Easing.OutQuint);
         isVisible = false;
+        samples.Overlay(true);
     }
 
     public override void Show()
@@ -310,6 +315,7 @@ public partial class ProfileOverlay : Container, IKeyBindingHandler<FluXisGlobal
         this.FadeIn(200);
         content.ScaleTo(1, 400, Easing.OutQuint);
         isVisible = true;
+        samples.Overlay(false);
     }
 
     public void ToggleVisibility()

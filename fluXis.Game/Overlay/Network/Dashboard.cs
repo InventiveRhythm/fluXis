@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -24,6 +25,9 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Container content;
     private DashboardSidebar sidebar;
@@ -171,12 +175,14 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
     {
         this.FadeIn(200);
         content.ScaleTo(1f, 400, Easing.OutQuint);
+        samples.Overlay(false);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
         content.ScaleTo(.9f, 400, Easing.OutQuint);
+        samples.Overlay(true);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

@@ -35,6 +35,9 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
     [Resolved]
     private MapStore maps { get; set; }
 
+    [Resolved]
+    private UISamples samples { get; set; }
+
     public FluXisScreenStack ScreenStack { get; set; }
 
     private const int inner_padding = 40;
@@ -311,12 +314,14 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
+        samples.Overlay(false);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
         content.MoveToY(-50, 400, Easing.OutQuint);
+        samples.Overlay(true);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
