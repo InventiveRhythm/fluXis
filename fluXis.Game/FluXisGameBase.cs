@@ -88,7 +88,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected Bindable<UserActivity> Activity { get; } = new();
 
-    public Action OnSongChanged { get; set; }
     public virtual Drawable Overlay { get; set; }
 
     public static string VersionString => Version != null ? IsDebug ? "local development build" : $"v{Version.Major}.{Version.Minor}.{Version.Build}" : "unknown version";
@@ -114,6 +113,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(Config = new FluXisConfig(storage));
+        dependencies.Cache(AudioClock = new AudioClock());
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
         dependencies.Cache(Fluxel = new Fluxel(Config, endpoint));
@@ -132,7 +132,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         LoadComponent(Samples = new UISamples());
         dependencies.Cache(Samples);
 
-        dependencies.Cache(AudioClock = new AudioClock());
         dependencies.Cache(BackgroundStack = new BackgroundStack());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
         dependencies.Cache(Settings = new SettingsMenu());
@@ -293,7 +292,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         MapStore.CurrentMapSet = set;
         var map = set.Maps.First();
         BackgroundStack.AddBackgroundFromMap(map);
-        AudioClock.LoadMap(map, true);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

@@ -3,19 +3,21 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK;
-using Box = osu.Framework.Graphics.Shapes.Box;
 
 namespace fluXis.Game.Screens.Select.List;
 
@@ -29,13 +31,10 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             {
                 new FluXisMenuItem("Play", FontAwesome.Solid.Play, MenuItemType.Highlighted, () =>
                 {
-                    var screen = mapListEntry.Screen;
-
-                    screen.MapSet.Value = map.MapSet; // failsafe
-                    screen.MapInfo.Value = map;
-                    screen.Accept();
+                    maps.Select(map, true);
+                    mapListEntry.SelectAction?.Invoke();
                 }),
-                new FluXisMenuItem("Edit", FontAwesome.Solid.Pen, MenuItemType.Normal, () => mapListEntry.Screen.EditMapSet(map))
+                new FluXisMenuItem("Edit", FontAwesome.Solid.Pen, MenuItemType.Normal, () => mapListEntry.EditAction?.Invoke(map))
             };
 
             if (FluXisGameBase.IsDebug)
@@ -47,6 +46,9 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
 
     [Resolved]
     private Storage storage { get; set; }
+
+    [Resolved]
+    private MapStore maps { get; set; }
 
     [Resolved]
     private Clipboard clipboard { get; set; }
@@ -210,22 +212,29 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             }
         };
 
-        mapListEntry.Screen.MapInfo.BindValueChanged(e => updateSelected(e.NewValue));
+        maps.MapBindable.BindValueChanged(updateSelected, true);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        maps.MapBindable.ValueChanged -= updateSelected;
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (Equals(mapListEntry.Screen.MapInfo.Value, map))
-            mapListEntry.Screen.Accept();
+        if (Equals(maps.CurrentMap, map))
+            mapListEntry.SelectAction?.Invoke();
         else
-            mapListEntry.Screen.MapInfo.Value = map;
+            maps.Select(map, true);
 
         return true;
     }
 
-    private void updateSelected(RealmMap newMap)
+    private void updateSelected(ValueChangedEvent<RealmMap> e)
     {
-        if (Equals(newMap, map))
+        if (Equals(e.NewValue, map))
             outline.FadeIn(200);
         else
             outline.FadeOut(200);
@@ -236,7 +245,6 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
         public string Tooltip { get; }
 
         public GimmickIcon(FluXisIconType type, string tooltip, bool show)
-            : base()
         {
             Size = new Vector2(14);
             Type = type;

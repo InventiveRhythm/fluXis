@@ -362,7 +362,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        AudioClock.LoadMap(RealmMap, true);
         AudioClock.Seek(GameplayStartTime - 2000 * Rate);
         AudioClock.RateTo(Rate, 0);
 

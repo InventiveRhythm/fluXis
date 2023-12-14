@@ -1,14 +1,15 @@
-﻿using fluXis.Game.Graphics;
+﻿using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Logging;
 using osuTK;
 using osuTK.Graphics;
 
@@ -95,13 +96,18 @@ public partial class MenuNowPlaying : Container
     {
         base.LoadComplete();
 
-        game.OnSongChanged += onSongChanged;
+        mapStore.MapSetBindable.BindValueChanged(onSongChanged, true);
     }
 
-    private void onSongChanged()
+    protected override void Dispose(bool isDisposing)
     {
-        Logger.Log("Song changed to " + mapStore.CurrentMapSet?.Metadata, LoggingTarget.Runtime, LogLevel.Debug);
+        base.Dispose(isDisposing);
 
+        mapStore.MapSetBindable.ValueChanged -= onSongChanged;
+    }
+
+    private void onSongChanged(ValueChangedEvent<RealmMapSet> e)
+    {
         cover.MapSet = mapStore.CurrentMapSet;
         title.Text = mapStore.CurrentMapSet?.Metadata.Title ?? "Unknown Title";
         artist.Text = mapStore.CurrentMapSet?.Metadata.Artist ?? "Unknown Artist";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map;
 using JetBrains.Annotations;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Textures;
 using Realms;
 
@@ -30,10 +31,19 @@ public class RealmMapSet : RealmObject
     [Ignored]
     public Action StatusChanged { get; set; } = null!;
 
+    [Ignored]
+    [CanBeNull]
+    public RealmMap LowestDifficulty => Maps.MinBy(map => map.Filters.NotesPerSecond);
+
+    [Ignored]
+    [CanBeNull]
+    public RealmMap HighestDifficulty => Maps.MaxBy(map => map.Filters.NotesPerSecond);
+
     public RealmMapSet([CanBeNull] List<RealmMap> maps = null)
     {
         ID = Guid.NewGuid();
         Maps = maps ?? new List<RealmMap>();
+        Maps.ForEach(map => map.MapSet = this);
     }
 
     [UsedImplicitly]

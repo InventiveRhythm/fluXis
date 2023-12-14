@@ -6,6 +6,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Screens.Select.Info.Scores;
 using fluXis.Game.Utils;
@@ -21,6 +22,9 @@ public partial class SelectMapInfo : GridContainer
 {
     [Resolved]
     private AudioClock clock { get; set; }
+
+    [Resolved]
+    private MapStore maps { get; set; }
 
     public SelectScreen Screen { get; set; }
     public ScoreList ScoreList { get; set; }
@@ -272,21 +276,21 @@ public partial class SelectMapInfo : GridContainer
     {
         base.Update();
 
-        if (Screen.MapInfo.Value == null)
+        if (maps.CurrentMap == null)
             return;
 
         var mod = Screen.ModSelector.SelectedMods.FirstOrDefault(m => m is RateMod) as RateMod;
         var rate = mod?.Rate ?? 1;
 
-        titleText.Text = Screen.MapInfo.Value.Metadata.Title;
-        artistText.Text = Screen.MapInfo.Value.Metadata.Artist;
+        titleText.Text = maps.CurrentMap.Metadata.Title;
+        artistText.Text = maps.CurrentMap.Metadata.Artist;
 
-        lengthText.Text = TimeUtils.Format(Screen.MapInfo.Value.Filters.Length / rate, false);
-        npsText.Text = $"{Screen.MapInfo.Value.Filters.NotesPerSecond * rate:F}".Replace(",", ".");
-        lnpText.Text = $"{Screen.MapInfo.Value.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
+        lengthText.Text = TimeUtils.Format(maps.CurrentMap.Filters.Length / rate, false);
+        npsText.Text = $"{maps.CurrentMap.Filters.NotesPerSecond * rate:F}".Replace(",", ".");
+        lnpText.Text = $"{maps.CurrentMap.Filters.LongNotePercentage:P2}".Replace(",", ".").Replace(" %", "%");
 
-        int bpmMin = (int)(Screen.MapInfo.Value.Filters.BPMMin * rate);
-        int bpmMax = (int)(Screen.MapInfo.Value.Filters.BPMMax * rate);
+        int bpmMin = (int)(maps.CurrentMap.Filters.BPMMin * rate);
+        int bpmMax = (int)(maps.CurrentMap.Filters.BPMMax * rate);
         bpmText.Text = bpmMin == bpmMax ? $"{bpmMin}" : $"{bpmMin}-{bpmMax}";
     }
 

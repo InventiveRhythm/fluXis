@@ -155,7 +155,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         if (!Config.Get<bool>(FluXisSetting.NowPlaying)) return;
 
-        OnSongChanged += () =>
+        MapStore.MapSetBindable.BindValueChanged(_ =>
         {
             var song = MapStore.CurrentMapSet;
             if (song == null) return;
@@ -171,7 +171,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
             var json = JsonConvert.SerializeObject(data);
             File.WriteAllText($"{Host.Storage.GetFullPath("nowplaying.json")}", json);
-        };
+        });
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

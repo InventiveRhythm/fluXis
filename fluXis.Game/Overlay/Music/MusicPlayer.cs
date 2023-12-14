@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
@@ -11,6 +12,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -235,23 +237,32 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
     {
         base.LoadComplete();
 
-        game.OnSongChanged += songChanged;
+        maps.MapSetBindable.BindValueChanged(songChanged, true);
     }
 
-    private void songChanged()
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        maps.MapSetBindable.ValueChanged -= songChanged;
+    }
+
+    private void songChanged(ValueChangedEvent<RealmMapSet> e)
     {
         Schedule(() =>
         {
-            if (maps.CurrentMapSet == null) return;
+            var next = e.NewValue;
+
+            if (next == null) return;
 
             video.Stop();
 
-            title.Text = maps.CurrentMapSet.Metadata.Title;
-            artist.Text = maps.CurrentMapSet.Metadata.Artist;
+            title.Text = next.Metadata.Title;
+            artist.Text = next.Metadata.Artist;
 
             LoadComponentAsync(new MapBackground
             {
-                Map = maps.CurrentMapSet.Maps.First(),
+                Map = next.Maps.First(),
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fill
             }, background =>
@@ -260,7 +271,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                 background.FadeInFromZero(400);
             });
 
-            LoadComponentAsync(new DrawableCover(maps.CurrentMapSet)
+            LoadComponentAsync(new DrawableCover(next)
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -274,8 +285,8 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
 
             Task.Run(() =>
             {
-                video.Map = maps.CurrentMapSet.Maps.First();
-                video.Info = maps.CurrentMapSet.Maps.First().GetMapInfo();
+                video.Map = next.Maps.First();
+                video.Info = next.Maps.First().GetMapInfo();
 
                 video.LoadVideo();
                 ScheduleAfterChildren(video.Start);

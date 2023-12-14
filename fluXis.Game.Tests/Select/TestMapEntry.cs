@@ -1,5 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Screens.Select.List;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Tests.Select;
 
@@ -7,27 +12,78 @@ public partial class TestMapEntry : FluXisTestScene
 {
     public TestMapEntry()
     {
-        var set = new RealmMapSet();
-        set.Maps.Add(new RealmMap
+        var maps = new List<RealmMapSet>
         {
-            MapSet = set,
-            Metadata = new RealmMapMetadata
+            new(new List<RealmMap>
             {
-                Title = "Test Title",
-                Artist = "Test Artist",
-                Mapper = "Test Mapper",
-                Source = "Test Source",
-                Tags = "Test Tags",
-                Background = "",
-                Audio = "",
-                PreviewTime = 0
-            }
-        });
+                new()
+                {
+                    Difficulty = "Easy",
+                    KeyCount = 4,
+                    Metadata = new RealmMapMetadata
+                    {
+                        Title = "Test 1",
+                        Artist = "Artist",
+                        Mapper = "Mapper 1"
+                    },
+                    Filters = new RealmMapFilters { NotesPerSecond = 5 }
+                },
+                new()
+                {
+                    Difficulty = "Hard",
+                    KeyCount = 6,
+                    Metadata = new RealmMapMetadata
+                    {
+                        Title = "Test 1",
+                        Artist = "Artist",
+                        Mapper = "Mapper 1"
+                    },
+                    Filters = new RealmMapFilters { NotesPerSecond = 14 }
+                }
+            }),
+            new(new List<RealmMap>
+            {
+                new()
+                {
+                    Difficulty = "Expert",
+                    KeyCount = 5,
+                    Metadata = new RealmMapMetadata
+                    {
+                        Title = "Test 2",
+                        Artist = "Artist",
+                        Mapper = "Mapper 2"
+                    },
+                    Filters = new RealmMapFilters { NotesPerSecond = 22 }
+                },
+                new()
+                {
+                    Difficulty = "Master",
+                    KeyCount = 8,
+                    Metadata = new RealmMapMetadata
+                    {
+                        Title = "Test 2",
+                        Artist = "Artist",
+                        Mapper = "Mapper 2"
+                    },
+                    Filters = new RealmMapFilters { NotesPerSecond = 26 }
+                }
+            })
+        };
 
         AddStep("Test MapEntry", () =>
         {
-            ClearInternal();
-            Add(new MapListEntry(null, set));
+            Clear();
+            Add(new FillFlowContainer
+            {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Width = 0.7f,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(10),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                ChildrenEnumerable = maps.Select(set => new MapListEntry(set))
+            });
         });
     }
 }

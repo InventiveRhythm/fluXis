@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,6 +20,9 @@ public partial class FooterOptions : FocusedOverlayContainer
 
     [Resolved]
     private SettingsMenu settings { get; set; }
+
+    [Resolved]
+    private MapStore maps { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -80,7 +84,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Icon = FontAwesome.Solid.Pen,
                                 Action = () =>
                                 {
-                                    Footer.Screen.EditMapSet(Footer.Screen.MapInfo.Value);
+                                    Footer.Screen.EditMapSet(maps.CurrentMap);
                                     State.Value = Visibility.Hidden;
                                 }
                             },
@@ -101,7 +105,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Color = FluXisColors.Red,
                                 Action = () =>
                                 {
-                                    Footer.Screen.OpenDeleteConfirm(Footer.Screen.MapSet.Value);
+                                    Footer.Screen.OpenDeleteConfirm(maps.CurrentMapSet);
                                     State.Value = Visibility.Hidden;
                                 }
                             }

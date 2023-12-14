@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -11,10 +14,17 @@ namespace fluXis.Game.Screens.Select.List;
 
 public partial class MapListEntry : Container
 {
-    public readonly SelectScreen Screen;
+    [Resolved]
+    private MapStore maps { get; set; }
+
+    public Action SelectAction;
+    public Action<RealmMap> EditAction;
+    public Action<RealmMapSet> ExportAction;
+    public Action<RealmMapSet> DeleteAction;
+
     public readonly RealmMapSet MapSet;
 
-    public bool Selected => Equals(Screen.MapSet.Value, MapSet);
+    public bool Selected => Equals(maps.CurrentMapSet, MapSet);
 
     public List<RealmMap> Maps
     {
@@ -32,9 +42,8 @@ public partial class MapListEntry : Container
     private Container difficultyContainer;
     private FillFlowContainer<MapDifficultyEntry> difficultyFlow;
 
-    public MapListEntry(SelectScreen screen, RealmMapSet mapSet)
+    public MapListEntry(RealmMapSet mapSet)
     {
-        Screen = screen;
         MapSet = mapSet;
     }
 
@@ -71,7 +80,21 @@ public partial class MapListEntry : Container
         }
     }
 
-    private void updateSelected()
+    protected override void LoadComplete()
+    {
+        maps.MapSetBindable.BindValueChanged(updateSelected, true);
+
+        base.LoadComplete();
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        maps.MapSetBindable.ValueChanged -= updateSelected;
+    }
+
+    private void updateSelected(ValueChangedEvent<RealmMapSet> set)
     {
         if (Selected)
             select();
@@ -96,19 +119,7 @@ public partial class MapListEntry : Container
         if (Selected)
             return false; // dont handle clicks when we already selected this mapset
 
-        if (Screen != null)
-        {
-            Screen.MapSet.Value = MapSet;
-            return true;
-        }
-
-        return false;
-    }
-
-    protected override void LoadComplete()
-    {
-        Screen?.MapSet.BindValueChanged(_ => updateSelected(), true);
-
-        base.LoadComplete();
+        maps.Select(MapSet.LowestDifficulty, true);
+        return true;
     }
 }

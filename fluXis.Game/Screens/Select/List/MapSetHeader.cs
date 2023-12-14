@@ -11,6 +11,7 @@ using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Map;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -34,11 +35,11 @@ public partial class MapSetHeader : Container, IHasContextMenu
         {
             List<MenuItem> items = new();
 
-            if (!Equals(parent.Screen.MapSet.Value, mapset))
-                items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => parent.Screen.MapSet.Value = mapset));
+            if (!Equals(maps.CurrentMapSet, mapset))
+                items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
 
-            items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.Screen.ExportMapSet(mapset)) { Enabled = () => !mapset.Managed });
-            items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.Screen.OpenDeleteConfirm(mapset)));
+            items.Add(new FluXisMenuItem("Export", FontAwesome.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset)) { Enabled = () => !mapset.Managed });
+            items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Times, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
 
             if (FluXisGameBase.IsDebug)
                 items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.ID.ToString())));
@@ -55,6 +56,9 @@ public partial class MapSetHeader : Container, IHasContextMenu
 
     [Resolved]
     private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private MapStore maps { get; set; }
 
     private readonly MapListEntry parent;
     private readonly RealmMapSet mapset;

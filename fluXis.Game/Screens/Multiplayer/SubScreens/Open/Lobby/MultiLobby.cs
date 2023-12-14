@@ -250,7 +250,6 @@ public partial class MultiLobby : MultiSubScreen
             var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Maps[0].Id);
             if (mapInfo == null) return; // what
 
-            clock.LoadMap(mapInfo, true);
             clock.FadeOut(); // because it sets itself to 1
             clock.RestartPoint = 0;
             clock.AllowLimitedLoop = false;

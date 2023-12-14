@@ -1,6 +1,5 @@
 using System.Linq;
 using fluXis.Game.Audio;
-using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -361,10 +360,9 @@ public partial class MenuScreen : FluXisScreen
         // load a random map
         if (maps.MapSets.Count > 0)
         {
-            maps.CurrentMapSet = maps.GetRandom();
-
-            RealmMap map = maps.CurrentMapSet.Maps.First();
-            clock.LoadMap(map, false, true);
+            maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault();
+            clock.Stop();
+            clock.Seek(maps.CurrentMap.Metadata.PreviewTime);
             clock.Volume = 0;
         }
 
@@ -403,7 +401,7 @@ public partial class MenuScreen : FluXisScreen
     {
         playButton.Description = $"{mapCount} maps loaded";
 
-        if (clock.Finished) Game.NextSong();
+        // if (clock.Finished) Game.NextSong();
 
         inactivityTime += Time.Elapsed;
 

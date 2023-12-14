@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -18,6 +19,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
@@ -41,15 +43,40 @@ public partial class MapStore : Component
     private AudioManager audio { get; set; }
 
     [Resolved]
+    private AudioClock clock { get; set; }
+
+    [Resolved]
     private NotificationManager notifications { get; set; }
 
     private bool initialLoad;
     private Storage files;
     private MapResourceProvider resources;
 
+    public Bindable<RealmMap> MapBindable { get; } = new();
+    public Bindable<RealmMapSet> MapSetBindable { get; } = new();
+
+    public RealmMap CurrentMap
+    {
+        get => MapBindable.Value;
+        set
+        {
+            MapBindable.Value = value;
+            MapSetBindable.Value = value?.MapSet;
+        }
+    }
+
+    public RealmMapSet CurrentMapSet
+    {
+        get => MapSetBindable.Value;
+        set
+        {
+            MapSetBindable.Value = value;
+            MapBindable.Value = value?.LowestDifficulty;
+        }
+    }
+
     public List<RealmMapSet> MapSets { get; } = new();
     public List<RealmMapSet> MapSetsSorted => MapSets.OrderBy(x => x.Metadata.Title).ToList();
-    public RealmMapSet CurrentMapSet;
 
     public Action<RealmMapSet> MapSetAdded;
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
@@ -102,6 +129,13 @@ public partial class MapStore : Component
         });
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        MapSetBindable.BindValueChanged(e => Logger.Log($"Changed mapset to {e.NewValue?.Metadata.Title} - {e.NewValue?.Metadata.Artist}", LoggingTarget.Runtime, LogLevel.Debug), true);
+    }
+
     private void loadMapSets(IQueryable<RealmMapSet> sets)
     {
         Logger.Log($"Found {sets.Count()} maps");
@@ -109,6 +143,15 @@ public partial class MapStore : Component
         foreach (var set in sets) AddMapSet(set.Detach());
 
         initialLoad = false;
+    }
+
+    public void Select(RealmMap map, bool loop = false, bool preview = true)
+    {
+        CurrentMap = map;
+        clock.Looping = loop;
+
+        if (loop)
+            clock.RestartPoint = preview ? map.Metadata.PreviewTime : 0;
     }
 
     public void AddMapSet(RealmMapSet mapSet, bool notify = true)

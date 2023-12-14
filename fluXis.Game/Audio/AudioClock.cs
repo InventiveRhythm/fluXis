@@ -5,6 +5,7 @@ using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Select;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -24,10 +25,10 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     private AudioManager audioManager { get; set; }
 
     [Resolved]
-    private ITrackStore trackStore { get; set; }
+    private FluXisGameBase game { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private MapStore maps { get; set; }
 
     private ITrackStore realmTrackStore { get; set; }
     private Storage realmStorage { get; set; }
@@ -104,7 +105,27 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         loopMode = config.GetBindable<LoopMode>(FluXisSetting.LoopMode);
     }
 
-    public void LoadMap(RealmMap info, bool start = false, bool usePreview = false)
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        string path = null;
+
+        maps.MapBindable.BindValueChanged(e =>
+        {
+            var newPath = e.NewValue?.MapSet.GetPathForFile(e.NewValue.Metadata.Audio);
+
+            if (newPath == path) return;
+
+            loadMap(e.NewValue);
+            path = newPath;
+
+            if (game.ScreenStack.CurrentScreen is SelectScreen)
+                Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
+        });
+    }
+
+    private void loadMap(RealmMap info)
     {
         AllowLimitedLoop = true; // reset
         Volume = 1;
@@ -112,27 +133,13 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         Stop();
         Seek(0);
         ChangeSource(info.GetTrack() ?? realmTrackStore.GetVirtual());
-
-        game.OnSongChanged?.Invoke();
-
-        if (start) Start();
-        Seek(usePreview ? info.Metadata.PreviewTime : 0);
+        Start();
 
         Task.Run(() =>
         {
             MapInfo = null;
             MapInfo = info.GetMapInfo();
         });
-    }
-
-    public void PlayTrack(string path, bool start = false)
-    {
-        trackHash = null;
-        MapInfo = null;
-
-        Stop();
-        ChangeSource(trackStore.Get(path));
-        if (start) Start();
     }
 
     public override void Reset()
