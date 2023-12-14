@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Overlay.Effect;
 
@@ -17,6 +18,8 @@ public partial class FlashOverlay : Container
     {
         this.flashes = flashes;
         RelativeSizeAxes = Axes.Both;
+        Anchor = Origin = Anchor.Centre;
+        Size = new Vector2(2f);
 
         AddInternal(flash = new Box
         {
