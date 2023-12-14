@@ -10,6 +10,7 @@ public partial class UISamples : Component
 {
     private Sample hover;
     private Sample click;
+    private Sample clickDisabled;
     private Sample dropdownOpen;
     private Sample dropdownClose;
     private Sample overlayOpen;
@@ -21,7 +22,6 @@ public partial class UISamples : Component
     private const int debounce_time = 50;
 
     private double lastHoverTime;
-    private double lastClickTime;
 
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
@@ -30,6 +30,7 @@ public partial class UISamples : Component
         hover.Frequency.BindTo(hoverPitch = new Bindable<double>());
 
         click = samples.Get("UI/click");
+        clickDisabled = samples.Get("UI/click-disabled");
         dropdownOpen = samples.Get("UI/dropdown-open");
         dropdownClose = samples.Get("UI/dropdown-close");
         overlayOpen = samples.Get("UI/Overlay/open");
@@ -48,13 +49,12 @@ public partial class UISamples : Component
         lastHoverTime = Time.Current;
     }
 
-    public void Click()
+    public void Click(bool disabled = false)
     {
-        if (Time.Current - lastClickTime < debounce_time)
-            return;
-
-        click?.Play();
-        lastClickTime = Time.Current;
+        if (disabled)
+            clickDisabled?.Play();
+        else
+            click?.Play();
     }
 
     public void Dropdown(bool close)

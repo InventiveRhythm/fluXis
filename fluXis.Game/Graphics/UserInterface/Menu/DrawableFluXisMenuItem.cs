@@ -20,6 +20,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
     private bool shouldShowChevron => Item.Items.Count > 0 && ShowChevron;
     private bool shouldShowCheck => (Item as FluXisMenuItem)?.IsActive?.Invoke() ?? false;
     private bool isSpacer => Item is FluXisMenuSpacer;
+    private bool isEnabled => (Item as FluXisMenuItem)?.Enabled?.Invoke() ?? true;
 
     private const int content_size = 20;
     private const int icon_size = 16;
@@ -103,12 +104,10 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (Item is FluXisMenuItem item && (!item.Enabled?.Invoke() ?? false)) return true;
+        if (isSpacer) return false;
 
-        if (!isSpacer)
-            samples.Click();
-
-        return base.OnClick(e);
+        samples.Click(!isEnabled);
+        return isEnabled && base.OnClick(e);
     }
 
     protected override Drawable CreateContent()
@@ -141,7 +140,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
         {
             AutoSizeAxes = Axes.Both,
             Direction = FillDirection.Horizontal,
-            Alpha = (Item as FluXisMenuItem)?.Enabled?.Invoke() ?? true ? 1f : .75f,
+            Alpha = isEnabled ? 1f : .75f,
             Spacing = new Vector2(5),
             Padding = new MarginPadding { Horizontal = 5, Vertical = 5 },
             Children = new Drawable[]

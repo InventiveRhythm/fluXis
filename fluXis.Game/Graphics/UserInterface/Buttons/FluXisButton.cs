@@ -125,6 +125,7 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
+        samples.Click(!Enabled);
         if (!Enabled) return false;
 
         if (HoldToConfirm)
@@ -140,15 +141,14 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
     {
         flashBox.FadeOutFromOne(1000, Easing.OutQuint);
         base.OnClick(e);
-        samples.Click();
     }
 
     protected override bool OnHover(HoverEvent e)
     {
+        samples.Hover();
         if (!Enabled) return false;
 
         hoverBox.FadeTo(0.2f, 50);
-        samples.Hover();
         return true;
     }
 
