@@ -23,7 +23,7 @@ public partial class DrawableOnlineBackground : Sprite
         Origin = Anchor.Centre;
         RelativeSizeAxes = Axes.Both;
         FillMode = FillMode.Fill;
-        Texture = textures.Get($"{fluxel.Endpoint.APIUrl}/assets/background/{mapSet.Id}");
+        Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/background/{mapSet.Id}");
     }
 
     protected override void LoadComplete()

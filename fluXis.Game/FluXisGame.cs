@@ -165,8 +165,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 player = "fluXis",
                 title = song.Metadata.Title,
                 artist = song.Metadata.Artist,
-                cover = $"{Fluxel.Endpoint.APIUrl}/assets/cover/{song.OnlineID}",
-                background = $"{Fluxel.Endpoint.APIUrl}/assets/background/{song.OnlineID}",
+                cover = $"{Fluxel.Endpoint.AssetUrl}/cover/{song.OnlineID}",
+                background = $"{Fluxel.Endpoint.AssetUrl}/background/{song.OnlineID}",
             };
 
             var json = JsonConvert.SerializeObject(data);

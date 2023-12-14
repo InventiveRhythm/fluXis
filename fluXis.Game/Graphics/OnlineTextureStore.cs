@@ -28,7 +28,7 @@ public class OnlineTextureStore : TextureStore
     private string getUrl(AssetType type, int id)
     {
         var typeStr = type.ToString().ToLower();
-        return $"{endpointConfig.APIUrl}/assets/{typeStr}/{id}";
+        return $"{endpointConfig.AssetUrl}/{typeStr}/{id}";
     }
 
     private static string getLookup(string name, WrapMode wrapModeS = default, WrapMode wrapModeT = default)

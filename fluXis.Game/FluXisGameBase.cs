@@ -200,18 +200,12 @@ public partial class FluXisGameBase : osu.Framework.Game
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<APIEndpointConfig>(json);
+            var custom = JsonConvert.DeserializeObject<APIEndpointConfig>(json);
+            return custom.AddDefaults();
         }
 
-        var endpoint = new APIEndpointConfig
-        {
-            APIUrl = "https://api.fluxis.flux.moe",
-            WebsocketUrl = "wss://fluxel.flux.moe",
-            WebsiteRootUrl = "https://fluxis.flux.moe"
-        };
-
-        var json2 = JsonConvert.SerializeObject(endpoint, Formatting.Indented);
-        File.WriteAllText(path, json2);
+        var defaultEndpoint = new APIEndpointConfig().AddDefaults();
+        File.WriteAllText(path, defaultEndpoint.ToString());
 
         return getApiEndpoint();
     }

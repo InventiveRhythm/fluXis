@@ -1,8 +1,27 @@
+using Newtonsoft.Json;
+
 namespace fluXis.Game.Online;
 
 public class APIEndpointConfig
 {
-    public string APIUrl { get; init; }
-    public string WebsocketUrl { get; init; }
-    public string WebsiteRootUrl { get; init; }
+    public string APIUrl { get; private set; }
+    public string AssetUrl { get; private set; }
+    public string WebsocketUrl { get; private set; }
+    public string WebsiteRootUrl { get; private set; }
+
+    public APIEndpointConfig AddDefaults()
+    {
+        if (string.IsNullOrWhiteSpace(APIUrl))
+            APIUrl = "https://api.fluxis.flux.moe";
+        if (string.IsNullOrWhiteSpace(AssetUrl))
+            AssetUrl = "https://assets.flux.moe";
+        if (string.IsNullOrWhiteSpace(WebsocketUrl))
+            WebsocketUrl = "wss://fluxel.flux.moe";
+        if (string.IsNullOrWhiteSpace(WebsiteRootUrl))
+            WebsiteRootUrl = "https://fluxis.flux.moe";
+
+        return this;
+    }
+
+    public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
 }

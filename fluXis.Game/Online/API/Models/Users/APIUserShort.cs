@@ -23,8 +23,8 @@ public class APIUserShort
     [JsonProperty("role")]
     public int Role { get; set; }
 
-    public string GetAvatarUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/avatar/" + ID;
-    public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.APIUrl + "/assets/banner/" + ID;
+    public string GetAvatarUrl(APIEndpointConfig endpoint) => endpoint.AssetUrl + "/avatar/" + ID;
+    public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.AssetUrl + "/banner/" + ID;
 
     public string GetName() => string.IsNullOrEmpty(DisplayName) ? Username : DisplayName;
 

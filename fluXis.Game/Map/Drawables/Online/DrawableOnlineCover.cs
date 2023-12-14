@@ -23,7 +23,7 @@ public partial class DrawableOnlineCover : Sprite
         Origin = Anchor.Centre;
         RelativeSizeAxes = Axes.Both;
         FillMode = FillMode.Fill;
-        Texture = textures.Get($"{fluxel.Endpoint.APIUrl}/assets/cover/{mapSet.Id}");
+        Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/cover/{mapSet.Id}");
     }
 
     protected override void LoadComplete()
