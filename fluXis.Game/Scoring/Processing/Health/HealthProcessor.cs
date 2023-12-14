@@ -1,8 +1,8 @@
 using System;
-using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Bindables;
 
 namespace fluXis.Game.Scoring.Processing.Health;
@@ -14,7 +14,7 @@ public class HealthProcessor : JudgementDependant
     protected virtual bool ClearHealthOnFail => true;
 
     public GameplayScreen Screen { get; set; }
-    protected AudioClock AudioClock => Screen.AudioClock;
+    protected GameplayClock GameplayClock => Screen.GameplayClock;
 
     public bool CanFail { get; set; } = true;
     public Func<HitResult, bool> ExtraFailCondition { get; set; }
@@ -43,7 +43,7 @@ public class HealthProcessor : JudgementDependant
             return;
 
         Failed = true;
-        FailTime = AudioClock.CurrentTime;
+        FailTime = GameplayClock.CurrentTime;
         OnFail?.Invoke();
 
         if (ClearHealthOnFail)

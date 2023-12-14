@@ -26,7 +26,7 @@ public partial class Bluescreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private FluXisSpriteText loadingText;
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures, AudioClock clock)
+    private void load(TextureStore textures, GlobalClock clock)
     {
         Schedule(() => cursorOverlay.FadeOut());
         clock.Stop();

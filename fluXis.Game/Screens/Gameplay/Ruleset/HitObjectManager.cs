@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
@@ -9,6 +8,7 @@ using fluXis.Game.Mods;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Structs;
+using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Skinning;
 using JetBrains.Annotations;
@@ -105,7 +105,7 @@ public partial class HitObjectManager : Container<HitObject>
         newTime = Math.Max(newTime, 0);
 
         Seeking = true;
-        (Clock as AudioClock)?.Seek(newTime);
+        (Clock as GameplayClock)?.Seek(newTime);
 
         if (newTime < prevTime)
         {

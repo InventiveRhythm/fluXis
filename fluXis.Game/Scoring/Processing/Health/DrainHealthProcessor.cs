@@ -34,20 +34,20 @@ public class DrainHealthProcessor : HealthProcessor
 
         if (lastTime == 0)
         {
-            lastTime = (float)AudioClock.CurrentTime;
+            lastTime = (float)GameplayClock.CurrentTime;
             return;
         }
 
         if (Screen.Playfield.Manager.Break)
             return;
 
-        var delta = (float)AudioClock.CurrentTime - lastTime;
+        var delta = (float)GameplayClock.CurrentTime - lastTime;
 
         HealthDrainRate = Math.Max(HealthDrainRate, -1f);
         Health.Value -= HealthDrainRate * (delta / 1000f);
         HealthDrainRate += 0.001f * delta;
 
-        lastTime = (float)AudioClock.CurrentTime;
+        lastTime = (float)GameplayClock.CurrentTime;
 
         if (Health.Value == 0)
             TriggerFailure();

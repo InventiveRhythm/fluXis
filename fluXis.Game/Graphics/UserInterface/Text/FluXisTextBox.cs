@@ -151,7 +151,7 @@ public partial class FluXisTextBox : BasicTextBox
     public partial class FluXisCaret : Caret
     {
         [Resolved]
-        private AudioClock clock { get; set; }
+        private GlobalClock clock { get; set; }
 
         private bool shouldPulse = true;
 

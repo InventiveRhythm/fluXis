@@ -19,7 +19,7 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     public override float BackgroundBlur => .4f;
 
     [Resolved]
-    private AudioClock audioClock { get; set; }
+    private GlobalClock globalClock { get; set; }
 
     protected virtual string Title => "Work in Progress";
 
@@ -60,14 +60,14 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     {
         this.FadeInFromZero(200);
         flowContainer.ScaleTo(.8f).ScaleTo(1, 1000, Easing.OutElastic);
-        audioClock.LowPassFilter.CutoffTo(LowPassFilter.MIN, 200);
+        globalClock.LowPassFilter.CutoffTo(LowPassFilter.MIN, 200);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         this.FadeOutFromOne(400);
         flowContainer.ScaleTo(.8f, 600);
-        audioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 200);
+        globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 200);
 
         return base.OnExiting(e);
     }

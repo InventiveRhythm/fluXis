@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,7 +17,10 @@ public partial class DangerHealthOverlay : Container
     private GameplayScreen screen { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GameplayClock gameplayClock { get; set; }
+
+    [Resolved]
+    private GlobalClock globalClock { get; set; }
 
     private Bindable<bool> dimOnLowHealth;
 
@@ -92,13 +96,14 @@ public partial class DangerHealthOverlay : Container
             darken.Alpha = 1 - multiplier;
             glow.Alpha = 1 - multiplier;
 
-            clock.LowPassFilter.Cutoff = (int)(LowPassFilter.MAX * multiplier);
+            globalClock.LowPassFilter.Cutoff = (int)(LowPassFilter.MAX * multiplier);
         }
         else
         {
             darken.Alpha = 0;
             glow.Alpha = 0;
-            clock.LowPassFilter.Cutoff = LowPassFilter.MAX;
+
+            globalClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
         }
     }
 }

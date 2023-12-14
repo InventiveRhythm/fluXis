@@ -15,7 +15,7 @@ namespace fluXis.Game.Screens.Menu.UI.Visualizer;
 public partial class MenuVisualizer : Container
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     private const int circle_count = 64;
     private const int max_extra_speed = 2;

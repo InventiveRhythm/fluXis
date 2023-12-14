@@ -34,7 +34,7 @@ public partial class MultiLobby : MultiSubScreen
     private BackgroundStack backgroundStack { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }

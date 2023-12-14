@@ -43,7 +43,7 @@ public partial class MapStore : Component
     private AudioManager audio { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }

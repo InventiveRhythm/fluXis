@@ -11,6 +11,7 @@ public partial class EditorPlaytestScreen : GameplayScreen
 {
     protected override double GameplayStartTime { get; }
     protected override bool InstantlyExitOnPause => true;
+    public override bool FadeBackToGlobalClock => false;
 
     private readonly MapInfo map;
     private readonly MapEvents events;
@@ -31,7 +32,6 @@ public partial class EditorPlaytestScreen : GameplayScreen
     public override bool OnExiting(ScreenExitEvent e)
     {
         base.OnExiting(e);
-        AudioClock.Stop();
         return false;
     }
 
@@ -43,13 +43,13 @@ public partial class EditorPlaytestScreen : GameplayScreen
 
     public override void OnDeath()
     {
-        AudioClock.Stop();
+        GameplayClock.Stop();
         this.Exit();
     }
 
     protected override void End()
     {
-        AudioClock.Stop();
+        GameplayClock.Stop();
         this.Exit();
     }
 }

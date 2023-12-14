@@ -60,7 +60,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private int exceptionCount;
     protected virtual int MaxExceptions => IsDebug ? 5 : 1;
 
-    protected AudioClock AudioClock { get; private set; }
+    protected GlobalClock GlobalClock { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
     protected LoginOverlay LoginOverlay { get; private set; }
     protected ChatOverlay ChatOverlay { get; private set; }
@@ -113,7 +113,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(Config = new FluXisConfig(storage));
-        dependencies.Cache(AudioClock = new AudioClock());
+        dependencies.Cache(GlobalClock = new GlobalClock());
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
         dependencies.Cache(Fluxel = new Fluxel(Config, endpoint));

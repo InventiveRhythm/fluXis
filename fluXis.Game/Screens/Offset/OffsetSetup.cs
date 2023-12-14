@@ -27,7 +27,7 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     public override bool AllowMusicControl => false;
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     private Bindable<float> offset;
 

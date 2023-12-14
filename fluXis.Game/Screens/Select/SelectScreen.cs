@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -61,7 +62,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private LightController lightController { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private BackgroundStack backgrounds { get; set; }

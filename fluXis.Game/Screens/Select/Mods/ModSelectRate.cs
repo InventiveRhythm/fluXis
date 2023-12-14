@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -17,7 +18,7 @@ namespace fluXis.Game.Screens.Select.Mods;
 public partial class ModSelectRate : Container
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     public ModSelector Selector { get; set; }
 

@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,6 +12,9 @@ public partial class SkipOverlay : Container
 {
     [Resolved]
     private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private GameplayClock clock { get; set; }
 
     private bool visible;
     private FillFlowContainer content;
@@ -74,7 +78,7 @@ public partial class SkipOverlay : Container
     {
         base.Update();
 
-        switch (screen.Map.StartTime - screen.AudioClock.CurrentTime > 2000)
+        switch (screen.Map.StartTime - clock.CurrentTime > 2000)
         {
             case true when !visible:
                 visible = true;
@@ -89,7 +93,7 @@ public partial class SkipOverlay : Container
 
         if (!visible) return;
 
-        double timeLeft = screen.Map.StartTime - (screen.AudioClock.CurrentTime + 2000);
+        double timeLeft = screen.Map.StartTime - (clock.CurrentTime + 2000);
         var progress = (float)(timeLeft / screen.Map.StartTime);
 
         if (float.IsFinite(progress))

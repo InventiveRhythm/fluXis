@@ -1,5 +1,5 @@
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,7 +12,7 @@ namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 public partial class Progressbar : GameplayHUDComponent
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GameplayClock clock { get; set; }
 
     private Bar bar;
     private FluXisSpriteText currentTimeText;
@@ -88,7 +88,7 @@ public partial class Progressbar : GameplayHUDComponent
         }
 
         [Resolved]
-        private AudioClock clock { get; set; }
+        private GameplayClock clock { get; set; }
 
         public Progressbar Progressbar { get; init; }
 

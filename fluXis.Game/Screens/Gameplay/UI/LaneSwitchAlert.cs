@@ -1,7 +1,7 @@
 using System;
-using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -75,7 +75,7 @@ public partial class LaneSwitchAlert : Container
 
     protected override void Update()
     {
-        if (playfield.Clock is not AudioClock clock) return;
+        if (playfield.Clock is not GameplayClock clock) return;
         if (screen.IsPaused.Value) return;
 
         leftContainer.X = -playfield.DrawWidth / 2 - 100;

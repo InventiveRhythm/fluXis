@@ -19,7 +19,7 @@ using osu.Framework.Timing;
 
 namespace fluXis.Game.Audio;
 
-public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
+public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
 {
     [Resolved]
     private AudioManager audioManager { get; set; }
@@ -89,7 +89,7 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
     private bool loopEndReached;
     public bool AllowLimitedLoop { get; set; } = true;
 
-    public AudioClock()
+    public GlobalClock()
     {
         underlying = new FramedMapClock();
         AddInternal(underlying);
@@ -295,9 +295,9 @@ public partial class AudioClock : TransformableClock, IFrameBasedClock, ISourceC
         }
     }
 
-    public TransformSequence<AudioClock> FadeTo(double volume, double duration = 0, Easing easing = Easing.None) => this.TransformTo(nameof(Volume), volume, duration, easing);
-    public TransformSequence<AudioClock> FadeIn(double duration = 0, Easing easing = Easing.None) => FadeTo(1, duration, easing);
-    public TransformSequence<AudioClock> FadeOut(double duration = 0, Easing easing = Easing.None) => FadeTo(0, duration, easing);
+    public TransformSequence<GlobalClock> FadeTo(double volume, double duration = 0, Easing easing = Easing.None) => this.TransformTo(nameof(Volume), volume, duration, easing);
+    public TransformSequence<GlobalClock> FadeIn(double duration = 0, Easing easing = Easing.None) => FadeTo(1, duration, easing);
+    public TransformSequence<GlobalClock> FadeOut(double duration = 0, Easing easing = Easing.None) => FadeTo(0, duration, easing);
 
     #endregion
 }

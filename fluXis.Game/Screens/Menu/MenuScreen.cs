@@ -51,7 +51,7 @@ public partial class MenuScreen : FluXisScreen
     private LoginOverlay login { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }

@@ -18,7 +18,7 @@ public partial class TestEditor : FluXisTestScene
     private MapStore maps { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     private ScreenStack screenStack { get; } = new() { RelativeSizeAxes = Axes.Both };
     private EditorLoader editor { get; set; }

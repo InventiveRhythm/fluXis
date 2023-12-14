@@ -29,7 +29,4 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
 
     public TransformSequence<TransformableClock> TimeTo(double newTime, double duration = 0, Easing easing = Easing.None)
         => this.TransformTo(this.PopulateTransform(new TimeTransform(), newTime, duration, easing));
-
-    public TransformSequence<TransformableClock> RateTo(double newRate, int duration = 400, Easing easing = Easing.OutQuint)
-        => this.TransformTo(this.PopulateTransform(new RateTransform(), newRate, duration, easing));
 }

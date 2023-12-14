@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,7 +15,7 @@ public partial class PulseEffect : Container
     private GameplayScreen screen { get; set; }
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GameplayClock clock { get; set; }
 
     private List<PulseEvent> pulses = new();
 

@@ -27,7 +27,7 @@ namespace fluXis.Game.Overlay.Music;
 public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
-    private AudioClock audioClock { get; set; }
+    private GlobalClock globalClock { get; set; }
 
     [Resolved]
     private FluXisGameBase game { get; set; }
@@ -207,10 +207,10 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                                                                 if (!ScreenStack.AllowMusicControl)
                                                                     return;
 
-                                                                if (audioClock.IsRunning)
-                                                                    audioClock.Stop();
+                                                                if (globalClock.IsRunning)
+                                                                    globalClock.Stop();
                                                                 else
-                                                                    audioClock.Start();
+                                                                    globalClock.Start();
                                                             }
                                                         },
                                                         new MusicPlayerButton
@@ -307,7 +307,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
         while (covers.Count > 1 && covers.Last().Alpha == 1)
             covers.Remove(covers[0], true);
 
-        pausePlay.IconSprite.Icon = audioClock.IsRunning ? FontAwesome.Solid.Pause : FontAwesome.Solid.Play;
+        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome.Solid.Pause : FontAwesome.Solid.Play;
     }
 
     protected override void PopIn()

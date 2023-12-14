@@ -1,7 +1,8 @@
-using fluXis.Game.Audio;
+using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,7 +16,7 @@ namespace fluXis.Game.Screens.Gameplay.UI.Menus;
 public partial class PauseMenu : CompositeDrawable
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GameplayClock clock { get; set; }
 
     [Resolved]
     private GameplayScreen screen { get; set; }
@@ -129,7 +130,7 @@ public partial class PauseMenu : CompositeDrawable
 
     public override void Hide()
     {
-        clock.RateTo(screen.Rate, 400, Easing.InQuint);
+        clock.RateTo(screen.Rate, 400, Easing.In);
 
         background.MoveToX(1.2f, 500, Easing.InQuint);
         content.ScaleTo(.8f, 400, Easing.InQuint).Delay(100).FadeOut(200);
@@ -137,7 +138,7 @@ public partial class PauseMenu : CompositeDrawable
 
     public override void Show()
     {
-        clock.RateTo(0);
+        clock.RateTo(0, 400, Easing.Out);
 
         background.MoveToX(-1.2f).MoveToX(-.2f, 750, Easing.OutQuint);
         content.ScaleTo(1, 1000, Easing.OutElastic).FadeIn(200);

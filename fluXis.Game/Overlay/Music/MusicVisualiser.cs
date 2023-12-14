@@ -9,7 +9,7 @@ namespace fluXis.Game.Overlay.Music;
 public partial class MusicVisualiser : Container
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     private const int bar_count = 128;
     private const float bar_width = 1f / bar_count;

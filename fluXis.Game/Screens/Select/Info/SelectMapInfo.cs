@@ -21,7 +21,7 @@ namespace fluXis.Game.Screens.Select.Info;
 public partial class SelectMapInfo : GridContainer
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private MapStore maps { get; set; }

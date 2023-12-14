@@ -63,7 +63,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private BackgroundStack backgrounds { get; set; }
 
     [Resolved]
-    private AudioClock audioClock { get; set; }
+    private GlobalClock globalClock { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
@@ -111,8 +111,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         backgroundDim = config.GetBindable<float>(FluXisSetting.EditorDim);
         backgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
 
-        audioClock.Looping = false;
-        audioClock.Stop(); // the editor clock will handle this
+        globalClock.Looping = false;
+        globalClock.Stop(); // the editor clock will handle this
 
         isNewMap = MapInfo == null && Map == null;
 
@@ -497,7 +497,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         exitAnimation();
         clock.Stop();
-        audioClock.Seek((float)clock.CurrentTime);
+        globalClock.Seek((float)clock.CurrentTime);
         Game.Overlay?.Hide();
         return base.OnExiting(e);
     }

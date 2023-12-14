@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Audio;
+using fluXis.Game.Audio.Transforms;
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -20,6 +21,7 @@ using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
@@ -50,6 +52,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual double GameplayStartTime => 0;
     protected virtual bool InstantlyExitOnPause => Playfield.Manager.AutoPlay;
+    public virtual bool FadeBackToGlobalClock => true;
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -64,7 +67,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private NotificationManager notifications { get; set; }
 
     [Resolved]
-    public AudioClock AudioClock { get; private set; }
+    private GlobalClock globalClock { get; set; }
 
     private DependencyContainer dependencies;
 
@@ -75,6 +78,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public GameplaySamples Samples { get; } = new();
     public Hitsounding Hitsounding { get; private set; }
 
+    public GameplayClock GameplayClock { get; private set; }
     public Action<double, double> OnSeek { get; set; }
 
     public JudgementProcessor JudgementProcessor { get; } = new();
@@ -93,6 +97,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public MapEvents MapEvents { get; private set; }
     public List<IMod> Mods { get; }
 
+    private GameplayClockContainer clockContainer;
     public Playfield Playfield { get; private set; }
     private Container hud { get; set; }
 
@@ -168,25 +173,23 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Playfield = new Playfield();
         dependencies.Cache(Playfield);
 
+        clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
+        {
+            new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
+            new PulseEffect(),
+            Playfield,
+            new LaneSwitchAlert()
+        });
+        dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
+
         InternalChild = new GameplayKeybindContainer(Game, realm)
         {
             Children = new Drawable[]
             {
                 Input,
                 Samples,
-                Hitsounding = new Hitsounding(RealmMap.MapSet, AudioClock.RateBindable),
-                new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Clock = AudioClock,
-                    Children = new Drawable[]
-                    {
-                        new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
-                        new PulseEffect(),
-                        Playfield,
-                        new LaneSwitchAlert()
-                    }
-                },
+                Hitsounding = new Hitsounding(RealmMap.MapSet, GameplayClock.RateBindable),
+                clockContainer,
                 hud = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -201,7 +204,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 },
                 new AutoPlayDisplay(),
                 new DangerHealthOverlay(),
-                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = AudioClock },
+                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                 new SkipOverlay(),
                 failMenu = new FailMenu(),
                 fcOverlay = new FullComboOverlay(),
@@ -265,11 +268,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         HealthProcessor.Update();
 
-        if (AudioClock.CurrentTime >= 0 && starting)
+        if (GameplayClock.CurrentTime >= 0 && starting)
         {
             starting = false;
             backgrounds.StartVideo();
-            AudioClock.Volume = 1; // just in case it was muted
+            // gameplayClock.Volume = 1; // just in case it was muted
         }
 
         var hudWasVisible = hudVisible;
@@ -290,7 +293,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual void OnDeath()
     {
         failMenu.Show();
-        AudioClock.RateTo(.4f, 2000, Easing.OutQuart);
+        GameplayClock.RateTo(.4f, 2000, Easing.OutQuart);
     }
 
     protected virtual void End()
@@ -352,8 +355,23 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         fadeOut();
 
-        AudioClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500);
-        ScheduleAfterChildren(() => AudioClock.RateTo(Rate, 500, Easing.InQuint));
+        if (FadeBackToGlobalClock)
+        {
+            globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500);
+            globalClock.RateTo(GameplayClock.Rate, 0);
+            ScheduleAfterChildren(() =>
+            {
+                globalClock.Seek(GameplayClock.CurrentTime);
+                globalClock.RateTo(Rate, 500, Easing.InQuint);
+            });
+        }
+        else
+        {
+            // we definetly want to reset the cutoff
+            globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
+        }
+
+        GameplayClock.Stop();
         backgrounds.StopVideo();
         Samples.CancelFail();
 
@@ -362,9 +380,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        AudioClock.Start();
-        AudioClock.Seek(GameplayStartTime - 2000 * Rate);
-        AudioClock.RateTo(Rate, 0);
+        GameplayClock.Start();
+        GameplayClock.Seek(GameplayStartTime - 2000 * Rate);
+        GameplayClock.RateTo(Rate, 0);
 
         IsPaused.BindValueChanged(_ => updateRpc(), true);
 
@@ -400,16 +418,16 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 }
 
                 // only add when we have hit at least one note
-                if (!Mods.Any(m => m is PausedMod) && AudioClock.CurrentTime > Map.StartTime)
+                if (!Mods.Any(m => m is PausedMod) && GameplayClock.CurrentTime > Map.StartTime)
                     Mods.Add(new PausedMod());
 
                 IsPaused.Toggle();
                 return true;
 
             case FluXisGlobalKeybind.Skip:
-                if (Map.StartTime - AudioClock.CurrentTime < 2000) return false;
+                if (Map.StartTime - GameplayClock.CurrentTime < 2000) return false;
 
-                AudioClock.Seek(Map.StartTime - 2000);
+                GameplayClock.Seek(Map.StartTime - 2000);
                 return true;
 
             case FluXisGlobalKeybind.ScrollSpeedIncrease:
@@ -421,11 +439,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return true;
 
             case FluXisGlobalKeybind.SeekBackward:
-                OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime - 5000);
+                OnSeek?.Invoke(GameplayClock.CurrentTime, GameplayClock.CurrentTime - 5000);
                 return Playfield.Manager.AutoPlay;
 
             case FluXisGlobalKeybind.SeekForward:
-                OnSeek?.Invoke(AudioClock.CurrentTime, AudioClock.CurrentTime + 5000);
+                OnSeek?.Invoke(GameplayClock.CurrentTime, GameplayClock.CurrentTime + 5000);
                 return Playfield.Manager.AutoPlay;
         }
 

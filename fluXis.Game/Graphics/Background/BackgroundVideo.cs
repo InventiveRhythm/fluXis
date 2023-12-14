@@ -16,7 +16,7 @@ namespace fluXis.Game.Graphics.Background;
 public partial class BackgroundVideo : CompositeDrawable
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private Storage storage { get; set; }

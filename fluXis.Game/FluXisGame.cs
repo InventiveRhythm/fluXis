@@ -60,7 +60,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         Children = new Drawable[]
         {
             Fluxel,
-            AudioClock,
+            GlobalClock,
             Samples,
             NotificationManager,
             buffer = new BufferedContainer
@@ -206,8 +206,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             switch (e.Action)
             {
                 case FluXisGlobalKeybind.MusicPause:
-                    if (AudioClock.IsRunning) AudioClock.Stop();
-                    else AudioClock.Start();
+                    if (GlobalClock.IsRunning) GlobalClock.Stop();
+                    else GlobalClock.Start();
                     return true;
 
                 case FluXisGlobalKeybind.MusicPrevious:
@@ -235,7 +235,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             Schedule(() => overlayContainer.Remove(Overlay, false));
             overlayDim.Alpha = 0;
             buffer.BlurSigma = Vector2.Zero;
-            AudioClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
+            GlobalClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
         }
         else if (Overlay is { IsLoaded: true })
         {
@@ -244,7 +244,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
             var lowpass = (LowPassFilter.MAX - LowPassFilter.MIN) * Overlay.Alpha;
             lowpass = LowPassFilter.MAX - lowpass;
-            AudioClock.LowPassFilter.Cutoff = (int)lowpass;
+            GlobalClock.LowPassFilter.Cutoff = (int)lowpass;
         }
         else if (buffer.BlurSigma != Vector2.Zero || overlayDim.Alpha != 0)
         {
@@ -257,7 +257,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         CursorOverlay.FadeOut(600);
         Toolbar.ShowToolbar.Value = false;
-        AudioClock.FadeOut(1500);
+        GlobalClock.FadeOut(1500);
         exitAnimation.Show(buffer.Hide, base.Exit);
     }
 }

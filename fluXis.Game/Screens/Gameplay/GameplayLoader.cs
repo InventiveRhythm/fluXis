@@ -26,10 +26,11 @@ public partial class GameplayLoader : FluXisScreen
     public override UserActivity InitialActivity => new UserActivity.LoadingGameplay();
 
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     public GameplayScreen GameplayScreen { get; set; }
     private readonly Func<GameplayScreen> createFunc;
+    private bool fadeBackToGlobalClock;
 
     public RealmMap Map { get; set; }
 
@@ -136,6 +137,7 @@ public partial class GameplayLoader : FluXisScreen
         GameplayScreen = createFunc();
         GameplayScreen.Loader = this;
         GameplayScreen.OnRestart += requestRestart;
+        fadeBackToGlobalClock = GameplayScreen.FadeBackToGlobalClock;
 
         LoadComponentAsync(GameplayScreen, _ =>
         {
@@ -146,7 +148,11 @@ public partial class GameplayLoader : FluXisScreen
                 ValidForResume = false;
                 loadingContainer.FadeOut(200);
                 clock.Delay(400).Schedule(() => clock.FadeOut(400));
-                this.Delay(800).Schedule(() => this.Push(GameplayScreen));
+                this.Delay(800).Schedule(() =>
+                {
+                    clock.Stop();
+                    this.Push(GameplayScreen);
+                });
             }
         });
     }
@@ -160,6 +166,16 @@ public partial class GameplayLoader : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e) => contentIn();
     public override void OnSuspending(ScreenTransitionEvent e) => contentOut();
     public override void OnResuming(ScreenTransitionEvent e) => contentIn();
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        clock.FadeIn();
+
+        if (fadeBackToGlobalClock)
+            clock.Start();
+
+        return base.OnExiting(e);
+    }
 
     private void contentIn()
     {

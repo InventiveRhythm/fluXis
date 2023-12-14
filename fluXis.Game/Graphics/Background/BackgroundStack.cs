@@ -17,7 +17,7 @@ namespace fluXis.Game.Graphics.Background;
 public partial class BackgroundStack : CompositeDrawable
 {
     [Resolved]
-    private AudioClock clock { get; set; }
+    private GlobalClock clock { get; set; }
 
     private Container backgroundContainer;
     private ParallaxContainer parallaxContainer;
