@@ -281,6 +281,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             HudVisibility.Hidden => false,
             HudVisibility.ShowDuringBreaks => Playfield.Manager.Break,
+            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !Playfield.Manager.Break,
             _ => true
         };
 

@@ -11,5 +11,8 @@ public enum HudVisibility
     Hidden,
 
     [Description("Show During Breaks")]
-    ShowDuringBreaks
+    ShowDuringBreaks,
+
+    [Description("Show During Gameplay")]
+    ShowDuringGameplay
 }
