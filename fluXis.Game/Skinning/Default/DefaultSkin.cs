@@ -1,5 +1,7 @@
 using System;
 using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Default.Health;
 using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
@@ -30,6 +32,9 @@ public class DefaultSkin : ISkin
     public Drawable GetStageBackground() => new DefaultStageBackground();
     public Drawable GetStageBorder(bool right) => right ? new DefaultStageBorderRight() : new DefaultStageBorderLeft();
     public Drawable GetLaneCover(bool bottom) => bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();
+
+    public Drawable GetHealthBarBackground() => new DefaultHealthBackground();
+    public Drawable GetHealthBar(HealthProcessor processor) => new DefaultHealthBar(processor);
 
     public Drawable GetHitObject(int lane, int keyCount)
     {

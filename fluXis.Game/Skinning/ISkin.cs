@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -16,6 +17,9 @@ public interface ISkin : IDisposable
     public Drawable GetStageBackground();
     public Drawable GetStageBorder(bool right);
     public Drawable GetLaneCover(bool bottom);
+
+    public Drawable GetHealthBarBackground();
+    public Drawable GetHealthBar(HealthProcessor processor);
 
     public Drawable GetHitObject(int lane, int keyCount);
     public Drawable GetLongNoteBody(int lane, int keyCount);

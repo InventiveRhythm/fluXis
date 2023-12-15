@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Custom.Health;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -86,6 +88,27 @@ public class CustomSkin : ISkin
         }
 
         return null;
+    }
+
+    public Drawable GetHealthBarBackground()
+    {
+        string path = SkinJson.GetOverrideOrDefault("Health/background") + ".png";
+
+        if (storage.Exists(path))
+        {
+            return new Sprite
+            {
+                Texture = textures.Get(path)
+            };
+        }
+
+        return null;
+    }
+
+    public Drawable GetHealthBar(HealthProcessor processor)
+    {
+        string path = SkinJson.GetOverrideOrDefault("Health/foreground") + ".png";
+        return storage.Exists(path) ? new SkinnableHealthBar(textures.Get(path)) : null;
     }
 
     public Drawable GetHitObject(int lane, int keyCount)

@@ -4,6 +4,7 @@ using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Utils;
 
 namespace fluXis.Game.Scoring.Processing.Health;
 
@@ -26,6 +27,8 @@ public class HealthProcessor : JudgementDependant
     public bool FailedAlready { get; private set; }
 
     public BindableFloat Health { get; }
+    public float SmoothHealth { get; private set; }
+
     public bool Failed { get; private set; }
     public Action OnFail { get; set; }
     public double FailTime { get; private set; }
@@ -71,7 +74,10 @@ public class HealthProcessor : JudgementDependant
     /// <returns>True if gameplay should exit normally.</returns>
     public virtual bool OnComplete() => true;
 
-    public virtual void Update() { }
+    public virtual void Update()
+    {
+        SmoothHealth = (float)Interpolation.Lerp(Health.Value, SmoothHealth, Math.Exp(-0.012 * Screen.Clock.ElapsedFrameTime));
+    }
 
     protected virtual float GetHealthIncreaseFor(HitResult result)
     {
