@@ -32,7 +32,7 @@ public class ScoreProcessor : JudgementDependant
     public int Okay => JudgementProcessor.Results.Count(x => x.Judgement == Judgement.Okay);
     public int Miss => JudgementProcessor.Results.Count(x => x.Judgement == Judgement.Miss);
 
-    public bool FullFlawless => Flawless == totalNotes;
+    public bool FullFlawless => Flawless == totalNotes && Miss == 0;
     public bool FullCombo => Combo.Value == totalNotes;
 
     private int totalNotes => Flawless + Perfect + Great + Alright + Okay + Miss;
