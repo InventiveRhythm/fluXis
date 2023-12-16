@@ -37,6 +37,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay;
 
@@ -189,17 +190,25 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 Input,
                 Samples,
                 Hitsounding = new Hitsounding(RealmMap.MapSet, GameplayClock.RateBindable),
-                clockContainer,
-                hud = new Container
+                new DrawSizePreservingFillContainer
                 {
                     RelativeSizeAxes = Axes.Both,
+                    TargetDrawSize = new Vector2(1920, 1080),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
-                        new GameplayHUD(),
-                        new ModsDisplay(),
+                        clockContainer,
                         new KeyOverlay()
+                    }
+                },
+                hud = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        new GameplayHUD(),
+                        new ModsDisplay()
                     }
                 },
                 new AutoPlayDisplay(),

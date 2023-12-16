@@ -55,6 +55,10 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private DependencyContainer dependencies;
 
+    private Vector2 targetDrawSize => new(1920, 1080);
+    private DrawSizePreservingFillContainer drawSizePreserver;
+    private Bindable<float> uiScale;
+
     protected override Container<Drawable> Content => content;
     private Container content;
     private int exceptionCount;
@@ -113,6 +117,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(Config = new FluXisConfig(storage));
+        uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
+
         dependencies.Cache(GlobalClock = new GlobalClock());
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
@@ -157,9 +163,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         base.Content.Add(new SafeAreaContainer
         {
             RelativeSizeAxes = Axes.Both,
-            Child = new DrawSizePreservingFillContainer
+            Child = drawSizePreserver = new DrawSizePreservingFillContainer
             {
-                TargetDrawSize = new Vector2(1920, 1080),
+                TargetDrawSize = targetDrawSize,
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
@@ -188,6 +194,17 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);
         LoadingTips.Load(storage);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        uiScale.BindValueChanged(e =>
+        {
+            var size = targetDrawSize / e.NewValue;
+            drawSizePreserver.TargetDrawSize = size;
+        }, true);
     }
 
     public void PerformUpdateCheck(bool silent, bool forceUpdate = false) => Task.Run(() => CreateUpdateManager()?.Perform(silent, forceUpdate));

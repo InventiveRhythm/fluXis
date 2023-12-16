@@ -18,6 +18,12 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
         {
             new SettingsSlider<float>
             {
+                Label = "UI Scale",
+                Description = "The scale of the UI.",
+                Bindable = Config.GetBindable<float>(FluXisSetting.UIScale)
+            },
+            new SettingsSlider<float>
+            {
                 Label = "Hold to Confirm Duration",
                 Description = "How long to hold a button to confirm an action.",
                 Bindable = Config.GetBindable<float>(FluXisSetting.HoldToConfirm)
