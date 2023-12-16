@@ -18,8 +18,9 @@ public partial class MusicVisualiser : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
+        Blending = BlendingParameters.Additive;
         Height = 400;
-        Alpha = 0.5f;
+        Alpha = 0.1f;
         Anchor = Anchor.BottomLeft;
         Origin = Anchor.BottomLeft;
 
