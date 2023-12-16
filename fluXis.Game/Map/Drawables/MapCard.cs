@@ -42,18 +42,9 @@ public partial class MapCard : Container, IHasContextMenu
             };
 
             if (downloaded)
-            {
-                list.Add(new FluXisMenuItem("Show in Song Select", FontAwesome.Solid.Eye, () =>
-                {
-                    if (localSet == null) return;
-
-                    game.SelectMapSet(localSet);
-                    game.MenuScreen.MakeCurrent();
-                    game.MenuScreen.Push(new SelectScreen());
-                }));
-            }
-            else
-                list.Add(new FluXisMenuItem("Download", FontAwesome.Solid.Download, () => maps.DownloadMapSet(MapSet)));
+                list.Add(new FluXisMenuItem("Show in Song Select", FontAwesome.Solid.Eye, selectAndShow));
+            else if (!downloading)
+                list.Add(new FluXisMenuItem("Download", FontAwesome.Solid.Download, download));
 
             return list.ToArray();
         }
@@ -309,6 +300,27 @@ public partial class MapCard : Container, IHasContextMenu
         OnClickAction?.Invoke(MapSet);
         return true;
     }
+
+    protected override bool OnDoubleClick(DoubleClickEvent e)
+    {
+        if (downloaded)
+            selectAndShow();
+        else if (!downloading)
+            download();
+
+        return true;
+    }
+
+    private void selectAndShow()
+    {
+        if (localSet == null) return;
+
+        game.SelectMapSet(localSet);
+        game.MenuScreen.MakeCurrent();
+        game.MenuScreen.Push(new SelectScreen());
+    }
+
+    private void download() => maps.DownloadMapSet(MapSet);
 
     private string getKeymodeString()
     {
