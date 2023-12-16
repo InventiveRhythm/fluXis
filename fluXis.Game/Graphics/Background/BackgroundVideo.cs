@@ -1,12 +1,14 @@
 using System;
 using System.IO;
-using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Video;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -16,23 +18,53 @@ namespace fluXis.Game.Graphics.Background;
 public partial class BackgroundVideo : CompositeDrawable
 {
     [Resolved]
-    private GlobalClock clock { get; set; }
-
-    [Resolved]
     private Storage storage { get; set; }
+
+    public bool ShowDim { get; init; } = true;
 
     public RealmMap Map { get; set; }
     public MapInfo Info { get; set; }
 
     public bool IsPlaying { get; private set; }
 
+    private Container videoContainer;
     private Video video;
+    private Box dim;
 
-    public override bool RemoveWhenNotAlive => false;
+    private Bindable<float> backgroundDim;
 
-    public BackgroundVideo()
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
     {
         RelativeSizeAxes = Axes.Both;
+        AlwaysPresent = true;
+        Alpha = 0;
+
+        backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
+
+        InternalChildren = new Drawable[]
+        {
+            videoContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
+            dim = new Box
+            {
+                Colour = Colour4.Black,
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0
+            }
+        };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        if (ShowDim)
+            backgroundDim.BindValueChanged(v => dim.FadeTo(v.NewValue, 400, Easing.OutQuint), true);
     }
 
     public void LoadVideo()
@@ -50,7 +82,8 @@ public partial class BackgroundVideo : CompositeDrawable
                     return;
                 }
 
-                video.FadeOut(500).Expire();
+                this.FadeOut(500);
+                video.Delay(500).Expire();
                 Logger.Log("Video is loaded, fading out.", LoggingTarget.Runtime, LogLevel.Debug);
                 video = null;
             });
@@ -74,12 +107,11 @@ public partial class BackgroundVideo : CompositeDrawable
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fill,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Alpha = 0
+                    Origin = Anchor.Centre
                 }, loadedVideo =>
                 {
                     Logger.Log("Video loaded, adding to scene tree.", LoggingTarget.Runtime, LogLevel.Debug);
-                    InternalChild = loadedVideo;
+                    videoContainer.Child = loadedVideo;
                 });
             });
         }
@@ -95,14 +127,14 @@ public partial class BackgroundVideo : CompositeDrawable
 
         if (video is not { IsLoaded: true }) return;
 
-        if (clock.CurrentTime > video.Duration)
+        if (Clock.CurrentTime > video.Duration)
         {
-            video.FadeOut(500);
+            this.FadeOut(500);
             return;
         }
 
         if (IsPlaying)
-            video.PlaybackPosition = clock.CurrentTime;
+            video.PlaybackPosition = Clock.CurrentTime;
     }
 
     public void Stop()
@@ -118,7 +150,7 @@ public partial class BackgroundVideo : CompositeDrawable
 
         IsPlaying = false;
         Logger.Log("Stopping video.", LoggingTarget.Runtime, LogLevel.Debug);
-        video.FadeOut(500);
+        this.FadeOut(500);
     }
 
     public void Start()
@@ -134,6 +166,6 @@ public partial class BackgroundVideo : CompositeDrawable
 
         IsPlaying = true;
         Logger.Log("Starting video.", LoggingTarget.Runtime, LogLevel.Debug);
-        video.FadeIn(500);
+        this.FadeIn(500);
     }
 }

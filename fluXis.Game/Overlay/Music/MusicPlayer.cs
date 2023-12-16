@@ -104,7 +104,9 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre
+                            Origin = Anchor.Centre,
+                            ShowDim = false,
+                            Clock = globalClock
                         },
                         new Container
                         {

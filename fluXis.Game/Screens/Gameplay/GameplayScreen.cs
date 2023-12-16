@@ -30,7 +30,6 @@ using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -98,6 +97,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public MapEvents MapEvents { get; private set; }
     public List<IMod> Mods { get; }
 
+    private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
     public Playfield Playfield { get; private set; }
     private Container hud { get; set; }
@@ -111,6 +111,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private Bindable<HudVisibility> hudVisibility;
     private Bindable<float> backgroundDim;
     private Bindable<float> backgroundBlur;
+    private Bindable<bool> bgaEnabled;
 
     private bool hudVisible = true;
 
@@ -130,12 +131,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config, ISampleStore samples)
+    private void load(FluXisConfig config)
     {
         dependencies.CacheAs(this);
 
         this.config = config;
         hudVisibility = config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
+        backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
+        backgroundBlur = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
+        bgaEnabled = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
         Map = LoadMap();
 
@@ -148,7 +152,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         MapEvents = Map.GetMapEvents();
         Map.Sort();
         getKeyCountFromEvents();
-        backgrounds.SetVideoBackground(RealmMap, Map);
 
         JudgementProcessor.AddDependants(new JudgementDependant[]
         {
@@ -164,9 +167,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
         Input = new GameplayInput(this, RealmMap.KeyCount);
-
-        backgroundBlur = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
-        backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -198,6 +198,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
+                        backgroundVideo = new BackgroundVideo
+                        {
+                            Clock = GameplayClock,
+                            Map = RealmMap,
+                            Info = Map
+                        },
                         clockContainer,
                         new KeyOverlay()
                     }
@@ -222,6 +228,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 new PauseMenu()
             }
         };
+
+        backgroundVideo.LoadVideo();
     }
 
     protected override void LoadComplete()
@@ -241,6 +249,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             if (HealthProcessor.OnComplete())
                 End();
         };
+
+        bgaEnabled.BindValueChanged(e =>
+        {
+            if (e.NewValue)
+                backgroundVideo.Start();
+            else
+                backgroundVideo.Stop();
+        }, true);
     }
 
     private void updateRpc()
@@ -280,8 +296,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (GameplayClock.CurrentTime >= 0 && starting)
         {
             starting = false;
-            backgrounds.StartVideo();
-            // gameplayClock.Volume = 1; // just in case it was muted
+
+            if (bgaEnabled.Value)
+                backgroundVideo.Start();
         }
 
         var hudWasVisible = hudVisible;
@@ -357,7 +374,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         fadeOut();
-        backgrounds.StopVideo();
         ValidForResume = false;
     }
 
@@ -382,7 +398,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
 
         GameplayClock.Stop();
-        backgrounds.StopVideo();
         Samples.CancelFail();
 
         return base.OnExiting(e);

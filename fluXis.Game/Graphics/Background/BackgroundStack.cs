@@ -3,7 +3,6 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Map;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -21,14 +20,12 @@ public partial class BackgroundStack : CompositeDrawable
 
     private Container backgroundContainer;
     private ParallaxContainer parallaxContainer;
-    private BackgroundVideo backgroundVideo;
     private Box swipeAnimation;
     private Box backgroundDim;
     private string currentBackground;
     private float blur;
 
     private Bindable<bool> backgroundPulse;
-    private Bindable<bool> backgroundVideoEnabled;
 
     public float Zoom { set => backgroundContainer.ScaleTo(value, 1000, Easing.OutQuint); }
     public float ParallaxStrength { set => parallaxContainer.Strength = value; }
@@ -37,7 +34,6 @@ public partial class BackgroundStack : CompositeDrawable
     private void load(FluXisConfig config)
     {
         backgroundPulse = config.GetBindable<bool>(FluXisSetting.BackgroundPulse);
-        backgroundVideoEnabled = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
@@ -54,7 +50,6 @@ public partial class BackgroundStack : CompositeDrawable
                     Origin = Anchor.Centre
                 }
             },
-            backgroundVideo = new BackgroundVideo(),
             backgroundDim = new Box
             {
                 Colour = Colour4.Black,
@@ -83,14 +78,6 @@ public partial class BackgroundStack : CompositeDrawable
         {
             if (!e.NewValue)
                 this.ScaleTo(1, 500, Easing.OutQuint);
-        }, true);
-
-        backgroundVideoEnabled.BindValueChanged(e =>
-        {
-            if (e.NewValue)
-                backgroundVideo.FadeIn(200);
-            else
-                backgroundVideo.FadeOut(200);
         }, true);
     }
 
@@ -156,23 +143,6 @@ public partial class BackgroundStack : CompositeDrawable
         else currentBackground = null;
 
         this.RunOnUpdate(Scheduler, () => backgroundContainer.Add(new Background(map) { Blur = blur }));
-    }
-
-    public void SetVideoBackground(RealmMap map, MapInfo info)
-    {
-        backgroundVideo.Map = map;
-        backgroundVideo.Info = info;
-        backgroundVideo.LoadVideo();
-    }
-
-    public void StartVideo()
-    {
-        backgroundVideo.Start();
-    }
-
-    public void StopVideo()
-    {
-        backgroundVideo.Stop();
     }
 
     public void SwipeAnimation()
