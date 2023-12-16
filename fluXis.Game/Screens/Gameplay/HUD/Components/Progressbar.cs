@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Utils;
@@ -67,7 +68,7 @@ public partial class Progressbar : GameplayHUDComponent
             percent = 1;
 
         bar.Progress = percent;
-        percentText.Text = $"{(int)(percent * 100)}%";
+        percentText.Text = $"{(int)Math.Clamp(percent * 100, 0, 100)}%";
         currentTimeText.Text = TimeUtils.Format(currentTime, false);
         timeLeftText.Text = TimeUtils.Format(timeLeft, false);
 
