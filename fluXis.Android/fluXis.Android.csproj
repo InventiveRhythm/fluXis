@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-android</TargetFramework>
+    <TargetFramework>net7.0-android</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>fluXis.Android</RootNamespace>
     <AssemblyName>fluXis.Android</AssemblyName>
