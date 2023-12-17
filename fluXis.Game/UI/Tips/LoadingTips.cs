@@ -9,6 +9,9 @@ namespace fluXis.Game.UI.Tips;
 
 public static class LoadingTips
 {
+    private const string tip_file = "cache/tips.json";
+    private const string online_path = "https://assets.flux.moe/tips.json";
+
     private static string[] tips = { "super awesome tip" };
 
     public static string RandomTip => tips[RNG.Next(0, tips.Length)];
@@ -23,11 +26,14 @@ public static class LoadingTips
     {
         try
         {
-            if (!storage.Exists("tips.json")) return;
+            if (storage.Exists("tips.json"))
+                storage.Move("tips.json", tip_file);
+
+            if (!storage.Exists(tip_file)) return;
 
             Logger.Log("Loading tips from local storage", LoggingTarget.Runtime, LogLevel.Debug);
 
-            var stream = storage.GetStream("tips.json");
+            var stream = storage.GetStream(tip_file);
             using var sr = new StreamReader(stream);
             var json = sr.ReadToEnd();
             tips = JsonConvert.DeserializeObject<string[]>(json);
@@ -45,14 +51,14 @@ public static class LoadingTips
         try
         {
             Logger.Log("Downloading tips from web...", LoggingTarget.Network, LogLevel.Debug);
-            var req = new WebRequest("https://fluxis.foxes4life.net/tips.json");
+            var req = new WebRequest(online_path);
             await req.PerformAsync();
             var json = req.GetResponseString();
             tips = JsonConvert.DeserializeObject<string[]>(json);
 
             Logger.Log("Saving tips to local storage...", LoggingTarget.Network, LogLevel.Debug);
 
-            var path = storage.GetFullPath("tips.json");
+            var path = storage.GetFullPath(tip_file);
             await File.WriteAllTextAsync(path, json);
 
             Logger.Log("Tips saved to local storage", LoggingTarget.Network, LogLevel.Debug);

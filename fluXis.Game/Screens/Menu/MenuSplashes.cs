@@ -9,6 +9,9 @@ namespace fluXis.Game.Screens.Menu;
 
 public static class MenuSplashes
 {
+    private const string splash_file = "cache/splashes.json";
+    private const string online_path = "https://assets.flux.moe/splashes.json";
+
     private static string[] splashes =
     {
         "Literally 1984.",
@@ -36,11 +39,14 @@ public static class MenuSplashes
     {
         try
         {
-            if (!storage.Exists("splashes.json")) return;
+            if (storage.Exists("splashes.json"))
+                storage.Move("splashes.json", splash_file);
+
+            if (!storage.Exists(splash_file)) return;
 
             Logger.Log("Loading splashes from local storage");
 
-            var stream = storage.GetStream("splashes.json");
+            var stream = storage.GetStream(splash_file);
             using var sr = new StreamReader(stream);
             var json = sr.ReadToEnd();
             splashes = JsonConvert.DeserializeObject<string[]>(json);
@@ -58,14 +64,14 @@ public static class MenuSplashes
         try
         {
             Logger.Log("Downloading splashes from web", LoggingTarget.Network);
-            var req = new WebRequest("https://fluxis.foxes4life.net/splashes.json");
+            var req = new WebRequest(online_path);
             await req.PerformAsync();
             var json = req.GetResponseString();
             splashes = JsonConvert.DeserializeObject<string[]>(json);
 
             Logger.Log("Saving splashes to local storage", LoggingTarget.Network);
 
-            var path = storage.GetFullPath("splashes.json");
+            var path = storage.GetFullPath(splash_file);
             await File.WriteAllTextAsync(path, json);
 
             Logger.Log("Splashes saved to local storage", LoggingTarget.Network);
