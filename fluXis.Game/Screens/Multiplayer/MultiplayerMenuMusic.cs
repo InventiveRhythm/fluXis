@@ -23,13 +23,13 @@ public partial class MultiplayerMenuMusic : Container
     {
         InternalChildren = new[]
         {
-            baseTrack = trackStore.Get("Menu/Multiplayer/base.wav"),
-            rankedMain = trackStore.Get("Menu/Multiplayer/ranked-main.wav"),
-            rankedPrepare = trackStore.Get("Menu/Multiplayer/ranked-prepare.wav"),
-            lobbyList = trackStore.Get("Menu/Multiplayer/lobby-list.wav"),
-            lobbyPrepare = trackStore.Get("Menu/Multiplayer/lobby-prepare.wav"),
-            win = trackStore.Get("Menu/Multiplayer/win.wav"),
-            lose = trackStore.Get("Menu/Multiplayer/lose.wav")
+            baseTrack = trackStore.Get("Menu/Multiplayer/base.mp3"),
+            rankedMain = trackStore.Get("Menu/Multiplayer/ranked-main.mp3"),
+            rankedPrepare = trackStore.Get("Menu/Multiplayer/ranked-prepare.mp3"),
+            lobbyList = trackStore.Get("Menu/Multiplayer/lobby-list.mp3"),
+            lobbyPrepare = trackStore.Get("Menu/Multiplayer/lobby-prepare.mp3"),
+            win = trackStore.Get("Menu/Multiplayer/win.mp3"),
+            lose = trackStore.Get("Menu/Multiplayer/lose.mp3")
         };
     }
 
