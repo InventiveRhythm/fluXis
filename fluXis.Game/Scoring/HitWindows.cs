@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Utils;
 
 namespace fluXis.Game.Scoring;
 
@@ -12,21 +13,22 @@ public class HitWindows
     public virtual Judgement ComboBreakJudgement => Judgement.Miss;
     public virtual Judgement Lowest => Judgement.Miss;
 
-    protected virtual Timing[] Timings { get; } =
-    {
-        new(Judgement.Flawless, 16),
-        new(Judgement.Perfect, 40),
-        new(Judgement.Great, 73),
-        new(Judgement.Alright, 103),
-        new(Judgement.Okay, 127),
-        new(Judgement.Miss, 164)
-    };
+    protected Timing[] Timings { get; set; }
 
-    public HitWindows(float multiplier = 1)
+    public HitWindows(float difficulty, float multiplier)
     {
-        for (var i = 0; i < Timings.Length; ++i)
-            Timings[i].Milliseconds *= multiplier;
+        Timings = CreateTimings(difficulty, multiplier);
     }
+
+    protected virtual Timing[] CreateTimings(float difficulty, float multiplier) => new Timing[]
+    {
+        new(Judgement.Flawless, difficulty, multiplier, 22, 19, 13),
+        new(Judgement.Perfect, difficulty, multiplier, 64, 49, 34),
+        new(Judgement.Great, difficulty, multiplier, 97, 82, 67),
+        new(Judgement.Alright, difficulty, multiplier, 127, 112, 97),
+        new(Judgement.Okay, difficulty, multiplier, 151, 136, 121),
+        new(Judgement.Miss, difficulty, multiplier, 188, 173, 158)
+    };
 
     public Judgement JudgementFor(double milliseconds)
     {
@@ -48,12 +50,12 @@ public class HitWindows
 
 public struct Timing
 {
-    public readonly Judgement Judgement;
-    public float Milliseconds;
+    public Judgement Judgement { get; }
+    public float Milliseconds { get; }
 
-    public Timing(Judgement judgement, float milliseconds)
+    public Timing(Judgement judgement, float difficulty, float multiplier, float min, float mid, float max)
     {
         Judgement = judgement;
-        Milliseconds = milliseconds;
+        Milliseconds = MapUtils.GetDifficulty(Math.Clamp(difficulty, 1, 10), min, mid, max) * multiplier;
     }
 }

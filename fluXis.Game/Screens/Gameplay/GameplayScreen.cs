@@ -86,8 +86,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public ScoreProcessor ScoreProcessor { get; private set; }
 
     public GameplayInput Input { get; private set; }
-    public HitWindows HitWindows { get; }
-    public ReleaseWindows ReleaseWindows { get; }
+    public HitWindows HitWindows { get; private set; }
+    public ReleaseWindows ReleaseWindows { get; private set; }
 
     public GameplayLoader Loader { get; set; }
     public Action OnRestart { get; set; }
@@ -124,8 +124,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Rate = ((RateMod)Mods.Find(m => m is RateMod))?.Rate ?? 1f;
         Mods.RemoveAll(m => m is PausedMod);
-        HitWindows = new HitWindows(Rate);
-        ReleaseWindows = new ReleaseWindows(Rate);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
@@ -152,6 +150,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         MapEvents = Map.GetMapEvents();
         Map.Sort();
         getKeyCountFromEvents();
+
+        HitWindows = new HitWindows(Map.AccuracyDifficulty, Rate);
+        ReleaseWindows = new ReleaseWindows(Map.AccuracyDifficulty, Rate);
 
         JudgementProcessor.AddDependants(new JudgementDependant[]
         {

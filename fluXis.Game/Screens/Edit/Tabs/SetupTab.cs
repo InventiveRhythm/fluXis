@@ -59,6 +59,7 @@ public partial class SetupTab : EditorTab
                                     CoverChanged = () => cover.MapSet = Screen.Map.MapSet
                                 },
                                 new MetadataSetupSection(values.MapInfo.Metadata),
+                                new DifficultySetupSection(),
                                 new KeyModeSetupSection(Screen.Map)
                             }
                         }

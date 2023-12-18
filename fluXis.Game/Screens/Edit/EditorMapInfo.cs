@@ -43,6 +43,7 @@ public class EditorMapInfo : MapInfo
             TimingPoints = info.TimingPoints,
             ScrollVelocities = info.ScrollVelocities,
             InitialKeyCount = info.InitialKeyCount,
+            AccuracyDifficulty = info.AccuracyDifficulty,
             MapEvents = new EditorMapEvents
             {
                 LaneSwitchEvents = events.LaneSwitchEvents ?? new List<LaneSwitchEvent>(),

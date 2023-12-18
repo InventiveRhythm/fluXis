@@ -21,6 +21,8 @@ public class MapInfo
     public List<TimingPointInfo> TimingPoints { get; set; }
     public List<ScrollVelocityInfo> ScrollVelocities { get; set; }
 
+    public float AccuracyDifficulty { get; set; } = 8;
+
     [JsonIgnore]
     public float StartTime => HitObjects[0].Time;
 
@@ -154,6 +156,7 @@ public class MapInfo
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
             InitialKeyCount = InitialKeyCount,
+            AccuracyDifficulty = AccuracyDifficulty,
             Map = Map
         };
     }

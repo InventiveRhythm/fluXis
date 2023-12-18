@@ -82,4 +82,16 @@ public static class MapUtils
 
     public static string GetHash(string input) => BitConverter.ToString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(input))).Replace("-", "").ToLower();
     public static string GetHash(Stream input) => BitConverter.ToString(SHA256.Create().ComputeHash(input)).Replace("-", "").ToLower();
+
+    public static float GetDifficulty(float difficulty, float min, float mid, float max)
+    {
+        if (difficulty > 5)
+            return mid + (max - mid) * getDifficulty(difficulty);
+        if (difficulty < 5)
+            return mid + (mid - min) * getDifficulty(difficulty);
+
+        return mid;
+    }
+
+    private static float getDifficulty(float difficulty) => (difficulty - 5) / 5;
 }
