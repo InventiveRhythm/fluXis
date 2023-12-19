@@ -71,6 +71,10 @@ public partial class MenuScreen : FluXisScreen
     private MenuPlayButton playButton;
     private int mapCount;
 
+    private MenuButton multiButton;
+    private MenuButton rankingButton;
+    private MenuButton browseButton;
+
     private bool pressedStart;
     private Sample menuStart;
     private double inactivityTime;
@@ -185,7 +189,7 @@ public partial class MenuScreen : FluXisScreen
                                 Width = 90,
                                 Y = 80
                             },
-                            new MenuButton
+                            multiButton = new MenuButton
                             {
                                 Text = "Multiplayer",
                                 Description = "Play against other players",
@@ -195,7 +199,7 @@ public partial class MenuScreen : FluXisScreen
                                 X = 110,
                                 Y = 80
                             },
-                            new MenuButton
+                            rankingButton = new MenuButton
                             {
                                 Text = "Ranking",
                                 Description = "Check online leaderboards",
@@ -212,7 +216,7 @@ public partial class MenuScreen : FluXisScreen
                                 Width = 90,
                                 Y = 160
                             },
-                            new MenuButton
+                            browseButton = new MenuButton
                             {
                                 Text = "Browse",
                                 Description = "Download community-made maps",
@@ -275,6 +279,22 @@ public partial class MenuScreen : FluXisScreen
 
         mapCount = maps.MapSets.Count;
         maps.CollectionUpdated += () => Schedule(() => this.TransformTo(nameof(mapCount), maps.MapSets.Count, 500, Easing.OutQuint));
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        updateButtons();
+        fluxel.OnUserChanged += _ => Schedule(updateButtons);
+    }
+
+    private void updateButtons()
+    {
+        var enabled = fluxel.LoggedInUser != null;
+        multiButton.Enabled.Value = enabled;
+        rankingButton.Enabled.Value = enabled;
+        browseButton.Enabled.Value = enabled;
     }
 
     private void continueToPlay() => this.Push(new SelectScreen());

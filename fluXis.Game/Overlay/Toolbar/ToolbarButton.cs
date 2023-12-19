@@ -1,7 +1,7 @@
-using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Text;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,16 +13,18 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarButton : Container, IHasDrawableTooltip
+public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
 {
     public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
     public string Title { get; init; }
     public string Description { get; init; }
-
-    public Action Action;
+    public bool RequireLogin { get; init; }
 
     [Resolved]
     private UISamples samples { get; set; }
+
+    [Resolved]
+    private Fluxel fluxel { get; set; }
 
     private Box hover;
     private Box flash;
@@ -59,8 +61,24 @@ public partial class ToolbarButton : Container, IHasDrawableTooltip
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1 : .2f, 200), true);
+
+        if (!RequireLogin) return;
+
+        fluxel.OnUserChanged += _ => updateState();
+        updateState();
+    }
+
+    private void updateState() => Enabled.Value = fluxel.LoggedInUser != null;
+
     protected override bool OnHover(HoverEvent e)
     {
+        if (!Enabled.Value) return true;
+
         hover.FadeTo(.2f, 50);
         samples.Hover();
         return true;
@@ -73,14 +91,24 @@ public partial class ToolbarButton : Container, IHasDrawableTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
-        Action?.Invoke();
-        samples.Click();
-        return true;
+        if (Enabled.Value)
+            flash.FadeOutFromOne(1000, Easing.OutQuint);
+
+        samples.Click(!Enabled.Value);
+        return base.OnClick(e);
     }
 
     public Drawable GetTooltip()
     {
+        if (!Enabled.Value)
+        {
+            return new FluXisSpriteText
+            {
+                Text = "Log in to use this feature.",
+                Margin = new MarginPadding { Horizontal = 10, Vertical = 6 }
+            };
+        }
+
         return new FillFlowContainer
         {
             AutoSizeAxes = Axes.Both,

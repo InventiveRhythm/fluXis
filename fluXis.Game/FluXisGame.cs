@@ -185,7 +185,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 Settings.ToggleVisibility();
                 return true;
 
-            case FluXisGlobalKeybind.ToggleDashboard:
+            case FluXisGlobalKeybind.ToggleDashboard when Fluxel.LoggedInUser != null:
                 Dashboard.ToggleVisibility();
                 return true;
 

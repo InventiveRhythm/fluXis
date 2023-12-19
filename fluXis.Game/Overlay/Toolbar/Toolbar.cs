@@ -109,28 +109,32 @@ public partial class Toolbar : Container
                                 Title = "Chat",
                                 Description = "Talk to other players.",
                                 Icon = FontAwesome.Solid.Comment,
-                                Action = chat.Show
+                                Action = chat.Show,
+                                RequireLogin = true
                             },
                             new ToolbarButton
                             {
                                 Title = "Ranking",
                                 Description = "See the top players.",
                                 Icon = FontAwesome.Solid.Trophy,
-                                Action = () => goToScreen(new Rankings())
+                                Action = () => goToScreen(new Rankings()),
+                                RequireLogin = true
                             },
                             new ToolbarButton
                             {
                                 Title = "Download Maps",
                                 Description = "Download new maps.",
                                 Icon = FontAwesome.Solid.Download,
-                                Action = () => goToScreen(new MapBrowser())
+                                Action = () => goToScreen(new MapBrowser()),
+                                RequireLogin = true
                             },
                             new ToolbarButton
                             {
                                 Title = "Dashboard",
                                 Description = "See news, updates, and more.",
                                 Icon = FontAwesome.Solid.ChartLine,
-                                Action = dashboard.ToggleVisibility
+                                Action = dashboard.ToggleVisibility,
+                                RequireLogin = true
                             },
                             new ToolbarButton
                             {
@@ -176,10 +180,7 @@ public partial class Toolbar : Container
     private void goToScreen(IScreen screen)
     {
         if (game.ScreenStack.CurrentScreen is not null && game.ScreenStack.CurrentScreen.GetType() == screen.GetType())
-        {
-            notifications.SendText("You are already on this screen.");
             return;
-        }
 
         if (game.ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false }) return;
 

@@ -1,8 +1,8 @@
-using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,12 +13,13 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
-public partial class MenuButton : Container
+public partial class MenuButton : ClickableContainer, IHasTextTooltip
 {
-    public Action Action { get; set; }
-    public string Text { get; set; }
-    public string Description { get; set; }
-    public IconUsage Icon { get; set; }
+    public string Tooltip => Enabled.Value ? "" : "Log in to use this feature.";
+
+    public string Text { get; init; }
+    public string Description { get; init; }
+    public IconUsage Icon { get; init; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -26,6 +27,7 @@ public partial class MenuButton : Container
     private Container content;
     private Box hover;
     private Box flash;
+    private Box dim;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -92,14 +94,28 @@ public partial class MenuButton : Container
                             Text = Description
                         }
                     }
+                },
+                dim = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background1
                 }
             }
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Enabled.BindValueChanged(e => dim.FadeTo(e.NewValue ? 0 : .8f, 200), true);
+    }
+
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        content.ScaleTo(.95f, 1000, Easing.OutQuint);
+        if (Enabled.Value)
+            content.ScaleTo(.95f, 1000, Easing.OutQuint);
+
         return true;
     }
 
@@ -110,8 +126,12 @@ public partial class MenuButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
-        samples.Hover();
+        if (Enabled.Value)
+        {
+            hover.FadeTo(.2f, 50);
+            samples.Hover();
+        }
+
         return true;
     }
 
@@ -122,10 +142,11 @@ public partial class MenuButton : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
-        Action?.Invoke();
-        samples.Click();
+        samples.Click(!Enabled.Value);
 
-        return true;
+        if (Enabled.Value)
+            flash.FadeOutFromOne(1000, Easing.OutQuint);
+
+        return base.OnClick(e);
     }
 }
