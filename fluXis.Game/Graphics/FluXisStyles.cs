@@ -15,6 +15,13 @@ public static class FluXisStyles
     public static EdgeEffectParameters ShadowLarge => createShadow(20, 2);
     public static EdgeEffectParameters ShadowLargeNoOffset => createShadow(20, 0);
 
+    public static EdgeEffectParameters SnowShadow => new()
+    {
+        Type = EdgeEffectType.Shadow,
+        Colour = Colour4.White.Opacity(.5f),
+        Radius = 10
+    };
+
     private static EdgeEffectParameters createShadow(int radius, float offset) => new()
     {
         Type = EdgeEffectType.Shadow,

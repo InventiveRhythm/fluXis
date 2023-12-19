@@ -32,6 +32,7 @@ using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
+using fluXis.Game.UI;
 using fluXis.Game.UI.Tips;
 using fluXis.Game.Updater;
 using fluXis.Resources;
@@ -55,6 +56,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     // the screen scaling for all components including the test browser and framework overlays.
 
     private DependencyContainer dependencies;
+
+    public Vector2 ContentSize => content.DrawSize;
 
     private Vector2 targetDrawSize => new(1920, 1080);
     private DrawSizePreservingFillContainer drawSizePreserver;
@@ -92,6 +95,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private ImportManager importManager;
 
     protected Bindable<UserActivity> Activity { get; } = new();
+    public Season CurrentSeason { get; private set; }
 
     public virtual Drawable Overlay { get; set; }
 
@@ -113,6 +117,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         initFonts();
 
         MapFiles.Initialize(storage.GetStorageForDirectory("maps"));
+
+        CurrentSeason = getSeason();
 
         var endpoint = getApiEndpoint();
 
@@ -209,6 +215,19 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     public void PerformUpdateCheck(bool silent, bool forceUpdate = false) => Task.Run(() => CreateUpdateManager()?.Perform(silent, forceUpdate));
+
+    private Season getSeason()
+    {
+        var date = DateTime.Now;
+
+        return date switch
+        {
+            { Month: 7 } or { Month: 8 } or { Month: 9 } => Season.Summer,
+            { Month: 10, Day: >= 18 } => Season.Halloween,
+            { Month: 12 } or { Month: 1 } => Season.Winter,
+            _ => Season.Normal
+        };
+    }
 
     private APIEndpointConfig getApiEndpoint()
     {

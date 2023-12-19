@@ -14,10 +14,12 @@ using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.NowPlaying;
+using fluXis.Game.Screens.Menu.UI.Snow;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Multiplayer;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
+using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -65,6 +67,8 @@ public partial class MenuScreen : FluXisScreen
     private FluXisSpriteText pressAnyKeyText;
     private MenuVisualizer visualizer;
 
+    private bool shouldSnow => Game.CurrentSeason == Season.Winter;
+
     private Container textContainer;
     private Container buttonContainer;
     private FillFlowContainer linkContainer;
@@ -95,7 +99,8 @@ public partial class MenuScreen : FluXisScreen
             {
                 Child = visualizer = new MenuVisualizer(),
                 RelativeSizeAxes = Axes.Both,
-                Strength = .1f
+                Strength = .1f,
+                Alpha = shouldSnow ? 0 : 1
             },
             new Container
             {
@@ -278,6 +283,13 @@ public partial class MenuScreen : FluXisScreen
                         }
                     }
                 }
+            },
+            new ParallaxContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = new MenuSnow(),
+                Strength = .05f,
+                Alpha = shouldSnow ? 1 : 0
             }
         };
 
@@ -401,8 +413,10 @@ public partial class MenuScreen : FluXisScreen
         clock.Start();
 
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
-        visualizer.FadeInFromZero(2000);
         inactivityTime = 0;
+
+        if (!shouldSnow)
+            visualizer.FadeInFromZero(2000);
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
