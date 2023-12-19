@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -56,6 +57,9 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private FluXisConfig config { get; set; }
 
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
@@ -378,10 +382,13 @@ public partial class MenuScreen : FluXisScreen
 
     public void PreEnter()
     {
-        // load a random map
-        maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
+        if (config.Get<bool>(FluXisSetting.IntroTheme))
+            maps.CurrentMap = maps.CreateBuiltinMap(MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
+        else // if diabled, load a random map
+            maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
+
         clock.Stop();
-        clock.Seek(maps.CurrentMap.Metadata.PreviewTime);
+        clock.Seek(maps.CurrentMap?.Metadata.PreviewTime ?? 0);
         clock.Volume = 0;
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
@@ -389,12 +396,9 @@ public partial class MenuScreen : FluXisScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        if (maps.MapSets.Count > 0)
-        {
-            clock.FadeIn(500);
-            clock.Seek(maps.CurrentMapSet.Metadata.PreviewTime);
-            clock.Start();
-        }
+        clock.FadeIn(500);
+        clock.Seek(maps.CurrentMapSet?.Metadata?.PreviewTime ?? 0);
+        clock.Start();
 
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
         visualizer.FadeInFromZero(2000);

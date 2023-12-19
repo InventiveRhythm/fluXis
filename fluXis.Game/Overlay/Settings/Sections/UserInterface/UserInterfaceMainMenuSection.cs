@@ -18,6 +18,12 @@ public partial class UserInterfaceMainMenuSection : SettingsSubSection
         {
             new SettingsToggle
             {
+                Label = "fluXis intro music",
+                Description = "Play the fluXis intro music on startup. Disabling this will play a random song from your library instead.",
+                Bindable = Config.GetBindable<bool>(FluXisSetting.IntroTheme)
+            },
+            new SettingsToggle
+            {
                 Label = "Bubble Visualizer",
                 Description = "Enable the bubble visualizer on the main menu.",
                 Bindable = Config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer)

@@ -242,7 +242,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     protected override void LoadComplete()
     {
         if (mapStore.CurrentMap.Hash == "dummy" && mapStore.MapSetsSorted.Any())
-            mapStore.Select(mapStore.MapSetsSorted.First().LowestDifficulty, true);
+            mapStore.Select(mapStore.GetRandom()?.LowestDifficulty, true);
 
         Task.Run(() =>
         {

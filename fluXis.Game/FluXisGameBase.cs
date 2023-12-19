@@ -43,6 +43,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game;
@@ -291,7 +292,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         if (MapStore.MapSets.Count <= 0)
             return;
 
-        int index = MapStore.MapSets.IndexOf(MapStore.CurrentMapSet);
+        var index = MapStore.CurrentMap?.Hash == "dummy"
+            ? RNG.Next(0, MapStore.MapSets.Count)
+            : MapStore.MapSets.IndexOf(MapStore.CurrentMapSet);
 
         index += change;
 

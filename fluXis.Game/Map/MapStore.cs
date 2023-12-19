@@ -9,6 +9,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
+using fluXis.Game.Map.Builtin.Roundhouse;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -151,7 +152,7 @@ public partial class MapStore : Component
         clock.Looping = loop;
 
         if (loop)
-            clock.RestartPoint = preview ? map.Metadata.PreviewTime : 0;
+            clock.RestartPoint = preview ? map?.Metadata.PreviewTime ?? 0 : 0;
     }
 
     public void AddMapSet(RealmMapSet mapSet, bool notify = true)
@@ -575,5 +576,22 @@ public partial class MapStore : Component
         });
 
         return set.Maps.FirstOrDefault();
+    }
+
+    public RealmMapSet CreateBuiltinMap(BuiltinMap map)
+    {
+        var set = map switch
+        {
+            BuiltinMap.Roundhouse => new RoundhouseMapSet(),
+            _ => throw new ArgumentOutOfRangeException(nameof(map), map, null)
+        };
+
+        set.Resources = new MapResourceProvider { TrackStore = audio.Tracks };
+        return set;
+    }
+
+    public enum BuiltinMap
+    {
+        Roundhouse
     }
 }
