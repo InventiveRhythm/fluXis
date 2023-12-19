@@ -37,6 +37,7 @@ public partial class MenuScreen : FluXisScreen
 {
     public override float Zoom => pressedStart ? 1f : 1.2f;
     public override bool ShowToolbar => pressedStart;
+    public override bool AutoPlayNext => true;
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -400,8 +401,6 @@ public partial class MenuScreen : FluXisScreen
     protected override void Update()
     {
         playButton.Description = $"{mapCount} maps loaded";
-
-        // if (clock.Finished) Game.NextSong();
 
         inactivityTime += Time.Elapsed;
 

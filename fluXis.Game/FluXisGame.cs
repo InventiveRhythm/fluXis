@@ -11,6 +11,7 @@ using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Image;
 using fluXis.Game.Overlay.Volume;
+using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Warning;
 using JetBrains.Annotations;
@@ -251,6 +252,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             overlayDim.Alpha = 0;
             buffer.BlurSigma = new Vector2(0);
         }
+
+        if (GlobalClock.Finished && ScreenStack.CurrentScreen is FluXisScreen { AutoPlayNext: true })
+            NextSong();
     }
 
     public override void Exit()

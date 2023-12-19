@@ -30,6 +30,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 {
     public override float BackgroundDim => 0.75f;
     public override float BackgroundBlur => 0.5f;
+    public override bool AutoPlayNext => true;
     public override UserActivity InitialActivity => new UserActivity.BrowsingMaps();
 
     [Resolved]

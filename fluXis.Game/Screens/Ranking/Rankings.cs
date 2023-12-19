@@ -25,6 +25,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
     public override float Zoom => 1.4f;
     public override float BackgroundDim => .8f;
     public override float BackgroundBlur => .5f;
+    public override bool AutoPlayNext => true;
 
     [Resolved]
     private Fluxel fluxel { get; set; }
