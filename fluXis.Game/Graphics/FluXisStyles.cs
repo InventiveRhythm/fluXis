@@ -18,7 +18,7 @@ public static class FluXisStyles
     public static EdgeEffectParameters SnowShadow => new()
     {
         Type = EdgeEffectType.Shadow,
-        Colour = Colour4.White.Opacity(.5f),
+        Colour = Colour4.White,
         Radius = 10
     };
 
