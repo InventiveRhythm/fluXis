@@ -69,7 +69,7 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
 
         if (!RequireLogin) return;
 
-        fluxel.OnUserChanged += _ => updateState();
+        fluxel.OnUserChanged += _ => Schedule(updateState);
         updateState();
     }
 
