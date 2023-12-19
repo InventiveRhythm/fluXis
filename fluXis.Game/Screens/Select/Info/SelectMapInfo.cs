@@ -103,7 +103,6 @@ public partial class SelectMapInfo : GridContainer
                                             {
                                                 RelativeSizeAxes = Axes.X,
                                                 FontSize = 60,
-                                                Text = "No Map Selected",
                                                 Truncate = true,
                                                 Shadow = true,
                                                 Anchor = Anchor.CentreLeft,
@@ -114,7 +113,6 @@ public partial class SelectMapInfo : GridContainer
                                             {
                                                 RelativeSizeAxes = Axes.X,
                                                 FontSize = 32,
-                                                Text = "Please select a map to view info",
                                                 Truncate = true,
                                                 Shadow = true,
                                                 Anchor = Anchor.CentreLeft,

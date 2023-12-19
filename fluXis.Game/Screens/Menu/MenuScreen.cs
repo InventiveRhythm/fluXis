@@ -359,13 +359,10 @@ public partial class MenuScreen : FluXisScreen
     public void PreEnter()
     {
         // load a random map
-        if (maps.MapSets.Count > 0)
-        {
-            maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault();
-            clock.Stop();
-            clock.Seek(maps.CurrentMap.Metadata.PreviewTime);
-            clock.Volume = 0;
-        }
+        maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
+        clock.Stop();
+        clock.Seek(maps.CurrentMap.Metadata.PreviewTime);
+        clock.Volume = 0;
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
     }

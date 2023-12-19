@@ -241,6 +241,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     protected override void LoadComplete()
     {
+        if (mapStore.CurrentMap.Hash == "dummy" && mapStore.MapSetsSorted.Any())
+            mapStore.Select(mapStore.MapSetsSorted.First().LowestDifficulty, true);
+
         Task.Run(() =>
         {
             Logger.Log("Loading sets...", LoggingTarget.Runtime, LogLevel.Debug);
@@ -356,7 +359,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         backgrounds.AddBackgroundFromMap(map);
         selectMapInfo.ChangeMap(map);
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
-        ScheduleAfterChildren(() => mapList.ScrollTo(lookup[mapStore.CurrentMapSet]));
+
+        if (lookup.TryGetValue(map.MapSet, out var entry))
+            ScheduleAfterChildren(() => mapList.ScrollTo(entry));
     }
 
     public void Accept()

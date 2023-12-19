@@ -201,8 +201,11 @@ public partial class MapStore : Component
         CollectionUpdated?.Invoke();
     }
 
+    [CanBeNull]
     public RealmMapSet GetRandom()
     {
+        if (MapSets.Count == 0) return null;
+
         Random rnd = new Random();
         return MapSets[rnd.Next(MapSets.Count)];
     }
@@ -552,5 +555,25 @@ public partial class MapStore : Component
     {
         MapSets.Remove(map);
         CollectionUpdated?.Invoke();
+    }
+
+    public static RealmMap CreateDummyMap()
+    {
+        var set = new RealmMapSet(new List<RealmMap>
+        {
+            new()
+            {
+                ID = default,
+                Hash = "dummy",
+                Metadata = new RealmMapMetadata
+                {
+                    Title = "please load a map!",
+                    Artist = "no maps available!"
+                },
+                Filters = new RealmMapFilters()
+            }
+        });
+
+        return set.Maps.FirstOrDefault();
     }
 }
