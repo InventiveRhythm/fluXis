@@ -27,6 +27,7 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
+using fluXis.Game.Plugins;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
@@ -92,6 +93,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private KeybindStore keybindStore;
     private LightController lightController;
     private SkinManager skinManager;
+    private PluginManager pluginManager;
     private ImportManager importManager;
 
     protected Bindable<UserActivity> Activity { get; } = new();
@@ -138,6 +140,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         LoadComponent(MapStore = new MapStore());
         dependencies.Cache(MapStore);
+
+        LoadComponent(pluginManager = new PluginManager());
+        dependencies.Cache(pluginManager);
 
         LoadComponent(importManager = new ImportManager());
         dependencies.Cache(importManager);

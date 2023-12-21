@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Import;
 using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Plugins;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -14,7 +15,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Plugins.Import;
 
 public partial class DrawableImportPlugin : Container
 {
-    public ImportPlugin Plugin { get; init; }
+    public Plugin Plugin { get; init; }
 
     [BackgroundDependencyLoader]
     private void load(FluXisRealm realm, ImportManager importManager)
@@ -79,11 +80,14 @@ public partial class DrawableImportPlugin : Container
             }
         };
 
-        if (Plugin.HasAutoImport)
+        // we are sure that the plugin has an importer because we only add plugins with importers
+        var importer = importManager.GetImporter(Plugin)!;
+
+        if (importer.SupportsAutoImport)
         {
             var autoImport = new Bindable<bool>
             {
-                Value = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == Plugin.ImporterId)?.AutoImport ?? false)
+                Value = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == importer.ID)?.AutoImport ?? false)
             };
 
             flow.Add(new SettingsDivider());
@@ -97,7 +101,7 @@ public partial class DrawableImportPlugin : Container
             {
                 realm.RunWrite(r =>
                 {
-                    var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == Plugin.ImporterId);
+                    var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == importer.ID);
 
                     if (info is not null)
                         info.AutoImport = e.NewValue;

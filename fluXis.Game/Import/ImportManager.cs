@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -11,7 +9,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
-using osu.Framework;
+using fluXis.Game.Plugins;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Graphics;
@@ -47,22 +45,66 @@ public partial class ImportManager : Component
     [Resolved]
     private FluXisGameBase game { get; set; }
 
-    private List<ImportPlugin> plugins { get; } = new();
-    public IEnumerable<ImportPlugin> Plugins => plugins.ToImmutableArray();
-
-    private Dictionary<ImportPlugin, MapImporter> importersByPlugin { get; } = new();
+    private Dictionary<Plugin, MapImporter> importersByPlugin { get; } = new();
     private Dictionary<MapImporter, List<RealmMapSet>> importedMaps { get; } = new();
-
     private List<MapImporter> importers { get; } = new();
-
-    public List<Task> TaskQueue { get; } = new();
+    private List<Task> taskQueue { get; } = new();
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(PluginManager plugins)
     {
-        loadFromAppDomain();
-        loadFromRunFolder();
-        loadFromPlugins();
+        foreach (var plugin in plugins.Plugins)
+        {
+            var importer = plugin.Importer;
+            if (importer == null) continue;
+
+            realm.RunWrite(r =>
+            {
+                var existing = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == importer.GameName);
+
+                if (existing == null)
+                {
+                    var id = getNewId(r);
+
+                    r.Add(new ImporterInfo
+                    {
+                        Name = importer.GameName,
+                        Color = importer.Color,
+                        Id = id
+                    });
+
+                    importer.ID = id;
+                    Logger.Log($"Assigned id {id} to importer {importer.GameName}");
+                }
+                else
+                {
+                    existing.Color = existing.Color;
+                    importer.ID = existing.Id;
+                    Logger.Log($"Importer {importer.GameName} has id {existing.Id}");
+                }
+            });
+
+            importersByPlugin.Add(plugin, importer);
+
+            if (!string.IsNullOrEmpty(importer.StoragePath))
+            {
+                var storageFor = new NativeStorage(importer.StoragePath);
+
+                importer.Resources = new MapResourceProvider
+                {
+                    TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(storageFor)),
+                    SampleStore = audio.GetSampleStore(new StorageBackedResourceStore(storageFor)),
+                    BackgroundStore = new BackgroundTextureStore(host, storageFor),
+                    CroppedBackgroundStore = new CroppedBackgroundStore(host, storageFor)
+                };
+            }
+
+            importer.Realm = realm;
+            importer.MapStore = mapStore;
+            importer.Storage = storage;
+            importer.Notifications = notifications;
+            importers.Add(importer);
+        }
 
         Logger.Log($"Loaded {importers.Count} importers");
 
@@ -81,15 +123,15 @@ public partial class ImportManager : Component
     {
         base.Update();
 
-        if (TaskQueue.Count <= 0) return;
+        if (taskQueue.Count <= 0) return;
 
-        var task = TaskQueue[0];
+        var task = taskQueue[0];
 
         if (task.Status == TaskStatus.Created)
             task.Start();
 
         if (task.IsCompleted)
-            TaskQueue.RemoveAt(0);
+            taskQueue.RemoveAt(0);
     }
 
     private void setToolbarText(string text)
@@ -107,19 +149,19 @@ public partial class ImportManager : Component
         });
     }
 
-    public MapImporter GetImporter(ImportPlugin plugin) => importersByPlugin[plugin];
+    public MapImporter GetImporter(Plugin plugin) => importersByPlugin[plugin];
 
     public void ImportMapsFrom(MapImporter importer)
     {
-        TaskQueue.Add(new Task(() =>
+        taskQueue.Add(new Task(() =>
         {
             var shouldImport = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == importer.ID)?.AutoImport ?? false);
             if (!shouldImport || !importer.SupportsAutoImport) return;
 
-            Logger.Log($"Auto-importing {importer.Name} maps...");
+            Logger.Log($"Auto-importing {importer.GameName} maps...");
             long time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            setToolbarText($"Importing {importer.Name} maps...");
+            setToolbarText($"Importing {importer.GameName} maps...");
 
             var maps = importer.GetMaps();
 
@@ -134,7 +176,7 @@ public partial class ImportManager : Component
             }
 
             mapStore.CollectionUpdated?.Invoke();
-            Logger.Log($"Imported {maps.Count} {importer.Name} maps in {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - time}ms");
+            Logger.Log($"Imported {maps.Count} {importer.GameName} maps in {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - time}ms");
             setToolbarText("");
         }));
     }
@@ -152,9 +194,23 @@ public partial class ImportManager : Component
 
     public void Import(string path)
     {
+        var extension = Path.GetExtension(path);
+
+        if (extension == ".fms")
+        {
+            new FluXisImport
+            {
+                Realm = realm,
+                MapStore = mapStore,
+                Storage = storage,
+                Notifications = notifications
+            }.Import(path);
+            return;
+        }
+
         try
         {
-            var importer = importers.FirstOrDefault(i => i.FileExtensions.Contains(Path.GetExtension(path)));
+            var importer = importers.FirstOrDefault(i => i.FileExtensions.Contains(extension));
 
             if (importer == null)
             {
@@ -171,153 +227,6 @@ public partial class ImportManager : Component
         }
     }
 
-    private void loadSingle(Assembly assembly)
-    {
-        string name = assembly.GetName().Name;
-
-        try
-        {
-            var types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(MapImporter)));
-
-            foreach (var type in types)
-            {
-                var importer = (MapImporter)Activator.CreateInstance(type);
-
-                if (importer == null)
-                {
-                    Logger.Log($"Failed to load importer {name}");
-                    continue;
-                }
-
-                Logger.Log($"Loaded importer {importer.GetType().Name} ({string.Join(", ", importer.FileExtensions)})");
-
-                if (importer is not FluXisImport)
-                {
-                    realm.RunWrite(r =>
-                    {
-                        var existing = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == importer.Name);
-
-                        if (existing == null)
-                        {
-                            var id = getNewId(r);
-
-                            r.Add(new ImporterInfo
-                            {
-                                Name = importer.Name,
-                                Color = importer.Color,
-                                Id = id
-                            });
-
-                            importer.ID = id;
-                            Logger.Log($"Assigned id {id} to importer {importer.Name}");
-                        }
-                        else
-                        {
-                            existing.Color = existing.Color;
-                            importer.ID = existing.Id;
-                            Logger.Log($"Importer {importer.Name} has id {existing.Id}");
-                        }
-                    });
-
-                    var plugin = new ImportPlugin
-                    {
-                        Name = importer.Name,
-                        Author = importer.Author,
-                        Version = importer.Version,
-                        HasAutoImport = importer.SupportsAutoImport,
-                        ImporterId = importer.ID
-                    };
-
-                    plugins.Add(plugin);
-                    importersByPlugin.Add(plugin, importer);
-
-                    if (!string.IsNullOrEmpty(importer.StoragePath))
-                    {
-                        var storageFor = new NativeStorage(importer.StoragePath);
-
-                        importer.Resources = new MapResourceProvider
-                        {
-                            TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(storageFor)),
-                            SampleStore = audio.GetSampleStore(new StorageBackedResourceStore(storageFor)),
-                            BackgroundStore = new BackgroundTextureStore(host, storageFor),
-                            CroppedBackgroundStore = new CroppedBackgroundStore(host, storageFor)
-                        };
-                    }
-                }
-
-                importer.Realm = realm;
-                importer.MapStore = mapStore;
-                importer.Storage = storage;
-                importer.Notifications = notifications;
-                importers.Add(importer);
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"Failed to load importer {name}");
-        }
-    }
-
-    private void loadFromAppDomain()
-    {
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            var name = assembly.GetName().Name;
-
-            if (name == null)
-                continue;
-
-            if (!name.StartsWith("fluXis", StringComparison.InvariantCultureIgnoreCase))
-                continue;
-
-            loadSingle(assembly);
-        }
-    }
-
-    private void loadFromRunFolder()
-    {
-        string[] files = Directory.GetFiles(RuntimeInfo.StartupDirectory, $"{lib_prefix}.*.dll");
-
-        foreach (var file in files)
-        {
-            try
-            {
-                var assembly = Assembly.LoadFrom(file);
-                loadSingle(assembly);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Failed to load importer {file} from directory from AppDomain!");
-            }
-        }
-    }
-
-    private void loadFromPlugins()
-    {
-        var path = storage.GetFullPath("plugins");
-
-        if (!Directory.Exists(path))
-        {
-            Logger.Log($"Plugins directory {path} does not exist. Creating...");
-            Directory.CreateDirectory(path);
-        }
-
-        string[] files = Directory.GetFiles(path, $"{lib_prefix}.*.dll");
-
-        foreach (var file in files)
-        {
-            try
-            {
-                var assembly = Assembly.LoadFrom(file);
-                loadSingle(assembly);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Failed to load importer {file} from plugins!");
-            }
-        }
-    }
-
     private static int getNewId(Realm realm)
     {
         var highest = 99;
@@ -330,11 +239,4 @@ public partial class ImportManager : Component
 
         return highest + 1;
     }
-}
-
-public enum ImportedAssetType
-{
-    Background,
-    Cover,
-    Audio
 }

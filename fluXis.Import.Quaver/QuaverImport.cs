@@ -6,12 +6,10 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
-using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Utils;
 using fluXis.Import.Quaver.Map;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Logging;
 using YamlDotNet.Serialization;
 
@@ -21,9 +19,7 @@ namespace fluXis.Import.Quaver;
 public class QuaverImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".qp" };
-    public override string Name => "Quaver";
-    public override string Author => "Flustix";
-    public override Version Version => new(1, 1, 0);
+    public override string GameName => "Quaver";
     public override bool SupportsAutoImport => true;
     public override string Color => "#0cb2d8";
     public override string StoragePath => songsPath;
@@ -49,15 +45,15 @@ public class QuaverImport : MapImporter
 
             foreach (var drive in drives)
             {
-                if (File.Exists($@"{drive}{steam_lib_path}"))
+                if (File.Exists($"{drive}{steam_lib_path}"))
                 {
-                    installPath = $@"{drive}{steam_lib_path}";
+                    installPath = $"{drive}{steam_lib_path}";
                     break;
                 }
 
-                if (File.Exists($@"{drive}{steam_path}"))
+                if (File.Exists($"{drive}{steam_path}"))
                 {
-                    installPath = $@"{drive}{steam_path}";
+                    installPath = $"{drive}{steam_path}";
                     break;
                 }
             }
@@ -75,73 +71,45 @@ public class QuaverImport : MapImporter
 
     public override void Import(string path)
     {
-        var notification = new LoadingNotificationData
-        {
-            TextLoading = "Importing Quaver map...",
-            TextSuccess = "Imported Quaver map!",
-            TextFailure = "Failed to import Quaver map!"
-        };
-
-        Notifications.Add(notification);
+        var notification = CreateNotification();
 
         try
         {
-            Logger.Log("Importing Quaver map: " + path);
-            string fileName = Path.GetFileNameWithoutExtension(path);
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            var folder = CreateTempFolder(fileName);
 
-            ZipArchive qp = ZipFile.OpenRead(path);
+            var qp = ZipFile.OpenRead(path);
 
             foreach (var entry in qp.Entries)
             {
                 if (entry.FullName.EndsWith(".qua"))
                 {
-                    QuaverMap quaverMap = parseQuaverMap(entry);
-                    MapInfo map = quaverMap.ToMapInfo();
+                    var quaverMap = parseFromEntry(entry);
+                    var map = quaverMap.ToMapInfo();
 
                     notification.TextSuccess = $"Imported Quaver map: {map.Metadata.Artist} - {map.Metadata.Title}";
 
-                    string effect = quaverMap.GetEffects().Save();
-                    Logger.Log(effect);
+                    var effect = quaverMap.GetEffects().Save();
 
                     if (effect != "")
                     {
-                        string name = entry.FullName.ToLower() + ".ffx";
-                        string dest = Path.Combine(Storage.GetFullPath("import"), fileName, name);
-                        Directory.CreateDirectory(Path.GetDirectoryName(dest));
-                        File.WriteAllText(dest, effect);
-
+                        var name = $"{entry.FullName.ToLower()}.ffx";
                         map.EffectFile = name;
+                        WriteFile(effect, folder, name);
                     }
 
-                    string json = JsonConvert.SerializeObject(map);
-                    string destPath = Path.Combine(Storage.GetFullPath("import"), fileName, entry.FullName + ".fsc");
-                    Directory.CreateDirectory(Path.GetDirectoryName(destPath));
-                    File.WriteAllText(destPath, json);
+                    var json = map.Serialize();
+                    WriteFile(json, folder, $"{entry.FullName}.fsc");
                 }
-                else CopyFile(entry, fileName);
+                else
+                    CopyFile(entry, folder);
             }
 
             qp.Dispose();
 
-            ZipArchive fms = ZipFile.Open(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms"), ZipArchiveMode.Create);
-
-            // add all files from the import folder
-            foreach (var file in Directory.GetFiles(Path.Combine(Storage.GetFullPath("import"), fileName)))
-                fms.CreateEntryFromFile(file, Path.GetFileName(file));
-
-            fms.Dispose();
-            Directory.Delete(Path.Combine(Storage.GetFullPath("import"), fileName), true);
-
-            var import = new FluXisImport
-            {
-                MapStatus = ID,
-                Notification = notification,
-                Realm = Realm,
-                MapStore = MapStore,
-                Storage = Storage,
-                Notifications = Notifications
-            };
-            import.Import(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms"));
+            var pack = CreatePackage(fileName, folder);
+            FinalizeConversion(pack, notification);
+            CleanUp(folder);
         }
         catch (Exception e)
         {
@@ -150,7 +118,7 @@ public class QuaverImport : MapImporter
         }
     }
 
-    private QuaverMap parseQuaverMap(ZipArchiveEntry entry)
+    private static QuaverMap parseFromEntry(ZipArchiveEntry entry)
     {
         string yaml = new StreamReader(entry.Open()).ReadToEnd();
         return ParseFromYaml(yaml);
@@ -169,9 +137,7 @@ public class QuaverImport : MapImporter
     public override List<RealmMapSet> GetMaps()
     {
         if (string.IsNullOrEmpty(quaverPath))
-        {
             return base.GetMaps();
-        }
 
         string dbPath = Path.Combine(quaverPath, "quaver.db");
 

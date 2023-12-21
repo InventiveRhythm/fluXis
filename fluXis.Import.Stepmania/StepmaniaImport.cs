@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Import;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Import.Stepmania.Map;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using osu.Framework.Logging;
 
 namespace fluXis.Import.Stepmania;
 
@@ -13,59 +14,48 @@ namespace fluXis.Import.Stepmania;
 public class StepmaniaImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".sm" };
-    public override string Name => "Stepmania";
-    public override string Author => "Flustix";
-    public override Version Version => new(1, 0, 0);
+    public override string GameName => "Stepmania";
     public override string Color => "#f0d01f";
 
     public override void Import(string path)
     {
-        var folderPath = Path.GetDirectoryName(path);
-        var fileName = Path.GetFileNameWithoutExtension(path);
+        var notification = CreateNotification();
 
-        var storagePath = Storage.GetFullPath("import") + "/" + fileName;
-        Directory.CreateDirectory(storagePath);
-
-        var data = File.ReadAllText(path);
-
-        var map = new StepmaniaFile();
-        map.Parse(data);
-
-        var mapInfos = map.ToMapInfos();
-
-        foreach (var info in mapInfos)
+        try
         {
-            var json = JsonConvert.SerializeObject(info);
-            WriteFile(json, Path.Combine(storagePath, info.Metadata.Difficulty + ".fsc"));
+            var smFolder = Path.GetDirectoryName(path);
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            var folder = CreateTempFolder(fileName);
+
+            Directory.GetFiles(smFolder).ToList().ForEach(x =>
+            {
+                if (x.EndsWith(".sm"))
+                {
+                    var data = File.ReadAllText(x);
+
+                    var map = new StepmaniaFile();
+                    map.Parse(data);
+
+                    var infos = map.ToMapInfos();
+
+                    foreach (var info in infos)
+                    {
+                        var json = JsonConvert.SerializeObject(info);
+                        WriteFile(json, folder, $"{info.Metadata.Difficulty}.fsc");
+                    }
+                }
+                else
+                    CopyFile(x, folder);
+            });
+
+            var pack = CreatePackage(fileName, folder);
+            FinalizeConversion(pack, notification);
+            CleanUp(folder);
         }
-
-        var zipPath = Path.Combine(Storage.GetFullPath("import"), fileName + ".fms");
-        if (File.Exists(zipPath)) File.Delete(zipPath);
-
-        ZipArchive fms = ZipFile.Open(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms"), ZipArchiveMode.Create);
-
-        foreach (var info in mapInfos)
-            fms.CreateEntryFromFile(Path.Combine(storagePath, info.Metadata.Difficulty + ".fsc"), info.Metadata.Difficulty + ".fsc");
-
-        Directory.GetFiles(folderPath).ToList().ForEach(x =>
+        catch (Exception e)
         {
-            if (x.EndsWith(".sm")) return;
-
-            var name = Path.GetFileName(x);
-            fms.CreateEntryFromFile(x, name);
-        });
-
-        fms.Dispose();
-
-        var import = new FluXisImport
-        {
-            MapStatus = ID,
-            Notification = null,
-            Realm = Realm,
-            MapStore = MapStore,
-            Storage = Storage,
-            Notifications = Notifications
-        };
-        import.Import(Path.Combine(Storage.GetFullPath("import"), fileName + ".fms"));
+            notification.State = LoadingState.Failed;
+            Logger.Error(e, "Error while importing Stepmania map");
+        }
     }
 }

@@ -8,7 +8,6 @@ using fluXis.Game.Import;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Utils;
 using fluXis.Import.osu.AutoImport;
 using JetBrains.Annotations;
@@ -22,9 +21,7 @@ namespace fluXis.Import.osu;
 public class OsuImport : MapImporter
 {
     public override string[] FileExtensions => new[] { ".osz" };
-    public override string Name => "osu!mania";
-    public override string Author => "Flustix";
-    public override Version Version => new(1, 1, 0);
+    public override string GameName => "osu!mania";
     public override bool SupportsAutoImport => true;
     public override string Color => "#e7659f";
     public override string StoragePath { get; } = string.Empty;
@@ -36,22 +33,14 @@ public class OsuImport : MapImporter
 
     public override void Import(string path)
     {
-        var notification = new LoadingNotificationData
-        {
-            TextLoading = "Importing osu! map...",
-            TextSuccess = "Imported osu! map!",
-            TextFailure = "Failed to import osu! map!"
-        };
-
-        Notifications.Add(notification);
+        var notification = CreateNotification();
 
         try
         {
-            Logger.Log("Importing osu! map: " + path);
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            var folder = CreateTempFolder(fileName);
 
-            string folder = Path.GetFileNameWithoutExtension(path);
-
-            ZipArchive osz = ZipFile.OpenRead(path);
+            var osz = ZipFile.OpenRead(path);
 
             var success = 0;
             var failed = 0;
@@ -62,9 +51,9 @@ public class OsuImport : MapImporter
                 {
                     try
                     {
-                        OsuMap map = parseOsuMap(entry);
-                        string json = map.ToMapInfo().Serialize(true);
-                        WriteFile(json, folder + "/" + entry.FullName + ".fsc");
+                        var map = parseOsuMap(entry);
+                        var json = map.ToMapInfo().Serialize();
+                        WriteFile(json, folder, $"{entry.FullName}.fsc");
 
                         notification.TextSuccess = $"Imported osu! map: {map.Artist} - {map.Title}";
                         success++;
@@ -93,25 +82,9 @@ public class OsuImport : MapImporter
             if (failed > 0)
                 notification.TextSuccess += $" ({failed} failed)";
 
-            ZipArchive fms = ZipFile.Open(Path.Combine(Storage.GetFullPath("import"), folder + ".fms"), ZipArchiveMode.Create);
-
-            // add all files from the import folder
-            foreach (var file in Directory.GetFiles(Path.Combine(Storage.GetFullPath("import"), folder)))
-                fms.CreateEntryFromFile(file, Path.GetFileName(file));
-
-            fms.Dispose();
-            Directory.Delete(Path.Combine(Storage.GetFullPath("import"), folder), true);
-
-            var import = new FluXisImport
-            {
-                MapStatus = ID,
-                Notification = notification,
-                Realm = Realm,
-                MapStore = MapStore,
-                Storage = Storage,
-                Notifications = Notifications
-            };
-            import.Import(Path.Combine(Storage.GetFullPath("import"), folder + ".fms"));
+            var pack = CreatePackage(fileName, folder);
+            FinalizeConversion(pack, notification);
+            CleanUp(folder);
         }
         catch (Exception e)
         {
