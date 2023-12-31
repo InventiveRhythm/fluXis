@@ -4,6 +4,7 @@ using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using fluXis.Game.Mods;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -58,7 +59,7 @@ public partial class ModSelectRate : Container
                 Padding = new MarginPadding { Vertical = 2, Horizontal = 10 },
                 Child = new FluXisSpriteText
                 {
-                    Text = "Rate",
+                    Text = LocalizationStrings.ModSelect.RateSection,
                     Colour = FluXisColors.TextDark,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,

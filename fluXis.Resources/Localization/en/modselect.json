@@ -1,0 +1,11 @@
+{
+  "title": "Gameplay Modifiers", 
+  "description": "Make the game harder or easier for yourself!",
+  "section-rate": "Rate",
+  "section-difficulty-increase": "Difficulty Increase",
+  "section-difficulty-decrease": "Difficulty Decrease",
+  "section-misc": "Miscellaneous",
+  "section-automation": "Automation",
+  "max-score": "Max Score: {0:0}%",
+  "incompatible-mods": "Incompatible Mods:"
+}

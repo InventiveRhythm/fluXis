@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,7 @@ using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
@@ -36,14 +38,17 @@ using fluXis.Game.Skinning;
 using fluXis.Game.UI;
 using fluXis.Game.UI.Tips;
 using fluXis.Game.Updater;
+using fluXis.Game.Utils;
 using fluXis.Resources;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Stores;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
@@ -113,10 +118,24 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     [BackgroundDependencyLoader]
-    private void load(Storage storage)
+    private void load(Storage storage, FrameworkConfigManager frameworkConfig)
     {
+        frameworkLocale = frameworkConfig.GetBindable<string>(FrameworkSetting.Locale);
+        frameworkLocale.BindValueChanged(_ => updateLanguage());
+
+        localisationParameters = Localisation.CurrentParameters.GetBoundCopy();
+        localisationParameters.BindValueChanged(_ => updateLanguage(), true);
+
+        CurrentLanguage.BindValueChanged(val => frameworkLocale.Value = val.NewValue.ToCultureCode());
+
+        Resources.AddExtension("json");
         Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
         initFonts();
+
+        /*foreach (var availableResource in Resources.GetAvailableResources())
+        {
+            Logger.Log(availableResource, LoggingTarget.Runtime, LogLevel.Debug);
+        }*/
 
         MapFiles.Initialize(storage.GetStorageForDirectory("maps"));
 
@@ -339,4 +358,34 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    #region Localization
+
+    public Bindable<Language> CurrentLanguage { get; } = new();
+
+    public IEnumerable<Language> SupportedLanguages
+    {
+        get
+        {
+            var languages = Enum.GetValues(typeof(Language)).Cast<Language>().ToList();
+
+            if (!IsDebug)
+            {
+                languages.Remove(Language.testing);
+                languages.Remove(Language.debug);
+            }
+
+            return languages;
+        }
+    }
+
+    private Bindable<string> frameworkLocale;
+    private IBindable<LocalisationParameters> localisationParameters;
+
+    private void updateLanguage()
+    {
+        CurrentLanguage.Value = LocaleUtils.GetLanguageFor(frameworkLocale.Value, localisationParameters.Value);
+    }
+
+    #endregion
 }

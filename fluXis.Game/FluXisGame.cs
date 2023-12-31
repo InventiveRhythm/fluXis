@@ -1,9 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Stores;
 using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Exit;
@@ -14,6 +17,7 @@ using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Warning;
+using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
@@ -23,6 +27,8 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.IO.Stores;
+using osu.Framework.Localisation;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -124,6 +130,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         base.LoadComplete();
         PerformUpdateCheck(true);
+
+        loadLocales();
 
         ScreenStack.Push(new WarningScreen());
         MenuScreen = new MenuScreen();
@@ -263,5 +271,32 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         Toolbar.ShowToolbar.Value = false;
         GlobalClock.FadeOut(1500);
         exitAnimation.Show(buffer.Hide, base.Exit);
+    }
+
+    private void loadLocales()
+    {
+        var localeStore = new NamespacedResourceStore<byte[]>(Resources, "Localization");
+        localeStore.AddExtension("json");
+
+        var languages = Enum.GetValues<Language>();
+
+        var mappings = languages.Select(l =>
+        {
+            if (l == Language.testing) return new LocaleMapping("testing", new TestingLocaleStore("en", localeStore));
+            if (l == Language.debug) return new LocaleMapping("debug", new DebugLocaleStore());
+
+            var code = l.ToCultureCode();
+
+            try
+            {
+                return new LocaleMapping(code, new ResourceLocaleStore(code, localeStore));
+            }
+            catch (FileNotFoundException)
+            {
+                return null;
+            }
+        }).Where(m => m != null);
+
+        Localisation.AddLocaleMappings(mappings);
     }
 }

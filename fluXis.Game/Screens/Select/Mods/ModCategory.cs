@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Mods;
@@ -13,7 +14,7 @@ public partial class ModCategory : Container
 {
     public ModSelector Selector { get; set; }
 
-    public string Label { get; init; }
+    public LocalisableString Label { get; init; }
     public string HexColour { get; init; }
     public IMod[] Mods { get; init; }
 

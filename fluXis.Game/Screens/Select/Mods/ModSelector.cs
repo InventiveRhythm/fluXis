@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using fluXis.Game.Mods;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -110,13 +111,13 @@ public partial class ModSelector : Container
                                             {
                                                 new FluXisSpriteText
                                                 {
-                                                    Text = "Gameplay Modifiers",
+                                                    Text = LocalizationStrings.ModSelect.Title,
                                                     FontSize = 40,
                                                     Y = -10
                                                 },
                                                 new FluXisSpriteText
                                                 {
-                                                    Text = "Make the game harder or easier for yourself.",
+                                                    Text = LocalizationStrings.ModSelect.Description,
                                                     Margin = new MarginPadding { Top = 25 },
                                                     Colour = FluXisColors.Text2
                                                 },
@@ -170,7 +171,7 @@ public partial class ModSelector : Container
                                                                 {
                                                                     new()
                                                                     {
-                                                                        Label = "Difficulty Decrease",
+                                                                        Label = LocalizationStrings.ModSelect.DifficultyDecreaseSection,
                                                                         HexColour = "#b2ff66",
                                                                         Selector = this,
                                                                         Mods = new IMod[]
@@ -181,7 +182,7 @@ public partial class ModSelector : Container
                                                                     },
                                                                     new()
                                                                     {
-                                                                        Label = "Miscellaneous",
+                                                                        Label = LocalizationStrings.ModSelect.MiscSection,
                                                                         HexColour = "#8866ff",
                                                                         Selector = this,
                                                                         Mods = new IMod[]
@@ -203,7 +204,7 @@ public partial class ModSelector : Container
                                                                 {
                                                                     new()
                                                                     {
-                                                                        Label = "Difficulty Increase",
+                                                                        Label = LocalizationStrings.ModSelect.DifficultyIncreaseSection,
                                                                         HexColour = "#ff6666",
                                                                         Selector = this,
                                                                         Mods = new IMod[]
@@ -215,7 +216,7 @@ public partial class ModSelector : Container
                                                                     },
                                                                     new()
                                                                     {
-                                                                        Label = "Automation",
+                                                                        Label = LocalizationStrings.ModSelect.AutomationSection,
                                                                         HexColour = "#66b3ff",
                                                                         Selector = this,
                                                                         Mods = new IMod[]
@@ -297,7 +298,7 @@ public partial class ModSelector : Container
 
     protected override void Update()
     {
-        maxScoreText.Text = $"Max Score: {(int)Math.Round(scoreMultiplier * 100)}%";
+        maxScoreText.Text = LocalizationStrings.ModSelect.MaxScore((int)Math.Round(scoreMultiplier * 100));
     }
 
     protected override bool OnHover(HoverEvent e) => true;

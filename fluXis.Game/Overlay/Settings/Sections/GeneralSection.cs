@@ -18,6 +18,8 @@ public partial class GeneralSection : SettingsSection
     {
         AddRange(new Drawable[]
         {
+            new GeneralLanguageSection(),
+            Divider,
             new GeneralUpdatesSection(),
             Divider,
             new GeneralFoldersSection(),

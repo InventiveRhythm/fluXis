@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using fluXis.Game.Mods;
 using fluXis.Game.Mods.Drawables;
 using fluXis.Game.Overlay.Mouse;
@@ -60,11 +61,6 @@ public partial class ModEntry : Container, IHasDrawableTooltip
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -81,7 +77,7 @@ public partial class ModEntry : Container, IHasDrawableTooltip
                     },
                     name = new FluXisSpriteText
                     {
-                        Text = Mod.Name,
+                        Text = LocalizationStrings.Mods.GetName(Mod),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.BottomLeft,
                         Shadow = true,
@@ -91,7 +87,7 @@ public partial class ModEntry : Container, IHasDrawableTooltip
                     description = new FluXisSpriteText
                     {
                         FontSize = 14,
-                        Text = Mod.Description,
+                        Text = LocalizationStrings.Mods.GetDescription(Mod),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.TopLeft,
                         Colour = FluXisColors.Text2,
@@ -105,6 +101,11 @@ public partial class ModEntry : Container, IHasDrawableTooltip
                         Text = $"{multiplierText}%"
                     }
                 }
+            },
+            flash = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0
             }
         };
     }
@@ -128,11 +129,11 @@ public partial class ModEntry : Container, IHasDrawableTooltip
     {
         var color = Selected ? FluXisColors.TextDark : FluXisColors.Text;
 
-        background.FadeColour(Selected ? Colour4.FromHex(HexColour) : FluXisColors.Background3, 200);
-        icon.FadeColour(color, 200);
-        name.FadeColour(color, 200);
-        description.FadeColour(color, 200);
-        scoreMultiplier.FadeColour(color, 200);
+        background.FadeColour(Selected ? Colour4.FromHex(HexColour) : FluXisColors.Background3);
+        icon.FadeColour(color);
+        name.FadeColour(color);
+        description.FadeColour(color);
+        scoreMultiplier.FadeColour(color);
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -158,13 +159,13 @@ public partial class ModEntry : Container, IHasDrawableTooltip
             {
                 new FluXisSpriteText
                 {
-                    Text = Mod.Name,
+                    Text = LocalizationStrings.Mods.GetName(Mod),
                     FontSize = 28,
                     Shadow = true
                 },
                 new FluXisSpriteText
                 {
-                    Text = Mod.Description,
+                    Text = LocalizationStrings.Mods.GetDescription(Mod),
                     FontSize = 20,
                     Colour = FluXisColors.Text2,
                     Shadow = true
@@ -178,7 +179,7 @@ public partial class ModEntry : Container, IHasDrawableTooltip
             {
                 new FluXisSpriteText
                 {
-                    Text = "Incompatible Mods:",
+                    Text = LocalizationStrings.ModSelect.IncompatibleMods,
                     FontSize = 20,
                     Margin = new MarginPadding { Top = 10, Bottom = 5 },
                     Shadow = true

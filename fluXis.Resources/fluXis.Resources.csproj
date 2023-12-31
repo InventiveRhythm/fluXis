@@ -9,10 +9,6 @@
     <EmbeddedResource Include="Shaders\**\*" />
     <EmbeddedResource Include="Textures\**\*" />
     <EmbeddedResource Include="Tracks\**\*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Textures\Backgrounds" />
-    <Folder Include="Textures\Covers\" />
-    <Folder Include="Tracks\Gameplay" />
+    <EmbeddedResource Include="Localization\**\*" />
   </ItemGroup>
 </Project>

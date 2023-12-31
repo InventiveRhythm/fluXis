@@ -1,6 +1,8 @@
 # fluXis
 A free and open-source vertical scrolling rhythm game.
 
+[![Crowdin](https://badges.crowdin.net/fluxis/localized.svg)](https://crowdin.com/project/fluxis)
+
 ## Downloading and playing the game
 ### Windows 8.1+
 1. Download the installer from [here](https://dl.choccy.foxes4life.net/fluXis/fluXis.Updater.exe) or the download button on the website.
