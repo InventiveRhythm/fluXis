@@ -15,6 +15,7 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.Map;
+using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
@@ -34,6 +35,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -91,6 +93,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
     private Bindable<bool> songSelectBlur;
+
+    private InputManager inputManager;
 
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples, FluXisConfig config)
@@ -241,6 +245,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     protected override void LoadComplete()
     {
+        inputManager = GetContainingInputManager();
+
         if (mapStore.CurrentMap.Hash == "dummy" && mapStore.MapSetsSorted.Any())
             mapStore.Select(mapStore.GetRandom()?.LowestDifficulty, true);
 
@@ -373,7 +379,12 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         backgrounds.AddBackgroundFromMap(mapStore.CurrentMap);
         backgrounds.SwipeAnimation();
 
-        this.Push(new GameplayLoader(mapStore.CurrentMap, () => new GameplayScreen(mapStore.CurrentMap, ModSelector.SelectedMods)));
+        var mods = ModSelector.SelectedMods.ToList();
+
+        if (inputManager.CurrentState.Keyboard.ControlPressed && !mods.Any(m => m is AutoPlayMod))
+            mods.Add(new AutoPlayMod());
+
+        this.Push(new GameplayLoader(mapStore.CurrentMap, () => new GameplayScreen(mapStore.CurrentMap, mods)));
     }
 
     private void changeSelection(int by = 0, bool last = false)
