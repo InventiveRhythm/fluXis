@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
@@ -187,7 +188,7 @@ public partial class MenuScreen : FluXisScreen
                             new MenuButtonBackground { Y = 190 },
                             playButton = new MenuPlayButton
                             {
-                                Description = $"{maps.MapSets.Count} maps loaded",
+                                Description = LocalizationStrings.MainMenu.PlayDescription(mapCount),
                                 Action = continueToPlay,
                                 Width = 700
                             },
@@ -200,8 +201,8 @@ public partial class MenuScreen : FluXisScreen
                             },
                             multiButton = new MenuButton
                             {
-                                Text = "Multiplayer",
-                                Description = "Play against other players",
+                                Text = LocalizationStrings.MainMenu.MultiplayerText,
+                                Description = LocalizationStrings.MainMenu.MultiplayerDescription,
                                 Icon = FontAwesome.Solid.Users,
                                 Action = continueToMultiplayer,
                                 Width = 290,
@@ -210,8 +211,8 @@ public partial class MenuScreen : FluXisScreen
                             },
                             rankingButton = new MenuButton
                             {
-                                Text = "Ranking",
-                                Description = "Check online leaderboards",
+                                Text = LocalizationStrings.MainMenu.RankingText,
+                                Description = LocalizationStrings.MainMenu.RankingDescription,
                                 Icon = FontAwesome.Solid.Trophy,
                                 Action = continueToRankings,
                                 Width = 280,
@@ -227,8 +228,8 @@ public partial class MenuScreen : FluXisScreen
                             },
                             browseButton = new MenuButton
                             {
-                                Text = "Browse",
-                                Description = "Download community-made maps",
+                                Text = LocalizationStrings.MainMenu.BrowseText,
+                                Description = LocalizationStrings.MainMenu.BrowseDescription,
                                 Icon = FontAwesome.Solid.Download,
                                 Width = 330,
                                 X = 110,
@@ -237,8 +238,8 @@ public partial class MenuScreen : FluXisScreen
                             },
                             new MenuButton
                             {
-                                Text = "Edit",
-                                Description = "Create your own maps",
+                                Text = LocalizationStrings.MainMenu.EditText,
+                                Description = LocalizationStrings.MainMenu.EditDescription,
                                 Icon = FontAwesome.Solid.Pen,
                                 Action = () => this.Push(new EditorLoader()),
                                 Width = 240,
@@ -435,7 +436,7 @@ public partial class MenuScreen : FluXisScreen
 
     protected override void Update()
     {
-        playButton.Description = $"{mapCount} maps loaded";
+        playButton.Description = LocalizationStrings.MainMenu.PlayDescription(mapCount);
 
         inactivityTime += Time.Elapsed;
 

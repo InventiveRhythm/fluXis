@@ -3,12 +3,14 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
@@ -17,7 +19,7 @@ public partial class MenuPlayButton : Container
 {
     public Action Action { get; set; }
 
-    public string Description
+    public LocalisableString Description
     {
         set
         {
@@ -34,7 +36,7 @@ public partial class MenuPlayButton : Container
     private Box hover;
     private Box flash;
     private FluXisSpriteText spriteText;
-    private string text;
+    private LocalisableString text;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -89,7 +91,7 @@ public partial class MenuPlayButton : Container
                             X = 40,
                             Y = 8,
                             Shadow = true,
-                            Text = "Play"
+                            Text = LocalizationStrings.MainMenu.PlayText
                         },
                         spriteText = new FluXisSpriteText
                         {

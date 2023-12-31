@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
@@ -17,8 +18,8 @@ public partial class MenuButton : ClickableContainer, IHasTextTooltip
 {
     public string Tooltip => Enabled.Value ? "" : "Log in to use this feature.";
 
-    public string Text { get; init; }
-    public string Description { get; init; }
+    public LocalisableString Text { get; init; }
+    public LocalisableString Description { get; init; }
     public IconUsage Icon { get; init; }
 
     [Resolved]

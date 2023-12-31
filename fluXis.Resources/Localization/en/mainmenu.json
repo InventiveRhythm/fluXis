@@ -1,0 +1,12 @@
+{
+  "play-text": "Play",
+  "play-description": "{0:0} maps loaded",
+  "multiplayer-text": "Multiplayer",
+  "multiplayer-description": "Play against other players",
+  "ranking-text": "Ranking",
+  "ranking-description": "Check online leaderboards",
+  "browse-text": "Browse",
+  "browse-description": "Download community-made maps",
+  "edit-text": "Edit",
+  "edit-description": "Create your own maps"
+}
