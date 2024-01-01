@@ -220,7 +220,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         keybindStore = new KeybindStore(realm);
         keybindStore.AssignDefaults(keybinds);
-        keybindStore.AssignDefaults(new GameplayKeybindContainer(this, realm));
+        keybindStore.AssignDefaults(new GameplayKeybindContainer(realm, 0));
 
         dependencies.Cache(keybinds);
         MenuSplashes.Load(storage);

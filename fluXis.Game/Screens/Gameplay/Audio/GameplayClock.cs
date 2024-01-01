@@ -11,7 +11,9 @@ namespace fluXis.Game.Screens.Gameplay.Audio;
 
 public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
 {
-    public override double CurrentTime => underlying.CurrentTime - offset.Value;
+    public float Offset => offset.Value;
+
+    public override double CurrentTime => underlying.CurrentTime - Offset;
     public override bool IsRunning => underlying.IsRunning;
     public double ElapsedFrameTime => underlying.ElapsedFrameTime;
     public double FramesPerSecond => underlying.FramesPerSecond;

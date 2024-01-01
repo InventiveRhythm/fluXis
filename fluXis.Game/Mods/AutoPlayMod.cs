@@ -11,5 +11,5 @@ public class AutoPlayMod : IMod
     public ModType Type => ModType.Automation;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => false;
-    public string[] IncompatibleMods => new[] { "NF", "FR", "FL" };
+    public string[] IncompatibleMods => new[] { "NF", "FR", "FL", "AP2" };
 }

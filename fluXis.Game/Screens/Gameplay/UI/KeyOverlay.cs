@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
@@ -24,7 +25,7 @@ public partial class KeyOverlay : Container
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    public FluXisGameplayKeybind[] Keybinds => screen.Input.Keys;
+    public List<FluXisGameplayKeybind> Keybinds => screen.Input.Keys;
 
     private FillFlowContainer flow;
     private int keyCount;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,12 @@ using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Replays;
+using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Screens.Gameplay.Replay;
+using fluXis.Game.Utils;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -25,6 +31,9 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
+using osu.Framework.Platform;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -36,6 +45,9 @@ public partial class ScoreList : GridContainer
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private Storage storage { get; set; }
 
     public SelectMapInfo MapInfo { get; init; }
 
@@ -220,14 +232,48 @@ public partial class ScoreList : GridContainer
                 {
                     if (s.MapID == map.ID)
                     {
+                        var info = s.ToScoreInfo();
+
+                        var replayPath = storage.GetFullPath($"replays/{s.ID}.frp");
+
                         scores.Add(new ScoreListEntry
                         {
-                            ScoreInfo = s.ToScoreInfo(),
+                            ScoreInfo = info,
                             Map = map,
                             Player = s.Player,
                             Date = s.Date,
                             Deletable = true,
-                            RealmScoreId = s.ID
+                            RealmScoreId = s.ID,
+                            HasReplay = storage.Exists(replayPath),
+                            ReplayAction = () =>
+                            {
+                                try
+                                {
+                                    var mapInfo = map.GetMapInfo();
+                                    if (mapInfo == null) return;
+
+                                    var scoreMods = info.Mods;
+                                    scoreMods.RemoveAll(string.IsNullOrEmpty);
+
+                                    var mods = scoreMods.Select(ModUtils.GetFromAcronym).ToList();
+                                    mods.RemoveAll(m => m == null);
+
+                                    if (mods.Count != scoreMods.Count)
+                                    {
+                                        Logger.Log($"Some mods were not found ({mods.Count}:{info.Mods.Count})", LoggingTarget.Runtime, LogLevel.Error);
+                                        return;
+                                    }
+
+                                    var json = File.ReadAllText(replayPath);
+                                    var replay = JsonConvert.DeserializeObject<Replay>(json);
+
+                                    MapInfo.Screen.Push(new GameplayLoader(map, () => new ReplayGameplayScreen(map, mods, replay)));
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Error(e, "Failed to load replay");
+                                }
+                            }
                         });
                     }
                 }));

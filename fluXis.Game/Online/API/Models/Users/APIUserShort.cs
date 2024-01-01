@@ -28,6 +28,19 @@ public class APIUserShort
 
     public string GetName() => string.IsNullOrEmpty(DisplayName) ? Username : DisplayName;
 
+    [JsonIgnore]
+    public string NameWithApostrophe
+    {
+        get
+        {
+            var name = GetName();
+            if (name.EndsWith("s") || name.EndsWith("z"))
+                return name + "'";
+
+            return name + "'s";
+        }
+    }
+
     public static CountryCode GetCountryCode(string code)
     {
         if (string.IsNullOrEmpty(code))

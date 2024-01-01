@@ -19,8 +19,10 @@ using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Replays;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Screens.Gameplay.Replay;
 using fluXis.Game.Screens.Select.Footer;
 using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
@@ -384,7 +386,19 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (inputManager.CurrentState.Keyboard.ControlPressed && !mods.Any(m => m is AutoPlayMod))
             mods.Add(new AutoPlayMod());
 
-        this.Push(new GameplayLoader(mapStore.CurrentMap, () => new GameplayScreen(mapStore.CurrentMap, mods)));
+        if (mods.Any(m => m is AutoPlayV2Mod))
+        {
+            this.Push(new GameplayLoader(mapStore.CurrentMap, () =>
+            {
+                var map = mapStore.CurrentMap.GetMapInfo();
+                var autogen = new AutoGenerator(map, mapStore.CurrentMap.KeyCount);
+                var replay = autogen.Generate();
+
+                return new ReplayGameplayScreen(mapStore.CurrentMap, mods, replay);
+            }));
+        }
+        else
+            this.Push(new GameplayLoader(mapStore.CurrentMap, () => new GameplayScreen(mapStore.CurrentMap, mods)));
     }
 
     private void changeSelection(int by = 0, bool last = false)

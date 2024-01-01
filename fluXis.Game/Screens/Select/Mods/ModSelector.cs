@@ -221,7 +221,8 @@ public partial class ModSelector : Container
                                                                         Selector = this,
                                                                         Mods = new IMod[]
                                                                         {
-                                                                            new AutoPlayMod()
+                                                                            new AutoPlayMod(),
+                                                                            new AutoPlayV2Mod()
                                                                         }
                                                                     }
                                                                 }

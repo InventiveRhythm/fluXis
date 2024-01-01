@@ -43,7 +43,7 @@ public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<
     protected void ReloadMappings(IQueryable<RealmKeybind> keybindings)
     {
         var realmBindings = keybindings.AsEnumerable();
-        var bindings = convertKeybindings(realmBindings);
+        var bindings = convertKeybindings(realmBindings).Where(k => DefaultKeyBindings.Any(d => d.Action.Equals(k.Action)));
 
         KeyBindings = bindings.Any()
             ? bindings

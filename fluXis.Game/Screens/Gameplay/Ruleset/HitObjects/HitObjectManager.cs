@@ -32,6 +32,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     [Resolved]
     private Playfield playfield { get; set; }
 
+    private GameplayInput input => screen.Input;
+
     private Bindable<bool> useSnapColors;
     public bool UseSnapColors => useSnapColors.Value;
 
@@ -289,8 +291,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     {
         if (screen.HealthProcessor.Failed)
             return;
-
-        GameplayInput input = screen.Input;
 
         if (input.JustPressed.Contains(true))
         {

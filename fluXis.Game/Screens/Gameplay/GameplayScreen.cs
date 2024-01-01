@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
@@ -17,6 +18,7 @@ using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Replays;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
@@ -35,6 +37,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -53,6 +57,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected virtual double GameplayStartTime => 0;
     protected virtual bool InstantlyExitOnPause => Playfield.Manager.AutoPlay;
     public virtual bool FadeBackToGlobalClock => true;
+    public virtual bool SubmitScore => true;
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -68,6 +73,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private GlobalClock globalClock { get; set; }
+
+    [Resolved]
+    private Storage storage { get; set; }
 
     private DependencyContainer dependencies;
 
@@ -91,6 +99,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public GameplayLoader Loader { get; set; }
     public Action OnRestart { get; set; }
+    private ReplayRecorder replayRecorder;
 
     public MapInfo Map { get; private set; }
     public RealmMap RealmMap { get; }
@@ -175,7 +184,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
 
         HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
-        Input = new GameplayInput(this, RealmMap.KeyCount);
+        Input = GetInput();
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -188,11 +197,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             new PulseEffect(),
             Playfield,
-            new LaneSwitchAlert()
+            new LaneSwitchAlert(),
+            replayRecorder = new ReplayRecorder()
         });
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
 
-        InternalChild = new GameplayKeybindContainer(Game, realm)
+        InternalChild = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
         {
             Children = new Drawable[]
             {
@@ -226,7 +236,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         new ModsDisplay()
                     }
                 },
-                new AutoPlayDisplay(),
+                CreateTextOverlay(),
                 new DangerHealthOverlay(),
                 new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                 new SkipOverlay(),
@@ -239,6 +249,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         };
 
         backgroundVideo.LoadVideo();
+
+        Input.OnPress += replayRecorder.PressKey;
+        Input.OnRelease += replayRecorder.ReleaseKey;
     }
 
     protected override void LoadComplete()
@@ -268,15 +281,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }, true);
     }
 
-    private void updateRpc()
-    {
-        if (!IsPaused.Value)
-            Activity.Value = Playfield.Manager.AutoPlay ? new UserActivity.WatchingReplay(RealmMap, APIUserShort.AutoPlay) : new UserActivity.Playing(RealmMap);
-        else
-            Activity.Value = new UserActivity.Paused(RealmMap);
-    }
+    private void updateRpc() => Activity.Value = !IsPaused.Value ? GetPlayingActivity() : new UserActivity.Paused(RealmMap);
 
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo();
+    protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount);
+    protected virtual Drawable CreateTextOverlay() => Mods.Any(m => m is AutoPlayMod) ? new AutoPlayDisplay() : Empty();
+    protected virtual UserActivity GetPlayingActivity() => Playfield.Manager.AutoPlay ? new UserActivity.WatchingReplay(RealmMap, APIUserShort.AutoPlay) : new UserActivity.Playing(RealmMap);
 
     protected HealthProcessor CreateHealthProcessor()
     {
@@ -361,9 +371,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         screen.OnRestart = OnRestart;
         if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 
-        if (Mods.All(m => m.Rankable))
+        if (Mods.All(m => m.Rankable) && SubmitScore)
         {
-            realm.RunWrite(r => r.Add(RealmScore.Create(RealmMap, player, score)));
+            realm.RunWrite(r =>
+            {
+                var rScore = r.Add(RealmScore.Create(RealmMap, player, score));
+
+                if (rScore != null)
+                    SaveReplay(rScore.ID);
+            });
 
             var request = new ScoreSubmitRequest(score);
             screen.SubmitRequest = request;
@@ -371,6 +387,27 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }
 
         this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(screen));
+    }
+
+    protected void SaveReplay(Guid scoreID)
+    {
+        try
+        {
+            var replay = replayRecorder.Replay;
+            replay.PlayerID = fluxel.LoggedInUser?.ID ?? -1;
+            var folder = storage.GetFullPath("replays");
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            var path = Path.Combine(folder, $"{scoreID}.frp");
+            Logger.Log($"Saving replay to {path}", LoggingTarget.Runtime, LogLevel.Debug);
+            File.WriteAllText(path, replay.ToJson());
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Failed to save replay!");
+        }
     }
 
     public virtual void RestartMap()

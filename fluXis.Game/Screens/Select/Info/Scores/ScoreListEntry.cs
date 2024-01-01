@@ -52,6 +52,9 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
 
             items.Add(new FluXisMenuItem("View Details", FontAwesome.Solid.InfoCircle, MenuItemType.Highlighted, viewDetails));
 
+            if (HasReplay)
+                items.Add(new FluXisMenuItem("View Replay", FontAwesome.Solid.PlayCircle, MenuItemType.Highlighted, () => ReplayAction?.Invoke()));
+
             if (Deletable && RealmScoreId != null)
             {
                 items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Trash, MenuItemType.Dangerous, () =>
@@ -79,6 +82,9 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     public APIUserShort Player { get; set; }
     public DateTimeOffset Date { get; set; }
     public int Place { get; set; }
+
+    public bool HasReplay { get; set; }
+    public Action ReplayAction { get; set; }
 
     public bool Deletable { get; set; }
     public Guid? RealmScoreId { get; set; }

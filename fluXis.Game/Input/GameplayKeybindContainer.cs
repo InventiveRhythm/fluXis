@@ -1,53 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
-using osu.Framework.Graphics;
-using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 
 namespace fluXis.Game.Input;
 
 public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisGameplayKeybind>
 {
-    private readonly FluXisGameBase handler;
+    public override IEnumerable<IKeyBinding> DefaultKeyBindings { get; }
 
-    private InputManager inputManager;
-
-    public GameplayKeybindContainer(FluXisGameBase game, FluXisRealm realm)
-        : base(realm, SimultaneousBindingMode.All, KeyCombinationMatchingMode.Any)
+    public GameplayKeybindContainer(FluXisRealm realm, int keyCount)
+        : base(realm, SimultaneousBindingMode.All)
     {
-        this.handler = game;
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        inputManager = GetContainingInputManager();
-    }
-
-    public override IEnumerable<IKeyBinding> DefaultKeyBindings => KeyBindings1K
-                                                                   .Concat(KeyBindings2K)
-                                                                   .Concat(KeyBindings3K)
-                                                                   .Concat(KeyBindings4K)
-                                                                   .Concat(KeyBindings5K)
-                                                                   .Concat(KeyBindings6K)
-                                                                   .Concat(KeyBindings7K)
-                                                                   .Concat(KeyBindings8K)
-                                                                   .Concat(KeyBindings9K)
-                                                                   .Concat(KeyBindings10K);
-
-    protected override IEnumerable<Drawable> KeyBindingInputQueue
-    {
-        get
+        DefaultKeyBindings = keyCount switch
         {
-            var queue = inputManager?.NonPositionalInputQueue ?? base.KeyBindingInputQueue;
-
-            if (handler != null)
-                queue = queue.Prepend(handler);
-
-            return queue;
-        }
+            1 => KeyBindings1K,
+            2 => KeyBindings2K,
+            3 => KeyBindings3K,
+            4 => KeyBindings4K,
+            5 => KeyBindings5K,
+            6 => KeyBindings6K,
+            7 => KeyBindings7K,
+            8 => KeyBindings8K,
+            9 => KeyBindings9K,
+            10 => KeyBindings10K,
+            _ => KeyBindings1K.Concat(KeyBindings2K)
+                              .Concat(KeyBindings3K)
+                              .Concat(KeyBindings4K)
+                              .Concat(KeyBindings5K)
+                              .Concat(KeyBindings6K)
+                              .Concat(KeyBindings7K)
+                              .Concat(KeyBindings8K)
+                              .Concat(KeyBindings9K)
+                              .Concat(KeyBindings10K)
+        };
     }
 
     public IEnumerable<KeyBinding> KeyBindings1K = new[]
