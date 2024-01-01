@@ -14,11 +14,13 @@ using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Game.Screens.Edit.BottomBar;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
@@ -230,6 +232,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             new("Copy", FontAwesome.Solid.Copy, () => ChartingContainer?.Copy()) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
                             new("Cut", FontAwesome.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
                             new("Paste", FontAwesome.Solid.Paste, () => ChartingContainer?.Paste()),
+                            new FluXisMenuSpacer(),
+                            new("Flip Selection", FontAwesome.Solid.ArrowsAltH, () => values.ActionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), Map.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
                             new FluXisMenuSpacer(),
                             new("Delete", FontAwesome.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
                             new("Select all", FontAwesome.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
