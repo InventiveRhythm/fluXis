@@ -1,16 +1,16 @@
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
 
 public class NoteHitsoundChangeAction : EditorAction
 {
-    private readonly HitObjectInfo[] infos;
+    private readonly HitObject[] infos;
     private readonly EditorMapInfo mapInfo;
     private readonly string newSample;
     private readonly string[] samples;
 
-    public NoteHitsoundChangeAction(EditorMapInfo mapInfo, HitObjectInfo[] infos, string newSample)
+    public NoteHitsoundChangeAction(EditorMapInfo mapInfo, HitObject[] infos, string newSample)
     {
         this.mapInfo = mapInfo;
         this.infos = infos;

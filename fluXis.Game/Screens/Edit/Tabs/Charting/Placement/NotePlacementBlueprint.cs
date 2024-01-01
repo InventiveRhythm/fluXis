@@ -1,27 +1,27 @@
 using System;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 
 public partial class NotePlacementBlueprint : PlacementBlueprint
 {
-    protected HitObjectInfo Hit => Object as HitObjectInfo;
+    protected HitObject Hit => Object as HitObject;
 
     protected NotePlacementBlueprint()
-        : base(new HitObjectInfo())
+        : base(new HitObject())
     {
     }
 
     public override void UpdatePlacement(float time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        ((HitObjectInfo)Object).Lane = Math.Clamp(lane, 1, EditorValues.Editor.Map.KeyCount);
+        ((HitObject)Object).Lane = Math.Clamp(lane, 1, EditorValues.Editor.Map.KeyCount);
     }
 
     public override void OnPlacementFinished(bool commit)
     {
         if (commit)
-            EditorValues.ActionStack.Add(new NotePlaceAction((HitObjectInfo)Object, EditorValues.MapInfo));
+            EditorValues.ActionStack.Add(new NotePlaceAction((HitObject)Object, EditorValues.MapInfo));
     }
 }

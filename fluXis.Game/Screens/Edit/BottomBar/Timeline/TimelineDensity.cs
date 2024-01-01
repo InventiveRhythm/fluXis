@@ -75,7 +75,7 @@ public partial class TimelineDensity : FillFlowContainer
             var start = sectionLength * i;
             var end = start + sectionLength;
 
-            var density = map.HitObjects.Count(h => h.Time >= start && h.HoldEndTime <= end);
+            var density = map.HitObjects.Count(h => h.Time >= start && h.EndTime <= end);
             counts[i] = density;
         }
 

@@ -1,5 +1,5 @@
 using System.Globalization;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -7,12 +7,12 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
-public partial class TimingPointSettings : PointSettings<TimingPointInfo>
+public partial class TimingPointSettings : PointSettings<TimingPoint>
 {
     private BasicPointSettingsField bpmField;
     private BasicPointSettingsField signatureField;
 
-    public TimingPointSettings(TimingPointInfo point)
+    public TimingPointSettings(TimingPoint point)
         : base(point)
     {
     }

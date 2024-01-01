@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -20,7 +20,7 @@ public partial class EditorHitObject : Container
     [Resolved]
     private EditorValues values { get; set; }
 
-    public HitObjectInfo Data { get; init; }
+    public HitObject Data { get; init; }
 
     public Drawable HitObjectPiece { get; private set; }
     private Drawable longNoteBody { get; set; }
@@ -78,9 +78,9 @@ public partial class EditorHitObject : Container
         X = playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = playfield.HitObjectContainer.PositionAtTime(Data.Time);
 
-        if (Data.IsLongNote())
+        if (Data.LongNote)
         {
-            var endY = playfield.HitObjectContainer.PositionAtTime(Data.HoldEndTime);
+            var endY = playfield.HitObjectContainer.PositionAtTime(Data.EndTime);
             longNoteBody.Height = Y - endY;
             longNoteBody.Y = -LongNoteEnd.Height / 2;
             LongNoteEnd.Y = endY - Y;

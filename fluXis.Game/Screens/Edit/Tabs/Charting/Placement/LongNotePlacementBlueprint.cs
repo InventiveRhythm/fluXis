@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
@@ -52,10 +52,10 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
         body.Width = EditorHitObjectContainer.NOTEWIDTH;
         end.Width = EditorHitObjectContainer.NOTEWIDTH;
 
-        if (Object is not HitObjectInfo hit) return;
+        if (Object is not HitObject hit) return;
 
         head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.Time, hit.Lane));
-        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.HoldEndTime, hit.Lane));
+        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.EndTime, hit.Lane));
         body.Height = Math.Abs(head.Y - end.Y);
         body.Position = new Vector2(head.X, head.Y - head.DrawHeight / 2);
     }
@@ -71,7 +71,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
     public override void UpdatePlacement(float time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        if (Object is not HitObjectInfo hit) return;
+        if (Object is not HitObject hit) return;
 
         if (State == PlacementState.Working)
         {
@@ -83,7 +83,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        var notesBetween = EditorValues.MapInfo.HitObjects.Where(h => h.Time > Hit.Time && h.Time < Hit.HoldEndTime && h.Lane == Hit.Lane).ToList();
+        var notesBetween = EditorValues.MapInfo.HitObjects.Where(h => h.Time > Hit.Time && h.Time < Hit.EndTime && h.Lane == Hit.Lane).ToList();
 
         if (notesBetween.Count > 0)
         {

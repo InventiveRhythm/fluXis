@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Map;
+namespace fluXis.Game.Map.Structures;
 
-public class TimingPointInfo : TimedObject
+public class TimingPoint : TimedObject
 {
     public float BPM { get; set; }
     public int Signature { get; set; }
@@ -11,9 +11,9 @@ public class TimingPointInfo : TimedObject
     [JsonIgnore]
     public float MsPerBeat => 60000f / BPM;
 
-    public TimingPointInfo Copy()
+    public TimingPoint Copy()
     {
-        return new TimingPointInfo
+        return new TimingPoint
         {
             Time = Time,
             BPM = BPM,

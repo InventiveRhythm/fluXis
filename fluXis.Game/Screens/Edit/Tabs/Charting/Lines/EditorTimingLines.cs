@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -35,7 +35,7 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
         values.MapInfo.TimingPointChanged += scheduleRedraw;
     }
 
-    private void scheduleRedraw(TimingPointInfo _)
+    private void scheduleRedraw(TimingPoint _)
     {
         Schedule(() =>
         {

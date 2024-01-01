@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Import.osu.Map.Components;
 
@@ -9,7 +9,7 @@ public class OsuHitObject
     public int EndTime { get; init; }
     public string HitSound { get; init; }
 
-    public HitObjectInfo ToHitObjectInfo(int keyCount)
+    public HitObject ToHitObjectInfo(int keyCount)
     {
         int key = (int)(X * (keyCount / 512f));
 
@@ -18,7 +18,7 @@ public class OsuHitObject
 
         if (holdTime < 0) holdTime = 0;
 
-        return new HitObjectInfo
+        return new HitObject
         {
             Lane = key + 1,
             Time = StartTime,

@@ -1,13 +1,13 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NotePasteAction : EditorAction
 {
-    private readonly HitObjectInfo[] infos;
+    private readonly HitObject[] infos;
     private readonly EditorMapInfo mapInfo;
 
-    public NotePasteAction(HitObjectInfo[] infos, EditorMapInfo mapInfo)
+    public NotePasteAction(HitObject[] infos, EditorMapInfo mapInfo)
     {
         this.infos = infos;
         this.mapInfo = mapInfo;

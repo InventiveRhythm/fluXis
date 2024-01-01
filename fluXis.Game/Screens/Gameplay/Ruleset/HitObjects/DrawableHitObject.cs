@@ -1,5 +1,5 @@
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Default.HitObject;
@@ -8,9 +8,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Gameplay.Ruleset;
+namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 
-public partial class HitObject : CompositeDrawable
+public partial class DrawableHitObject : CompositeDrawable
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
@@ -21,7 +21,7 @@ public partial class HitObject : CompositeDrawable
     [Resolved]
     private Playfield playfield { get; set; }
 
-    public HitObjectInfo Data { get; }
+    public HitObject Data { get; }
     private double scrollVelocityTime { get; }
     private double scrollVelocityEndTime { get; }
 
@@ -38,12 +38,12 @@ public partial class HitObject : CompositeDrawable
     public bool IsBeingHeld { get; set; }
     public bool LongNoteMissed { get; private set; }
 
-    public HitObject(HitObjectManager manager, HitObjectInfo data)
+    public DrawableHitObject(HitObjectManager manager, HitObject data)
     {
         this.manager = manager;
         Data = data;
         scrollVelocityTime = manager.ScrollVelocityPositionFromTime(data.Time);
-        scrollVelocityEndTime = manager.ScrollVelocityPositionFromTime(data.HoldEndTime);
+        scrollVelocityEndTime = manager.ScrollVelocityPositionFromTime(data.EndTime);
     }
 
     [BackgroundDependencyLoader]
@@ -54,15 +54,15 @@ public partial class HitObject : CompositeDrawable
 
         InternalChildren = new[]
         {
-            holdBodyPiece = skinManager.GetLongNoteBody(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.IsLongNote() ? 1 : 0),
-            holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.IsLongNote() ? 1 : 0),
+            holdBodyPiece = skinManager.GetLongNoteBody(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.LongNote ? 1 : 0),
+            holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.LongNote ? 1 : 0),
             notePiece = skinManager.GetHitObject(Data.Lane, manager.KeyCount)
         };
 
         if (manager.UseSnapColors)
         {
             var colorStart = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.Time));
-            var colorEnd = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.HoldEndTime));
+            var colorEnd = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.EndTime));
 
             if (notePiece is DefaultHitObjectPiece defaultPiece) defaultPiece.SetColor(colorStart);
             else notePiece.Colour = colorStart;
@@ -98,9 +98,9 @@ public partial class HitObject : CompositeDrawable
         var missTime = screen.HitWindows.TimingFor(Judgement.Miss);
         var releaseMissTime = screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest);
 
-        Missed = (Clock.CurrentTime - Data.Time > lastHitableTime && !IsBeingHeld) || (Data.IsLongNote() && IsBeingHeld && Clock.CurrentTime - Data.HoldEndTime > releaseMissTime);
+        Missed = (Clock.CurrentTime - Data.Time > lastHitableTime && !IsBeingHeld) || (Data.LongNote && IsBeingHeld && Clock.CurrentTime - Data.EndTime > releaseMissTime);
         Hitable = Clock.CurrentTime - Data.Time > -missTime && !Missed;
-        Releasable = Data.IsLongNote() && Clock.CurrentTime - Data.HoldEndTime > -releaseMissTime && !Missed;
+        Releasable = Data.LongNote && Clock.CurrentTime - Data.EndTime > -releaseMissTime && !Missed;
     }
 
     private void updatePositioning()
@@ -112,7 +112,7 @@ public partial class HitObject : CompositeDrawable
         if (IsBeingHeld)
             Y = manager.HitPosition;
 
-        if (!Data.IsLongNote()) return;
+        if (!Data.LongNote) return;
 
         var endY = manager.PositionAtTime(scrollVelocityEndTime);
         var diff = Y - endY;

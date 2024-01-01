@@ -141,8 +141,16 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Map = LoadMap();
 
-        if (Map == null || !Map.Validate(notifications))
+        if (Map == null)
         {
+            notifications.SendError("Map could not be loaded");
+            ValidForPush = false;
+            return;
+        }
+
+        if (!Map.Validate(out var issue))
+        {
+            notifications.SendError(issue);
             ValidForPush = false;
             return;
         }

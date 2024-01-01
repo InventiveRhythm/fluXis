@@ -10,6 +10,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using fluXis.Game.Map.Builtin.Roundhouse;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -299,13 +300,13 @@ public partial class MapStore : Component
             BackgroundFile = map.Metadata.Background,
             CoverFile = map.MapSet.Cover,
             VideoFile = refInfo?.VideoFile ?? "",
-            TimingPoints = refInfo?.TimingPoints.Select(x => new TimingPointInfo
+            TimingPoints = refInfo?.TimingPoints.Select(x => new TimingPoint
             {
                 BPM = x.BPM,
                 Time = x.Time,
                 Signature = x.Signature,
                 HideLines = x.HideLines
-            }).ToList() ?? new List<TimingPointInfo> { new() { BPM = 120, Time = 0, Signature = 4 } }, // Add default timing point to avoid issues
+            }).ToList() ?? new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }, // Add default timing point to avoid issues
         };
 
         var json = JsonConvert.SerializeObject(info);

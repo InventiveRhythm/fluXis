@@ -1,13 +1,13 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NotePlaceAction : EditorAction
 {
-    private readonly HitObjectInfo info;
+    private readonly HitObject info;
     private readonly EditorMapInfo mapInfo;
 
-    public NotePlaceAction(HitObjectInfo info, EditorMapInfo mapInfo)
+    public NotePlaceAction(HitObject info, EditorMapInfo mapInfo)
     {
         this.info = info;
         this.mapInfo = mapInfo;

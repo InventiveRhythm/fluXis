@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Utils;
@@ -18,9 +19,9 @@ public static class MapUtils
 
         foreach (var hitObject in map.HitObjects)
         {
-            filters.Length = Math.Max(filters.Length, hitObject.HoldEndTime);
+            filters.Length = Math.Max(filters.Length, hitObject.EndTime);
 
-            if (hitObject.IsLongNote())
+            if (hitObject.LongNote)
                 filters.LongNoteCount++;
             else
                 filters.NoteCount++;
@@ -52,7 +53,7 @@ public static class MapUtils
         return filters;
     }
 
-    private static float getNps(List<HitObjectInfo> hitObjects)
+    private static float getNps(List<HitObject> hitObjects)
     {
         if (hitObjects.Count == 0) return 0;
 

@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Mods;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
@@ -18,9 +19,9 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Gameplay.Ruleset;
+namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 
-public partial class HitObjectManager : Container<HitObject>
+public partial class HitObjectManager : Container<DrawableHitObject>
 {
     [Resolved]
     private SkinManager skinManager { get; set; }
@@ -41,9 +42,9 @@ public partial class HitObjectManager : Container<HitObject>
 
     public MapInfo Map => playfield.Map;
     public int KeyCount => playfield.RealmMap.KeyCount;
-    public List<HitObjectInfo> PastHitObjects { get; } = new();
-    public List<HitObjectInfo> FutureHitObjects { get; } = new();
-    public List<HitObject> HitObjects { get; } = new();
+    public List<HitObject> PastHitObjects { get; } = new();
+    public List<HitObject> FutureHitObjects { get; } = new();
+    public List<DrawableHitObject> HitObjects { get; } = new();
 
     public double CurrentTime { get; private set; }
     public int CurrentKeyCount { get; private set; }
@@ -74,7 +75,7 @@ public partial class HitObjectManager : Container<HitObject>
     public bool Break => timeUntilNextHitObject >= 2000;
     private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - Clock.CurrentTime;
 
-    private HitObjectInfo nextHitObject
+    private HitObject nextHitObject
     {
         get
         {
@@ -113,7 +114,7 @@ public partial class HitObjectManager : Container<HitObject>
 
             foreach (var hitObject in hitObjects)
             {
-                if (hitObject.IsLongNote() && hitObject.HoldEndTime >= newTime && hitObject.HoldEndResult != null)
+                if (hitObject.LongNote && hitObject.EndTime >= newTime && hitObject.HoldEndResult != null)
                 {
                     var endResult = hitObject.HoldEndResult;
                     judgementProcessor.RevertResult(endResult);
@@ -126,7 +127,7 @@ public partial class HitObjectManager : Container<HitObject>
                 judgementProcessor.RevertResult(result);
                 hitObject.Result = null;
 
-                var hit = new HitObject(this, hitObject);
+                var hit = new DrawableHitObject(this, hitObject);
                 HitObjects.Add(hit);
                 AddInternal(hit);
             }
@@ -147,9 +148,9 @@ public partial class HitObjectManager : Container<HitObject>
                 judgementProcessor.AddResult(hitResult);
                 info.Result = hitResult;
 
-                if (info.IsLongNote())
+                if (info.LongNote)
                 {
-                    var endHitResult = new HitResult(info.HoldEndTime, 0, Judgement.Flawless);
+                    var endHitResult = new HitResult(info.EndTime, 0, Judgement.Flawless);
                     judgementProcessor.AddResult(endHitResult);
                     info.HoldEndResult = endHitResult;
                 }
@@ -173,7 +174,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         while (FutureHitObjects is { Count: > 0 } && ShouldDisplay(FutureHitObjects[0].Time))
         {
-            HitObject hitObject = new HitObject(this, FutureHitObjects[0]);
+            DrawableHitObject hitObject = new DrawableHitObject(this, FutureHitObjects[0]);
             FutureHitObjects.RemoveAt(0);
             HitObjects.Add(hitObject);
             AddInternal(hitObject);
@@ -186,7 +187,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         foreach (var hitObject in HitObjects.Where(h => h.Missed).ToList())
         {
-            if (hitObject.Data.IsLongNote())
+            if (hitObject.Data.LongNote)
             {
                 if (!hitObject.LongNoteMissed)
                 {
@@ -194,7 +195,7 @@ public partial class HitObjectManager : Container<HitObject>
                     miss(hitObject, hitObject.GotHit);
                 }
 
-                if (hitObject.Data.HoldEndTime - Clock.CurrentTime <= screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest))
+                if (hitObject.Data.EndTime - Clock.CurrentTime <= screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest))
                     removeHitObject(hitObject);
             }
             else miss(hitObject);
@@ -258,7 +259,7 @@ public partial class HitObjectManager : Container<HitObject>
     {
         bool[] pressed = new bool[KeyCount];
 
-        List<HitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Clock.CurrentTime).ToList();
+        List<DrawableHitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Clock.CurrentTime).ToList();
 
         foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
         {
@@ -269,12 +270,12 @@ public partial class HitObjectManager : Container<HitObject>
             pressed[hitObject.Data.Lane - 1] = true;
         }
 
-        foreach (var hitObject in belowTime.Where(h => h.Data.IsLongNote()).ToList())
+        foreach (var hitObject in belowTime.Where(h => h.Data.LongNote).ToList())
         {
             hitObject.IsBeingHeld = true;
             pressed[hitObject.Data.Lane - 1] = true;
 
-            if (hitObject.Data.HoldEndTime <= Clock.CurrentTime)
+            if (hitObject.Data.EndTime <= Clock.CurrentTime)
                 hit(hitObject, true);
         }
 
@@ -303,7 +304,7 @@ public partial class HitObjectManager : Container<HitObject>
                 playHitSound(next);
             }
 
-            List<HitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
+            List<DrawableHitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
 
             bool[] pressed = new bool[KeyCount];
 
@@ -324,14 +325,14 @@ public partial class HitObjectManager : Container<HitObject>
         {
             foreach (var hit in HitObjects)
             {
-                if (hit.Hitable && hit.GotHit && hit.Data.IsLongNote() && input.Pressed[hit.Data.Lane - 1])
+                if (hit.Hitable && hit.GotHit && hit.Data.LongNote && input.Pressed[hit.Data.Lane - 1])
                     hit.IsBeingHeld = true;
             }
         }
 
         if (input.JustReleased.Contains(true))
         {
-            List<HitObject> releaseable = HitObjects.Where(hit => hit.Releasable && input.JustReleased[hit.Data.Lane - 1]).ToList();
+            List<DrawableHitObject> releaseable = HitObjects.Where(hit => hit.Releasable && input.JustReleased[hit.Data.Lane - 1]).ToList();
 
             bool[] pressed = new bool[KeyCount];
 
@@ -349,33 +350,33 @@ public partial class HitObjectManager : Container<HitObject>
         }
     }
 
-    private void hit(HitObject hitObject, bool isHoldEnd)
+    private void hit(DrawableHitObject hitObject, bool isHoldEnd)
     {
-        double diff = isHoldEnd ? hitObject.Data.HoldEndTime - Clock.CurrentTime : hitObject.Data.Time - Clock.CurrentTime;
+        double diff = isHoldEnd ? hitObject.Data.EndTime - Clock.CurrentTime : hitObject.Data.Time - Clock.CurrentTime;
         diff = AutoPlay ? 0 : diff;
         hitObject.GotHit = true;
 
         judmentDisplay(hitObject, diff, isHoldEnd);
 
-        if (!hitObject.Data.IsLongNote() || isHoldEnd) removeHitObject(hitObject);
+        if (!hitObject.Data.LongNote || isHoldEnd) removeHitObject(hitObject);
     }
 
-    private void miss(HitObject hitObject, bool isHoldEnd = false)
+    private void miss(DrawableHitObject hitObject, bool isHoldEnd = false)
     {
         var windows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
         judmentDisplay(hitObject, -windows.TimingFor(windows.Lowest), isHoldEnd);
 
-        if (!hitObject.Data.IsLongNote()) removeHitObject(hitObject);
+        if (!hitObject.Data.LongNote) removeHitObject(hitObject);
     }
 
-    private void removeHitObject(HitObject hitObject)
+    private void removeHitObject(DrawableHitObject hitObject)
     {
         HitObjects.Remove(hitObject);
         PastHitObjects.Add(hitObject.Data);
         RemoveInternal(hitObject, false);
     }
 
-    private void playHitSound(HitObjectInfo hitObject)
+    private void playHitSound(HitObject hitObject)
     {
         Sample sample = null;
 
@@ -396,7 +397,7 @@ public partial class HitObjectManager : Container<HitObject>
         sample?.Play();
     }
 
-    private void judmentDisplay(HitObject hitObject, double difference, bool isHoldEnd = false)
+    private void judmentDisplay(DrawableHitObject hitObject, double difference, bool isHoldEnd = false)
     {
         var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
         var judgement = hitWindows.JudgementFor(difference);
@@ -433,15 +434,15 @@ public partial class HitObjectManager : Container<HitObject>
         if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || screen.Mods.Any(m => m is NoSvMod))
             return;
 
-        ScrollVelocityInfo first = Map.ScrollVelocities[0];
+        ScrollVelocity first = Map.ScrollVelocities[0];
 
         float time = first.Time;
         scrollVelocityMarks.Add(time);
 
         for (var i = 1; i < Map.ScrollVelocities.Count; i++)
         {
-            ScrollVelocityInfo prev = Map.ScrollVelocities[i - 1];
-            ScrollVelocityInfo current = Map.ScrollVelocities[i];
+            ScrollVelocity prev = Map.ScrollVelocities[i - 1];
+            ScrollVelocity current = Map.ScrollVelocities[i];
 
             time += (int)((current.Time - prev.Time) * prev.Multiplier);
             scrollVelocityMarks.Add(time);
@@ -455,7 +456,7 @@ public partial class HitObjectManager : Container<HitObject>
 
         for (var i = 0; i < Map.TimingPoints.Count; i++)
         {
-            TimingPointInfo timingPoint = Map.TimingPoints[i];
+            TimingPoint timingPoint = Map.TimingPoints[i];
             double time = timingPoint.Time;
             float target = i + 1 < Map.TimingPoints.Count ? Map.TimingPoints[i + 1].Time : Map.EndTime;
             float increment = timingPoint.MsPerBeat;
@@ -504,7 +505,7 @@ public partial class HitObjectManager : Container<HitObject>
         if (index == 0)
             return time;
 
-        ScrollVelocityInfo prev = Map.ScrollVelocities[index - 1];
+        ScrollVelocity prev = Map.ScrollVelocities[index - 1];
 
         double position = scrollVelocityMarks[index - 1];
         position += (time - prev.Time) * prev.Multiplier;
@@ -512,7 +513,7 @@ public partial class HitObjectManager : Container<HitObject>
     }
 
     [CanBeNull]
-    private HitObjectInfo nextInLane(int lane)
+    private HitObject nextInLane(int lane)
     {
         var hit = HitObjects.FirstOrDefault(h => h.Data.Lane == lane && !h.GotHit)?.Data;
         hit ??= FutureHitObjects.FirstOrDefault(h => h.Lane == lane);

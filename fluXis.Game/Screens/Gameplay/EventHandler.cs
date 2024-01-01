@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay;

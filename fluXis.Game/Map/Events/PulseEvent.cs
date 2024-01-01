@@ -1,3 +1,4 @@
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Utils;
 
 namespace fluXis.Game.Map.Events;

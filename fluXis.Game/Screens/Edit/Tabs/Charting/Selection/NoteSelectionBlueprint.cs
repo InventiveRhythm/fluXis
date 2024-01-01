@@ -1,15 +1,15 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
 
 public partial class NoteSelectionBlueprint : SelectionBlueprint
 {
-    public new HitObjectInfo Object => (HitObjectInfo)base.Object;
+    public new HitObject Object => (HitObject)base.Object;
 
     public new EditorHitObject Drawable => (EditorHitObject)base.Drawable;
 
-    public override float SecondComparer => Object.HoldEndTime;
+    public override float SecondComparer => Object.EndTime;
 
     public NoteSelectionBlueprint(TimedObject info)
         : base(info)

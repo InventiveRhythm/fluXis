@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Import.Stepmania.Map.Components;
 
 namespace fluXis.Import.Stepmania.Map;
@@ -156,7 +157,7 @@ public class StepmaniaFile
                     Tags = "",
                     PreviewTime = (int)(SampleStart * 1000)
                 },
-                TimingPoints = new List<TimingPointInfo>()
+                TimingPoints = new List<TimingPoint>()
             };
 
             var beats = 0f;
@@ -171,7 +172,7 @@ public class StepmaniaFile
                 {
                     if (bpms.Count != 0 && beats >= bpms.First().Beat)
                     {
-                        map.TimingPoints.Add(new TimingPointInfo
+                        map.TimingPoints.Add(new TimingPoint
                         {
                             Time = time,
                             Signature = 4,
@@ -189,7 +190,7 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Normal:
-                                map.HitObjects.Add(new HitObjectInfo
+                                map.HitObjects.Add(new HitObject
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
                                     Lane = i + 1
@@ -197,7 +198,7 @@ public class StepmaniaFile
                                 break;
 
                             case StepNote.Head:
-                                map.HitObjects.Add(new HitObjectInfo
+                                map.HitObjects.Add(new HitObject
                                 {
                                     Time = (int)Math.Round(time, MidpointRounding.AwayFromZero),
                                     HoldTime = int.MinValue,
@@ -216,7 +217,7 @@ public class StepmaniaFile
 
                                     for (int j = 0; j < notes; j++)
                                     {
-                                        map.HitObjects.Add(new HitObjectInfo
+                                        map.HitObjects.Add(new HitObject
                                         {
                                             Time = (int)Math.Round(roll.Time + distance * (j + 1), MidpointRounding.AwayFromZero),
                                             Lane = i + 1
@@ -224,7 +225,7 @@ public class StepmaniaFile
                                     }
                                 }
                                 else if (note != null)
-                                    note.HoldEndTime = (int)Math.Round(time, MidpointRounding.AwayFromZero);
+                                    note.EndTime = (int)Math.Round(time, MidpointRounding.AwayFromZero);
 
                                 break;
 

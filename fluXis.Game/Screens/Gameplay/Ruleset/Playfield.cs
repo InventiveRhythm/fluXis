@@ -4,6 +4,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils.Extensions;

@@ -1,4 +1,4 @@
-namespace fluXis.Game.Map;
+namespace fluXis.Game.Map.Structures;
 
 public class TimedObject
 {

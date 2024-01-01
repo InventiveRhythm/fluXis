@@ -1,13 +1,13 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NoteRemoveAction : EditorAction
 {
-    private readonly HitObjectInfo[] infos;
+    private readonly HitObject[] infos;
     private readonly EditorMapInfo mapInfo;
 
-    public NoteRemoveAction(HitObjectInfo[] infos, EditorMapInfo mapInfo)
+    public NoteRemoveAction(HitObject[] infos, EditorMapInfo mapInfo)
     {
         this.infos = infos;
         this.mapInfo = mapInfo;

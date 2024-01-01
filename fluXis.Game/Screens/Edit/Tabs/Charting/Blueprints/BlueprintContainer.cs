@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
@@ -165,11 +165,11 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
         switch (obj)
         {
-            case HitObjectInfo hit:
+            case HitObject hit:
                 var hitDrawable = ChartingContainer.HitObjects.FirstOrDefault(d => d.Data == obj);
                 if (hitDrawable == null) return null;
 
-                blueprint = hit.IsLongNote() ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);
+                blueprint = hit.LongNote ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);
                 blueprint.Drawable = hitDrawable;
                 break;
 

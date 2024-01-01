@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -125,9 +125,9 @@ public partial class SelectionHandler : Container, IHasContextMenu
 
         var objs = objects.ToList();
 
-        if (objs.Any(o => o is HitObjectInfo))
+        if (objs.Any(o => o is HitObject))
         {
-            var hits = objs.OfType<HitObjectInfo>().ToArray();
+            var hits = objs.OfType<HitObject>().ToArray();
 
             if (hits.Length > 0)
                 values.ActionStack.Add(new NoteRemoveAction(hits, values.MapInfo));

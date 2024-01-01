@@ -1,16 +1,19 @@
 using fluXis.Game.Scoring.Structs;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Map;
+namespace fluXis.Game.Map.Structures;
 
-public class HitObjectInfo : TimedObject
+public class HitObject : TimedObject
 {
     public int Lane { get; set; }
     public float HoldTime { get; set; }
     public string HitSound { get; set; }
 
     [JsonIgnore]
-    public float HoldEndTime
+    public bool LongNote => HoldTime > 0;
+
+    [JsonIgnore]
+    public float EndTime
     {
         get
         {
@@ -28,23 +31,19 @@ public class HitObjectInfo : TimedObject
     [JsonIgnore]
     public HitResult HoldEndResult { get; set; }
 
-    public bool IsLongNote()
+    public HitObject Copy()
     {
-        return HoldTime > 0;
-    }
-
-    public HitObjectInfo Copy()
-    {
-        return new HitObjectInfo
+        return new HitObject
         {
             Time = Time,
             Lane = Lane,
-            HoldTime = HoldTime
+            HoldTime = HoldTime,
+            HitSound = HitSound
         };
     }
 
     public override string ToString()
     {
-        return $"Time: {Time}, Lane: {Lane}, HoldTime: {HoldTime}";
+        return $"Time: {Time}, Lane: {Lane}, HoldTime: {HoldTime}, HitSound: {HitSound}";
     }
 }

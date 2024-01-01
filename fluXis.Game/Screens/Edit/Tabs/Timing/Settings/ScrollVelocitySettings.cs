@@ -1,5 +1,5 @@
 using System.Globalization;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -7,11 +7,11 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 
-public partial class ScrollVelocitySettings : PointSettings<ScrollVelocityInfo>
+public partial class ScrollVelocitySettings : PointSettings<ScrollVelocity>
 {
     private BasicPointSettingsField multiplierField;
 
-    public ScrollVelocitySettings(ScrollVelocityInfo point)
+    public ScrollVelocitySettings(ScrollVelocity point)
         : base(point)
     {
     }

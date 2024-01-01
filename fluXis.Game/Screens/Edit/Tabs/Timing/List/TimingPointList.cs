@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
@@ -11,7 +11,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Timing.List;
 
 public partial class TimingPointList : TimingCategoryList<TimingPointList.TimingPointEntry>
 {
-    public TimingPointList(List<TimingPointInfo> points, TimingTab tab)
+    public TimingPointList(List<TimingPoint> points, TimingTab tab)
         : base("Timing Points", FluXisColors.Background3, tab)
     {
         points.ForEach(point => AddEntry(new TimingPointEntry(point)));
@@ -19,7 +19,7 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
 
     public override void OnAdd()
     {
-        var point = new TimingPointInfo
+        var point = new TimingPoint
         {
             Time = (float)EditorClock.CurrentTime,
             BPM = 120,
@@ -36,34 +36,34 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
     {
         var entries = GetEntries().ToList();
 
-        entries.Sort((a, b) => a.PointInfo.Time.CompareTo(b.PointInfo.Time));
+        entries.Sort((a, b) => a.TimingPoint.Time.CompareTo(b.TimingPoint.Time));
         ReplaceEntries(entries);
     }
 
     public override void Remove(TimingPointEntry entry)
     {
-        EditorValues.MapInfo.Remove(entry.PointInfo);
+        EditorValues.MapInfo.Remove(entry.TimingPoint);
         base.Remove(entry);
     }
 
     public partial class TimingPointEntry : ListEntry
     {
-        public readonly TimingPointInfo PointInfo;
+        public readonly TimingPoint TimingPoint;
 
         private FluXisSpriteText timeText;
         private FluXisSpriteText bpmText;
         private FluXisSpriteText signatureText;
 
-        public TimingPointEntry(TimingPointInfo pointInfo)
+        public TimingPointEntry(TimingPoint timingPoint)
         {
-            PointInfo = pointInfo;
+            TimingPoint = timingPoint;
         }
 
         protected override void Update()
         {
-            timeText.Text = TimeUtils.Format(PointInfo.Time);
-            bpmText.Text = PointInfo.BPM + "bpm";
-            signatureText.Text = PointInfo.Signature + "/4";
+            timeText.Text = TimeUtils.Format(TimingPoint.Time);
+            bpmText.Text = TimingPoint.BPM + "bpm";
+            signatureText.Text = TimingPoint.Signature + "/4";
             base.Update();
         }
 
@@ -71,24 +71,24 @@ public partial class TimingPointList : TimingCategoryList<TimingPointList.Timing
         {
             timeText = new FluXisSpriteText
             {
-                Text = TimeUtils.Format(PointInfo.Time),
+                Text = TimeUtils.Format(TimingPoint.Time),
                 FontSize = 24,
                 Width = 100
             },
             bpmText = new FluXisSpriteText
             {
-                Text = PointInfo.BPM + "bpm",
+                Text = TimingPoint.BPM + "bpm",
                 FontSize = 24,
                 Width = 80
             },
             signatureText = new FluXisSpriteText
             {
-                Text = PointInfo.Signature + "/4",
+                Text = TimingPoint.Signature + "/4",
                 FontSize = 24
             }
         };
 
-        public override PointSettings CreatePointSettings() => new TimingPointSettings(PointInfo);
+        public override PointSettings CreatePointSettings() => new TimingPointSettings(TimingPoint);
 
         protected override void Remove() => List.Remove(this);
     }

@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;

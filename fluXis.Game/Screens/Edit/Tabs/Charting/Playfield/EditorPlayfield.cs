@@ -1,5 +1,5 @@
 using fluXis.Game.Configuration;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
@@ -89,7 +89,7 @@ public partial class EditorPlayfield : Container
             hitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
     }
 
-    public void PlayHitSound(HitObjectInfo info)
+    public void PlayHitSound(HitObject info)
     {
         var sample = hitsounding.GetSample(info.HitSound) ?? hitSound;
         sample?.Play();

@@ -1,3 +1,4 @@
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Utils;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;

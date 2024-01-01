@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Screens.Edit;
@@ -11,17 +12,17 @@ public class EditorMapInfo : MapInfo
     [JsonIgnore]
     public EditorMapEvents MapEvents { get; set; } = new();
 
-    public event Action<HitObjectInfo> HitObjectAdded;
-    public event Action<HitObjectInfo> HitObjectRemoved;
+    public event Action<HitObject> HitObjectAdded;
+    public event Action<HitObject> HitObjectRemoved;
     public event Action HitSoundsChanged;
 
-    public event Action<TimingPointInfo> TimingPointAdded;
-    public event Action<TimingPointInfo> TimingPointRemoved;
-    public event Action<TimingPointInfo> TimingPointChanged;
+    public event Action<TimingPoint> TimingPointAdded;
+    public event Action<TimingPoint> TimingPointRemoved;
+    public event Action<TimingPoint> TimingPointChanged;
 
-    public event Action<ScrollVelocityInfo> ScrollVelocityAdded;
-    public event Action<ScrollVelocityInfo> ScrollVelocityRemoved;
-    public event Action<ScrollVelocityInfo> ScrollVelocityChanged;
+    public event Action<ScrollVelocity> ScrollVelocityAdded;
+    public event Action<ScrollVelocity> ScrollVelocityRemoved;
+    public event Action<ScrollVelocity> ScrollVelocityChanged;
 
     public EditorMapInfo(MapMetadata metadata)
         : base(metadata)
@@ -57,13 +58,13 @@ public class EditorMapInfo : MapInfo
         };
     }
 
-    public void Add(HitObjectInfo hitObject)
+    public void Add(HitObject hitObject)
     {
         HitObjects.Add(hitObject);
         HitObjectAdded?.Invoke(hitObject);
     }
 
-    public void Remove(HitObjectInfo hitObject)
+    public void Remove(HitObject hitObject)
     {
         HitObjects.Remove(hitObject);
         HitObjectRemoved?.Invoke(hitObject);
@@ -72,36 +73,36 @@ public class EditorMapInfo : MapInfo
     public void ChangeHitSounds() =>
         HitSoundsChanged?.Invoke();
 
-    public void Add(TimingPointInfo timingPoint)
+    public void Add(TimingPoint timingPoint)
     {
         TimingPoints.Add(timingPoint);
         TimingPointAdded?.Invoke(timingPoint);
     }
 
-    public void Remove(TimingPointInfo timingPoint)
+    public void Remove(TimingPoint timingPoint)
     {
         TimingPoints.Remove(timingPoint);
         TimingPointRemoved?.Invoke(timingPoint);
     }
 
-    public void Change(TimingPointInfo timingPoint)
+    public void Change(TimingPoint timingPoint)
     {
         TimingPointChanged?.Invoke(timingPoint);
     }
 
-    public void Add(ScrollVelocityInfo scrollVelocity)
+    public void Add(ScrollVelocity scrollVelocity)
     {
         ScrollVelocities.Add(scrollVelocity);
         ScrollVelocityAdded?.Invoke(scrollVelocity);
     }
 
-    public void Remove(ScrollVelocityInfo scrollVelocity)
+    public void Remove(ScrollVelocity scrollVelocity)
     {
         ScrollVelocities.Remove(scrollVelocity);
         ScrollVelocityRemoved?.Invoke(scrollVelocity);
     }
 
-    public void Change(ScrollVelocityInfo scrollVelocity)
+    public void Change(ScrollVelocity scrollVelocity)
     {
         ScrollVelocityChanged?.Invoke(scrollVelocity);
     }

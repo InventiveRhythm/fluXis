@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 

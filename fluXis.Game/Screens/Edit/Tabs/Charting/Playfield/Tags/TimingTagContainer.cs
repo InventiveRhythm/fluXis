@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
@@ -21,6 +21,6 @@ public partial class TimingTagContainer : EditorTagContainer
         Values.MapInfo.ScrollVelocityRemoved += RemoveTag;
     }
 
-    private void addTimingPoint(TimingPointInfo tp) => AddTag(new TimingPointTag(this, tp));
-    private void addScrollVelocity(ScrollVelocityInfo sv) => AddTag(new ScrollVelocityTag(this, sv));
+    private void addTimingPoint(TimingPoint tp) => AddTag(new TimingPointTag(this, tp));
+    private void addScrollVelocity(ScrollVelocity sv) => AddTag(new ScrollVelocityTag(this, sv));
 }

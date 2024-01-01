@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Import.osu.Map.Components;
 
@@ -12,9 +12,9 @@ public class OsuTimingPoint
 
     public bool IsScrollVelocity => Inherited == 0 || BeatLength < 0;
 
-    public TimingPointInfo ToTimingPointInfo()
+    public TimingPoint ToTimingPointInfo()
     {
-        return new TimingPointInfo
+        return new TimingPoint
         {
             Time = Time,
             BPM = 60000 / BeatLength,
@@ -22,9 +22,9 @@ public class OsuTimingPoint
         };
     }
 
-    public ScrollVelocityInfo ToScrollVelocityInfo()
+    public ScrollVelocity ToScrollVelocityInfo()
     {
-        return new ScrollVelocityInfo
+        return new ScrollVelocity
         {
             Time = Time,
             Multiplier = (float)Math.Clamp(-100 / (double)BeatLength, 0.1f, 10)

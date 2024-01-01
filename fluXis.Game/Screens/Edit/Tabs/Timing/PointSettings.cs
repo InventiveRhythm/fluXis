@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Timing.Settings.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;

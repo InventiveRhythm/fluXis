@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -42,12 +42,12 @@ public partial class EditorHitObjectContainer : Container
         });
     }
 
-    private void add(HitObjectInfo info)
+    private void add(HitObject info)
     {
         Add(new EditorHitObject { Data = info });
     }
 
-    private void remove(HitObjectInfo info)
+    private void remove(HitObject info)
     {
         var hitObject = InternalChildren.OfType<EditorHitObject>().FirstOrDefault(h => h.Data == info);
         if (hitObject != null) Remove(hitObject, true);

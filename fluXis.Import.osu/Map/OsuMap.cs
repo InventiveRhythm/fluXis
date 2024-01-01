@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Import.osu.Map;
 
@@ -71,9 +72,9 @@ public class OsuMap
         {
             AudioFile = AudioFilename.Trim(),
             BackgroundFile = "",
-            HitObjects = new List<HitObjectInfo>(),
-            TimingPoints = new List<TimingPointInfo>(),
-            ScrollVelocities = new List<ScrollVelocityInfo>(),
+            HitObjects = new List<HitObject>(),
+            TimingPoints = new List<TimingPoint>(),
+            ScrollVelocities = new List<ScrollVelocity>(),
             InitialKeyCount = (int)CircleSize
         };
 

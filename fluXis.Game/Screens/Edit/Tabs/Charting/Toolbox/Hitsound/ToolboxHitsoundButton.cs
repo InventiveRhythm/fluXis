@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
 using fluXis.Game.Screens.Gameplay;
 using osu.Framework.Allocation;
@@ -31,7 +31,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     [Resolved]
     private EditorValues values { get; set; }
 
-    private IEnumerable<HitObjectInfo> hits => BlueprintContainer.SelectionHandler.SelectedObjects.Where(o => o is HitObjectInfo).Cast<HitObjectInfo>();
+    private IEnumerable<HitObject> hits => BlueprintContainer.SelectionHandler.SelectedObjects.Where(o => o is HitObject).Cast<HitObject>();
 
     public override bool IsSelected => hits.Any() && hits.All(h =>
     {

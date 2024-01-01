@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Structures;
 using fluXis.Import.Quaver.Map.Structs;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
@@ -45,14 +46,14 @@ public class QuaverMap
             Map = this,
             AudioFile = AudioFile,
             BackgroundFile = BackgroundFile,
-            HitObjects = new List<HitObjectInfo>(),
-            TimingPoints = new List<TimingPointInfo>(),
-            ScrollVelocities = new List<ScrollVelocityInfo>()
+            HitObjects = new List<HitObject>(),
+            TimingPoints = new List<TimingPoint>(),
+            ScrollVelocities = new List<ScrollVelocity>()
         };
 
         foreach (var o in HitObjects)
         {
-            mapInfo.HitObjects.Add(new HitObjectInfo
+            mapInfo.HitObjects.Add(new HitObject
             {
                 Time = o.StartTime,
                 Lane = o.Lane,
@@ -62,7 +63,7 @@ public class QuaverMap
 
         foreach (var t in TimingPoints)
         {
-            mapInfo.TimingPoints.Add(new TimingPointInfo
+            mapInfo.TimingPoints.Add(new TimingPoint
             {
                 Time = t.StartTime,
                 BPM = t.Bpm,
@@ -73,7 +74,7 @@ public class QuaverMap
 
         foreach (var s in SliderVelocities)
         {
-            mapInfo.ScrollVelocities.Add(new ScrollVelocityInfo
+            mapInfo.ScrollVelocities.Add(new ScrollVelocity
             {
                 Time = s.StartTime,
                 Multiplier = s.Multiplier
