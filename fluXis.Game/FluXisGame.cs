@@ -29,7 +29,6 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
-using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game;
@@ -87,13 +86,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                         }
                     },
                     Dashboard,
-                    MusicPlayer,
                     LoginOverlay,
-                    Toolbar,
                     RegisterOverlay,
                     ChatOverlay,
                     ProfileOverlay,
-                    Settings
+                    MusicPlayer,
+                    Settings,
+                    Toolbar
                 }
             },
             new PopoverContainer
@@ -189,24 +188,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         switch (e.Action)
         {
-            case FluXisGlobalKeybind.ToggleSettings:
-                Settings.ToggleVisibility();
-                return true;
-
-            case FluXisGlobalKeybind.ToggleDashboard when Fluxel.LoggedInUser != null:
-                Dashboard.ToggleVisibility();
-                return true;
-
-            case FluXisGlobalKeybind.ToggleMusicPlayer:
-                MusicPlayer.ToggleVisibility();
-                return true;
-
             case FluXisGlobalKeybind.OpenSkinEditor:
                 OpenSkinEditor();
-                return true;
-
-            case FluXisGlobalKeybind.Home:
-                MenuScreen?.MakeCurrent(); // stupid to use it from Toolbar, but it works
                 return true;
         }
 

@@ -13,7 +13,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osuTK;
 
 namespace fluXis.Game.Overlay.Network;
 
@@ -38,7 +37,6 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
@@ -68,7 +66,6 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
                     CornerRadius = rounding,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-                    Scale = new Vector2(.9f),
                     EdgeEffect = FluXisStyles.ShadowLarge,
                     Children = new Drawable[]
                     {
@@ -174,14 +171,14 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
     protected override void PopIn()
     {
         this.FadeIn(200);
-        content.ScaleTo(1f, 400, Easing.OutQuint);
+        content.MoveToY(0, 400, Easing.OutQuint);
         samples.Overlay(false);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
-        content.ScaleTo(.9f, 400, Easing.OutQuint);
+        content.MoveToY(-50, 400, Easing.OutQuint);
         samples.Overlay(true);
     }
 

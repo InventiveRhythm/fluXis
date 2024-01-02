@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
-using fluXis.Game.Database.Input;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Skinning;
@@ -10,7 +8,7 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Bindings;
+using osu.Framework.Input;
 
 namespace fluXis.Game.Screens.Gameplay.UI;
 
@@ -24,6 +22,9 @@ public partial class KeyOverlay : Container
 
     [Resolved]
     private SkinManager skinManager { get; set; }
+
+    [Resolved]
+    private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
     public List<FluXisGameplayKeybind> Keybinds => screen.Input.Keys;
 
@@ -43,7 +44,7 @@ public partial class KeyOverlay : Container
             Direction = FillDirection.Horizontal,
             Children = Keybinds.Select(x => new KeybindContainer
             {
-                Keybind = InputUtils.GetReadableCombination(getBind(x))
+                Keybind = keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(x, realm).KeyCombination)
             }).ToList()
         };
     }
@@ -64,29 +65,6 @@ public partial class KeyOverlay : Container
             con.Width = screen.Playfield.Receptors[i].Width;
             con.Alpha = con.Width == 0 ? 0 : 1;
         }
-    }
-
-    private KeyCombination getBind(FluXisGameplayKeybind keybind)
-    {
-        KeyCombination combo = new KeyCombination();
-
-        realm.Run(r =>
-        {
-            var binding = r.All<RealmKeybind>().FirstOrDefault(x => x.Action == keybind.ToString());
-            if (binding == null) return;
-
-            var split = binding.Key.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-            if (split.Length > 1)
-            {
-                combo = new KeyCombination(split.Select(x => (InputKey)Enum.Parse(typeof(InputKey), x)).ToArray());
-                return;
-            }
-
-            combo = new KeyCombination((InputKey)Enum.Parse(typeof(InputKey), binding.Key));
-        });
-
-        return combo;
     }
 
     private partial class KeybindContainer : Container

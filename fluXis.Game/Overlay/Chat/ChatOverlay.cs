@@ -25,8 +25,10 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Chat;
 
-public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class ChatOverlay : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    protected override bool StartHidden => true;
+
     [Resolved]
     private Fluxel fluxel { get; set; }
 
@@ -51,7 +53,6 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
@@ -179,6 +180,8 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
 
     protected override void LoadComplete()
     {
+        base.LoadComplete();
+
         textBox.OnCommit += (sender, _) =>
         {
             fluxel.SendPacketAsync(new ChatMessagePacket(sender.Text, Channel));
@@ -276,24 +279,19 @@ public partial class ChatOverlay : Container, IKeyBindingHandler<FluXisGlobalKey
         });
     }
 
-    public override void Hide()
-    {
-        this.FadeOut(200);
-        content.MoveToY(50, 400, Easing.OutQuint);
-        samples.Overlay(true);
-    }
-
-    public override void Show()
+    protected override void PopIn()
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
         samples.Overlay(false);
     }
 
-    protected override bool OnHover(HoverEvent e) => true;
-    protected override bool OnDragStart(DragStartEvent e) => true;
-    protected override bool OnKeyDown(KeyDownEvent e) => true;
-    protected override bool OnScroll(ScrollEvent e) => true;
+    protected override void PopOut()
+    {
+        this.FadeOut(200);
+        content.MoveToY(50, 400, Easing.OutQuint);
+        samples.Overlay(true);
+    }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {

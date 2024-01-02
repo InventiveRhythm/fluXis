@@ -69,6 +69,10 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
 
 public enum FluXisGlobalKeybind
 {
+    // fallback as "empty" keybind
+    // should never be actually used
+    None,
+
     // Global UI Keybinds
     Select,
     Back,

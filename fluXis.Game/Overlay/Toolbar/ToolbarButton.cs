@@ -1,23 +1,30 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Database;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
+using fluXis.Game.Input;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
+public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    public string TooltipTitle { get; init; }
+    public string TooltipSub { get; init; }
     public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
-    public string Title { get; init; }
-    public string Description { get; init; }
+    public FluXisGlobalKeybind Keybind { get; init; } = FluXisGlobalKeybind.None;
     public bool RequireLogin { get; init; }
 
     [Resolved]
@@ -26,6 +33,13 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
     [Resolved]
     private Fluxel fluxel { get; set; }
 
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
+
+    private Circle line;
     private Box hover;
     private Box flash;
 
@@ -41,6 +55,22 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
 
         Children = new Drawable[]
         {
+            new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 10,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Colour = FluXisColors.Highlight,
+                Padding = new MarginPadding(3),
+                Child = line = new Circle
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Width = 0
+                }
+            },
             hover = new Box
             {
                 RelativeSizeAxes = Axes.Both,
@@ -73,8 +103,6 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
         updateState();
     }
 
-    private void updateState() => Enabled.Value = fluxel.LoggedInUser != null;
-
     protected override bool OnHover(HoverEvent e)
     {
         if (!Enabled.Value) return true;
@@ -98,6 +126,20 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
         return base.OnClick(e);
     }
 
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        if (e.Action != Keybind) return false;
+
+        TriggerClick();
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+
+    protected void SetLineState(bool state) => line.ResizeWidthTo(state ? 1 : 0, 400, Easing.OutQuint);
+
+    private void updateState() => Enabled.Value = fluxel.LoggedInUser != null;
+
     public Drawable GetTooltip()
     {
         if (!Enabled.Value)
@@ -108,6 +150,11 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
                 Margin = new MarginPadding { Horizontal = 10, Vertical = 6 }
             };
         }
+
+        var title = TooltipTitle;
+
+        if (Keybind != FluXisGlobalKeybind.None)
+            title += $" ({keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(Keybind, realm).KeyCombination)})";
 
         return new FillFlowContainer
         {
@@ -131,7 +178,7 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
                         },
                         new FluXisSpriteText
                         {
-                            Text = Title,
+                            Text = title,
                             FontSize = 24
                         }
                     }
@@ -139,7 +186,7 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip
                 new FluXisTextFlow
                 {
                     AutoSizeAxes = Axes.Both,
-                    Text = Description,
+                    Text = TooltipSub,
                     FontSize = 18
                 }
             }

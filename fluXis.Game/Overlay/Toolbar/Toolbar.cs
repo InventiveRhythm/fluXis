@@ -1,13 +1,15 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Input;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
-using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Settings;
+using fluXis.Game.Overlay.Toolbar.Buttons;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Browse;
+using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Wiki;
@@ -36,14 +38,11 @@ public partial class Toolbar : Container
     private ChatOverlay chat { get; set; }
 
     [Resolved]
-    private NotificationManager notifications { get; set; }
-
-    [Resolved]
     private FluXisGameBase game { get; set; }
 
     public FluXisSpriteText CenterText { get; private set; }
 
-    public BindableBool ShowToolbar = new();
+    public BindableBool ShowToolbar { get; } = new();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -74,6 +73,7 @@ public partial class Toolbar : Container
                 {
                     new FillFlowContainer
                     {
+                        Name = "Screens (+Settings)",
                         Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreLeft,
@@ -81,74 +81,49 @@ public partial class Toolbar : Container
                         AutoSizeAxes = Axes.X,
                         Children = new Drawable[]
                         {
-                            new ToolbarButton
+                            new ToolbarOverlayButton
                             {
-                                Title = "Home",
-                                Description = "Return to the main menu.",
-                                Icon = FontAwesome.Solid.Home,
-                                Action = () => game.MenuScreen?.MakeCurrent()
+                                TooltipTitle = "Settings",
+                                TooltipSub = "Change your settings.",
+                                Icon = FontAwesome.Solid.Cog,
+                                Overlay = settings,
+                                Keybind = FluXisGlobalKeybind.ToggleSettings
                             },
                             new ToolbarSeperator(),
-                            new ToolbarButton
+                            new ToolbarScreenButton
                             {
-                                Title = "Maps",
-                                Description = "Browse your maps.",
+                                TooltipTitle = "Home",
+                                TooltipSub = "Return to the main menu.",
+                                Icon = FontAwesome.Solid.Home,
+                                Screen = typeof(MenuScreen),
+                                Action = () => game.MenuScreen?.MakeCurrent(),
+                                Keybind = FluXisGlobalKeybind.Home
+                            },
+                            new ToolbarScreenButton
+                            {
+                                TooltipTitle = "Maps",
+                                TooltipSub = "Browse your maps.",
                                 Icon = FontAwesome.Solid.Map,
+                                Screen = typeof(SelectScreen),
                                 Action = () => goToScreen(new SelectScreen())
                             },
-                            new ToolbarButton
+                            new ToolbarScreenButton
                             {
-                                Title = "Settings",
-                                Description = "Change your settings.",
-                                Icon = FontAwesome.Solid.Cog,
-                                Action = () => settings.ToggleVisibility()
-                            },
-                            new ToolbarSeperator(),
-                            new ToolbarButton
-                            {
-                                Title = "Chat",
-                                Description = "Talk to other players.",
-                                Icon = FontAwesome.Solid.Comment,
-                                Action = chat.Show,
-                                RequireLogin = true
-                            },
-                            new ToolbarButton
-                            {
-                                Title = "Ranking",
-                                Description = "See the top players.",
-                                Icon = FontAwesome.Solid.Trophy,
-                                Action = () => goToScreen(new Rankings()),
-                                RequireLogin = true
-                            },
-                            new ToolbarButton
-                            {
-                                Title = "Download Maps",
-                                Description = "Download new maps.",
+                                TooltipTitle = "Download Maps",
+                                TooltipSub = "Download new maps.",
                                 Icon = FontAwesome.Solid.Download,
+                                Screen = typeof(MapBrowser),
                                 Action = () => goToScreen(new MapBrowser()),
                                 RequireLogin = true
                             },
-                            new ToolbarButton
+                            new ToolbarScreenButton
                             {
-                                Title = "Dashboard",
-                                Description = "See news, updates, and more.",
-                                Icon = FontAwesome.Solid.ChartLine,
-                                Action = dashboard.ToggleVisibility,
+                                TooltipTitle = "Ranking",
+                                TooltipSub = "See the top players.",
+                                Icon = FontAwesome.Solid.Trophy,
+                                Screen = typeof(Rankings),
+                                Action = () => goToScreen(new Rankings()),
                                 RequireLogin = true
-                            },
-                            new ToolbarButton
-                            {
-                                Title = "Wiki",
-                                Description = "Learn about the game.",
-                                Icon = FontAwesome.Solid.Book,
-                                Action = () => goToScreen(new Wiki())
-                            },
-                            new ToolbarButton
-                            {
-                                Title = "Music Player",
-                                Description = "Listen to your music.",
-                                Icon = FontAwesome.Solid.Music,
-                                Action = musicPlayer.ToggleVisibility
                             }
                         }
                     },
@@ -159,6 +134,7 @@ public partial class Toolbar : Container
                     },
                     new FillFlowContainer
                     {
+                        Name = "Overlays",
                         Direction = FillDirection.Horizontal,
                         RelativeSizeAxes = Axes.Y,
                         AutoSizeAxes = Axes.X,
@@ -166,6 +142,40 @@ public partial class Toolbar : Container
                         Origin = Anchor.CentreRight,
                         Children = new Drawable[]
                         {
+                            new ToolbarOverlayButton
+                            {
+                                TooltipTitle = "Chat",
+                                TooltipSub = "Talk to other players.",
+                                Icon = FontAwesome.Solid.Comment,
+                                Overlay = chat,
+                                RequireLogin = true
+                            },
+                            new ToolbarOverlayButton
+                            {
+                                TooltipTitle = "Dashboard",
+                                TooltipSub = "See news, updates, and more.",
+                                Icon = FontAwesome.Solid.ChartLine,
+                                Overlay = dashboard,
+                                Keybind = FluXisGlobalKeybind.ToggleDashboard,
+                                RequireLogin = true
+                            },
+                            new ToolbarScreenButton
+                            {
+                                TooltipTitle = "Wiki",
+                                TooltipSub = "Learn about the game.",
+                                Icon = FontAwesome.Solid.Book,
+                                Screen = typeof(Wiki),
+                                Action = () => goToScreen(new Wiki())
+                            },
+                            new ToolbarOverlayButton
+                            {
+                                TooltipTitle = "Music Player",
+                                TooltipSub = "Listen to your music.",
+                                Icon = FontAwesome.Solid.Music,
+                                Overlay = musicPlayer,
+                                Keybind = FluXisGlobalKeybind.ToggleMusicPlayer,
+                                Margin = new MarginPadding { Right = 10 }
+                            },
                             new ToolbarProfile(),
                             new ToolbarClock()
                         }
@@ -182,7 +192,8 @@ public partial class Toolbar : Container
         if (game.ScreenStack.CurrentScreen is not null && game.ScreenStack.CurrentScreen.GetType() == screen.GetType())
             return;
 
-        if (game.ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false }) return;
+        if (game.ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false })
+            return;
 
         game.MenuScreen.MakeCurrent();
         game.ScreenStack.Push(screen);

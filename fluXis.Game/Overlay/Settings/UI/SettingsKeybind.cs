@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
@@ -9,6 +8,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -18,6 +18,9 @@ namespace fluXis.Game.Overlay.Settings.UI;
 
 public partial class SettingsKeybind : SettingsItem
 {
+    [Resolved]
+    private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
+
     private FluXisRealm realm { get; set; }
 
     public override bool AcceptsFocus => true;
@@ -52,7 +55,7 @@ public partial class SettingsKeybind : SettingsItem
         {
             flow.Add(new KeybindContainer
             {
-                Keybind = InputUtils.GetReadableCombination(getBind(keybind)),
+                Keybind = keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(keybind.ToString(), realm).KeyCombination),
                 SettingsKeybind = this
             });
         }
@@ -60,29 +63,6 @@ public partial class SettingsKeybind : SettingsItem
 
     protected override void Reset()
     {
-    }
-
-    private KeyCombination getBind(object keybind)
-    {
-        KeyCombination combo = new KeyCombination();
-
-        realm.Run(r =>
-        {
-            var binding = r.All<RealmKeybind>().FirstOrDefault(x => x.Action == keybind.ToString());
-            if (binding == null) return;
-
-            var split = binding.Key.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-            if (split.Length > 1)
-            {
-                combo = new KeyCombination(split.Select(x => (InputKey)Enum.Parse(typeof(InputKey), x)).ToArray());
-                return;
-            }
-
-            combo = new KeyCombination((InputKey)Enum.Parse(typeof(InputKey), binding.Key));
-        });
-
-        return combo;
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -171,7 +151,8 @@ public partial class SettingsKeybind : SettingsItem
                 else bind.Key = combination.ToString();
             });
 
-            flow.Children.ElementAt(index).Keybind = InputUtils.GetReadableCombination(combination);
+            var bind = InputUtils.GetBindingFor(keybind.ToString(), realm);
+            flow.Children.ElementAt(index).Keybind = keyCombinationProvider.GetReadableString(bind.KeyCombination);
             index++;
         }
         else index = -1;
