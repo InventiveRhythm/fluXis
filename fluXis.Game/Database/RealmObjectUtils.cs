@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using AutoMapper;
 using AutoMapper.Internal;
+using fluXis.Game.Database.Input;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using Realms;
@@ -74,6 +75,7 @@ public static class RealmObjectUtils
         c.CreateMap<RealmMapSet, RealmMapSet>();
         c.CreateMap<RealmScore, RealmScore>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();
+        c.CreateMap<RealmKeybind, RealmKeybind>();
     }
 
     public static T Detach<T>(this T realmObject) where T : RealmObjectBase

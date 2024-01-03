@@ -14,7 +14,7 @@ public static class InputUtils
 
     public static KeyBinding GetBindingFor(string bind, FluXisRealm realm)
     {
-        var keybind = realm.Run(r => r.All<RealmKeybind>().FirstOrDefault(k => k.Action == bind));
+        var keybind = realm.Run(r => r.All<RealmKeybind>().FirstOrDefault(k => k.Action == bind).Detach());
         if (keybind == null) return null;
 
         return keybind.Key.Contains(',')
