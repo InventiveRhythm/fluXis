@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Gameplay.Input;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Replays;
 
@@ -39,15 +36,6 @@ public class AutoGenerator
             PlayerID = APIUserShort.AutoPlay.ID,
             Frames = frames
         };
-
-        var folder = Path.Combine(Environment.CurrentDirectory, "replays");
-
-        if (!Directory.Exists(folder))
-            Directory.CreateDirectory(folder);
-
-        var path = Path.Combine(folder, $"{map.Map?.ID}.frp");
-        Logger.Log($"Saving replay to {path}", LoggingTarget.Information);
-        File.WriteAllText(path, replay.ToJson());
 
         return replay;
     }
