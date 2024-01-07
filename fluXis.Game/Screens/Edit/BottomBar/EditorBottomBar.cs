@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Mods;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.BottomBar.Timeline;
 using fluXis.Game.Screens.Gameplay;
@@ -121,7 +123,7 @@ public partial class EditorBottomBar : Container
                                         var clone = values.Editor.MapInfo.Clone();
                                         clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
 
-                                        values.Editor.Push(new GameplayLoader(values.Editor.Map, () => new EditorPlaytestScreen(values.Editor.Map, clone, values.MapEvents, startTime)));
+                                        values.Editor.Push(new GameplayLoader(values.Editor.Map, new List<IMod> { new NoFailMod() }, () => new EditorPlaytestScreen(values.Editor.Map, clone, values.MapEvents, startTime)));
                                     }
                                 }
                             }

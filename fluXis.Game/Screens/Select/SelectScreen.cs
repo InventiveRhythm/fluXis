@@ -388,7 +388,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         if (mods.Any(m => m is AutoPlayV2Mod))
         {
-            this.Push(new GameplayLoader(mapStore.CurrentMap, () =>
+            this.Push(new GameplayLoader(mapStore.CurrentMap, mods, () =>
             {
                 var map = mapStore.CurrentMap.GetMapInfo();
                 var autogen = new AutoGenerator(map, mapStore.CurrentMap.KeyCount);
@@ -398,7 +398,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             }));
         }
         else
-            this.Push(new GameplayLoader(mapStore.CurrentMap, () => new GameplayScreen(mapStore.CurrentMap, mods)));
+            this.Push(new GameplayLoader(mapStore.CurrentMap, mods, () => new GameplayScreen(mapStore.CurrentMap, mods)));
     }
 
     private void changeSelection(int by = 0, bool last = false)

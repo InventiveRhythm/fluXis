@@ -267,7 +267,7 @@ public partial class ScoreList : GridContainer
                                     var json = File.ReadAllText(replayPath);
                                     var replay = JsonConvert.DeserializeObject<Replay>(json);
 
-                                    MapInfo.Screen.Push(new GameplayLoader(map, () => new ReplayGameplayScreen(map, mods, replay)));
+                                    MapInfo.Screen.Push(new GameplayLoader(map, mods, () => new ReplayGameplayScreen(map, mods, replay)));
                                 }
                                 catch (Exception e)
                                 {

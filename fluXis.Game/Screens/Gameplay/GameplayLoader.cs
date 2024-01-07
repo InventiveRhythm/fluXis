@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Map.Drawables;
+using fluXis.Game.Mods;
+using fluXis.Game.Mods.Drawables;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.UI.Tips;
 using osu.Framework.Allocation;
@@ -32,15 +37,17 @@ public partial class GameplayLoader : FluXisScreen
     private readonly Func<GameplayScreen> createFunc;
     private bool fadeBackToGlobalClock;
 
-    public RealmMap Map { get; set; }
+    private RealmMap map { get; }
+    private List<IMod> mods { get; }
 
     private Container loadingContainer;
     private FillFlowContainer content;
     private FluXisSpriteText tip;
 
-    public GameplayLoader(RealmMap map, Func<GameplayScreen> create)
+    public GameplayLoader(RealmMap map, List<IMod> mods, Func<GameplayScreen> create)
     {
-        Map = map;
+        this.map = map;
+        this.mods = mods;
         createFunc = create;
     }
 
@@ -63,14 +70,16 @@ public partial class GameplayLoader : FluXisScreen
                 {
                     new Container
                     {
-                        Size = new Vector2(250),
-                        CornerRadius = 20,
-                        Masking = true,
+                        Size = new Vector2(300),
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
+                        CornerRadius = 20,
+                        Masking = true,
+                        EdgeEffect = FluXisStyles.ShadowMedium,
+                        Margin = new MarginPadding { Bottom = 20 },
                         Children = new Drawable[]
                         {
-                            new DrawableCover(Map.MapSet)
+                            new DrawableCover(map.MapSet)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
@@ -100,25 +109,122 @@ public partial class GameplayLoader : FluXisScreen
                     },
                     new FluXisSpriteText
                     {
+                        Text = map.Metadata.Title,
+                        Margin = new MarginPadding { Bottom = -5 },
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        Text = Map.Metadata.Artist,
-                        FontSize = 22,
-                        Margin = new MarginPadding { Top = 20 }
+                        Shadow = true,
+                        WebFontSize = 36
                     },
                     new FluXisSpriteText
                     {
+                        Text = map.Metadata.Artist,
+                        Margin = new MarginPadding { Bottom = 10 },
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        Text = Map.Metadata.Title,
-                        FontSize = 40
+                        Shadow = true,
+                        Alpha = .8f,
+                        FontSize = 32
                     },
                     new FluXisSpriteText
                     {
+                        Text = map.Difficulty,
+                        Margin = new MarginPadding { Bottom = 5 },
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        Text = $"[{Map.Difficulty}] mapped by {Map.Metadata.Mapper}",
-                        FontSize = 28
+                        Shadow = true,
+                        WebFontSize = 24
+                    },
+                    new FillFlowContainer
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Horizontal,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Spacing = new Vector2(10),
+                        Margin = new MarginPadding { Bottom = 20 },
+                        Children = new Drawable[]
+                        {
+                            new KeyCountChip
+                            {
+                                Size = new Vector2(40, 20),
+                                FontSize = 14 * 1.4f,
+                                KeyCount = map.KeyCount
+                            },
+                            new DifficultyChip
+                            {
+                                Size = new Vector2(80, 20),
+                                FontSize = 14 * 1.4f,
+                                Rating = map.Filters.NotesPerSecond
+                            }
+                        }
+                    },
+                    new Container
+                    {
+                        AutoSizeAxes = Axes.Y,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Children = new Drawable[]
+                        {
+                            new FluXisSpriteText
+                            {
+                                Text = "Mapper",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.CentreRight,
+                                WebFontSize = 16,
+                                Alpha = .8f,
+                                X = -5,
+                                Shadow = true
+                            },
+                            new FluXisSpriteText
+                            {
+                                Text = map.Metadata.Mapper,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.CentreLeft,
+                                WebFontSize = 16,
+                                Width = 200,
+                                X = 5,
+                                Truncate = true,
+                                Shadow = true
+                            }
+                        }
+                    },
+                    new Container
+                    {
+                        AutoSizeAxes = Axes.Y,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Margin = new MarginPadding { Bottom = 20 },
+                        Children = new Drawable[]
+                        {
+                            new FluXisSpriteText
+                            {
+                                Text = "Source",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.CentreRight,
+                                WebFontSize = 16,
+                                Alpha = .8f,
+                                X = -5,
+                                Shadow = true
+                            },
+                            new FluXisSpriteText
+                            {
+                                Text = string.IsNullOrEmpty(map.Metadata.Source) ? "-" : map.Metadata.Source,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.CentreLeft,
+                                WebFontSize = 16,
+                                Width = 200,
+                                X = 5,
+                                Truncate = true,
+                                Shadow = true
+                            }
+                        }
+                    },
+                    new ModList
+                    {
+                        Mods = mods,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
                     }
                 }
             },
@@ -147,8 +253,8 @@ public partial class GameplayLoader : FluXisScreen
             {
                 ValidForResume = false;
                 loadingContainer.FadeOut(200);
-                clock.Delay(400).Schedule(() => clock.FadeOut(400));
-                this.Delay(800).Schedule(() =>
+                clock.Delay(500).Schedule(() => clock.FadeOut(500));
+                this.Delay(1000).Schedule(() =>
                 {
                     clock.Stop();
                     this.Push(GameplayScreen);
@@ -174,6 +280,7 @@ public partial class GameplayLoader : FluXisScreen
         if (fadeBackToGlobalClock)
             clock.Start();
 
+        clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
         return base.OnExiting(e);
     }
 
