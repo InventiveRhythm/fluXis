@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Screens.Gameplay.Ruleset;
@@ -106,10 +107,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public MapEvents MapEvents { get; private set; }
     public List<IMod> Mods { get; }
 
+    private GameplayKeybindContainer keybindContainer;
     private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
     public Playfield Playfield { get; private set; }
     private Container hud { get; set; }
+    private ScoreSubmissionOverlay scoreSubmissionOverlay;
 
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
@@ -202,50 +205,54 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
 
-        InternalChild = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
+        InternalChildren = new Drawable[]
         {
-            Children = new Drawable[]
+            keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
             {
-                Input,
-                Samples,
-                Hitsounding = new Hitsounding(RealmMap.MapSet, GameplayClock.RateBindable),
-                new DrawSizePreservingFillContainer
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    TargetDrawSize = new Vector2(1920, 1080),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Children = new Drawable[]
+                    Input,
+                    Samples,
+                    Hitsounding = new Hitsounding(RealmMap.MapSet, GameplayClock.RateBindable),
+                    new DrawSizePreservingFillContainer
                     {
-                        backgroundVideo = new BackgroundVideo
+                        RelativeSizeAxes = Axes.Both,
+                        TargetDrawSize = new Vector2(1920, 1080),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Children = new Drawable[]
                         {
-                            Clock = GameplayClock,
-                            Map = RealmMap,
-                            Info = Map
-                        },
-                        clockContainer,
-                        new KeyOverlay()
-                    }
-                },
-                hud = new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
+                            backgroundVideo = new BackgroundVideo
+                            {
+                                Clock = GameplayClock,
+                                Map = RealmMap,
+                                Info = Map
+                            },
+                            clockContainer,
+                            new KeyOverlay()
+                        }
+                    },
+                    hud = new Container
                     {
-                        new GameplayHUD(),
-                        new ModsDisplay()
-                    }
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
+                        {
+                            new GameplayHUD(),
+                            new ModsDisplay()
+                        }
+                    },
+                    CreateTextOverlay(),
+                    new DangerHealthOverlay(),
+                    new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
+                    new SkipOverlay(),
+                    failMenu = new FailMenu(),
+                    fcOverlay = new FullComboOverlay(),
+                    quickActionOverlay = new QuickActionOverlay(),
+                    new GameplayTouchInput(),
+                    new PauseMenu()
                 },
-                CreateTextOverlay(),
-                new DangerHealthOverlay(),
-                new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
-                new SkipOverlay(),
-                failMenu = new FailMenu(),
-                fcOverlay = new FullComboOverlay(),
-                quickActionOverlay = new QuickActionOverlay(),
-                new GameplayTouchInput(),
-                new PauseMenu()
-            }
+            },
+            scoreSubmissionOverlay = new ScoreSubmissionOverlay()
         };
 
         backgroundVideo.LoadVideo();
@@ -352,41 +359,48 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             ScoreProcessor.Recalculate();
         }
 
-        var player = Playfield.Manager.AutoPlay ? APIUserShort.AutoPlay : fluxel.LoggedInUser;
-
         if (ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless)
             fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
 
-        var bestScore = realm.Run(r =>
+        keybindContainer.Delay(400).FadeOut(400);
+        if (SubmitScore) scoreSubmissionOverlay.FadeIn(400);
+
+        Task.Run(() =>
         {
-            var onMap = r.All<RealmScore>().Where(s => s.MapID == RealmMap.ID).ToList();
-            var best = onMap.MaxBy(s => s.Score);
-            return best;
-        });
+            var player = Playfield.Manager.AutoPlay ? APIUserShort.AutoPlay : fluxel.LoggedInUser;
 
-        var score = ScoreProcessor.ToScoreInfo();
-        score.ScrollSpeed = config.Get<float>(FluXisSetting.ScrollSpeed);
-
-        var screen = new SoloResults(RealmMap, score, player);
-        screen.OnRestart = OnRestart;
-        if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
-
-        if (Mods.All(m => m.Rankable) && SubmitScore)
-        {
-            realm.RunWrite(r =>
+            var bestScore = realm.Run(r =>
             {
-                var rScore = r.Add(RealmScore.Create(RealmMap, player, score));
-
-                if (rScore != null)
-                    SaveReplay(rScore.ID);
+                var onMap = r.All<RealmScore>().Where(s => s.MapID == RealmMap.ID).ToList();
+                var best = onMap.MaxBy(s => s.Score);
+                return best.Detach();
             });
 
-            var request = new ScoreSubmitRequest(score);
-            screen.SubmitRequest = request;
-            request.PerformAsync(fluxel);
-        }
+            var score = ScoreProcessor.ToScoreInfo();
+            score.ScrollSpeed = config.Get<float>(FluXisSetting.ScrollSpeed);
 
-        this.Delay(1000).FadeOut(500).OnComplete(_ => this.Push(screen));
+            var screen = new SoloResults(RealmMap, score, player);
+            screen.OnRestart = OnRestart;
+            if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
+
+            if (Mods.All(m => m.Rankable) && SubmitScore)
+            {
+                realm.RunWrite(r =>
+                {
+                    var rScore = r.Add(RealmScore.Create(RealmMap, player, score));
+
+                    if (rScore != null)
+                        SaveReplay(rScore.ID);
+                });
+
+                var request = new ScoreSubmitRequest(score);
+                screen.SubmitRequest = request;
+                request.Perform(fluxel);
+                Schedule(() => scoreSubmissionOverlay.FadeOut(400));
+            }
+
+            Schedule(() => this.Delay(600).FadeOut(400).OnComplete(_ => this.Push(screen)));
+        });
     }
 
     protected void SaveReplay(Guid scoreID)
@@ -419,7 +433,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        fadeOut();
         ValidForResume = false;
     }
 
