@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Users;
 using Newtonsoft.Json;
@@ -22,6 +23,12 @@ public static class UserCache
     public static void Init(Fluxel.Fluxel api)
     {
         fluxel = api;
+    }
+
+    public static async Task<APIUser> GetUserAsync(int id, bool forceReload = false)
+    {
+        var user = await Task.Run(() => GetUser(id, forceReload));
+        return user;
     }
 
     public static APIUser GetUser(int id, bool forceReload = false)

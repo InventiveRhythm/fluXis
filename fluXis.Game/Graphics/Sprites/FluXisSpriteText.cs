@@ -10,6 +10,11 @@ public partial class FluXisSpriteText : SpriteText
         set => base.Font = base.Font.With(size: value);
     }
 
+    // this is super wacky...
+    // the font is rendered smaller here than in a web browser/figma
+    // this multiplier should be about right to make them match up
+    public float WebFontSize { set => FontSize = value * 1.4f; }
+
     public new FluXisFont Font
     {
         set => base.Font = base.Font.With(family: value.ToString());

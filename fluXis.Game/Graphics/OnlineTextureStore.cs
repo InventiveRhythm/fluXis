@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Online;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
@@ -22,12 +23,25 @@ public class OnlineTextureStore : TextureStore
 
     public Texture GetAvatar(int id) => get(AssetType.Avatar, id);
     public Texture GetBanner(int id) => get(AssetType.Banner, id);
+    public Texture GetBackground(int id) => get(AssetType.Background, id);
+    public Texture GetCover(int id) => get(AssetType.Cover, id);
+    public Texture GetClubIcon(int id) => get(AssetType.ClubIcon, id);
+    public Texture GetClubBanner(int id) => get(AssetType.ClubBanner, id);
 
     private Texture get(AssetType type, int id) => Get(getUrl(type, id));
 
     private string getUrl(AssetType type, int id)
     {
-        var typeStr = type.ToString().ToLower();
+        var typeStr = type switch
+        {
+            AssetType.Avatar => "avatar",
+            AssetType.Banner => "banner",
+            AssetType.Background => "background",
+            AssetType.Cover => "cover",
+            AssetType.ClubIcon => "club-icon",
+            AssetType.ClubBanner => "club-banner",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
         return $"{endpointConfig.AssetUrl}/{typeStr}/{id}";
     }
 
@@ -46,6 +60,8 @@ public class OnlineTextureStore : TextureStore
         Avatar,
         Banner,
         Background,
-        Cover
+        Cover,
+        ClubIcon,
+        ClubBanner
     }
 }

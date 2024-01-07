@@ -26,9 +26,9 @@ using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Profile;
 using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
+using fluXis.Game.Overlay.User;
 using fluXis.Game.Plugins;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Gameplay.HUD;
@@ -78,7 +78,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
     protected LoginOverlay LoginOverlay { get; private set; }
     protected ChatOverlay ChatOverlay { get; private set; }
-    protected ProfileOverlay ProfileOverlay { get; private set; }
+    protected UserProfileOverlay ProfileOverlay { get; private set; }
     protected RegisterOverlay RegisterOverlay { get; private set; }
     protected NotificationManager NotificationManager { get; private set; }
     protected MusicPlayer MusicPlayer { get; private set; }
@@ -177,7 +177,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.CacheAs(RegisterOverlay = new RegisterOverlay());
         dependencies.Cache(Toolbar = new Toolbar());
         dependencies.Cache(ScreenStack = new FluXisScreenStack { Activity = Activity });
-        dependencies.Cache(ProfileOverlay = new ProfileOverlay());
+        dependencies.Cache(ProfileOverlay = new UserProfileOverlay());
         dependencies.CacheAs(lightController = CreateLightController());
         dependencies.Cache(skinManager = new SkinManager());
         dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });

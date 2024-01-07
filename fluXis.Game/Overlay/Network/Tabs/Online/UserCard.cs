@@ -3,7 +3,7 @@ using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Models.Users;
-using fluXis.Game.Overlay.Profile;
+using fluXis.Game.Overlay.User;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,7 +18,7 @@ public partial class UserCard : Container
     public APIUserShort User { get; }
 
     [Resolved]
-    private ProfileOverlay profile { get; set; }
+    private UserProfileOverlay profile { get; set; }
 
     private Container bannerContainer;
     private Container avatarContainer;
@@ -131,8 +131,7 @@ public partial class UserCard : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        profile.UpdateUser(User.ID);
-        profile.Show();
+        profile.ShowUser(User.ID);
         return true;
     }
 }

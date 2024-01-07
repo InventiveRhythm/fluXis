@@ -4,7 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
-using fluXis.Game.Overlay.Profile;
+using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
@@ -20,7 +20,7 @@ namespace fluXis.Game.Screens.Ranking.UI;
 public partial class LeaderboardUser : Container
 {
     [Resolved]
-    private ProfileOverlay profileOverlay { get; set; }
+    private UserProfileOverlay profile { get; set; }
 
     private APIUser user { get; }
 
@@ -187,8 +187,7 @@ public partial class LeaderboardUser : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        profileOverlay.UpdateUser(user.ID);
-        profileOverlay.Show();
+        profile.ShowUser(user.ID);
         return true;
     }
 

@@ -50,6 +50,7 @@ public partial class MapCard : Container, IHasContextMenu
         }
     }
 
+    public int CardWidth { get; init; } = 430;
     public APIMapSet MapSet { get; }
     public Action<APIMapSet> OnClickAction { get; set; }
     public bool ShowDownloadedState { get; set; } = true;
@@ -71,7 +72,7 @@ public partial class MapCard : Container, IHasContextMenu
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = 430;
+        Width = CardWidth;
         Height = 100;
         CornerRadius = 20;
         Masking = true;
@@ -105,7 +106,7 @@ public partial class MapCard : Container, IHasContextMenu
             },
             content = new Container
             {
-                Width = 430,
+                Width = CardWidth,
                 RelativeSizeAxes = Axes.Y,
                 Masking = true,
                 CornerRadius = 20,
@@ -165,7 +166,7 @@ public partial class MapCard : Container, IHasContextMenu
                                 },
                                 new FillFlowContainer
                                 {
-                                    Width = 320,
+                                    RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,
                                     Direction = FillDirection.Vertical,
                                     Anchor = Anchor.CentreLeft,
@@ -345,7 +346,7 @@ public partial class MapCard : Container, IHasContextMenu
     {
         bool shouldShow = downloading || downloaded;
 
-        content.ResizeWidthTo(shouldShow ? 420 : 430, 400, Easing.OutQuint);
+        content.ResizeWidthTo(shouldShow ? CardWidth - 10 : CardWidth, 400, Easing.OutQuint);
 
         if (downloading)
             background.Colour = Colour4.FromHex("#7BB1E8");

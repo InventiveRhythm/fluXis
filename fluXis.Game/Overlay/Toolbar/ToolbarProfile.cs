@@ -8,7 +8,7 @@ using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Mouse;
-using fluXis.Game.Overlay.Profile;
+using fluXis.Game.Overlay.User;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,7 +25,7 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
     public string Tooltip => loadingContainer.Alpha > 0 ? "Connecting..." : "";
 
     [Resolved]
-    private ProfileOverlay profileOverlay { get; set; }
+    private UserProfileOverlay profile { get; set; }
 
     [Resolved]
     private LoginOverlay loginOverlay { get; set; }
@@ -210,8 +210,10 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
             loginOverlay.Show();
         else
         {
-            profileOverlay.UpdateUser(fluxel.LoggedInUser.ID);
-            profileOverlay.ToggleVisibility();
+            if (profile.State.Value == Visibility.Visible)
+                profile.Hide();
+            else
+                profile.ShowUser(fluxel.LoggedInUser.ID);
         }
 
         return true;

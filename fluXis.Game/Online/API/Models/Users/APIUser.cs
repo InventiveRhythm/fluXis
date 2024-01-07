@@ -1,5 +1,7 @@
+using fluXis.Game.Online.API.Models.Clubs;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Models.Scores;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Users;
@@ -8,6 +10,10 @@ public class APIUser : APIUserShort
 {
     [JsonProperty("aboutme")]
     public string AboutMe { get; set; } = string.Empty;
+
+    [CanBeNull]
+    [JsonProperty("club")]
+    public APIClubShort Club { get; set; } = new();
 
     [JsonProperty("social")]
     public APIUserSocials Socials { get; set; } = new();

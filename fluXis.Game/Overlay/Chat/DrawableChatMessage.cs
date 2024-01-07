@@ -10,7 +10,7 @@ using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Profile;
+using fluXis.Game.Overlay.User;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -23,7 +23,7 @@ namespace fluXis.Game.Overlay.Chat;
 public partial class DrawableChatMessage : Container
 {
     [Resolved]
-    private ProfileOverlay profile { get; set; }
+    private UserProfileOverlay profile { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
@@ -48,11 +48,7 @@ public partial class DrawableChatMessage : Container
                 Size = new Vector2(40),
                 Masking = true,
                 CornerRadius = 5,
-                Action = () =>
-                {
-                    profile.Show();
-                    profile.UpdateUser(InitialMessage.Sender.ID);
-                }
+                Action = () => profile.ShowUser(InitialMessage.Sender.ID)
             },
             new FillFlowContainer
             {
