@@ -1,4 +1,6 @@
 using System.Linq;
+using fluXis.Game.Audio;
+using fluXis.Game.Audio.Preview;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -30,11 +32,17 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 {
     public override float BackgroundDim => 0.75f;
     public override float BackgroundBlur => 0.5f;
-    public override bool AutoPlayNext => true;
+    public override bool AllowMusicControl => false;
     public override UserActivity InitialActivity => new UserActivity.BrowsingMaps();
 
     [Resolved]
     private Fluxel fluxel { get; set; }
+
+    [Resolved]
+    private GlobalClock clock { get; set; }
+
+    [Resolved]
+    private PreviewManager previews { get; set; }
 
     private readonly Bindable<APIMapSet> selectedSet = new();
 
@@ -194,7 +202,11 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     EdgeEffect = FluXisStyles.ShadowSmall,
-                    OnClickAction = set => selectedSet.Value = set
+                    OnClickAction = set =>
+                    {
+                        previews.PlayPreview(set.Id);
+                        selectedSet.Value = set;
+                    }
                 });
             }
 
@@ -206,12 +218,18 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     {
         this.FadeInFromZero(250);
         backButton.Show();
+
+        clock.FadeOut(500);
+        clock.Delay(500).OnComplete(_ => clock.Stop());
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         this.FadeOut(250);
         backButton.Hide();
+        clock.Start();
+        clock.FadeIn(500);
+        previews.StopPreview();
         return false;
     }
 

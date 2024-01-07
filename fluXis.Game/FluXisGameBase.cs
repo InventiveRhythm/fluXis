@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Audio.Preview;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -100,6 +101,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private SkinManager skinManager;
     private PluginManager pluginManager;
     private ImportManager importManager;
+    private PreviewManager previewManager;
 
     protected Bindable<UserActivity> Activity { get; } = new();
     public Season CurrentSeason { get; private set; }
@@ -182,6 +184,10 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(skinManager = new SkinManager());
         dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
         dependencies.Cache(Dashboard = new Dashboard());
+
+        previewManager = new PreviewManager();
+        LoadComponent(previewManager);
+        dependencies.Cache(previewManager);
 
         var layoutManager = new LayoutManager();
         LoadComponent(layoutManager);
