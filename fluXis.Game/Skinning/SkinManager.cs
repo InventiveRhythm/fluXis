@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Default;
@@ -22,8 +23,10 @@ using osu.Framework.Platform;
 
 namespace fluXis.Game.Skinning;
 
-public partial class SkinManager : Component, ISkin
+public partial class SkinManager : Component, ISkin, IDragDropHandler
 {
+    public string[] AllowedExtensions => new[] { ".fsk" };
+
     [Resolved]
     private FluXisConfig config { get; set; }
 
@@ -37,7 +40,13 @@ public partial class SkinManager : Component, ISkin
     private ISampleStore samples { get; set; }
 
     [Resolved]
+    private NotificationManager notifications { get; set; }
+
+    [Resolved]
     private GameHost host { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
 
     private DefaultSkin defaultSkin { get; set; }
     private ISkin currentSkin { get; set; }
@@ -79,6 +88,8 @@ public partial class SkinManager : Component, ISkin
         currentSkin = defaultSkin = new DefaultSkin(textures, samples);
         skinStorage = storage.GetStorageForDirectory("skins");
         skinName = config.GetBindable<string>(FluXisSetting.SkinName);
+
+        game.AddDragDropHandler(this);
     }
 
     protected override void LoadComplete()
@@ -111,6 +122,44 @@ public partial class SkinManager : Component, ISkin
         var json = JsonConvert.SerializeObject(SkinJson, Formatting.Indented);
         var path = skinStorage.GetFullPath($"{SkinFolder}/skin.json");
         File.WriteAllText(path, json);
+    }
+
+    public bool OnDragDrop(string file)
+    {
+        var zip = new ZipArchive(File.OpenRead(file), ZipArchiveMode.Read);
+
+        var folder = Path.GetFileNameWithoutExtension(file);
+        var path = skinStorage.GetFullPath(folder);
+
+        if (Directory.Exists(path))
+        {
+            notifications.SendError("A skin with this name already exists", "Either delete the existing one, or rename the skin file.");
+            return true;
+        }
+
+        Directory.CreateDirectory(path);
+
+        foreach (var entry in zip.Entries)
+        {
+            var filePath = Path.Combine(path, entry.FullName);
+
+            if (filePath.Contains(Path.DirectorySeparatorChar))
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            entry.ExtractToFile(filePath, true);
+        }
+
+        Logger.Log($"Imported skin '{folder}'", LoggingTarget.Information);
+
+        zip.Dispose();
+        File.Delete(file);
+
+        Schedule(() =>
+        {
+            SkinListChanged?.Invoke();
+            skinName.Value = folder;
+        });
+        return true;
     }
 
     public void OpenFolder() => PathUtils.OpenFolder(isDefault(SkinFolder) ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
