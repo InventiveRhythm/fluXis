@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Scoring.Enums;
@@ -43,6 +44,8 @@ public partial class SkinManager : Component, ISkin
 
     private const string default_skin_name = "Default";
     private const string default_bright_skin_name = "Default Bright";
+
+    public Action SkinListChanged { get; set; }
 
     public SkinJson SkinJson => currentSkin.SkinJson;
     public string SkinFolder { get; private set; } = default_skin_name;
@@ -108,6 +111,43 @@ public partial class SkinManager : Component, ISkin
     }
 
     public void OpenFolder() => PathUtils.OpenFolder(isDefault(SkinFolder) ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
+
+    public void ExportCurrent()
+    {
+        if (isDefault(SkinFolder)) return;
+
+        var exportPath = host.Storage.GetFullPath("export", true);
+        var zipPath = Path.Combine(exportPath, $"{SkinFolder}.fsk");
+
+        if (File.Exists(zipPath))
+            File.Delete(zipPath);
+
+        using var zip = new ZipArchive(File.Create(zipPath), ZipArchiveMode.Create);
+        var files = Directory.GetFiles(skinStorage.GetFullPath(SkinFolder), "*", SearchOption.AllDirectories);
+
+        foreach (var file in files)
+        {
+            var relativePath = file.Replace(skinStorage.GetFullPath(SkinFolder), "");
+            zip.CreateEntryFromFile(file, relativePath[1..]);
+        }
+
+        Logger.Log($"Exported skin '{SkinFolder}' to '{zipPath}'", LoggingTarget.Information);
+        PathUtils.ShowFile(zipPath);
+    }
+
+    public void Delete(string folder)
+    {
+        if (isDefault(folder)) return;
+
+        var path = skinStorage.GetFullPath(folder);
+        Directory.Delete(path, true);
+        Logger.Log($"Deleted skin '{folder}'", LoggingTarget.Information);
+
+        if (folder == SkinFolder)
+            skinName.Value = default_skin_name;
+
+        SkinListChanged?.Invoke();
+    }
 
     private ISkin createCustomSkin(SkinJson skinJson, string folder)
     {

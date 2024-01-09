@@ -21,11 +21,20 @@ public static class FileExtensionHelper
         if (processModule == null) return;
 
         var filePath = processModule.FileName;
+
         ensureAssociationsSet(new FileAssociation
         {
             Extension = ".fms",
             ProgId = "fluXis.MapSet",
             FileTypeDescription = "fluXis MapSet",
+            ExecutableFilePath = filePath
+        });
+
+        ensureAssociationsSet(new FileAssociation
+        {
+            Extension = ".fsk",
+            ProgId = "fluXis.Skin",
+            FileTypeDescription = "fluXis Skin",
             ExecutableFilePath = filePath
         });
     }

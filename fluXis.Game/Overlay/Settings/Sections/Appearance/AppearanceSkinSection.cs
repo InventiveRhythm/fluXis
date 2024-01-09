@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
@@ -12,12 +13,17 @@ public partial class AppearanceSkinSection : SettingsSubSection
     public override string Title => "Skin";
     public override IconUsage Icon => FontAwesome.Solid.PaintBrush;
 
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
+    private SettingsDropdown<string> currentDropdown;
+
     [BackgroundDependencyLoader]
     private void load(SkinManager skinManager, FluXisGameBase gameBase)
     {
         AddRange(new Drawable[]
         {
-            new SettingsDropdown<string>
+            currentDropdown = new SettingsDropdown<string>
             {
                 Label = "Current Skin",
                 Bindable = Config.GetBindable<string>(FluXisSetting.SkinName),
@@ -38,15 +44,33 @@ public partial class AppearanceSkinSection : SettingsSubSection
             new SettingsButton
             {
                 Label = "Export Skin",
-                Enabled = false,
-                ButtonText = "Export"
+                Description = "Export the current skin as a .fsk file.",
+                ButtonText = "Export",
+                Action = skinManager.ExportCurrent
             },
             new SettingsButton
             {
                 Label = "Delete Skin",
-                Enabled = false,
-                ButtonText = "Delete"
+                Description = "Delete the current skin.",
+                ButtonText = "Delete",
+                Action = () =>
+                {
+                    if (skinManager.IsDefault)
+                        return;
+
+                    gameBase.Overlay = new ConfirmDeletionPanel(() =>
+                    {
+                        skinManager.Delete(skinManager.SkinFolder);
+                    }, itemName: "skin");
+                }
             }
         });
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        skinManager.SkinListChanged += () => currentDropdown.Items = skinManager.GetSkinNames();
     }
 }
