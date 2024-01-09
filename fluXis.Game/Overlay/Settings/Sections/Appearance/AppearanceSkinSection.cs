@@ -35,6 +35,13 @@ public partial class AppearanceSkinSection : SettingsSubSection
             },
             new SettingsButton
             {
+                Label = "Refresh Skin list",
+                Description = "Refresh the list of available skins.",
+                ButtonText = "Refresh",
+                Action = reloadList
+            },
+            new SettingsButton
+            {
                 Label = "Open Skin editor",
                 ButtonText = "Open",
                 Action = gameBase.OpenSkinEditor,
@@ -79,6 +86,8 @@ public partial class AppearanceSkinSection : SettingsSubSection
         buttonsEnabled.Value = !skinManager.IsDefault;
 
         skinManager.SkinChanged += () => buttonsEnabled.Value = !skinManager.IsDefault;
-        skinManager.SkinListChanged += () => currentDropdown.Items = skinManager.GetSkinNames();
+        skinManager.SkinListChanged += reloadList;
     }
+
+    private void reloadList() => currentDropdown.Items = skinManager.GetSkinNames();
 }
