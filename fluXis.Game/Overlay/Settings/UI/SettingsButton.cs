@@ -10,10 +10,12 @@ public partial class SettingsButton : SettingsItem
     public Action Action { get; init; } = () => { };
     public string ButtonText { get; init; } = string.Empty;
 
+    private FluXisButton button;
+
     [BackgroundDependencyLoader]
     private void load()
     {
-        Add(new FluXisButton
+        Add(button = new FluXisButton
         {
             Anchor = Anchor.CentreRight,
             Origin = Anchor.CentreRight,
@@ -23,6 +25,12 @@ public partial class SettingsButton : SettingsItem
             Text = ButtonText,
             Action = Action
         });
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        button.EnabledBindable.BindTo(EnabledBindable);
     }
 
     protected override void Reset()

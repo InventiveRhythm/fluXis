@@ -45,6 +45,7 @@ public partial class SkinManager : Component, ISkin
     private const string default_skin_name = "Default";
     private const string default_bright_skin_name = "Default Bright";
 
+    public Action SkinChanged { get; set; }
     public Action SkinListChanged { get; set; }
 
     public SkinJson SkinJson => currentSkin.SkinJson;
@@ -98,6 +99,8 @@ public partial class SkinManager : Component, ISkin
             SkinFolder = e.NewValue;
             currentSkin = loadSkin(SkinFolder);
             Logger.Log($"Switched skin to '{SkinFolder}'", LoggingTarget.Information);
+
+            SkinChanged?.Invoke();
         }, true);
     }
 

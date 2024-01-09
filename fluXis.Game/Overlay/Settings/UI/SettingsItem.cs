@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -16,23 +17,27 @@ public abstract partial class SettingsItem : Container
 {
     public string Label { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
-    public bool Enabled { get; init; } = true;
 
-    public virtual bool IsDefault => true;
+    protected virtual bool IsDefault => true;
+
+    public bool Enabled
+    {
+        get => EnabledBindable.Value;
+        set => EnabledBindable.Value = value;
+    }
+
+    public BindableBool EnabledBindable { get; init; } = new(true);
 
     protected FillFlowContainer TextFlow { get; private set; }
 
     private bool isDefault;
     private ResetButton resetButton;
 
-    private const float reset_button_height = 30;
-
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.X;
         Height = 40;
-        Alpha = Enabled ? 1 : 0.5f;
 
         InternalChildren = new Drawable[]
         {
@@ -72,6 +77,8 @@ public abstract partial class SettingsItem : Container
     {
         base.LoadComplete();
         updateResetButton();
+
+        EnabledBindable.BindValueChanged(e => this.FadeTo(e.NewValue ? 1 : .5f, 200), true);
     }
 
     protected override void Update()

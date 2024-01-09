@@ -16,7 +16,7 @@ public partial class SettingsSlider<T> : SettingsItem
     public bool DisplayAsPercentage { get; init; }
     public float Step { get; init; } = .01f;
 
-    public override bool IsDefault => Bindable.IsDefault;
+    protected override bool IsDefault => Bindable.IsDefault;
 
     private FluXisSpriteText valueLabel;
 

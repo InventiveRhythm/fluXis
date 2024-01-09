@@ -33,7 +33,7 @@ public partial class SettingsDropdown<T> : SettingsItem
         }
     }
 
-    public override bool IsDefault => Bindable.IsDefault;
+    protected override bool IsDefault => Bindable.IsDefault;
 
     private SettingsDropdownMenu menu;
 

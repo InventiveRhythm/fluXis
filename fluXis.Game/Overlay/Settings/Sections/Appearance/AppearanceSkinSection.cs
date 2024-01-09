@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
@@ -17,10 +18,13 @@ public partial class AppearanceSkinSection : SettingsSubSection
     private SkinManager skinManager { get; set; }
 
     private SettingsDropdown<string> currentDropdown;
+    private BindableBool buttonsEnabled;
 
     [BackgroundDependencyLoader]
     private void load(SkinManager skinManager, FluXisGameBase gameBase)
     {
+        buttonsEnabled = new BindableBool(true);
+
         AddRange(new Drawable[]
         {
             currentDropdown = new SettingsDropdown<string>
@@ -33,19 +37,22 @@ public partial class AppearanceSkinSection : SettingsSubSection
             {
                 Label = "Open Skin editor",
                 ButtonText = "Open",
-                Action = gameBase.OpenSkinEditor
+                Action = gameBase.OpenSkinEditor,
+                EnabledBindable = buttonsEnabled
             },
             new SettingsButton
             {
                 Label = "Open Skin folder",
                 Action = skinManager.OpenFolder,
-                ButtonText = "Open"
+                ButtonText = "Open",
+                EnabledBindable = buttonsEnabled
             },
             new SettingsButton
             {
                 Label = "Export Skin",
                 Description = "Export the current skin as a .fsk file.",
                 ButtonText = "Export",
+                EnabledBindable = buttonsEnabled,
                 Action = skinManager.ExportCurrent
             },
             new SettingsButton
@@ -53,15 +60,13 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 Label = "Delete Skin",
                 Description = "Delete the current skin.",
                 ButtonText = "Delete",
+                EnabledBindable = buttonsEnabled,
                 Action = () =>
                 {
                     if (skinManager.IsDefault)
                         return;
 
-                    gameBase.Overlay = new ConfirmDeletionPanel(() =>
-                    {
-                        skinManager.Delete(skinManager.SkinFolder);
-                    }, itemName: "skin");
+                    gameBase.Overlay = new ConfirmDeletionPanel(() => skinManager.Delete(skinManager.SkinFolder), itemName: "skin");
                 }
             }
         });
@@ -71,6 +76,9 @@ public partial class AppearanceSkinSection : SettingsSubSection
     {
         base.LoadComplete();
 
+        buttonsEnabled.Value = !skinManager.IsDefault;
+
+        skinManager.SkinChanged += () => buttonsEnabled.Value = !skinManager.IsDefault;
         skinManager.SkinListChanged += () => currentDropdown.Items = skinManager.GetSkinNames();
     }
 }

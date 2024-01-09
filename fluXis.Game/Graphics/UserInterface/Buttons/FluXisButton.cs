@@ -23,6 +23,7 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
     public string Text { get; set; } = "Default Text";
     public Colour4 Color { get; set; } = FluXisColors.Background4;
     public bool HoldToConfirm { get; set; }
+    public bool FadeOnDisabled { get; init; } = true;
 
     public ButtonData Data
     {
@@ -45,6 +46,8 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
         {
             base.Enabled.Value = value;
             EnabledBindable.Value = value;
+
+            if (!FadeOnDisabled) return;
 
             if (IsLoaded)
                 this.FadeTo(value ? 1 : 0.5f, 200);

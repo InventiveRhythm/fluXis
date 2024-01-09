@@ -11,7 +11,7 @@ namespace fluXis.Game.Overlay.Settings.UI;
 
 public partial class SettingsToggle : SettingsItem
 {
-    public override bool IsDefault => Bindable.IsDefault;
+    protected override bool IsDefault => Bindable.IsDefault;
 
     public Bindable<bool> Bindable { get; init; } = new();
 
