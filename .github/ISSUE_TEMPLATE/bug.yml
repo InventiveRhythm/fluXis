@@ -13,18 +13,12 @@ body:
     attributes:
       label: fluXis version
       description: What version of fluXis are you using? (Visible on the first page of the settings menu)
-      value: |
-        - fluXis version:
-      render: Markdown
     validations:
       required: true
   - type: textarea
     attributes:
       label: Device
       description: What device are you using? (Windows 10, Windows 11, etc.)
-      value: |
-        - Device:
-      render: Markdown
     validations:
       required: true
   - type: textarea
@@ -50,4 +44,4 @@ body:
       label: Screenshots/Video
       description: If applicable, add screenshots or a video to help explain your problem.
     validations:
-      required: true
+      required: false
