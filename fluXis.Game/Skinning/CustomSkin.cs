@@ -3,9 +3,11 @@ using System.Linq;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Custom.Health;
+using fluXis.Game.Skinning.Custom.Lighting;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
@@ -168,21 +170,15 @@ public class CustomSkin : ISkin
         return null;
     }
 
-    public Drawable GetColumnLighting(int lane, int keyCount)
+    public VisibilityContainer GetColumnLighting(int lane, int keyCount)
     {
         string path = SkinJson.GetOverrideOrDefault("Lighting/column-lighting") + ".png";
 
         if (storage.Exists(path))
         {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Colour = SkinJson.GetLaneColor(lane, keyCount),
-                Width = 1
-            };
+            var lighting = new SkinnableHitLighting(textures.Get(path));
+            lighting.SetColor(SkinJson, lane, keyCount);
+            return lighting;
         }
 
         return null;

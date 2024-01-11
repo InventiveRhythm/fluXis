@@ -21,7 +21,7 @@ public partial class Receptor : CompositeDrawable
 
     private Drawable up;
     private Drawable down;
-    private Drawable hitLighting;
+    private VisibilityContainer hitLighting;
 
     private int currentKeyCount;
     private bool visible;
@@ -45,7 +45,7 @@ public partial class Receptor : CompositeDrawable
         {
             up = skinManager.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, false),
             down = skinManager.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, true),
-            hitLighting = skinManager.GetColumnLighting(idx + 1, playfield.RealmMap.KeyCount)
+            hitLighting = skinManager.GetColumnLighting(idx + 1, playfield.RealmMap.KeyCount).With(l => l.AlwaysPresent = true)
         };
 
         hitLighting.Margin = new MarginPadding
@@ -67,8 +67,10 @@ public partial class Receptor : CompositeDrawable
         up.Alpha = IsDown ? 0 : 1;
         down.Alpha = IsDown ? 1 : 0;
 
-        if (visible)
-            hitLighting.FadeTo(IsDown ? 0.5f : 0, IsDown ? 0 : 100);
+        if (IsDown)
+            hitLighting.Show();
+        else
+            hitLighting.Hide();
 
         if (currentKeyCount != playfield.Manager.CurrentKeyCount)
         {

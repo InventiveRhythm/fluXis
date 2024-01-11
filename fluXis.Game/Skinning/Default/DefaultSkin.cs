@@ -9,6 +9,7 @@ using fluXis.Game.Skinning.Default.Stage;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Skinning.Default;
@@ -57,7 +58,7 @@ public class DefaultSkin : ISkin
         return end;
     }
 
-    public Drawable GetColumnLighting(int lane, int keyCount)
+    public VisibilityContainer GetColumnLighting(int lane, int keyCount)
     {
         var lighting = new DefaultColumnLighing(SkinJson);
         lighting.UpdateColor(lane, keyCount);
