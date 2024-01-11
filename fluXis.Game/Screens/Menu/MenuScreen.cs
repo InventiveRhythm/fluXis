@@ -370,9 +370,6 @@ public partial class MenuScreen : FluXisScreen
             return true;
         }
 
-        if (e.Key == Key.P)
-            clock.Seek(clock.TrackLength - 1000);
-
         return canPlayAnimation();
     }
 
