@@ -152,7 +152,11 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(GlobalClock = new GlobalClock());
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
-        dependencies.Cache(Fluxel = new Fluxel(Config, endpoint));
+
+        Fluxel = new Fluxel(endpoint);
+        LoadComponent(Fluxel);
+        dependencies.Cache(Fluxel);
+
         UserCache.Init(Fluxel);
 
         dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));

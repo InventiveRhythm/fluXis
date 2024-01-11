@@ -14,9 +14,13 @@ using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Online.Fluxel.Packets.Account;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
+using fluXis.Game.Overlay.Notifications;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
@@ -24,8 +28,10 @@ namespace fluXis.Game.Online.Fluxel;
 
 public partial class Fluxel : Component
 {
-    public FluXisConfig Config { get; }
     public APIEndpointConfig Endpoint { get; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
 
     private string username;
     private string password;
@@ -71,14 +77,19 @@ public partial class Fluxel : Component
     }
 
     public string LastError { get; private set; }
-    public string Token { get; private set; }
 
-    public Fluxel(FluXisConfig config, APIEndpointConfig endpoint)
+    public string Token => tokenBindable.Value;
+    private Bindable<string> tokenBindable;
+
+    public Fluxel(APIEndpointConfig endpoint)
     {
-        Config = config;
         Endpoint = endpoint;
+    }
 
-        Token = config.Get<string>(FluXisSetting.Token);
+    [BackgroundDependencyLoader]
+    private void load(FluXisConfig config)
+    {
+        tokenBindable = config.GetBindable<string>(FluXisSetting.Token);
 
         var thread = new Thread(loop) { IsBackground = true };
         thread.Start();
@@ -86,6 +97,7 @@ public partial class Fluxel : Component
         RegisterListener<string>(EventType.Token, onAuthResponse);
         RegisterListener<APIUserShort>(EventType.Login, onLoginResponse);
         RegisterListener<APIRegisterResponse>(EventType.Register, onRegisterResponse);
+        RegisterListener<object>(EventType.Logout, onLogout);
     }
 
     private async void loop()
@@ -245,6 +257,7 @@ public partial class Fluxel : Component
                     EventType.Token => handleListener<string>,
                     EventType.Login => handleListener<APIUserShort>,
                     EventType.Register => handleListener<APIRegisterResponse>,
+                    EventType.Logout => handleListener<object>,
                     EventType.ServerMessage => handleListener<ServerMessage>,
                     EventType.ChatMessage => handleListener<ChatMessage>,
                     EventType.ChatHistory => handleListener<ChatMessage[]>,
@@ -292,11 +305,10 @@ public partial class Fluxel : Component
     {
         await connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Logout Requested", CancellationToken.None);
         LoggedInUser = null;
-        Token = "";
+        tokenBindable.Value = "";
         username = "";
         password = "";
 
-        Config.GetBindable<string>(FluXisSetting.Token).Value = "";
         Status = ConnectionStatus.Offline;
     }
 
@@ -307,6 +319,8 @@ public partial class Fluxel : Component
             packetQueue.Add(message);
             return;
         }
+
+        Logger.Log($"Sending packet {message}", LoggingTarget.Network, LogLevel.Debug);
 
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
         await connection.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
@@ -369,8 +383,7 @@ public partial class Fluxel : Component
     {
         if (response.Status == 200)
         {
-            Token = response.Data;
-            Config.GetBindable<string>(FluXisSetting.Token).Value = Token;
+            tokenBindable.Value = response.Data;
             waitTime = 5; // reset wait time for login
             SendPacketAsync(new LoginPacket(Token));
         }
@@ -407,11 +420,16 @@ public partial class Fluxel : Component
             return;
         }
 
-        Token = response.Data.Token;
-        Config.GetBindable<string>(FluXisSetting.Token).Value = Token;
+        tokenBindable.Value = response.Data.Token;
         LoggedInUser = response.Data.User;
         registering = false;
         Status = ConnectionStatus.Online;
+    }
+
+    private void onLogout(FluxelResponse<object> response)
+    {
+        Logout();
+        notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome.Solid.ExclamationTriangle);
     }
 
     private EventType getType(string id)
@@ -421,6 +439,7 @@ public partial class Fluxel : Component
             "account/auth" => EventType.Token,
             "account/login" => EventType.Login,
             "account/register" => EventType.Register,
+            "account/logout" => EventType.Logout,
 
             "server/message" => EventType.ServerMessage,
 
@@ -454,6 +473,11 @@ public enum EventType
     Token,
     Login,
     Register,
+
+    /// <summary>
+    /// Logged out by the server, because the same account logged in somewhere else.
+    /// </summary>
+    Logout,
 
     ServerMessage,
 
