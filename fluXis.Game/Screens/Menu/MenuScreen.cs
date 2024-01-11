@@ -370,6 +370,9 @@ public partial class MenuScreen : FluXisScreen
             return true;
         }
 
+        if (e.Key == Key.P)
+            clock.Seek(clock.TrackLength - 1000);
+
         return canPlayAnimation();
     }
 
@@ -395,14 +398,20 @@ public partial class MenuScreen : FluXisScreen
 
     public void PreEnter()
     {
+        clock.Stop();
+        clock.Volume = 0;
+
         if (config.Get<bool>(FluXisSetting.IntroTheme))
+        {
             maps.CurrentMap = maps.CreateBuiltinMap(MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
+
+            // this doesnt loop perfectly and i hate it and can't do anything about it
+            clock.RestartPoint = maps.CurrentMap?.Metadata.PreviewTime ?? 0;
+            clock.AllowLimitedLoop = false;
+            clock.Seek(0);
+        }
         else // if diabled, load a random map
             maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
-
-        clock.Stop();
-        clock.Seek(maps.CurrentMap?.Metadata.PreviewTime ?? 0);
-        clock.Volume = 0;
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
     }
@@ -410,8 +419,13 @@ public partial class MenuScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         clock.FadeIn(500);
-        clock.Seek(maps.CurrentMapSet?.Metadata?.PreviewTime ?? 0);
+
         clock.Start();
+
+        if (config.Get<bool>(FluXisSetting.IntroTheme))
+            clock.Seek(0);
+        else
+            clock.Seek(maps.CurrentMapSet?.Metadata?.PreviewTime ?? 0);
 
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
         inactivityTime = 0;

@@ -17,7 +17,8 @@ public class RoundhouseMap : RealmMap
         Metadata = new RealmMapMetadata
         {
             Title = "Roundhouse",
-            Artist = "Akiri"
+            Artist = "Akiri",
+            PreviewTime = 1443 // this is used as the restart point not actual start time
         };
     }
 
