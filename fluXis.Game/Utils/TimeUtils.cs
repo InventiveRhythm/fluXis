@@ -78,4 +78,39 @@ public static class TimeUtils
 
         return span.TotalSeconds >= 30 ? $"{(int)span.TotalSeconds} seconds ago" : "now";
     }
+
+    public static string GetWeekDay(this DateTimeOffset time)
+    {
+        return time.DayOfWeek switch
+        {
+            DayOfWeek.Monday => "Monday",
+            DayOfWeek.Tuesday => "Tuesday",
+            DayOfWeek.Wednesday => "Wednesday",
+            DayOfWeek.Thursday => "Thursday",
+            DayOfWeek.Friday => "Friday",
+            DayOfWeek.Saturday => "Saturday",
+            DayOfWeek.Sunday => "Sunday",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    public static string GetMonth(this DateTimeOffset time)
+    {
+        return time.Month switch
+        {
+            1 => "January",
+            2 => "February",
+            3 => "March",
+            4 => "April",
+            5 => "May",
+            6 => "June",
+            7 => "July",
+            8 => "August",
+            9 => "September",
+            10 => "Oktober",
+            11 => "November",
+            12 => "December",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
 }

@@ -11,6 +11,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Chat;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.User;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -72,9 +73,10 @@ public partial class DrawableChatMessage : Container
                                 FontSize = 22,
                                 Colour = InitialMessage.Sender.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(InitialMessage.Sender.Role)
                             },
-                            new FluXisSpriteText
+                            new FluXisTooltipText
                             {
-                                Text = DateTimeOffset.FromUnixTimeSeconds(InitialMessage.Timestamp).ToString("HH:mm"),
+                                Text = getTime(),
+                                Tooltip = getTooltip(),
                                 FontSize = 18,
                                 Colour = FluXisColors.Text2,
                                 Anchor = Anchor.CentreLeft,
@@ -120,6 +122,25 @@ public partial class DrawableChatMessage : Container
     {
         flow.Remove(flow.FirstOrDefault(m => m.Message.Id == id), true);
         Messages.Remove(Messages.FirstOrDefault(m => m.Id == id));
+    }
+
+    private string getTime()
+    {
+        var date = TimeUtils.GetFromSeconds(InitialMessage.Timestamp);
+        var today = DateTimeOffset.Now;
+
+        if (date.Day == today.Day && date.Month == today.Month && date.Year == today.Year)
+            return $"Today at {date.Hour:00}:{date.Minute:00}";
+        if (date.Day == today.Day - 1 && date.Month == today.Month && date.Year == today.Year)
+            return $"Yesterday at {date.Hour:00}:{date.Minute:00}";
+
+        return $"{date.Hour:00}:{date.Minute:00} {StringUtils.NumberWithOrderSuffix(date.Day)} {date.GetMonth()[..3]}";
+    }
+
+    private string getTooltip()
+    {
+        var date = TimeUtils.GetFromSeconds(InitialMessage.Timestamp);
+        return $"{date.GetWeekDay()}, {date.Day} {date.GetMonth()} {date.Year} at {date.Hour:00}:{date.Minute:00}";
     }
 
     private partial class MessageText : FluXisTextFlow, IHasContextMenu

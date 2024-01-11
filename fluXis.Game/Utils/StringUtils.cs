@@ -31,4 +31,20 @@ public static class StringUtils
 
         return $"{nameCensored}@{domainNameCensored}.{tld}";
     }
+
+    public static string NumberWithOrderSuffix(int number)
+    {
+        var numStr = number.ToString();
+
+        if (numStr.EndsWith("1") && !numStr.EndsWith("11"))
+            return $"{number}st";
+
+        if (numStr.EndsWith("2") && !numStr.EndsWith("12"))
+            return $"{number}nd";
+
+        if (numStr.EndsWith("3") && !numStr.EndsWith("13"))
+            return $"{number}rd";
+
+        return $"{number}th";
+    }
 }
