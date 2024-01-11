@@ -398,9 +398,6 @@ public partial class MenuScreen : FluXisScreen
 
     public void PreEnter()
     {
-        clock.Stop();
-        clock.Volume = 0;
-
         if (config.Get<bool>(FluXisSetting.IntroTheme))
         {
             maps.CurrentMap = maps.CreateBuiltinMap(MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
@@ -412,6 +409,9 @@ public partial class MenuScreen : FluXisScreen
         }
         else // if diabled, load a random map
             maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
+
+        clock.Stop();
+        clock.Volume = 0;
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
     }
