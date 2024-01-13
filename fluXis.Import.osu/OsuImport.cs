@@ -12,6 +12,7 @@ using fluXis.Game.Utils;
 using fluXis.Import.osu.AutoImport;
 using JetBrains.Annotations;
 using osu_database_reader.BinaryFiles;
+using osu.Framework.Bindables;
 using osu.Framework.Logging;
 using osu.Shared;
 
@@ -24,11 +25,12 @@ public class OsuImport : MapImporter
     public override string GameName => "osu!mania";
     public override bool SupportsAutoImport => true;
     public override string Color => "#e7659f";
-    public override string StoragePath { get; } = string.Empty;
 
-    public OsuImport()
+    private Bindable<string> osuPath { get; }
+
+    public OsuImport(OsuPluginConfig config)
     {
-        StoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "osu!", "Songs");
+        osuPath = config.GetBindable<string>(OsuPluginSetting.GameLocation);
     }
 
     public override void Import(string path)
@@ -145,10 +147,13 @@ public class OsuImport : MapImporter
 
     public override List<RealmMapSet> GetMaps()
     {
-        if (!File.Exists(StoragePath + "/../osu!.db"))
+        if (!File.Exists(osuPath.Value + "/osu!.db"))
             return new List<RealmMapSet>();
 
-        var db = OsuDb.Read(StoragePath + "/../osu!.db");
+        var db = OsuDb.Read(osuPath.Value + "/osu!.db");
+
+        var songsPath = Path.Combine(osuPath.Value, "Songs");
+        var resources = GetResourceProvider(songsPath);
 
         var maps = db.Beatmaps.Where(b => b.GameMode == GameMode.Mania);
         var sets = maps.GroupBy(b => b.FolderName);
@@ -164,7 +169,7 @@ public class OsuImport : MapImporter
                 var realmMapSet = new OsuRealmMapSet(mapList)
                 {
                     Managed = true,
-                    Resources = Resources
+                    Resources = resources
                 };
 
                 foreach (var map in set)
@@ -173,11 +178,11 @@ public class OsuImport : MapImporter
                     // to get the map background, we have to load the map,
                     // because for some reason the background is not in the .db file
                     // this increades the loading time by a lot, but there is no other way
-                    var osuMap = ParseOsuMap(File.ReadAllText(StoragePath + "/" + map.FolderName + "/" + map.BeatmapFileName), true);
+                    var osuMap = ParseOsuMap(File.ReadAllText(songsPath + "/" + map.FolderName + "/" + map.BeatmapFileName), true);
 
                     var realmMap = new OsuRealmMap
                     {
-                        OsuPath = StoragePath,
+                        OsuPath = songsPath,
                         FolderPath = map.FolderName,
                         Difficulty = map.Version,
                         Metadata = new RealmMapMetadata

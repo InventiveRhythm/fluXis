@@ -17,12 +17,16 @@ public partial class PluginManager : Component
     [Resolved]
     private Storage storage { get; set; }
 
+    private Storage pluginStorage;
+
     private List<Plugin> plugins { get; } = new();
     public IEnumerable<Plugin> Plugins => plugins.ToImmutableArray();
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        pluginStorage = storage.GetStorageForDirectory("plugins");
+
         loadFromAppDomain();
         loadFromRunFolder();
         loadFromPlugins();
@@ -48,6 +52,7 @@ public partial class PluginManager : Component
                     continue;
                 }
 
+                plugin.CreateConfig(pluginStorage);
                 plugins.Add(plugin);
                 Logger.Log($"Loaded plugin {plugin}");
             }

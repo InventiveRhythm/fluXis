@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Utils;
 using fluXis.Import.Quaver.Map;
 using JetBrains.Annotations;
+using osu.Framework.Bindables;
 using osu.Framework.Logging;
 using YamlDotNet.Serialization;
 
@@ -22,51 +22,13 @@ public class QuaverImport : MapImporter
     public override string GameName => "Quaver";
     public override bool SupportsAutoImport => true;
     public override string Color => "#0cb2d8";
-    public override string StoragePath => songsPath;
 
-    private readonly string quaverPath;
-    private string songsPath => string.IsNullOrEmpty(quaverPath) ? "" : Path.Combine(quaverPath, "Songs");
+    private Bindable<string> quaverPath { get; }
+    private string songsPath => string.IsNullOrEmpty(quaverPath.Value) ? "" : Path.Combine(quaverPath.Value, "Songs");
 
-    public QuaverImport()
+    public QuaverImport(QuaverPluginConfig config)
     {
-        const string c_path = @"C:\Program Files (x86)\Steam\steamapps\common\Quaver\Quaver.exe";
-        var installPath = "";
-
-        if (File.Exists(c_path)) installPath = c_path;
-        else
-        {
-            string[] drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                              .Select(c => $@"{c}:\")
-                              .Where(Directory.Exists)
-                              .ToArray();
-
-            const string steam_lib_path = @"SteamLibrary\steamapps\common\Quaver\Quaver.exe";
-            const string steam_path = @"Steam\steamapps\common\Quaver\Quaver.exe";
-
-            foreach (var drive in drives)
-            {
-                if (File.Exists($"{drive}{steam_lib_path}"))
-                {
-                    installPath = $"{drive}{steam_lib_path}";
-                    break;
-                }
-
-                if (File.Exists($"{drive}{steam_path}"))
-                {
-                    installPath = $"{drive}{steam_path}";
-                    break;
-                }
-            }
-        }
-
-        if (string.IsNullOrEmpty(installPath))
-        {
-            Logger.Log("Could not find Quaver install");
-            return;
-        }
-
-        Logger.Log($"Found Quaver install at {installPath}");
-        quaverPath = Path.GetDirectoryName(installPath);
+        quaverPath = config.GetBindable<string>(QuaverPluginSetting.GameLocation);
     }
 
     public override void Import(string path)
@@ -136,14 +98,14 @@ public class QuaverImport : MapImporter
 
     public override List<RealmMapSet> GetMaps()
     {
-        if (string.IsNullOrEmpty(quaverPath))
+        if (string.IsNullOrEmpty(quaverPath.Value))
             return base.GetMaps();
 
-        string dbPath = Path.Combine(quaverPath, "quaver.db");
+        string dbPath = Path.Combine(quaverPath.Value, "quaver.db");
 
         if (!File.Exists(dbPath))
         {
-            Logger.Log("Could not find Quaver database");
+            Logger.Log($"Could not find Quaver database at {dbPath}");
             return base.GetMaps();
         }
 
@@ -220,6 +182,8 @@ public class QuaverImport : MapImporter
 
             reader.Close();
 
+            var resources = GetResourceProvider(songsPath);
+
             foreach (var (directoryName, mapSetMaps) in maps)
             {
                 var mapSetRealm = new QuaverRealmMapSet(mapSetMaps)
@@ -229,7 +193,7 @@ public class QuaverImport : MapImporter
                     OnlineID = 0,
                     Cover = "",
                     Managed = true,
-                    Resources = Resources
+                    Resources = resources
                 };
 
                 foreach (var map in mapSetMaps)

@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Import;
 using JetBrains.Annotations;
+using osu.Framework.Platform;
 
 namespace fluXis.Game.Plugins;
 
@@ -17,6 +18,8 @@ public abstract class Plugin
 
     [CanBeNull]
     protected virtual MapImporter CreateImporter() => null;
+
+    public virtual void CreateConfig(Storage storage) { }
 
     public override string ToString() => $"{Name} v{Version} by {Author}";
 }

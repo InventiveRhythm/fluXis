@@ -86,18 +86,21 @@ public partial class ImportManager : Component
 
             importersByPlugin.Add(plugin, importer);
 
-            if (!string.IsNullOrEmpty(importer.StoragePath))
+            importer.ResourceRequest = path =>
             {
-                var storageFor = new NativeStorage(importer.StoragePath);
+                var storageFor = new NativeStorage(path);
+                var resourceStore = new StorageBackedResourceStore(storageFor);
 
-                importer.Resources = new MapResourceProvider
+                var resource = new MapResourceProvider
                 {
-                    TrackStore = audio.GetTrackStore(new StorageBackedResourceStore(storageFor)),
-                    SampleStore = audio.GetSampleStore(new StorageBackedResourceStore(storageFor)),
+                    TrackStore = audio.GetTrackStore(resourceStore),
+                    SampleStore = audio.GetSampleStore(resourceStore),
                     BackgroundStore = new BackgroundTextureStore(host, storageFor),
                     CroppedBackgroundStore = new CroppedBackgroundStore(host, storageFor)
                 };
-            }
+
+                return resource;
+            };
 
             importer.Realm = realm;
             importer.MapStore = mapStore;

@@ -18,15 +18,13 @@ public class MapImporter
     public virtual string GameName => "Unknown";
     public virtual bool SupportsAutoImport => false;
     public virtual string Color => "#000000";
-    public virtual string StoragePath => "";
 
     /// <summary>
     /// ID of the importer in the database.
     /// </summary>
     public int ID { get; internal set; }
 
-    public MapResourceProvider Resources { get; set; }
-
+    internal Func<string, MapResourceProvider> ResourceRequest { get; set; }
     internal Storage Storage { get; set; }
     internal FluXisRealm Realm { get; set; }
     internal MapStore MapStore { get; set; }
@@ -35,6 +33,17 @@ public class MapImporter
     public virtual void Import(string path) => throw new NotImplementedException();
 
     public virtual List<RealmMapSet> GetMaps() => new();
+
+    /// <summary>
+    /// Used to request the resource provider for the given folder.
+    /// </summary>
+    /// <param name="folder">
+    /// Path to the folder to request the resource provider for.
+    /// </param>
+    /// <returns>
+    /// The requested resource provider.
+    /// </returns>
+    protected MapResourceProvider GetResourceProvider(string folder) => ResourceRequest(folder);
 
     /// <summary>
     /// Used to pass the mapset to FluXisImport to add it to the database.
