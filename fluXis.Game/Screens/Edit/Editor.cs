@@ -84,8 +84,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorTabSwitcher tabSwitcher;
     private EditorBottomBar bottomBar;
 
+    public Bindable<Waveform> Waveform { get; private set; }
+
     private EditorClock clock;
-    private Bindable<Waveform> waveform;
     private EditorChangeHandler changeHandler;
     private EditorValues values;
 
@@ -132,7 +133,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         backgrounds.AddBackgroundFromMap(Map);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("maps")));
 
-        dependencies.CacheAs(waveform = new Bindable<Waveform>());
+        dependencies.CacheAs(Waveform = new Bindable<Waveform>());
         dependencies.CacheAs(changeHandler = new EditorChangeHandler());
         dependencies.CacheAs(values = new EditorValues
         {
@@ -355,7 +356,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (s != null) w = new Waveform(s);
         }
 
-        waveform.Value = w;
+        Waveform.Value = w;
         return Map.GetTrack() ?? trackStore.GetVirtual(10000);
     }
 

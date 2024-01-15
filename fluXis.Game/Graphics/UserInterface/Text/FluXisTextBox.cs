@@ -17,9 +17,13 @@ public partial class FluXisTextBox : BasicTextBox
 {
     protected override Color4 SelectionColour => FluXisColors.Background6;
     protected override Color4 InputErrorColour => FluXisColors.ButtonRed;
+    protected override float LeftRightPadding => SidePadding;
 
+    public int SidePadding { get; set; } = 5;
+    public float TextContainerHeight { get; set; } = .75f;
     public bool IsPassword { get; set; }
-    public Action OnTextChanged;
+    public Action OnTextChanged { get; set; }
+    public Action OnCommitAction { get; set; }
 
     public Colour4 BackgroundInactive
     {
@@ -51,6 +55,7 @@ public partial class FluXisTextBox : BasicTextBox
         BackgroundCommit = BorderColour = FluXisColors.Highlight;
         Placeholder.Font = FluXisSpriteText.GetFont();
         Placeholder.Colour = FluXisColors.Foreground;
+        TextContainer.Height = TextContainerHeight;
 
         Add(samples);
     }
@@ -69,7 +74,11 @@ public partial class FluXisTextBox : BasicTextBox
         OnTextChanged?.Invoke();
     }
 
-    protected override void OnTextCommitted(bool textChanged) => samples.Accept();
+    protected override void OnTextCommitted(bool textChanged)
+    {
+        samples.Accept();
+        OnCommitAction?.Invoke();
+    }
 
     private double lastSelectionTime;
 

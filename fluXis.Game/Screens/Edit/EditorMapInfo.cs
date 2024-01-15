@@ -14,6 +14,7 @@ public class EditorMapInfo : MapInfo
 
     public event Action<HitObject> HitObjectAdded;
     public event Action<HitObject> HitObjectRemoved;
+    public event Action<HitObject> HitObjectChanged;
     public event Action HitSoundsChanged;
 
     public event Action<TimingPoint> TimingPointAdded;
@@ -56,6 +57,28 @@ public class EditorMapInfo : MapInfo
                 PlayfieldFadeEvents = events.PlayfieldFadeEvents ?? new List<PlayfieldFadeEvent>()
             }
         };
+    }
+
+    public void Update(TimedObject obj)
+    {
+        switch (obj)
+        {
+            case HitObject hit:
+                HitObjectChanged?.Invoke(hit);
+                break;
+
+            case TimingPoint timing:
+                TimingPointChanged?.Invoke(timing);
+                break;
+
+            case ScrollVelocity sv:
+                ScrollVelocityChanged?.Invoke(sv);
+                break;
+
+            default:
+                MapEvents.Update(obj);
+                break;
+        }
     }
 
     public void Add(HitObject hitObject)

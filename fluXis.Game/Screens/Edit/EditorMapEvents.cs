@@ -1,13 +1,16 @@
 using System;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 
 namespace fluXis.Game.Screens.Edit;
 
 public class EditorMapEvents : MapEvents
 {
     public event Action<LaneSwitchEvent> LaneSwitchEventAdded;
+    public event Action<LaneSwitchEvent> LaneSwitchEventChanged;
     public event Action<LaneSwitchEvent> LaneSwitchEventRemoved;
+
     public event Action<FlashEvent> FlashEventAdded;
     public event Action<FlashEvent> FlashEventRemoved;
     public event Action<PulseEvent> PulseEventAdded;
@@ -16,6 +19,16 @@ public class EditorMapEvents : MapEvents
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventRemoved;
     public event Action<ShakeEvent> ShakeEventAdded;
     public event Action<ShakeEvent> ShakeEventRemoved;
+
+    public void Update(TimedObject obj)
+    {
+        switch (obj)
+        {
+            case LaneSwitchEvent lane:
+                LaneSwitchEventChanged?.Invoke(lane);
+                break;
+        }
+    }
 
     public void Add(LaneSwitchEvent laneSwitchEvent)
     {

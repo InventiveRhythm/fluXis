@@ -76,7 +76,7 @@ public partial class Toolbox : ExpandingContainer
     {
         Expanded.BindValueChanged(v =>
         {
-            this.ResizeWidthTo(v.NewValue ? size_open : size_closed, 500, Easing.OutQuint);
+            this.ResizeWidthTo(v.NewValue ? size_open : size_closed, 500, Easing.OutQuart);
             categories.ForEach(d => d.OnSizeChanged(v.NewValue));
         }, true);
     }

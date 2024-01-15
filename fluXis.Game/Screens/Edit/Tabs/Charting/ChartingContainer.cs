@@ -7,9 +7,11 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Points;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -63,6 +65,9 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     private Box dim;
     private Toolbox.Toolbox toolbox;
 
+    private ClickableContainer sidebarClickHandler;
+    private PointsSidebar sidebar;
+
     public EditorPlayfield Playfield { get; private set; }
     public BlueprintContainer BlueprintContainer { get; private set; }
     public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
@@ -95,7 +100,14 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
                 Colour = Colour4.Black.Opacity(.4f),
                 Alpha = 0
             },
-            toolbox = new Toolbox.Toolbox()
+            toolbox = new Toolbox.Toolbox(),
+            sidebarClickHandler = new ClickableContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0,
+                Action = () => sidebar.OnWrapperClick?.Invoke()
+            },
+            sidebar = new PointsSidebar()
         };
     }
 
@@ -105,11 +117,28 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         inputManager = GetContainingInputManager();
 
-        toolbox.Expanded.BindValueChanged(e =>
+        toolbox.Expanded.BindValueChanged(e => Schedule(() => onSidebarExpand(e)));
+        sidebar.Expanded.BindValueChanged(e => Schedule(() => onSidebarExpand(e)));
+
+        void onSidebarExpand(ValueChangedEvent<bool> e)
         {
-            dim.FadeTo(e.NewValue ? 1 : 0, 400, Easing.OutCubic);
-            playfieldContainer.MoveToX(e.NewValue ? 40 : 0, 500, Easing.OutCubic);
-        });
+            var showDim = toolbox.Expanded.Value || sidebar.Expanded.Value;
+            dim.FadeTo(showDim ? 1 : 0, 400, Easing.OutCubic);
+
+            var leftSide = e.NewValue == toolbox.Expanded.Value;
+            var rightSide = e.NewValue == sidebar.Expanded.Value;
+            var bothSides = leftSide && rightSide;
+
+            var offset = bothSides switch
+            {
+                false when leftSide => 40,
+                false when rightSide => -40,
+                _ => 0
+            };
+
+            playfieldContainer.MoveToX(offset, 500, Easing.OutCubic);
+            sidebarClickHandler.FadeTo(rightSide ? 1 : 0);
+        }
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
