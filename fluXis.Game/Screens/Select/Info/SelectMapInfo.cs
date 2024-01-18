@@ -277,7 +277,7 @@ public partial class SelectMapInfo : GridContainer
         if (maps.CurrentMap == null)
             return;
 
-        var mod = Screen.ModSelector.SelectedMods.FirstOrDefault(m => m is RateMod) as RateMod;
+        var mod = Screen?.ModSelector.SelectedMods.FirstOrDefault(m => m is RateMod) as RateMod;
         var rate = mod?.Rate ?? 1;
 
         titleText.Text = maps.CurrentMap.Metadata.Title;
