@@ -74,6 +74,9 @@ public partial class DrawableLongNote : DrawableHitObject
         if (key != Keybind || !ObjectManager.IsFirstInColumn(this))
             return;
 
+        if (!headPiece.Hittable)
+            return;
+
         IsBeingHeld.Value = true;
     }
 

@@ -6,6 +6,8 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects.Long;
 
 public partial class DrawableLongNoteHead : DrawableLongNotePart
 {
+    public bool Hittable => Time.Current - Data.Time > -HitWindows.TimingFor(HitWindows.Lowest);
+
     public DrawableLongNoteHead(HitObject data)
         : base(data)
     {
