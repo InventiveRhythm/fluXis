@@ -15,7 +15,6 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
@@ -62,9 +61,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private BackgroundStack backgrounds { get; set; }
 
     [Resolved]
     private Fluxel fluxel { get; set; }
@@ -292,8 +288,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo();
     protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount);
-    protected virtual Drawable CreateTextOverlay() => Mods.Any(m => m is AutoPlayMod) ? new AutoPlayDisplay() : Empty();
-    protected virtual UserActivity GetPlayingActivity() => Playfield.Manager.AutoPlay ? new UserActivity.WatchingReplay(RealmMap, APIUserShort.AutoPlay) : new UserActivity.Playing(RealmMap);
+    protected virtual Drawable CreateTextOverlay() => Empty();
+    protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(RealmMap);
 
     protected HealthProcessor CreateHealthProcessor()
     {
@@ -367,7 +363,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var player = Playfield.Manager.AutoPlay ? APIUserShort.AutoPlay : fluxel.LoggedInUser;
+            var player = fluxel.LoggedInUser;
 
             var bestScore = realm.Run(r =>
             {
@@ -476,7 +472,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     private void fadeOut() => this.FadeOut(restarting ? 100 : 300);
 
-    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         if (e.Repeat || Playfield.Manager.Finished) return false;
 
@@ -521,14 +517,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             case FluXisGlobalKeybind.ScrollSpeedDecrease:
                 config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
                 return true;
-
-            case FluXisGlobalKeybind.SeekBackward:
-                OnSeek?.Invoke(GameplayClock.CurrentTime, GameplayClock.CurrentTime - 5000);
-                return Playfield.Manager.AutoPlay;
-
-            case FluXisGlobalKeybind.SeekForward:
-                OnSeek?.Invoke(GameplayClock.CurrentTime, GameplayClock.CurrentTime + 5000);
-                return Playfield.Manager.AutoPlay;
         }
 
         return false;

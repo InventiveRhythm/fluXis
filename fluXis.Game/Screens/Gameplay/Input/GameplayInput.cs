@@ -159,7 +159,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
 
     public bool PressKey(FluXisGameplayKeybind key)
     {
-        if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
+        if (screen.IsPaused.Value)
             return false;
 
         var idx = Keys.IndexOf(key);
@@ -172,7 +172,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
 
     public void ReleaseKey(FluXisGameplayKeybind key)
     {
-        if (screen.IsPaused.Value || screen.Playfield.Manager.AutoPlay)
+        if (screen.IsPaused.Value)
             return;
 
         var idx = Keys.IndexOf(key);

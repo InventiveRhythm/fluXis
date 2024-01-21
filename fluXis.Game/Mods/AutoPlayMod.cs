@@ -6,10 +6,10 @@ public class AutoPlayMod : IMod
 {
     public string Name => "AutoPlay";
     public string Acronym => "AP";
-    public string Description => "Watch a perfect playthrough of the song.";
+    public string Description => "Watch a perfect replay of the map.";
     public IconUsage Icon => FontAwesome.Solid.Plane;
     public ModType Type => ModType.Automation;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => false;
-    public string[] IncompatibleMods => new[] { "NF", "FR", "FL", "AP2" };
+    public string[] IncompatibleMods => new[] { "NF", "FR", "FL" };
 }

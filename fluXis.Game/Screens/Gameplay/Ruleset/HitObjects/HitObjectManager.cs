@@ -71,8 +71,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     public Action OnFinished { get; set; }
     public bool Finished { get; private set; }
 
-    public bool AutoPlay => screen.Mods.Any(m => m is AutoPlayMod);
-
     public bool Break => timeUntilNextHitObject >= 2000;
     private double timeUntilNextHitObject => (nextHitObject?.Time ?? double.MaxValue) - Clock.CurrentTime;
 
@@ -118,8 +116,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     private void onSeek(double prevTime, double newTime)
     {
-        if (!AutoPlay) return;
-
         newTime = Math.Max(newTime, 0);
 
         /*Seeking = true;

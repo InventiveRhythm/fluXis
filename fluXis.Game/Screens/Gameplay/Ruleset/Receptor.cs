@@ -61,8 +61,7 @@ public partial class Receptor : CompositeDrawable
 
     protected override void Update()
     {
-        if (!playfield.Manager.AutoPlay)
-            IsDown = screen.Input.Pressed[idx];
+        IsDown = screen.Input.Pressed[idx];
 
         up.Alpha = IsDown ? 0 : 1;
         down.Alpha = IsDown ? 1 : 0;

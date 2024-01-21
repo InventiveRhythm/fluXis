@@ -386,7 +386,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (inputManager.CurrentState.Keyboard.ControlPressed && !mods.Any(m => m is AutoPlayMod))
             mods.Add(new AutoPlayMod());
 
-        if (mods.Any(m => m is AutoPlayV2Mod))
+        if (mods.Any(m => m is AutoPlayMod))
         {
             this.Push(new GameplayLoader(mapStore.CurrentMap, mods, () =>
             {
