@@ -45,6 +45,12 @@ public class HitWindows
 
     public float TimingFor(Judgement judgement) => Timings.FirstOrDefault(x => x.Judgement == judgement).Milliseconds;
 
+    public bool CanBeHit(float milliseconds)
+    {
+        milliseconds = Math.Abs(milliseconds);
+        return milliseconds <= TimingFor(Lowest);
+    }
+
     public IEnumerable<Timing> GetTimings() => Timings;
 }
 

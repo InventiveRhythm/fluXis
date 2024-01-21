@@ -9,7 +9,6 @@ using fluXis.Game.Mods;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Structs;
-using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Skinning;
 using JetBrains.Annotations;
@@ -44,7 +43,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public MapInfo Map => playfield.Map;
     public int KeyCount => playfield.RealmMap.KeyCount;
-    public List<HitObject> PastHitObjects { get; } = new();
+    public List<DrawableHitObject> PastHitObjects { get; } = new();
     public List<HitObject> FutureHitObjects { get; } = new();
     public List<DrawableHitObject> HitObjects { get; } = new();
 
@@ -101,13 +100,29 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         screen.OnSeek += onSeek;
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        input.OnPress += key =>
+        {
+            var lane = input.Keys.IndexOf(key) + 1;
+            var hit = nextInLane(lane);
+
+            if (hit == null)
+                return;
+
+            playHitSound(hit);
+        };
+    }
+
     private void onSeek(double prevTime, double newTime)
     {
         if (!AutoPlay) return;
 
         newTime = Math.Max(newTime, 0);
 
-        Seeking = true;
+        /*Seeking = true;
         (Clock as GameplayClock)?.Seek(newTime);
 
         if (newTime < prevTime)
@@ -129,7 +144,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
                 judgementProcessor.RevertResult(result);
                 hitObject.Result = null;
 
-                var hit = new DrawableHitObject(this, hitObject);
+                var hit = new OldDrawableHitObject(this, hitObject);
                 HitObjects.Add(hit);
                 AddInternal(hit);
             }
@@ -161,7 +176,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             var toPast = FutureHitObjects.Where(h => h.Time <= newTime);
             PastHitObjects.AddRange(toPast);
             FutureHitObjects.RemoveAll(h => h.Time <= newTime);
-        }
+        }*/
     }
 
     protected override void Update()
@@ -176,32 +191,15 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
         while (FutureHitObjects is { Count: > 0 } && ShouldDisplay(FutureHitObjects[0].Time))
         {
-            DrawableHitObject hitObject = new DrawableHitObject(this, FutureHitObjects[0]);
+            var hit = createHitObject(FutureHitObjects[0]);
+            HitObjects.Add(hit);
+            AddInternal(hit);
+
             FutureHitObjects.RemoveAt(0);
-            HitObjects.Add(hitObject);
-            AddInternal(hitObject);
         }
 
-        if (AutoPlay)
-            updateAutoPlay();
-        else
-            updateInput();
-
-        foreach (var hitObject in HitObjects.Where(h => h.Missed).ToList())
-        {
-            if (hitObject.Data.LongNote)
-            {
-                if (!hitObject.LongNoteMissed)
-                {
-                    hitObject.MissLongNote();
-                    miss(hitObject, hitObject.GotHit);
-                }
-
-                if (hitObject.Data.EndTime - Clock.CurrentTime <= screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest))
-                    removeHitObject(hitObject);
-            }
-            else miss(hitObject);
-        }
+        foreach (var hitObject in HitObjects.Where(h => h.CanBeRemoved).ToList())
+            removeHitObject(hitObject);
 
         foreach (var laneSwitchEvent in screen.MapEvents.LaneSwitchEvents)
         {
@@ -247,6 +245,34 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         return receptors[lane - 1].Width;
     }
 
+    public bool IsFirstInColumn(DrawableHitObject hitObject) => HitObjects.FirstOrDefault(h => h.Data.Lane == hitObject.Data.Lane && h.Data.Time < hitObject.Data.Time) == null;
+
+    private DrawableHitObject createHitObject(HitObject hitObject)
+    {
+        var drawable = getDrawableFor(hitObject);
+        drawable.Keybind = screen.Input.Keys[hitObject.Lane - 1];
+        drawable.OnHit += hit;
+        return drawable;
+    }
+
+    private void removeHitObject(DrawableHitObject hitObject)
+    {
+        hitObject.OnKill();
+        hitObject.OnHit -= hit;
+
+        HitObjects.Remove(hitObject);
+        PastHitObjects.Add(hitObject);
+        RemoveInternal(hitObject, false);
+    }
+
+    private DrawableHitObject getDrawableFor(HitObject hit)
+    {
+        if (hit.LongNote)
+            return new DrawableLongNote(hit);
+
+        return new DrawableNote(hit);
+    }
+
     private void updateTime()
     {
         int svIndex = 0;
@@ -257,123 +283,24 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         CurrentTime = ScrollVelocityPositionFromTime(Clock.CurrentTime, svIndex);
     }
 
-    private void updateAutoPlay()
+    private void hit(DrawableHitObject hitObject, float difference)
     {
-        bool[] pressed = new bool[KeyCount];
+        // since judged is only set after hitting the tail this works
+        var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
 
-        List<DrawableHitObject> belowTime = HitObjects.Where(h => h.Data.Time <= Clock.CurrentTime).ToList();
+        var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
+        var judgement = hitWindows.JudgementFor(difference);
 
-        foreach (var hitObject in belowTime.Where(h => !h.GotHit).ToList())
-        {
-            if (!Seeking)
-                playHitSound(hitObject.Data);
-
-            hit(hitObject, false);
-            pressed[hitObject.Data.Lane - 1] = true;
-        }
-
-        foreach (var hitObject in belowTime.Where(h => h.Data.LongNote).ToList())
-        {
-            hitObject.IsBeingHeld = true;
-            pressed[hitObject.Data.Lane - 1] = true;
-
-            if (hitObject.Data.EndTime <= Clock.CurrentTime)
-                hit(hitObject, true);
-        }
-
-        for (var i = 0; i < pressed.Length; i++)
-            playfield.Receptors[i].IsDown = pressed[i];
-
-        ScheduleAfterChildren(() => Seeking = false);
-    }
-
-    private void updateInput()
-    {
         if (screen.HealthProcessor.Failed)
             return;
 
-        if (input.JustPressed.Contains(true))
-        {
-            for (var i = 0; i < input.JustPressed.Length; i++)
-            {
-                if (!input.JustPressed[i]) continue;
+        var result = new HitResult(hitObject.Data.Time, difference, judgement);
+        judgementProcessor.AddResult(result);
 
-                var next = nextInLane(i + 1);
-                if (next == null) continue;
-
-                playHitSound(next);
-            }
-
-            List<DrawableHitObject> hitable = HitObjects.Where(hit => hit.Hitable && input.JustPressed[hit.Data.Lane - 1]).ToList();
-
-            bool[] pressed = new bool[KeyCount];
-
-            if (hitable.Count > 0)
-            {
-                foreach (var hitObject in hitable)
-                {
-                    if (!pressed[hitObject.Data.Lane - 1])
-                    {
-                        hit(hitObject, false);
-                        pressed[hitObject.Data.Lane - 1] = true;
-                    }
-                }
-            }
-        }
-
-        if (input.Pressed.Contains(true))
-        {
-            foreach (var hit in HitObjects)
-            {
-                if (hit.Hitable && hit.GotHit && hit.Data.LongNote && input.Pressed[hit.Data.Lane - 1])
-                    hit.IsBeingHeld = true;
-            }
-        }
-
-        if (input.JustReleased.Contains(true))
-        {
-            List<DrawableHitObject> releaseable = HitObjects.Where(hit => hit.Releasable && input.JustReleased[hit.Data.Lane - 1]).ToList();
-
-            bool[] pressed = new bool[KeyCount];
-
-            if (releaseable.Count > 0)
-            {
-                foreach (var hitObject in releaseable)
-                {
-                    if (!pressed[hitObject.Data.Lane - 1])
-                    {
-                        hit(hitObject, true);
-                        pressed[hitObject.Data.Lane - 1] = true;
-                    }
-                }
-            }
-        }
-    }
-
-    private void hit(DrawableHitObject hitObject, bool isHoldEnd)
-    {
-        double diff = isHoldEnd ? hitObject.Data.EndTime - Clock.CurrentTime : hitObject.Data.Time - Clock.CurrentTime;
-        diff = AutoPlay ? 0 : diff;
-        hitObject.GotHit = true;
-
-        judmentDisplay(hitObject, diff, isHoldEnd);
-
-        if (!hitObject.Data.LongNote || isHoldEnd) removeHitObject(hitObject);
-    }
-
-    private void miss(DrawableHitObject hitObject, bool isHoldEnd = false)
-    {
-        var windows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
-        judmentDisplay(hitObject, -windows.TimingFor(windows.Lowest), isHoldEnd);
-
-        if (!hitObject.Data.LongNote) removeHitObject(hitObject);
-    }
-
-    private void removeHitObject(DrawableHitObject hitObject)
-    {
-        HitObjects.Remove(hitObject);
-        PastHitObjects.Add(hitObject.Data);
-        RemoveInternal(hitObject, false);
+        if (isHoldEnd)
+            hitObject.Data.HoldEndResult = result;
+        else
+            hitObject.Data.Result = result;
     }
 
     private void playHitSound(HitObject hitObject)
@@ -395,23 +322,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
         sample ??= screen.Samples.HitSample;
         sample?.Play();
-    }
-
-    private void judmentDisplay(DrawableHitObject hitObject, double difference, bool isHoldEnd = false)
-    {
-        var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
-        var judgement = hitWindows.JudgementFor(difference);
-
-        if (screen.HealthProcessor.Failed)
-            return;
-
-        var result = new HitResult(hitObject.Data.Time, (float)difference, judgement);
-        judgementProcessor.AddResult(result);
-
-        if (isHoldEnd)
-            hitObject.Data.HoldEndResult = result;
-        else
-            hitObject.Data.Result = result;
     }
 
     private void loadMap()
@@ -515,7 +425,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     [CanBeNull]
     private HitObject nextInLane(int lane)
     {
-        var hit = HitObjects.FirstOrDefault(h => h.Data.Lane == lane && !h.GotHit)?.Data;
+        var hit = HitObjects.FirstOrDefault(h => h.Data.Lane == lane && !h.Judged)?.Data;
         hit ??= FutureHitObjects.FirstOrDefault(h => h.Lane == lane);
         return hit;
     }

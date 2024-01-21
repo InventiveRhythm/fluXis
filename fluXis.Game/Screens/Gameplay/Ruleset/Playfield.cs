@@ -34,6 +34,8 @@ public partial class Playfield : Container
     public MapInfo Map => screen.Map;
     public RealmMap RealmMap => screen.RealmMap;
 
+    private DependencyContainer dependencies;
+
     private TimingLineManager timingLineManager;
     private Drawable hitLine;
 
@@ -60,11 +62,13 @@ public partial class Playfield : Container
         bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
 
+        dependencies.CacheAs(Manager = new HitObjectManager());
+
         InternalChildren = new[]
         {
             Stage = new Stage(),
             timingLineManager = new TimingLineManager(),
-            Manager = new HitObjectManager(),
+            Manager,
             Receptors = new FillFlowContainer<Receptor>
             {
                 AutoSizeAxes = Axes.X,
@@ -124,4 +128,6 @@ public partial class Playfield : Container
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
     }
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 }

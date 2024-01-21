@@ -8,6 +8,7 @@ namespace fluXis.Game.Scoring;
 public class ReleaseWindows : HitWindows
 {
     public override Judgement Lowest => Judgement.Alright;
+    public override Judgement LowestHitable => Judgement.Alright;
 
     public ReleaseWindows(float difficulty, float rate)
         : base(difficulty, rate)

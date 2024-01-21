@@ -1,11 +1,11 @@
-using fluXis.Game.Graphics.UserInterface.Color;
+using System;
+using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring;
+using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Skinning;
-using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
@@ -13,37 +13,32 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 public partial class DrawableHitObject : CompositeDrawable
 {
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    protected GameplayScreen Screen { get; private set; }
 
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    protected HitObjectManager ObjectManager { get; private set; }
 
     [Resolved]
-    private Playfield playfield { get; set; }
+    protected GameplayInput Input { get; private set; }
+
+    [Resolved]
+    protected SkinManager SkinManager { get; private set; }
 
     public HitObject Data { get; }
-    private double scrollVelocityTime { get; }
-    private double scrollVelocityEndTime { get; }
+    protected double ScrollVelocityTime { get; private set; }
+    protected double ScrollVelocityEndTime { get; private set; }
 
-    private readonly HitObjectManager manager;
+    public FluXisGameplayKeybind Keybind { get; set; }
 
-    private Drawable notePiece;
-    private Drawable holdBodyPiece;
-    private Drawable holdEndPiece;
+    public virtual bool CanBeRemoved => false;
+    public virtual HitWindows HitWindows => Screen.HitWindows;
 
-    public bool Hitable { get; private set; }
-    public bool Releasable { get; private set; }
-    public bool GotHit { get; set; }
-    public bool Missed { get; private set; }
-    public bool IsBeingHeld { get; set; }
-    public bool LongNoteMissed { get; private set; }
+    public bool Judged { get; private set; }
+    public Action<DrawableHitObject, float> OnHit { get; set; }
 
-    public DrawableHitObject(HitObjectManager manager, HitObject data)
+    protected DrawableHitObject(HitObject data)
     {
-        this.manager = manager;
         Data = data;
-        scrollVelocityTime = manager.ScrollVelocityPositionFromTime(data.Time);
-        scrollVelocityEndTime = manager.ScrollVelocityPositionFromTime(data.EndTime);
     }
 
     [BackgroundDependencyLoader]
@@ -52,73 +47,61 @@ public partial class DrawableHitObject : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         Origin = Anchor.BottomLeft;
 
-        InternalChildren = new[]
-        {
-            holdBodyPiece = skinManager.GetLongNoteBody(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.LongNote ? 1 : 0),
-            holdEndPiece = skinManager.GetLongNoteEnd(Data.Lane, manager.KeyCount).With(d => d.Alpha = Data.LongNote ? 1 : 0),
-            notePiece = skinManager.GetHitObject(Data.Lane, manager.KeyCount)
-        };
-
-        if (manager.UseSnapColors)
-        {
-            var colorStart = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.Time));
-            var colorEnd = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.EndTime));
-
-            if (notePiece is DefaultHitObjectPiece defaultPiece) defaultPiece.SetColor(colorStart);
-            else notePiece.Colour = colorStart;
-
-            if (holdBodyPiece is DefaultHitObjectBody defaultBody) defaultBody.SetColor(colorStart, colorEnd.Darken(.4f));
-            else holdBodyPiece.Colour = ColourInfo.GradientVertical(colorEnd.Darken(.4f), colorStart);
-
-            if (holdEndPiece is DefaultHitObjectEnd defaultEnd) defaultEnd.SetColor(colorEnd.Darken(.4f));
-            else holdEndPiece.Colour = colorEnd.Darken(.4f);
-        }
+        ScrollVelocityTime = ObjectManager.ScrollVelocityPositionFromTime(Data.Time);
+        ScrollVelocityEndTime = ObjectManager.ScrollVelocityPositionFromTime(Data.EndTime);
     }
 
-    public void MissLongNote()
+    protected override void LoadComplete()
     {
-        LongNoteMissed = true;
-        this.FadeColour(Colour4.Red, 100);
+        base.LoadComplete();
+
+        Input.OnPress += OnPressed;
+        Input.OnRelease += OnReleased;
     }
 
     protected override void Update()
     {
         base.Update();
 
-        updateTiming();
-        updatePositioning();
-
-        // reset for next frame
-        IsBeingHeld = false;
+        X = ObjectManager.PositionAtLane(Data.Lane);
+        Y = ObjectManager.PositionAtTime(ScrollVelocityTime);
+        Width = ObjectManager.WidthOfLane(Data.Lane);
     }
 
-    private void updateTiming()
+    protected override void Dispose(bool isDisposing)
     {
-        var lastHitableTime = screen.HitWindows.TimingFor(screen.HitWindows.LowestHitable);
-        var missTime = screen.HitWindows.TimingFor(Judgement.Miss);
-        var releaseMissTime = screen.ReleaseWindows.TimingFor(screen.ReleaseWindows.Lowest);
+        base.Dispose(isDisposing);
 
-        Missed = (Clock.CurrentTime - Data.Time > lastHitableTime && !IsBeingHeld) || (Data.LongNote && IsBeingHeld && Clock.CurrentTime - Data.EndTime > releaseMissTime);
-        Hitable = Clock.CurrentTime - Data.Time > -missTime && !Missed;
-        Releasable = Data.LongNote && Clock.CurrentTime - Data.EndTime > -releaseMissTime && !Missed;
+        Input.OnPress -= OnPressed;
+        Input.OnRelease -= OnReleased;
     }
 
-    private void updatePositioning()
+    protected void UpdateJudgement(bool byUser)
     {
-        X = manager.PositionAtLane(Data.Lane);
-        Y = manager.PositionAtTime(scrollVelocityTime);
-        Width = manager.WidthOfLane(Data.Lane);
+        if (Judged)
+            return;
 
-        if (IsBeingHeld)
-            Y = manager.HitPosition;
-
-        if (!Data.LongNote) return;
-
-        var endY = manager.PositionAtTime(scrollVelocityEndTime);
-        var diff = Y - endY;
-
-        holdBodyPiece.Height = diff;
-        holdBodyPiece.Y = -holdEndPiece.Height / 2;
-        holdEndPiece.Y = -diff;
+        var offset = Data.Time - Time.Current;
+        CheckJudgement(byUser, (float)offset);
     }
+
+    protected virtual void CheckJudgement(bool byUser, float offset) { }
+
+    protected void ApplyResult(float diff)
+    {
+        if (Judged)
+            throw new InvalidOperationException("Can not apply judgement to already judged hitobject.");
+
+        Judged = true;
+
+        OnHit?.Invoke(this, diff);
+    }
+
+    public void OnKill()
+    {
+        UpdateJudgement(false);
+    }
+
+    public virtual void OnPressed(FluXisGameplayKeybind key) { }
+    public virtual void OnReleased(FluXisGameplayKeybind key) { }
 }

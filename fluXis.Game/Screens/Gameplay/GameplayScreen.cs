@@ -56,7 +56,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override bool AllowExit => false;
 
     protected virtual double GameplayStartTime => 0;
-    protected virtual bool InstantlyExitOnPause => Playfield.Manager.AutoPlay;
+    protected virtual bool InstantlyExitOnPause => false;
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
 
@@ -143,6 +143,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+
         dependencies.CacheAs(this);
 
         this.config = config;
@@ -187,13 +190,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
 
         HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
-        Input = GetInput();
 
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
-
-        Playfield = new Playfield();
-        dependencies.Cache(Playfield);
+        dependencies.CacheAs(Input = GetInput());
+        dependencies.Cache(Playfield = new Playfield());
 
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
@@ -203,13 +202,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             new LaneSwitchAlert(),
             replayRecorder = new ReplayRecorder()
         });
+
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
 
         InternalChildren = new Drawable[]
         {
             keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
             {
-                Children = new Drawable[]
+                Children = new[]
                 {
                     Input,
                     Samples,
