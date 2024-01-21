@@ -10,7 +10,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
     public override IEnumerable<IKeyBinding> DefaultKeyBindings { get; }
 
     public GameplayKeybindContainer(FluXisRealm realm, int keyCount)
-        : base(realm, SimultaneousBindingMode.All)
+        : base(realm, SimultaneousBindingMode.Unique)
     {
         DefaultKeyBindings = keyCount switch
         {
