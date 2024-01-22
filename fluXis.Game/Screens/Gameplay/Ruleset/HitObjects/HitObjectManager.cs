@@ -43,7 +43,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public MapInfo Map => playfield.Map;
     public int KeyCount => playfield.RealmMap.KeyCount;
-    public List<DrawableHitObject> PastHitObjects { get; } = new();
+    public List<HitObject> PastHitObjects { get; } = new();
     public List<HitObject> FutureHitObjects { get; } = new();
     public List<DrawableHitObject> HitObjects { get; } = new();
 
@@ -257,8 +257,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         hitObject.OnHit -= hit;
 
         HitObjects.Remove(hitObject);
-        PastHitObjects.Add(hitObject);
-        RemoveInternal(hitObject, false);
+        PastHitObjects.Add(hitObject.Data);
+        RemoveInternal(hitObject, true);
     }
 
     private DrawableHitObject getDrawableFor(HitObject hit)
