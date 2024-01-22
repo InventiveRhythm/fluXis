@@ -240,7 +240,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                     }
                 }
             },
-            footer = new SelectFooter { Screen = this },
+            footer = new SelectFooter
+            {
+                Screen = this,
+                ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
+            },
             ModSelector = new ModSelector()
         };
     }

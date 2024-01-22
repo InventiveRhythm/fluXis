@@ -16,7 +16,7 @@ public partial class FooterOptionSection : FillFlowContainer
         {
             subTitle = value;
 
-            if (IsLoaded)
+            if (subTitleText != null)
                 subTitleText.Text = subTitle;
         }
     }

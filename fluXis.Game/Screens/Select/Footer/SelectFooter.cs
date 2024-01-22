@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.Sprites;
@@ -21,6 +22,8 @@ public partial class SelectFooter : Container
 {
     public SelectScreen Screen { get; init; }
     public Container<SelectFooterButton> ButtonContainer { get; private set; }
+
+    public Action ScoresWiped { get; init; }
 
     private Container backgroundContainer;
     private Container keyboardContainer;
@@ -53,7 +56,11 @@ public partial class SelectFooter : Container
                     Colour = FluXisColors.Background2
                 }
             },
-            options = new FooterOptions { Footer = this },
+            options = new FooterOptions
+            {
+                Footer = this,
+                ScoresWiped = ScoresWiped
+            },
             keyboardContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,

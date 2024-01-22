@@ -41,6 +41,7 @@ public class FontAwesome6
         public static IconUsage Download => getSolid(0xf019);
         public static IconUsage Drum => getSolid(0xf569);
         public static IconUsage EarthAmericas => getSolid(0xf57d);
+        public static IconUsage Eraser => getSolid(0xf12d);
         public static IconUsage Eye => getSolid(0xf06e);
         public static IconUsage File => getSolid(0xf15b);
         public static IconUsage Film => getSolid(0xf008);

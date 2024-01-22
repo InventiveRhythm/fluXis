@@ -1,7 +1,13 @@
+using System;
+using System.Linq;
+using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings;
 using osu.Framework.Allocation;
@@ -19,12 +25,19 @@ public partial class FooterOptions : FocusedOverlayContainer
     protected override bool StartHidden => true;
     public SelectFooterButton Button { get; set; }
     public SelectFooter Footer { get; init; }
+    public Action ScoresWiped { get; init; }
 
     [Resolved]
     private SettingsMenu settings { get; set; }
 
     [Resolved]
     private MapStore maps { get; set; }
+
+    [Resolved]
+    private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
 
     private FooterOptionSection setSection;
     private FooterOptionSection mapSection;
@@ -124,6 +137,46 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 {
                                     Footer.Screen.EditMapSet(maps.CurrentMap);
                                     State.Value = Visibility.Hidden;
+                                }
+                            },
+                            new FooterOptionButton
+                            {
+                                Text = "Wipe local scores",
+                                Icon = FontAwesome6.Solid.Eraser,
+                                Color = FluXisColors.Red,
+                                Action = () =>
+                                {
+                                    State.Value = Visibility.Hidden;
+
+                                    game.Overlay = new ButtonPanel
+                                    {
+                                        Text = "Are you sure you want to wipe all local scores for this difficulty?",
+                                        SubText = "This action cannot be undone.",
+                                        ButtonWidth = 200,
+                                        Buttons = new ButtonData[]
+                                        {
+                                            new()
+                                            {
+                                                Text = "Yes, do it.",
+                                                Color = FluXisColors.ButtonRed,
+                                                HoldToConfirm = true,
+                                                Action = () =>
+                                                {
+                                                    realm.RunWrite(r =>
+                                                    {
+                                                        var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
+                                                        r.RemoveRange(scores);
+                                                    });
+
+                                                    ScoresWiped?.Invoke();
+                                                }
+                                            },
+                                            new()
+                                            {
+                                                Text = "No, nevermind."
+                                            }
+                                        }
+                                    };
                                 }
                             }
                         }
