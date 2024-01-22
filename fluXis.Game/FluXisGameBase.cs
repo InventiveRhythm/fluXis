@@ -291,6 +291,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/Noto/Noto-CJK-Basic");
         AddFont(Resources, "Fonts/Noto/Noto-CJK-Compatibility");
         AddFont(Resources, "Fonts/Noto/Noto-Thai");
+
+        AddFont(Resources, "Fonts/FontAwesome6/Solid");
+        AddFont(Resources, "Fonts/FontAwesome6/Brands");
     }
 
     public new virtual void Exit()
