@@ -1,9 +1,11 @@
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -23,6 +25,9 @@ public partial class FooterOptions : FocusedOverlayContainer
 
     [Resolved]
     private MapStore maps { get; set; }
+
+    private FooterOptionSection setSection;
+    private FooterOptionSection mapSection;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -78,15 +83,9 @@ public partial class FooterOptions : FocusedOverlayContainer
                         Padding = new MarginPadding(10),
                         Children = new Drawable[]
                         {
-                            new FooterOptionButton
+                            setSection = new FooterOptionSection
                             {
-                                Text = "Edit Map",
-                                Icon = FontAwesome6.Solid.Pen,
-                                Action = () =>
-                                {
-                                    Footer.Screen.EditMapSet(maps.CurrentMap);
-                                    State.Value = Visibility.Hidden;
-                                }
+                                Title = "General"
                             },
                             new FooterOptionButton
                             {
@@ -98,6 +97,10 @@ public partial class FooterOptions : FocusedOverlayContainer
                                     State.Value = Visibility.Hidden;
                                 }
                             },
+                            setSection = new FooterOptionSection
+                            {
+                                Title = "For all difficulties"
+                            },
                             new FooterOptionButton
                             {
                                 Text = "Delete MapSet",
@@ -108,6 +111,20 @@ public partial class FooterOptions : FocusedOverlayContainer
                                     Footer.Screen.OpenDeleteConfirm(maps.CurrentMapSet);
                                     State.Value = Visibility.Hidden;
                                 }
+                            },
+                            mapSection = new FooterOptionSection
+                            {
+                                Title = "For this difficulty"
+                            },
+                            new FooterOptionButton
+                            {
+                                Text = "Edit Map",
+                                Icon = FontAwesome6.Solid.Pen,
+                                Action = () =>
+                                {
+                                    Footer.Screen.EditMapSet(maps.CurrentMap);
+                                    State.Value = Visibility.Hidden;
+                                }
                             }
                         }
                     }
@@ -116,12 +133,34 @@ public partial class FooterOptions : FocusedOverlayContainer
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        maps.MapBindable.BindValueChanged(mapChanged, true);
+    }
+
+    private void mapChanged(ValueChangedEvent<RealmMap> e)
+    {
+        var map = e.NewValue;
+
+        setSection.SubTitle = $"{map.Metadata.Artist} - {map.Metadata.Title}";
+        mapSection.SubTitle = map.Difficulty;
+    }
+
     protected override void Update()
     {
         base.Update();
 
         var delta = Button.ScreenSpaceDrawQuad.Centre.X - ScreenSpaceDrawQuad.Centre.X;
         X += delta;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        maps.MapBindable.ValueChanged -= mapChanged;
     }
 
     protected override bool OnHover(HoverEvent e) => true;
