@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -39,7 +40,7 @@ public partial class DropdownIcon : Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Icon = FontAwesome.Solid.ChevronDown,
+                    Icon = FontAwesome6.Solid.ChevronDown,
                     Size = new Vector2(24)
                 }
             }

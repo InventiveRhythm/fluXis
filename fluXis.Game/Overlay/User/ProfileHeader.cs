@@ -169,7 +169,7 @@ public partial class ProfileHeader : Container
                                         Placement = user.GlobalRank,
                                         CreateIcon = () => new SpriteIcon
                                         {
-                                            Icon = FontAwesome.Solid.GlobeAmericas,
+                                            Icon = FontAwesome6.Solid.EarthAmericas,
                                             Size = new Vector2(20)
                                         }
                                     },
@@ -194,11 +194,11 @@ public partial class ProfileHeader : Container
                                 {
                                     new HeaderButton
                                     {
-                                        Icon = FontAwesome.Solid.ShareAlt
+                                        Icon = FontAwesome6.Solid.ShareNodes
                                     },
                                     new HeaderButton
                                     {
-                                        Icon = FontAwesome.Solid.UserPlus,
+                                        Icon = FontAwesome6.Solid.UserPlus,
                                         Alpha = user.ID == fluxel.LoggedInUser?.ID ? 0 : 1,
                                         Text = "Follow"
                                     }

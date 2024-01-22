@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
@@ -10,7 +11,6 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -64,7 +64,7 @@ public partial class SelectFooter : Container
                     backButton = new CornerButton
                     {
                         ButtonText = "Back",
-                        Icon = FontAwesome.Solid.ChevronLeft,
+                        Icon = FontAwesome6.Solid.ChevronLeft,
                         Action = Screen.Exit
                     },
                     ButtonContainer = new Container<SelectFooterButton>
@@ -80,14 +80,14 @@ public partial class SelectFooter : Container
                             new SelectFooterButton
                             {
                                 Text = "Mods",
-                                Icon = FontAwesome.Solid.LayerGroup,
+                                Icon = FontAwesome6.Solid.LayerGroup,
                                 AccentColor = Colour4.FromHex("#edbb98"),
                                 Action = openModSelector
                             },
                             randomButton = new SelectFooterButton
                             {
                                 Text = "Random",
-                                Icon = FontAwesome.Solid.Random,
+                                Icon = FontAwesome6.Solid.Shuffle,
                                 AccentColor = Colour4.FromHex("#ed98a7"),
                                 Action = randomMap,
                                 Index = 1,
@@ -96,7 +96,7 @@ public partial class SelectFooter : Container
                             options.Button = new SelectFooterButton
                             {
                                 Text = "Options",
-                                Icon = FontAwesome.Solid.Cog,
+                                Icon = FontAwesome6.Solid.Gear,
                                 AccentColor = Colour4.FromHex("#98cbed"),
                                 Action = OpenSettings,
                                 Index = 2,
@@ -107,7 +107,7 @@ public partial class SelectFooter : Container
                     playButton = new CornerButton
                     {
                         ButtonText = "Play!",
-                        Icon = FontAwesome.Solid.Play,
+                        Icon = FontAwesome6.Solid.Play,
                         ButtonColor = FluXisColors.Accent2,
                         Corner = Corner.BottomRight,
                         Action = Screen.Accept

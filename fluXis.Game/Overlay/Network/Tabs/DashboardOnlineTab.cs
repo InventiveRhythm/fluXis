@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Online;
@@ -14,7 +15,7 @@ namespace fluXis.Game.Overlay.Network.Tabs;
 public partial class DashboardOnlineTab : DashboardWipTab
 {
     public override string Title => "Online";
-    public override IconUsage Icon => FontAwesome.Solid.Globe;
+    public override IconUsage Icon => FontAwesome6.Solid.EarthAmericas;
 
     [Resolved]
     private Fluxel fluxel { get; set; }

@@ -6,6 +6,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Account;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Other;
@@ -20,7 +21,6 @@ using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
@@ -429,7 +429,7 @@ public partial class Fluxel : Component
     private void onLogout(FluxelResponse<object> response)
     {
         Logout();
-        notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome.Solid.ExclamationTriangle);
+        notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome6.Solid.TriangleExclamation);
     }
 
     private EventType getType(string id)

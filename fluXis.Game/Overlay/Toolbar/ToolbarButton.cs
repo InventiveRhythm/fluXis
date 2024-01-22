@@ -23,7 +23,7 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip, IK
 {
     public string TooltipTitle { get; init; }
     public string TooltipSub { get; init; }
-    public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
+    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public FluXisGlobalKeybind Keybind { get; init; } = FluXisGlobalKeybind.None;
     public bool RequireLogin { get; init; }
 

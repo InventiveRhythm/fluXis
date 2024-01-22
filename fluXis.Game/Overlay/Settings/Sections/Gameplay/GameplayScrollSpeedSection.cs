@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Gameplay;
 public partial class GameplayScrollSpeedSection : SettingsSubSection
 {
     public override string Title => "Scroll Speed";
-    public override IconUsage Icon => FontAwesome.Solid.ArrowsAltV;
+    public override IconUsage Icon => FontAwesome6.Solid.UpDown;
 
     [BackgroundDependencyLoader]
     private void load()

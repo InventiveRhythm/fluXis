@@ -28,7 +28,7 @@ public partial class SelectFooterButton : Container
         }
     }
 
-    public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
+    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public Action Action { get; set; }
     public Colour4 AccentColor { get; init; } = Color4.White;
     public int Index { get; init; }

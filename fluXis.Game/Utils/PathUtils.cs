@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -73,15 +74,15 @@ public static class PathUtils
     {
         return type switch
         {
-            FileType.Folder => FontAwesome.Solid.Folder,
-            FileType.Drive => FontAwesome.Solid.Hdd,
-            FileType.Audio => FontAwesome.Solid.Music,
-            FileType.Image => FontAwesome.Solid.Image,
-            FileType.Video => FontAwesome.Solid.Video,
-            FileType.Map => FontAwesome.Solid.Map,
-            FileType.Skin => FontAwesome.Solid.PaintBrush,
-            FileType.Unknown => FontAwesome.Solid.File,
-            _ => FontAwesome.Solid.Question
+            FileType.Folder => FontAwesome6.Solid.Folder,
+            FileType.Drive => FontAwesome6.Solid.HardDrive,
+            FileType.Audio => FontAwesome6.Solid.Music,
+            FileType.Image => FontAwesome6.Solid.Image,
+            FileType.Video => FontAwesome6.Solid.Film,
+            FileType.Map => FontAwesome6.Solid.Map,
+            FileType.Skin => FontAwesome6.Solid.PaintBrush,
+            FileType.Unknown => FontAwesome6.Solid.File,
+            _ => FontAwesome6.Solid.Question
         };
     }
 

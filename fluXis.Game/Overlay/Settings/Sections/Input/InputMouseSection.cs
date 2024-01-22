@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -10,7 +11,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Input;
 public partial class InputMouseSection : SettingsSubSection
 {
     public override string Title => "Mouse";
-    public override IconUsage Icon => FontAwesome.Solid.MousePointer;
+    public override IconUsage Icon => FontAwesome6.Solid.ComputerMouse;
 
     private MouseHandler mh { get; }
     private Bindable<double> localSensitivity { get; }

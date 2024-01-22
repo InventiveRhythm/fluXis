@@ -150,7 +150,7 @@ public partial class TimingCategoryList<T> : Container
                         {
                             new SpriteIcon
                             {
-                                Icon = FontAwesome.Solid.Plus,
+                                Icon = FontAwesome6.Solid.Plus,
                                 Size = new Vector2(20),
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft

@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
@@ -7,7 +8,7 @@ public class EasyMod : IMod
     public string Name => "Easy";
     public string Acronym => "EZ";
     public string Description => $"Health starts at 0, reach {HEALTH_REQUIREMENT}% to pass.";
-    public IconUsage Icon => FontAwesome.Solid.CandyCane;
+    public IconUsage Icon => FontAwesome6.Solid.CandyCane;
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.7f;
     public bool Rankable => true;

@@ -12,6 +12,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
@@ -47,7 +48,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 using osu.Framework.Platform;
@@ -133,11 +133,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         Resources.AddExtension("json");
         Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
         initFonts();
-
-        /*foreach (var availableResource in Resources.GetAvailableResources())
-        {
-            Logger.Log(availableResource, LoggingTarget.Runtime, LogLevel.Debug);
-        }*/
 
         MapFiles.Initialize(storage.GetStorageForDirectory("maps"));
 
@@ -292,8 +287,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/Noto/Noto-CJK-Compatibility");
         AddFont(Resources, "Fonts/Noto/Noto-Thai");
 
-        AddFont(Resources, "Fonts/FontAwesome6/Solid");
-        AddFont(Resources, "Fonts/FontAwesome6/Brands");
+        AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Solid");
+        AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Regular");
+        AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Brands");
     }
 
     public new virtual void Exit()
@@ -311,7 +307,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             exceptionCount++;
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
-            NotificationManager.SendError("An unhandled error occurred!", e.Message, FontAwesome.Solid.Bomb);
+            NotificationManager.SendError("An unhandled error occurred!", e.Message, FontAwesome6.Solid.Bomb);
             return exceptionCount <= MaxExceptions;
         };
     }
@@ -326,7 +322,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         if (ScreenStack.CurrentScreen is SkinEditor)
         {
-            NotificationManager.SendText("You are already in the Skin editor.", "", FontAwesome.Solid.Bomb);
+            NotificationManager.SendText("You are already in the Skin editor.", "", FontAwesome6.Solid.Bomb);
             return;
         }
 

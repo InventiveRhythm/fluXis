@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.Drawables;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Online;
@@ -21,7 +22,7 @@ namespace fluXis.Game.Overlay.Network.Tabs;
 public partial class DashboardAccountTab : DashboardTab
 {
     public override string Title => "Account";
-    public override IconUsage Icon => FontAwesome.Solid.Cog;
+    public override IconUsage Icon => FontAwesome6.Solid.Gear;
 
     [Resolved]
     private Fluxel fluxel { get; set; }

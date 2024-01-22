@@ -11,7 +11,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
@@ -87,7 +86,7 @@ public partial class MultiModeSelect : MultiSubScreen
             {
                 Corner = Corner.BottomLeft,
                 ButtonText = "Back",
-                Icon = FontAwesome.Solid.ChevronLeft,
+                Icon = FontAwesome6.Solid.ChevronLeft,
                 Action = this.Exit
             },
             new FluXisSpriteText

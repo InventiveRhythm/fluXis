@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -8,7 +9,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Settings.Tabs;
@@ -53,7 +53,7 @@ public partial class SettingsCategorySelector : Container
             {
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Icon = FontAwesome.Solid.Times,
+                Icon = FontAwesome6.Solid.XMark,
                 ButtonSize = 70,
                 Action = CloseAction,
                 Margin = new MarginPadding(10)

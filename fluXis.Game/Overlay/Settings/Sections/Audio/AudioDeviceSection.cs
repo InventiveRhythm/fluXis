@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -12,7 +13,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Audio;
 public partial class AudioDeviceSection : SettingsSubSection
 {
     public override string Title => "Device";
-    public override IconUsage Icon => FontAwesome.Solid.Headphones;
+    public override IconUsage Icon => FontAwesome6.Solid.Headphones;
 
     [Resolved]
     private AudioManager audio { get; set; }

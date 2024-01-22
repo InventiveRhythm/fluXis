@@ -7,7 +7,6 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
@@ -38,7 +37,7 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
         {
             leftIcon = new ClickableSpriteIcon
             {
-                Icon = FontAwesome.Solid.ChevronLeft,
+                Icon = FontAwesome6.Solid.ChevronLeft,
                 Size = new Vector2(10),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
@@ -65,7 +64,7 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
             },
             rightIcon = new ClickableSpriteIcon
             {
-                Icon = FontAwesome.Solid.ChevronRight,
+                Icon = FontAwesome6.Solid.ChevronRight,
                 Size = new Vector2(10),
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,

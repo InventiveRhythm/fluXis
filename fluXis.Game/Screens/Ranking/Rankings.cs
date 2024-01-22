@@ -67,7 +67,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                     new SpriteIcon
                                     {
                                         Size = new Vector2(50),
-                                        Icon = FontAwesome.Solid.GlobeAmericas,
+                                        Icon = FontAwesome6.Solid.EarthAmericas,
                                         Shadow = true,
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft
@@ -158,7 +158,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                 {
                                     Corner = Corner.BottomLeft,
                                     ButtonText = "Back",
-                                    Icon = FontAwesome.Solid.ChevronLeft,
+                                    Icon = FontAwesome6.Solid.ChevronLeft,
                                     Action = this.Exit
                                 }
                             }

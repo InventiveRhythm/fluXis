@@ -13,7 +13,6 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
@@ -29,16 +28,16 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
         {
             List<MenuItem> items = new()
             {
-                new FluXisMenuItem("Play", FontAwesome.Solid.Play, MenuItemType.Highlighted, () =>
+                new FluXisMenuItem("Play", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
                 {
                     maps.Select(map, true);
                     mapListEntry.SelectAction?.Invoke();
                 }),
-                new FluXisMenuItem("Edit", FontAwesome.Solid.Pen, MenuItemType.Normal, () => mapListEntry.EditAction?.Invoke(map))
+                new FluXisMenuItem("Edit", FontAwesome6.Solid.Pen, MenuItemType.Normal, () => mapListEntry.EditAction?.Invoke(map))
             };
 
             if (FluXisGameBase.IsDebug)
-                items.Add(new FluXisMenuItem("Copy ID", FontAwesome.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
+                items.Add(new FluXisMenuItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
 
             return items.ToArray();
         }

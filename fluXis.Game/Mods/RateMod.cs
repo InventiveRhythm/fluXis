@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics.Sprites;
 
@@ -8,7 +9,7 @@ public class RateMod : IMod
 {
     public string Name => "Rate";
     public string Description => "Change the rate of the map";
-    public IconUsage Icon => FontAwesome.Solid.Clock;
+    public IconUsage Icon => FontAwesome6.Solid.Clock;
     public ModType Type => ModType.Rate;
     public bool Rankable => true;
     public string[] IncompatibleMods => Array.Empty<string>();

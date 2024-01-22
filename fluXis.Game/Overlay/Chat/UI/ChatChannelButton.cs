@@ -14,7 +14,7 @@ namespace fluXis.Game.Overlay.Chat.UI;
 public partial class ChatChannelButton : Container
 {
     public string Channel { get; set; }
-    public IconUsage Icon { get; set; } = FontAwesome.Solid.Hashtag;
+    public IconUsage Icon { get; set; } = FontAwesome6.Solid.Hashtag;
 
     [Resolved]
     private UISamples samples { get; set; }

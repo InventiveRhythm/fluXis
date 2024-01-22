@@ -18,7 +18,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Overlay.Toolbar;
@@ -85,7 +84,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Settings",
                                 TooltipSub = "Change your settings.",
-                                Icon = FontAwesome.Solid.Cog,
+                                Icon = FontAwesome6.Solid.Gear,
                                 Overlay = settings,
                                 Keybind = FluXisGlobalKeybind.ToggleSettings
                             },
@@ -94,7 +93,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Home",
                                 TooltipSub = "Return to the main menu.",
-                                Icon = FontAwesome.Solid.Home,
+                                Icon = FontAwesome6.Solid.House,
                                 Screen = typeof(MenuScreen),
                                 Action = () => game.MenuScreen?.MakeCurrent(),
                                 Keybind = FluXisGlobalKeybind.Home
@@ -103,7 +102,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Maps",
                                 TooltipSub = "Browse your maps.",
-                                Icon = FontAwesome.Solid.Map,
+                                Icon = FontAwesome6.Solid.Map,
                                 Screen = typeof(SelectScreen),
                                 Action = () => goToScreen(new SelectScreen())
                             },
@@ -111,7 +110,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Download Maps",
                                 TooltipSub = "Download new maps.",
-                                Icon = FontAwesome.Solid.Download,
+                                Icon = FontAwesome6.Solid.Download,
                                 Screen = typeof(MapBrowser),
                                 Action = () => goToScreen(new MapBrowser()),
                                 RequireLogin = true
@@ -120,7 +119,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Ranking",
                                 TooltipSub = "See the top players.",
-                                Icon = FontAwesome.Solid.Trophy,
+                                Icon = FontAwesome6.Solid.Trophy,
                                 Screen = typeof(Rankings),
                                 Action = () => goToScreen(new Rankings()),
                                 RequireLogin = true
@@ -146,7 +145,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Chat",
                                 TooltipSub = "Talk to other players.",
-                                Icon = FontAwesome.Solid.Comment,
+                                Icon = FontAwesome6.Solid.Message,
                                 Overlay = chat,
                                 RequireLogin = true
                             },
@@ -154,7 +153,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Dashboard",
                                 TooltipSub = "See news, updates, and more.",
-                                Icon = FontAwesome.Solid.ChartLine,
+                                Icon = FontAwesome6.Solid.ChartLine,
                                 Overlay = dashboard,
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
                                 RequireLogin = true
@@ -163,7 +162,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Wiki",
                                 TooltipSub = "Learn about the game.",
-                                Icon = FontAwesome.Solid.Book,
+                                Icon = FontAwesome6.Solid.Book,
                                 Screen = typeof(Wiki),
                                 Action = () => goToScreen(new Wiki())
                             },
@@ -171,7 +170,7 @@ public partial class Toolbar : Container
                             {
                                 TooltipTitle = "Music Player",
                                 TooltipSub = "Listen to your music.",
-                                Icon = FontAwesome.Solid.Music,
+                                Icon = FontAwesome6.Solid.Music,
                                 Overlay = musicPlayer,
                                 Keybind = FluXisGlobalKeybind.ToggleMusicPlayer,
                                 Margin = new MarginPadding { Right = 10 }

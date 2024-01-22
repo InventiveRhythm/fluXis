@@ -14,7 +14,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -256,7 +255,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     private void save()
     {
-        notifications.SendText("Skin Saved", "", FontAwesome.Solid.Check);
+        notifications.SendText("Skin Saved", "", FontAwesome6.Solid.Check);
         skinManager.UpdateAndSave(skinJson);
     }
 

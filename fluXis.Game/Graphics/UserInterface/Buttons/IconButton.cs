@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -14,7 +15,7 @@ public partial class IconButton : Container
 {
     public float ButtonSize { get; init; } = 50;
     public Colour4 ButtonColor { get; init; } = Colour4.Transparent;
-    public IconUsage Icon { get; init; } = FontAwesome.Solid.Question;
+    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public float IconSize { get; init; } = 30;
     public Action Action { get; init; }
 

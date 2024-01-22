@@ -79,7 +79,7 @@ public partial class PlayerListEntry : Container
                     {
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Icon = FontAwesome.Solid.Check,
+                        Icon = FontAwesome6.Solid.Check,
                         Size = new Vector2(20),
                         Shadow = true,
                         Margin = new MarginPadding { Right = 10 },

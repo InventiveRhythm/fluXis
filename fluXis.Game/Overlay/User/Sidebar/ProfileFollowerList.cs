@@ -40,7 +40,7 @@ public partial class ProfileFollowerList : FillFlowContainer
                     new SpriteIcon
                     {
                         Size = new Vector2(20),
-                        Icon = FontAwesome.Solid.UserFriends,
+                        Icon = FontAwesome6.Solid.UserGroup,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre
                     },

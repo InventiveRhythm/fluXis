@@ -17,7 +17,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -194,7 +193,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                                                     {
                                                         new MusicPlayerButton
                                                         {
-                                                            Icon = FontAwesome.Solid.StepBackward,
+                                                            Icon = FontAwesome6.Solid.BackwardStep,
                                                             Action = () =>
                                                             {
                                                                 if (ScreenStack.AllowMusicControl)
@@ -203,7 +202,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                                                         },
                                                         pausePlay = new MusicPlayerButton
                                                         {
-                                                            Icon = FontAwesome.Solid.Play,
+                                                            Icon = FontAwesome6.Solid.Play,
                                                             Action = () =>
                                                             {
                                                                 if (!ScreenStack.AllowMusicControl)
@@ -217,7 +216,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
                                                         },
                                                         new MusicPlayerButton
                                                         {
-                                                            Icon = FontAwesome.Solid.StepForward,
+                                                            Icon = FontAwesome6.Solid.ForwardStep,
                                                             Action = () =>
                                                             {
                                                                 if (ScreenStack.AllowMusicControl)
@@ -309,7 +308,7 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
         while (covers.Count > 1 && covers.Last().Alpha == 1)
             covers.Remove(covers[0], true);
 
-        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome.Solid.Pause : FontAwesome.Solid.Play;
+        pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
     }
 
     protected override void PopIn()

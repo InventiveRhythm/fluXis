@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
@@ -8,7 +9,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.General;
 public partial class GeneralUpdatesSection : SettingsSubSection
 {
     public override string Title => "Updates";
-    public override IconUsage Icon => FontAwesome.Solid.Sync;
+    public override IconUsage Icon => FontAwesome6.Solid.Rotate;
 
     private InputManager inputManager;
 

@@ -149,7 +149,7 @@ public abstract partial class SettingsItem : Container
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Icon = FontAwesome.Solid.Undo,
+                        Icon = FontAwesome6.Solid.RotateLeft,
                         Size = new Vector2(16)
                     }
                 }

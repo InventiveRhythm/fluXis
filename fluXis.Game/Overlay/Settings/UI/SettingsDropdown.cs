@@ -107,7 +107,7 @@ public partial class SettingsDropdown<T> : SettingsItem
                     },
                     new SpriteIcon
                     {
-                        Icon = FontAwesome.Solid.ChevronDown,
+                        Icon = FontAwesome6.Solid.ChevronDown,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
                         Size = new Vector2(14),

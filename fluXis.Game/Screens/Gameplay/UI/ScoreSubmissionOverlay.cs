@@ -39,7 +39,7 @@ public partial class ScoreSubmissionOverlay : Container
                 {
                     new SpriteIcon
                     {
-                        Icon = FontAwesome.Solid.Shapes,
+                        Icon = FontAwesome6.Solid.Shapes,
                         Size = new Vector2(30),
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,

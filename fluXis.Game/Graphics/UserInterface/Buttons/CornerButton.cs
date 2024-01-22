@@ -31,7 +31,7 @@ public partial class CornerButton : Container
         }
     }
 
-    public virtual IconUsage Icon { get; set; } = FontAwesome.Solid.Question;
+    public virtual IconUsage Icon { get; set; } = FontAwesome6.Solid.Question;
     public virtual Colour4 ButtonColor { get; set; } = FluXisColors.Background4;
     public Corner Corner { get; set; } = Corner.BottomLeft;
     public Action Action { get; set; }

@@ -16,7 +16,6 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -42,9 +41,9 @@ public partial class MapCard : Container, IHasContextMenu
             };
 
             if (downloaded)
-                list.Add(new FluXisMenuItem("Show in Song Select", FontAwesome.Solid.Eye, selectAndShow));
+                list.Add(new FluXisMenuItem("Show in Song Select", FontAwesome6.Solid.Eye, selectAndShow));
             else if (!downloading)
-                list.Add(new FluXisMenuItem("Download", FontAwesome.Solid.Download, download));
+                list.Add(new FluXisMenuItem("Download", FontAwesome6.Solid.Download, download));
 
             return list.ToArray();
         }

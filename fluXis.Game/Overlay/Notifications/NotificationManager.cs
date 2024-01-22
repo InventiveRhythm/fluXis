@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notifications.Floating;
 using osu.Framework.Development;
@@ -23,7 +24,7 @@ public partial class NotificationManager : Component
         Floating?.Add(notification.CreateFloating());
     }
 
-    public void SendSmallText(string text) => SendSmallText(text, FontAwesome.Solid.Info);
+    public void SendSmallText(string text) => SendSmallText(text, FontAwesome6.Solid.Info);
 
     public void SendSmallText(string text, IconUsage icon)
     {
@@ -41,7 +42,7 @@ public partial class NotificationManager : Component
         });
     }
 
-    public void SendText(string text, string subtext = "") => SendText(text, subtext, FontAwesome.Solid.Info);
+    public void SendText(string text, string subtext = "") => SendText(text, subtext, FontAwesome6.Solid.Info);
 
     public void SendText(string text, string subtext, IconUsage icon)
     {
@@ -60,7 +61,7 @@ public partial class NotificationManager : Component
         });
     }
 
-    public void SendError(string text, string subtext = "") => SendError(text, subtext, FontAwesome.Solid.Times);
+    public void SendError(string text, string subtext = "") => SendError(text, subtext, FontAwesome6.Solid.XMark);
 
     public void SendError(string text, string subtext, IconUsage icon)
     {

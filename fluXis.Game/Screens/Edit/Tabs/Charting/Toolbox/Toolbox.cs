@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox.Hitsound;
 using osu.Framework.Allocation;
@@ -7,7 +8,6 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox;
@@ -55,13 +55,13 @@ public partial class Toolbox : ExpandingContainer
                         new()
                         {
                             Title = "Tools",
-                            Icon = FontAwesome.Solid.Pen,
+                            Icon = FontAwesome6.Solid.Pen,
                             Tools = chartingContainer.Tools
                         },
                         new()
                         {
                             Title = "Effects",
-                            Icon = FontAwesome.Solid.Magic,
+                            Icon = FontAwesome6.Solid.WandMagicSparkles,
                             Tools = chartingContainer.EffectTools
                         },
                         new ToolboxHitsoundCategory(),

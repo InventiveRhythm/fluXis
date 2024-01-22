@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using osu.Framework.Graphics.Sprites;
+using fluXis.Game.Graphics.Sprites;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox.Hitsound;
 
@@ -10,7 +10,7 @@ public partial class ToolboxHitsoundCategory : ToolboxCategory
     public ToolboxHitsoundCategory()
     {
         Title = "Hitsound";
-        Icon = FontAwesome.Solid.Drum;
+        Icon = FontAwesome6.Solid.Drum;
 
         items = new List<ToolboxButton>
         {

@@ -1,7 +1,7 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Tests.Overlay;
 
@@ -15,7 +15,7 @@ public partial class TestNotificationOverlay : FluXisTestScene
         int count = 0;
 
         AddStep("Send notification", () => notifications.SendText("This is a test notification"));
-        AddStep("Send counting notification", () => notifications.SendText("This is a test notification", $"Count: {++count}", FontAwesome.Regular.Circle));
+        AddStep("Send counting notification", () => notifications.SendText("This is a test notification", $"Count: {++count}", FontAwesome6.Solid.Circle));
         AddStep("Send error notification", () => notifications.SendError("This is a test error notification"));
 
         var loading = new LoadingNotificationData();

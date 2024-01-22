@@ -10,7 +10,7 @@ namespace fluXis.Game.Overlay.Notifications.Floating;
 public partial class SmallFloatingTextNotification : FloatingNotification
 {
     public string Text { get; set; }
-    public IconUsage Icon { get; set; } = FontAwesome.Solid.Info;
+    public IconUsage Icon { get; set; } = FontAwesome6.Solid.Info;
 
     private FillFlowContainer content;
 

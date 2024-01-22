@@ -16,7 +16,7 @@ public partial class FloatingTextNotification : FloatingNotification
 {
     public string Text { get; set; }
     public string SubText { get; set; }
-    public IconUsage Icon { get; set; } = FontAwesome.Solid.Info;
+    public IconUsage Icon { get; set; } = FontAwesome6.Solid.Info;
     public Color4 BackgroundColor { get; set; } = FluXisColors.Background2;
     public float Lifetime { get; set; } = 5000;
 

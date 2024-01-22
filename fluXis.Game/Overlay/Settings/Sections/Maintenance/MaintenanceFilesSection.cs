@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Settings.UI;
@@ -15,7 +16,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Maintenance;
 public partial class MaintenanceFilesSection : SettingsSubSection
 {
     public override string Title => "Files";
-    public override IconUsage Icon => FontAwesome.Solid.File;
+    public override IconUsage Icon => FontAwesome6.Solid.File;
 
     [BackgroundDependencyLoader]
     private void load(Storage storage, MapStore store, NotificationManager notifications)
@@ -29,7 +30,7 @@ public partial class MaintenanceFilesSection : SettingsSubSection
                 ButtonText = "Run",
                 Action = () =>
                 {
-                    notifications.SendSmallText("Cleaning up files...", FontAwesome.Solid.Sync);
+                    notifications.SendSmallText("Cleaning up files...", FontAwesome6.Solid.Rotate);
                     var deleted = 0;
                     var errors = 0;
 
@@ -52,7 +53,7 @@ public partial class MaintenanceFilesSection : SettingsSubSection
                         }
                     }
 
-                    notifications.SendText($"Cleaned up {deleted} folder(s)", errors != 0 ? $"{errors} deletion(s) failed." : "", FontAwesome.Solid.Check);
+                    notifications.SendText($"Cleaned up {deleted} folder(s)", errors != 0 ? $"{errors} deletion(s) failed." : "", FontAwesome6.Solid.Check);
                 }
             }
         });

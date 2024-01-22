@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Ruleset;
@@ -45,7 +46,7 @@ public partial class LaneSwitchAlert : Container
                 {
                     leftIcon = new SpriteIcon
                     {
-                        Icon = FontAwesome.Solid.ChevronLeft,
+                        Icon = FontAwesome6.Solid.ChevronLeft,
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -62,7 +63,7 @@ public partial class LaneSwitchAlert : Container
                 {
                     rightIcon = new SpriteIcon
                     {
-                        Icon = FontAwesome.Solid.ChevronRight,
+                        Icon = FontAwesome6.Solid.ChevronRight,
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,

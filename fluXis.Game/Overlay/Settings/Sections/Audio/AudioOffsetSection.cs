@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Offset;
@@ -11,7 +12,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Audio;
 public partial class AudioOffsetSection : SettingsSubSection
 {
     public override string Title => "Offset";
-    public override IconUsage Icon => FontAwesome.Solid.Clock;
+    public override IconUsage Icon => FontAwesome6.Solid.Clock;
 
     [BackgroundDependencyLoader]
     private void load(FluXisGameBase game)

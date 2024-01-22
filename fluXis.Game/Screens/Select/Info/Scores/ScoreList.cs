@@ -158,7 +158,7 @@ public partial class ScoreList : GridContainer
                             {
                                 new SpriteIcon
                                 {
-                                    Icon = FontAwesome.Solid.ExclamationTriangle,
+                                    Icon = FontAwesome6.Solid.TriangleExclamation,
                                     Colour = Colour4.FromHex("#ffd500"),
                                     Size = new Vector2(20),
                                     Shadow = true,

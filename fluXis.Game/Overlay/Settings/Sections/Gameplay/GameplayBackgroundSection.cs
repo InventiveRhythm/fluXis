@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Gameplay;
 public partial class GameplayBackgroundSection : SettingsSubSection
 {
     public override string Title => "Background";
-    public override IconUsage Icon => FontAwesome.Solid.Image;
+    public override IconUsage Icon => FontAwesome6.Solid.Image;
 
     [BackgroundDependencyLoader]
     private void load()

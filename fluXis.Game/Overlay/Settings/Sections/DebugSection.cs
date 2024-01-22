@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Overlay.Settings.Sections;
 
 public partial class DebugSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome.Solid.Bug;
+    public override IconUsage Icon => FontAwesome6.Solid.Bug;
     public override string Title => "Debug";
 
     [BackgroundDependencyLoader]

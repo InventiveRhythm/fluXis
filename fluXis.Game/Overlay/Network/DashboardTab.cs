@@ -9,7 +9,7 @@ namespace fluXis.Game.Overlay.Network;
 public partial class DashboardTab : Container
 {
     public virtual string Title => "Untitled";
-    public virtual IconUsage Icon => FontAwesome.Solid.QuestionCircle;
+    public virtual IconUsage Icon => FontAwesome6.Solid.Question;
 
     protected new Container Content { get; private set; }
 

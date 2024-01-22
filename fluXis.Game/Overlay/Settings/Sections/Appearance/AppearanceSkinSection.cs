@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Skinning;
@@ -12,7 +13,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 public partial class AppearanceSkinSection : SettingsSubSection
 {
     public override string Title => "Skin";
-    public override IconUsage Icon => FontAwesome.Solid.PaintBrush;
+    public override IconUsage Icon => FontAwesome6.Solid.PaintBrush;
 
     [Resolved]
     private SkinManager skinManager { get; set; }

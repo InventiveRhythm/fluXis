@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Overlay.Notifications;
@@ -15,7 +16,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -285,7 +285,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         if (!hits.Any())
         {
-            notifications.SendSmallText("Nothing selected.", FontAwesome.Solid.Times);
+            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
             return;
         }
 
@@ -299,11 +299,11 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         if (deleteAfter)
         {
-            notifications.SendSmallText($"Cut {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
+            notifications.SendSmallText($"Cut {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
             BlueprintContainer.SelectionHandler.DeleteSelected();
         }
         else
-            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
+            notifications.SendSmallText($"Copied {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
     }
 
     public void Paste()
@@ -312,7 +312,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         if (content == null)
         {
-            notifications.SendSmallText("Clipboard is empty.", FontAwesome.Solid.Times);
+            notifications.SendSmallText("Clipboard is empty.", FontAwesome6.Solid.XMark);
             return;
         }
 
@@ -325,7 +325,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         values.ActionStack.Add(new NotePasteAction(content.HitObjects.ToArray(), values.MapInfo));
 
-        notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome.Solid.Check);
+        notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

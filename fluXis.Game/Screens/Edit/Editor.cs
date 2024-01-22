@@ -7,6 +7,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
@@ -34,7 +35,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
@@ -180,23 +180,23 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 Items = new FluXisMenuItem[]
                 {
-                    new("File", FontAwesome.Solid.File)
+                    new("File", FontAwesome6.Solid.File)
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Save", FontAwesome.Solid.Save, () => save()) { Enabled = HasChanges },
+                            new("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { Enabled = HasChanges },
                             new FluXisMenuSpacer(),
-                            new("Create new difficulty", FontAwesome.Solid.Plus, () => Game.Overlay = new EditorDifficultyCreationPanel
+                            new("Create new difficulty", FontAwesome6.Solid.Plus, () => Game.Overlay = new EditorDifficultyCreationPanel
                             {
                                 OnCreateNewDifficulty = diffname => createNewDiff(diffname, false),
                                 OnCopyDifficulty = diffname => createNewDiff(diffname, true)
                             }),
-                            new("Switch to difficulty", FontAwesome.Solid.ExchangeAlt, () => { })
+                            new("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
                             {
                                 Enabled = () => Map.MapSet.Maps.Count > 1,
                                 Items = Map.MapSet.Maps.Where(x => x.ID != Map.ID).Select(x => new FluXisMenuItem(x.Difficulty, () => loader.SwitchTo(x))).ToList()
                             },
-                            new("Delete difficulty", FontAwesome.Solid.Trash, () =>
+                            new("Delete difficulty", FontAwesome6.Solid.Trash, () =>
                             {
                                 Game.Overlay = new ConfirmDeletionPanel(() =>
                                 {
@@ -215,71 +215,71 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 Enabled = () => Map.MapSet.Maps.Count > 1
                             },
                             new FluXisMenuSpacer(),
-                            new("Export", FontAwesome.Solid.BoxOpen, export),
-                            new("Upload", FontAwesome.Solid.Upload, startUpload),
+                            new("Export", FontAwesome6.Solid.BoxOpen, export),
+                            new("Upload", FontAwesome6.Solid.Upload, startUpload),
                             new FluXisMenuSpacer(),
-                            new("Open Song Folder", FontAwesome.Solid.FolderOpen, () => PathUtils.OpenFolder(MapFiles.GetFullPath(Map.MapSet.GetPathForFile("")))),
+                            new("Open Song Folder", FontAwesome6.Solid.FolderOpen, () => PathUtils.OpenFolder(MapFiles.GetFullPath(Map.MapSet.GetPathForFile("")))),
                             new FluXisMenuSpacer(),
-                            new("Exit", FontAwesome.Solid.Times, MenuItemType.Dangerous, tryExit)
+                            new("Exit", FontAwesome6.Solid.XMark, MenuItemType.Dangerous, tryExit)
                         }
                     },
-                    new("Edit", FontAwesome.Solid.Pen)
+                    new("Edit", FontAwesome6.Solid.Pen)
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Undo", FontAwesome.Solid.Get(0xf0e2), values.ActionStack.Undo) { Enabled = () => values.ActionStack.CanUndo },
-                            new("Redo", FontAwesome.Solid.Get(0xf01e), values.ActionStack.Redo) { Enabled = () => values.ActionStack.CanRedo },
+                            new("Undo", FontAwesome6.Solid.RotateLeft, values.ActionStack.Undo) { Enabled = () => values.ActionStack.CanUndo },
+                            new("Redo", FontAwesome6.Solid.RotateRight, values.ActionStack.Redo) { Enabled = () => values.ActionStack.CanRedo },
                             new FluXisMenuSpacer(),
-                            new("Copy", FontAwesome.Solid.Copy, () => ChartingContainer?.Copy()) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                            new("Cut", FontAwesome.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
-                            new("Paste", FontAwesome.Solid.Paste, () => ChartingContainer?.Paste()),
+                            new("Copy", FontAwesome6.Solid.Copy, () => ChartingContainer?.Copy()) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
+                            new("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
+                            new("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
                             new FluXisMenuSpacer(),
-                            new("Flip Selection", FontAwesome.Solid.ArrowsAltH, () => values.ActionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), Map.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
+                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => values.ActionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), Map.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
                             new FluXisMenuSpacer(),
-                            new("Delete", FontAwesome.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
-                            new("Select all", FontAwesome.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
+                            new("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
+                            new("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
                         }
                     },
-                    new("View", FontAwesome.Solid.Eye)
+                    new("View", FontAwesome6.Solid.Eye)
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Background Dim", FontAwesome.Solid.Percentage)
+                            new("Background Dim", FontAwesome6.Solid.Percent)
                             {
                                 Items = new FluXisMenuItem[]
                                 {
-                                    new("0%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = 0) { IsActive = () => backgroundDim.Value == 0f },
-                                    new("20%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .2f) { IsActive = () => backgroundDim.Value == .2f },
-                                    new("40%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .4f) { IsActive = () => backgroundDim.Value == .4f },
-                                    new("60%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .6f) { IsActive = () => backgroundDim.Value == .6f },
-                                    new("80%", FontAwesome.Solid.Percentage, () => backgroundDim.Value = .8f) { IsActive = () => backgroundDim.Value == .8f },
+                                    new("0%", FontAwesome6.Solid.Percent, () => backgroundDim.Value = 0) { IsActive = () => backgroundDim.Value == 0f },
+                                    new("20%", FontAwesome6.Solid.Percent, () => backgroundDim.Value = .2f) { IsActive = () => backgroundDim.Value == .2f },
+                                    new("40%", FontAwesome6.Solid.Percent, () => backgroundDim.Value = .4f) { IsActive = () => backgroundDim.Value == .4f },
+                                    new("60%", FontAwesome6.Solid.Percent, () => backgroundDim.Value = .6f) { IsActive = () => backgroundDim.Value == .6f },
+                                    new("80%", FontAwesome6.Solid.Percent, () => backgroundDim.Value = .8f) { IsActive = () => backgroundDim.Value == .8f },
                                 }
                             },
-                            new("Background Blur", FontAwesome.Solid.Percentage)
+                            new("Background Blur", FontAwesome6.Solid.Percent)
                             {
                                 Items = new FluXisMenuItem[]
                                 {
-                                    new("0%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = 0) { IsActive = () => backgroundBlur.Value == 0f },
-                                    new("20%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .2f) { IsActive = () => backgroundBlur.Value == .2f },
-                                    new("40%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .4f) { IsActive = () => backgroundBlur.Value == .4f },
-                                    new("60%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .6f) { IsActive = () => backgroundBlur.Value == .6f },
-                                    new("80%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = .8f) { IsActive = () => backgroundBlur.Value == .8f },
-                                    new("100%", FontAwesome.Solid.Percentage, () => backgroundBlur.Value = 1f) { IsActive = () => backgroundBlur.Value == 1f }
+                                    new("0%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = 0) { IsActive = () => backgroundBlur.Value == 0f },
+                                    new("20%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = .2f) { IsActive = () => backgroundBlur.Value == .2f },
+                                    new("40%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = .4f) { IsActive = () => backgroundBlur.Value == .4f },
+                                    new("60%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = .6f) { IsActive = () => backgroundBlur.Value == .6f },
+                                    new("80%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = .8f) { IsActive = () => backgroundBlur.Value == .8f },
+                                    new("100%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = 1f) { IsActive = () => backgroundBlur.Value == 1f }
                                 }
                             },
-                            new("Waveform opacity", FontAwesome.Solid.Percentage)
+                            new("Waveform opacity", FontAwesome6.Solid.Percent)
                             {
                                 Items = new FluXisMenuItem[]
                                 {
-                                    new("0%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0) { IsActive = () => values.WaveformOpacity.Value == 0 },
-                                    new("25%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0.25f) { IsActive = () => values.WaveformOpacity.Value == 0.25f },
-                                    new("50%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0.5f) { IsActive = () => values.WaveformOpacity.Value == 0.5f },
-                                    new("75%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 0.75f) { IsActive = () => values.WaveformOpacity.Value == 0.75f },
-                                    new("100%", FontAwesome.Solid.Percentage, () => values.WaveformOpacity.Value = 1) { IsActive = () => values.WaveformOpacity.Value == 1 }
+                                    new("0%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0) { IsActive = () => values.WaveformOpacity.Value == 0 },
+                                    new("25%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0.25f) { IsActive = () => values.WaveformOpacity.Value == 0.25f },
+                                    new("50%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0.5f) { IsActive = () => values.WaveformOpacity.Value == 0.5f },
+                                    new("75%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0.75f) { IsActive = () => values.WaveformOpacity.Value == 0.75f },
+                                    new("100%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 1) { IsActive = () => values.WaveformOpacity.Value == 1 }
                                 }
                             },
-                            new("Flash effect underlay", FontAwesome.Solid.LayerGroup, values.FlashUnderlay.Toggle) { IsActive = () => values.FlashUnderlay.Value },
-                            new("Flash effect underlay color", FontAwesome.Solid.Palette)
+                            new("Flash effect underlay", FontAwesome6.Solid.LayerGroup, values.FlashUnderlay.Toggle) { IsActive = () => values.FlashUnderlay.Value },
+                            new("Flash effect underlay color", FontAwesome6.Solid.Palette)
                             {
                                 Items = new FluXisMenuItem[]
                                 {
@@ -287,14 +287,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new("Light", () => values.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => values.FlashUnderlayColor.Value == Colour4.White }
                                 }
                             },
-                            new("Show sample on notes", FontAwesome.Solid.LayerGroup, values.ShowSamples.Toggle) { IsActive = () => values.ShowSamples.Value }
+                            new("Show sample on notes", FontAwesome6.Solid.LayerGroup, values.ShowSamples.Toggle) { IsActive = () => values.ShowSamples.Value }
                         }
                     },
-                    new("Timing", FontAwesome.Solid.Clock)
+                    new("Timing", FontAwesome6.Solid.Clock)
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Set preview point to current time", FontAwesome.Solid.Stopwatch, () =>
+                            new("Set preview point to current time", FontAwesome6.Solid.Stopwatch, () =>
                             {
                                 MapInfo.Metadata.PreviewTime = (int)clock.CurrentTime;
                                 Map.Metadata.PreviewTime = (int)clock.CurrentTime;
@@ -586,7 +586,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (hash == Map.Hash && effHash == effectHash)
         {
-            notifications.SendSmallText("Map is already up to date", FontAwesome.Solid.Check);
+            notifications.SendSmallText("Map is already up to date", FontAwesome6.Solid.Check);
             return true;
         }
 
@@ -666,7 +666,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             }
         });
 
-        notifications.SendSmallText("Saved!", FontAwesome.Solid.Check);
+        notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
         return true;
     }
 

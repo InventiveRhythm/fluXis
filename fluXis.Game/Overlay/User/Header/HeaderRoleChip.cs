@@ -59,12 +59,12 @@ public partial class HeaderRoleChip : Container
     {
         return RoleId switch
         {
-            1 => FontAwesome.Solid.Star,
-            2 => FontAwesome.Regular.Gem, // we dont have the icon that the website uses
-            3 => FontAwesome.Solid.Get(0xf3ed),
-            4 => FontAwesome.Solid.UserShield,
-            5 => FontAwesome.Solid.UserAstronaut,
-            _ => FontAwesome.Solid.User
+            1 => FontAwesome6.Solid.Star,
+            2 => FontAwesome6.Solid.Diamond, // we dont have the icon that the website uses
+            3 => FontAwesome6.Solid.ShieldHalved,
+            4 => FontAwesome6.Solid.UserShield,
+            5 => FontAwesome6.Solid.UserAstronaut,
+            _ => FontAwesome6.Solid.User
         };
     }
 

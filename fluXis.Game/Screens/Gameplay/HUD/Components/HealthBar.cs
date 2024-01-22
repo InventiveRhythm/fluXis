@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -30,7 +31,7 @@ public partial class HealthBar : GameplayHUDComponent
                 Size = new Vector2(30),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Icon = FontAwesome.Solid.Times,
+                Icon = FontAwesome6.Solid.XMark,
                 Alpha = 0
             }
         };

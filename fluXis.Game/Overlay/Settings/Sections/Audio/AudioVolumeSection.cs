@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -10,7 +11,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Audio;
 public partial class AudioVolumeSection : SettingsSubSection
 {
     public override string Title => "Volume";
-    public override IconUsage Icon => FontAwesome.Solid.VolumeUp;
+    public override IconUsage Icon => FontAwesome6.Solid.VolumeHigh;
 
     [BackgroundDependencyLoader]
     private void load(AudioManager audio)

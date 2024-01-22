@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -102,7 +103,7 @@ public partial class SearchBar : Container
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Icon = FontAwesome.Solid.Search,
+                                Icon = FontAwesome6.Solid.MagnifyingGlass,
                                 Shear = new Vector2(.2f, 0),
                                 Size = new Vector2(24),
                                 Shadow = true,

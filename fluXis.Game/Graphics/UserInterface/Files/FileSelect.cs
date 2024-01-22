@@ -161,7 +161,7 @@ public partial class FileSelect : CompositeDrawable, IKeyBindingHandler<FluXisGl
                                                 {
                                                     new SpriteIcon
                                                     {
-                                                        Icon = FontAwesome.Solid.FolderOpen,
+                                                        Icon = FontAwesome6.Solid.FolderOpen,
                                                         Size = new Vector2(30),
                                                         Anchor = Anchor.TopCentre,
                                                         Origin = Anchor.TopCentre,
@@ -196,7 +196,7 @@ public partial class FileSelect : CompositeDrawable, IKeyBindingHandler<FluXisGl
                                                 {
                                                     new SpriteIcon
                                                     {
-                                                        Icon = FontAwesome.Solid.Times,
+                                                        Icon = FontAwesome6.Solid.XMark,
                                                         Size = new Vector2(30),
                                                         Anchor = Anchor.TopCentre,
                                                         Origin = Anchor.TopCentre
@@ -374,7 +374,7 @@ public partial class FileSelect : CompositeDrawable, IKeyBindingHandler<FluXisGl
                                                     Size = new Vector2(20),
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft,
-                                                    Icon = FontAwesome.Solid.Search,
+                                                    Icon = FontAwesome6.Solid.MagnifyingGlass,
                                                     Margin = new MarginPadding { Left = 15 }
                                                 },
                                                 new Container
@@ -676,7 +676,7 @@ public partial class FileSelect : CompositeDrawable, IKeyBindingHandler<FluXisGl
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Icon = FontAwesome.Solid.ChevronLeft,
+                    Icon = FontAwesome6.Solid.ChevronLeft,
                     Size = new Vector2(20)
                 }
             };

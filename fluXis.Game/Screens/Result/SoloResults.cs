@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
@@ -15,7 +16,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -90,14 +90,14 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                     backButton = new CornerButton
                     {
                         ButtonText = "Back",
-                        Icon = FontAwesome.Solid.ChevronLeft,
+                        Icon = FontAwesome6.Solid.ChevronLeft,
                         Action = this.Exit
                     },
                     retryButton = new CornerButton
                     {
                         ButtonText = "Retry",
                         Corner = Corner.BottomRight,
-                        Icon = FontAwesome.Solid.Get(0xf0e2),
+                        Icon = FontAwesome6.Solid.RotateRight,
                         ButtonColor = FluXisColors.Accent2,
                         Alpha = OnRestart is not null ? 1f : 0f,
                         Action = () => OnRestart?.Invoke()

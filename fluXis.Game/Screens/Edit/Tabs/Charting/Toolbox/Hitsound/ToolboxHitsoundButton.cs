@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
 using fluXis.Game.Screens.Gameplay;
@@ -67,10 +68,10 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     {
         var icon = sample switch
         {
-            "normal" => FontAwesome.Solid.Drum,
-            "drum" => FontAwesome.Solid.Drum,
-            "clap" => FontAwesome.Solid.Hands,
-            _ => FontAwesome.Solid.Drum
+            "normal" => FontAwesome6.Solid.Drum,
+            "drum" => FontAwesome6.Solid.Drum,
+            "clap" => FontAwesome6.Solid.HandsClapping,
+            _ => FontAwesome6.Solid.Drum
         };
 
         return new SpriteIcon

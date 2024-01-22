@@ -73,7 +73,7 @@ public partial class DashboardAccountEntry : Container
                                     LoadingIcon = new SpriteIcon
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Icon = FontAwesome.Solid.Sync,
+                                        Icon = FontAwesome6.Solid.Rotate,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Alpha = 0
@@ -81,7 +81,7 @@ public partial class DashboardAccountEntry : Container
                                     CompletedIcon = new SpriteIcon
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Icon = FontAwesome.Solid.Check,
+                                        Icon = FontAwesome6.Solid.Check,
                                         Alpha = 0
                                     }
                                 }

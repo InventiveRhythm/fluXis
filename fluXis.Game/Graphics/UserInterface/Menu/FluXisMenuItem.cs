@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
@@ -8,7 +9,7 @@ namespace fluXis.Game.Graphics.UserInterface.Menu;
 public class FluXisMenuItem : MenuItem
 {
     public MenuItemType Type { get; }
-    public IconUsage Icon { get; } = FontAwesome.Solid.Circle;
+    public IconUsage Icon { get; } = FontAwesome6.Solid.Circle;
     public Func<bool> Enabled { get; set; }
     public Func<bool> IsActive { get; set; }
 

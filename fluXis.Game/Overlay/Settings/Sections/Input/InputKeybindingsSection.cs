@@ -13,7 +13,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Input;
 public partial class InputKeybindingsSection : SettingsSubSection
 {
     public override string Title => "Keybindings";
-    public override IconUsage Icon => FontAwesome.Solid.Keyboard;
+    public override IconUsage Icon => FontAwesome6.Solid.Keyboard;
 
     [Resolved]
     private MapStore mapStore { get; set; }

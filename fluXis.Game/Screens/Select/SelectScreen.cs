@@ -179,7 +179,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                                         {
                                             new SpriteIcon
                                             {
-                                                Icon = FontAwesome.Solid.ExclamationTriangle,
+                                                Icon = FontAwesome6.Solid.TriangleExclamation,
                                                 Size = new Vector2(30),
                                                 Anchor = Anchor.TopCentre,
                                                 Origin = Anchor.TopCentre

@@ -21,7 +21,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -50,14 +49,14 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
             if (deleted)
                 return items.ToArray();
 
-            items.Add(new FluXisMenuItem("View Details", FontAwesome.Solid.InfoCircle, MenuItemType.Highlighted, viewDetails));
+            items.Add(new FluXisMenuItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails));
 
             if (HasReplay)
-                items.Add(new FluXisMenuItem("View Replay", FontAwesome.Solid.PlayCircle, MenuItemType.Highlighted, () => ReplayAction?.Invoke()));
+                items.Add(new FluXisMenuItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction?.Invoke()));
 
             if (Deletable && RealmScoreId != null)
             {
-                items.Add(new FluXisMenuItem("Delete", FontAwesome.Solid.Trash, MenuItemType.Dangerous, () =>
+                items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () =>
                 {
                     deleted = true;
                     deletedContainer.FadeIn(200);

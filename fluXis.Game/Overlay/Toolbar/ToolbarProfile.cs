@@ -1,5 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Drawables;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -121,7 +122,7 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
                             },
                             arrow = new SpriteIcon
                             {
-                                Icon = FontAwesome.Solid.ChevronDown,
+                                Icon = FontAwesome6.Solid.ChevronDown,
                                 Size = new Vector2(10),
                                 Y = 40,
                                 Anchor = Anchor.TopCentre,

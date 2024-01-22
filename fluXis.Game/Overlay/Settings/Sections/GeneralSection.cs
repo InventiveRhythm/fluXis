@@ -10,7 +10,7 @@ namespace fluXis.Game.Overlay.Settings.Sections;
 
 public partial class GeneralSection : SettingsSection
 {
-    public override IconUsage Icon => FontAwesome.Solid.Cog;
+    public override IconUsage Icon => FontAwesome6.Solid.Gear;
     public override string Title => "General";
 
     [BackgroundDependencyLoader]

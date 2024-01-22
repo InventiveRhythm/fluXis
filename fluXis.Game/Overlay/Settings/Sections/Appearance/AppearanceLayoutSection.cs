@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Utils;
@@ -11,7 +12,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 public partial class AppearanceLayoutSection : SettingsSubSection
 {
     public override string Title => "HUD Layout";
-    public override IconUsage Icon => FontAwesome.Solid.LayerGroup;
+    public override IconUsage Icon => FontAwesome6.Solid.LayerGroup;
 
     [BackgroundDependencyLoader]
     private void load(LayoutManager layouts, Storage storage)

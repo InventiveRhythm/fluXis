@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Configuration;
@@ -13,7 +14,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Graphics;
 public partial class GraphicsRenderingSection : SettingsSubSection
 {
     public override string Title => "Rendering";
-    public override IconUsage Icon => FontAwesome.Solid.Cubes;
+    public override IconUsage Icon => FontAwesome6.Solid.Cubes;
 
     [BackgroundDependencyLoader]
     private void load(GameHost host, FrameworkConfigManager frameworkConfig)

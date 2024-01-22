@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Mods;
@@ -12,7 +13,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.BottomBar;
@@ -91,7 +91,7 @@ public partial class EditorBottomBar : Container
                                 Child = new CornerButton
                                 {
                                     ButtonText = "Test",
-                                    Icon = FontAwesome.Solid.Play,
+                                    Icon = FontAwesome6.Solid.Play,
                                     ShowImmediately = true,
                                     ButtonColor = FluXisColors.Accent2,
                                     Corner = Corner.BottomRight,

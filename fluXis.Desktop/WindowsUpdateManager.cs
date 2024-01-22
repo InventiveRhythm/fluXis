@@ -6,11 +6,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.Versioning;
 using fluXis.Game;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
 using fluXis.Game.Updater;
 using Newtonsoft.Json.Linq;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
@@ -93,7 +93,7 @@ public partial class WindowsUpdateManager : IUpdateManager
         if (!UpdateAvailable && !forceUpdate)
         {
             if (!silent)
-                notifications.SendText("No updates available.", "You are running the latest version.", FontAwesome.Solid.Check);
+                notifications.SendText("No updates available.", "You are running the latest version.", FontAwesome6.Solid.Check);
 
             return;
         }

@@ -61,7 +61,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
         {
             new SpriteIcon
             {
-                Icon = FontAwesome.Solid.ChevronRight,
+                Icon = FontAwesome6.Solid.ChevronRight,
                 Alpha = shouldShowChevron ? 1f : 0f,
                 Size = new Vector2(icon_size * .8f),
                 Margin = new MarginPadding(icon_margin) { Right = icon_margin * 4 },
@@ -71,7 +71,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
             },
             new SpriteIcon
             {
-                Icon = FontAwesome.Solid.Check,
+                Icon = FontAwesome6.Solid.Check,
                 Alpha = shouldShowCheck ? 1f : 0f,
                 Size = new Vector2(icon_size * .8f),
                 Margin = new MarginPadding(icon_margin) { Right = icon_margin * 4 },
@@ -147,7 +147,7 @@ public partial class DrawableFluXisMenuItem : osu.Framework.Graphics.UserInterfa
             {
                 icon = new SpriteIcon
                 {
-                    Icon = (Item as FluXisMenuItem)?.Icon ?? FontAwesome.Solid.Circle,
+                    Icon = (Item as FluXisMenuItem)?.Icon ?? FontAwesome6.Solid.Circle,
                     Size = new Vector2(icon_size),
                     Margin = new MarginPadding(icon_margin),
                     Shadow = true,

@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings;
@@ -6,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -81,7 +81,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = "Edit Map",
-                                Icon = FontAwesome.Solid.Pen,
+                                Icon = FontAwesome6.Solid.Pen,
                                 Action = () =>
                                 {
                                     Footer.Screen.EditMapSet(maps.CurrentMap);
@@ -91,7 +91,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = "Game Settings",
-                                Icon = FontAwesome.Solid.Cog,
+                                Icon = FontAwesome6.Solid.Gear,
                                 Action = () =>
                                 {
                                     settings.Show();
@@ -101,7 +101,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             new FooterOptionButton
                             {
                                 Text = "Delete MapSet",
-                                Icon = FontAwesome.Solid.Trash,
+                                Icon = FontAwesome6.Solid.Trash,
                                 Color = FluXisColors.Red,
                                 Action = () =>
                                 {

@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
@@ -33,7 +34,7 @@ public partial class HitErrorBar : GameplayHUDComponent
         {
             icon = new SpriteIcon
             {
-                Icon = FontAwesome.Solid.ChevronDown,
+                Icon = FontAwesome6.Solid.ChevronDown,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Size = new Vector2(16)

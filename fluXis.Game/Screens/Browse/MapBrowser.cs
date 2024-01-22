@@ -71,7 +71,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                     {
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Icon = FontAwesome.Solid.Globe,
+                        Icon = FontAwesome6.Solid.EarthAmericas,
                         Size = new Vector2(20)
                     },
                     new FluXisSpriteText
@@ -147,7 +147,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             },
             backButton = new CornerButton
             {
-                Icon = FontAwesome.Solid.ChevronLeft,
+                Icon = FontAwesome6.Solid.ChevronLeft,
                 ButtonText = "Back",
                 Action = this.Exit
             },

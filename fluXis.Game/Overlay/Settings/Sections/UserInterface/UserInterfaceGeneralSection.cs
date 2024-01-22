@@ -1,4 +1,5 @@
 using fluXis.Game.Configuration;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.UserInterface;
 public partial class UserInterfaceGeneralSection : SettingsSubSection
 {
     public override string Title => "General";
-    public override IconUsage Icon => FontAwesome.Solid.Cog;
+    public override IconUsage Icon => FontAwesome6.Solid.Gear;
 
     [BackgroundDependencyLoader]
     private void load()

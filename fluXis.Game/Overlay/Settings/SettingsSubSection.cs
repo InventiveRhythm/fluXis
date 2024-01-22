@@ -14,7 +14,7 @@ public partial class SettingsSubSection : FillFlowContainer
     protected FluXisConfig Config { get; private set; }
 
     public virtual string Title => "Subsection";
-    public virtual IconUsage Icon => FontAwesome.Solid.ChevronRight;
+    public virtual IconUsage Icon => FontAwesome6.Solid.ChevronRight;
 
     [BackgroundDependencyLoader]
     private void load()

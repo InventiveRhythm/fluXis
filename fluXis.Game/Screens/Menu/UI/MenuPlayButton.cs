@@ -81,7 +81,7 @@ public partial class MenuPlayButton : Container
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             Shadow = true,
-                            Icon = FontAwesome.Solid.Play
+                            Icon = FontAwesome6.Solid.Play
                         },
                         new FluXisSpriteText
                         {

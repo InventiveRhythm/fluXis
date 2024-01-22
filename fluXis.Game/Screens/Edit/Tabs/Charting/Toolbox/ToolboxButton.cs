@@ -86,7 +86,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Icon = FontAwesome.Regular.QuestionCircle
+                                    Icon = FontAwesome6.Solid.Question
                                 }
                             },
                             new FluXisSpriteText

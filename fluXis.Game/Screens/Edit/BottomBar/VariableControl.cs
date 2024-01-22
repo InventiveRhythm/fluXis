@@ -6,7 +6,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
@@ -128,7 +127,7 @@ public partial class VariableControl : FillFlowContainer
                                 },
                                 new ClickableSpriteIcon
                                 {
-                                    Icon = FontAwesome.Solid.Plus,
+                                    Icon = FontAwesome6.Solid.Plus,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     Size = new Vector2(10),
@@ -137,7 +136,7 @@ public partial class VariableControl : FillFlowContainer
                                 },
                                 new ClickableSpriteIcon
                                 {
-                                    Icon = FontAwesome.Solid.Minus,
+                                    Icon = FontAwesome6.Solid.Minus,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
                                     Size = new Vector2(10),

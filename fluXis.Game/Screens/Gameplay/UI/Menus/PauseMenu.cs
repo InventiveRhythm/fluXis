@@ -7,7 +7,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -95,14 +94,14 @@ public partial class PauseMenu : CompositeDrawable
                             {
                                 Text = "Resume",
                                 SubText = "Continue playing",
-                                Icon = FontAwesome.Solid.Play,
+                                Icon = FontAwesome6.Solid.Play,
                                 Action = () => screen.IsPaused.Value = false
                             },
                             new GameplayMenuButton
                             {
                                 Text = "Restart",
                                 SubText = "Try again?",
-                                Icon = FontAwesome.Solid.Redo,
+                                Icon = FontAwesome6.Solid.RotateRight,
                                 Action = () => screen.RestartMap()
                             },
                             new GameplayMenuButton
@@ -110,7 +109,7 @@ public partial class PauseMenu : CompositeDrawable
                                 Text = "Quit",
                                 Color = FluXisColors.Red,
                                 SubText = "Bye bye",
-                                Icon = FontAwesome.Solid.DoorOpen,
+                                Icon = FontAwesome6.Solid.DoorOpen,
                                 Action = () => screen.Exit()
                             }
                         }

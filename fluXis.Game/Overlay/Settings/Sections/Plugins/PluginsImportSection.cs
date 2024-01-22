@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Settings.Sections.Plugins.Import;
 using fluXis.Game.Plugins;
 using osu.Framework.Allocation;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Overlay.Settings.Sections.Plugins;
 public partial class PluginsImportSection : SettingsSubSection
 {
     public override string Title => "Import Plugins";
-    public override IconUsage Icon => FontAwesome.Solid.Plug;
+    public override IconUsage Icon => FontAwesome6.Solid.Plug;
 
     [BackgroundDependencyLoader]
     private void load(PluginManager plugins)

@@ -12,7 +12,6 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
@@ -65,7 +64,7 @@ public partial class LaneSwtichEditorPanel : Panel
                         {
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
-                            Icon = FontAwesome.Solid.Question,
+                            Icon = FontAwesome6.Solid.Question,
                             Size = new Vector2(20),
                             Margin = new MarginPadding(5),
                             Action = () => notifications.SendText("Not implemented yet!")
