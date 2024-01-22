@@ -110,7 +110,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             if (hit == null)
                 return;
 
-            playHitSound(hit);
+            PlayHitSound(hit);
         };
     }
 
@@ -263,10 +263,19 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     private DrawableHitObject getDrawableFor(HitObject hit)
     {
-        if (hit.LongNote)
-            return new DrawableLongNote(hit);
+        switch (hit.Type)
+        {
+            case 1:
+                return new DrawableTickNote(hit);
 
-        return new DrawableNote(hit);
+            default:
+            {
+                if (hit.LongNote)
+                    return new DrawableLongNote(hit);
+
+                return new DrawableNote(hit);
+            }
+        }
     }
 
     private void updateTime()
@@ -299,7 +308,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             hitObject.Data.Result = result;
     }
 
-    private void playHitSound(HitObject hitObject)
+    public void PlayHitSound(HitObject hitObject)
     {
         Sample sample = null;
 

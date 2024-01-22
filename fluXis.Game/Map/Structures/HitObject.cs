@@ -9,6 +9,12 @@ public class HitObject : TimedObject
     public float HoldTime { get; set; }
     public string HitSound { get; set; }
 
+    /// <summary>
+    /// 0 = Normal / Long
+    /// 1 = Tick
+    /// </summary>
+    public int Type { get; set; }
+
     [JsonIgnore]
     public bool LongNote => HoldTime > 0;
 

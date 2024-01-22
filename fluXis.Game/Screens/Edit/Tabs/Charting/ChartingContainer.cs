@@ -30,7 +30,8 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     {
         new SelectTool(),
         new SingleNoteTool(),
-        new LongNoteTool()
+        new LongNoteTool(),
+        new TickNoteTool()
     };
 
     public IReadOnlyList<EffectTool> EffectTools { get; } = new EffectTool[]

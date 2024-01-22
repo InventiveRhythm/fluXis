@@ -25,6 +25,7 @@ public partial class EditorHitObject : Container
     public Drawable HitObjectPiece { get; private set; }
     private Drawable longNoteBody { get; set; }
     public Drawable LongNoteEnd { get; private set; }
+    private Drawable tickNotePiece { get; set; }
 
     private FluXisSpriteText text { get; set; }
 
@@ -41,6 +42,7 @@ public partial class EditorHitObject : Container
         Children = new[]
         {
             HitObjectPiece = new DefaultHitObjectPiece(null),
+            tickNotePiece = new DefaultTickNote(),
             longNoteBody = new DefaultHitObjectBody(null).With(b =>
             {
                 b.Anchor = Anchor.BottomCentre;
@@ -56,7 +58,7 @@ public partial class EditorHitObject : Container
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,
-                Height = 36,
+                Height = Data.Type == 1 ? 20 : 36,
                 Child = text = new FluXisSpriteText
                 {
                     Anchor = Anchor.Centre,
@@ -66,6 +68,24 @@ public partial class EditorHitObject : Container
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        switch (Data.Type)
+        {
+            case 1:
+                HitObjectPiece.Hide();
+                longNoteBody.Hide();
+                LongNoteEnd.Hide();
+                break;
+
+            default:
+                tickNotePiece.Hide();
+                break;
+        }
     }
 
     protected override void Update()
