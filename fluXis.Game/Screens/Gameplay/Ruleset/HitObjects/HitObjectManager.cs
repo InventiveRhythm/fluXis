@@ -308,8 +308,13 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             hitObject.Data.Result = result;
     }
 
-    public void PlayHitSound(HitObject hitObject)
+    public void PlayHitSound(HitObject hitObject, bool userTriggered = true)
     {
+        // ignore hitsounds when the next is a
+        // tick note since it would be played twice
+        // when hitting them as a normal note
+        if (hitObject is { Type: 1 } && userTriggered) return;
+
         Sample sample = null;
 
         if (hitObject != null && !string.IsNullOrEmpty(hitObject.HitSound))

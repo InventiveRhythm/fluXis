@@ -41,7 +41,7 @@ public partial class DrawableTickNote : DrawableHitObject
         if (offset >= 0)
             return;
 
-        ObjectManager.PlayHitSound(Data);
+        ObjectManager.PlayHitSound(Data, false);
         ApplyResult(offset);
     }
 
