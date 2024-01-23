@@ -1,0 +1,11 @@
+{
+  "title": "Модификаторы геймплея",
+  "description": "Сделайте игру сложнее или легче для себя!",
+  "section-rate": "Оценить",
+  "section-difficulty-increase": "Повышение сложности",
+  "section-difficulty-decrease": "Уменьшение сложности",
+  "section-misc": "Разное",
+  "section-automation": "Автоматизация",
+  "max-score": "Максимальное количество очков: {0:0}%",
+  "incompatible-mods": "Несовместимые моды:"
+}

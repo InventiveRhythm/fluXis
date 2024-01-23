@@ -1,0 +1,11 @@
+{
+  "title": "Modificateurs en jeu",
+  "description": "Rendez le jeu plus facile ou plus difficile pour toi !",
+  "section-rate": "Vitesse",
+  "section-difficulty-increase": "Augmenter la difficulté",
+  "section-difficulty-decrease": "Diminuer la difficulté",
+  "section-misc": "Divers",
+  "section-automation": "Automatisation",
+  "max-score": "Score Max: {0:0}%",
+  "incompatible-mods": "Mods incompatible :"
+}

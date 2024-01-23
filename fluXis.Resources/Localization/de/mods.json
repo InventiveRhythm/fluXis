@@ -1,0 +1,20 @@
+{
+    "ap-name": "Auto-Wiederhabe",
+    "ap-description": "Guck ein perfektes Spiel von diesem Song an.",
+    "ez-name": "Einfach",
+    "ez-description": "Lebenspunkte starten bei 0, erreiche 80 % um die Map \nzu schaffen.",
+    "fl-name": "Einwandfrei",
+    "fl-description": "Für die besten.",
+    "fr-name": "Zerbrechlich",
+    "fr-description": "Ein Fehler und du bist tot.",
+    "hd-name": "Hart",
+    "hd-description": "Lebenspunkte sinken, desto mehr du verfehlst, desto schneller stirbst du.",
+    "nf-name": "Kein verlieren",
+    "nf-description": "Du kannst nicht scheitern, egal was passiert.",
+    "nln-name": "Kein LN",
+    "nln-description": "Entfernt alle lange Noten und ersetzt die mit normalen Noten.",
+    "nsv-name": "Kein SG",
+    "nsv-description": "Entfernt alle Schiebereglergeschwindischkeits-Änderungen.",
+    "pa-name": "Pausiert",
+    "pa-description": "Pausiere das Spiel mitten einer Map."
+}
