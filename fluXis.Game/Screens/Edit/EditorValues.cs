@@ -11,7 +11,12 @@ public class EditorValues
         set => ZoomBindable.Value = value;
     }
 
-    public int SnapDivisor { get; set; } = 4;
+    public int SnapDivisor
+    {
+        get => SnapDivisorBindable.Value;
+        set => SnapDivisorBindable.Value = value;
+    }
+
     public Bindable<float> WaveformOpacity { get; } = new(.25f);
     public BindableBool FlashUnderlay { get; } = new();
     public BindableColour4 FlashUnderlayColor { get; } = new(FluXisColors.Background1);
@@ -28,6 +33,13 @@ public class EditorValues
         MaxValue = 5f,
         Default = 2f,
         Precision = .1f
+    };
+
+    public BindableInt SnapDivisorBindable { get; } = new(4)
+    {
+        MinValue = 1,
+        MaxValue = 16,
+        Default = 4
     };
 
     public override string ToString()

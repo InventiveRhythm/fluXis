@@ -19,6 +19,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public event Action<Track> TrackChanged;
 
     public MapInfo MapInfo { get; set; }
+    public BindableInt SnapDivisor { get; init; }
 
     public double ElapsedFrameTime => underlying.ElapsedFrameTime;
     public double FramesPerSecond => underlying.FramesPerSecond;
@@ -118,7 +119,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         if (direction < 0 && tp.Time == time)
             tp = MapInfo.GetTimingPoint((float)(time - 1));
 
-        double sAmount = tp.MsPerBeat / 4 * amount;
+        double sAmount = tp.MsPerBeat / SnapDivisor.Value * amount;
         double sTime = time + sAmount * direction;
 
         if (IsRunning || MapInfo.TimingPoints.Count == 0)

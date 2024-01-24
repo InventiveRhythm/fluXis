@@ -148,7 +148,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         effectHash = MapUtils.GetHash(values.MapEvents.Save());
 
-        clock = new EditorClock(MapInfo);
+        clock = new EditorClock(MapInfo) { SnapDivisor = values.SnapDivisorBindable };
         clock.ChangeSource(loadMapTrack());
         dependencies.CacheAs(clock);
 
