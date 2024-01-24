@@ -58,7 +58,7 @@ public partial class DefaultHealthBar : Container
     {
         base.Update();
 
-        text.Text = $"{Math.Floor(processor.SmoothHealth)}";
+        text.Text = $"{(int)Math.Round(processor.SmoothHealth)}";
 
         switch (processor)
         {
