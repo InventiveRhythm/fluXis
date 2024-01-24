@@ -29,4 +29,14 @@ public static class FluXisStyles
         Radius = radius,
         Offset = new Vector2(0, offset)
     };
+
+    public static EdgeEffectParameters Glow(Colour4 color, float radius)
+    {
+        return new EdgeEffectParameters
+        {
+            Type = EdgeEffectType.Glow,
+            Colour = color,
+            Radius = radius
+        };
+    }
 }

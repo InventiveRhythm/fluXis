@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notifications.Floating;
@@ -42,13 +43,13 @@ public partial class NotificationManager : Component
         });
     }
 
-    public void SendText(string text, string subtext = "") => SendText(text, subtext, FontAwesome6.Solid.Info);
+    public void SendText(string text, string subtext = "", Action action = null) => SendText(text, subtext, FontAwesome6.Solid.Info, action);
 
-    public void SendText(string text, string subtext, IconUsage icon)
+    public void SendText(string text, string subtext, IconUsage icon, Action action = null)
     {
         if (!ThreadSafety.IsUpdateThread)
         {
-            Scheduler.Add(() => SendText(text, subtext, icon));
+            Scheduler.Add(() => SendText(text, subtext, icon, action));
             return;
         }
 
@@ -57,17 +58,18 @@ public partial class NotificationManager : Component
         {
             Text = text,
             SubText = subtext,
-            Icon = icon
+            Icon = icon,
+            Action = action
         });
     }
 
-    public void SendError(string text, string subtext = "") => SendError(text, subtext, FontAwesome6.Solid.XMark);
+    public void SendError(string text, string subtext = "", Action action = null) => SendError(text, subtext, FontAwesome6.Solid.XMark, action);
 
-    public void SendError(string text, string subtext, IconUsage icon)
+    public void SendError(string text, string subtext, IconUsage icon, Action action = null)
     {
         if (!ThreadSafety.IsUpdateThread)
         {
-            Scheduler.Add(() => SendError(text, subtext, icon));
+            Scheduler.Add(() => SendError(text, subtext, icon, action));
             return;
         }
 
@@ -77,9 +79,10 @@ public partial class NotificationManager : Component
             Text = text,
             SubText = subtext,
             Icon = icon,
-            BackgroundColor = FluXisColors.ButtonRed,
+            AccentColor = FluXisColors.Red,
             SampleAppearing = "UI/Notifications/error.mp3",
-            Lifetime = 10000
+            Lifetime = 10000,
+            Action = action
         });
     }
 }
