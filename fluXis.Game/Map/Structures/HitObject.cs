@@ -44,7 +44,8 @@ public class HitObject : TimedObject
             Time = Time,
             Lane = Lane,
             HoldTime = HoldTime,
-            HitSound = HitSound
+            HitSound = HitSound,
+            Type = Type
         };
     }
 

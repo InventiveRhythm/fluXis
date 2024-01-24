@@ -276,12 +276,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
     public void Copy(bool deleteAfter = false)
     {
-        var hits = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().Select(x => new HitObject
-        {
-            Time = x.Time,
-            Lane = x.Lane,
-            HoldTime = x.HoldTime
-        }).ToList();
+        var hits = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().Select(h => h.Copy()).ToList();
 
         if (!hits.Any())
         {
