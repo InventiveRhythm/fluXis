@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -23,9 +24,15 @@ public partial class FluXisToggleSwitch : Container
 
     private Vector2 dragStartPos;
 
+    private Sample toggleOn;
+    private Sample toggleOff;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        toggleOn = samples.Get(@"UI/toggle-on");
+        toggleOff = samples.Get(@"UI/toggle-off");
+
         Size = new Vector2(80, 32);
 
         InternalChildren = new Drawable[]
@@ -77,6 +84,11 @@ public partial class FluXisToggleSwitch : Container
             nub.FadeColour(v.NewValue ? FluXisColors.Background3 : FluXisColors.Background5, 200);
             nub.MoveToX(v.NewValue ? 1 : 0, 400, Easing.OutQuint);
             nub.ResizeTo(v.NewValue ? 24 : 16, 400, Easing.OutQuint);
+
+            if (v.NewValue)
+                toggleOn?.Play();
+            else
+                toggleOff?.Play();
         }, true);
     }
 
@@ -131,7 +143,6 @@ public partial class FluXisToggleSwitch : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        samples.Click();
         State.Value = !State.Value;
         return base.OnClick(e);
     }
