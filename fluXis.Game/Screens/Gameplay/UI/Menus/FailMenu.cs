@@ -1,7 +1,9 @@
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -17,18 +19,29 @@ public partial class FailMenu : Container
 
     private GameplaySamples samples => screen.Samples;
 
+    private Box dim;
     private CircularContainer circle;
     private FluXisSpriteText text;
     private Container buttons;
 
+    private Bindable<bool> dimOnLowHealth;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
+
         RelativeSizeAxes = Axes.Both;
         Alpha = 0.001f; // making sure the fillflow is centered
 
         InternalChildren = new Drawable[]
         {
+            dim = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Black.Opacity(.5f),
+                Alpha = dimOnLowHealth.Value ? 0 : 1
+            },
             circle = new CircularContainer
             {
                 Anchor = Anchor.Centre,
@@ -111,6 +124,13 @@ public partial class FailMenu : Container
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        dimOnLowHealth.BindValueChanged(_ => dim.FadeTo(dimOnLowHealth.Value ? 0 : 1, 300), true);
     }
 
     public override void Show()
