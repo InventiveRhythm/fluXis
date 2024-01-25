@@ -21,6 +21,8 @@ using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -46,6 +48,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     private FloatingNotificationContainer notificationContainer;
     private BufferedContainer buffer;
+
+    private readonly BindableDouble inactiveVolume = new();
 
     public override Drawable Overlay
     {
@@ -123,6 +127,14 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             CursorOverlay,
             exitAnimation = new ExitAnimation()
         };
+
+        Audio.AddAdjustment(AdjustableProperty.Volume, inactiveVolume);
+
+        IsActive.BindValueChanged(active =>
+        {
+            var volume = Audio.VolumeTrack.Value * Config.Get<double>(FluXisSetting.InactiveVolume);
+            this.TransformBindableTo(inactiveVolume, active.NewValue ? 1 : volume, 1000, Easing.OutQuint);
+        }, true);
     }
 
     protected override void LoadComplete()

@@ -14,7 +14,7 @@ public partial class AudioVolumeSection : SettingsSubSection
     public override IconUsage Icon => FontAwesome6.Solid.VolumeHigh;
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager audio)
+    private void load(AudioManager audio, FluXisConfig config)
     {
         AddRange(new Drawable[]
         {
@@ -22,6 +22,13 @@ public partial class AudioVolumeSection : SettingsSubSection
             {
                 Label = "Master Volume",
                 Bindable = audio.Volume,
+                DisplayAsPercentage = true
+            },
+            new SettingsSlider<double>
+            {
+                Label = "Master Volume (Inactive)",
+                Description = "Volume when the game is inactive (multiplied by Master Volume)",
+                Bindable = config.GetBindable<double>(FluXisSetting.InactiveVolume),
                 DisplayAsPercentage = true
             },
             new SettingsSlider<double>

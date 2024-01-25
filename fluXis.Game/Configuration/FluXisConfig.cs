@@ -63,6 +63,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Audio
         SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
+        SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
         SetDefault(FluXisSetting.HitSoundVolume, 1d, 0d, 1d, 0.01d);
 
         // Graphics
@@ -127,6 +128,7 @@ public enum FluXisSetting
     EditorBlur,
 
     // Audio
+    InactiveVolume,
     HitSoundVolume,
     GlobalOffset,
 
