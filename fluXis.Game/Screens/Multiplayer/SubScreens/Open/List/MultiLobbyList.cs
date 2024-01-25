@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
-using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.API.Requests.Multiplayer;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
@@ -15,7 +14,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
-using WebRequest = osu.Framework.IO.Network.WebRequest;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 
@@ -77,12 +75,10 @@ public partial class MultiLobbyList : MultiSubScreen
         loadingIcon.FadeIn(200);
         lobbyList.FadeOut(200).OnComplete(_ => lobbyList.Clear());
 
-        var request = new WebRequest($"{fluxel.Endpoint.APIUrl}/multi/lobbies");
-        request.AllowInsecureRequests = true;
-        await request.PerformAsync();
+        var request = new MultiLobbiesRequest();
+        await request.PerformAsync(fluxel);
 
-        var json = request.GetResponseString();
-        var lobbies = JsonConvert.DeserializeObject<APIResponse<List<MultiplayerRoom>>>(json);
+        var lobbies = request.Response;
 
         foreach (var lobby in lobbies.Data)
             lobbyList.Add(new LobbySlot { Room = lobby, List = this });
