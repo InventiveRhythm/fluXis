@@ -18,6 +18,8 @@ public partial class FluXisToggleSwitch : Container
     [Resolved]
     private UISamples samples { get; set; }
 
+    private bool initial = true;
+
     private Box background;
     private Circle nubHover;
     private Circle nub;
@@ -85,11 +87,16 @@ public partial class FluXisToggleSwitch : Container
             nub.MoveToX(v.NewValue ? 1 : 0, 400, Easing.OutQuint);
             nub.ResizeTo(v.NewValue ? 24 : 16, 400, Easing.OutQuint);
 
+            if (initial)
+                return;
+
             if (v.NewValue)
                 toggleOn?.Play();
             else
                 toggleOff?.Play();
         }, true);
+
+        initial = false;
     }
 
     protected override void Update()
