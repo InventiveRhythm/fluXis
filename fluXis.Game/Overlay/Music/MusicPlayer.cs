@@ -23,7 +23,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Music;
 
-public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
     private GlobalClock globalClock { get; set; }
@@ -33,9 +33,6 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
 
     [Resolved]
     private MapStore maps { get; set; }
-
-    [Resolved]
-    private UISamples samples { get; set; }
 
     public FluXisScreenStack ScreenStack { get; set; }
 
@@ -315,14 +312,12 @@ public partial class MusicPlayer : VisibilityContainer, IKeyBindingHandler<FluXi
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
-        samples.Overlay(false);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
         content.MoveToY(-50, 400, Easing.OutQuint);
-        samples.Overlay(true);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

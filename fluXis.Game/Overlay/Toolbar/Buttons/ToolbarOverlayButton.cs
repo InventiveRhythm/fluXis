@@ -5,7 +5,7 @@ namespace fluXis.Game.Overlay.Toolbar.Buttons;
 
 public partial class ToolbarOverlayButton : ToolbarButton
 {
-    public VisibilityContainer Overlay
+    public OverlayContainer Overlay
     {
         init
         {

@@ -19,10 +19,8 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User;
 
-public partial class UserProfileOverlay : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override bool StartHidden => true;
-
     [Resolved]
     private Fluxel fluxel { get; set; }
 

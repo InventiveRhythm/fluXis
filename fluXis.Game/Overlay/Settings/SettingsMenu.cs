@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -22,12 +21,9 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Settings;
 
-public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override bool StartHidden => true;
-
-    [Resolved]
-    private UISamples samples { get; set; }
+    protected override bool PlaySamples => false;
 
     private Bindable<SettingsSection> currentSection { get; } = new();
 
@@ -54,6 +50,8 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
     private Sample open;
     private Sample close;
     private Sample tabSwitch;
+
+    private bool initial = true;
 
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
@@ -191,6 +189,8 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
 
         if (sections.Count > 0)
             currentSection.Value = sections[0];
+
+        initial = false;
     }
 
     private void sectionChanged(ValueChangedEvent<SettingsSection> e)
@@ -219,13 +219,14 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
 
         next.MoveToX(0, 400, Easing.OutQuint).FadeIn(200);
 
-        if (prev != null)
+        if (prev != null && !initial)
             tabSwitch?.Play();
     }
 
     protected override void PopIn()
     {
-        open?.Play();
+        if (!initial)
+            open?.Play();
 
         const int size = 200;
         const int scale_duration = 400;
@@ -250,7 +251,9 @@ public partial class SettingsMenu : VisibilityContainer, IKeyBindingHandler<FluX
 
     protected override void PopOut()
     {
-        close?.Play();
+        if (!initial)
+            close?.Play();
+
         this.FadeOut(200);
         content.ScaleTo(.95f, 400, Easing.OutQuint);
     }

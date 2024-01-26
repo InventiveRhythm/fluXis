@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -25,18 +24,13 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Chat;
 
-public partial class ChatOverlay : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override bool StartHidden => true;
-
     [Resolved]
     private Fluxel fluxel { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
-
-    [Resolved]
-    private UISamples samples { get; set; }
 
     public string Channel { get; set; } = "general";
 
@@ -283,14 +277,12 @@ public partial class ChatOverlay : VisibilityContainer, IKeyBindingHandler<FluXi
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
-        samples.Overlay(false);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
         content.MoveToY(50, 400, Easing.OutQuint);
-        samples.Overlay(true);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

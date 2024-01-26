@@ -1,5 +1,4 @@
 using System;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -16,17 +15,12 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Overlay.Network;
 
-public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    protected override bool StartHidden => true;
-
     private const int rounding = 20;
 
     [Resolved]
     private Fluxel fluxel { get; set; }
-
-    [Resolved]
-    private UISamples samples { get; set; }
 
     private Container content;
     private DashboardSidebar sidebar;
@@ -172,14 +166,12 @@ public partial class Dashboard : VisibilityContainer, IKeyBindingHandler<FluXisG
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
-        samples.Overlay(false);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
         content.MoveToY(-50, 400, Easing.OutQuint);
-        samples.Overlay(true);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
