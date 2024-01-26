@@ -28,7 +28,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.LaneCoverBottom, 0f, 0f, 1f, 0.01f);
         SetDefault(FluXisSetting.DimAndFade, true);
 
-        SetDefault(FluXisSetting.ScrollSpeed, 2f, 1f, 10f, 0.1f);
+        SetDefault(FluXisSetting.ScrollSpeed, 3f, 2f, 8f, 0.1f);
 
         SetDefault(FluXisSetting.Hitsounding, true);
         SetDefault(FluXisSetting.BackgroundVideo, true);
