@@ -49,7 +49,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private FloatingNotificationContainer notificationContainer;
     private BufferedContainer buffer;
 
-    private readonly BindableDouble inactiveVolume = new();
+    private readonly BindableDouble inactiveVolume = new(1f);
 
     public override Drawable Overlay
     {
