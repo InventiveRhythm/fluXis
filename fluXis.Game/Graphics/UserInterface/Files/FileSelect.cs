@@ -9,6 +9,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Files.Entry;
 using fluXis.Game.Graphics.UserInterface.Files.Sidebar;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Utils;
@@ -25,7 +26,7 @@ using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Files;
 
-public partial class FileSelect : CompositeDrawable, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public bool ShowFiles { get; init; } = true;
     public string MapDirectory { get; init; } = null;
@@ -611,6 +612,7 @@ public partial class FileSelect : CompositeDrawable, IKeyBindingHandler<FluXisGl
 
     public override void Show() => this.ScaleTo(.9f).FadeInFromZero(200).ScaleTo(1f, 1000, Easing.OutElastic);
     public override void Hide() => this.FadeOut(200).ScaleTo(.9f, 400, Easing.OutQuint);
+    public void Close() => Hide();
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {

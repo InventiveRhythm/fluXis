@@ -5,11 +5,12 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Panel;
 
-public partial class ButtonPanel : Panel
+public partial class ButtonPanel : Panel, ICloseable
 {
     public string Text { get; set; }
     public string SubText { get; set; }
@@ -79,5 +80,14 @@ public partial class ButtonPanel : Panel
                 }).ToArray()
             }
         };
+    }
+
+    protected override bool OnClick(ClickEvent e) => true;
+
+    public void Close()
+    {
+        var last = Buttons.Last();
+        last.Action?.Invoke();
+        Hide();
     }
 }
