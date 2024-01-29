@@ -13,27 +13,28 @@ public partial class TestAchievementOverlay : FluXisTestScene
         var panels = new PanelContainer();
         Add(panels);
 
-        AddStep("Show Default", () => panels.Content = new AchievementOverlay(new Achievement
+        AddStep("Show Level 1", () => panels.Content = new AchievementOverlay(new Achievement
         {
             ID = "test-1",
+            Level = 1,
             Name = "Test Achievement",
             Description = "This is a test achievement."
         }));
 
-        AddStep("Show Red", () => panels.Content = new AchievementOverlay(new Achievement
+        AddStep("Show Level 2", () => panels.Content = new AchievementOverlay(new Achievement
         {
             ID = "test-2",
+            Level = 2,
             Name = "Test Achievement",
-            Description = "This is a test achievement.",
-            ColorHex = "#ff5555"
+            Description = "This is a test achievement."
         }));
 
-        AddStep("Show Green", () => panels.Content = new AchievementOverlay(new Achievement
+        AddStep("Show Level 3", () => panels.Content = new AchievementOverlay(new Achievement
         {
             ID = "test-3",
+            Level = 3,
             Name = "Test Achievement",
-            Description = "This is a test achievement.",
-            ColorHex = "#55ff55"
+            Description = "This is a test achievement."
         }));
     }
 }
