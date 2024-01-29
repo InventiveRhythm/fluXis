@@ -258,6 +258,7 @@ public partial class Fluxel : Component
                     EventType.Login => handleListener<APIUserShort>,
                     EventType.Register => handleListener<APIRegisterResponse>,
                     EventType.Logout => handleListener<object>,
+                    EventType.Achievement => handleListener<Achievement>,
                     EventType.ServerMessage => handleListener<ServerMessage>,
                     EventType.ChatMessage => handleListener<ChatMessage>,
                     EventType.ChatHistory => handleListener<ChatMessage[]>,
@@ -441,6 +442,7 @@ public partial class Fluxel : Component
             "account/register" => EventType.Register,
             "account/logout" => EventType.Logout,
 
+            "achievement" => EventType.Achievement,
             "server/message" => EventType.ServerMessage,
 
             "chat/message" => EventType.ChatMessage,
@@ -479,6 +481,7 @@ public enum EventType
     /// </summary>
     Logout,
 
+    Achievement,
     ServerMessage,
 
     ChatMessage,

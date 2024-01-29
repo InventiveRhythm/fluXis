@@ -8,6 +8,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Localization.Stores;
 using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.Achievements;
 using fluXis.Game.Overlay.Exit;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
@@ -117,6 +118,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         ScreenStack.Push(new WarningScreen());
         MenuScreen = new MenuScreen();
         LoadComponent(MenuScreen);
+
+        Fluxel.RegisterListener<Achievement>(EventType.Achievement, res =>
+        {
+            var achievement = res.Data;
+            Schedule(() => panelContainer.Content = new AchievementOverlay(achievement));
+        });
 
         Fluxel.RegisterListener<ServerMessage>(EventType.ServerMessage, res =>
         {
