@@ -22,7 +22,8 @@ public partial class DriveEntry : Container
     private DriveInfo info { get; }
     private FileSelect selector { get; }
 
-    private float usage => (float)info.AvailableFreeSpace / info.TotalSize;
+    private long used => info.TotalSize - info.AvailableFreeSpace;
+    private float usage => (float)used / info.TotalSize;
     private Colour4 color { get; }
 
     private Box hover { get; set; }
@@ -96,7 +97,7 @@ public partial class DriveEntry : Container
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
                                 Alpha = .8f,
-                                Text = $"{info.AvailableFreeSpace / 1024 / 1024 / 1024} GB / {info.TotalSize / 1024 / 1024 / 1024} GB",
+                                Text = $"{used / 1024 / 1024 / 1024} GB / {info.TotalSize / 1024 / 1024 / 1024} GB",
                             }
                         }
                     },
