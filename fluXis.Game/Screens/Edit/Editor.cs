@@ -234,6 +234,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             new("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
                             new("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
                             new FluXisMenuSpacer(),
+                            new("Apply Offset", FontAwesome6.Solid.Clock, applyOffset),
                             new("Flip Selection", FontAwesome6.Solid.LeftRight, () => values.ActionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), Map.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
                             new FluXisMenuSpacer(),
                             new("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
@@ -325,6 +326,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             },
             bottomBar = new EditorBottomBar()
+        };
+    }
+
+    private void applyOffset()
+    {
+        Game.Overlay = new EditorOffsetPanel
+        {
+            OnApplyOffset = offset => MapInfo.ApplyOffsetToAll(offset)
         };
     }
 

@@ -89,4 +89,49 @@ public class EditorMapEvents : MapEvents
         ShakeEvents.Remove(shakeEvent);
         ShakeEventRemoved?.Invoke(shakeEvent);
     }
+
+    public void ApplyOffsetToAll(float offset)
+    {
+        foreach (var switchEvent in LaneSwitchEvents)
+        {
+            switchEvent.Time += offset;
+            Update(switchEvent);
+        }
+
+        foreach (var flashEvent in FlashEvents)
+        {
+            flashEvent.Time += offset;
+            Update(flashEvent);
+        }
+
+        foreach (var pulseEvent in PulseEvents)
+        {
+            pulseEvent.Time += offset;
+            Update(pulseEvent);
+        }
+
+        foreach (var moveEvent in PlayfieldMoveEvents)
+        {
+            moveEvent.Time += offset;
+            Update(moveEvent);
+        }
+
+        foreach (var scaleEvent in PlayfieldScaleEvents)
+        {
+            scaleEvent.Time += offset;
+            Update(scaleEvent);
+        }
+
+        foreach (var shakeEvent in ShakeEvents)
+        {
+            shakeEvent.Time += offset;
+            Update(shakeEvent);
+        }
+
+        foreach (var fadeEvent in PlayfieldFadeEvents)
+        {
+            fadeEvent.Time += offset;
+            Update(fadeEvent);
+        }
+    }
 }

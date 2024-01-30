@@ -132,6 +132,29 @@ public class EditorMapInfo : MapInfo
 
     public override MapEvents GetMapEvents() => MapEvents;
 
+    public void ApplyOffsetToAll(float offset)
+    {
+        foreach (var hitObject in HitObjects)
+        {
+            hitObject.Time += offset;
+            Update(hitObject);
+        }
+
+        foreach (var timingPoint in TimingPoints)
+        {
+            timingPoint.Time += offset;
+            Update(timingPoint);
+        }
+
+        foreach (var scrollVelocity in ScrollVelocities)
+        {
+            scrollVelocity.Time += offset;
+            Update(scrollVelocity);
+        }
+
+        MapEvents.ApplyOffsetToAll(offset);
+    }
+
     public new EditorMapInfo Clone()
     {
         return new EditorMapInfo(Metadata)
