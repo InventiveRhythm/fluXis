@@ -103,7 +103,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         IsActive.BindValueChanged(active =>
         {
-            var volume = Audio.VolumeTrack.Value * Config.Get<double>(FluXisSetting.InactiveVolume);
+            var volume = Config.Get<double>(FluXisSetting.InactiveVolume);
             this.TransformBindableTo(inactiveVolume, active.NewValue ? 1 : volume, 1000, Easing.OutQuint);
         }, true);
     }
