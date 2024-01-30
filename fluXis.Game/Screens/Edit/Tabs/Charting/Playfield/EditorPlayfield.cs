@@ -80,7 +80,7 @@ public partial class EditorPlayfield : Container
         base.Update();
 
         float songLengthInPixels = .5f * (clock.TrackLength * values.Zoom);
-        float songTimeInPixels = -EditorHitObjectContainer.HITPOSITION - .5f * (-(float)clock.CurrentTime * values.Zoom);
+        float songTimeInPixels = -EditorHitObjectContainer.HITPOSITION - .5f * (-(float)(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * values.Zoom);
 
         waveform.Width = songLengthInPixels;
         waveform.Y = songTimeInPixels;

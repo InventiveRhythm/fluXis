@@ -26,6 +26,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting;
 
 public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    public const float WAVEFORM_OFFSET = 20;
+
     public IReadOnlyList<ChartingTool> Tools { get; } = new ChartingTool[]
     {
         new SelectTool(),

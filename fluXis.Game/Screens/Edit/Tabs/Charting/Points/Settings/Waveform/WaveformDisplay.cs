@@ -99,7 +99,7 @@ public partial class WaveformDisplay : Container
         foreach (var row in InternalChildren.OfType<WaveformRow>())
         {
             var time = point.Time + index * point.MsPerBeat;
-            var offset = (time - DrawWidth / 2) / trackLength * scale;
+            var offset = (time - DrawWidth / 2 + ChartingContainer.WAVEFORM_OFFSET) / trackLength * scale;
 
             row.Alpha = time < point.Time || time > endTime ? 0.2f : 1;
             row.WaveformOffsetTo(-offset);
