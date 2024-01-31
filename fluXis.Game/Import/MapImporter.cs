@@ -117,13 +117,7 @@ public class MapImporter
     protected string CreatePackage(string name, string folder)
     {
         string path = Path.Combine(Storage.GetFullPath("import"), name + ".fms");
-
-        var pack = ZipFile.Open(path, ZipArchiveMode.Create);
-
-        foreach (var file in Directory.GetFiles(folder))
-            pack.CreateEntryFromFile(file, Path.GetFileName(file));
-
-        pack.Dispose();
+        ZipFile.CreateFromDirectory(folder, path, CompressionLevel.NoCompression, false);
         return path;
     }
 
@@ -175,6 +169,9 @@ public class MapImporter
     /// </param>
     protected static void CopyFile(ZipArchiveEntry entry, string folder)
     {
+        // create subdirectories if necessary
+        Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(folder, entry.FullName)));
+
         string destPath = Path.Combine(folder, entry.FullName);
         entry.ExtractToFile(destPath, true);
     }
@@ -190,6 +187,9 @@ public class MapImporter
     /// </param>
     protected static void CopyFile(string path, string folder)
     {
+        // create subdirectories if necessary
+        Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(folder, path)));
+
         string destPath = Path.Combine(folder, Path.GetFileName(path));
         File.Copy(path, destPath, true);
     }
