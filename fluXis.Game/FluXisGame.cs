@@ -12,6 +12,7 @@ using fluXis.Game.Overlay.Achievements;
 using fluXis.Game.Overlay.Exit;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Overlay.Notifications.Types.Image;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens;
@@ -94,6 +95,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             panelContainer = new PanelContainer { BlurContainer = buffer },
             new VolumeOverlay(),
             NotificationManager.Floating = notificationContainer = new FloatingNotificationContainer(),
+            NotificationManager.Tasks = new TaskNotificationContainer(),
             new FpsOverlay(),
             CursorOverlay,
             exitAnimation = new ExitAnimation()

@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Notifications.Floating;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -12,6 +13,7 @@ namespace fluXis.Game.Overlay.Notifications;
 public partial class NotificationManager : Component
 {
     public FloatingNotificationContainer Floating { get; set; }
+    public TaskNotificationContainer Tasks { get; set; }
 
     public void Add(INotificationData notification)
     {
@@ -23,6 +25,18 @@ public partial class NotificationManager : Component
 
         Logger.Log($"Sending notification: {notification}");
         Floating?.Add(notification.CreateFloating());
+    }
+
+    public void AddTask(TaskNotificationData notification)
+    {
+        if (!ThreadSafety.IsUpdateThread)
+        {
+            Scheduler.Add(() => AddTask(notification));
+            return;
+        }
+
+        Logger.Log($"Sending task notification: {notification}");
+        Tasks?.Add(notification.Create());
     }
 
     public void SendSmallText(string text) => SendSmallText(text, FontAwesome6.Solid.Info);
