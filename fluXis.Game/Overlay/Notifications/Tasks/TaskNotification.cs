@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -164,8 +165,8 @@ public partial class TaskNotification : CompositeDrawable
         Show();
 
         updateState(LoadingState.Working);
-        data.ProgressBindable.BindValueChanged(e => resize(e.NewValue));
-        data.StateBindable.BindValueChanged(e => updateState(e.NewValue));
+        data.ProgressBindable.BindValueChanged(e => Scheduler.ScheduleIfNeeded(() => resize(e.NewValue)));
+        data.StateBindable.BindValueChanged(e => Scheduler.ScheduleIfNeeded(() => updateState(e.NewValue)));
     }
 
     protected override bool OnClick(ClickEvent e)
