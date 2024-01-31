@@ -155,13 +155,16 @@ public class FluXisImport : MapImporter
                     }
 
                     archive.Dispose();
-                    MapStore.AddMapSet(mapSet.Detach());
+
+                    mapSet = mapSet.Detach();
+                    MapStore.AddMapSet(mapSet);
 
                     try { File.Delete(path); }
                     catch { Logger.Log($"Failed to delete {path}"); }
                 });
             }
 
+            Notification.Action = () => MapStore.Present(mapSet);
             Notification.State = LoadingState.Complete;
         }
         catch (Exception e)

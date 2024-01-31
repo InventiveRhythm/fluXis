@@ -16,6 +16,7 @@ using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Screens.Select;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -49,6 +50,9 @@ public partial class MapStore : Component
 
     [Resolved]
     private NotificationManager notifications { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
 
     private bool initialLoad;
     private Storage files;
@@ -154,6 +158,16 @@ public partial class MapStore : Component
 
         if (loop)
             clock.RestartPoint = preview ? map?.Metadata.PreviewTime ?? 0 : 0;
+    }
+
+    public void Present(RealmMapSet map)
+    {
+        Select(map.LowestDifficulty, true, false);
+
+        var stack = game.ScreenStack;
+
+        if (stack.CurrentScreen is not SelectScreen)
+            stack.Push(new SelectScreen());
     }
 
     public void AddMapSet(RealmMapSet mapSet, bool notify = true)

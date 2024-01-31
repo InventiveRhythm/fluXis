@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Notifications.Floating;
 using osu.Framework.Bindables;
@@ -11,6 +12,7 @@ public class LoadingNotificationData : INotificationData
     public string TextSuccess { get; set; } = "Loaded!";
     public string TextFailure { get; set; } = "Failed!";
     public IconUsage Icon { get; set; } = FontAwesome6.Solid.Rotate;
+    public Action Action { get; set; }
 
     public BindableFloat ProgressBindable { get; } = new() { MinValue = 0, MaxValue = 1 };
     public Bindable<LoadingState> StateBindable { get; } = new();

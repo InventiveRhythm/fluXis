@@ -94,6 +94,16 @@ public partial class FloatingLoadingNotification : FloatingNotification
         data.ProgressBindable.BindValueChanged(e => Schedule(() => onProgressChange(e)));
     }
 
+    protected override bool OnClick(ClickEvent e)
+    {
+        if (data.Action == null || data.State != LoadingState.Complete)
+            return false;
+
+        data.Action.Invoke();
+        Hide(100);
+        return true;
+    }
+
     private void onProgressChange(ValueChangedEvent<float> e)
     {
         if (data.State == LoadingState.Working) foreground.ResizeWidthTo(e.NewValue, 200, Easing.OutQuint);
@@ -160,13 +170,13 @@ public partial class FloatingLoadingNotification : FloatingNotification
         this.Delay(1000).Schedule(() => canMinimize = true);
     }
 
-    public void Hide(float delay = 0)
+    public void Hide(float delay = 0, float duration = 400)
     {
         canMinimize = false;
         this.Delay(delay).Schedule(() =>
         {
             disappear?.Play();
-            this.FadeOut(400).Expire();
+            this.FadeOut(duration).Expire();
         });
     }
 
