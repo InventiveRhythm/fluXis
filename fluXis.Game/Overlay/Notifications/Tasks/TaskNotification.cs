@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -25,6 +26,10 @@ public partial class TaskNotification : CompositeDrawable
     private CircularContainer progress;
     private Box progressFill;
 
+    private Sample appear;
+    private Sample disappear;
+    private Sample error;
+
     private readonly Color4 colorWorking = Colour4.FromHex("#66AACC");
     private readonly Color4 colorFailed = Colour4.FromHex("#CC6666");
     private readonly Color4 colorFinished = Colour4.FromHex("#66CC66");
@@ -35,8 +40,12 @@ public partial class TaskNotification : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        appear = samples.Get("UI/Notifications/in");
+        disappear = samples.Get("UI/Notifications/out");
+        error = samples.Get("UI/Notifications/error");
+
         Size = new Vector2(400, 80);
 
         InternalChild = content = new Container
@@ -178,8 +187,17 @@ public partial class TaskNotification : CompositeDrawable
         return true;
     }
 
-    public override void Show() => content.MoveToX(-500).MoveToX(0, 500, Easing.OutQuint);
-    public void Hide(float delay = 0) => content.Delay(delay).MoveToX(-500, 500, Easing.OutQuint).Expire();
+    public override void Show()
+    {
+        appear?.Play();
+        content.MoveToX(-500).MoveToX(0, 500, Easing.OutQuint);
+    }
+
+    public void Hide(float delay = 0)
+    {
+        this.Delay(delay).OnComplete(_ => disappear?.Play());
+        content.Delay(delay).MoveToX(-500, 500, Easing.OutQuint).Expire();
+    }
 
     private void updateState(LoadingState state, bool instant = false)
     {
@@ -204,6 +222,7 @@ public partial class TaskNotification : CompositeDrawable
                 icon.Icon = FontAwesome6.Solid.XMark;
                 statusText.Text = data.TextFailed;
                 Hide(10000);
+                error?.Play();
                 break;
 
             case LoadingState.Complete:
