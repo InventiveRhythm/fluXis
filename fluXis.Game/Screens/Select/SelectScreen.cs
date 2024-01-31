@@ -18,7 +18,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Replays;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Gameplay;
@@ -474,14 +474,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (set == null)
             return;
 
-        var notification = new LoadingNotificationData
+        var notification = new TaskNotificationData
         {
-            TextLoading = $"Exporting mapset {set.Metadata.Artist} - {set.Metadata.Title}...",
-            TextSuccess = $"Exported mapset {set.Metadata.Artist} - {set.Metadata.Title}!",
-            TextFailure = $"Failed to export mapset {set.Metadata.Artist} - {set.Metadata.Title}!"
+            Text = $"{set.Metadata.Title} - {set.Metadata.Artist}",
+            TextWorking = "Exporting..."
         };
 
-        notifications.Add(notification);
+        notifications.AddTask(notification);
         Task.Run(() => mapStore.Export(set, notification));
     }
 

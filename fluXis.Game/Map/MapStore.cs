@@ -15,7 +15,7 @@ using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
@@ -232,7 +232,7 @@ public partial class MapStore : Component
     public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
     public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
 
-    public string Export(RealmMapSet set, LoadingNotificationData notification, bool openFolder = true)
+    public string Export(RealmMapSet set, TaskNotificationData notification, bool openFolder = true)
     {
         try
         {
@@ -499,11 +499,11 @@ public partial class MapStore : Component
         if (DownloadQueue.Any(x => x.Id == set.Id))
             return;
 
-        var notification = new LoadingNotificationData
+        var notification = new TaskNotificationData
         {
-            TextLoading = "Downloading mapset...",
-            TextSuccess = $"Downloaded {set.Title} - {set.Artist}.",
-            TextFailure = "Failed to download mapset."
+            Text = $"{set.Title} - {set.Artist}",
+            TextWorking = "Downloading...",
+            TextFinished = "Done! Click to view."
         };
 
         var req = fluxel.CreateAPIRequest($"/mapset/{set.Id}/download");
@@ -564,7 +564,7 @@ public partial class MapStore : Component
         StartDownload(set);
         req.PerformAsync();
 
-        notifications.Add(notification);
+        notifications.AddTask(notification);
     }
 
     public void Remove(RealmMapSet map)

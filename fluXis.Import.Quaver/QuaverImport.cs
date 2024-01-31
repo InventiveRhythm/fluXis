@@ -49,8 +49,6 @@ public class QuaverImport : MapImporter
                     var quaverMap = parseFromEntry(entry);
                     var map = quaverMap.ToMapInfo();
 
-                    notification.TextSuccess = $"Imported Quaver map: {map.Metadata.Artist} - {map.Metadata.Title}";
-
                     var effect = quaverMap.GetEffects().Save();
 
                     if (effect != "")

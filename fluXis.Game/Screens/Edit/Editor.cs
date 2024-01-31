@@ -20,7 +20,7 @@ using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Game.Screens.Edit.BottomBar;
 using fluXis.Game.Screens.Edit.MenuBar;
@@ -690,11 +690,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         if (!save(false)) return;
 
-        mapStore.Export(Map.MapSet, new LoadingNotificationData
+        mapStore.Export(Map.MapSet, new TaskNotificationData
         {
-            TextLoading = "Exporting mapset...",
-            TextSuccess = "Exported!",
-            TextFailure = "Failed to export!"
+            Text = $"{MapInfo.Metadata.Title} - {MapInfo.Metadata.Artist}",
+            TextWorking = "Exporting..."
         });
     }
 
@@ -804,7 +803,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         overlay.SubText = "Uploading mapset...";
 
         var realmMapSet = mapStore.GetFromGuid(Map.MapSet.ID);
-        var path = mapStore.Export(realmMapSet.Detach(), new LoadingNotificationData(), false);
+        var path = mapStore.Export(realmMapSet.Detach(), new TaskNotificationData(), false);
         var buffer = await File.ReadAllBytesAsync(path);
 
         var request = new MapSetUploadRequest(buffer, Map.MapSet);

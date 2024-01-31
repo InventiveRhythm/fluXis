@@ -7,7 +7,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Import;
@@ -54,7 +54,7 @@ public class MapImporter
     /// <param name="notification">
     /// Loading notification to update.
     /// </param>
-    protected void FinalizeConversion(string path, LoadingNotificationData notification = null)
+    protected void FinalizeConversion(string path, TaskNotificationData notification = null)
     {
         notification ??= CreateNotification();
 
@@ -127,16 +127,16 @@ public class MapImporter
     /// <returns>
     /// The created notification.
     /// </returns>
-    protected LoadingNotificationData CreateNotification()
+    protected TaskNotificationData CreateNotification()
     {
-        var notification = new LoadingNotificationData
+        var notification = new TaskNotificationData
         {
-            TextLoading = $"Importing {GameName} map...",
-            TextSuccess = $"Imported {GameName} map!",
-            TextFailure = $"Failed to import {GameName} map!"
+            Text = $"Importing {GameName} map...",
+            TextWorking = "Importing...",
+            TextFinished = "Done! Click to view."
         };
 
-        Notifications.Add(notification);
+        Notifications.AddTask(notification);
         return notification;
     }
 

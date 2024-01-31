@@ -7,7 +7,7 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
@@ -23,20 +23,19 @@ public class FluXisImport : MapImporter
      */
     public int MapStatus { get; set; } = -2;
 
-    public LoadingNotificationData Notification { get; set; }
+    public TaskNotificationData Notification { get; set; }
 
     public override void Import(string path)
     {
         if (Notification == null)
         {
-            Notification = new LoadingNotificationData
+            Notification = new TaskNotificationData
             {
-                TextLoading = "Importing mapset...",
-                TextSuccess = "Imported mapset!",
-                TextFailure = "Failed to import mapset!"
+                TextWorking = "Importing...",
+                TextFinished = "Done! Click to view."
             };
 
-            Notifications.Add(Notification);
+            Notifications.AddTask(Notification);
         }
 
         try
@@ -164,7 +163,7 @@ public class FluXisImport : MapImporter
                 });
             }
 
-            Notification.Action = () => MapStore.Present(mapSet);
+            Notification.ClickAction = () => MapStore.Present(mapSet);
             Notification.State = LoadingState.Complete;
         }
         catch (Exception e)

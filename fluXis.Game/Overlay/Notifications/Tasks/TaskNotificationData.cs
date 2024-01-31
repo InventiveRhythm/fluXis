@@ -10,7 +10,7 @@ public class TaskNotificationData
     public string Text { get; set; } = "Running Task...";
     public string TextWorking { get; set; } = "Working...";
     public string TextFinished { get; set; } = "Finished!";
-    public string TextFailed { get; set; } = "Failed!";
+    public string TextFailed { get; set; } = "Failed! View logs for more info.";
     public IconUsage WorkingIcon { get; set; } = FontAwesome6.Solid.ArrowsRotate;
     public bool SpinIcon { get; set; } = true;
     public Action ClickAction { get; set; }

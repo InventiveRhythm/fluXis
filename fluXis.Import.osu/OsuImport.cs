@@ -56,8 +56,6 @@ public class OsuImport : MapImporter
                         var map = parseOsuMap(entry);
                         var json = map.ToMapInfo().Serialize();
                         WriteFile(json, folder, $"{entry.FullName}.fsc");
-
-                        notification.TextSuccess = $"Imported osu! map: {map.Artist} - {map.Title}";
                         success++;
                     }
                     catch (Exception e)
@@ -75,14 +73,14 @@ public class OsuImport : MapImporter
             if (success == 0)
             {
                 if (failed == 0)
-                    notification.TextFailure = "No osu!mania maps found in the .osz file";
+                    notification.TextFailed = "No osu!mania maps found in the .osz file";
 
                 notification.State = LoadingState.Failed;
                 return;
             }
 
             if (failed > 0)
-                notification.TextSuccess += $" ({failed} failed)";
+                notification.TextFinished += $" ({failed} failed)";
 
             var pack = CreatePackage(fileName, folder);
             FinalizeConversion(pack, notification);

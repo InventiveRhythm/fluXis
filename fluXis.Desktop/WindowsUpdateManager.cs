@@ -8,7 +8,7 @@ using System.Runtime.Versioning;
 using fluXis.Game;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Types.Loading;
+using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Updater;
 using Newtonsoft.Json.Linq;
 using osu.Framework.IO.Network;
@@ -145,14 +145,15 @@ public partial class WindowsUpdateManager : IUpdateManager
 
     private void startUpdate(string latest)
     {
-        var notification = new LoadingNotificationData
+        var notification = new TaskNotificationData
         {
-            TextLoading = "Downloading update...",
-            TextFailure = "Failed to download update. Check update.log for more information.",
-            TextSuccess = "Update downloaded. Starting update..."
+            Text = "New update available!",
+            TextWorking = "Downloading...",
+            TextFailed = "Failed! Check update.log for more information.",
+            TextFinished = "Done! Starting update..."
         };
 
-        notifications.Add(notification);
+        notifications.AddTask(notification);
 
         try
         {
@@ -192,14 +193,15 @@ public partial class WindowsUpdateManager : IUpdateManager
 
     private async void getPatcher(Action callback)
     {
-        var notification = new LoadingNotificationData
+        var notification = new TaskNotificationData()
         {
-            TextLoading = "Downloading patcher...",
-            TextFailure = "Failed to download patcher. Check update.log for more information.",
-            TextSuccess = "Patcher downloaded. Starting update...",
+            Text = "Game patcher download",
+            TextWorking = "Downloading...",
+            TextFailed = "Failed! Check update.log for more information.",
+            TextFinished = "Done! Starting update...",
         };
 
-        notifications.Add(notification);
+        notifications.AddTask(notification);
 
         const string url = "https://dl.flux.moe/fluXis/patcher.exe";
         var request = new WebRequest(url);
