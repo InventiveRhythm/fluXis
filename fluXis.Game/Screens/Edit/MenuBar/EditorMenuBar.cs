@@ -16,7 +16,7 @@ public partial class EditorMenuBar : FluXisMenu
         MaskingContainer.CornerRadius = 0;
         MaskingContainer.EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
         BackgroundColour = FluXisColors.Background1;
-        ItemsContainer.Spacing = new Vector2(10, 0);
+        // ItemsContainer = new Vector2(10, 0);
     }
 
     protected override void UpdateSize(Vector2 newSize)

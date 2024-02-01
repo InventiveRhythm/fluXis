@@ -123,9 +123,9 @@ public partial class FluXisTextBox : BasicTextBox
 
         if (IsPassword)
         {
-            container.Height = CalculatedTextSize;
-            container.Width = CalculatedTextSize / 2;
-            container.Child = new PasswordCharacter(CalculatedTextSize);
+            container.Height = FontSize;
+            container.Width = FontSize / 2;
+            container.Child = new PasswordCharacter(FontSize);
         }
         else
         {
@@ -133,7 +133,7 @@ public partial class FluXisTextBox : BasicTextBox
             container.Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                FontSize = CalculatedTextSize
+                FontSize = FontSize
             };
         }
 

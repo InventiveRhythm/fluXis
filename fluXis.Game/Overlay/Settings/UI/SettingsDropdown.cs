@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -116,11 +117,29 @@ public partial class SettingsDropdown<T> : SettingsItem
                 };
             }
 
+            protected override DropdownSearchBar CreateSearchBar() => new SettingsDropdownSearchBar();
+
             protected override bool OnHover(HoverEvent e)
             {
                 base.OnHover(e);
                 return true;
             }
+        }
+
+        private partial class SettingsDropdownSearchBar : DropdownSearchBar
+        {
+            protected override TextBox CreateTextBox()
+            {
+                return new FluXisTextBox
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 30,
+                    PlaceholderText = "Search"
+                };
+            }
+
+            protected override void PopIn() => this.FadeIn(200);
+            protected override void PopOut() => this.FadeOut(200);
         }
 
         private partial class FluXisDropdownMenu : DropdownMenu

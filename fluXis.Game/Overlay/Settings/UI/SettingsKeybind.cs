@@ -126,7 +126,7 @@ public partial class SettingsKeybind : SettingsItem
         return true;
     }
 
-    private void updateBinding(KeyCombination combination, InputKey key) => updateBinding(new KeyCombination(combination.Keys.Where(KeyCombination.IsModifierKey).Append(key)));
+    private void updateBinding(KeyCombination combination, InputKey key) => updateBinding(new KeyCombination(combination.Keys.Where(KeyCombination.IsModifierKey).Append(key).ToArray()));
 
     private void updateBinding(KeyCombination combination)
     {

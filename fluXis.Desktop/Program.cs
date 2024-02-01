@@ -22,7 +22,7 @@ public static class Program
 
         string name = $"fluXis{(args.Contains("--dev") ? "-dev" : "")}";
 
-        using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { BindIPC = true });
+        using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { IPCPort = 44127 });
 
         switch (host.IsPrimaryInstance)
         {
