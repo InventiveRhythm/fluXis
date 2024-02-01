@@ -4,7 +4,7 @@ namespace fluXis.Game.Online.API;
 
 public class APIResponse<T>
 {
-    [JsonProperty("code")]
+    [JsonProperty("status")]
     public int Status { get; init; }
 
     [JsonProperty("message")]
