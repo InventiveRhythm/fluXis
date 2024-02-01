@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Users;
-using Newtonsoft.Json;
-using osu.Framework.IO.Network;
+using fluXis.Game.Online.API.Requests.Users;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online;
@@ -54,19 +52,18 @@ public static class UserCache
         return user;
     }
 
-    private static APIUser fetchUser(int id)
+    private static APIUser fetchUser(long id)
     {
-        // TODO: rewrite to use APIRequest
         try
         {
-            var req = new WebRequest($"{fluxel.Endpoint.APIUrl}/user/{id}");
-            req.AllowInsecureRequests = true;
-            req.Perform();
-            APIResponse<APIUser> user = JsonConvert.DeserializeObject<APIResponse<APIUser>>(req.GetResponseString());
+            var req = new UserRequest(id);
+            req.Perform(fluxel);
+            var res = req.Response;
 
-            if (user.Status == 200) return user.Data;
+            if (res.Status == 200)
+                return res.Data;
 
-            Logger.Log($"Failed to load user from API: {user.Message}", LoggingTarget.Network, LogLevel.Error);
+            Logger.Log($"Failed to load user from API: {res.Message}", LoggingTarget.Network, LogLevel.Error);
             return null;
         }
         catch (Exception e)
