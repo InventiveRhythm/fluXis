@@ -260,16 +260,17 @@ public partial class FluXisGameBase : osu.Framework.Game
     private APIEndpointConfig getApiEndpoint()
     {
         var path = Host.Storage.GetFullPath("server.json");
-        var endpoint = new APIEndpointConfig();
 
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
-            json.DeserializeInto(endpoint);
+            return json.Deserialize<APIEndpointConfig>().AddDefaults();
         }
 
-        File.WriteAllText(path, endpoint.ToString());
-        return endpoint;
+        var defaultEndpoint = new APIEndpointConfig().AddDefaults();
+        File.WriteAllText(path, defaultEndpoint.ToString());
+
+        return getApiEndpoint();
     }
 
     private void initFonts()
