@@ -128,8 +128,8 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             var showDim = toolbox.Expanded.Value || sidebar.Expanded.Value;
             dim.FadeTo(showDim ? 1 : 0, 400, Easing.OutCubic);
 
-            var leftSide = e.NewValue == toolbox.Expanded.Value;
-            var rightSide = e.NewValue == sidebar.Expanded.Value;
+            var leftSide = toolbox.Expanded.Value;
+            var rightSide = sidebar.Expanded.Value;
             var bothSides = leftSide && rightSide;
 
             var offset = bothSides switch
