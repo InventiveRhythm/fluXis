@@ -3,12 +3,14 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Online.API.Models.Maps;
 using osu.Framework.IO.Network;
 
-namespace fluXis.Game.Online.API.Requests.Maps;
+namespace fluXis.Game.Online.API.Requests.MapSets;
 
 public class MapSetUploadRequest : APIRequest<APIMapSet>
 {
-    protected override string Path => map.OnlineID != -1 ? $"/map/{map.OnlineID}/update" : "/maps";
-    protected override HttpMethod Method => HttpMethod.Post;
+    protected override string Path => update ? $"/mapset/{map.OnlineID}" : "/mapsets";
+    protected override HttpMethod Method => update ? HttpMethod.Patch : HttpMethod.Post;
+
+    private bool update => map.OnlineID != -1;
 
     private byte[] file { get; }
     private RealmMapSet map { get; }

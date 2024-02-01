@@ -17,7 +17,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.Activity;
-using fluXis.Game.Online.API.Requests.Maps;
+using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
