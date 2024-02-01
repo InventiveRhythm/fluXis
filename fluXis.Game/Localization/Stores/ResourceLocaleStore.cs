@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 
@@ -50,7 +50,7 @@ public class ResourceLocaleStore : ILocalisationStore
                 return null;
 
             using var reader = new StreamReader(stream);
-            cache[id] = JsonConvert.DeserializeObject<Dictionary<string, string>>(reader.ReadToEnd());
+            cache[id] = reader.ReadToEnd().Deserialize<Dictionary<string, string>>();
             dict = cache[id];
         }
 

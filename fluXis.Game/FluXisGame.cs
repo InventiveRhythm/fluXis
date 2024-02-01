@@ -20,7 +20,6 @@ using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Warning;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -168,8 +167,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 background = $"{Fluxel.Endpoint.AssetUrl}/background/{song.OnlineID}",
             };
 
-            var json = JsonConvert.SerializeObject(data);
-            File.WriteAllText($"{Host.Storage.GetFullPath("nowplaying.json")}", json);
+            File.WriteAllText($"{Host.Storage.GetFullPath("nowplaying.json")}", data.Serialize());
         });
     }
 

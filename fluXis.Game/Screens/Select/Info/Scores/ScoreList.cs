@@ -22,7 +22,6 @@ using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Gameplay.Replay;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -264,9 +263,7 @@ public partial class ScoreList : GridContainer
                                         return;
                                     }
 
-                                    var json = File.ReadAllText(replayPath);
-                                    var replay = JsonConvert.DeserializeObject<Replay>(json);
-
+                                    var replay = File.ReadAllText(replayPath).Deserialize<Replay>();
                                     MapInfo.Screen.Push(new GameplayLoader(map, mods, () => new ReplayGameplayScreen(map, mods, replay)));
                                 }
                                 catch (Exception e)

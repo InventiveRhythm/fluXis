@@ -5,7 +5,6 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
 using fluXis.Game.Utils;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -66,8 +65,7 @@ public partial class LayoutManager : Component
         };
 
         var path = Path.Combine(storage.GetFullPath("layouts"), $"{id}.json");
-        var json = JsonConvert.SerializeObject(layout, Formatting.Indented);
-        File.WriteAllText(path, json);
+        File.WriteAllText(path, layout.Serialize(true));
 
         Layouts.Add(layout);
         Layout.Value = layout;
@@ -89,8 +87,7 @@ public partial class LayoutManager : Component
         {
             try
             {
-                var json = File.ReadAllText(file);
-                var layout = JsonConvert.DeserializeObject<HUDLayout>(json);
+                var layout = File.ReadAllText(file).Deserialize<HUDLayout>();
 
                 layout.ID = Path.GetFileNameWithoutExtension(file);
                 Layouts.Add(layout);

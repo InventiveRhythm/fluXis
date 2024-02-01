@@ -2,7 +2,7 @@ using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Scoring;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Scores;
@@ -38,7 +38,7 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
 
     protected override void CreatePostData(JsonWebRequest<APIResponse<APIScoreResponse>> request)
     {
-        request.AddRaw(JsonConvert.SerializeObject(new
+        request.AddRaw(new
         {
             hash = score.MapHash,
             mods = score.Mods,
@@ -50,6 +50,6 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
             alright = score.Alright,
             okay = score.Okay,
             miss = score.Miss
-        }));
+        }.Serialize());
     }
 }

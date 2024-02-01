@@ -31,6 +31,7 @@ using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -412,7 +413,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             var path = Path.Combine(folder, $"{scoreID}.frp");
             Logger.Log($"Saving replay to {path}", LoggingTarget.Runtime, LogLevel.Debug);
-            File.WriteAllText(path, replay.ToJson());
+            File.WriteAllText(path, replay.Serialize());
         }
         catch (Exception e)
         {

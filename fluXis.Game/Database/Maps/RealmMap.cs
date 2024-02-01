@@ -4,7 +4,6 @@ using System.IO;
 using fluXis.Game.Map;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;
@@ -60,7 +59,7 @@ public class RealmMap : RealmObject
             var path = MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
             var json = File.ReadAllText(path);
             var hash = MapUtils.GetHash(json);
-            MapInfo map = JsonConvert.DeserializeObject<MapInfo>(json);
+            var map = json.Deserialize<MapInfo>();
             map.Map = this;
             map.Hash = hash;
             return map;

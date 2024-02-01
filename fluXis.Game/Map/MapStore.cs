@@ -19,7 +19,6 @@ using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -323,9 +322,6 @@ public partial class MapStore : Component
             }).ToList() ?? new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }, // Add default timing point to avoid issues
         };
 
-        var json = JsonConvert.SerializeObject(info);
-        var hash = MapUtils.GetHash(json);
-
         var realmMap = new RealmMap
         {
             ID = id,
@@ -344,7 +340,7 @@ public partial class MapStore : Component
             },
             FileName = fileName,
             OnlineID = 0,
-            Hash = hash,
+            Hash = MapUtils.GetHash(info.Serialize()),
             Filters = MapUtils.GetMapFilters(info, new MapEvents()),
             KeyCount = map.KeyCount,
             MapSet = set
@@ -391,9 +387,6 @@ public partial class MapStore : Component
             ScrollVelocities = refInfo.ScrollVelocities.Select(x => x.Copy()).ToList()
         };
 
-        var json = JsonConvert.SerializeObject(info);
-        var hash = MapUtils.GetHash(json);
-
         var realmMap = new RealmMap
         {
             ID = id,
@@ -411,7 +404,7 @@ public partial class MapStore : Component
                 ColorHex = map.Metadata.ColorHex
             },
             FileName = fileName,
-            Hash = hash,
+            Hash = MapUtils.GetHash(info.Serialize()),
             Filters = MapUtils.GetMapFilters(info, refEffect),
             KeyCount = map.KeyCount,
             MapSet = set
@@ -439,10 +432,8 @@ public partial class MapStore : Component
 
     private void save(RealmMap map, MapInfo info)
     {
-        var json = JsonConvert.SerializeObject(info);
-
         string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(map.FileName));
-        File.WriteAllText(path, json);
+        File.WriteAllText(path, info.Serialize());
     }
 
     public void DeleteDifficultyFromMapSet(RealmMapSet set, RealmMap map)

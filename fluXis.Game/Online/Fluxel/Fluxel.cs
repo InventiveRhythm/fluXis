@@ -16,7 +16,7 @@ using fluXis.Game.Online.Fluxel.Packets;
 using fluXis.Game.Online.Fluxel.Packets.Account;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -234,7 +234,7 @@ public partial class Fluxel : Component
                 // handler logic
                 void handleListener<T>(string msg)
                 {
-                    var response = FluxelResponse<T>.Parse(msg);
+                    var response = msg.Deserialize<FluxelResponse<T>>();
 
                     var type = getType(response.Type);
 
@@ -248,7 +248,7 @@ public partial class Fluxel : Component
                     }
                 }
 
-                var idString = JsonConvert.DeserializeObject<JObject>(message)["id"]!.ToObject<string>();
+                var idString = message.Deserialize<JObject>()["id"]!.ToObject<string>();
                 Logger.Log($"Received packet {idString}", LoggingTarget.Network, LogLevel.Debug);
 
                 // find right handler
@@ -332,8 +332,7 @@ public partial class Fluxel : Component
     public async Task SendPacket(Packet packet)
     {
         FluxelRequest request = new FluxelRequest(packet.ID, packet);
-        string json = JsonConvert.SerializeObject(request);
-        await send(json);
+        await send(request.Serialize());
     }
 
     public void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)

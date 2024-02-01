@@ -9,7 +9,6 @@ using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Utils;
-using Newtonsoft.Json;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Import;
@@ -57,7 +56,7 @@ public class FluXisImport : MapImporter
                 if (filename.EndsWith(".fsc"))
                 {
                     string json = new StreamReader(entry.Open()).ReadToEnd();
-                    MapInfo mapInfo = JsonConvert.DeserializeObject<MapInfo>(json);
+                    var mapInfo = json.Deserialize<MapInfo>();
 
                     float length = 0;
                     int keys = 0;
@@ -121,7 +120,6 @@ public class FluXisImport : MapImporter
                     try
                     {
                         var onlineMap = MapStore.LookUpHash(hash);
-                        Logger.Log(JsonConvert.SerializeObject(onlineMap));
                         if (onlineMap == null) continue;
 
                         map.OnlineID = onlineMap.Id;

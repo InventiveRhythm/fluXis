@@ -11,6 +11,7 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Points;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -292,7 +293,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             hit.Time -= minTime;
 
         var content = new EditorClipboardContent { HitObjects = hits };
-        clipboard.SetText(content.ToString() ?? string.Empty);
+        clipboard.SetText(content.Serialize());
 
         if (deleteAfter)
         {
@@ -305,7 +306,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
     public void Paste()
     {
-        var content = EditorClipboardContent.Deserialize(clipboard.GetText());
+        var content = clipboard.GetText()?.Deserialize<EditorClipboardContent>();
 
         if (content == null)
         {

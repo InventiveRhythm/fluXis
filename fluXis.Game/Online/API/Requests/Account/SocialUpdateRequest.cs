@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Account;
@@ -25,12 +25,12 @@ public class SocialUpdateRequest : APIRequest<dynamic>
 
     protected override void CreatePostData(JsonWebRequest<APIResponse<dynamic>> request)
     {
-        request.AddRaw(JsonConvert.SerializeObject(new Dictionary<string, string>
+        request.AddRaw(new Dictionary<string, string>
         {
             { "twitter", twitter },
             { "youtube", youtube },
             { "twitch", twitch },
             { "discord", discord }
-        }));
+        }.Serialize());
     }
 }

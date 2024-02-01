@@ -10,7 +10,6 @@ using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Default;
 using fluXis.Game.Skinning.Json;
 using fluXis.Game.Utils;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
@@ -120,7 +119,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     {
         currentSkin = createCustomSkin(newSkinJson, SkinFolder);
 
-        var json = JsonConvert.SerializeObject(SkinJson, Formatting.Indented);
+        var json = SkinJson.Serialize(true);
         var path = skinStorage.GetFullPath($"{SkinFolder}/skin.json");
         File.WriteAllText(path, json);
     }
@@ -233,8 +232,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             if (skinStorage.Exists($"{folder}/skin.json"))
             {
                 var path = skinStorage.GetFullPath($"{folder}/skin.json");
-                var json = File.ReadAllText(path);
-                skinJson = JsonConvert.DeserializeObject<SkinJson>(json);
+                skinJson = File.ReadAllText(path).Deserialize<SkinJson>();
                 Logger.Log($"Loaded skin.json from '{folder}'", LoggingTarget.Information);
             }
             else

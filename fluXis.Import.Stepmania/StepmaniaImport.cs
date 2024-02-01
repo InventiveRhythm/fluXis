@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using fluXis.Game.Import;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Utils;
 using fluXis.Import.Stepmania.Map;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using osu.Framework.Logging;
 
 namespace fluXis.Import.Stepmania;
@@ -39,10 +39,7 @@ public class StepmaniaImport : MapImporter
                     var infos = map.ToMapInfos();
 
                     foreach (var info in infos)
-                    {
-                        var json = JsonConvert.SerializeObject(info);
-                        WriteFile(json, folder, $"{info.Metadata.Difficulty}.fsc");
-                    }
+                        WriteFile(info.Serialize(), folder, $"{info.Metadata.Difficulty}.fsc");
                 }
                 else
                     CopyFile(x, folder);

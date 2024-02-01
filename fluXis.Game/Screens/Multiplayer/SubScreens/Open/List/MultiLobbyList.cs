@@ -7,11 +7,9 @@ using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -116,7 +114,6 @@ public partial class MultiLobbyList : MultiSubScreen
             {
                 loadingPanel?.Hide();
                 notifications.SendError($"Failed to join lobby", res.Message);
-                Logger.Log(JsonConvert.SerializeObject(res));
             }
         });
     }

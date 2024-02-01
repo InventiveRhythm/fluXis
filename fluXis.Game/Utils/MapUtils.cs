@@ -7,7 +7,6 @@ using System.Text;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
-using Newtonsoft.Json;
 
 namespace fluXis.Game.Utils;
 
@@ -69,16 +68,6 @@ public static class MapUtils
         }
 
         return (float)seconds.Average(x => x.Value);
-    }
-
-    public static string Serialize(this MapInfo map, bool indent = false)
-    {
-        var json = JsonConvert.SerializeObject(map, indent ? Formatting.Indented : Formatting.None, new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore
-        });
-
-        return json;
     }
 
     public static string GetHash(string input) => BitConverter.ToString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(input))).Replace("-", "").ToLower();

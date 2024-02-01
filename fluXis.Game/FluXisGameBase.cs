@@ -42,7 +42,6 @@ using fluXis.Game.UI.Tips;
 using fluXis.Game.Updater;
 using fluXis.Game.Utils;
 using fluXis.Resources;
-using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Configuration;
@@ -261,18 +260,16 @@ public partial class FluXisGameBase : osu.Framework.Game
     private APIEndpointConfig getApiEndpoint()
     {
         var path = Host.Storage.GetFullPath("server.json");
+        var endpoint = new APIEndpointConfig();
 
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
-            var custom = JsonConvert.DeserializeObject<APIEndpointConfig>(json);
-            return custom.AddDefaults();
+            json.DeserializeInto(endpoint);
         }
 
-        var defaultEndpoint = new APIEndpointConfig().AddDefaults();
-        File.WriteAllText(path, defaultEndpoint.ToString());
-
-        return getApiEndpoint();
+        File.WriteAllText(path, endpoint.ToString());
+        return endpoint;
     }
 
     private void initFonts()

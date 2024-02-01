@@ -1,5 +1,5 @@
 using System.IO;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -35,8 +35,7 @@ public static class LoadingTips
 
             var stream = storage.GetStream(tip_file);
             using var sr = new StreamReader(stream);
-            var json = sr.ReadToEnd();
-            tips = JsonConvert.DeserializeObject<string[]>(json);
+            tips = sr.ReadToEnd().Deserialize<string[]>();
 
             Logger.Log("Tips loaded from local storage", LoggingTarget.Runtime, LogLevel.Debug);
         }
@@ -54,7 +53,7 @@ public static class LoadingTips
             var req = new WebRequest(online_path);
             await req.PerformAsync();
             var json = req.GetResponseString();
-            tips = JsonConvert.DeserializeObject<string[]>(json);
+            tips = json.Deserialize<string[]>();
 
             Logger.Log("Saving tips to local storage...", LoggingTarget.Network, LogLevel.Debug);
 

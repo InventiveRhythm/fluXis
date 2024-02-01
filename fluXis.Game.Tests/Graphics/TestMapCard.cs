@@ -2,7 +2,7 @@
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -17,7 +17,7 @@ public partial class TestMapCard : FluXisTestScene
         req.Perform();
 
         var json = req.GetResponseString();
-        var res = JsonConvert.DeserializeObject<APIResponse<APIMapSet>>(json);
+        var res = json.Deserialize<APIResponse<APIMapSet>>();
 
         Add(new MapCard(res.Data)
         {

@@ -13,9 +13,4 @@ public class FluxelResponse<T> : APIResponse<T>
     {
         Type = type;
     }
-
-    public static FluxelResponse<T> Parse(string json)
-    {
-        return JsonConvert.DeserializeObject<FluxelResponse<T>>(json);
-    }
 }

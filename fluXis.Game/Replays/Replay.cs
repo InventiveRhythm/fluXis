@@ -24,6 +24,4 @@ public class Replay
             return user;
         }
     }
-
-    public string ToJson() => JsonConvert.SerializeObject(this);
 }

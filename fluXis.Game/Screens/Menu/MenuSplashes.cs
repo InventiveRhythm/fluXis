@@ -1,5 +1,5 @@
 using System.IO;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
@@ -48,8 +48,7 @@ public static class MenuSplashes
 
             var stream = storage.GetStream(splash_file);
             using var sr = new StreamReader(stream);
-            var json = sr.ReadToEnd();
-            splashes = JsonConvert.DeserializeObject<string[]>(json);
+            splashes = sr.ReadToEnd().Deserialize<string[]>();
 
             Logger.Log("Splashes loaded from local storage");
         }
@@ -67,7 +66,7 @@ public static class MenuSplashes
             var req = new WebRequest(online_path);
             await req.PerformAsync();
             var json = req.GetResponseString();
-            splashes = JsonConvert.DeserializeObject<string[]>(json);
+            splashes = json.Deserialize<string[]>();
 
             Logger.Log("Saving splashes to local storage", LoggingTarget.Network);
 

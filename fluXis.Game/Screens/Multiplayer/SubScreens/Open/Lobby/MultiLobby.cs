@@ -11,7 +11,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Game.UI;
-using Newtonsoft.Json;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -149,7 +149,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         Schedule(() =>
         {
-            string json = JsonConvert.SerializeObject(response.Data.Data);
+            string json = JsonUtils.Serialize(response.Data.Data);
 
             /*
             switch (response.Data.Type)

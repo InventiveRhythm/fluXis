@@ -56,6 +56,7 @@ public static class UserCache
 
     private static APIUser fetchUser(int id)
     {
+        // TODO: rewrite to use APIRequest
         try
         {
             var req = new WebRequest($"{fluxel.Endpoint.APIUrl}/user/{id}");
