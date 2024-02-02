@@ -268,7 +268,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         }
 
         var defaultEndpoint = new APIEndpointConfig().AddDefaults();
-        File.WriteAllText(path, defaultEndpoint.ToString());
+        File.WriteAllText(path, defaultEndpoint.Serialize());
 
         return getApiEndpoint();
     }
