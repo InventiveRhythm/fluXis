@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
@@ -11,6 +10,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Screens;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -226,55 +226,53 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         base.LoadComplete();
 
-        maps.MapSetBindable.BindValueChanged(songChanged, true);
+        maps.MapBindable.BindValueChanged(mapChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        maps.MapSetBindable.ValueChanged -= songChanged;
+        maps.MapBindable.ValueChanged -= mapChanged;
     }
 
-    private void songChanged(ValueChangedEvent<RealmMapSet> e)
+    private void mapChanged(ValueChangedEvent<RealmMap> e) => Scheduler.ScheduleOnceIfNeeded(songChanged);
+
+    private void songChanged()
     {
-        Schedule(() =>
+        var next = maps.CurrentMap;
+
+        if (next == null) return;
+
+        video.Stop();
+
+        title.Text = next.Metadata.Title;
+        artist.Text = next.Metadata.Artist;
+
+        LoadComponentAsync(new MapBackground(next) { RelativeSizeAxes = Axes.Both }, background =>
         {
-            var next = e.NewValue;
+            background.FadeInFromZero(400);
+            backgrounds.Add(background, 400);
+        });
 
-            if (next == null) return;
+        LoadComponentAsync(new MapCover(next.MapSet)
+        {
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        }, cover =>
+        {
+            cover.FadeInFromZero(400);
+            covers.Add(cover, 400);
+        });
 
-            video.Stop();
+        Task.Run(() =>
+        {
+            video.Map = next;
+            video.Info = next.GetMapInfo();
 
-            title.Text = next.Metadata.Title;
-            artist.Text = next.Metadata.Artist;
-
-            LoadComponentAsync(new MapBackground(next.Maps.First()) { RelativeSizeAxes = Axes.Both }, background =>
-            {
-                background.FadeInFromZero(400);
-                backgrounds.Add(background, 400);
-            });
-
-            LoadComponentAsync(new MapCover(next)
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                FillMode = FillMode.Fill
-            }, cover =>
-            {
-                cover.FadeInFromZero(400);
-                covers.Add(cover, 400);
-            });
-
-            Task.Run(() =>
-            {
-                video.Map = next.Maps.First();
-                video.Info = next.Maps.First().GetMapInfo();
-
-                video.LoadVideo();
-                ScheduleAfterChildren(video.Start);
-            });
+            video.LoadVideo();
+            ScheduleAfterChildren(video.Start);
         });
     }
 

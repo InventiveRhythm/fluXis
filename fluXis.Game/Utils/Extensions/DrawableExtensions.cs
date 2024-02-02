@@ -44,4 +44,12 @@ public static class DrawableExtensions
         else
             scheduler.Add(action.Invoke);
     }
+
+    public static void ScheduleOnceIfNeeded(this Scheduler scheduler, Action action)
+    {
+        if (ThreadSafety.IsUpdateThread)
+            action.Invoke();
+        else
+            scheduler.AddOnce(action.Invoke);
+    }
 }
