@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Map.Drawables;
@@ -79,7 +78,7 @@ public partial class GameplayLoader : FluXisScreen
                         Margin = new MarginPadding { Bottom = 20 },
                         Children = new Drawable[]
                         {
-                            new DrawableCover(map.MapSet)
+                            new MapCover(map.MapSet)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,

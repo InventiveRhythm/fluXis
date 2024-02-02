@@ -4,12 +4,12 @@ using osu.Framework.Testing;
 
 namespace fluXis.Game.Tests.Graphics;
 
-public partial class TestBackgroundStack : TestScene
+public partial class TestGlobalBackground : TestScene
 {
     [BackgroundDependencyLoader]
     private void load()
     {
-        var stack = new BackgroundStack();
+        var stack = new GlobalBackground();
         Add(stack);
 
         AddSliderStep("Set parallax", 0f, 1f, 0f, v => stack.ParallaxStrength = v);

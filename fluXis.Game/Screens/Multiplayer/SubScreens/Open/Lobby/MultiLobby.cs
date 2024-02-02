@@ -31,7 +31,7 @@ public partial class MultiLobby : MultiSubScreen
     private MapStore mapStore { get; set; }
 
     [Resolved]
-    private BackgroundStack backgroundStack { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Resolved]
     private GlobalClock clock { get; set; }
@@ -199,7 +199,7 @@ public partial class MultiLobby : MultiSubScreen
         {
             clock.Looping = false;
             stopClockMusic();
-            backgroundStack.AddBackgroundFromMap(null);
+            backgrounds.AddBackgroundFromMap(null);
             fluxel.SendPacketAsync(new MultiplayerLeavePacket());
             readyButton.Hide();
             return false;
@@ -253,7 +253,7 @@ public partial class MultiLobby : MultiSubScreen
             clock.FadeOut(); // because it sets itself to 1
             clock.RestartPoint = 0;
             clock.AllowLimitedLoop = false;
-            backgroundStack.AddBackgroundFromMap(mapInfo);
+            backgrounds.AddBackgroundFromMap(mapInfo);
             startClockMusic();
         }
 

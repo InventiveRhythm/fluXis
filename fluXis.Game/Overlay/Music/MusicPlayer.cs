@@ -5,11 +5,11 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Drawables;
 using fluXis.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -40,9 +40,9 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private const int rounding = 20;
 
     private Container content;
-    private Container backgrounds;
+    private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
-    private Container covers;
+    private SpriteStack<MapCover> covers;
     private FluXisSpriteText title;
     private FluXisSpriteText artist;
     private MusicPlayerButton pausePlay;
@@ -90,12 +90,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             RelativeSizeAxes = Axes.Both,
                             Colour = FluXisColors.Background2
                         },
-                        backgrounds = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre
-                        },
+                        backgrounds = new SpriteStack<MapBackground>(),
                         video = new BackgroundVideo
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -142,7 +137,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     Origin = Anchor.BottomLeft,
                                     Children = new Drawable[]
                                     {
-                                        covers = new Container
+                                        new Container
                                         {
                                             Size = new Vector2(150),
                                             Masking = true,
@@ -150,14 +145,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
                                             EdgeEffect = FluXisStyles.ShadowMedium,
-                                            Children = new Drawable[]
-                                            {
-                                                new Box
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Colour = Colour4.Black
-                                                }
-                                            }
+                                            Child = covers = new SpriteStack<MapCover>()
                                         },
                                         new FillFlowContainer
                                         {
@@ -261,18 +249,13 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             title.Text = next.Metadata.Title;
             artist.Text = next.Metadata.Artist;
 
-            LoadComponentAsync(new MapBackground
+            LoadComponentAsync(new MapBackground(next.Maps.First()) { RelativeSizeAxes = Axes.Both }, background =>
             {
-                Map = next.Maps.First(),
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fill
-            }, background =>
-            {
-                backgrounds.Add(background);
                 background.FadeInFromZero(400);
+                backgrounds.Add(background, 400);
             });
 
-            LoadComponentAsync(new DrawableCover(next)
+            LoadComponentAsync(new MapCover(next)
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -280,8 +263,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                 FillMode = FillMode.Fill
             }, cover =>
             {
-                covers.Add(cover);
                 cover.FadeInFromZero(400);
+                covers.Add(cover, 400);
             });
 
             Task.Run(() =>
@@ -298,12 +281,6 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     protected override void Update()
     {
         base.Update();
-
-        while (backgrounds.Count > 1 && backgrounds.Last().Alpha == 1)
-            backgrounds.Remove(backgrounds[0], true);
-
-        while (covers.Count > 1 && covers.Last().Alpha == 1)
-            covers.Remove(covers[0], true);
 
         pausePlay.IconSprite.Icon = globalClock.IsRunning ? FontAwesome6.Solid.Pause : FontAwesome6.Solid.Play;
     }

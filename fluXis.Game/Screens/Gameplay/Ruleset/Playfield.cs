@@ -22,7 +22,7 @@ public partial class Playfield : Container
     private SkinManager skinManager { get; set; }
 
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Resolved]
     private GameplayScreen screen { get; set; }

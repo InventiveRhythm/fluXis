@@ -17,7 +17,7 @@ public partial class WarningScreen : FluXisScreen
     public override bool ShowToolbar => false;
 
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     private FillFlowContainer epilepsyContainer;
     private FluXisTextFlow epilepsyText;

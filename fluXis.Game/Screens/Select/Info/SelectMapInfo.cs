@@ -3,10 +3,10 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Drawables;
 using fluXis.Game.Mods;
 using fluXis.Game.Screens.Select.Info.Scores;
 using fluXis.Game.Utils;
@@ -31,7 +31,7 @@ public partial class SelectMapInfo : GridContainer
 
     public Action HoverAction { get; set; }
 
-    private BackgroundStack backgroundStack;
+    private SpriteStack<MapBackground> backgrounds;
     private FluXisSpriteText titleText;
     private FluXisSpriteText artistText;
     private FluXisSpriteText bpmText;
@@ -83,7 +83,7 @@ public partial class SelectMapInfo : GridContainer
                                 Masking = true,
                                 Children = new Drawable[]
                                 {
-                                    backgroundStack = new BackgroundStack(),
+                                    backgrounds = new SpriteStack<MapBackground>(),
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -266,7 +266,10 @@ public partial class SelectMapInfo : GridContainer
 
     public void ChangeMap(RealmMap map)
     {
-        backgroundStack.ChangeMap(map);
+        var bg = new MapBackground(map);
+        backgrounds.Add(bg, 400);
+        bg.FadeInFromZero(400);
+
         ScoreList.SetMap(map);
     }
 
@@ -307,43 +310,5 @@ public partial class SelectMapInfo : GridContainer
     {
         clock.OnBeat -= OnBeat;
         base.Dispose(isDisposing);
-    }
-
-    private partial class BackgroundStack : Container
-    {
-        public BackgroundStack()
-        {
-            RelativeSizeAxes = Axes.Both;
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-        }
-
-        public void ChangeMap(RealmMap map)
-        {
-            var background = new MapBackground
-            {
-                Map = map,
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fill,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
-            };
-
-            Add(background);
-            background.FadeInFromZero(300);
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            while (Children.Count > 1)
-            {
-                if (Children[1].Alpha == 1)
-                    Remove(Children[0], false);
-                else
-                    break;
-            }
-        }
     }
 }

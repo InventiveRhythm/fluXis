@@ -1,8 +1,8 @@
-using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Shaders.Bloom;
 using fluXis.Game.Graphics.Shaders.Chromatic;
 using fluXis.Game.Graphics.Shaders.Greyscale;
+using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -32,7 +32,7 @@ public partial class TestShaderContainer : FluXisTestScene
                 new ParallaxContainer
                 {
                     Strength = .04f,
-                    Child = new MapBackground
+                    Child = new MapBackground(null)
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,

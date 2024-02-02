@@ -1,9 +1,8 @@
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Map.Drawables;
 using fluXis.Game.Screens.Edit.Tabs.Metadata;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,7 +18,7 @@ public partial class SetupTab : EditorTab
     private EditorValues values { get; set; }
 
     private MapBackground background;
-    private DrawableCover cover;
+    private MapCover cover;
     private FluXisSpriteText titleText;
     private FluXisSpriteText artistText;
 
@@ -71,13 +70,12 @@ public partial class SetupTab : EditorTab
                         Masking = true,
                         Children = new Drawable[]
                         {
-                            background = new MapBackground
+                            background = new MapBackground(Screen.Map)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                FillMode = FillMode.Fill,
-                                Map = Screen.Map
+                                FillMode = FillMode.Fill
                             },
                             new Box
                             {
@@ -100,7 +98,7 @@ public partial class SetupTab : EditorTab
                                         CornerRadius = 20,
                                         Masking = true,
                                         EdgeEffect = FluXisStyles.ShadowMedium,
-                                        Child = cover = new DrawableCover(Screen.Map.MapSet)
+                                        Child = cover = new MapCover(Screen.Map.MapSet)
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Anchor = Anchor.Centre,

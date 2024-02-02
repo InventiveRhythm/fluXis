@@ -4,9 +4,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Game.Graphics.Cover;
+namespace fluXis.Game.Map.Drawables;
 
-public partial class DrawableCover : Sprite
+public partial class MapCover : Sprite
 {
     [Resolved]
     private TextureStore textures { get; set; }
@@ -17,13 +17,15 @@ public partial class DrawableCover : Sprite
         set
         {
             mapSet = value;
-            if (IsLoaded) setTexture();
+
+            if (IsLoaded)
+                setTexture();
         }
     }
 
     private RealmMapSet mapSet { get; set; }
 
-    public DrawableCover(RealmMapSet mapSet)
+    public MapCover(RealmMapSet mapSet)
     {
         MapSet = mapSet;
     }

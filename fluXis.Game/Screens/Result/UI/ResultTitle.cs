@@ -1,8 +1,8 @@
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.API.Models.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -54,7 +54,7 @@ public partial class ResultTitle : Container
                         Margin = new MarginPadding { Right = 10 },
                         CornerRadius = 10,
                         Masking = true,
-                        Child = new DrawableCover(map.MapSet)
+                        Child = new MapCover(map.MapSet)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,

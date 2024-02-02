@@ -69,7 +69,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private GlobalClock clock { get; set; }
 
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     private readonly List<RealmMapSet> maps = new();
     public SearchFilters Filters = new();

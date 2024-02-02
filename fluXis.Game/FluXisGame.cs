@@ -71,7 +71,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 RedrawOnScale = false,
                 Children = new Drawable[]
                 {
-                    BackgroundStack,
+                    GlobalBackground,
                     screenContainer = new Container
                     {
                         RelativeSizeAxes = Axes.Both,

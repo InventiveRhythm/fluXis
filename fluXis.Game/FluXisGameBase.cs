@@ -82,7 +82,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected RegisterOverlay RegisterOverlay { get; private set; }
     protected NotificationManager NotificationManager { get; private set; }
     protected MusicPlayer MusicPlayer { get; private set; }
-    protected BackgroundStack BackgroundStack { get; private set; }
+    protected GlobalBackground GlobalBackground { get; private set; }
     protected UISamples Samples { get; private set; }
     protected Fluxel Fluxel { get; private set; }
     protected FluXisConfig Config { get; private set; }
@@ -169,7 +169,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         LoadComponent(Samples = new UISamples());
         dependencies.Cache(Samples);
 
-        dependencies.Cache(BackgroundStack = new BackgroundStack());
+        dependencies.Cache(GlobalBackground = new GlobalBackground());
         dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
         dependencies.Cache(Settings = new SettingsMenu());
         dependencies.Cache(LoginOverlay = new LoginOverlay());
@@ -357,7 +357,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         MapStore.CurrentMapSet = set;
         var map = set.Maps.First();
-        BackgroundStack.AddBackgroundFromMap(map);
+        GlobalBackground.AddBackgroundFromMap(map);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

@@ -1,5 +1,5 @@
-using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.UserInterface.Files;
+using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osuTK;
@@ -13,7 +13,7 @@ public partial class TestFileSelect : FluXisTestScene
     {
         AddRange(new Drawable[]
         {
-            new MapBackground
+            new MapBackground(null)
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,

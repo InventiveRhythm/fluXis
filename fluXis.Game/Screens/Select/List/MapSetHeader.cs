@@ -5,13 +5,12 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Background;
-using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -96,14 +95,11 @@ public partial class MapSetHeader : Container, IHasContextMenu
         BorderColour = colorsLoaded ? ColourInfo.GradientVertical(color.Lighten(1), color) : Colour4.White;
         Children = new Drawable[]
         {
-            backgroundWrapper = new DelayedLoadUnloadWrapper(() => background = new MapBackground
+            backgroundWrapper = new DelayedLoadUnloadWrapper(() => background = new MapBackground(mapset.Maps[0], true)
             {
-                Map = mapset.Maps[0],
                 RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fill,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Cropped = true
+                Origin = Anchor.Centre
             }, 100, 200)
             {
                 RelativeSizeAxes = Axes.Both
@@ -152,7 +148,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                                 RelativeSizeAxes = Axes.Both,
                                 Masking = true,
                                 CornerRadius = 10,
-                                Child = new DrawableCover(mapset)
+                                Child = new MapCover(mapset)
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,

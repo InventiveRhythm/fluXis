@@ -1,8 +1,8 @@
 ﻿using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Cover;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -24,7 +24,7 @@ public partial class MenuNowPlaying : Container
     private FluXisGameBase game { get; set; }
 
     private Container coverContainer;
-    private DrawableCover cover;
+    private MapCover cover;
     private FluXisSpriteText title;
     private FluXisSpriteText artist;
 
@@ -56,7 +56,7 @@ public partial class MenuNowPlaying : Container
                 CornerRadius = 10,
                 Masking = true,
                 EdgeEffect = FluXisStyles.ShadowSmall,
-                Child = cover = new DrawableCover(null)
+                Child = cover = new MapCover(null)
                 {
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fill,

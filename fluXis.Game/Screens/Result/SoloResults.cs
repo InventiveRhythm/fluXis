@@ -29,7 +29,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     public override float BackgroundBlur => 0.2f;
 
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     public ScoreInfo Score { get; }
     public RealmMap Map { get; }

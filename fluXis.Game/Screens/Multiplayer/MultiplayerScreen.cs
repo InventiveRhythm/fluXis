@@ -24,7 +24,7 @@ public partial class MultiplayerScreen : FluXisScreen
     private MapStore mapStore { get; set; }
 
     [Resolved]
-    private BackgroundStack backgroundStack { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Cached]
     private MultiplayerMenuMusic menuMusic = new();
@@ -70,7 +70,7 @@ public partial class MultiplayerScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         globalClock.FadeOut(400).OnComplete(c => c.Stop());
-        backgroundStack.AddBackgroundFromMap(null);
+        backgrounds.AddBackgroundFromMap(null);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
@@ -82,7 +82,7 @@ public partial class MultiplayerScreen : FluXisScreen
 
         globalClock.Start();
         globalClock.FadeIn(400);
-        backgroundStack.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
+        backgrounds.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
         return false;
     }
 }

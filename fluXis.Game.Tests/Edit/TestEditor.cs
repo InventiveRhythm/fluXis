@@ -12,7 +12,7 @@ namespace fluXis.Game.Tests.Edit;
 public partial class TestEditor : FluXisTestScene
 {
     [Resolved]
-    private BackgroundStack backgroundStack { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -27,7 +27,7 @@ public partial class TestEditor : FluXisTestScene
     private void load()
     {
         Add(clock);
-        Add(backgroundStack);
+        Add(backgrounds);
         Add(screenStack);
 
         var map = maps.GetFromGuid("4820fd48-69b3-4c05-983b-46923697680f")?

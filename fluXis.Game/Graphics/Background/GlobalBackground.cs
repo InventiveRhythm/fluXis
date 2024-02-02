@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -13,12 +14,12 @@ using osuTK;
 
 namespace fluXis.Game.Graphics.Background;
 
-public partial class BackgroundStack : CompositeDrawable
+public partial class GlobalBackground : CompositeDrawable
 {
     [Resolved]
     private GlobalClock clock { get; set; }
 
-    private Container backgroundContainer;
+    private SpriteStack<BlurableBackground> stack;
     private ParallaxContainer parallaxContainer;
     private Box swipeAnimation;
     private Box backgroundDim;
@@ -27,7 +28,7 @@ public partial class BackgroundStack : CompositeDrawable
 
     private Bindable<bool> backgroundPulse;
 
-    public float Zoom { set => backgroundContainer.ScaleTo(value, 1000, Easing.OutQuint); }
+    public float Zoom { set => stack.ScaleTo(value, 1000, Easing.OutQuint); }
     public float ParallaxStrength { set => parallaxContainer.Strength = value; }
 
     [BackgroundDependencyLoader]
@@ -43,9 +44,9 @@ public partial class BackgroundStack : CompositeDrawable
             parallaxContainer = new ParallaxContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Child = backgroundContainer = new Container
+                Child = stack = new SpriteStack<BlurableBackground>
                 {
-                    RelativeSizeAxes = Axes.Both,
+                    AutoFill = false,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 }
@@ -83,40 +84,19 @@ public partial class BackgroundStack : CompositeDrawable
 
     public void SetDim(float alpha, float duration = 200) => backgroundDim.FadeTo(alpha, duration);
 
-    public void SetBlur(float blur, float duration = 200)
+    public void SetBlur(float blur, float duration = 300)
     {
         if (this.blur == blur)
             return;
 
         this.blur = blur;
-
-        var last = backgroundContainer.Count > 0 ? backgroundContainer[^1] : null;
-
-        if (last is Background background) // 🧀 transforming blur is laggy so we just replace the background
-        {
-            this.RunOnUpdate(Scheduler, () =>
-            {
-                backgroundContainer.Add(new Background(background.Map)
-                {
-                    Blur = blur,
-                    Duration = duration
-                });
-            });
-        }
+        add(stack.Current?.Map, duration);
     }
 
     protected override void Update()
     {
         // this is EXTREMELY laggy, and i do not know why
         // Padding = new MarginPadding { Top = toolbar.Height - 10 + toolbar.Y };
-
-        while (backgroundContainer.Children.Count > 1)
-        {
-            if (backgroundContainer.Children[1].Alpha == 1)
-                backgroundContainer.Remove(backgroundContainer.Children[0], true);
-            else
-                break;
-        }
 
         if (backgroundPulse.Value)
         {
@@ -142,7 +122,7 @@ public partial class BackgroundStack : CompositeDrawable
         }
         else currentBackground = null;
 
-        this.RunOnUpdate(Scheduler, () => backgroundContainer.Add(new Background(map) { Blur = blur }));
+        add(map, 300);
     }
 
     public void SwipeAnimation()
@@ -157,4 +137,7 @@ public partial class BackgroundStack : CompositeDrawable
                       .Delay(delay)
                       .FadeOut(fade_duration);
     }
+
+    private void add(RealmMap map, float duration)
+        => Scheduler.ScheduleIfNeeded(() => stack.Add(new BlurableBackground(map, blur, duration), duration));
 }

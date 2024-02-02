@@ -11,7 +11,7 @@ namespace fluXis.Game.Screens;
 public partial class FluXisScreenStack : ScreenStack
 {
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Resolved]
     private Toolbar toolbar { get; set; }

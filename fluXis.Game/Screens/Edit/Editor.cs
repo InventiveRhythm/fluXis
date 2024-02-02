@@ -62,7 +62,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private MapStore mapStore { get; set; }
 
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Resolved]
     private GlobalClock globalClock { get; set; }

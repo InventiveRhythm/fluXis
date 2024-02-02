@@ -47,7 +47,7 @@ public partial class MenuScreen : FluXisScreen
     private MapStore maps { get; set; }
 
     [Resolved]
-    private BackgroundStack backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; }
 
     [Resolved]
     private SettingsMenu settings { get; set; }

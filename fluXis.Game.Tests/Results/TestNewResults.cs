@@ -19,7 +19,7 @@ namespace fluXis.Game.Tests.Results;
 public partial class TestNewResults : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(MapStore maps, BackgroundStack backgrounds, Toolbar toolbar)
+    private void load(MapStore maps, GlobalBackground backgrounds, Toolbar toolbar)
     {
         var score = new ScoreInfo
         {
