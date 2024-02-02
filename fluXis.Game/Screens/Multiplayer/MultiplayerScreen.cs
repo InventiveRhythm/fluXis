@@ -8,6 +8,7 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Multiplayer;
 
+[Cached]
 public partial class MultiplayerScreen : FluXisScreen
 {
     public override float Zoom => 1.1f;

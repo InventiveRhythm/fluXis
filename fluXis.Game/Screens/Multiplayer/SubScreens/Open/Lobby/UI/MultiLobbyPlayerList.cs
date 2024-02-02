@@ -61,7 +61,7 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
     }
 
     [CanBeNull]
-    public PlayerListEntry GetPlayer(int id)
+    public PlayerListEntry GetPlayer(long id)
     {
         return playerList.Children.FirstOrDefault(p => p.User.ID == id);
     }

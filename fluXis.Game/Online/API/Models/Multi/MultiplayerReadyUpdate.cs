@@ -9,7 +9,4 @@ public class MultiplayerReadyUpdate
 
     [JsonProperty("ready")]
     public bool Ready { get; init; }
-
-    [JsonIgnore]
-    public bool AllReady => PlayerID == -1;
 }
