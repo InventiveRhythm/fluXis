@@ -17,10 +17,23 @@ public static class Program
     {
         Args = args;
 
+        string name = "fluXis";
+
+        if (args.Contains("--profile"))
+        {
+            var idx = Array.IndexOf(args, "--profile");
+
+            if (args.Length <= idx + 1)
+                throw new ArgumentException("No profile name provided.");
+
+            var profile = args[idx + 1].ToLower();
+
+            name += $"-{profile}";
+            Console.WriteLine($"Running with profile {profile}");
+        }
+
         if (OperatingSystem.IsWindows())
             FileExtensionHelper.EnsureAssociationsSet();
-
-        string name = $"fluXis{(args.Contains("--dev") ? "-dev" : "")}";
 
         using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { IPCPort = 44127 });
 
