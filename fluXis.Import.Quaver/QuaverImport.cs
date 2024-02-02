@@ -140,7 +140,6 @@ public class QuaverImport : MapImporter
 
                 var map = new QuaverRealmMap
                 {
-                    ID = default,
                     QuaverPath = songsPath,
                     FolderPath = directoryName,
                     FileName = path,
@@ -186,7 +185,6 @@ public class QuaverImport : MapImporter
             {
                 var mapSetRealm = new QuaverRealmMapSet(mapSetMaps)
                 {
-                    ID = default,
                     FolderPath = directoryName,
                     OnlineID = 0,
                     Cover = "",
