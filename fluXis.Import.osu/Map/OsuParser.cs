@@ -150,6 +150,10 @@ public class OsuParser
                 case "CircleSize":
                     map.CircleSize = float.Parse(value, CultureInfo.InvariantCulture);
                     break;
+
+                case "OverallDifficulty":
+                    map.OverallDifficulty = float.Parse(value, CultureInfo.InvariantCulture);
+                    break;
             }
         }
     }
