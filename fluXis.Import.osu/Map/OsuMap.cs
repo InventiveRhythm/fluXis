@@ -88,8 +88,10 @@ public class OsuMap
                 keyCounts.Add(hitObject.X);
         }
 
+        keyCounts.Sort();
+
         foreach (var hitObject in HitObjects)
-            mapInfo.HitObjects.Add(hitObject.ToHitObjectInfo(keyCounts.Count));
+            mapInfo.HitObjects.Add(hitObject.ToHitObjectInfo(keyCounts.IndexOf(hitObject.X)));
 
         foreach (var timingPoint in TimingPoints)
         {

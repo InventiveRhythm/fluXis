@@ -9,10 +9,8 @@ public class OsuHitObject
     public int EndTime { get; init; }
     public string HitSound { get; init; }
 
-    public HitObject ToHitObjectInfo(int keyCount)
+    public HitObject ToHitObjectInfo(int lane)
     {
-        int key = (int)(X * (keyCount / 512f));
-
         float holdTime = 0;
         if (EndTime > 0) holdTime = EndTime - StartTime;
 
@@ -20,7 +18,7 @@ public class OsuHitObject
 
         return new HitObject
         {
-            Lane = key + 1,
+            Lane = lane + 1,
             Time = StartTime,
             HoldTime = holdTime,
             HitSound = HitSound
