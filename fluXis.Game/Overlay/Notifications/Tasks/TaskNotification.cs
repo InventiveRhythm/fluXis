@@ -195,8 +195,8 @@ public partial class TaskNotification : CompositeDrawable
 
     public void Hide(float delay = 0)
     {
-        this.Delay(delay).OnComplete(_ => disappear?.Play());
-        content.Delay(delay).MoveToX(-500, 500, Easing.OutQuint).Expire();
+        this.Delay(delay).Expire().OnComplete(_ => disappear?.Play());
+        content.Delay(delay).MoveToX(-500, 500, Easing.OutQuint);
     }
 
     private void updateState(LoadingState state, bool instant = false)
