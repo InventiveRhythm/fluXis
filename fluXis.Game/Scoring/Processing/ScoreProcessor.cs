@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Structs;
 using osu.Framework.Bindables;
@@ -76,7 +77,7 @@ public class ScoreProcessor : JudgementDependant
         return accBased + comboBased;
     }
 
-    public ScoreInfo ToScoreInfo()
+    public ScoreInfo ToScoreInfo(APIUserShort player = null)
     {
         return new ScoreInfo
         {
@@ -93,6 +94,7 @@ public class ScoreProcessor : JudgementDependant
             Miss = Miss,
             HitResults = JudgementProcessor.Results,
             MapID = Map.OnlineID,
+            PlayerID = player?.ID ?? 0,
             MapHash = MapInfo.Hash,
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             Mods = Mods.Select(m => m.Acronym).ToList()

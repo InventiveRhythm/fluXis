@@ -78,6 +78,8 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
 
     public LowPassFilter LowPassFilter { get; private set; }
 
+    private string trackPath;
+
     private readonly FramedMapClock underlying;
     private readonly Bindable<Track> track = new();
     private Bindable<float> offset;
@@ -109,20 +111,27 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
     {
         base.LoadComplete();
 
-        string path = null;
+        maps.MapBindable.BindValueChanged(onMapChange);
+    }
 
-        maps.MapBindable.BindValueChanged(e =>
-        {
-            var newPath = e.NewValue?.MapSet.GetPathForFile(e.NewValue.Metadata.Audio);
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
 
-            if (newPath == path) return;
+        track.Value?.Dispose();
+        maps.MapBindable.ValueChanged -= onMapChange;
+    }
 
-            loadMap(e.NewValue);
-            path = newPath;
+    private void onMapChange(ValueChangedEvent<RealmMap> e)
+    {
+        var newPath = e.NewValue?.MapSet.GetPathForFile(e.NewValue.Metadata.Audio);
 
-            if (game.ScreenStack.CurrentScreen is SelectScreen)
-                Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
-        });
+        if (newPath == trackPath) return;
+
+        loadMap(e.NewValue);
+        trackPath = newPath;
+
+        if (game.ScreenStack.CurrentScreen is SelectScreen) Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
     }
 
     private void loadMap(RealmMap info)

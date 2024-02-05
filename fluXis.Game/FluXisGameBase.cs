@@ -21,6 +21,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.Login;
@@ -85,6 +86,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected GlobalBackground GlobalBackground { get; private set; }
     protected UISamples Samples { get; private set; }
     protected Fluxel Fluxel { get; private set; }
+    protected MultiplayerClient MultiplayerClient { get; private set; }
     protected FluXisConfig Config { get; private set; }
     protected MapStore MapStore { get; private set; }
 
@@ -151,6 +153,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         LoadComponent(Fluxel);
         dependencies.Cache(Fluxel);
 
+        dependencies.CacheAs(MultiplayerClient = new OnlineMultiplayerClient());
+
         UserCache.Init(Fluxel);
 
         dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));
@@ -204,6 +208,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
+                    MultiplayerClient,
                     keybinds = new GlobalKeybindContainer(this, realm)
                     {
                         Children = new Drawable[]

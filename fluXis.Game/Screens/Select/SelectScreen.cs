@@ -57,7 +57,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     public override UserActivity InitialActivity => new UserActivity.SongSelect();
 
     [Resolved]
-    private MapStore mapStore { get; set; }
+    protected MapStore MapStore { get; private set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -71,10 +71,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     [Resolved]
     private GlobalBackground backgrounds { get; set; }
 
-    private readonly List<RealmMapSet> maps = new();
+    public List<RealmMapSet> Maps { get; } = new();
     public SearchFilters Filters = new();
 
-    private MapList mapList;
+    public MapList MapList { get; private set; }
     private SelectMapInfo selectMapInfo;
     private SearchBar searchBar;
     private SelectFooter footer;
@@ -106,7 +106,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         randomClick = samples.Get("UI/Select/Random.wav");
         rewindClick = samples.Get("UI/Select/Rewind.wav");
 
-        Filters.OnChange += updateSearch;
+        Filters.OnChange += UpdateSearch;
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
 
         InternalChildren = new Drawable[]
@@ -137,14 +137,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         {
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding(10) { Top = 80, Left = 20, Bottom = 40 },
-                            Child = mapList = new MapList { Alpha = 0 }
+                            Child = MapList = new MapList { Alpha = 0 }
                         }
                     },
                     searchBar = new SearchBar { Filters = Filters },
                     selectMapInfo = new SelectMapInfo
                     {
                         Screen = this,
-                        HoverAction = mapList.ScrollToSelected
+                        HoverAction = MapList.ScrollToSelected
                     },
                     new Container
                     {
@@ -253,8 +253,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         inputManager = GetContainingInputManager();
 
-        if (mapStore.CurrentMap.Hash == "dummy" && mapStore.MapSetsSorted.Any())
-            mapStore.Select(mapStore.GetRandom()?.LowestDifficulty, true);
+        if (MapStore.CurrentMap.Hash == "dummy" && MapStore.MapSetsSorted.Any())
+            MapStore.Select(MapStore.GetRandom()?.LowestDifficulty, true);
 
         Task.Run(() =>
         {
@@ -264,13 +264,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
             Schedule(() =>
             {
-                mapStore.MapSetAdded += addMapSet;
-                mapStore.MapSetUpdated += replaceMapSet;
-                mapStore.MapSetBindable.BindValueChanged(mapSetBindableChanged, true);
-                mapStore.MapBindable.BindValueChanged(mapBindableChanged, true);
+                MapStore.MapSetAdded += addMapSet;
+                MapStore.MapSetUpdated += replaceMapSet;
+                MapStore.MapSetBindable.BindValueChanged(mapSetBindableChanged, true);
+                MapStore.MapBindable.BindValueChanged(mapBindableChanged, true);
 
-                mapList.FadeIn(500);
+                MapList.FadeIn(500);
                 loadingIcon.FadeOut(500);
+                OnMapsLoaded();
             });
         });
     }
@@ -279,17 +280,17 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         base.Dispose(isDisposing);
 
-        mapStore.MapSetAdded -= addMapSet;
-        mapStore.MapSetUpdated -= replaceMapSet;
+        MapStore.MapSetAdded -= addMapSet;
+        MapStore.MapSetUpdated -= replaceMapSet;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
-        mapStore.MapSetBindable.ValueChanged -= mapSetBindableChanged;
-        mapStore.MapBindable.ValueChanged -= mapBindableChanged;
+        MapStore.MapSetBindable.ValueChanged -= mapSetBindableChanged;
+        MapStore.MapBindable.ValueChanged -= mapBindableChanged;
     }
 
     private void loadMapSets()
     {
-        var sets = mapStore.MapSetsSorted;
+        var sets = MapStore.MapSetsSorted;
 
         foreach (RealmMapSet set in sets)
         {
@@ -302,9 +303,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             };
 
             LoadComponent(entry);
-            Schedule(() => mapList.AddMap(entry));
+            Schedule(() => MapList.AddMap(entry));
             lookup[set] = entry;
-            maps.Add(set);
+            Maps.Add(set);
         }
 
         if (!sets.Any()) Schedule(() => noMapsContainer.FadeIn(500));
@@ -314,7 +315,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         Schedule(() =>
         {
-            int index = mapStore.MapSetsSorted.IndexOf(set);
+            int index = MapStore.MapSetsSorted.IndexOf(set);
             if (index == -1) return;
 
             var entry = new MapListEntry(set)
@@ -325,7 +326,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 ExportAction = ExportMapSet
             };
 
-            mapList.Insert(index, entry);
+            MapList.Insert(index, entry);
             lookup[set] = entry;
             // mapStore.Select(set.LowestDifficulty, true);
             noMapsContainer.FadeOut(200);
@@ -338,8 +339,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         {
             if (lookup.ContainsKey(oldSet))
             {
-                mapList.Remove(lookup[oldSet], true);
-                maps.Remove(oldSet);
+                MapList.Remove(lookup[oldSet], true);
+                Maps.Remove(oldSet);
                 lookup.Remove(oldSet);
             }
 
@@ -356,7 +357,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (set == null || !lookup.ContainsKey(set))
             return;
 
-        var previous = mapStore.CurrentMapSet;
+        var previous = MapStore.CurrentMapSet;
 
         if (!Equals(previous, set) || !clock.IsRunning)
             clock.Seek(set.Metadata.PreviewTime);
@@ -373,16 +374,16 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
 
         if (lookup.TryGetValue(map.MapSet, out var entry))
-            ScheduleAfterChildren(() => mapList.ScrollTo(entry));
+            ScheduleAfterChildren(() => MapList.ScrollTo(entry));
     }
 
-    public void Accept()
+    public virtual void Accept()
     {
-        if (mapStore.CurrentMap == null)
+        if (MapStore.CurrentMap == null)
             return;
 
         menuAccept.Play();
-        backgrounds.AddBackgroundFromMap(mapStore.CurrentMap);
+        backgrounds.AddBackgroundFromMap(MapStore.CurrentMap);
         backgrounds.SwipeAnimation();
 
         var mods = ModSelector.SelectedMods.ToList();
@@ -392,44 +393,44 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         if (mods.Any(m => m is AutoPlayMod))
         {
-            this.Push(new GameplayLoader(mapStore.CurrentMap, mods, () =>
+            this.Push(new GameplayLoader(MapStore.CurrentMap, mods, () =>
             {
-                var map = mapStore.CurrentMap.GetMapInfo();
-                var autogen = new AutoGenerator(map, mapStore.CurrentMap.KeyCount);
+                var map = MapStore.CurrentMap.GetMapInfo();
+                var autogen = new AutoGenerator(map, MapStore.CurrentMap.KeyCount);
                 var replay = autogen.Generate();
 
-                return new ReplayGameplayScreen(mapStore.CurrentMap, mods, replay);
+                return new ReplayGameplayScreen(MapStore.CurrentMap, mods, replay);
             }));
         }
         else
-            this.Push(new GameplayLoader(mapStore.CurrentMap, mods, () => new GameplayScreen(mapStore.CurrentMap, mods)));
+            this.Push(new GameplayLoader(MapStore.CurrentMap, mods, () => new GameplayScreen(MapStore.CurrentMap, mods)));
     }
 
     private void changeSelection(int by = 0, bool last = false)
     {
-        if (maps.Count == 0)
+        if (Maps.Count == 0)
             return;
 
-        int current = maps.IndexOf(mapStore.CurrentMapSet);
+        int current = Maps.IndexOf(MapStore.CurrentMapSet);
         current += by;
 
         if (current < 0)
-            current = maps.Count - 1;
-        else if (current >= maps.Count)
+            current = Maps.Count - 1;
+        else if (current >= Maps.Count)
             current = 0;
 
-        var set = maps[current];
+        var set = Maps[current];
         var map = last ? set.HighestDifficulty : set.LowestDifficulty;
-        mapStore.Select(map, true);
+        MapStore.Select(map, true);
     }
 
     private void changeMapSelection(int by = 0)
     {
-        if (!maps.Contains(mapStore.CurrentMapSet)) return;
+        if (!Maps.Contains(MapStore.CurrentMapSet)) return;
 
-        var listEntry = lookup[mapStore.CurrentMapSet];
+        var listEntry = lookup[MapStore.CurrentMapSet];
 
-        int current = listEntry.Maps.IndexOf(mapStore.CurrentMap);
+        int current = listEntry.Maps.IndexOf(MapStore.CurrentMap);
         current += by;
 
         if (current < 0)
@@ -444,7 +445,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        mapStore.Select(listEntry.Maps[current], true);
+        MapStore.Select(listEntry.Maps[current], true);
     }
 
     public void OpenDeleteConfirm(RealmMapSet set)
@@ -457,15 +458,15 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (set == null)
             return;
 
-        mapStore.DeleteMapSet(set);
-        mapList.Remove(lookup[set], false);
-        maps.Remove(set);
+        MapStore.DeleteMapSet(set);
+        MapList.Remove(lookup[set], false);
+        Maps.Remove(set);
         lookup.Remove(set);
 
-        if (Equals(set, mapStore.CurrentMapSet))
+        if (Equals(set, MapStore.CurrentMapSet))
             changeSelection(1);
 
-        if (maps.Count == 0)
+        if (Maps.Count == 0)
             noMapsContainer.FadeIn(500);
     }
 
@@ -481,7 +482,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         };
 
         notifications.AddTask(notification);
-        Task.Run(() => mapStore.Export(set, notification));
+        Task.Run(() => MapStore.Export(set, notification));
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -490,7 +491,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         clock.Looping = false;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
-        mapList.MoveToX(-200, 500, Easing.OutQuint);
+        MapList.MoveToX(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
         searchBar.Hide();
         footer.Hide();
@@ -499,17 +500,17 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     public override void OnResuming(ScreenTransitionEvent e)
     {
         this.FadeIn(200);
-        lightController.FadeColour(FluXisColors.GetKeyColor(mapStore.CurrentMap.KeyCount), 400);
+        lightController.FadeColour(FluXisColors.GetKeyColor(MapStore.CurrentMap.KeyCount), 400);
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
-        mapList.MoveToX(0, 500, Easing.OutQuint);
+        MapList.MoveToX(0, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(0, 500, Easing.OutQuint);
         searchBar.Show();
         footer.Show();
 
-        if (mapStore.CurrentMap != null)
+        if (MapStore.CurrentMap != null)
         {
-            clock.RestartPoint = mapStore.CurrentMap.Metadata.PreviewTime;
+            clock.RestartPoint = MapStore.CurrentMap.Metadata.PreviewTime;
 
             if (!clock.IsRunning)
                 clock.Start();
@@ -523,7 +524,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         this.FadeInFromZero(200);
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
-        mapList.MoveToX(-200)
+        MapList.MoveToX(-200)
                .MoveToX(0, 500, Easing.OutQuint);
 
         selectMapInfo.MoveToX(200)
@@ -532,8 +533,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         searchBar.Show();
         footer.Show();
 
-        if (mapStore.CurrentMap != null)
-            clock.RestartPoint = mapStore.CurrentMap.Metadata.PreviewTime;
+        if (MapStore.CurrentMap != null)
+            clock.RestartPoint = MapStore.CurrentMap.Metadata.PreviewTime;
     }
 
     public override bool OnExiting(ScreenExitEvent e)
@@ -541,7 +542,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         this.FadeOut(200);
         clock.Looping = false;
 
-        mapList.MoveToX(-200, 500, Easing.OutQuint);
+        MapList.MoveToX(-200, 500, Easing.OutQuint);
         selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
         searchBar.Hide();
         footer.Hide();
@@ -646,10 +647,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void changeLetter(int by)
     {
-        if (maps.Count <= 1) // no need to change letter if there's only one map
+        if (Maps.Count <= 1) // no need to change letter if there's only one map
             return;
 
-        var current = getLetter(mapStore.CurrentMapSet.Metadata.Title[0]);
+        var current = getLetter(MapStore.CurrentMapSet.Metadata.Title[0]);
 
         var index = Array.IndexOf(letters, current);
         index += by;
@@ -657,7 +658,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (index < 0) index = letters.Length - 1;
         if (index >= letters.Length) index = 0;
 
-        while (maps.All(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) != letters[index]))
+        while (Maps.All(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) != letters[index]))
         {
             index += by;
 
@@ -674,10 +675,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void changeLetter(char letter)
     {
-        if (maps.Count <= 1) // no need to change letter if there's only one map
+        if (Maps.Count <= 1) // no need to change letter if there's only one map
             return;
 
-        var current = getLetter(mapStore.CurrentMapSet.Metadata.Title[0]);
+        var current = getLetter(MapStore.CurrentMapSet.Metadata.Title[0]);
 
         if (current == letter)
         {
@@ -687,8 +688,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         Logger.Log($"Changing letter to {letter}");
 
-        var first = maps.FirstOrDefault(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter);
-        if (first != null) mapStore.CurrentMapSet = first;
+        var first = Maps.FirstOrDefault(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter);
+        if (first != null) MapStore.CurrentMapSet = first;
 
         currentLetter.Text = letter.ToString();
         letterContainer.FadeIn(200).Delay(1000).FadeOut(300);
@@ -701,38 +702,40 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void cycleLetter(char letter)
     {
-        if (maps.Count <= 1) // no need to change letter if there's only one map
+        if (Maps.Count <= 1) // no need to change letter if there's only one map
             return;
 
-        var startingWith = maps.Where(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter).ToList();
-        var idx = startingWith.IndexOf(mapStore.CurrentMapSet);
+        var startingWith = Maps.Where(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter).ToList();
+        var idx = startingWith.IndexOf(MapStore.CurrentMapSet);
 
         if (idx == -1) return;
 
         idx++;
         if (idx >= startingWith.Count) idx = 0;
 
-        mapStore.CurrentMapSet = startingWith[idx];
+        MapStore.CurrentMapSet = startingWith[idx];
     }
 
-    private void updateSearch()
-    {
-        maps.Clear();
+    protected virtual void OnMapsLoaded() { }
 
-        foreach (var child in mapList.Content.Children)
+    protected virtual void UpdateSearch()
+    {
+        Maps.Clear();
+
+        foreach (var child in MapList.Content.Children)
         {
             bool matches = child.MapSet.Maps.Aggregate(false, (current, map) => current | Filters.Matches(map));
 
             if (matches)
             {
-                maps.Add(child.MapSet);
+                Maps.Add(child.MapSet);
                 child.Show();
             }
             else
                 child.Hide();
         }
 
-        if (!maps.Any())
+        if (!Maps.Any())
             noMapsContainer.FadeIn(200);
         else
             noMapsContainer.FadeOut(200);
@@ -740,13 +743,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public void RandomMap()
     {
-        if (maps.Count == 0)
+        if (Maps.Count == 0)
             return;
 
-        var newMap = maps[RNG.Next(0, maps.Count)];
-        var currentMap = mapStore.CurrentMapSet;
+        var newMap = Maps[RNG.Next(0, Maps.Count)];
+        var currentMap = MapStore.CurrentMapSet;
 
-        mapStore.CurrentMapSet = newMap;
+        MapStore.CurrentMapSet = newMap;
         randomClick?.Play();
 
         if (randomHistory.Count > 0)
@@ -764,7 +767,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (randomHistory.Count <= 0)
             return;
 
-        mapStore.CurrentMapSet = randomHistory.Last();
+        MapStore.CurrentMapSet = randomHistory.Last();
         randomHistory.RemoveAt(randomHistory.Count - 1);
         rewindClick?.Play();
     }
@@ -781,8 +784,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         if (map == null) return;
 
-        mapStore.Select(map, true);
-        if (mapStore.CurrentMap == null) return;
+        MapStore.Select(map, true);
+        if (MapStore.CurrentMap == null) return;
 
         var loadedMap = map.GetMapInfo();
         if (loadedMap == null) return;

@@ -1,3 +1,6 @@
+using fluXis.Game.Scoring;
+using Newtonsoft.Json;
+
 namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 
 /// <summary>
@@ -6,4 +9,12 @@ namespace fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 public class MultiplayerCompletePacket : Packet
 {
     public override string ID => "multi/complete";
+
+    [JsonProperty("score")]
+    public ScoreInfo Score { get; set; }
+
+    public MultiplayerCompletePacket(ScoreInfo score)
+    {
+        Score = score;
+    }
 }

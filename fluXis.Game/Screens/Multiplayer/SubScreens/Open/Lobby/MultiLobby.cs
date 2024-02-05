@@ -9,6 +9,7 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Online.Multiplayer;
@@ -49,9 +50,11 @@ public partial class MultiLobby : MultiSubScreen
     [Resolved]
     private Fluxel fluxel { get; set; }
 
+    [Resolved]
+    private MultiplayerClient client { get; set; }
+
     public MultiplayerRoom Room { get; set; }
 
-    private MultiplayerClient client;
     private bool ready;
 
     private bool confirmExit;
@@ -62,9 +65,10 @@ public partial class MultiLobby : MultiSubScreen
     [BackgroundDependencyLoader]
     private void load()
     {
+        client.Room = Room;
+
         InternalChildren = new Drawable[]
         {
-            client = new OnlineMultiplayerClient { Room = Room },
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -124,24 +128,46 @@ public partial class MultiLobby : MultiSubScreen
             {
                 Corner = Corner.BottomRight,
                 ButtonText = "Ready",
-                Action = () =>
-                {
-                    ready = !ready;
-                    fluxel.SendPacketAsync(new MultiplayerReadyPacket(ready));
-                    readyButton.ButtonText = ready ? "Unready" : "Ready";
-                }
+                Action = toggleReadyState
             }
         };
+    }
+
+    private void toggleReadyState()
+    {
+        ready = !ready;
+        fluxel.SendPacketAsync(new MultiplayerReadyPacket(ready));
+        readyButton.ButtonText = ready ? "Unready" : "Ready";
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        client.UserJoined += user => playerList.AddPlayer(user);
-        client.UserLeft += user => playerList.RemovePlayer(user.ID);
+        client.UserJoined += onUserJoined;
+        client.UserLeft += onUserLeft;
         client.ReadyStateChanged += updateReadyState;
         client.Starting += startLoading;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        client.UserJoined -= onUserJoined;
+        client.UserLeft -= onUserLeft;
+        client.ReadyStateChanged -= updateReadyState;
+        client.Starting -= startLoading;
+    }
+
+    private void onUserJoined(APIUserShort user)
+    {
+        playerList.AddPlayer(user);
+    }
+
+    private void onUserLeft(APIUserShort user)
+    {
+        playerList.RemovePlayer(user.ID);
     }
 
     private void updateReadyState(long id, bool ready)
@@ -155,7 +181,7 @@ public partial class MultiLobby : MultiSubScreen
         var map = mapStore.CurrentMapSet.Maps.First();
         var mods = new List<IMod>();
 
-        multiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(map, mods)));
+        multiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
     }
 
     public override bool OnExiting(ScreenExitEvent e)

@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring;
 using osu.Framework.Graphics;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.Multiplayer;
 
@@ -14,7 +17,9 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action RoomUpdated;
     public event Action<long, bool> ReadyStateChanged;
     public event Action Starting;
+    public event Action<List<ScoreInfo>> ResultsReady;
 
+    public virtual APIUserShort Player => APIUserShort.Dummy;
     public MultiplayerRoom Room { get; set; }
 
     Task IMultiplayerClient.UserJoined(APIUserShort user)
@@ -75,6 +80,15 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
             RoomUpdated?.Invoke();
         }, false);
 
+        return Task.CompletedTask;
+    }
+
+    public virtual Task Finished(ScoreInfo score) => Task.CompletedTask;
+
+    Task IMultiplayerClient.ResultsReady(List<ScoreInfo> scores)
+    {
+        Logger.Log($"Received results for {scores.Count} players", LoggingTarget.Network, LogLevel.Debug);
+        Schedule(() => ResultsReady?.Invoke(scores));
         return Task.CompletedTask;
     }
 }

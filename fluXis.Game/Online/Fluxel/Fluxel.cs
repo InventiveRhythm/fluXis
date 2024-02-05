@@ -268,6 +268,7 @@ public partial class Fluxel : Component
                     EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
                     EventType.MultiplayerReady => handleListener<MultiplayerReadyUpdate>,
                     EventType.MultiplayerStartGame => handleListener<dynamic>,
+                    EventType.MultiplayerFinish => handleListener<MultiplayerFinishPacket>,
                     _ => _ => { }
                 };
 
@@ -455,6 +456,7 @@ public partial class Fluxel : Component
             "multi/update" => EventType.MultiplayerRoomUpdate,
             "multi/ready" => EventType.MultiplayerReady,
             "multi/start" => EventType.MultiplayerStartGame,
+            "multi/finish" => EventType.MultiplayerFinish,
 
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, null)
         };
@@ -494,5 +496,6 @@ public enum EventType
     MultiplayerLeave,
     MultiplayerRoomUpdate,
     MultiplayerReady,
-    MultiplayerStartGame
+    MultiplayerStartGame,
+    MultiplayerFinish
 }
