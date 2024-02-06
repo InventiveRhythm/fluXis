@@ -1,18 +1,23 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 
 public partial class AppearanceLayoutSection : SettingsSubSection
 {
-    public override string Title => "HUD Layout";
+    public override LocalisableString Title => strings.Layout;
     public override IconUsage Icon => FontAwesome6.Solid.LayerGroup;
+
+    private SettingsAppearanceStrings strings => LocalizationStrings.Settings.Appearance;
 
     [BackgroundDependencyLoader]
     private void load(LayoutManager layouts, Storage storage)
@@ -23,28 +28,31 @@ public partial class AppearanceLayoutSection : SettingsSubSection
         {
             layoutDropdown = new SettingsDropdown<HUDLayout>
             {
-                Label = "Current Layout",
+                Label = strings.LayoutCurrent,
+                Description = strings.LayoutCurrentDescription,
                 Bindable = layouts.Layout,
                 Items = layouts.Layouts
             },
             new SettingsButton
             {
-                Label = "Reload Layouts",
+                Label = strings.LayoutReload,
+                Description = strings.LayoutReloadDescription,
                 Enabled = true,
                 ButtonText = "Reload",
                 Action = layouts.Reload
             },
             new SettingsButton
             {
-                Label = "Create New Layout",
+                Label = strings.LayoutCreate,
+                Description = strings.LayoutCreateDescription,
                 Enabled = true,
                 ButtonText = "Create",
                 Action = layouts.CreateNewLayout
             },
             new SettingsButton
             {
-                Label = "Show layout file in explorer",
-                Description = "Opens the folder containing the layout file in your file explorer. (This is temporary until the layout editor is finished)",
+                Label = strings.LayoutShowInExplorer,
+                Description = strings.LayoutShowInExplorerDescription,
                 Enabled = true,
                 ButtonText = "Show",
                 Action = () =>
@@ -57,7 +65,8 @@ public partial class AppearanceLayoutSection : SettingsSubSection
             },
             new SettingsButton
             {
-                Label = "Open Layout editor",
+                Label = strings.LayoutOpenEditor,
+                Description = strings.LayoutOpenEditorDescription,
                 Enabled = false,
                 ButtonText = "Open"
             }

@@ -1,17 +1,22 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Audio;
 
 public partial class AudioVolumeSection : SettingsSubSection
 {
-    public override string Title => "Volume";
+    public override LocalisableString Title => strings.Volume;
     public override IconUsage Icon => FontAwesome6.Solid.VolumeHigh;
+
+    private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 
     [BackgroundDependencyLoader]
     private void load(AudioManager audio, FluXisConfig config)
@@ -20,32 +25,32 @@ public partial class AudioVolumeSection : SettingsSubSection
         {
             new SettingsSlider<double>
             {
-                Label = "Master Volume",
+                Label = strings.MasterVolume,
                 Bindable = audio.Volume,
                 DisplayAsPercentage = true
             },
             new SettingsSlider<double>
             {
-                Label = "Master Volume (Inactive)",
-                Description = "Volume when the game is inactive (multiplied by Master Volume)",
+                Label = strings.MasterVolumeInactive,
+                Description = strings.MasterVolumeInactiveDescription,
                 Bindable = config.GetBindable<double>(FluXisSetting.InactiveVolume),
                 DisplayAsPercentage = true
             },
             new SettingsSlider<double>
             {
-                Label = "Music Volume",
+                Label = strings.MusicVolume,
                 Bindable = audio.VolumeTrack,
                 DisplayAsPercentage = true
             },
             new SettingsSlider<double>
             {
-                Label = "Effect Volume",
+                Label = strings.EffectVolume,
                 Bindable = audio.VolumeSample,
                 DisplayAsPercentage = true
             },
             new SettingsSlider<double>
             {
-                Label = "Hit Sound Volume",
+                Label = strings.HitSoundVolume,
                 Bindable = Config.GetBindable<double>(FluXisSetting.HitSoundVolume),
                 DisplayAsPercentage = true
             }

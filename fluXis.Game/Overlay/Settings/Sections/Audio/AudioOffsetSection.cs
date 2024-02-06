@@ -1,18 +1,23 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Offset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Audio;
 
 public partial class AudioOffsetSection : SettingsSubSection
 {
-    public override string Title => "Offset";
+    public override LocalisableString Title => strings.Offset;
     public override IconUsage Icon => FontAwesome6.Solid.Clock;
+
+    private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 
     [BackgroundDependencyLoader]
     private void load(FluXisGameBase game)
@@ -21,15 +26,15 @@ public partial class AudioOffsetSection : SettingsSubSection
         {
             new SettingsSlider<float>
             {
-                Label = "Audio Offset",
+                Label = strings.AudioOffset,
                 ValueLabel = "{value}ms",
-                Description = "Changes the audio offset for all songs.",
+                Description = strings.AudioOffsetDescription,
                 Bindable = Config.GetBindable<float>(FluXisSetting.GlobalOffset),
                 Step = 1
             },
             new SettingsButton
             {
-                Label = "Open Offset wizard",
+                Label = strings.OpenOffsetWizard,
                 ButtonText = "Open",
                 Action = () =>
                 {

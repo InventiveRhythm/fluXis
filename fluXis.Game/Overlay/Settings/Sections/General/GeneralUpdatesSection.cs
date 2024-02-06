@@ -1,15 +1,20 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.General;
 
 public partial class GeneralUpdatesSection : SettingsSubSection
 {
-    public override string Title => "Updates";
+    public override LocalisableString Title => strings.Updates;
     public override IconUsage Icon => FontAwesome6.Solid.Rotate;
+
+    private SettingsGeneralStrings strings => LocalizationStrings.Settings.General;
 
     private InputManager inputManager;
 
@@ -18,8 +23,8 @@ public partial class GeneralUpdatesSection : SettingsSubSection
     {
         Add(new SettingsButton
         {
-            Label = "Check for updates",
-            Description = "Checks for updates and downloads them if available.",
+            Label = strings.UpdatesCheck,
+            Description = strings.UpdatesCheckDescription,
             ButtonText = "Check",
             Action = () => game.PerformUpdateCheck(false, inputManager.CurrentState.Keyboard.AltPressed)
         });

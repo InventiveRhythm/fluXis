@@ -1,17 +1,22 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Files;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections;
 
 public partial class DebugSection : SettingsSection
 {
     public override IconUsage Icon => FontAwesome6.Solid.Bug;
-    public override string Title => "Debug";
+    public override LocalisableString Title => strings.Title;
+
+    private SettingsDebugStrings strings => LocalizationStrings.Settings.Debug;
 
     [BackgroundDependencyLoader]
     private void load(FrameworkConfigManager frameworkConfig, FluXisGameBase game)
@@ -20,12 +25,12 @@ public partial class DebugSection : SettingsSection
         {
             new SettingsToggle
             {
-                Label = "Show Log Overlay",
+                Label = strings.ShowLogOverlay,
                 Bindable = frameworkConfig.GetBindable<bool>(FrameworkSetting.ShowLogOverlay)
             },
             new SettingsButton
             {
-                Label = "Import File",
+                Label = strings.ImportFile,
                 ButtonText = "Import",
                 Action = () =>
                 {
@@ -37,8 +42,8 @@ public partial class DebugSection : SettingsSection
             },
             new SettingsButton
             {
-                Label = "Install Update From File",
-                Description = "Installs an update from a .zip file. Be careful from where you download the file from though!",
+                Label = strings.InstallUpdateFromFile,
+                Description = strings.InstallUpdateFromFileDescription,
                 ButtonText = "Find",
                 Action = () =>
                 {

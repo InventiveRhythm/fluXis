@@ -1,16 +1,21 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.UserInterface;
 
 public partial class UserInterfaceGeneralSection : SettingsSubSection
 {
-    public override string Title => "General";
+    public override LocalisableString Title => strings.General;
     public override IconUsage Icon => FontAwesome6.Solid.Gear;
+
+    private SettingsUIStrings strings => LocalizationStrings.Settings.UI;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -19,26 +24,26 @@ public partial class UserInterfaceGeneralSection : SettingsSubSection
         {
             new SettingsSlider<float>
             {
-                Label = "UI Scale",
-                Description = "The scale of the UI.",
+                Label = strings.UIScale,
+                Description = strings.UIScaleDescription,
                 Bindable = Config.GetBindable<float>(FluXisSetting.UIScale)
             },
             new SettingsSlider<float>
             {
-                Label = "Hold to Confirm Duration",
-                Description = "How long to hold a button to confirm an action.",
+                Label = strings.ConfirmDuration,
+                Description = strings.ConfirmDurationDescription,
                 Bindable = Config.GetBindable<float>(FluXisSetting.HoldToConfirm)
             },
             new SettingsToggle
             {
-                Label = "Skip Warning",
-                Description = "Skips the epliepsy warning at the start of the game.",
+                Label = strings.SkipWarning,
+                Description = strings.SkipWarningDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SkipIntro)
             },
             new SettingsToggle
             {
-                Label = "Parallax",
-                Description = "Enable the parallax effect on backgrounds and such.",
+                Label = strings.Parallax,
+                Description = strings.ParallaxDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.Parallax)
             }
         });

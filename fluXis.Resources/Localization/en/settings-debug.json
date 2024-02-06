@@ -1,0 +1,7 @@
+{
+  "title": "Debug",
+  "show-log-overlay": "Show Log Overlay",
+  "import-file": "Import File",
+  "update-from-file": "Install Update From File",
+  "update-from-file-description": "Installs an update from a .zip file. Be careful from where you download the file from though!"
+}

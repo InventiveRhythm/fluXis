@@ -9,14 +9,15 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Settings.UI;
 
 public abstract partial class SettingsItem : Container
 {
-    public string Label { get; init; } = string.Empty;
-    public string Description { get; init; } = string.Empty;
+    public LocalisableString Label { get; init; } = string.Empty;
+    public LocalisableString Description { get; init; } = string.Empty;
 
     protected virtual bool IsDefault => true;
 

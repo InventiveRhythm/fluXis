@@ -2,12 +2,15 @@ using System;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 
@@ -15,8 +18,10 @@ namespace fluXis.Game.Overlay.Settings.Sections.Maintenance;
 
 public partial class MaintenanceFilesSection : SettingsSubSection
 {
-    public override string Title => "Files";
+    public override LocalisableString Title => strings.Files;
     public override IconUsage Icon => FontAwesome6.Solid.File;
+
+    private SettingsMaintenanceStrings strings => LocalizationStrings.Settings.Maintenance;
 
     [BackgroundDependencyLoader]
     private void load(Storage storage, MapStore store, NotificationManager notifications)
@@ -25,8 +30,8 @@ public partial class MaintenanceFilesSection : SettingsSubSection
         {
             new SettingsButton
             {
-                Label = "Clean up files",
-                Description = "Deletes all files that are not used by any maps",
+                Label = strings.CleanUpFiles,
+                Description = strings.CleanUpFilesDescription,
                 ButtonText = "Run",
                 Action = () =>
                 {

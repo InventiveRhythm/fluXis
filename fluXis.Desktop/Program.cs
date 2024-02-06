@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using fluXis.Game;
 using fluXis.Game.IPC;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
+using fluXis.Game.Utils;
 using osu.Framework.Platform;
 using osu.Framework;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 
 namespace fluXis.Desktop;
@@ -15,6 +20,12 @@ public static class Program
 
     public static void Main(string[] args)
     {
+        if (args.Contains("--generate-langfiles"))
+        {
+            generateDefaultLangfiles();
+            return;
+        }
+
         Args = args;
 
         string name = "fluXis";
@@ -73,5 +84,47 @@ public static class Program
         }
 
         return false;
+    }
+
+    private static void generateDefaultLangfiles()
+    {
+        // used to generate the default english langfiles
+
+        var cats = new List<LocalizationCategory>
+        {
+            new SettingsAppearanceStrings(),
+            new SettingsAudioStrings(),
+            new SettingsDebugStrings(),
+            new SettingsGameplayStrings(),
+            new SettingsGeneralStrings(),
+            new SettingsGraphicsStrings(),
+            new SettingsInputStrings(),
+            new SettingsMaintenanceStrings(),
+            new SettingsPluginsStrings(),
+            new SettingsUIStrings()
+        };
+
+        Directory.CreateDirectory("langfiles");
+
+        foreach (var cat in cats)
+        {
+            var file = cat.FileName;
+            var props = cat.GetType().GetProperties().Where(p => p.PropertyType == typeof(TranslatableString));
+
+            var dict = new Dictionary<string, string>();
+
+            foreach (var prop in props)
+            {
+                var value = (TranslatableString)prop.GetValue(cat)!;
+
+                var key = value.Key.Split(':')[1];
+                var defaultStr = value.Format;
+
+                dict.Add(key, defaultStr);
+            }
+
+            var json = dict.Serialize(true);
+            File.WriteAllText($"langfiles/{file}.json", json);
+        }
     }
 }

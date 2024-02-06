@@ -1,17 +1,22 @@
 using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Gameplay;
 
 public partial class GameplayGeneralSection : SettingsSubSection
 {
-    public override string Title => "General";
+    public override LocalisableString Title => strings.General;
     public override IconUsage Icon => FontAwesome6.Solid.Gear;
+
+    private SettingsGameplayStrings strings => LocalizationStrings.Settings.Gameplay;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -20,56 +25,59 @@ public partial class GameplayGeneralSection : SettingsSubSection
         {
             new SettingsDropdown<ScrollDirection>
             {
-                Label = "Scroll Direction",
+                Label = strings.ScrollDirection,
+                Description = strings.ScrollDirectionDescription,
                 Items = Enum.GetValues<ScrollDirection>(),
                 Bindable = Config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection)
             },
             new SettingsToggle
             {
-                Label = "Snap Coloring",
-                Description = "Color notes based on their snap divisor.",
+                Label = strings.SnapColoring,
+                Description = strings.SnapColoringDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.SnapColoring)
             },
             new SettingsToggle
             {
-                Label = "Timing Lines",
-                Description = "Show a line every 4 beats.",
+                Label = strings.TimingLines,
+                Description = strings.TimingLinesDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.TimingLines)
             },
             new SettingsToggle
             {
-                Label = "Hide Flawless Judgement",
-                Description = "Hides the best judgement (Flawless) from popping up during gameplay.",
+                Label = strings.HideFlawless,
+                Description = strings.HideFlawlessDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.HideFlawless)
             },
             new SettingsToggle
             {
-                Label = "Show Early/Late",
-                Description = "Show early/late below the judgement.",
+                Label = strings.ShowEarlyLate,
+                Description = strings.ShowEarlyLateDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.ShowEarlyLate)
             },
             new SettingsToggle
             {
-                Label = "Judgement Splash",
-                Description = "Show a splash when a judgement is hit.",
+                Label = strings.JudgementSplash,
+                Description = strings.JudgementSplashDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.JudgementSplash)
             },
             new SettingsSlider<float>
             {
-                Label = "Top Lane Cover",
+                Label = strings.LaneCoverTop,
+                Description = strings.LaneCoverTopDescription,
                 Bindable = Config.GetBindable<float>(FluXisSetting.LaneCoverTop),
                 DisplayAsPercentage = true
             },
             new SettingsSlider<float>
             {
-                Label = "Bottom Lane Cover",
+                Label = strings.LaneCoverBottom,
+                Description = strings.LaneCoverBottomDescription,
                 Bindable = Config.GetBindable<float>(FluXisSetting.LaneCoverBottom),
                 DisplayAsPercentage = true
             },
             new SettingsToggle
             {
-                Label = "Health Effects",
-                Description = "Dims and fades the entire playfield when health is low.",
+                Label = strings.HealthEffects,
+                Description = strings.HealthEffectsDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.DimAndFade)
             }
         });

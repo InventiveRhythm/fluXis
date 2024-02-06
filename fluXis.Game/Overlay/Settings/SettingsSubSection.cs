@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Settings;
@@ -13,7 +14,7 @@ public partial class SettingsSubSection : FillFlowContainer
     [Resolved]
     protected FluXisConfig Config { get; private set; }
 
-    public virtual string Title => "Subsection";
+    public virtual LocalisableString Title => "Subsection";
     public virtual IconUsage Icon => FontAwesome6.Solid.ChevronRight;
 
     [BackgroundDependencyLoader]

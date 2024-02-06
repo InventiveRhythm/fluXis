@@ -1,17 +1,22 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Handlers.Mouse;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Input;
 
 public partial class InputMouseSection : SettingsSubSection
 {
-    public override string Title => "Mouse";
+    public override LocalisableString Title => strings.Mouse;
     public override IconUsage Icon => FontAwesome6.Solid.ComputerMouse;
+
+    private SettingsInputStrings strings => LocalizationStrings.Settings.Input;
 
     private MouseHandler mh { get; }
     private Bindable<double> localSensitivity { get; }
@@ -33,14 +38,14 @@ public partial class InputMouseSection : SettingsSubSection
         {
             new SettingsToggle
             {
-                Label = "High Precision Mouse",
-                Description = "Uses raw input from the mouse instead of the cursor position.",
+                Label = strings.HighPrecisionMouse,
+                Description = strings.HighPrecisionMouseDescription,
                 Bindable = mh.UseRelativeMode.GetBoundCopy()
             },
             new SettingsSlider<double>
             {
-                Label = "Sensitivity",
-                Description = "This is only used when High Precision Mouse is enabled.",
+                Label = strings.Sensitivity,
+                Description = strings.SensitivityDescription,
                 Bindable = mh.Sensitivity.GetBoundCopy(),
                 Step = 0.01f
             }

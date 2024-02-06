@@ -1,19 +1,24 @@
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Input;
 
 public partial class InputKeybindingsSection : SettingsSubSection
 {
-    public override string Title => "Keybindings";
+    public override LocalisableString Title => strings.Keybindings;
     public override IconUsage Icon => FontAwesome6.Solid.Keyboard;
+
+    private SettingsInputStrings strings => LocalizationStrings.Settings.Input;
 
     [Resolved]
     private MapStore mapStore { get; set; }
@@ -40,110 +45,110 @@ public partial class InputKeybindingsSection : SettingsSubSection
     {
         AddRange(new Drawable[]
         {
-            new KeybindSectionTitle { Text = "Navigation" },
+            new KeybindSectionTitle { Text = strings.Navigation },
             new SettingsKeybind
             {
-                Label = "Previous selection",
+                Label = strings.PreviousSelection,
                 Keybinds = new object[] { FluXisGlobalKeybind.Previous }
             },
             new SettingsKeybind
             {
-                Label = "Next selection",
+                Label = strings.NextSelection,
                 Keybinds = new object[] { FluXisGlobalKeybind.Next }
             },
             new SettingsKeybind
             {
-                Label = "Previous group",
+                Label = strings.PreviousGroup,
                 Keybinds = new object[] { FluXisGlobalKeybind.PreviousGroup }
             },
             new SettingsKeybind
             {
-                Label = "Next group",
+                Label = strings.NextGroup,
                 Keybinds = new object[] { FluXisGlobalKeybind.NextGroup }
             },
             new SettingsKeybind
             {
-                Label = "Back",
+                Label = strings.Back,
                 Keybinds = new object[] { FluXisGlobalKeybind.Back }
             },
             new SettingsKeybind
             {
-                Label = "Select",
+                Label = strings.Select,
                 Keybinds = new object[] { FluXisGlobalKeybind.Select }
             },
-            new KeybindSectionTitle { Text = "Song Select" },
+            new KeybindSectionTitle { Text = strings.SongSelect },
             new SettingsKeybind
             {
-                Label = "Decrease Rate",
+                Label = strings.DecreaseRate,
                 Keybinds = new object[] { FluXisGlobalKeybind.DecreaseRate }
             },
             new SettingsKeybind
             {
-                Label = "Increase Rate",
+                Label = strings.IncreaseRate,
                 Keybinds = new object[] { FluXisGlobalKeybind.IncreaseRate }
             },
-            new KeybindSectionTitle { Text = "Editing" },
+            new KeybindSectionTitle { Text = strings.Editing },
             new SettingsKeybind
             {
-                Label = "Delete Selected",
+                Label = strings.DeleteSelection,
                 Keybinds = new object[] { FluXisGlobalKeybind.Delete }
             },
             new SettingsKeybind
             {
-                Label = "Undo",
+                Label = strings.Undo,
                 Keybinds = new object[] { FluXisGlobalKeybind.Undo }
             },
             new SettingsKeybind
             {
-                Label = "Redo",
+                Label = strings.Redo,
                 Keybinds = new object[] { FluXisGlobalKeybind.Redo }
             },
-            new KeybindSectionTitle { Text = "Overlays" },
+            new KeybindSectionTitle { Text = strings.Overlays },
             new SettingsKeybind
             {
-                Label = "Toggle Settings",
+                Label = strings.ToggleSettings,
                 Keybinds = new object[] { FluXisGlobalKeybind.ToggleSettings }
             },
-            new KeybindSectionTitle { Text = "Audio" },
+            new KeybindSectionTitle { Text = strings.Audio },
             new SettingsKeybind
             {
-                Label = "Decrease Volume",
+                Label = strings.VolumeDown,
                 Keybinds = new object[] { FluXisGlobalKeybind.VolumeDecrease }
             },
             new SettingsKeybind
             {
-                Label = "Increase Volume",
+                Label = strings.VolumeUp,
                 Keybinds = new object[] { FluXisGlobalKeybind.VolumeIncrease }
             },
             new SettingsKeybind
             {
-                Label = "Previous Volume Category",
+                Label = strings.PreviousVolumeCategory,
                 Keybinds = new object[] { FluXisGlobalKeybind.VolumePreviousCategory }
             },
             new SettingsKeybind
             {
-                Label = "Next Volume Category",
+                Label = strings.NextVolumeCategory,
                 Keybinds = new object[] { FluXisGlobalKeybind.VolumeNextCategory }
             },
             new SettingsKeybind
             {
-                Label = "Previous Track",
+                Label = strings.PreviousTrack,
                 Keybinds = new object[] { FluXisGlobalKeybind.MusicPrevious }
             },
             new SettingsKeybind
             {
-                Label = "Next Track",
+                Label = strings.NextTrack,
                 Keybinds = new object[] { FluXisGlobalKeybind.MusicNext }
             },
             new SettingsKeybind
             {
-                Label = "Pause/Resume Track",
+                Label = strings.PlayPause,
                 Keybinds = new object[] { FluXisGlobalKeybind.MusicPause }
             },
-            new KeybindSectionTitle { Text = "Keymodes" },
+            new KeybindSectionTitle { Text = strings.Keymodes },
             new SettingsKeybind
             {
-                Label = "4 Key Layout",
+                Label = strings.FourKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key4k1,
@@ -154,7 +159,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             new SettingsKeybind
             {
-                Label = "5 Key Layout",
+                Label = strings.FiveKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key5k1,
@@ -166,7 +171,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             new SettingsKeybind
             {
-                Label = "6 Key Layout",
+                Label = strings.SixKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key6k1,
@@ -179,7 +184,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             new SettingsKeybind
             {
-                Label = "7 Key Layout",
+                Label = strings.SevenKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key7k1,
@@ -193,7 +198,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             new SettingsKeybind
             {
-                Label = "8 Key Layout",
+                Label = strings.EightKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key8k1,
@@ -206,10 +211,10 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key8k8
                 }
             },
-            otherKeymodesTitle = new KeybindSectionTitle { Text = "Other Keymodes" },
+            otherKeymodesTitle = new KeybindSectionTitle { Text = strings.OtherKeymodes },
             oneKeyLayout = new SettingsKeybind
             {
-                Label = "1 Key Layout",
+                Label = strings.OneKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key1k1
@@ -217,7 +222,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             twoKeyLayout = new SettingsKeybind
             {
-                Label = "2 Key Layout",
+                Label = strings.TwoKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key2k1,
@@ -226,7 +231,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             threeKeyLayout = new SettingsKeybind
             {
-                Label = "3 Key Layout",
+                Label = strings.ThreeKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key3k1,
@@ -236,7 +241,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             nineKeyLayout = new SettingsKeybind
             {
-                Label = "9 Key Layout",
+                Label = strings.NineKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key9k1,
@@ -252,7 +257,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             tenKeyLayout = new SettingsKeybind
             {
-                Label = "10 Key Layout",
+                Label = strings.TenKey,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key10k1,
@@ -267,40 +272,40 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key10k10
                 }
             },
-            new KeybindSectionTitle { Text = "In-Game" },
+            new KeybindSectionTitle { Text = strings.InGame },
             new SettingsKeybind
             {
-                Label = "Skip Intro",
+                Label = strings.SkipIntro,
                 Keybinds = new object[] { FluXisGlobalKeybind.Skip }
             },
             new SettingsKeybind
             {
-                Label = "Decrease Scroll Speed",
+                Label = strings.DecreaseSpeed,
                 Keybinds = new object[] { FluXisGlobalKeybind.ScrollSpeedDecrease }
             },
             new SettingsKeybind
             {
-                Label = "Increase Scroll Speed",
+                Label = strings.IncreaseSpeed,
                 Keybinds = new object[] { FluXisGlobalKeybind.ScrollSpeedIncrease }
             },
             new SettingsKeybind
             {
-                Label = "Quick Restart",
+                Label = strings.QuickRestart,
                 Keybinds = new object[] { FluXisGlobalKeybind.QuickRestart }
             },
             new SettingsKeybind
             {
-                Label = "Quick Exit",
+                Label = strings.QuickExit,
                 Keybinds = new object[] { FluXisGlobalKeybind.QuickExit }
             },
             new SettingsKeybind
             {
-                Label = "Seek Backward",
+                Label = strings.SeekBackward,
                 Keybinds = new object[] { FluXisGlobalKeybind.SeekBackward }
             },
             new SettingsKeybind
             {
-                Label = "Seek Forward",
+                Label = strings.SeekForward,
                 Keybinds = new object[] { FluXisGlobalKeybind.SeekForward }
             }
         });
