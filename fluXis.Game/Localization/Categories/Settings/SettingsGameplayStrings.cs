@@ -70,7 +70,7 @@ public class SettingsGameplayStrings : LocalizationCategory
     public TranslatableString Hitsounds => Get("map-hitsounds", "Map Hitsounds");
     public TranslatableString HitsoundsDescription => Get("map-hitsounds-description", "Use the map's custom hitsounds.");
 
-    public TranslatableString BackgroundVideo => Get("background-video", "Video / Story");
+    public TranslatableString BackgroundVideo => Get("background-video", "Video / Storyboard");
     public TranslatableString BackgroundVideoDescription => Get("background-video-description", "Show the video or storyboard in the background.");
 
     #endregion
