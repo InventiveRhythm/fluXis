@@ -16,6 +16,7 @@ using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
 using fluXis.Game.Screens.Menu.UI.NowPlaying;
 using fluXis.Game.Screens.Menu.UI.Snow;
+using fluXis.Game.Screens.Menu.UI.Updates;
 using fluXis.Game.Screens.Menu.UI.Visualizer;
 using fluXis.Game.Screens.Multiplayer;
 using fluXis.Game.Screens.Ranking;
@@ -73,6 +74,7 @@ public partial class MenuScreen : FluXisScreen
     private Container textContainer;
     private Container buttonContainer;
     private FillFlowContainer linkContainer;
+    private MenuUpdates updates;
 
     private Sprite logoText;
     private CircularContainer animationCircle;
@@ -252,6 +254,7 @@ public partial class MenuScreen : FluXisScreen
                     {
                         ButtonContainer = buttonContainer
                     },
+                    updates = new MenuUpdates { X = 200 },
                     linkContainer = new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,
@@ -381,14 +384,20 @@ public partial class MenuScreen : FluXisScreen
     {
         textContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
         buttonContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
-        linkContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+        // linkContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+
+        updates.CanShow = true;
+        updates.Show(duration);
     }
 
     private void hideMenu(int duration = 400)
     {
         textContainer.MoveToX(-200, duration, Easing.OutQuint).FadeOut(duration / 2f);
         buttonContainer.MoveToX(-200, duration, Easing.OutQuint).FadeOut(duration / 2f);
-        linkContainer.MoveToX(200, duration, Easing.OutQuint).FadeOut(duration / 2f);
+        // linkContainer.MoveToX(200, duration, Easing.OutQuint).FadeOut(duration / 2f);
+
+        updates.CanShow = false;
+        updates.MoveToX(200, duration, Easing.OutQuint).FadeOut(duration / 2f);
     }
 
     private void randomizeSplash() => splashText.Text = MenuSplashes.RandomSplash;

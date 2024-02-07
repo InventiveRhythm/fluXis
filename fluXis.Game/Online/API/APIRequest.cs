@@ -10,6 +10,10 @@ public class APIRequest<T> where T : class
 {
     protected virtual string Path => string.Empty;
     protected virtual HttpMethod Method => HttpMethod.Get;
+    protected virtual string RootUrl => Config.APIUrl;
+
+    protected APIEndpointConfig Config => fluxel.Endpoint;
+    private Fluxel.Fluxel fluxel;
 
     public event Action<APIResponse<T>> Success;
     public event Action<Exception> Failure;
@@ -17,14 +21,11 @@ public class APIRequest<T> where T : class
 
     public APIResponse<T> Response { get; protected set; }
 
-    private Fluxel.Fluxel fluxel;
-    private APIEndpointConfig config => fluxel.Endpoint;
-
     public virtual void Perform(Fluxel.Fluxel fluxel)
     {
         this.fluxel = fluxel;
 
-        var request = new JsonWebRequest<APIResponse<T>>($"{config.APIUrl}{Path}");
+        var request = new JsonWebRequest<APIResponse<T>>($"{RootUrl}{Path}");
         request.Method = Method;
         request.AllowInsecureRequests = true;
         request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
