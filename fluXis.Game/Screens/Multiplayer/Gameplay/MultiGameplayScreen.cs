@@ -4,8 +4,6 @@ using fluXis.Game.Mods;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay;
-using fluXis.Game.Screens.Result;
-using osu.Framework.Logging;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Multiplayer.Gameplay;
@@ -42,20 +40,5 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.Finished(ScoreProcessor.ToScoreInfo(client.Player));
     }
 
-    private void onResultsReady(List<ScoreInfo> scores)
-    {
-        Logger.Log($"Received {scores.Count} scores for results");
-        var score = scores.Find(s => s.PlayerID == client.Player.ID);
-
-        if (score == null)
-        {
-            // uhh
-            // should never happen
-            // but just in case?
-            this.Exit();
-            return;
-        }
-
-        this.Push(new SoloResults(RealmMap, score, client.Player));
-    }
+    private void onResultsReady(List<ScoreInfo> scores) => this.Push(new MultiResults(RealmMap, scores));
 }
