@@ -84,6 +84,8 @@ public partial class MultiResults : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 Height = 60,
                 Masking = true,
                 EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
