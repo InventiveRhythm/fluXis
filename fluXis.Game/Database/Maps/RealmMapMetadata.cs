@@ -1,4 +1,6 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using JetBrains.Annotations;
+using osu.Framework.Graphics;
 using Realms;
 
 namespace fluXis.Game.Database.Maps;
@@ -14,6 +16,19 @@ public class RealmMapMetadata : RealmObject
     public string Audio { get; set; } = string.Empty;
     public int PreviewTime { get; set; }
     public string ColorHex { get; set; }
+
+    [Ignored]
+    public Colour4 Color
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(ColorHex))
+                return FluXisColors.Background2;
+
+            return Colour4.TryParseHex(ColorHex, out var color) ? color : FluXisColors.Background2;
+        }
+        set => ColorHex = value.ToHex();
+    }
 
     [UsedImplicitly]
     public RealmMapMetadata()
