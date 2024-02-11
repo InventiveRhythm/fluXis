@@ -192,7 +192,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     {
         base.LoadComplete();
 
-        maps.MapBindable.BindValueChanged(mapChanged);
+        maps.MapBindable.BindValueChanged(mapChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
