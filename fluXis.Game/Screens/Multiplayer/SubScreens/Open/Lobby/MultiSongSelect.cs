@@ -5,7 +5,7 @@ namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 
 public partial class MultiSongSelect : SelectScreen
 {
-    public override void Accept()
+    protected override void Accept()
     {
         if (MapStore.CurrentMap == null)
             return;

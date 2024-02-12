@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.Sprites;
@@ -14,15 +15,21 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
 public partial class SelectFooter : Container
 {
-    public SelectScreen Screen { get; init; }
     public Container<SelectFooterButton> ButtonContainer { get; private set; }
 
+    public Action BackAction { get; init; }
+    public Action ModsAction { get; init; }
+    public Action RandomAction { get; init; }
+    public Action RewindAction { get; init; }
+    public Action PlayAction { get; init; }
+
+    public Action<RealmMapSet> DeleteAction { get; init; }
+    public Action<RealmMap> EditAction { get; init; }
     public Action ScoresWiped { get; init; }
 
     private Container backgroundContainer;
@@ -58,7 +65,8 @@ public partial class SelectFooter : Container
             },
             options = new FooterOptions
             {
-                Footer = this,
+                DeleteAction = DeleteAction,
+                EditAction = EditAction,
                 ScoresWiped = ScoresWiped
             },
             keyboardContainer = new Container
@@ -72,7 +80,7 @@ public partial class SelectFooter : Container
                     {
                         ButtonText = "Back",
                         Icon = FontAwesome6.Solid.ChevronLeft,
-                        Action = Screen.Exit
+                        Action = BackAction
                     },
                     ButtonContainer = new Container<SelectFooterButton>
                     {
@@ -89,7 +97,7 @@ public partial class SelectFooter : Container
                                 Text = "Mods",
                                 Icon = FontAwesome6.Solid.LayerGroup,
                                 AccentColor = Colour4.FromHex("#edbb98"),
-                                Action = openModSelector
+                                Action = ModsAction,
                             },
                             randomButton = new SelectFooterButton
                             {
@@ -117,7 +125,7 @@ public partial class SelectFooter : Container
                         Icon = FontAwesome6.Solid.Play,
                         ButtonColor = FluXisColors.Accent2,
                         Corner = Corner.BottomRight,
-                        Action = Screen.Accept
+                        Action = PlayAction
                     }
                 }
             },
@@ -219,14 +227,12 @@ public partial class SelectFooter : Container
         ButtonContainer.MoveToY(100, 500, Easing.OutQuint);
     }
 
-    private void openModSelector() => Screen.ModSelector.IsOpen.Toggle();
-
     private void randomMap()
     {
         if (inputManager.CurrentState.Keyboard.ShiftPressed)
-            Screen.RewindRandom();
+            RewindAction?.Invoke();
         else
-            Screen.RandomMap();
+            RandomAction?.Invoke();
     }
 
     public void OpenSettings()

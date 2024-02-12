@@ -16,10 +16,12 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
+using fluXis.Game.IO;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Chat;
@@ -33,6 +35,7 @@ using fluXis.Game.Overlay.Register;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Plugins;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
@@ -50,6 +53,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
@@ -163,6 +167,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         LoadComponent(MapStore = new MapStore());
         dependencies.Cache(MapStore);
+
+        dependencies.Cache(new ReplayStorage(storage.GetStorageForDirectory("replays")));
 
         LoadComponent(pluginManager = new PluginManager());
         dependencies.Cache(pluginManager);
@@ -363,6 +369,11 @@ public partial class FluXisGameBase : osu.Framework.Game
         MapStore.CurrentMapSet = set;
         var map = set.Maps.First();
         GlobalBackground.AddBackgroundFromMap(map);
+    }
+
+    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player)
+    {
+        Logger.Log($"{nameof(PresentScore)} is not implemented. I hope we are just running in a testing environment.", LoggingTarget.Runtime, LogLevel.Error);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

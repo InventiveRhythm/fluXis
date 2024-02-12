@@ -1,19 +1,15 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Audio;
-using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menu;
-using fluXis.Game.Map;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
-using fluXis.Game.Screens.Result;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -23,8 +19,6 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
-using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -38,7 +32,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     private UISamples samples { get; set; }
 
     [Resolved]
-    private FluXisRealm realm { get; set; }
+    private FluXisGameBase game { get; set; }
 
     public MenuItem[] ContextMenuItems
     {
@@ -51,23 +45,16 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
 
             items.Add(new FluXisMenuItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails));
 
-            if (HasReplay)
-                items.Add(new FluXisMenuItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction?.Invoke()));
+            if (ReplayAction != null)
+                items.Add(new FluXisMenuItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
 
-            if (Deletable && RealmScoreId != null)
+            if (DeleteAction != null)
             {
                 items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () =>
                 {
+                    DeleteAction.Invoke();
                     deleted = true;
                     deletedContainer.FadeIn(200);
-
-                    realm.RunWrite(r =>
-                    {
-                        var realmScore = r.Find<RealmScore>(RealmScoreId);
-                        if (realmScore == null) return;
-
-                        r.Remove(realmScore);
-                    });
                 }));
             }
 
@@ -75,18 +62,15 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
         }
     }
 
-    public ScoreList ScoreList { get; set; }
-    public ScoreInfo ScoreInfo { get; set; }
-    public RealmMap Map { get; set; }
-    public APIUserShort Player { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public ScoreInfo ScoreInfo { get; init; }
+    public RealmMap Map { get; init; }
+    public APIUserShort Player { get; init; }
     public int Place { get; set; }
 
-    public bool HasReplay { get; set; }
-    public Action ReplayAction { get; set; }
+    public Action ReplayAction { get; init; }
+    public Action DeleteAction { get; init; }
 
-    public bool Deletable { get; set; }
-    public Guid? RealmScoreId { get; set; }
+    private DateTimeOffset date;
     private bool deleted;
 
     private FluXisSpriteText timeText;
@@ -99,9 +83,10 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     {
         RelativeSizeAxes = Axes.X;
         Height = 60;
-
         CornerRadius = 10;
         Masking = true;
+
+        date = TimeUtils.GetFromSeconds(ScoreInfo.Timestamp);
 
         Children = new Drawable[]
         {
@@ -171,7 +156,6 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
                                 },
                                 timeText = new FluXisSpriteText
                                 {
-                                    Text = TimeUtils.Ago(Date),
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.TopLeft,
                                     Padding = new MarginPadding { Left = 60 }
@@ -281,7 +265,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
 
     protected override void Update()
     {
-        timeText.Text = TimeUtils.Ago(Date);
+        timeText.Text = TimeUtils.Ago(date);
         base.Update();
     }
 
@@ -301,27 +285,11 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
         return true;
     }
 
-    private void viewDetails()
-    {
-        if (ScoreList == null) return;
-
-        if (Map == null)
-        {
-            Logger.Log("RealmMap is null", LoggingTarget.Runtime, LogLevel.Error);
-            return;
-        }
-
-        MapInfo mapInfo = Map.GetMapInfo();
-        if (mapInfo == null) return;
-
-        ScoreList.MapInfo.Screen.Push(new SoloResults(Map, ScoreInfo, Player));
-    }
+    private void viewDetails() => game.PresentScore(Map, ScoreInfo, Player);
 
     public Drawable GetTooltip()
     {
         if (deleted) return null;
-
-        var date = Date;
 
         return new FillFlowContainer
         {

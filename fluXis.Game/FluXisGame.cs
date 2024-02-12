@@ -2,11 +2,13 @@
 using System.IO;
 using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Stores;
 using fluXis.Game.Online.API.Models.Other;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Achievements;
 using fluXis.Game.Overlay.Exit;
@@ -15,8 +17,10 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Overlay.Notifications.Types.Image;
 using fluXis.Game.Overlay.Volume;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
+using fluXis.Game.Screens.Result;
 using fluXis.Game.Screens.Warning;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
@@ -169,6 +173,14 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
             File.WriteAllText($"{Host.Storage.GetFullPath("nowplaying.json")}", data.Serialize());
         });
+    }
+
+    public override void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player)
+    {
+        if (map == null || score == null)
+            throw new ArgumentNullException();
+
+        ScreenStack.Push(new SoloResults(map, score, player));
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

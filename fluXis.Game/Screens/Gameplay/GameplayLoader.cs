@@ -240,6 +240,13 @@ public partial class GameplayLoader : FluXisScreen
     private void loadGameplay()
     {
         GameplayScreen = createFunc();
+
+        if (GameplayScreen == null)
+        {
+            this.Exit();
+            return;
+        }
+
         GameplayScreen.Loader = this;
         GameplayScreen.OnRestart += requestRestart;
         fadeBackToGlobalClock = GameplayScreen.FadeBackToGlobalClock;

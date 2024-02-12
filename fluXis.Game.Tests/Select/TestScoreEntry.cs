@@ -1,8 +1,13 @@
-using fluXis.Game.Database.Maps;
-using fluXis.Game.Database.Score;
+using System;
+using System.Collections.Generic;
+using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Select.Info.Scores;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Tests.Select;
 
@@ -10,31 +15,38 @@ public partial class TestScoreEntry : FluXisTestScene
 {
     public TestScoreEntry()
     {
-        var score = new RealmScore(RealmMap.CreateNew())
+        Add(new FluXisContextMenuContainer
         {
-            Score = 1000000,
-            Accuracy = 100,
-            MaxCombo = 1000,
-            Grade = "X",
-            Mods = "HD NF",
-            Flawless = 100,
-            Perfect = 100,
-            Great = 100,
-            Alright = 100,
-            Okay = 100,
-            Miss = 100
-        };
-
-        Add(new Container
-        {
-            RelativeSizeAxes = Axes.X,
-            AutoSizeAxes = Axes.Y,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Width = 0.5f,
-            Children = new Drawable[]
+            RelativeSizeAxes = Axes.Both,
+            Child = new Container
             {
-                new ScoreListEntry()
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Width = 0.5f,
+                Child = new ScoreListEntry
+                {
+                    Place = 1,
+                    Player = APIUserShort.Dummy,
+                    ReplayAction = () => Logger.Log("Replay requested"),
+                    DeleteAction = () => Logger.Log("Delete requested"),
+                    ScoreInfo = new ScoreInfo
+                    {
+                        Score = 1000000,
+                        MaxCombo = 100,
+                        Accuracy = 100,
+                        Mods = new List<string> { "HD", "NF" },
+                        Rank = ScoreRank.X,
+                        Flawless = 100,
+                        Perfect = 100,
+                        Great = 100,
+                        Alright = 100,
+                        Okay = 100,
+                        Miss = 0,
+                        Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                    }
+                }
             }
         });
     }

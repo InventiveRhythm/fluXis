@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,15 +13,13 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Map;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Replays;
-using fluXis.Game.Screens.Gameplay;
-using fluXis.Game.Screens.Gameplay.Replay;
-using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -30,9 +27,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
-using osu.Framework.Platform;
-using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -46,9 +40,10 @@ public partial class ScoreList : GridContainer
     private Fluxel fluxel { get; set; }
 
     [Resolved]
-    private Storage storage { get; set; }
+    private MapStore maps { get; set; }
 
-    public SelectMapInfo MapInfo { get; init; }
+    [Resolved(CanBeNull = true)]
+    private SelectScreen screen { get; set; }
 
     private RealmMap map;
     private ScoreListType type = ScoreListType.Local;
@@ -183,6 +178,15 @@ public partial class ScoreList : GridContainer
     protected override void LoadComplete()
     {
         ScheduleAfterChildren(() => setType(ScoreListType.Local));
+
+        maps.MapBindable.BindValueChanged(onMapChanged, true);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        maps.MapBindable.ValueChanged -= onMapChanged;
     }
 
     private void setType(ScoreListType type)
@@ -196,14 +200,16 @@ public partial class ScoreList : GridContainer
         if (map == null)
             return;
 
-        SetMap(map);
+        changeMap(map);
     }
 
-    public void SetMap(RealmMap map)
+    private void onMapChanged(ValueChangedEvent<RealmMap> e) => changeMap(e.NewValue);
+
+    private void changeMap(RealmMap map)
     {
         if (!IsLoaded)
         {
-            Schedule(() => SetMap(map));
+            Schedule(() => changeMap(map));
             return;
         }
 
@@ -232,45 +238,26 @@ public partial class ScoreList : GridContainer
                     if (s.MapID == map.ID)
                     {
                         var info = s.ToScoreInfo();
-
-                        var replayPath = storage.GetFullPath($"replays/{s.ID}.frp");
+                        var detach = s.Detach();
 
                         scores.Add(new ScoreListEntry
                         {
                             ScoreInfo = info,
                             Map = map,
                             Player = s.Player,
-                            Date = s.Date,
-                            Deletable = true,
-                            RealmScoreId = s.ID,
-                            HasReplay = storage.Exists(replayPath),
-                            ReplayAction = () =>
+                            DeleteAction = () =>
                             {
-                                try
+                                realm.RunWrite(r2 =>
                                 {
-                                    var mapInfo = map.GetMapInfo();
-                                    if (mapInfo == null) return;
+                                    var realmScore = r2.Find<RealmScore>(detach.ID);
 
-                                    var scoreMods = info.Mods;
-                                    scoreMods.RemoveAll(string.IsNullOrEmpty);
-
-                                    var mods = scoreMods.Select(ModUtils.GetFromAcronym).ToList();
-                                    mods.RemoveAll(m => m == null);
-
-                                    if (mods.Count != scoreMods.Count)
-                                    {
-                                        Logger.Log($"Some mods were not found ({mods.Count}:{info.Mods.Count})", LoggingTarget.Runtime, LogLevel.Error);
+                                    if (realmScore == null)
                                         return;
-                                    }
 
-                                    var replay = File.ReadAllText(replayPath).Deserialize<Replay>();
-                                    MapInfo.Screen.Push(new GameplayLoader(map, mods, () => new ReplayGameplayScreen(map, mods, replay)));
-                                }
-                                catch (Exception e)
-                                {
-                                    Logger.Error(e, "Failed to load replay");
-                                }
-                            }
+                                    r2.Remove(realmScore);
+                                });
+                            },
+                            ReplayAction = () => screen?.ViewReplay(map, detach)
                         });
                     }
                 }));
@@ -359,14 +346,12 @@ public partial class ScoreList : GridContainer
         {
             ScoreInfo = x.ToScoreInfo(),
             Map = map,
-            Player = UserCache.GetUser(x.UserId),
-            Date = DateTimeOffset.FromUnixTimeSeconds(x.Time)
+            Player = UserCache.GetUser(x.UserId)
         }).ToList();
     }
 
     private void addScore(ScoreListEntry entry, int index = -1)
     {
-        entry.ScoreList = this;
         entry.Place = index;
         entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children[^1].Y + scrollContainer.ScrollContent.Children[^1].Height + 5 : 0;
         scrollContainer.ScrollContent.Add(entry);

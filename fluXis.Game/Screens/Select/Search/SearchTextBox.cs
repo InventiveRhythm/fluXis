@@ -8,7 +8,8 @@ namespace fluXis.Game.Screens.Select.Search;
 
 public partial class SearchTextBox : FluXisTextBox
 {
-    public SearchFilters Search { get; init; }
+    [Resolved]
+    private SearchFilters filters { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -25,7 +26,7 @@ public partial class SearchTextBox : FluXisTextBox
 
     private void updateSearch()
     {
-        Search.Query = Text;
+        filters.Query = Text;
     }
 
     protected override void OnUserTextAdded(string added)

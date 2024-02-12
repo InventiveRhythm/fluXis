@@ -1,7 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Select.Search.Dropdown;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,8 +12,6 @@ namespace fluXis.Game.Screens.Select.Search;
 
 public partial class SearchDropdown : Container
 {
-    public SearchFilters Filters { get; init; }
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -43,9 +40,9 @@ public partial class SearchDropdown : Container
                 Padding = new MarginPadding(10) { Left = 30, Top = 20 },
                 Children = new Drawable[]
                 {
-                    new SearchDropdownKeymode(Filters),
-                    new SearchDropdownBPM { Filters = Filters },
-                    new SearchDropdownStatus { Filters = Filters }
+                    new SearchDropdownKeymode(),
+                    new SearchDropdownBPM(),
+                    new SearchDropdownStatus()
                 }
             }
         };

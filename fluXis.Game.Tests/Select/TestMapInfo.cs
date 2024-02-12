@@ -11,12 +11,10 @@ public partial class TestMapInfo : FluXisTestScene
     [Resolved]
     private MapStore maps { get; set; }
 
-    private SelectMapInfo info;
-
     [BackgroundDependencyLoader]
     private void load()
     {
-        info = new SelectMapInfo();
+        var info = new SelectMapInfo();
         Add(info);
 
         AddStep("Set MapSet", () => setMap(maps.MapSets.First().LowestDifficulty));
@@ -26,9 +24,5 @@ public partial class TestMapInfo : FluXisTestScene
         AddStep("Set Random MapSet", () => setMap(maps.GetRandom()?.LowestDifficulty));
     }
 
-    private void setMap(RealmMap map)
-    {
-        maps.CurrentMap = map;
-        info.ChangeMap(map);
-    }
+    private void setMap(RealmMap map) => maps.CurrentMap = map;
 }

@@ -9,8 +9,6 @@ namespace fluXis.Game.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownBPM : Container
 {
-    public SearchFilters Filters { get; init; }
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -27,19 +25,19 @@ public partial class SearchDropdownBPM : Container
                 Origin = Anchor.CentreLeft,
                 X = 5
             },
-            new TextBox(Filters)
+            new TextBox()
         };
     }
 
     private partial class TextBox : FluXisTextBox
     {
-        private readonly SearchFilters filters;
+        [Resolved]
+        private SearchFilters filters { get; init; }
+
         private int bpm;
 
-        public TextBox(SearchFilters filters)
+        public TextBox()
         {
-            this.filters = filters;
-
             Width = 200;
             Height = 30;
             CornerRadius = 10;

@@ -6,14 +6,15 @@ using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
-using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
+using fluXis.Game.IO;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
@@ -28,6 +29,7 @@ using fluXis.Game.Screens.Select.Info;
 using fluXis.Game.Screens.Select.List;
 using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Screens.Select.Search;
+using fluXis.Game.Screens.Select.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -36,7 +38,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -71,24 +72,28 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     [Resolved]
     private GlobalBackground backgrounds { get; set; }
 
-    public List<RealmMapSet> Maps { get; } = new();
-    public SearchFilters Filters = new();
+    [Resolved]
+    private ReplayStorage replays { get; set; }
 
-    public MapList MapList { get; private set; }
+    private DependencyContainer dependencies;
+
+    protected List<RealmMapSet> Maps { get; } = new();
+    protected MapList MapList { get; private set; }
+    protected SearchFilters Filters { get; private set; }
+
     private SelectMapInfo selectMapInfo;
     private SearchBar searchBar;
     private SelectFooter footer;
-    public ModSelector ModSelector;
+    private ModSelector modSelector;
 
     private Sample menuAccept;
     private Sample menuScroll;
     private Sample randomClick;
     private Sample rewindClick;
 
-    private Container noMapsContainer;
+    private SelectNoMaps noMapsContainer;
     private LoadingIcon loadingIcon;
-    private Container letterContainer;
-    private FluXisSpriteText currentLetter;
+    private SelectLetter letterContainer;
 
     private readonly List<RealmMapSet> randomHistory = new();
 
@@ -106,8 +111,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         randomClick = samples.Get("UI/Select/Random.wav");
         rewindClick = samples.Get("UI/Select/Rewind.wav");
 
-        Filters.OnChange += UpdateSearch;
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
+
+        dependencies.CacheAs(this);
+        dependencies.CacheAs(Filters = new SearchFilters());
+        dependencies.CacheAs(modSelector = new ModSelector());
+
+        Filters.OnChange += UpdateSearch;
 
         InternalChildren = new Drawable[]
         {
@@ -136,14 +146,18 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         Child = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(10) { Top = 80, Left = 20, Bottom = 40 },
+                            Padding = new MarginPadding(10)
+                            {
+                                Top = 80,
+                                Left = 20,
+                                Bottom = 40
+                            },
                             Child = MapList = new MapList { Alpha = 0 }
                         }
                     },
-                    searchBar = new SearchBar { Filters = Filters },
+                    searchBar = new SearchBar(),
                     selectMapInfo = new SelectMapInfo
                     {
-                        Screen = this,
                         HoverAction = MapList.ScrollToSelected
                     },
                     new Container
@@ -154,82 +168,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         Width = .5f,
                         Children = new Drawable[]
                         {
-                            noMapsContainer = new Container
-                            {
-                                AutoSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                CornerRadius = 20,
-                                Masking = true,
-                                Alpha = 0,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Colour4.Black,
-                                        Alpha = 0.5f
-                                    },
-                                    new FillFlowContainer
-                                    {
-                                        AutoSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Vertical,
-                                        Padding = new MarginPadding(20),
-                                        Children = new Drawable[]
-                                        {
-                                            new SpriteIcon
-                                            {
-                                                Icon = FontAwesome6.Solid.TriangleExclamation,
-                                                Size = new Vector2(30),
-                                                Anchor = Anchor.TopCentre,
-                                                Origin = Anchor.TopCentre
-                                            },
-                                            new FluXisSpriteText
-                                            {
-                                                Text = "No maps found!",
-                                                FontSize = 32,
-                                                Shadow = true,
-                                                Anchor = Anchor.TopCentre,
-                                                Origin = Anchor.TopCentre
-                                            },
-                                            new FluXisSpriteText
-                                            {
-                                                Text = "Try changing your search filters.",
-                                                FontSize = 26,
-                                                Colour = FluXisColors.Text2,
-                                                Shadow = true,
-                                                Anchor = Anchor.TopCentre,
-                                                Origin = Anchor.TopCentre
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            letterContainer = new Container
-                            {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(100),
-                                Alpha = 0,
-                                CornerRadius = 20,
-                                Masking = true,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        Alpha = 0.5f,
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Colour4.Black
-                                    },
-                                    currentLetter = new FluXisSpriteText
-                                    {
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        FontSize = 64,
-                                        Text = "A"
-                                    }
-                                }
-                            },
+                            noMapsContainer = new SelectNoMaps(),
+                            letterContainer = new SelectLetter(),
                             loadingIcon = new LoadingIcon
                             {
                                 Anchor = Anchor.Centre,
@@ -242,10 +182,16 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             },
             footer = new SelectFooter
             {
-                Screen = this,
+                BackAction = this.Exit,
+                ModsAction = modSelector.IsOpen.Toggle,
+                RewindAction = RewindRandom,
+                RandomAction = RandomMap,
+                PlayAction = Accept,
+                DeleteAction = DeleteMapSet,
+                EditAction = EditMap,
                 ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
             },
-            ModSelector = new ModSelector()
+            modSelector
         };
     }
 
@@ -288,6 +234,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         MapStore.MapBindable.ValueChanged -= mapBindableChanged;
     }
 
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
     private void loadMapSets()
     {
         var sets = MapStore.MapSetsSorted;
@@ -297,7 +245,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             var entry = new MapListEntry(set)
             {
                 SelectAction = Accept,
-                EditAction = EditMapSet,
+                EditAction = EditMap,
                 DeleteAction = DeleteMapSet,
                 ExportAction = ExportMapSet
             };
@@ -308,7 +256,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             Maps.Add(set);
         }
 
-        if (!sets.Any()) Schedule(() => noMapsContainer.FadeIn(500));
+        if (!sets.Any()) Schedule(noMapsContainer.Show);
     }
 
     private void addMapSet(RealmMapSet set)
@@ -321,7 +269,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             var entry = new MapListEntry(set)
             {
                 SelectAction = Accept,
-                EditAction = EditMapSet,
+                EditAction = EditMap,
                 DeleteAction = DeleteMapSet,
                 ExportAction = ExportMapSet
             };
@@ -329,7 +277,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             MapList.Insert(index, entry);
             lookup[set] = entry;
             // mapStore.Select(set.LowestDifficulty, true);
-            noMapsContainer.FadeOut(200);
+            noMapsContainer.Show();
         });
     }
 
@@ -370,14 +318,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         menuScroll.Play();
         backgrounds.AddBackgroundFromMap(map);
-        selectMapInfo.ChangeMap(map);
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
 
         if (lookup.TryGetValue(map.MapSet, out var entry))
             ScheduleAfterChildren(() => MapList.ScrollTo(entry));
     }
 
-    public virtual void Accept()
+    protected virtual void Accept()
     {
         if (MapStore.CurrentMap == null)
             return;
@@ -386,24 +333,59 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         backgrounds.AddBackgroundFromMap(MapStore.CurrentMap);
         backgrounds.SwipeAnimation();
 
-        var mods = ModSelector.SelectedMods.ToList();
+        var mods = modSelector.SelectedMods.ToList();
 
         if (inputManager.CurrentState.Keyboard.ControlPressed && !mods.Any(m => m is AutoPlayMod))
             mods.Add(new AutoPlayMod());
 
         if (mods.Any(m => m is AutoPlayMod))
         {
-            this.Push(new GameplayLoader(MapStore.CurrentMap, mods, () =>
+            viewReplay(MapStore.CurrentMap, mods, () =>
             {
                 var map = MapStore.CurrentMap.GetMapInfo();
                 var autogen = new AutoGenerator(map, MapStore.CurrentMap.KeyCount);
-                var replay = autogen.Generate();
-
-                return new ReplayGameplayScreen(MapStore.CurrentMap, mods, replay);
-            }));
+                return autogen.Generate();
+            });
         }
         else
             this.Push(new GameplayLoader(MapStore.CurrentMap, mods, () => new GameplayScreen(MapStore.CurrentMap, mods)));
+    }
+
+    public void ViewReplay(RealmMap map, RealmScore score)
+    {
+        var scoreMods = score.Mods.Split(' ').ToList();
+        scoreMods.RemoveAll(string.IsNullOrEmpty);
+
+        var mods = scoreMods.Select(ModUtils.GetFromAcronym).ToList();
+        mods.RemoveAll(m => m == null);
+
+        if (mods.Count != scoreMods.Count)
+        {
+            Logger.Log($"Some mods were not found ({mods.Count}:{scoreMods.Count})", LoggingTarget.Runtime, LogLevel.Error);
+            return;
+        }
+
+        viewReplay(map, mods, () =>
+        {
+            var replay = replays.Get(score.ID);
+
+            if (replay == null)
+            {
+                Logger.Log($"Replay for score {score.ID} not found", LoggingTarget.Runtime, LogLevel.Error);
+                return null;
+            }
+
+            return replay;
+        });
+    }
+
+    private void viewReplay(RealmMap map, List<IMod> mods, Func<Replay> replayFunc)
+    {
+        this.Push(new GameplayLoader(map, mods, () =>
+        {
+            var replay = replayFunc();
+            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay);
+        }));
     }
 
     private void changeSelection(int by = 0, bool last = false)
@@ -467,7 +449,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             changeSelection(1);
 
         if (Maps.Count == 0)
-            noMapsContainer.FadeIn(500);
+            noMapsContainer.Show();
     }
 
     public void ExportMapSet(RealmMapSet set)
@@ -577,9 +559,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 return true;
 
             case FluXisGlobalKeybind.Back:
-                if (ModSelector.IsOpen.Value)
+                if (modSelector.IsOpen.Value)
                 {
-                    ModSelector.IsOpen.Value = false;
+                    modSelector.IsOpen.Value = false;
                     return true;
                 }
 
@@ -598,7 +580,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         return false;
     }
 
-    private void changeRate(float by) => ModSelector.RateMod.RateBindable.Value += by;
+    private void changeRate(float by) => modSelector.RateMod.RateBindable.Value += by;
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
@@ -689,15 +671,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         Logger.Log($"Changing letter to {letter}");
 
         var first = Maps.FirstOrDefault(m => getLetter(m.Metadata.Title.FirstOrDefault(' ')) == letter);
-        if (first != null) MapStore.CurrentMapSet = first;
 
-        currentLetter.Text = letter.ToString();
-        letterContainer.FadeIn(200).Delay(1000).FadeOut(300);
+        if (first != null)
+            MapStore.CurrentMapSet = first;
 
-        if (first == null)
-        {
-            currentLetter.FadeColour(Colour4.FromHex("#FF5555")).FadeColour(Colour4.White, 1000);
-        }
+        letterContainer.SetLetter(letter);
     }
 
     private void cycleLetter(char letter)
@@ -736,9 +714,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         }
 
         if (!Maps.Any())
-            noMapsContainer.FadeIn(200);
+            noMapsContainer.Show();
         else
-            noMapsContainer.FadeOut(200);
+            noMapsContainer.Hide();
     }
 
     public void RandomMap()
@@ -780,7 +758,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             backgrounds.SetBlur(0, 500);
     }
 
-    public void EditMapSet(RealmMap map)
+    public void EditMap(RealmMap map)
     {
         if (map == null) return;
 

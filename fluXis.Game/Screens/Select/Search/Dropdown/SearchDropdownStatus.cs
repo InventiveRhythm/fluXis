@@ -13,7 +13,8 @@ namespace fluXis.Game.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownStatus : Container
 {
-    public SearchFilters Filters { get; init; }
+    [Resolved]
+    private SearchFilters filters { get; init; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -53,13 +54,13 @@ public partial class SearchDropdownStatus : Container
 
     private bool onStatusClick(StatusChip chip)
     {
-        if (Filters.Status.Contains(chip.Status))
-            Filters.Status.Remove(chip.Status);
+        if (filters.Status.Contains(chip.Status))
+            filters.Status.Remove(chip.Status);
         else
-            Filters.Status.Add(chip.Status);
+            filters.Status.Add(chip.Status);
 
-        Filters.OnChange.Invoke();
-        return Filters.Status.Contains(chip.Status);
+        filters.OnChange.Invoke();
+        return filters.Status.Contains(chip.Status);
     }
 
     private partial class StatusChip : Container

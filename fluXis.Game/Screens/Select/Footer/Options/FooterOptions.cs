@@ -24,7 +24,9 @@ public partial class FooterOptions : FocusedOverlayContainer
 {
     protected override bool StartHidden => true;
     public SelectFooterButton Button { get; set; }
-    public SelectFooter Footer { get; init; }
+
+    public Action<RealmMapSet> DeleteAction { get; init; }
+    public Action<RealmMap> EditAction { get; init; }
     public Action ScoresWiped { get; init; }
 
     [Resolved]
@@ -121,7 +123,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Color = FluXisColors.Red,
                                 Action = () =>
                                 {
-                                    Footer.Screen.OpenDeleteConfirm(maps.CurrentMapSet);
+                                    DeleteAction?.Invoke(maps.CurrentMapSet);
                                     State.Value = Visibility.Hidden;
                                 }
                             },
@@ -135,7 +137,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 Icon = FontAwesome6.Solid.Pen,
                                 Action = () =>
                                 {
-                                    Footer.Screen.EditMapSet(maps.CurrentMap);
+                                    EditAction?.Invoke(maps.CurrentMap);
                                     State.Value = Visibility.Hidden;
                                 }
                             },

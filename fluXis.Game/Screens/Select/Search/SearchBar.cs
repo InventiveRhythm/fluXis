@@ -1,7 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -15,8 +14,6 @@ namespace fluXis.Game.Screens.Select.Search;
 
 public partial class SearchBar : Container
 {
-    public SearchFilters Filters { get; init; }
-
     private SearchDropdown dropdown;
 
     private readonly BindableBool dropdownOpen = new();
@@ -33,7 +30,7 @@ public partial class SearchBar : Container
 
         InternalChildren = new Drawable[]
         {
-            dropdown = new SearchDropdown { Filters = Filters },
+            dropdown = new SearchDropdown(),
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -78,7 +75,7 @@ public partial class SearchBar : Container
                                 RelativeSizeAxes = Axes.Both,
                                 Padding = new MarginPadding { Left = 110, Right = 20 },
                                 Shear = new Vector2(.2f, 0),
-                                Child = new SearchTextBox { Search = Filters }
+                                Child = new SearchTextBox()
                             }
                         }
                     },

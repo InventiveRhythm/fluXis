@@ -1,7 +1,4 @@
 using System;
-using fluXis.Game.Audio;
-using fluXis.Game.Database.Maps;
-using fluXis.Game.Map;
 using fluXis.Game.Screens.Select.Info.Header;
 using fluXis.Game.Screens.Select.Info.Scores;
 using osu.Framework.Allocation;
@@ -13,13 +10,6 @@ namespace fluXis.Game.Screens.Select.Info;
 
 public partial class SelectMapInfo : GridContainer
 {
-    [Resolved]
-    private GlobalClock clock { get; set; }
-
-    [Resolved]
-    private MapStore maps { get; set; }
-
-    public SelectScreen Screen { get; set; }
     public ScoreList ScoreList { get; set; }
 
     public Action HoverAction { get; set; }
@@ -50,18 +40,10 @@ public partial class SelectMapInfo : GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Bottom = 20 },
-                    Child = ScoreList = new ScoreList
-                    {
-                        MapInfo = this
-                    }
+                    Child = ScoreList = new ScoreList()
                 }
             }
         };
-    }
-
-    public void ChangeMap(RealmMap map)
-    {
-        ScoreList.SetMap(map);
     }
 
     protected override bool OnHover(HoverEvent e)

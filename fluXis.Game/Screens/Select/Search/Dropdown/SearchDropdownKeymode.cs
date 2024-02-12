@@ -12,17 +12,13 @@ namespace fluXis.Game.Screens.Select.Search.Dropdown;
 
 public partial class SearchDropdownKeymode : CompositeDrawable
 {
-    private SearchFilters filters { get; }
+    [Resolved]
+    private SearchFilters filters { get; init; }
 
     private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
     private int currentKeymode;
 
     private FillFlowContainer tictacs;
-
-    public SearchDropdownKeymode(SearchFilters filters)
-    {
-        this.filters = filters;
-    }
 
     [BackgroundDependencyLoader]
     private void load()
