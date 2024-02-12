@@ -277,7 +277,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             MapList.Insert(index, entry);
             lookup[set] = entry;
             // mapStore.Select(set.LowestDifficulty, true);
-            noMapsContainer.Show();
+            noMapsContainer.Hide();
         });
     }
 
