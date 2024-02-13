@@ -1,6 +1,5 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Panel;
 
@@ -15,9 +14,6 @@ public partial class Panel : Container
         CornerRadius = 20;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Scale = new Vector2(.95f);
-        Rotation = 2;
-        Alpha = 0;
         EdgeEffect = FluXisStyles.ShadowMedium;
 
         Children = new Drawable[]
@@ -38,11 +34,14 @@ public partial class Panel : Container
 
     public override void Hide()
     {
-        this.ScaleTo(.95f, 400, Easing.OutQuint).RotateTo(2, 400, Easing.OutQuint).FadeOut(200);
+        this.ScaleTo(.9f, 400, Easing.OutQuint)
+            .FadeOut(400, Easing.OutQuint);
     }
 
     public override void Show()
     {
-        this.RotateTo(0).ScaleTo(1f, 800, Easing.OutElastic).FadeIn(200);
+        this.RotateTo(0).ScaleTo(.75f)
+            .FadeInFromZero(400, Easing.OutQuint)
+            .ScaleTo(1f, 800, Easing.OutElasticHalf);
     }
 }
