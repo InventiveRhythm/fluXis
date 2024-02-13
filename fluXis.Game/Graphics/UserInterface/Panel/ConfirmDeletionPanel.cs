@@ -10,6 +10,7 @@ public partial class ConfirmDeletionPanel : ButtonPanel
     {
         Text = $"Are you sure you want to delete this{(string.IsNullOrEmpty(itemName) ? "" : $" {itemName}")}?";
         SubText = "This action cannot be undone.";
+        ButtonWidth = 200;
         Buttons = new ButtonData[]
         {
             new()

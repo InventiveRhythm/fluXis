@@ -430,26 +430,24 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         MapStore.Select(listEntry.Maps[current], true);
     }
 
-    public void OpenDeleteConfirm(RealmMapSet set)
-    {
-        Game.Overlay ??= new ConfirmDeletionPanel(() => DeleteMapSet(set), itemName: "MapSet") { ButtonWidth = 200 };
-    }
-
     public void DeleteMapSet(RealmMapSet set)
     {
         if (set == null)
             return;
 
-        MapStore.DeleteMapSet(set);
-        MapList.Remove(lookup[set], false);
-        Maps.Remove(set);
-        lookup.Remove(set);
+        Game.Overlay ??= new ConfirmDeletionPanel(() =>
+        {
+            MapStore.DeleteMapSet(set);
+            MapList.Remove(lookup[set], false);
+            Maps.Remove(set);
+            lookup.Remove(set);
 
-        if (Equals(set, MapStore.CurrentMapSet))
-            changeSelection(1);
+            if (Equals(set, MapStore.CurrentMapSet))
+                changeSelection(1);
 
-        if (Maps.Count == 0)
-            noMapsContainer.Show();
+            if (Maps.Count == 0)
+                noMapsContainer.Show();
+        }, itemName: "MapSet");
     }
 
     public void ExportMapSet(RealmMapSet set)
