@@ -26,6 +26,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
 
     private APIUser user;
     private Container content;
+    private FluXisScrollContainer scroll;
     private FillFlowContainer flow;
 
     [BackgroundDependencyLoader]
@@ -54,19 +55,16 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
             },
             new Container
             {
-                Width = 1320,
+                Width = 1360,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Padding = new MarginPadding { Vertical = 80 },
                 Child = content = new ClickableContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
+                    RelativePositionAxes = Axes.Both,
                     Masking = true,
-                    CornerRadius = 20,
-                    EdgeEffect = FluXisStyles.ShadowLarge,
+                    EdgeEffect = FluXisStyles.ShadowLargeNoOffset,
                     Children = new Drawable[]
                     {
                         new Box
@@ -74,7 +72,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                             RelativeSizeAxes = Axes.Both,
                             Colour = FluXisColors.Background1
                         },
-                        new FluXisScrollContainer
+                        scroll = new FluXisScrollContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             ScrollbarVisible = false,
@@ -83,6 +81,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Direction = FillDirection.Vertical,
+                                Padding = new MarginPadding { Top = 70, Bottom = 20, Horizontal = 20 },
                                 Spacing = new Vector2(20)
                             }
                         }
@@ -180,13 +179,18 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
 
     protected override void PopIn()
     {
-        content.ScaleTo(1, 400, Easing.OutQuint);
+        content.ResizeHeightTo(0).MoveToY(1)
+               .ResizeHeightTo(1, 800, Easing.OutQuint)
+               .MoveToY(0, 800, Easing.OutQuint);
+
+        scroll.ScrollTo(0, false);
+        scroll.FadeOut().Delay(400).FadeIn(200);
         this.FadeIn(200);
     }
 
     protected override void PopOut()
     {
-        content.ScaleTo(0.95f, 400, Easing.OutQuint);
+        content.ResizeHeightTo(0, 800, Easing.OutQuint);
         this.FadeOut(200);
     }
 
