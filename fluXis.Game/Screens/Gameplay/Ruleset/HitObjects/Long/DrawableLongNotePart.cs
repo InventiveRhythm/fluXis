@@ -71,7 +71,11 @@ public partial class DrawableLongNotePart : CompositeDrawable
         }
 
         if (!HitWindows.CanBeHit(offset))
+        {
+            ApplyResult(HitWindows.TimingFor(HitWindows.Lowest));
+            OnMiss?.Invoke();
             return;
+        }
 
         ApplyResult(offset);
     }
