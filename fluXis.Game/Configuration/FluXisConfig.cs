@@ -62,9 +62,12 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.EditorBlur, 0f, 0f, 1f, 0.2f);
 
         // Audio
-        SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
         SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
         SetDefault(FluXisSetting.HitSoundVolume, 1d, 0d, 1d, 0.01d);
+
+        // Audio // Offset
+        SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
+        SetDefault(FluXisSetting.DisableOffsetInReplay, true);
 
         // Graphics
         SetDefault(FluXisSetting.ShowFps, false);
@@ -131,6 +134,7 @@ public enum FluXisSetting
     InactiveVolume,
     HitSoundVolume,
     GlobalOffset,
+    DisableOffsetInReplay,
 
     // Graphics
     ShowFps,

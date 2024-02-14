@@ -59,6 +59,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected virtual bool InstantlyExitOnPause => false;
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
+    protected virtual bool UseGlobalOffset => true;
+
+    [Resolved]
+    protected FluXisConfig Config { get; private set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -115,8 +119,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private FullComboOverlay fcOverlay;
     private QuickActionOverlay quickActionOverlay;
 
-    private FluXisConfig config;
-
     private Bindable<HudVisibility> hudVisibility;
     private Bindable<float> backgroundDim;
     private Bindable<float> backgroundBlur;
@@ -138,18 +140,17 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
         dependencies.CacheAs(this);
 
-        this.config = config;
-        hudVisibility = config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
-        backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
-        backgroundBlur = config.GetBindable<float>(FluXisSetting.BackgroundBlur);
-        bgaEnabled = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
+        hudVisibility = Config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
+        backgroundDim = Config.GetBindable<float>(FluXisSetting.BackgroundDim);
+        backgroundBlur = Config.GetBindable<float>(FluXisSetting.BackgroundBlur);
+        bgaEnabled = Config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
         Map = LoadMap();
 
@@ -198,7 +199,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             Playfield,
             new LaneSwitchAlert(),
             replayRecorder = new ReplayRecorder()
-        });
+        }, UseGlobalOffset);
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
 
@@ -374,7 +375,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
 
             var score = ScoreProcessor.ToScoreInfo();
-            score.ScrollSpeed = config.Get<float>(FluXisSetting.ScrollSpeed);
+            score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
             var screen = new SoloResults(RealmMap, score, player);
             screen.OnRestart = OnRestart;
@@ -512,11 +513,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return true;
 
             case FluXisGlobalKeybind.ScrollSpeedIncrease:
-                config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value += 0.1f;
+                Config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value += 0.1f;
                 return true;
 
             case FluXisGlobalKeybind.ScrollSpeedDecrease:
-                config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
+                Config.GetBindable<float>(FluXisSetting.ScrollSpeed).Value -= 0.1f;
                 return true;
         }
 

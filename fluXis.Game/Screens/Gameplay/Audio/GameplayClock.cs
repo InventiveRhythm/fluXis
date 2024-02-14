@@ -11,7 +11,8 @@ namespace fluXis.Game.Screens.Gameplay.Audio;
 
 public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
 {
-    public float Offset => offset.Value;
+    public float Offset => useOffset ? offset.Value : 0;
+    private bool useOffset { get; }
 
     public override double CurrentTime => underlying.CurrentTime - Offset;
     public override bool IsRunning => underlying.IsRunning;
@@ -25,8 +26,10 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
     private FramedMapClock underlying { get; }
     private Bindable<float> offset;
 
-    public GameplayClock(MapInfo info, Track track)
+    public GameplayClock(MapInfo info, Track track, bool useOffset)
     {
+        this.useOffset = useOffset;
+
         underlying = new FramedMapClock();
         AddInternal(underlying);
 

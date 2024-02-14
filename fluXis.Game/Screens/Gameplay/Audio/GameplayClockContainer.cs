@@ -9,13 +9,13 @@ public partial class GameplayClockContainer : Container
 {
     public GameplayClock GameplayClock { get; }
 
-    public GameplayClockContainer(RealmMap realmMap, MapInfo info, Drawable[] drawables)
+    public GameplayClockContainer(RealmMap realmMap, MapInfo info, Drawable[] drawables, bool useOffset = true)
     {
         RelativeSizeAxes = Axes.Both;
 
         InternalChildren = new Drawable[]
         {
-            GameplayClock = new GameplayClock(info, realmMap.GetTrack()),
+            GameplayClock = new GameplayClock(info, realmMap.GetTrack(), useOffset),
             new Container
             {
                 RelativeSizeAxes = Axes.Both,

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Mods;
@@ -14,6 +15,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
 {
     protected override bool InstantlyExitOnPause => true;
     public override bool SubmitScore => false;
+    protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
 
     private Replays.Replay replay { get; }
     private List<ReplayFrame> frames { get; }

@@ -32,6 +32,12 @@ public partial class AudioOffsetSection : SettingsSubSection
                 Bindable = Config.GetBindable<float>(FluXisSetting.GlobalOffset),
                 Step = 1
             },
+            new SettingsToggle
+            {
+                Label = strings.DisableOffsetInReplay,
+                Description = strings.DisableOffsetInReplayDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.DisableOffsetInReplay)
+            },
             new SettingsButton
             {
                 Label = strings.OpenOffsetWizard,
