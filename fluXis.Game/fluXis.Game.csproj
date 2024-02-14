@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- I really don't like the default suggestions from C# 12 -->
+    <!-- So until I figure out how to change them using DotSettings or .editorconfig, -->
+    <!-- I will keep this here -->
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
