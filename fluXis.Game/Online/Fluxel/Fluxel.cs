@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
@@ -55,7 +56,7 @@ public partial class Fluxel : Component
             if (status == value) return;
 
             status = value;
-            Logger.Log($"Status changed to {value}", LoggingTarget.Network);
+            Logger.Log($"Network status changed to {value}!", LoggingTarget.Network);
             OnStatusChanged?.Invoke(value);
         }
     }
@@ -72,7 +73,7 @@ public partial class Fluxel : Component
             loggedInUser = value;
             OnUserChanged?.Invoke(loggedInUser);
 
-            Logger.Log(value == null ? "Logged out" : $"Logged in as {value.Username}", LoggingTarget.Network);
+            Logger.Log(value == null ? "Logged out!" : $"Logged in as {value.Username}!", LoggingTarget.Network);
         }
     }
 
@@ -204,7 +205,7 @@ public partial class Fluxel : Component
 
     private async Task receive()
     {
-        Logger.Log("Waiting for data...", LoggingTarget.Network);
+        Logger.Log("Waiting for data...", LoggingTarget.Network, LogLevel.Debug);
 
         if (connection.State == WebSocketState.Open)
         {
@@ -223,13 +224,10 @@ public partial class Fluxel : Component
                     end = res.EndOfMessage;
 
                     // convert to string
-                    string msg = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
-                    message += msg;
+                    message += Encoding.UTF8.GetString(buffer).TrimEnd('\0');
                 }
 
                 if (string.IsNullOrEmpty(message)) return;
-
-                Logger.Log(message, LoggingTarget.Network);
 
                 // handler logic
                 void handleListener<T>(string msg)
@@ -249,7 +247,7 @@ public partial class Fluxel : Component
                 }
 
                 var idString = message.Deserialize<JObject>()["id"]!.ToObject<string>();
-                Logger.Log($"Received packet {idString}", LoggingTarget.Network, LogLevel.Debug);
+                Logger.Log($"Received packet {idString}!", LoggingTarget.Network);
 
                 // find right handler
                 Action<string> handler = getType(idString) switch
@@ -325,7 +323,7 @@ public partial class Fluxel : Component
 
         Logger.Log($"Sending packet {message}", LoggingTarget.Network, LogLevel.Debug);
 
-        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
+        byte[] buffer = Encoding.UTF8.GetBytes(message);
         await connection.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
     }
 

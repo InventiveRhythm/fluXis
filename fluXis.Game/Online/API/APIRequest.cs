@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using osu.Framework.IO.Network;
@@ -25,6 +26,8 @@ public class APIRequest<T> where T : class
     {
         this.fluxel = fluxel;
 
+        Logger.Log($"Performing API request {GetType().Name.Split('.').Last()}...", LoggingTarget.Network);
+
         var request = new JsonWebRequest<APIResponse<T>>($"{RootUrl}{Path}");
         request.Method = Method;
         request.AllowInsecureRequests = true;
@@ -37,12 +40,11 @@ public class APIRequest<T> where T : class
         {
             CreatePostData(request);
             request.Perform();
-            Logger.Log($"API request performed: {request.GetResponseString()}", LoggingTarget.Network);
             TriggerSuccess(request.ResponseObject);
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"API request failed: {e.Message}", LoggingTarget.Network);
+            Logger.Error(e, $"API request {GetType().Name.Split('.').Last()} failed!");
             Response = new APIResponse<T>(400, e.Message, null);
             Failure?.Invoke(e);
         }

@@ -55,6 +55,8 @@ public class DiscordActivity
             Assets = assets
         });
 
-        Logger.Log($"Discord Rich Presence updated: {state} {details} {largeImageKey}", LoggingTarget.Network);
+        Logger.Log($"Discord Rich Presence updated: {getOrEmpty(state)}, {getOrEmpty(details)}, {getOrEmpty(largeImageKey)}!", LoggingTarget.Network, LogLevel.Debug);
     }
+
+    private string getOrEmpty(string str) => string.IsNullOrEmpty(str) ? "<empty>" : str;
 }
