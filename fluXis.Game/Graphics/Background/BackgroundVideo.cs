@@ -65,7 +65,7 @@ public partial class BackgroundVideo : CompositeDrawable
 
     public void LoadVideo()
     {
-        if (string.IsNullOrWhiteSpace(Info.VideoFile))
+        if (string.IsNullOrWhiteSpace(Info?.VideoFile))
         {
             Schedule(() =>
             {
