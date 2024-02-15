@@ -3,6 +3,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -114,9 +115,12 @@ public partial class MenuNowPlaying : Container
 
         const int delay = 4000;
 
-        this.MoveToX(50).MoveToX(0, 600, Easing.OutQuint).FadeInFromZero(400)
-            .Delay(delay).MoveToX(50, 800, Easing.OutQuint).FadeOut(400);
+        Scheduler.ScheduleOnceIfNeeded(() =>
+        {
+            this.MoveToX(50).MoveToX(0, 600, Easing.OutQuint).FadeInFromZero(400)
+                .Delay(delay).MoveToX(50, 800, Easing.OutQuint).FadeOut(400);
 
-        coverContainer.RotateTo(-4).RotateTo(4, 600, Easing.OutQuint);
+            coverContainer.RotateTo(-4).RotateTo(4, 600, Easing.OutQuint);
+        });
     }
 }
