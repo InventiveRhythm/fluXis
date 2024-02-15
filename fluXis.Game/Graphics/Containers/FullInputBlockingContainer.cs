@@ -10,7 +10,9 @@ public partial class FullInputBlockingContainer : Container
 
     protected override bool Handle(UIEvent e)
     {
-        base.Handle(e);
+        if (e is TouchEvent)
+            return false;
+
         return true;
     }
 
