@@ -3,17 +3,19 @@ using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Gameplay;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox.Hitsound;
 
 public partial class ToolboxHitsoundButton : ToolboxButton
 {
-    public override string Text { get; }
+    protected override string Text { get; }
 
     public override LocalisableString Tooltip
     {
@@ -33,15 +35,20 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     [Resolved]
     private EditorValues values { get; set; }
 
+    [Resolved]
+    private EditorPlayfield playfield { get; set; }
+
     private IEnumerable<HitObject> hits => BlueprintContainer.SelectionHandler.SelectedObjects.Where(o => o is HitObject).Cast<HitObject>();
 
-    public override bool IsSelected => hits.Any() && hits.All(h =>
+    protected override bool IsSelected => hits.Any() && hits.All(h =>
     {
         if (string.IsNullOrEmpty(h.HitSound))
             return sample == "normal";
 
         return h.HitSound == $"{Hitsounding.DEFAULT_PREFIX}{sample}";
     });
+
+    protected override bool PlayClickSound => false;
 
     private string sample { get; }
 
@@ -63,6 +70,12 @@ public partial class ToolboxHitsoundButton : ToolboxButton
         values.ActionStack.Add(new NoteHitsoundChangeAction(values.MapInfo, hits.ToArray(), $"{Hitsounding.DEFAULT_PREFIX}{sample}"));
 
         UpdateSelectionState();
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        playfield.PlayHitSound(new HitObject { HitSound = $"{Hitsounding.DEFAULT_PREFIX}{sample}" });
+        return base.OnClick(e);
     }
 
     protected override Drawable CreateIcon()

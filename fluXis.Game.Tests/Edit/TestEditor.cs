@@ -1,5 +1,4 @@
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Screens.Edit;
@@ -12,13 +11,7 @@ namespace fluXis.Game.Tests.Edit;
 public partial class TestEditor : FluXisTestScene
 {
     [Resolved]
-    private GlobalBackground backgrounds { get; set; }
-
-    [Resolved]
     private MapStore maps { get; set; }
-
-    [Resolved]
-    private GlobalClock clock { get; set; }
 
     private ScreenStack screenStack { get; } = new() { RelativeSizeAxes = Axes.Both };
     private EditorLoader editor { get; set; }
@@ -26,8 +19,10 @@ public partial class TestEditor : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
-        Add(clock);
+        var backgrounds = new GlobalBackground();
+        TestDependencies.CacheAs(backgrounds);
         Add(backgrounds);
+
         Add(screenStack);
 
         var map = maps.GetFromGuid("4820fd48-69b3-4c05-983b-46923697680f")?

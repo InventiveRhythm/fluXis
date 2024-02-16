@@ -10,9 +10,9 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox;
 
 public partial class ToolboxSnapButton : ToolboxButton
 {
-    public override string Text => $"1/{snap}{getSuffix()}";
+    protected override string Text => $"1/{snap}{getSuffix()}";
     public override LocalisableString Tooltip => $"Snap to 1/{snap}{getSuffix()} of a beat";
-    public override bool IsSelected => values.SnapDivisor == snap;
+    protected override bool IsSelected => values.SnapDivisor == snap;
 
     [Resolved]
     private EditorValues values { get; set; }

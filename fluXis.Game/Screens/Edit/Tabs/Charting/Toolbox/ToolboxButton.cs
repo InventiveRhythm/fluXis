@@ -26,8 +26,9 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     public ChartingTool Tool { get; init; }
     public virtual LocalisableString Tooltip => Tool.Description;
 
-    public virtual string Text => Tool.Name;
-    public virtual bool IsSelected => BlueprintContainer.CurrentTool == Tool;
+    protected virtual string Text => Tool.Name;
+    protected virtual bool IsSelected => BlueprintContainer.CurrentTool == Tool;
+    protected virtual bool PlayClickSound => true;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -158,7 +159,10 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     protected override bool OnClick(ClickEvent e)
     {
         flash.FadeOutFromOne(400);
-        samples.Click();
+
+        if (PlayClickSound)
+            samples.Click();
+
         Select();
         return true;
     }
