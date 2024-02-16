@@ -118,8 +118,9 @@ public partial class NormalResults : Container
                                                 Spacing = new Vector2(-3),
                                                 Children = new Drawable[]
                                                 {
-                                                    new FluXisSpriteText
+                                                    new TruncatingText
                                                     {
+                                                        RelativeSizeAxes = Axes.X,
                                                         Anchor = Anchor.CentreLeft,
                                                         Origin = Anchor.CentreLeft,
                                                         Text = map.Difficulty,
@@ -252,14 +253,14 @@ public partial class NormalResults : Container
                                 Direction = FillDirection.Vertical,
                                 Children = new Drawable[]
                                 {
-                                    new FluXisSpriteText
+                                    new TruncatingText
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = map.Metadata.Title,
                                         FontSize = 36
                                     },
-                                    new FluXisSpriteText
+                                    new TruncatingText
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
