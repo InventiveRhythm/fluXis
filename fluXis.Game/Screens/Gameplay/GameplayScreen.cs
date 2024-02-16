@@ -172,8 +172,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Map.Sort();
         getKeyCountFromEvents();
 
-        HitWindows = new HitWindows(Map.AccuracyDifficulty, Rate);
-        ReleaseWindows = new ReleaseWindows(Map.AccuracyDifficulty, Rate);
+        var difficulty = Map.AccuracyDifficulty == 0 ? 8 : Map.AccuracyDifficulty;
+        difficulty *= Mods.Any(m => m is HardMod) ? 1.5f : 1;
+
+        HitWindows = new HitWindows(difficulty, Rate);
+        ReleaseWindows = new ReleaseWindows(difficulty, Rate);
 
         JudgementProcessor.AddDependants(new JudgementDependant[]
         {

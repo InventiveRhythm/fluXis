@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Utils;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Scoring;
 
@@ -18,6 +19,11 @@ public class HitWindows
     public HitWindows(float difficulty, float multiplier)
     {
         Timings = CreateTimings(difficulty, multiplier);
+
+        Logger.Log($"Difficulty: {difficulty}, Multiplier: {multiplier}", LoggingTarget.Runtime, LogLevel.Debug);
+
+        foreach (var timing in Timings)
+            Logger.Log($"{timing.Judgement} - {timing.Milliseconds}ms", LoggingTarget.Runtime, LogLevel.Debug);
     }
 
     protected virtual Timing[] CreateTimings(float difficulty, float multiplier) => new Timing[]
@@ -62,6 +68,6 @@ public struct Timing
     public Timing(Judgement judgement, float difficulty, float multiplier, float min, float mid, float max)
     {
         Judgement = judgement;
-        Milliseconds = MapUtils.GetDifficulty(Math.Clamp(difficulty, 1, 10), min, mid, max) * multiplier;
+        Milliseconds = MapUtils.GetDifficulty(difficulty, min, mid, max) * multiplier;
     }
 }

@@ -18,12 +18,12 @@ public class DrainHealthProcessor : HealthProcessor
     {
         return result.Judgement switch
         {
-            Judgement.Miss => -3f,
-            Judgement.Okay => -1f,
-            Judgement.Alright => 0f,
-            Judgement.Great => 0.025f,
-            Judgement.Perfect => 0.05f,
-            Judgement.Flawless => 0.5f,
+            Judgement.Miss => -4f,
+            Judgement.Okay => -2f,
+            Judgement.Alright => -.5f,
+            Judgement.Great => -.25f,
+            Judgement.Perfect => 0f,
+            Judgement.Flawless => .25f,
             _ => 0f
         };
     }
