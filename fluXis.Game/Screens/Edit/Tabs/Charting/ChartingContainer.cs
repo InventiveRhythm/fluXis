@@ -11,6 +11,7 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Points;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
+using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -60,6 +61,8 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
     [Resolved]
     private NotificationManager notifications { get; set; }
+
+    public Bindable<string> CurrentHitSound { get; } = new($"{Hitsounding.DEFAULT_PREFIX}normal");
 
     private DependencyContainer dependencies;
     private InputManager inputManager;

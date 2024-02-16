@@ -1,11 +1,15 @@
 using System;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes;
+using osu.Framework.Allocation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 
 public partial class NotePlacementBlueprint : PlacementBlueprint
 {
+    [Resolved]
+    private ChartingContainer chartingContainer { get; set; }
+
     protected HitObject Hit => Object as HitObject;
 
     protected NotePlacementBlueprint()
@@ -21,7 +25,10 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        if (commit)
-            EditorValues.ActionStack.Add(new NotePlaceAction((HitObject)Object, EditorValues.MapInfo));
+        if (!commit)
+            return;
+
+        Hit.HitSound = chartingContainer.CurrentHitSound.Value;
+        EditorValues.ActionStack.Add(new NotePlaceAction(Hit, EditorValues.MapInfo));
     }
 }
