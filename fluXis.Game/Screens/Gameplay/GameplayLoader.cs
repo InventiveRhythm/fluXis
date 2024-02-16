@@ -175,7 +175,7 @@ public partial class GameplayLoader : FluXisScreen
                                 X = -5,
                                 Shadow = true
                             },
-                            new FluXisSpriteText
+                            new TruncatingText
                             {
                                 Text = map.Metadata.Mapper,
                                 Anchor = Anchor.Centre,
@@ -183,7 +183,6 @@ public partial class GameplayLoader : FluXisScreen
                                 WebFontSize = 16,
                                 Width = 200,
                                 X = 5,
-                                Truncate = true,
                                 Shadow = true
                             }
                         }
@@ -206,7 +205,7 @@ public partial class GameplayLoader : FluXisScreen
                                 X = -5,
                                 Shadow = true
                             },
-                            new FluXisSpriteText
+                            new TruncatingText
                             {
                                 Text = string.IsNullOrEmpty(map.Metadata.Source) ? "-" : map.Metadata.Source,
                                 Anchor = Anchor.Centre,
@@ -214,7 +213,6 @@ public partial class GameplayLoader : FluXisScreen
                                 WebFontSize = 16,
                                 Width = 200,
                                 X = 5,
-                                Truncate = true,
                                 Shadow = true
                             }
                         }

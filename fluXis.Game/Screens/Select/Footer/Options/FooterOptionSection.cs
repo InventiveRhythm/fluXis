@@ -23,7 +23,7 @@ public partial class FooterOptionSection : FillFlowContainer
 
     private string subTitle;
 
-    private FluXisSpriteText subTitleText;
+    private TruncatingText subTitleText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -35,19 +35,17 @@ public partial class FooterOptionSection : FillFlowContainer
 
         InternalChildren = new Drawable[]
         {
-            new FluXisSpriteText
+            new TruncatingText
             {
                 RelativeSizeAxes = Axes.X,
                 Text = Title,
-                WebFontSize = 16,
-                Truncate = true
+                WebFontSize = 16
             },
-            subTitleText = new FluXisSpriteText
+            subTitleText = new TruncatingText
             {
                 RelativeSizeAxes = Axes.X,
                 Text = SubTitle,
                 WebFontSize = 12,
-                Truncate = true,
                 Alpha = .8f
             }
         };

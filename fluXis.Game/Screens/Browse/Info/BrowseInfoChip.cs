@@ -38,7 +38,7 @@ public partial class BrowseInfoChip : Container
 
     private Box hover;
     private Box flash;
-    private FluXisSpriteText text;
+    private TruncatingText text;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -75,18 +75,16 @@ public partial class BrowseInfoChip : Container
                 Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
-                    new FluXisSpriteText
+                    new TruncatingText
                     {
                         RelativeSizeAxes = Axes.X,
-                        Truncate = true,
                         Text = Title,
                         FontSize = 16,
                         Colour = FluXisColors.Text2
                     },
-                    text = new FluXisSpriteText
+                    text = new TruncatingText
                     {
                         RelativeSizeAxes = Axes.X,
-                        Truncate = true,
                         Text = DefaultText,
                         Alpha = 0.5f,
                         FontSize = 20

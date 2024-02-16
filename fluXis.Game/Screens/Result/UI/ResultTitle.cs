@@ -68,28 +68,25 @@ public partial class ResultTitle : Container
                         Y = -2,
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            new TruncatingText
                             {
                                 Text = map.Metadata.Title,
                                 FontSize = 40,
-                                RelativeSizeAxes = Axes.X,
-                                Truncate = true
+                                RelativeSizeAxes = Axes.X
                             },
-                            new FluXisSpriteText
+                            new TruncatingText
                             {
                                 Text = map.Metadata.Artist,
                                 FontSize = 26,
                                 Colour = FluXisColors.Text2,
-                                Truncate = true,
                                 RelativeSizeAxes = Axes.X,
                                 Margin = new MarginPadding { Top = 33 }
                             },
-                            new FluXisSpriteText
+                            new TruncatingText
                             {
                                 Text = $"[{map.Difficulty}] mapped by {map.Metadata.Mapper}",
                                 FontSize = 22,
                                 Colour = FluXisColors.Text2,
-                                Truncate = true,
                                 RelativeSizeAxes = Axes.X,
                                 Margin = new MarginPadding { Top = 58 }
                             }

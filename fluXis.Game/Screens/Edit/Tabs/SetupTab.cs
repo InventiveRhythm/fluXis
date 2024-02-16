@@ -19,8 +19,8 @@ public partial class SetupTab : EditorTab
 
     private MapBackground background;
     private MapCover cover;
-    private FluXisSpriteText titleText;
-    private FluXisSpriteText artistText;
+    private TruncatingText titleText;
+    private TruncatingText artistText;
 
     public SetupTab(Editor screen)
         : base(screen)
@@ -115,19 +115,17 @@ public partial class SetupTab : EditorTab
                                         Padding = new MarginPadding { Left = 170 },
                                         Children = new Drawable[]
                                         {
-                                            titleText = new FluXisSpriteText
+                                            titleText = new TruncatingText
                                             {
                                                 Text = Screen.Map.Metadata.Title,
                                                 RelativeSizeAxes = Axes.X,
-                                                Truncate = true,
                                                 FontSize = 38,
                                                 Shadow = true
                                             },
-                                            artistText = new FluXisSpriteText
+                                            artistText = new TruncatingText
                                             {
                                                 Text = Screen.Map.Metadata.Artist,
                                                 RelativeSizeAxes = Axes.X,
-                                                Truncate = true,
                                                 FontSize = 24,
                                                 Shadow = true
                                             }

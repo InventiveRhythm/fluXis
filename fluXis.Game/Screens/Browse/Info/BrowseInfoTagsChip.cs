@@ -11,7 +11,7 @@ namespace fluXis.Game.Screens.Browse.Info;
 
 public partial class BrowseInfoTagsChip : Container
 {
-    private FluXisSpriteText noTagsText;
+    private TruncatingText noTagsText;
     private FillFlowContainer tagsFlow;
 
     public string[] Tags
@@ -63,18 +63,16 @@ public partial class BrowseInfoTagsChip : Container
                 Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
-                    new FluXisSpriteText
+                    new TruncatingText
                     {
                         RelativeSizeAxes = Axes.X,
-                        Truncate = true,
                         Text = "Tags",
                         FontSize = 16,
                         Colour = FluXisColors.Text2
                     },
-                    noTagsText = new FluXisSpriteText
+                    noTagsText = new TruncatingText
                     {
                         RelativeSizeAxes = Axes.X,
-                        Truncate = true,
                         Text = "No Tags",
                         Alpha = 0.5f,
                         FontSize = 20

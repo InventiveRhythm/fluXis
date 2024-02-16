@@ -169,20 +169,18 @@ public partial class MapSetHeader : Container, IHasContextMenu
                                 Spacing = new Vector2(0, -5),
                                 Children = new Drawable[]
                                 {
-                                    new FluXisSpriteText
+                                    new TruncatingText
                                     {
                                         FontSize = 32,
                                         Text = mapset.Metadata.Title,
                                         RelativeSizeAxes = Axes.X,
-                                        Truncate = true,
                                         Shadow = true
                                     },
-                                    new FluXisSpriteText
+                                    new TruncatingText
                                     {
                                         FontSize = 24,
                                         Text = mapset.Metadata.Artist,
                                         RelativeSizeAxes = Axes.X,
-                                        Truncate = true,
                                         Shadow = true
                                     }
                                 }

@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Graphics.Sprites;
@@ -24,6 +25,12 @@ public partial class FluXisSpriteText : SpriteText
     {
         get => base.Font.FixedWidth;
         set => base.Font = base.Font.With(fixedWidth: value);
+    }
+
+    [Obsolete("Use TruncatingText instead.")]
+    public new bool Truncate
+    {
+        set => throw new InvalidOperationException("Use TruncatingText instead.");
     }
 
     public FluXisSpriteText()

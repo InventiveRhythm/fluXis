@@ -21,7 +21,7 @@ public partial class TaskNotification : CompositeDrawable
     private Container content;
     private Box iconBox;
     private SpriteIcon icon;
-    private FluXisSpriteText statusText;
+    private TruncatingText statusText;
     private Box progressBackground;
     private CircularContainer progress;
     private Box progressFill;
@@ -112,18 +112,16 @@ public partial class TaskNotification : CompositeDrawable
                                             Spacing = new Vector2(0, -3),
                                             Children = new Drawable[]
                                             {
-                                                new FluXisSpriteText
+                                                new TruncatingText
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     Text = data.Text,
-                                                    WebFontSize = 16,
-                                                    Truncate = true
+                                                    WebFontSize = 16
                                                 },
-                                                statusText = new FluXisSpriteText
+                                                statusText = new TruncatingText
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     WebFontSize = 12,
-                                                    Truncate = true,
                                                     Alpha = 0.8f
                                                 }
                                             }

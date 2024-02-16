@@ -26,8 +26,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private SpriteStack<MapBackground> backgrounds;
     private SectionedGradient gradient;
     private SpriteStack<MapCover> covers;
-    private FluXisSpriteText title;
-    private FluXisSpriteText artist;
+    private TruncatingText title;
+    private TruncatingText artist;
     private DifficultyChip difficulty;
     private FluXisSpriteText difficultyText;
     private FluXisSpriteText mapper;
@@ -115,21 +115,19 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                                             Padding = new MarginPadding { Horizontal = 20 },
                                             Children = new Drawable[]
                                             {
-                                                title = new FluXisSpriteText
+                                                title = new TruncatingText
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     WebFontSize = 36,
                                                     Text = "no map selected",
-                                                    Shadow = true,
-                                                    Truncate = true
+                                                    Shadow = true
                                                 },
-                                                artist = new FluXisSpriteText
+                                                artist = new TruncatingText
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     WebFontSize = 24,
                                                     Text = "select a map to view info",
-                                                    Shadow = true,
-                                                    Truncate = true
+                                                    Shadow = true
                                                 }
                                             }
                                         }

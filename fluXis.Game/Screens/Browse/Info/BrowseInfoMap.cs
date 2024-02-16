@@ -58,17 +58,15 @@ public partial class BrowseInfoMap : Container, IHasTextTooltip
                 Padding = new MarginPadding { Left = 60, Right = 110 },
                 Children = new Drawable[]
                 {
-                    new FluXisSpriteText
+                    new TruncatingText
                     {
                         RelativeSizeAxes = Axes.X,
-                        Truncate = true,
                         Text = map.Difficulty,
                         FontSize = mapperIsCreator ? 24 : 20,
                     },
-                    new FluXisSpriteText
+                    new TruncatingText
                     {
                         RelativeSizeAxes = Axes.X,
-                        Truncate = true,
                         Text = $"mapped by {map.Mapper.Username}",
                         FontSize = 14,
                         Alpha = mapperIsCreator ? 0 : 1,

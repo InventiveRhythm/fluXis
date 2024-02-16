@@ -42,18 +42,16 @@ public partial class LobbySlot : Container
                     Origin = Anchor.CentreLeft,
                     Children = new Drawable[]
                     {
-                        new FluXisSpriteText
+                        new TruncatingText
                         {
                             Text = Room.Settings.Name,
                             RelativeSizeAxes = Axes.X,
-                            Truncate = true,
                             FontSize = 30
                         },
-                        new FluXisSpriteText
+                        new TruncatingText
                         {
                             Text = $"hosted by {Room.Host.Username}",
                             RelativeSizeAxes = Axes.X,
-                            Truncate = true,
                             FontSize = 20
                         }
                     }

@@ -174,29 +174,26 @@ public partial class MapCard : Container, IHasContextMenu
                                     Padding = new MarginPadding { Horizontal = 10 },
                                     Children = new Drawable[]
                                     {
-                                        new FluXisSpriteText
+                                        new TruncatingText
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             Text = MapSet.Title,
                                             FontSize = 24,
-                                            Shadow = true,
-                                            Truncate = true
+                                            Shadow = true
                                         },
-                                        new FluXisSpriteText
+                                        new TruncatingText
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             Text = $"by {MapSet.Artist}",
                                             FontSize = 16,
-                                            Shadow = true,
-                                            Truncate = true
+                                            Shadow = true
                                         },
-                                        new FluXisSpriteText
+                                        new TruncatingText
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             Text = $"mapped by {MapSet.Creator?.GetName()}",
                                             FontSize = 16,
-                                            Shadow = true,
-                                            Truncate = true
+                                            Shadow = true
                                         },
                                         new Container
                                         {
