@@ -3,6 +3,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox;
@@ -10,7 +11,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox;
 public partial class ToolboxSnapButton : ToolboxButton
 {
     public override string Text => $"1/{snap}{getSuffix()}";
-    public override string Tooltip => $"Snap to 1/{snap}{getSuffix()} of a beat";
+    public override LocalisableString Tooltip => $"Snap to 1/{snap}{getSuffix()} of a beat";
     public override bool IsSelected => values.SnapDivisor == snap;
 
     [Resolved]

@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Mouse;
@@ -14,7 +15,7 @@ public partial class GlobalCursorOverlay : Container
     private InputManager inputManager;
     private double timeInactive;
     private bool isHidden;
-    private string tooltipText;
+    private LocalisableString tooltipText;
     private IHasDrawableTooltip lastHoveredDrawable;
 
     // tracking stuff when hidden
@@ -47,7 +48,7 @@ public partial class GlobalCursorOverlay : Container
             {
                 case IHasTextTooltip desc:
                 {
-                    var newTip = desc.Tooltip ?? "";
+                    var newTip = desc.Tooltip;
 
                     if (newTip != tooltipText)
                     {
@@ -84,7 +85,7 @@ public partial class GlobalCursorOverlay : Container
 
         if (!foundHovered)
         {
-            tooltipText = null;
+            tooltipText = "";
             lastHoveredDrawable = null;
             cursor.DrawableTooltip = null;
         }

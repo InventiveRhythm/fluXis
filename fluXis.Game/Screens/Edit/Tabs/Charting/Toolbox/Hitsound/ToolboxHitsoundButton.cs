@@ -7,6 +7,7 @@ using fluXis.Game.Screens.Gameplay;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Toolbox.Hitsound;
 
@@ -14,7 +15,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 {
     public override string Text { get; }
 
-    public override string Tooltip
+    public override LocalisableString Tooltip
     {
         get
         {

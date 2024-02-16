@@ -16,7 +16,7 @@ namespace fluXis.Game.Screens.Menu.UI;
 
 public partial class MenuButton : ClickableContainer, IHasTextTooltip
 {
-    public string Tooltip => Enabled.Value ? "" : "Log in to use this feature.";
+    public LocalisableString Tooltip => Enabled.Value ? "" : "Log in to use this feature.";
 
     public LocalisableString Text { get; init; }
     public LocalisableString Description { get; init; }

@@ -8,13 +8,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Browse.Info;
 
 public partial class BrowseInfoMap : Container, IHasTextTooltip
 {
-    public string Tooltip => map.Difficulty;
+    public LocalisableString Tooltip => map.Difficulty;
 
     private bool mapperIsCreator => map.Mapper.ID == set.Creator.ID;
 

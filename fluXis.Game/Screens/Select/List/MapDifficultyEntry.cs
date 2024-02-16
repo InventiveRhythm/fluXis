@@ -15,6 +15,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osuTK;
 
@@ -241,7 +242,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
 
     private partial class GimmickIcon : FluXisIcon, IHasTextTooltip
     {
-        public string Tooltip { get; }
+        public LocalisableString Tooltip { get; }
 
         public GimmickIcon(FluXisIconType type, string tooltip, bool show)
         {

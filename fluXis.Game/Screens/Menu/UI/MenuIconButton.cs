@@ -6,13 +6,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
 public partial class MenuIconButton : Container, IHasTextTooltip
 {
-    public string Tooltip => Text;
+    public LocalisableString Tooltip => Text;
 
     public string Text { get; set; } = string.Empty;
     public Action Action { get; set; }

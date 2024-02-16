@@ -16,6 +16,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 using osuTK.Input;
 
@@ -23,7 +24,7 @@ namespace fluXis.Game.Overlay.Toolbar;
 
 public partial class ToolbarProfile : Container, IHasTextTooltip
 {
-    public string Tooltip => loadingContainer.Alpha > 0 ? "Connecting..." : "";
+    public LocalisableString Tooltip => loadingContainer.Alpha > 0 ? "Connecting..." : "";
 
     [Resolved]
     private UserProfileOverlay profile { get; set; }

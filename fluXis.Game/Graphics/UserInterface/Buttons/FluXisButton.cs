@@ -11,12 +11,13 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Graphics.UserInterface.Buttons;
 
 public partial class FluXisButton : ClickableContainer, IHasTextTooltip
 {
-    public string Tooltip => TooltipText;
+    public LocalisableString Tooltip => TooltipText;
     public string TooltipText { get; set; }
 
     public int FontSize { get; set; } = 24;
