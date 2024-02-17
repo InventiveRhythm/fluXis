@@ -118,7 +118,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
     public virtual LightController CreateLightController() => new();
-    public virtual IUpdateManager CreateUpdateManager() => null;
+    public virtual IUpdatePerformer CreateUpdatePerformer() => null;
 
     protected FluXisGameBase()
     {
@@ -253,7 +253,26 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
-    public void PerformUpdateCheck(bool silent, bool forceUpdate = false) => Task.Run(() => CreateUpdateManager()?.Perform(silent, forceUpdate));
+    public void PerformUpdateCheck(bool silent, bool forceUpdate = false)
+    {
+        Task.Run(() =>
+        {
+            var checker = new UpdateChecker(Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel));
+
+            if (forceUpdate || checker.UpdateAvailable)
+            {
+                var performer = CreateUpdatePerformer();
+                var version = checker.LatestVersion;
+
+                if (performer != null)
+                    performer.Perform(version);
+                else
+                    NotificationManager.SendText($"New update available! ({version})", "Check the github releases to download the latest version.", FontAwesome6.Solid.Download);
+            }
+            else if (!silent)
+                NotificationManager.SendText("No updates available.", "You are running the latest version.", FontAwesome6.Solid.Check);
+        });
+    }
 
     private Season getSeason()
     {

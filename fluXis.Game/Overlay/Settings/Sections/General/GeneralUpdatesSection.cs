@@ -1,8 +1,11 @@
+using System;
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Localisation;
@@ -21,12 +24,22 @@ public partial class GeneralUpdatesSection : SettingsSubSection
     [BackgroundDependencyLoader]
     private void load(FluXisGameBase game)
     {
-        Add(new SettingsButton
+        AddRange(new Drawable[]
         {
-            Label = strings.UpdatesCheck,
-            Description = strings.UpdatesCheckDescription,
-            ButtonText = "Check",
-            Action = () => game.PerformUpdateCheck(false, inputManager.CurrentState.Keyboard.AltPressed)
+            new SettingsDropdown<ReleaseChannel>
+            {
+                Label = strings.ReleaseChannel,
+                Description = strings.ReleaseChannelDescription,
+                Bindable = Config.GetBindable<ReleaseChannel>(FluXisSetting.ReleaseChannel),
+                Items = Enum.GetValues<ReleaseChannel>()
+            },
+            new SettingsButton
+            {
+                Label = strings.UpdatesCheck,
+                Description = strings.UpdatesCheckDescription,
+                ButtonText = "Check",
+                Action = () => game.PerformUpdateCheck(false, inputManager.CurrentState.Keyboard.AltPressed)
+            }
         });
     }
 

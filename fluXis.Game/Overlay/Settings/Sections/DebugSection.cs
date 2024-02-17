@@ -50,7 +50,7 @@ public partial class DebugSection : SettingsSection
                     game.Overlay = new FileSelect
                     {
                         AllowedExtensions = new[] { ".zip" },
-                        OnFileSelected = file => game.CreateUpdateManager()?.UpdateFromFile(file)
+                        OnFileSelected = file => game.CreateUpdatePerformer()?.UpdateFromFile(file)
                     };
                 }
             }

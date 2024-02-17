@@ -3,81 +3,29 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.Versioning;
-using fluXis.Game;
-using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Updater;
-using Newtonsoft.Json.Linq;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
 namespace fluXis.Desktop;
 
 [SupportedOSPlatform("windows")]
-public partial class WindowsUpdateManager : IUpdateManager
+public partial class WindowsUpdatePerformer : IUpdatePerformer
 {
     private NotificationManager notifications { get; }
     private readonly Logger logger = Logger.GetLogger("update");
-
-    private string latestVersion;
-    private bool forceUpdate;
 
     private string folder => $"{Path.GetDirectoryName(Environment.CommandLine)}";
     private string patcher => @$"{folder}\patcher.exe";
     private string patches => @$"{folder}\patches";
 
-    public bool UpdateAvailable
-    {
-        get
-        {
-            var current = FluXisGameBase.Version;
-
-            logger.Add("Checking for updates...");
-            logger.Add($"Current version: {current}");
-
-            if (!forceUpdate)
-            {
-                if (current == null)
-                {
-                    logger.Add("No version installed.");
-                    return false;
-                }
-
-                if (FluXisGameBase.IsDebug)
-                {
-                    logger.Add("Running in debug mode. Skipping update check.");
-                    return false;
-                }
-            }
-
-            var latestString = fetchLatestVersion();
-
-            if (!Version.TryParse(latestString, out var latest))
-            {
-                logger.Add($"Failed to parse latest version. {latestString}");
-                return false;
-            }
-
-            latestVersion = latestString;
-            logger.Add($"Latest version: {latestVersion}");
-
-            if (current < latest) return true;
-
-            logger.Add("No updates available.");
-            return false;
-        }
-    }
-
-    public WindowsUpdateManager(NotificationManager notifications)
+    public WindowsUpdatePerformer(NotificationManager notifications)
     {
         this.notifications = notifications;
-    }
 
-    public void Perform(bool silent, bool forceUpdate = false)
-    {
         if (Program.Args.Contains("--post-update"))
         {
             logger.Add("Update complete. Cleaning up...");
@@ -87,24 +35,25 @@ public partial class WindowsUpdateManager : IUpdateManager
 
             logger.Add("Cleanup complete.");
         }
+    }
 
-        this.forceUpdate = forceUpdate;
-
-        if (!UpdateAvailable && !forceUpdate)
+    public void Perform(string version)
+    {
+        /*if (!UpdateAvailable && !forceUpdate)
         {
             if (!silent)
                 notifications.SendText("No updates available.", "You are running the latest version.", FontAwesome6.Solid.Check);
 
             return;
-        }
+        }*/
 
-        if (string.IsNullOrEmpty(latestVersion))
+        if (string.IsNullOrEmpty(version))
             return;
 
         if (!File.Exists(patcher))
-            getPatcher(() => startUpdate(latestVersion));
+            getPatcher(() => startUpdate(version));
         else
-            startUpdate(latestVersion);
+            startUpdate(version);
     }
 
     public void UpdateFromFile(FileInfo file)
@@ -193,7 +142,7 @@ public partial class WindowsUpdateManager : IUpdateManager
 
     private async void getPatcher(Action callback)
     {
-        var notification = new TaskNotificationData()
+        var notification = new TaskNotificationData
         {
             Text = "Game patcher download",
             TextWorking = "Downloading...",
@@ -229,17 +178,5 @@ public partial class WindowsUpdateManager : IUpdateManager
             logger.Add("Failed to download patcher.", LogLevel.Error, e);
             notification.State = LoadingState.Failed;
         }
-    }
-
-    private string fetchLatestVersion()
-    {
-        const string url = "https://api.github.com/repos/TeamfluXis/fluXis/releases/latest";
-        var request = new WebRequest(url);
-        request.AddHeader("User-Agent", "fluXis.Updater");
-        request.Method = HttpMethod.Get;
-        request.Perform();
-
-        var json = JObject.Parse(request.GetResponseString());
-        return json["tag_name"]?.ToString() ?? "";
     }
 }

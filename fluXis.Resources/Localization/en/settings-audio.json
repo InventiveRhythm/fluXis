@@ -12,5 +12,7 @@
   "offset-title": "Offset",
   "audio-offset": "Audio Offset",
   "audio-offset-description": "Changes the audio offset for all songs. Higher means objects appear later.",
+  "disable-offset-in-replay": "Disable Offset in Replays",
+  "disable-offset-in-replay-description": "Disables the audio offset when viewing replays. This is useful for recording videos of replays.",
   "open-offset-wizard": "Open Offset wizard"
 }

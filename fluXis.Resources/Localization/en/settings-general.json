@@ -3,6 +3,8 @@
   "language-title": "Language",
   "language-current": "Current Language",
   "updates-title": "Updates",
+  "release-channel": "Release Channel",
+  "release-channel-description": "Select the release channel to receive updates from.",
   "check-updates": "Check for updates",
   "check-updates-description": "Checks for updates and downloads them if available.",
   "folders-title": "Folders",

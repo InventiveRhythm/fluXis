@@ -76,6 +76,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.Token, string.Empty);
 
         // Misc
+        SetDefault(FluXisSetting.ReleaseChannel, ReleaseChannel.Stable);
         SetDefault(FluXisSetting.NowPlaying, false);
     }
 }
@@ -143,5 +144,6 @@ public enum FluXisSetting
     Token,
 
     // Misc
-    NowPlaying, // saves the current song to a json file
+    ReleaseChannel,
+    NowPlaying // saves the current song to a json file
 }
