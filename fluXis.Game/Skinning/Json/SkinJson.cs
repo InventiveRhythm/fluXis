@@ -94,7 +94,13 @@ public class SkinJson
     }
 
     [CanBeNull]
-    public string GetOverride(string key) => Overrides.TryGetValue(key, out var value) ? value : null;
+    public string GetOverride(string key)
+    {
+        if (string.IsNullOrEmpty(key) || Overrides == null)
+            return null;
+
+        return Overrides.TryGetValue(key, out var value) ? value : null;
+    }
 
     public string GetOverrideOrDefault(string key) => GetOverride(key) ?? key;
 
