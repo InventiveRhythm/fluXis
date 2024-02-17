@@ -1,6 +1,5 @@
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
@@ -19,7 +18,7 @@ public partial class DrawableTickNote : DrawableHitObject
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = new DefaultTickNote();
+        InternalChild = SkinManager.GetTickNote(Data.Lane, ObjectManager.KeyCount);
     }
 
     protected override void Update()

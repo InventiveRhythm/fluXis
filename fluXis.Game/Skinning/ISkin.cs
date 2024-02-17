@@ -23,6 +23,7 @@ public interface ISkin : IDisposable
     public Drawable GetHealthBar(HealthProcessor processor);
 
     public Drawable GetHitObject(int lane, int keyCount);
+    public Drawable GetTickNote(int lane, int keyCount);
     public Drawable GetLongNoteBody(int lane, int keyCount);
     public Drawable GetLongNoteEnd(int lane, int keyCount);
 
