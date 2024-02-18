@@ -32,7 +32,7 @@ public partial class SearchDropdownBPM : Container
     private partial class TextBox : FluXisTextBox
     {
         [Resolved]
-        private SearchFilters filters { get; init; }
+        private SearchFilters filters { get; set; }
 
         private int bpm;
 

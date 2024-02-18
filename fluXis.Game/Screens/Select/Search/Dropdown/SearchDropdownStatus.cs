@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Select.Search.Dropdown;
 public partial class SearchDropdownStatus : Container
 {
     [Resolved]
-    private SearchFilters filters { get; init; }
+    private SearchFilters filters { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
