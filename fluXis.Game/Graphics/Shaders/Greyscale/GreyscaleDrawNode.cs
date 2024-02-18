@@ -36,7 +36,11 @@ public partial class GreyscaleContainer
 
             using (BindFrameBuffer(target))
             {
-                parameters.Data = parameters.Data with { TexSize = current.Size };
+                parameters.Data = parameters.Data with
+                {
+                    TexSize = current.Size,
+                    Strength = Source.Strength
+                };
 
                 Shader.BindUniformBlock("m_GreyscaleParameters", parameters);
                 Shader.Bind();
@@ -55,8 +59,10 @@ public partial class GreyscaleContainer
         private record struct GreyscaleParameters
         {
             public UniformVector2 TexSize;
+            public UniformFloat Strength;
             private readonly UniformPadding4 pad1;
             private readonly UniformPadding4 pad2;
+            private readonly UniformPadding12 pad3;
         }
     }
 }

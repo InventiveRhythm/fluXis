@@ -41,10 +41,11 @@ public partial class TestShaderStackContainer : FluXisTestScene
 
         var chroma = new ChromaticContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(chroma);
-        AddSliderStep("Chroma Strength", 0, 20, 1, strength => chroma.Strength = strength);
+        AddSliderStep("Chroma Strength", 0, 20, 0, strength => chroma.Strength = strength);
 
         var grey = new GreyscaleContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(grey);
+        AddSliderStep("Greyscale Strength", 0, 1f, 0f, strength => grey.Strength = strength);
 
         var invert = new InvertContainer { RelativeSizeAxes = Axes.Both, Strength = 0 };
         stack.AddShader(invert);
