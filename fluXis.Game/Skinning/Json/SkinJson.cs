@@ -84,7 +84,7 @@ public class SkinJson
     {
         var colors = GetKeymode(maxLanes).Colors;
 
-        if (colors.Count == 0)
+        if (colors == null || colors.Count == 0)
             return Colour4.White;
 
         var color = colors[(lane - 1) % colors.Count];
