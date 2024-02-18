@@ -1,0 +1,38 @@
+using System.Collections.Generic;
+using System.Linq;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
+
+namespace fluXis.Game.Graphics.Shaders;
+
+public partial class ShaderStackContainer : CompositeDrawable
+{
+    private readonly List<ShaderContainer> shaders = new();
+
+    public ShaderStackContainer()
+    {
+        RelativeSizeAxes = Axes.Both;
+    }
+
+    public void AddShader(ShaderContainer shader)
+    {
+        Logger.Log($"Adding shader {shader.GetType().Name} to stack", LoggingTarget.Runtime, LogLevel.Debug);
+        Logger.Log($"{shaders.Count}", LoggingTarget.Runtime, LogLevel.Debug);
+
+        if (shaders.Count == 0)
+            InternalChild = shader;
+        else
+            shaders.Last().Add(shader);
+
+        shaders.Add(shader);
+    }
+
+    public void AddContent(Drawable[] content)
+    {
+        if (shaders.Count == 0)
+            InternalChildren = content;
+        else
+            shaders.Last().AddRange(content);
+    }
+}
