@@ -60,7 +60,7 @@ public class RealmMapSet : RealmObject
         return texture ?? backgrounds.Get(GetPathForFile(Metadata.Background));
     }
 
-    public string GetPathForFile(string filename) => $"{ID.ToString()}/{filename}";
+    public virtual string GetPathForFile(string filename) => $"{ID.ToString()}/{filename}";
     public override string ToString() => ID.ToString();
 
     public void SetStatus(int status)
