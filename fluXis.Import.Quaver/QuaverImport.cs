@@ -140,8 +140,6 @@ public class QuaverImport : MapImporter
 
                 var map = new QuaverRealmMap
                 {
-                    QuaverPath = songsPath,
-                    FolderPath = directoryName,
                     FileName = path,
                     Difficulty = difficulty,
                     Metadata = new RealmMapMetadata

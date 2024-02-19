@@ -166,6 +166,7 @@ public class OsuImport : MapImporter
 
                 var realmMapSet = new OsuRealmMapSet(mapList)
                 {
+                    FolderPath = set.Key,
                     Managed = true,
                     Resources = resources
                 };
@@ -180,8 +181,6 @@ public class OsuImport : MapImporter
 
                     var realmMap = new OsuRealmMap
                     {
-                        OsuPath = songsPath,
-                        FolderPath = map.FolderName,
                         Difficulty = map.Version,
                         Metadata = new RealmMapMetadata
                         {

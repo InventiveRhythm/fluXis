@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using fluXis.Game.Database.Maps;
-using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Import.Quaver.Map;
 
@@ -14,9 +13,5 @@ public class QuaverRealmMapSet : RealmMapSet
     {
     }
 
-    public override Texture GetCover()
-    {
-        var backgrounds = Resources?.BackgroundStore;
-        return backgrounds?.Get(Path.Combine(FolderPath, Metadata.Background));
-    }
+    public override string GetPathForFile(string filename) => Path.Combine(FolderPath, filename);
 }
