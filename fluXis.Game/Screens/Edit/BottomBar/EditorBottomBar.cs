@@ -7,6 +7,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Mods;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.BottomBar.Timeline;
+using fluXis.Game.Screens.Edit.Playtest;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
@@ -123,7 +124,22 @@ public partial class EditorBottomBar : Container
                                         var clone = values.Editor.MapInfo.Clone();
                                         clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
 
-                                        values.Editor.Push(new GameplayLoader(values.Editor.Map, new List<IMod> { new NoFailMod() }, () => new EditorPlaytestScreen(values.Editor.Map, clone, values.MapEvents, startTime)));
+                                        var shouldAutoPlay = GetContainingInputManager().CurrentState.Keyboard.ControlPressed;
+
+                                        var mods = new List<IMod>();
+
+                                        if (shouldAutoPlay)
+                                            mods.Add(new AutoPlayMod());
+                                        else
+                                            mods.Add(new NoFailMod());
+
+                                        values.Editor.Push(new GameplayLoader(values.Editor.Map, mods, () =>
+                                        {
+                                            if (shouldAutoPlay)
+                                                return new EditorAutoPlaytestScreen(values.Editor.Map, clone, startTime);
+
+                                            return new EditorPlaytestScreen(values.Editor.Map, clone, startTime);
+                                        }));
                                     }
                                 }
                             }
