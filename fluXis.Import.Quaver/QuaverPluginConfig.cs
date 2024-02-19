@@ -7,8 +7,10 @@ namespace fluXis.Import.Quaver;
 
 public class QuaverPluginConfig : PluginConfigManager<QuaverPluginSetting>
 {
+    protected override string ID => "quaver";
+
     public QuaverPluginConfig(Storage storage)
-        : base("quaver", storage)
+        : base(storage)
     {
     }
 

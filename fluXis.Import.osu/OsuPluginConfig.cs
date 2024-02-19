@@ -7,8 +7,10 @@ namespace fluXis.Import.osu;
 
 public class OsuPluginConfig : PluginConfigManager<OsuPluginSetting>
 {
+    protected override string ID => "osu";
+
     public OsuPluginConfig(Storage storage)
-        : base("osu", storage)
+        : base(storage)
     {
     }
 

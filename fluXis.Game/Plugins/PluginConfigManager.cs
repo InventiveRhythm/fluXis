@@ -4,14 +4,14 @@ using osu.Framework.Platform;
 
 namespace fluXis.Game.Plugins;
 
-public class PluginConfigManager<TLookup> : IniConfigManager<TLookup>
+public abstract class PluginConfigManager<TLookup> : IniConfigManager<TLookup>
     where TLookup : struct, Enum
 {
-    protected sealed override string Filename { get; }
+    protected abstract string ID { get; }
+    protected sealed override string Filename => $"{ID}.config.ini";
 
-    public PluginConfigManager(string id, Storage storage)
+    protected PluginConfigManager(Storage storage)
         : base(storage)
     {
-        Filename = $"{id}.config.ini";
     }
 }
