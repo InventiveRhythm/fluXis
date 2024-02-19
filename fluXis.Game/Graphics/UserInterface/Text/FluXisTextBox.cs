@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
@@ -24,6 +25,8 @@ public partial class FluXisTextBox : BasicTextBox
     public bool IsPassword { get; set; }
     public Action OnTextChanged { get; set; }
     public Action OnCommitAction { get; set; }
+
+    private Container textContainer => TextContainer;
 
     public Colour4 BackgroundInactive
     {
@@ -60,7 +63,7 @@ public partial class FluXisTextBox : BasicTextBox
         Add(samples);
     }
 
-    protected override Caret CreateCaret() => new FluXisCaret { SelectionColour = SelectionColour };
+    protected override Caret CreateCaret() => new FluXisCaret(this) { SelectionColour = SelectionColour };
 
     protected override void OnUserTextAdded(string added)
     {
@@ -164,9 +167,12 @@ public partial class FluXisTextBox : BasicTextBox
 
         private bool shouldPulse = true;
 
-        public FluXisCaret()
+        private FluXisTextBox box { get; }
+
+        public FluXisCaret(FluXisTextBox box)
         {
-            RelativeSizeAxes = Axes.Y;
+            this.box = box;
+
             Size = new Vector2(4, 0.8f);
             Anchor = Anchor.CentreLeft;
             Origin = Anchor.CentreLeft;
@@ -182,6 +188,9 @@ public partial class FluXisTextBox : BasicTextBox
 
         protected override void LoadComplete()
         {
+            // this sucks
+            RelativeSizeAxes = box.FontSize != box.textContainer.DrawHeight ? Axes.None : Axes.Y;
+
             base.LoadComplete();
 
             clock.OnBeat += onBeat;

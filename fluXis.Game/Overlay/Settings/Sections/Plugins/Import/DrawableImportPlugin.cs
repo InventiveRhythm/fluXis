@@ -10,6 +10,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Plugins.Import;
 
@@ -39,6 +40,8 @@ public partial class DrawableImportPlugin : Container
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Padding = new MarginPadding(10),
+                Spacing = new Vector2(10),
+                Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
                     new Container
@@ -90,7 +93,6 @@ public partial class DrawableImportPlugin : Container
                 Value = realm.Run(r => r.All<ImporterInfo>().FirstOrDefault(i => i.Id == importer.ID)?.AutoImport ?? false)
             };
 
-            flow.Add(new SettingsDivider());
             flow.Add(new SettingsToggle
             {
                 Label = "Auto Import Maps",
@@ -113,5 +115,7 @@ public partial class DrawableImportPlugin : Container
                     importManager.RemoveImportedMaps(importManager.GetImporter(Plugin));
             });
         }
+
+        flow.AddRange(Plugin.CreateSettings());
     }
 }

@@ -5,6 +5,8 @@ namespace fluXis.Game.Graphics.Sprites;
 
 public partial class FluXisSpriteText : SpriteText
 {
+    private const float web_scale = 1.4f;
+
     public float FontSize
     {
         get => base.Font.Size;
@@ -14,7 +16,7 @@ public partial class FluXisSpriteText : SpriteText
     // this is super wacky...
     // the font is rendered smaller here than in a web browser/figma
     // this multiplier should be about right to make them match up
-    public float WebFontSize { set => FontSize = value * 1.4f; }
+    public float WebFontSize { set => FontSize = value * web_scale; }
 
     public new FluXisFont Font
     {
@@ -39,6 +41,8 @@ public partial class FluXisSpriteText : SpriteText
     }
 
     public static FontUsage GetFont(FluXisFont font = FluXisFont.RenogareSoft, float size = 20, bool fixedWidth = false) => new(font.ToString(), size, fixedWidth: fixedWidth);
+
+    public static float GetWebFontSize(float i) => i * web_scale;
 }
 
 public enum FluXisFont

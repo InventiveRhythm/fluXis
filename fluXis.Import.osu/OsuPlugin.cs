@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Import;
+using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Plugins;
 using osu.Framework.Platform;
 
@@ -15,4 +17,14 @@ public class OsuPlugin : Plugin
 
     protected override MapImporter CreateImporter() => new OsuImport(config);
     public override void CreateConfig(Storage storage) => config = new OsuPluginConfig(storage);
+
+    public override List<SettingsItem> CreateSettings() => new()
+    {
+        new SettingsTextBox
+        {
+            Label = "osu! Directory",
+            Description = "The directory where osu! is installed.",
+            Bindable = config.GetBindable<string>(OsuPluginSetting.GameLocation)
+        }
+    };
 }
