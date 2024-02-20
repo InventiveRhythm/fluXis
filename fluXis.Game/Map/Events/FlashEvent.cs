@@ -1,6 +1,5 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Utils;
-using osu.Framework.Extensions.Color4Extensions;
+using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
 
@@ -8,15 +7,24 @@ namespace fluXis.Game.Map.Events;
 
 public class FlashEvent : TimedObject
 {
+    [JsonProperty("duration")]
     public float Duration { get; set; }
+
+    [JsonProperty("background")]
     public bool InBackground { get; set; }
+
+    [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.None;
 
+    [JsonProperty("start-color")]
     public Color4 StartColor { get; set; } = Color4.White;
+
+    [JsonProperty("start-alpha")]
     public float StartOpacity { get; set; } = 1;
 
+    [JsonProperty("end-color")]
     public Color4 EndColor { get; set; } = Color4.White;
-    public float EndOpacity { get; set; }
 
-    public override string ToString() => $"Flash({Time.ToStringInvariant()},{Duration.ToStringInvariant()},{InBackground.ToString()},{Easing.ToString()},{StartColor.ToHex()},{StartOpacity.ToStringInvariant()},{EndColor.ToHex()},{EndOpacity.ToStringInvariant()})";
+    [JsonProperty("end-alpha")]
+    public float EndOpacity { get; set; }
 }

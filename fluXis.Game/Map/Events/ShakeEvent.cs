@@ -1,15 +1,13 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Utils;
+using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
 public class ShakeEvent : TimedObject
 {
+    [JsonProperty("duration")]
     public float Duration { get; set; }
-    public float Magnitude { get; set; } = 10;
 
-    public override string ToString()
-    {
-        return $"Shake({Time.ToStringInvariant()},{Duration.ToStringInvariant()},{Magnitude.ToStringInvariant()})";
-    }
+    [JsonProperty("magnitude")]
+    public float Magnitude { get; set; } = 10;
 }

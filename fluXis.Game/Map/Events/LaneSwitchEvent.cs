@@ -1,11 +1,14 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Utils;
+using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
 public class LaneSwitchEvent : TimedObject
 {
+    [JsonProperty("count")]
     public int Count { get; set; } = 1;
+
+    [JsonProperty("speed")]
     public float Speed { get; set; }
 
     public static readonly bool[][][] SWITCH_VISIBILITY =
@@ -82,6 +85,4 @@ public class LaneSwitchEvent : TimedObject
             new[] { true, true, true, true, true, false, true, true, true, true } // 9k
         }
     };
-
-    public override string ToString() => $"LaneSwitch({Time.ToStringInvariant()},{Count},{Speed.ToStringInvariant()})";
 }

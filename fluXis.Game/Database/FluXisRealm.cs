@@ -99,7 +99,7 @@ public class FluXisRealm : IDisposable
                         dynamic effectFile = newMap.MapSet.GetPathForFile(map.EffectFile);
                         string effectPath = storage.GetFullPath("files/" + PathUtils.HashToPath(effectFile.Hash));
                         string content = File.ReadAllText(effectPath);
-                        events.Load(content);
+                        events = MapEvents.Load<MapEvents>(content);
                     }
 
                     newMap.Filters = MapUtils.GetMapFilters(map, events);

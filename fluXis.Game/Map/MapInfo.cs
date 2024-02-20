@@ -130,8 +130,7 @@ public class MapInfo
             return events;
 
         var content = File.ReadAllText(MapFiles.GetFullPath(effectFile));
-        events.Load(content);
-        return events;
+        return MapEvents.Load<T>(content);
     }
 
     public TimingPoint GetTimingPoint(double time)

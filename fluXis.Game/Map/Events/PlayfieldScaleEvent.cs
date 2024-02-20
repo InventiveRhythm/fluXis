@@ -1,15 +1,20 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Events;
 
 public class PlayfieldScaleEvent : TimedObject
 {
+    [JsonProperty("x")]
     public float ScaleX { get; set; }
-    public float ScaleY { get; set; }
-    public float Duration { get; set; }
-    public Easing Easing { get; set; }
 
-    public override string ToString() => $"PlayfieldScale({Time.ToStringInvariant()},{ScaleX.ToStringInvariant()},{ScaleY.ToStringInvariant()},{Duration.ToStringInvariant()},{Easing.ToString()})";
+    [JsonProperty("y")]
+    public float ScaleY { get; set; }
+
+    [JsonProperty("duration")]
+    public float Duration { get; set; }
+
+    [JsonProperty("ease")]
+    public Easing Easing { get; set; }
 }

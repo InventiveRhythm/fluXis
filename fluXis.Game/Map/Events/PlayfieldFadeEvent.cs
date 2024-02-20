@@ -1,15 +1,13 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Utils;
+using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
 public class PlayfieldFadeEvent : TimedObject
 {
+    [JsonProperty("duration")]
     public float FadeTime { get; set; }
-    public float Alpha { get; set; }
 
-    public override string ToString()
-    {
-        return $"PlayfieldFade({Time.ToStringInvariant()},{FadeTime.ToStringInvariant()},{Alpha.ToStringInvariant()})";
-    }
+    [JsonProperty("alpha")]
+    public float Alpha { get; set; }
 }

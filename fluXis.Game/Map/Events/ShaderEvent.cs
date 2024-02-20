@@ -1,15 +1,16 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace fluXis.Game.Map.Events;
 
 public class ShaderEvent : TimedObject
 {
+    [JsonProperty("shader")]
     public string ShaderName { get; set; } = string.Empty;
+
+    [JsonProperty("params")]
     public JObject ShaderParams { get; set; } = new();
 
     public T ParamsAs<T>() => ShaderParams.ToObject<T>();
-
-    public override string ToString() => $"Shader({Time.ToStringInvariant()},{ShaderName},{ShaderParams.Serialize()})";
 }

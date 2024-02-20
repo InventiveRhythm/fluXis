@@ -119,6 +119,6 @@ public class QuaverMap
             }
         }
 
-        return new MapEvents().Load(effectFile);
+        return MapEvents.Load<MapEvents>(effectFile);
     }
 }

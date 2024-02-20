@@ -105,7 +105,7 @@ public class FluXisImport : MapImporter
                     if (effectFileEntry != null)
                     {
                         string content = new StreamReader(effectFileEntry.Open()).ReadToEnd();
-                        events.Load(content);
+                        events = MapEvents.Load<MapEvents>(content);
                     }
 
                     map.Filters = MapUtils.GetMapFilters(mapInfo, events);
