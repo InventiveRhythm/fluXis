@@ -111,15 +111,23 @@ public class MapInfo
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
-    public virtual MapEvents GetMapEvents()
+    public MapEvents GetMapEvents() => GetMapEvents<MapEvents>();
+
+    public virtual T GetMapEvents<T>()
+        where T : MapEvents, new()
     {
-        var events = new MapEvents();
-        if (Map == null) return events;
+        var events = new T();
+
+        if (Map == null)
+            return events;
 
         var effectFile = Map.MapSet.GetPathForFile(EffectFile);
-        if (string.IsNullOrEmpty(effectFile)) return events;
 
-        if (!File.Exists(MapFiles.GetFullPath(effectFile))) return events;
+        if (string.IsNullOrEmpty(effectFile))
+            return events;
+
+        if (!File.Exists(MapFiles.GetFullPath(effectFile)))
+            return events;
 
         var content = File.ReadAllText(MapFiles.GetFullPath(effectFile));
         events.Load(content);

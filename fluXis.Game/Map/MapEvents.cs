@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Utils;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Map;
 
@@ -16,6 +19,7 @@ public class MapEvents
     public List<PlayfieldScaleEvent> PlayfieldScaleEvents { get; init; } = new();
     public List<ShakeEvent> ShakeEvents { get; init; } = new();
     public List<PlayfieldFadeEvent> PlayfieldFadeEvents { get; init; } = new();
+    public List<ShaderEvent> ShaderEvents { get; init; } = new();
 
     public MapEvents Load(string content)
     {
@@ -124,6 +128,28 @@ public class MapEvents
                         Alpha = float.Parse(args[2], CultureInfo.InvariantCulture)
                     });
                     break;
+
+                case "Shader":
+                    if (args.Length < 3)
+                        continue;
+
+                    var startIdx = line.IndexOf('{');
+                    var endIdx = line.LastIndexOf('}');
+
+                    if (startIdx == -1 || endIdx == -1)
+                        continue;
+
+                    var dataJson = line[startIdx..(endIdx + 1)];
+                    Logger.Log(dataJson);
+                    var data = dataJson.Deserialize<JObject>();
+
+                    ShaderEvents.Add(new ShaderEvent
+                    {
+                        Time = float.Parse(args[0], CultureInfo.InvariantCulture),
+                        ShaderName = args[1],
+                        ShaderParams = data
+                    });
+                    break;
             }
         }
 
@@ -141,6 +167,7 @@ public class MapEvents
         PlayfieldScaleEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         ShakeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PlayfieldFadeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        ShaderEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public string Save()
@@ -155,6 +182,7 @@ public class MapEvents
         content += PlayfieldScaleEvents.Aggregate(string.Empty, (current, playfieldScale) => current + (playfieldScale + Environment.NewLine));
         content += ShakeEvents.Aggregate(string.Empty, (current, shake) => current + (shake + Environment.NewLine));
         content += PlayfieldFadeEvents.Aggregate(string.Empty, (current, playfieldFade) => current + (playfieldFade + Environment.NewLine));
+        content += ShaderEvents.Aggregate(string.Empty, (current, shader) => current + (shader + Environment.NewLine));
         return content;
     }
 }

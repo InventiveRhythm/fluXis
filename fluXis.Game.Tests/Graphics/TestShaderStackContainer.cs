@@ -23,7 +23,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(MapStore maps)
     {
-        const string set_id = "9896365c-5541-4612-9f39-5a44aa1012ed";
+        const string set_id = "9049dbaf-1598-4547-9d99-bd2ab62b7d61";
         const string map_id = "3b55b380-e533-4eea-bf16-4b98d9776583";
 
         var map = maps.GetFromGuid(set_id)?.Maps.FirstOrDefault(m => m.ID == Guid.Parse(map_id));

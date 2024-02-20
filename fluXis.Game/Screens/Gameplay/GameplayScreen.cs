@@ -11,6 +11,10 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Shaders;
+using fluXis.Game.Graphics.Shaders.Chromatic;
+using fluXis.Game.Graphics.Shaders.Greyscale;
+using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -109,6 +113,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public List<IMod> Mods { get; }
 
     private GameplayKeybindContainer keybindContainer;
+    private GlobalBackground background;
     private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
     public Playfield Playfield { get; private set; }
@@ -195,8 +200,32 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         dependencies.CacheAs(Input = GetInput());
         dependencies.Cache(Playfield = new Playfield());
 
+        var shaders = new ShaderStackContainer();
+        var shaderTypes = MapEvents.ShaderEvents.Select(e => e.ShaderName).Distinct().ToList();
+
+        foreach (var shaderType in shaderTypes)
+        {
+            ShaderContainer shader = shaderType switch
+            {
+                "Chromatic" => new ChromaticContainer(),
+                "Greyscale" => new GreyscaleContainer(),
+                "Invert" => new InvertContainer(),
+                _ => null
+            };
+
+            if (shader == null)
+            {
+                Logger.Log($"Shader '{shaderType}' not found", LoggingTarget.Runtime, LogLevel.Error);
+                continue;
+            }
+
+            shader.RelativeSizeAxes = Axes.Both;
+            shaders.AddShader(shader);
+        }
+
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
+            new ShaderEventHandler(MapEvents.ShaderEvents, shaders),
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             new PulseEffect(),
             Playfield,
@@ -210,42 +239,50 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
             {
-                Children = new[]
+                Children = new Drawable[]
                 {
                     Input,
                     Samples,
                     Hitsounding = new Hitsounding(RealmMap.MapSet, GameplayClock.RateBindable),
-                    new DrawSizePreservingFillContainer
+                    shaders.AddContent(new[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        TargetDrawSize = new Vector2(1920, 1080),
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Children = new Drawable[]
+                        new DrawSizePreservingFillContainer
                         {
-                            backgroundVideo = new BackgroundVideo
+                            RelativeSizeAxes = Axes.Both,
+                            TargetDrawSize = new Vector2(1920, 1080),
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Children = new Drawable[]
                             {
-                                Clock = GameplayClock,
-                                Map = RealmMap,
-                                Info = Map
-                            },
-                            clockContainer,
-                            new KeyOverlay()
-                        }
-                    },
-                    hud = new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Children = new Drawable[]
+                                background = new GlobalBackground
+                                {
+                                    DefaultMap = RealmMap,
+                                    InitialBlur = BackgroundBlur
+                                },
+                                backgroundVideo = new BackgroundVideo
+                                {
+                                    Clock = GameplayClock,
+                                    Map = RealmMap,
+                                    Info = Map
+                                },
+                                clockContainer,
+                                new KeyOverlay()
+                            }
+                        },
+                        hud = new Container
                         {
-                            new GameplayHUD(),
-                            new ModsDisplay()
-                        }
-                    },
-                    CreateTextOverlay(),
-                    new DangerHealthOverlay(),
-                    new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
-                    new SkipOverlay(),
+                            RelativeSizeAxes = Axes.Both,
+                            Children = new Drawable[]
+                            {
+                                new GameplayHUD(),
+                                new ModsDisplay()
+                            }
+                        },
+                        CreateTextOverlay(),
+                        new DangerHealthOverlay(),
+                        new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
+                        new SkipOverlay(),
+                    }),
                     failMenu = new FailMenu(),
                     fcOverlay = new FullComboOverlay(),
                     quickActionOverlay = new QuickActionOverlay(),
@@ -271,6 +308,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             if (!Playfield.Manager.Seeking)
                 Samples.Miss();
         };
+
+        background.SetDim(BackgroundDim);
+        background.ParallaxStrength = 0;
 
         Playfield.Manager.OnFinished = () =>
         {

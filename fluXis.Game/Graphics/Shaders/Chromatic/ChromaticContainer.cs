@@ -7,5 +7,8 @@ public partial class ChromaticContainer : ShaderContainer
     protected override string FragmentShader => "ChromaticAberration";
     protected override DrawNode CreateShaderDrawNode() => new ChromaticContainerDrawNode(this, SharedData);
 
-    public float Strength { get; set; } = 2f;
+    /// <summary>
+    /// The strength of the chromatic aberration effect. In pixels.
+    /// </summary>
+    public float Strength { get; set; } = 0f;
 }

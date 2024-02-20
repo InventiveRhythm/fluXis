@@ -10,5 +10,5 @@ public partial class InvertContainer : ShaderContainer
     /// <summary>
     /// The strength of the invert effect. From 0 to 1.
     /// </summary>
-    public float Strength { get; set; } = 1f;
+    public float Strength { get; set; }
 }

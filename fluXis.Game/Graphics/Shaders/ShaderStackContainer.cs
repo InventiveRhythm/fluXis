@@ -28,11 +28,16 @@ public partial class ShaderStackContainer : CompositeDrawable
         shaders.Add(shader);
     }
 
-    public void AddContent(Drawable[] content)
+    public ShaderStackContainer AddContent(Drawable[] content)
     {
         if (shaders.Count == 0)
             InternalChildren = content;
         else
             shaders.Last().AddRange(content);
+
+        return this;
     }
+
+    public T GetShader<T>() where T : ShaderContainer
+        => shaders.FirstOrDefault(s => s.GetType() == typeof(T)) as T;
 }

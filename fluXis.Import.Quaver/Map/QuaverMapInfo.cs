@@ -13,5 +13,5 @@ public class QuaverMapInfo : MapInfo
     {
     }
 
-    public override MapEvents GetMapEvents() => Map.GetEffects();
+    public override T GetMapEvents<T>() => Map.GetEffects() as T;
 }

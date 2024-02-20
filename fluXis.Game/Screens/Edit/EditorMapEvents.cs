@@ -133,5 +133,11 @@ public class EditorMapEvents : MapEvents
             fadeEvent.Time += offset;
             Update(fadeEvent);
         }
+
+        foreach (var shaderEvent in ShaderEvents)
+        {
+            shaderEvent.Time += offset;
+            Update(shaderEvent);
+        }
     }
 }

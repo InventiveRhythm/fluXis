@@ -19,6 +19,9 @@ public partial class GlobalBackground : CompositeDrawable
     [Resolved]
     private GlobalClock clock { get; set; }
 
+    public RealmMap DefaultMap { get; init; }
+    public float InitialBlur { get; init; } = 0.01f;
+
     private SpriteStack<BlurableBackground> stack;
     private ParallaxContainer parallaxContainer;
     private Box swipeAnimation;
@@ -72,8 +75,8 @@ public partial class GlobalBackground : CompositeDrawable
 
     protected override void LoadComplete()
     {
-        blur = 0.01f;
-        AddBackgroundFromMap(null);
+        blur = InitialBlur;
+        AddBackgroundFromMap(DefaultMap);
 
         backgroundPulse.BindValueChanged(e =>
         {

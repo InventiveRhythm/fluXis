@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using fluXis.Game.Map;
-using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using Newtonsoft.Json;
 
@@ -32,8 +30,6 @@ public class EditorMapInfo : MapInfo
 
     public static EditorMapInfo FromMapInfo(MapInfo info)
     {
-        var events = info.GetMapEvents();
-
         return new EditorMapInfo(info.Metadata)
         {
             AudioFile = info.AudioFile,
@@ -46,16 +42,7 @@ public class EditorMapInfo : MapInfo
             ScrollVelocities = info.ScrollVelocities,
             InitialKeyCount = info.InitialKeyCount,
             AccuracyDifficulty = info.AccuracyDifficulty,
-            MapEvents = new EditorMapEvents
-            {
-                LaneSwitchEvents = events.LaneSwitchEvents ?? new List<LaneSwitchEvent>(),
-                FlashEvents = events.FlashEvents ?? new List<FlashEvent>(),
-                PulseEvents = events.PulseEvents ?? new List<PulseEvent>(),
-                PlayfieldMoveEvents = events.PlayfieldMoveEvents ?? new List<PlayfieldMoveEvent>(),
-                PlayfieldScaleEvents = events.PlayfieldScaleEvents ?? new List<PlayfieldScaleEvent>(),
-                ShakeEvents = events.ShakeEvents ?? new List<ShakeEvent>(),
-                PlayfieldFadeEvents = events.PlayfieldFadeEvents ?? new List<PlayfieldFadeEvent>()
-            }
+            MapEvents = info.GetMapEvents<EditorMapEvents>()
         };
     }
 
@@ -130,7 +117,7 @@ public class EditorMapInfo : MapInfo
         ScrollVelocityChanged?.Invoke(scrollVelocity);
     }
 
-    public override MapEvents GetMapEvents() => MapEvents;
+    public override T GetMapEvents<T>() => MapEvents as T;
 
     public void ApplyOffsetToAll(float offset)
     {
