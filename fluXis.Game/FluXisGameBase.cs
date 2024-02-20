@@ -238,8 +238,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         keybindStore.AssignDefaults(new GameplayKeybindContainer(realm, 0));
 
         dependencies.Cache(keybinds);
-        MenuSplashes.Load(storage);
-        LoadingTips.Load(storage);
+        MenuSplashes.Load(Host.CacheStorage);
+        LoadingTips.Load(Host.CacheStorage);
     }
 
     protected override void LoadComplete()

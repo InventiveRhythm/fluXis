@@ -10,7 +10,7 @@ namespace fluXis.Game.Screens.Menu;
 
 public static class MenuSplashes
 {
-    private const string splash_file = "cache/splashes.json";
+    private const string splash_file = "splashes.json";
     private const string online_path = "https://assets.flux.moe/splashes.json";
 
     private static string[] splashes =
@@ -40,10 +40,8 @@ public static class MenuSplashes
     {
         try
         {
-            if (storage.Exists("splashes.json"))
-                storage.Move("splashes.json", splash_file);
-
-            if (!storage.Exists(splash_file)) return;
+            if (!storage.Exists(splash_file))
+                return;
 
             Logger.Log("Loading splashes from local storage...", LoggingTarget.Runtime, LogLevel.Debug);
 

@@ -9,7 +9,7 @@ namespace fluXis.Game.UI.Tips;
 
 public static class LoadingTips
 {
-    private const string tip_file = "cache/tips.json";
+    private const string tip_file = "tips.json";
     private const string online_path = "https://assets.flux.moe/tips.json";
 
     private static string[] tips = { "super awesome tip" };
@@ -26,10 +26,8 @@ public static class LoadingTips
     {
         try
         {
-            if (storage.Exists("tips.json"))
-                storage.Move("tips.json", tip_file);
-
-            if (!storage.Exists(tip_file)) return;
+            if (!storage.Exists(tip_file))
+                return;
 
             Logger.Log("Loading tips from local storage", LoggingTarget.Runtime, LogLevel.Debug);
 
