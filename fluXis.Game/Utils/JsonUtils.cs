@@ -14,7 +14,6 @@ public static class JsonUtils
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
         Formatting = indent ? Formatting.Indented : Formatting.None,
         ObjectCreationHandling = ObjectCreationHandling.Replace,
-        NullValueHandling = NullValueHandling.Ignore,
-        DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+        NullValueHandling = NullValueHandling.Ignore
     };
 }
