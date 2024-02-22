@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Game.Graphics.Shaders;
+using fluXis.Game.Graphics.Shaders.Bloom;
 using fluXis.Game.Graphics.Shaders.Chromatic;
 using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
@@ -35,6 +36,10 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
             case "Chromatic":
                 chromatic(ev);
+                break;
+
+            case "Bloom":
+                bloom(ev);
                 break;
         }
     }
@@ -72,5 +77,17 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             throw new System.Exception("Chromatic shader not found");
 
         chromatic.TransformTo(nameof(chromatic.Strength), data.Strength, ev.Duration);
+    }
+
+    private void bloom(ShaderEvent ev)
+    {
+        Logger.Log($"Bloom at {Clock.CurrentTime}", LoggingTarget.Runtime, LogLevel.Debug);
+        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var bloom = stack.GetShader<BloomContainer>();
+
+        if (bloom == null)
+            throw new System.Exception("Bloom shader not found");
+
+        bloom.TransformTo(nameof(bloom.Strength), data.Strength, ev.Duration);
     }
 }

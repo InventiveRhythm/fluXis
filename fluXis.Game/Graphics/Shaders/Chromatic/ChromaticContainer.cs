@@ -10,5 +10,5 @@ public partial class ChromaticContainer : ShaderContainer
     /// <summary>
     /// The strength of the chromatic aberration effect. In pixels.
     /// </summary>
-    public float Strength { get; set; } = 0f;
+    public float Strength { get; set; }
 }

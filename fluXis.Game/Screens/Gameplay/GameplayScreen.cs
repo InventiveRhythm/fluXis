@@ -12,6 +12,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Shaders;
+using fluXis.Game.Graphics.Shaders.Bloom;
 using fluXis.Game.Graphics.Shaders.Chromatic;
 using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
@@ -210,6 +211,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 "Chromatic" => new ChromaticContainer(),
                 "Greyscale" => new GreyscaleContainer(),
                 "Invert" => new InvertContainer(),
+                "Bloom" => new BloomContainer(),
                 _ => null
             };
 

@@ -18,7 +18,7 @@ public partial class TestShaderContainer : FluXisTestScene
     {
         AddStep("Clear", Clear);
         AddStep("Add Chromatic", () => createContainer(new ChromaticContainer()));
-        AddStep("Add Bloom", () => createContainer(new BufferedBloomContainer()));
+        AddStep("Add Bloom", () => createContainer(new BloomContainer()));
         AddStep("Add Greyscale", () => createContainer(new GreyscaleContainer()));
     }
 
