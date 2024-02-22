@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Events.Shader;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Screens.Gameplay;
@@ -46,7 +47,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
         if (invert == null)
             throw new System.Exception("Invert shader not found");
 
-        invert.Strength = data.Strength;
+        invert.TransformTo(nameof(invert.Strength), data.Strength, ev.Duration);
     }
 
     private void greyscale(ShaderEvent ev)
@@ -58,7 +59,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
         if (greyscale == null)
             throw new System.Exception("Greyscale shader not found");
 
-        greyscale.Strength = data.Strength;
+        greyscale.TransformTo(nameof(greyscale.Strength), data.Strength, ev.Duration);
     }
 
     private void chromatic(ShaderEvent ev)
@@ -70,6 +71,6 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
         if (chromatic == null)
             throw new System.Exception("Chromatic shader not found");
 
-        chromatic.Strength = data.Strength;
+        chromatic.TransformTo(nameof(chromatic.Strength), data.Strength, ev.Duration);
     }
 }
