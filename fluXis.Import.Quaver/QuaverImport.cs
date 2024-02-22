@@ -183,7 +183,7 @@ public class QuaverImport : MapImporter
             {
                 var mapSetRealm = new QuaverRealmMapSet(mapSetMaps)
                 {
-                    FolderPath = directoryName,
+                    FolderPath = Path.Combine(songsPath, directoryName),
                     OnlineID = 0,
                     Cover = "",
                     Managed = true,
