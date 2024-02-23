@@ -28,6 +28,7 @@ using fluXis.Game.Screens.Edit.Tabs;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -650,7 +651,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     PreviewTime = MapInfo.Metadata.PreviewTime
                 };
 
-                mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), set.Detach());
+                var detach = set.Detach();
+                Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), detach));
             }
             else
             {
