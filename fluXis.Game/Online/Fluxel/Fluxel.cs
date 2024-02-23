@@ -29,6 +29,9 @@ namespace fluXis.Game.Online.Fluxel;
 
 public partial class Fluxel : Component
 {
+    private const int chunk_out = 4096; // 4KB
+    private const int chunk_in = 1024; // 1KB (its actually 1016 bytes server-side, but we'll round up)
+
     public APIEndpointConfig Endpoint { get; }
 
     [Resolved]
@@ -211,67 +214,20 @@ public partial class Fluxel : Component
         {
             try
             {
-                string message = "";
-                bool end = false;
+                var buffer = new byte[chunk_in];
+                var message = new StringBuilder();
 
-                while (!end) // incomplete packet, wait for more data
+                while (true)
                 {
-                    // receive data
-                    byte[] buffer = new byte[1024 * 1024 * 2]; // 2MB (some packets are big)
-                    var res = await connection.ReceiveAsync(buffer, CancellationToken.None);
+                    var result = await connection.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                    message.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
 
-                    // check if end of message
-                    end = res.EndOfMessage;
+                    if (!result.EndOfMessage)
+                        continue;
 
-                    // convert to string
-                    message += Encoding.UTF8.GetString(buffer).TrimEnd('\0');
+                    handleMessage(message.ToString());
+                    break;
                 }
-
-                if (string.IsNullOrEmpty(message)) return;
-
-                // handler logic
-                void handleListener<T>(string msg)
-                {
-                    var response = msg.Deserialize<FluxelResponse<T>>();
-
-                    var type = getType(response.Type);
-
-                    if (!responseListeners.ContainsKey(type)) return;
-
-                    foreach (var listener
-                             in (IEnumerable<Action<object>>)responseListeners.GetValueOrDefault(type)
-                                ?? ArraySegment<Action<object>>.Empty)
-                    {
-                        listener(response);
-                    }
-                }
-
-                var idString = message.Deserialize<JObject>()["id"]!.ToObject<string>();
-                Logger.Log($"Received packet {idString}!", LoggingTarget.Network);
-
-                // find right handler
-                Action<string> handler = getType(idString) switch
-                {
-                    EventType.Token => handleListener<string>,
-                    EventType.Login => handleListener<APIUserShort>,
-                    EventType.Register => handleListener<APIRegisterResponse>,
-                    EventType.Logout => handleListener<object>,
-                    EventType.Achievement => handleListener<Achievement>,
-                    EventType.ServerMessage => handleListener<ServerMessage>,
-                    EventType.ChatMessage => handleListener<ChatMessage>,
-                    EventType.ChatHistory => handleListener<ChatMessage[]>,
-                    EventType.ChatMessageDelete => handleListener<string>,
-                    EventType.MultiplayerJoin => handleListener<MultiplayerJoinPacket>,
-                    EventType.MultiplayerLeave => handleListener<MultiplayerLeavePacket>,
-                    EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
-                    EventType.MultiplayerReady => handleListener<MultiplayerReadyUpdate>,
-                    EventType.MultiplayerStartGame => handleListener<dynamic>,
-                    EventType.MultiplayerFinish => handleListener<MultiplayerFinishPacket>,
-                    _ => _ => { }
-                };
-
-                // execute handler
-                handler(message);
             }
             catch (Exception e)
             {
@@ -284,6 +240,56 @@ public partial class Fluxel : Component
             Status = ConnectionStatus.Reconnecting;
             Logger.Log("Reconnecting to server...", LoggingTarget.Network);
         }
+    }
+
+    private void handleMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+            return;
+
+                // handler logic
+        void handleListener<T>(string msg)
+        {
+            var response = msg.Deserialize<FluxelResponse<T>>();
+
+            var type = getType(response.Type);
+
+            if (!responseListeners.ContainsKey(type)) return;
+
+            foreach (var listener
+                     in (IEnumerable<Action<object>>)responseListeners.GetValueOrDefault(type)
+                        ?? ArraySegment<Action<object>>.Empty)
+            {
+                listener(response);
+            }
+        }
+
+        var idString = message.Deserialize<JObject>()["id"]!.ToObject<string>();
+        Logger.Log($"Received packet {idString}!", LoggingTarget.Network);
+
+        // find right handler
+        Action<string> handler = getType(idString) switch
+        {
+            EventType.Token => handleListener<string>,
+            EventType.Login => handleListener<APIUserShort>,
+            EventType.Register => handleListener<APIRegisterResponse>,
+            EventType.Logout => handleListener<object>,
+            EventType.Achievement => handleListener<Achievement>,
+            EventType.ServerMessage => handleListener<ServerMessage>,
+            EventType.ChatMessage => handleListener<ChatMessage>,
+            EventType.ChatHistory => handleListener<ChatMessage[]>,
+            EventType.ChatMessageDelete => handleListener<string>,
+            EventType.MultiplayerJoin => handleListener<MultiplayerJoinPacket>,
+            EventType.MultiplayerLeave => handleListener<MultiplayerLeavePacket>,
+            EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
+            EventType.MultiplayerReady => handleListener<MultiplayerReadyUpdate>,
+            EventType.MultiplayerStartGame => handleListener<dynamic>,
+            EventType.MultiplayerFinish => handleListener<MultiplayerFinishPacket>,
+            _ => _ => { }
+        };
+
+        // execute handler
+        handler(message);
     }
 
     public async void Login(string username, string password)
@@ -323,8 +329,28 @@ public partial class Fluxel : Component
 
         Logger.Log($"Sending packet {message}", LoggingTarget.Network, LogLevel.Debug);
 
-        byte[] buffer = Encoding.UTF8.GetBytes(message);
-        await connection.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+        var bytes = Encoding.UTF8.GetBytes(message);
+
+        try
+        {
+            var length = bytes.Length;
+            var sections = length / chunk_out;
+
+            if (length % chunk_out != 0)
+                sections++;
+
+            for (var i = 0; i < sections; i++)
+            {
+                var start = i * chunk_out;
+                var end = Math.Min(start + chunk_out, length);
+
+                await connection.SendAsync(new ArraySegment<byte>(bytes, start, end - start), WebSocketMessageType.Text, i == sections - 1, CancellationToken.None);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Failed to send packet!", LoggingTarget.Network);
+        }
     }
 
     public async void SendPacketAsync(Packet packet) => await SendPacket(packet);
