@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Overlay.Mouse;

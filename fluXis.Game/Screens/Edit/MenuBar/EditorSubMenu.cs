@@ -1,8 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.UserInterface;
 
 namespace fluXis.Game.Screens.Edit.MenuBar;
 
@@ -16,5 +15,4 @@ public partial class EditorSubMenu : FluXisMenu
     }
 
     protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorSubMenu();
-    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableFluXisMenuItem(item);
 }

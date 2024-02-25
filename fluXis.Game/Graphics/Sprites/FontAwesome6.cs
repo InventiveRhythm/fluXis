@@ -14,6 +14,7 @@ public class FontAwesome6
 
         public static IconUsage AngleDoubleRight => getSolid(0xf101);
         public static IconUsage ArrowDown => getSolid(0xf063);
+        public static IconUsage ArrowRight => getSolid(0xf061);
         public static IconUsage ArrowPointer => getSolid(0xf245);
         public static IconUsage ArrowsRotate => getSolid(0xf021);
         public static IconUsage BackwardStep => getSolid(0xf048);

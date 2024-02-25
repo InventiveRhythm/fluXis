@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
 
-namespace fluXis.Game.Graphics.UserInterface.Menu;
+namespace fluXis.Game.Graphics.UserInterface.Menus;
 
 public class FluXisMenuItem : MenuItem
 {

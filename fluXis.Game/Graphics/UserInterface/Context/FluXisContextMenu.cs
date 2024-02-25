@@ -1,5 +1,6 @@
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Context;
@@ -10,19 +11,18 @@ public partial class FluXisContextMenu : FluXisMenu
         : base(Direction.Vertical)
     {
         MaskingContainer.EdgeEffect = FluXisStyles.ShadowSmall;
+        MaskingContainer.CornerRadius = 10;
+        ItemsContainer.Masking = true;
+        ItemsContainer.CornerRadius = 10;
     }
 
     protected override void UpdateSize(Vector2 newSize)
     {
         if (newSize.Y == 0)
-            this.ScaleTo(.8f, 400, Easing.OutQuint);
+            this.ResizeTo(0, 400, Easing.OutQuint);
         else
-        {
-            Size = newSize;
-            Width = newSize.X + 30;
-            this.ScaleTo(1, 1000, Easing.OutElastic);
-        }
+            this.ResizeTo(newSize, 400, Easing.OutQuint);
     }
 
-    protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new FluXisContextMenu();
+    protected override Menu CreateSubMenu() => new FluXisContextMenu();
 }

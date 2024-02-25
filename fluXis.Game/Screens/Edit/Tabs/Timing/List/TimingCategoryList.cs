@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

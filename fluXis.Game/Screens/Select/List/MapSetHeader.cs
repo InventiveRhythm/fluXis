@@ -8,7 +8,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
@@ -34,7 +34,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
             List<MenuItem> items = new();
 
             if (!Equals(maps.CurrentMapSet, mapset))
-                items.Add(new FluXisMenuItem("Select", MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
+                items.Add(new FluXisMenuItem("Select", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
 
             items.Add(new FluXisMenuItem("Export", FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset)) { Enabled = () => !mapset.Managed });
             items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));

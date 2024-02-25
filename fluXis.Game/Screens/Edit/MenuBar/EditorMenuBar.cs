@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
@@ -13,10 +14,15 @@ public partial class EditorMenuBar : FluXisMenu
         : base(Direction.Horizontal, true)
     {
         RelativeSizeAxes = Axes.X;
-        MaskingContainer.CornerRadius = 0;
-        MaskingContainer.EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
         BackgroundColour = FluXisColors.Background1;
         // ItemsContainer = new Vector2(10, 0);
+    }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        MaskingContainer.CornerRadius = 0;
+        MaskingContainer.EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
     }
 
     protected override void UpdateSize(Vector2 newSize)
@@ -26,5 +32,12 @@ public partial class EditorMenuBar : FluXisMenu
     }
 
     protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorSubMenu();
-    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableFluXisMenuItem(item) { ShowChevron = false };
+
+    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item)
+    {
+        if (item is FluXisMenuItem i)
+            return new DrawableFluXisMenuItem(i, false);
+
+        return base.CreateDrawableMenuItem(item);
+    }
 }

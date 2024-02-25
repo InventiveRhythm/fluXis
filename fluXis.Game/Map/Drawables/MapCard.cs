@@ -5,7 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Drawables.Online;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Screens.Select;
@@ -37,7 +37,7 @@ public partial class MapCard : Container, IHasContextMenu
         {
             var list = new List<MenuItem>
             {
-                new FluXisMenuItem("Select", MenuItemType.Highlighted, () => OnClickAction?.Invoke(MapSet))
+                new FluXisMenuItem("Select", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => OnClickAction?.Invoke(MapSet))
             };
 
             if (downloaded)

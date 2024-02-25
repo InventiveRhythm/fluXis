@@ -4,7 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

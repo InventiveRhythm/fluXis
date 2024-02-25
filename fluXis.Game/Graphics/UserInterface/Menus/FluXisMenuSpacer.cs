@@ -1,4 +1,4 @@
-namespace fluXis.Game.Graphics.UserInterface.Menu;
+namespace fluXis.Game.Graphics.UserInterface.Menus;
 
 public class FluXisMenuSpacer : FluXisMenuItem
 {

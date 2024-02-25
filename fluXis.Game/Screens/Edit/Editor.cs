@@ -11,7 +11,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
-using fluXis.Game.Graphics.UserInterface.Menu;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
@@ -269,6 +269,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new("100%", FontAwesome6.Solid.Percent, () => backgroundBlur.Value = 1f) { IsActive = () => backgroundBlur.Value == 1f }
                                 }
                             },
+                            new FluXisMenuSpacer(),
                             new("Waveform opacity", FontAwesome6.Solid.Percent)
                             {
                                 Items = new FluXisMenuItem[]
@@ -280,8 +281,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new("100%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 1) { IsActive = () => values.WaveformOpacity.Value == 1 }
                                 }
                             },
-                            new("Flash effect underlay", FontAwesome6.Solid.LayerGroup, values.FlashUnderlay.Toggle) { IsActive = () => values.FlashUnderlay.Value },
-                            new("Flash effect underlay color", FontAwesome6.Solid.Palette)
+                            new FluXisMenuSpacer(),
+                            new("Flash underlay", FontAwesome6.Solid.LayerGroup, values.FlashUnderlay.Toggle) { IsActive = () => values.FlashUnderlay.Value },
+                            new("Underlay color", FontAwesome6.Solid.Palette)
                             {
                                 Items = new FluXisMenuItem[]
                                 {
@@ -289,6 +291,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     new("Light", () => values.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => values.FlashUnderlayColor.Value == Colour4.White }
                                 }
                             },
+                            new FluXisMenuSpacer(),
                             new("Show sample on notes", FontAwesome6.Solid.LayerGroup, values.ShowSamples.Toggle) { IsActive = () => values.ShowSamples.Value }
                         }
                     },

@@ -5,32 +5,30 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
-namespace fluXis.Game.Graphics.UserInterface.Menu;
+namespace fluXis.Game.Graphics.UserInterface.Menus;
 
-public partial class FluXisMenu : osu.Framework.Graphics.UserInterface.Menu
+public partial class FluXisMenu : Menu
 {
     public FluXisMenu(Direction direction, bool topLevelMenu = false)
         : base(direction, topLevelMenu)
     {
         BackgroundColour = FluXisColors.Background4;
-        MaskingContainer.CornerRadius = 10;
-        ItemsContainer.Padding = new MarginPadding(5);
     }
 
-    protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() =>
+    protected override Menu CreateSubMenu() =>
         new FluXisMenu(Direction.Vertical) { Anchor = Direction == Direction.Horizontal ? Anchor.TopLeft : Anchor.TopRight };
 
     protected override void UpdateSize(Vector2 newSize)
     {
         if (Direction == Direction.Vertical)
         {
-            Width = newSize.X + 30;
+            Width = newSize.X;
             this.ResizeHeightTo(newSize.Y, 400, Easing.OutQuint);
         }
         else
         {
             Height = newSize.Y;
-            this.ResizeWidthTo(newSize.X + 30, 400, Easing.OutQuint);
+            this.ResizeWidthTo(newSize.X, 400, Easing.OutQuint);
         }
     }
 
@@ -46,7 +44,12 @@ public partial class FluXisMenu : osu.Framework.Graphics.UserInterface.Menu
 
     protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item)
     {
-        return new DrawableFluXisMenuItem(item);
+        return item switch
+        {
+            FluXisMenuSpacer spacer => new DrawableFluXisMenuSpacer(spacer),
+            FluXisMenuItem menuItem => new DrawableFluXisMenuItem(menuItem),
+            _ => new BasicMenu.BasicDrawableMenuItem(item)
+        };
     }
 
     protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new FluXisScrollContainer(direction) { ScrollbarVisible = false };
