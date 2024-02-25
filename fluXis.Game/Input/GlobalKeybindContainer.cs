@@ -49,6 +49,7 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Right), FluXisGlobalKeybind.VolumeIncrease),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Up), FluXisGlobalKeybind.VolumePreviousCategory),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Down), FluXisGlobalKeybind.VolumeNextCategory),
+        new KeyBinding(new KeyCombination(InputKey.S, InputKey.E, InputKey.X), FluXisGlobalKeybind.Funny)
     };
 
     public IEnumerable<KeyBinding> InGameKeyBindings = new[]
@@ -72,6 +73,9 @@ public enum FluXisGlobalKeybind
     // fallback as "empty" keybind
     // should never be actually used
     None,
+
+    // the funny keybind
+    Funny,
 
     // Global UI Keybinds
     Select,

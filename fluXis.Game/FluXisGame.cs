@@ -58,7 +58,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     }
 
     [UsedImplicitly]
-    public bool Sex = true;
+    public bool Sex { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -191,6 +191,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         {
             case FluXisGlobalKeybind.OpenSkinEditor:
                 OpenSkinEditor();
+                return true;
+
+            case FluXisGlobalKeybind.Funny when !Sex:
+                NotificationManager.SendSmallText("Sex mode activated!");
+                Sex = true;
                 return true;
         }
 
