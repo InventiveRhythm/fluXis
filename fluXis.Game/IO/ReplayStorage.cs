@@ -34,8 +34,11 @@ public class ReplayStorage
         return json.Deserialize<Replay>();
     }
 
-    public void Save(Replay replay)
+    public void Save(Replay replay, Guid scoreId)
     {
+        var path = getPath(scoreId);
+        var json = replay.Serialize();
+        File.WriteAllText(storage.GetFullPath(path), json);
     }
 
     private string getPath(Guid scoreId) => $"{scoreId}.frp";

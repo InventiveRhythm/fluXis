@@ -83,7 +83,8 @@ public class APIScore
             MapHash = null,
             ScrollSpeed = ScrollSpeed,
             Timestamp = Time,
-            Mods = Mods.Split(",").ToList()
+            Mods = Mods.Split(",").ToList(),
+            PlayerID = UserId
         };
     }
 }

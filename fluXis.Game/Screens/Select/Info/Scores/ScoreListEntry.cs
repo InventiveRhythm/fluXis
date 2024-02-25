@@ -45,6 +45,9 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
 
             items.Add(new FluXisMenuItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails));
 
+            if (DownloadAction != null)
+                items.Add(new FluXisMenuItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, () => DownloadAction.Invoke()));
+
             if (ReplayAction != null)
                 items.Add(new FluXisMenuItem("View Replay", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () => ReplayAction.Invoke()));
 
@@ -68,6 +71,7 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     public int Place { get; set; }
 
     public Action ReplayAction { get; init; }
+    public Action DownloadAction { get; init; }
     public Action DeleteAction { get; init; }
 
     private DateTimeOffset date;

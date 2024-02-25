@@ -13,10 +13,16 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.IO;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
+using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Notifications.Tasks;
+using fluXis.Game.Replays;
+using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -27,6 +33,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.IO.Network;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
@@ -41,6 +49,12 @@ public partial class ScoreList : GridContainer
 
     [Resolved]
     private MapStore maps { get; set; }
+
+    [Resolved]
+    private ReplayStorage replays { get; set; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
 
     [Resolved(CanBeNull = true)]
     private SelectScreen screen { get; set; }
@@ -257,7 +271,7 @@ public partial class ScoreList : GridContainer
                                     r2.Remove(realmScore);
                                 });
                             },
-                            ReplayAction = () => screen?.ViewReplay(map, detach)
+                            ReplayAction = replays.Exists(s.ID) ? () => screen?.ViewReplay(map, detach) : null
                         });
                     }
                 }));
@@ -346,8 +360,55 @@ public partial class ScoreList : GridContainer
         {
             ScoreInfo = x.ToScoreInfo(),
             Map = map,
-            Player = UserCache.GetUser(x.UserId)
+            Player = UserCache.GetUser(x.UserId),
+            DownloadAction = () => downloadScore(map, x)
         }).ToList();
+    }
+
+    private void downloadScore(RealmMap map, APIScore score)
+    {
+        if (realm.Run(r => r.All<RealmScore>().Any(s => s.OnlineID == score.Id)))
+        {
+            notifications.SendSmallText("You already have this score!");
+            return;
+        }
+
+        var realmScore = realm.RunWrite(r => r.Add(RealmScore.FromScoreInfo(map, score.ToScoreInfo(), score.Id))).Detach();
+
+        var notification = new TaskNotificationData
+        {
+            Text = "Downloading replay...",
+            TextWorking = "Downloading...",
+            TextFinished = "Done!",
+            TextFailed = "Failed to download replay!",
+        };
+
+        notifications.AddTask(notification);
+
+        // ReSharper disable once MethodSupportsCancellation
+        Task.Run(() =>
+        {
+            try
+            {
+                var req = new WebRequest($"{fluxel.Endpoint.AssetUrl}/replay/{score.Id}.frp");
+                req.AllowInsecureRequests = true;
+                req.Perform();
+
+                if (req.ResponseStream == null)
+                    return;
+
+                var json = req.GetResponseString();
+                var replay = json.Deserialize<Replay>();
+                replays.Save(replay, realmScore.ID);
+
+                notification.State = LoadingState.Complete;
+            }
+            catch (Exception e)
+            {
+                Logger.Log($"Failed to download replay for score {score.Id}: {e.Message}", LoggingTarget.Network, LogLevel.Error);
+                notification.State = LoadingState.Failed;
+            }
+        });
     }
 
     private void addScore(ScoreListEntry entry, int index = -1)
