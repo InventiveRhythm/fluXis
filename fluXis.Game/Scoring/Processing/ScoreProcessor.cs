@@ -94,7 +94,7 @@ public class ScoreProcessor : JudgementDependant
             Miss = Miss,
             HitResults = JudgementProcessor.Results,
             MapID = Map.OnlineID,
-            PlayerID = player?.ID ?? 0,
+            PlayerID = player?.ID ?? -1,
             MapHash = MapInfo.Hash,
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             Mods = Mods.Select(m => m.Acronym).ToList()

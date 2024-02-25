@@ -5,6 +5,7 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Realms;
 
@@ -53,22 +54,26 @@ public class RealmScore : RealmObject
     {
     }
 
-    public static RealmScore Create(RealmMap map, APIUserShort player, ScoreInfo score)
+    public static RealmScore FromScoreInfo(RealmMap map, ScoreInfo info, int onlineID = -1)
     {
-        return new RealmScore(map)
+        return new RealmScore
         {
-            PlayerID = player?.ID ?? -1,
-            Accuracy = score.Accuracy,
-            Rank = score.Rank,
-            Score = score.Score,
-            MaxCombo = score.MaxCombo,
-            Flawless = score.Flawless,
-            Perfect = score.Perfect,
-            Great = score.Great,
-            Alright = score.Alright,
-            Okay = score.Okay,
-            Miss = score.Miss,
-            Mods = string.Join(' ', score.Mods)
+            ID = Guid.NewGuid(),
+            OnlineID = onlineID,
+            Accuracy = info.Accuracy,
+            Rank = info.Rank,
+            Score = info.Score,
+            MaxCombo = info.MaxCombo,
+            Flawless = info.Flawless,
+            Perfect = info.Perfect,
+            Great = info.Great,
+            Alright = info.Alright,
+            Okay = info.Okay,
+            Miss = info.Miss,
+            Mods = string.Join(' ', info.Mods),
+            MapID = map.ID,
+            Date = TimeUtils.GetFromSeconds(info.Timestamp),
+            PlayerID = info.PlayerID
         };
     }
 

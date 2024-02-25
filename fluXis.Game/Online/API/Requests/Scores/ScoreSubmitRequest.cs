@@ -38,18 +38,6 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
 
     protected override void CreatePostData(JsonWebRequest<APIResponse<APIScoreResponse>> request)
     {
-        request.AddRaw(new
-        {
-            hash = score.MapHash,
-            mods = score.Mods,
-            scrollSpeed = score.ScrollSpeed,
-            maxCombo = score.MaxCombo,
-            flawless = score.Flawless,
-            perfect = score.Perfect,
-            great = score.Great,
-            alright = score.Alright,
-            okay = score.Okay,
-            miss = score.Miss
-        }.Serialize());
+        request.AddRaw(score.Serialize());
     }
 }

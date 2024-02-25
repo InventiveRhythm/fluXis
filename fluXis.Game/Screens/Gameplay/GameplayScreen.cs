@@ -419,7 +419,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return best.Detach();
             });
 
-            var score = ScoreProcessor.ToScoreInfo();
+            var score = ScoreProcessor.ToScoreInfo(player);
             score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
             var screen = new SoloResults(RealmMap, score, player);
@@ -430,10 +430,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             {
                 realm.RunWrite(r =>
                 {
-                    var rScore = r.Add(RealmScore.Create(RealmMap, player, score));
+                    var rScore = r.Add(RealmScore.FromScoreInfo(RealmMap, score));
 
                     if (rScore != null)
-                        SaveReplay(rScore.ID);
+                        score.Replay = SaveReplay(rScore.ID);
                 });
 
                 var request = new ScoreSubmitRequest(score);
@@ -446,7 +446,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
     }
 
-    protected void SaveReplay(Guid scoreID)
+    protected Replays.Replay SaveReplay(Guid scoreID)
     {
         try
         {
@@ -460,11 +460,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             var path = Path.Combine(folder, $"{scoreID}.frp");
             Logger.Log($"Saving replay to {path}", LoggingTarget.Runtime, LogLevel.Debug);
             File.WriteAllText(path, replay.Serialize());
+
+            return replay;
         }
         catch (Exception e)
         {
             Logger.Error(e, "Failed to save replay!");
         }
+
+        return null;
     }
 
     public virtual void RestartMap()

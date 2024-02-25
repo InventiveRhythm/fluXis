@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Replays;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Structs;
 using Newtonsoft.Json;
@@ -60,6 +61,9 @@ public class ScoreInfo
 
     [JsonProperty("time")]
     public long Timestamp { get; set; }
+
+    [JsonProperty("replay")]
+    public Replay Replay { get; set; }
 
     [JsonIgnore]
     public bool FullFlawless => Flawless == MaxCombo;
