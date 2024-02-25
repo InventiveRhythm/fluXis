@@ -13,6 +13,9 @@ public class APIResponse<T>
     [JsonProperty("data")]
     public T Data { get; init; }
 
+    [JsonIgnore]
+    public bool Success => Status is >= 200 and < 300;
+
     public APIResponse(int status, string message, T data)
     {
         Status = status;

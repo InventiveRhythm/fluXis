@@ -4,6 +4,9 @@ namespace fluXis.Game.Online.API.Models.Scores;
 
 public class APIScoreResponse
 {
+    [JsonProperty("id")]
+    public int ID { get; set; }
+
     [JsonProperty("ovr")]
     public double OverallRating { get; init; }
 

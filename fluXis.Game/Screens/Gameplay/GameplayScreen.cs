@@ -428,17 +428,26 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             if (Mods.All(m => m.Rankable) && SubmitScore && RealmMap.Status < 100)
             {
-                realm.RunWrite(r =>
+                var scoreId = realm.RunWrite(r =>
                 {
                     var rScore = r.Add(RealmScore.FromScoreInfo(RealmMap, score));
-
-                    if (rScore != null)
-                        score.Replay = SaveReplay(rScore.ID);
+                    score.Replay = SaveReplay(rScore.ID);
+                    return rScore.ID;
                 });
 
                 var request = new ScoreSubmitRequest(score);
                 screen.SubmitRequest = request;
                 request.Perform(fluxel);
+
+                if (request.Response.Success && request.Response.Data.ID != 0)
+                {
+                    realm.RunWrite(r =>
+                    {
+                        var rScore = r.Find<RealmScore>(scoreId);
+                        rScore.OnlineID = request.Response.Data.ID;
+                    });
+                }
+
                 Schedule(() => scoreSubmissionOverlay.FadeOut(400));
             }
 
