@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Points.List;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -16,15 +21,21 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points;
 
 public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    private const int size_closed = 120;
+    private const int size_closed = 190;
     private const int size_open = 420;
 
     protected override double HoverDelay => 500;
 
     public Action OnWrapperClick { get; set; }
 
+    [Resolved]
+    private ChartingContainer chartingContainer { get; set; }
+
+    private SelectionHandler selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
+
     private bool showingSettings;
 
+    private SelectionInspector inspector;
     private PointsList pointsList;
     private ClickableContainer settingsWrapper;
     private FillFlowContainer settingsFlow;
@@ -45,6 +56,7 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2
             },
+            inspector = new SelectionInspector(),
             pointsList = new PointsList
             {
                 Alpha = 0,
@@ -86,17 +98,72 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
     {
         base.LoadComplete();
 
-        OnWrapperClick = closeSettings;
+        OnWrapperClick = close;
+
+        selectionHandler.SelectedObjects.CollectionChanged += (_, _) => updateSelection();
+        updateSelection();
 
         Expanded.BindValueChanged(v =>
         {
             this.ResizeWidthTo(v.NewValue ? size_open : size_closed, 500, Easing.OutQuart);
 
             if (v.NewValue)
+            {
+                inspector.FadeOut(200);
                 pointsList.Delay(200).FadeIn(200);
+            }
             else
+            {
+                inspector.Delay(200).FadeIn(200);
                 pointsList.FadeOut(200);
+            }
         }, true);
+    }
+
+    private void updateSelection()
+    {
+        inspector.Clear();
+
+        switch (selectionHandler.SelectedObjects.Count)
+        {
+            case 0:
+                inspector.AddSection("Nothing selected", "");
+                break;
+
+            case 1:
+                var selected = selectionHandler.SelectedObjects.Single();
+                inspector.AddSection("Type", selected.GetType().ReadableName());
+                inspector.AddSection("Time", TimeUtils.Format(selected.Time));
+
+                if (selected is HitObject hit)
+                {
+                    inspector.AddSection("Hit Type", hit.Type switch
+                    {
+                        0 when !hit.LongNote => "Single",
+                        0 when hit.LongNote => "Long",
+                        1 => "Tick",
+                        _ => "Unknown"
+                    });
+
+                    inspector.AddSection("Lane", $"{hit.Lane}");
+
+                    switch (hit.Type)
+                    {
+                        case 0 when hit.LongNote:
+                            inspector.AddSection("Length", $"{hit.HoldTime:#,0.##}ms");
+                            inspector.AddSection("End Time", TimeUtils.Format(hit.EndTime));
+                            break;
+                    }
+                }
+
+                break;
+
+            default:
+                inspector.AddSection("Selected", $"{selectionHandler.SelectedObjects.Count} objects");
+                inspector.AddSection("Start", TimeUtils.Format(selectionHandler.SelectedObjects.Min(o => o.Time)));
+                inspector.AddSection("End", TimeUtils.Format(selectionHandler.SelectedObjects.Max(o => o.Time)));
+                break;
+        }
     }
 
     private void showPointSettings(IEnumerable<Drawable> drawables)
@@ -113,9 +180,13 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
         settingsWrapper.ScaleTo(1.1f).FadeInFromZero(200).ScaleTo(1, 400, Easing.OutQuint);
     }
 
-    private void closeSettings()
+    private void close()
     {
-        if (!showingSettings) return;
+        if (!showingSettings)
+        {
+            Expanded.Value = false;
+            return;
+        }
 
         showingSettings = false;
         Locked.Value = false;
@@ -126,10 +197,13 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Action != FluXisGlobalKeybind.Back || !showingSettings)
+        if (e.Action != FluXisGlobalKeybind.Back)
             return false;
 
-        closeSettings();
+        if (!showingSettings && !Expanded.Value)
+            return false;
+
+        close();
         return true;
     }
 
