@@ -11,12 +11,13 @@
 
 ## Downloading and playing the game
 ### Windows 8.1+
-1. Download the installer from [here](https://dl.flux.moe/fluXis/updater.zip) or the download button on the website.
-2. Extract the zip file.
-3. Run the installer (`fluXis.Updater.exe`).
-4. Wait for the installer to finish.
-    - This also creates a shortcut in the start menu.
-5. The game should now be automatically launched.
+1. Download and install the .NET 8.0 desktop runtime from [here](https://dotnet.microsoft.com/download/dotnet/8.0/runtime).
+2. Download the installer from [here](https://dl.flux.moe/install/fluXis-installer.zip) or the download button on the website.
+3. Extract the zip file.
+4. Run the installer (`fluXis.Installer.exe`).
+5. Follow the instructions in the installer.
+
+You can find the game in the start menu or on your desktop (if you chose to create a desktop shortcut).
 
 *Make sure to report any issues with the installer to the [discord server](https://discord.gg/29hMftpNq9).*
 
