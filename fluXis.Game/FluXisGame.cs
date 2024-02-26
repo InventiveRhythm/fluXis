@@ -21,18 +21,21 @@ using fluXis.Game.Scoring;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Warning;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
+using osu.Framework.Screens;
 
 namespace fluXis.Game;
 
@@ -43,6 +46,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
 
     private Container screenContainer;
+    private Container<VisibilityContainer> overlayContainer;
     private ExitAnimation exitAnimation;
     private PanelContainer panelContainer;
 
@@ -85,13 +89,20 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                             ScreenStack
                         }
                     },
-                    Dashboard,
+                    overlayContainer = new Container<VisibilityContainer>
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new VisibilityContainer[]
+                        {
+                            Dashboard,
+                            ChatOverlay,
+                            ProfileOverlay,
+                            MusicPlayer,
+                            Settings
+                        }
+                    },
                     LoginOverlay,
                     RegisterOverlay,
-                    ChatOverlay,
-                    ProfileOverlay,
-                    MusicPlayer,
-                    Settings,
                     Toolbar
                 }
             },
@@ -175,12 +186,26 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         });
     }
 
+    public override void CloseOverlays() => overlayContainer.Children.ForEach(c => c.Hide());
+
     public override void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player)
     {
         if (map == null || score == null)
             throw new ArgumentNullException();
 
         ScreenStack.Push(new SoloResults(map, score, player));
+    }
+
+    public override void ShowMap(RealmMapSet set)
+    {
+        CloseOverlays();
+        SelectMapSet(set);
+
+        if (ScreenStack.CurrentScreen is not SelectScreen)
+        {
+            MenuScreen.MakeCurrent();
+            MenuScreen.Push(new SelectScreen());
+        }
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

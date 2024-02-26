@@ -53,7 +53,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
@@ -390,10 +389,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         GlobalBackground.AddBackgroundFromMap(map);
     }
 
-    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player)
-    {
-        Logger.Log($"{nameof(PresentScore)} is not implemented. I hope we are just running in a testing environment.", LoggingTarget.Runtime, LogLevel.Error);
-    }
+    public virtual void CloseOverlays() { }
+    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player) { }
+    public virtual void ShowMap(RealmMapSet map) { }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 

@@ -8,7 +8,6 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Drawables.Online;
 using fluXis.Game.Online.API.Models.Maps;
-using fluXis.Game.Screens.Select;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -18,7 +17,6 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Map.Drawables;
@@ -310,11 +308,10 @@ public partial class MapCard : Container, IHasContextMenu
 
     private void selectAndShow()
     {
-        if (localSet == null) return;
+        if (localSet == null)
+            return;
 
-        game.SelectMapSet(localSet);
-        game.MenuScreen.MakeCurrent();
-        game.MenuScreen.Push(new SelectScreen());
+        game.ShowMap(localSet);
     }
 
     private void download() => maps.DownloadMapSet(MapSet);

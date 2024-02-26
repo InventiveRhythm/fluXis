@@ -16,7 +16,6 @@ using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
-using fluXis.Game.Screens.Select;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -161,12 +160,7 @@ public partial class MapStore : Component
 
     public void Present(RealmMapSet map)
     {
-        Select(map.LowestDifficulty, true, false);
-
-        var stack = game.ScreenStack;
-
-        if (stack.CurrentScreen is not SelectScreen)
-            stack.Push(new SelectScreen());
+        game.ShowMap(map);
     }
 
     public void AddMapSet(RealmMapSet mapSet, bool notify = true)
