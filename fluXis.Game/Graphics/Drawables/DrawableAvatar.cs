@@ -13,7 +13,7 @@ namespace fluXis.Game.Graphics.Drawables;
 public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
 {
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private OnlineTextureStore store { get; set; }

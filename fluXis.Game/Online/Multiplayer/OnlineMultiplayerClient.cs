@@ -11,7 +11,7 @@ namespace fluXis.Game.Online.Multiplayer;
 public partial class OnlineMultiplayerClient : MultiplayerClient
 {
     [Resolved]
-    private Fluxel.Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     public override APIUserShort Player => fluxel.LoggedInUser;
     private IMultiplayerClient impl => this;

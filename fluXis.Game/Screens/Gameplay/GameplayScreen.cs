@@ -73,7 +73,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }

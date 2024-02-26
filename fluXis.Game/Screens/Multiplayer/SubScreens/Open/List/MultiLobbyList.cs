@@ -24,7 +24,7 @@ public partial class MultiLobbyList : MultiSubScreen
     private MultiplayerMenuMusic menuMusic { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private FluXisGameBase game { get; set; }

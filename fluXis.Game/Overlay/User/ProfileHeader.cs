@@ -27,7 +27,7 @@ public partial class ProfileHeader : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load(Fluxel fluxel)
+    private void load(FluxelClient fluxel)
     {
         RelativeSizeAxes = Axes.X;
         Height = 440;

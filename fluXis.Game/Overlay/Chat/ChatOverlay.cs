@@ -27,7 +27,7 @@ namespace fluXis.Game.Overlay.Chat;
 public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using fluXis.Game.Online.Fluxel;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
@@ -14,7 +15,7 @@ public class APIRequest<T> where T : class
     protected virtual string RootUrl => Config.APIUrl;
 
     protected APIEndpointConfig Config => fluxel.Endpoint;
-    private Fluxel.Fluxel fluxel;
+    private FluxelClient fluxel;
 
     public event Action<APIResponse<T>> Success;
     public event Action<Exception> Failure;
@@ -22,7 +23,7 @@ public class APIRequest<T> where T : class
 
     public APIResponse<T> Response { get; protected set; }
 
-    public virtual void Perform(Fluxel.Fluxel fluxel)
+    public virtual void Perform(FluxelClient fluxel)
     {
         this.fluxel = fluxel;
 
@@ -58,7 +59,7 @@ public class APIRequest<T> where T : class
             fluxel.Schedule(() => Success?.Invoke(Response));
     }
 
-    public Task PerformAsync(Fluxel.Fluxel fluxel)
+    public Task PerformAsync(Fluxel.FluxelClient fluxel)
     {
         var task = new Task(() => Perform(fluxel));
         task.Start();

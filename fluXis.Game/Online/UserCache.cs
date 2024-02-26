@@ -10,7 +10,7 @@ namespace fluXis.Game.Online;
 public static class UserCache
 {
     private static readonly Dictionary<int, APIUser> users = new();
-    private static Fluxel.Fluxel fluxel;
+    private static Fluxel.FluxelClient fluxel;
 
     public static Action<int> OnAvatarUpdate { get; set; }
     public static Action<int> OnBannerUpdate { get; set; }
@@ -18,7 +18,7 @@ public static class UserCache
     private static readonly Dictionary<int, List<Action>> avatar_update_callbacks = new();
     private static readonly Dictionary<int, List<Action>> banner_update_callbacks = new();
 
-    public static void Init(Fluxel.Fluxel api)
+    public static void Init(Fluxel.FluxelClient api)
     {
         fluxel = api;
     }

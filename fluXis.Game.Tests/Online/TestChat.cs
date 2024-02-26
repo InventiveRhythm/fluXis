@@ -11,7 +11,7 @@ namespace fluXis.Game.Tests.Online;
 public partial class TestChat : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(LoginOverlay login, Fluxel fluxel)
+    private void load(LoginOverlay login, FluxelClient fluxel)
     {
         Add(login);
 

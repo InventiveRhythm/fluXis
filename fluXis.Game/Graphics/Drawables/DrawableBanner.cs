@@ -10,7 +10,7 @@ namespace fluXis.Game.Graphics.Drawables;
 public partial class DrawableBanner : Sprite
 {
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private OnlineTextureStore store { get; set; }

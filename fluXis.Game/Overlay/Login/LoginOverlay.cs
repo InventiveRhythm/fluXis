@@ -24,7 +24,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
     private RegisterOverlay register { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private FillFlowContainer loginContainer;
 

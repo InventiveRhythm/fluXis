@@ -11,10 +11,10 @@ namespace fluXis.Desktop;
 
 public class DiscordActivity
 {
-    private Fluxel fluxel;
+    private FluxelClient fluxel;
     private DiscordRpcClient client;
 
-    public void Initialize(Fluxel fluxel, Bindable<UserActivity> bind)
+    public void Initialize(FluxelClient fluxel, Bindable<UserActivity> bind)
     {
         client = new DiscordRpcClient("975141679583604767");
         client.Initialize();

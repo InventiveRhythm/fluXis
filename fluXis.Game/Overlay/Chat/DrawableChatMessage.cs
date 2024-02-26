@@ -27,7 +27,7 @@ public partial class DrawableChatMessage : Container
     private UserProfileOverlay profile { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     public ChatMessage InitialMessage { get; set; }
     public List<ChatMessage> Messages { get; } = new();
@@ -146,7 +146,7 @@ public partial class DrawableChatMessage : Container
     private partial class MessageText : FluXisTextFlow, IHasContextMenu
     {
         public ChatMessage Message { get; init; }
-        public Fluxel Fluxel { get; init; }
+        public FluxelClient Fluxel { get; init; }
 
         [Resolved]
         private NotificationManager notifications { get; set; }

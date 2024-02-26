@@ -12,7 +12,7 @@ namespace fluXis.Game.Audio.Preview;
 public partial class PreviewManager : Component
 {
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private ITrackStore trackStore;
     private long currentId = -1;

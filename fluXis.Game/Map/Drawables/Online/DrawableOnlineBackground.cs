@@ -17,7 +17,7 @@ public partial class DrawableOnlineBackground : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures, Fluxel fluxel)
+    private void load(TextureStore textures, FluxelClient fluxel)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;

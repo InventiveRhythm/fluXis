@@ -27,7 +27,7 @@ using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.Fluxel;
 
-public partial class Fluxel : Component
+public partial class FluxelClient : Component
 {
     private const int chunk_out = 4096; // 4KB
     private const int chunk_in = 1024; // 1KB (its actually 1016 bytes server-side, but we'll round up)
@@ -37,11 +37,16 @@ public partial class Fluxel : Component
     [Resolved]
     private NotificationManager notifications { get; set; }
 
+    public string Token => tokenBindable.Value;
+    private Bindable<string> tokenBindable;
+
     private string username;
     private string password;
     private string email;
     private double waitTime;
     private bool registering;
+
+    private bool hasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
 
     private readonly List<string> packetQueue = new();
     private readonly ConcurrentDictionary<EventType, List<Action<object>>> responseListeners = new();
@@ -50,13 +55,15 @@ public partial class Fluxel : Component
     private APIUserShort loggedInUser;
 
     public Action<APIUserShort> OnUserChanged { get; set; }
+    public Action<ConnectionStatus> OnStatusChanged { get; set; }
 
     public ConnectionStatus Status
     {
         get => status;
         private set
         {
-            if (status == value) return;
+            if (status == value)
+                return;
 
             status = value;
             Logger.Log($"Network status changed to {value}!", LoggingTarget.Network);
@@ -64,28 +71,21 @@ public partial class Fluxel : Component
         }
     }
 
-    public Action<ConnectionStatus> OnStatusChanged { get; set; }
-
-    private bool hasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
-
     public APIUserShort LoggedInUser
     {
         get => loggedInUser;
         private set
         {
             loggedInUser = value;
-            OnUserChanged?.Invoke(loggedInUser);
 
             Logger.Log(value == null ? "Logged out!" : $"Logged in as {value.Username}!", LoggingTarget.Network);
+            OnUserChanged?.Invoke(loggedInUser);
         }
     }
 
     public string LastError { get; private set; }
 
-    public string Token => tokenBindable.Value;
-    private Bindable<string> tokenBindable;
-
-    public Fluxel(APIEndpointConfig endpoint)
+    public FluxelClient(APIEndpointConfig endpoint)
     {
         Endpoint = endpoint;
     }
@@ -131,7 +131,6 @@ public partial class Fluxel : Component
 
             Thread.Sleep(50);
         }
-        // ReSharper disable once FunctionNeverReturns
     }
 
     private async Task tryConnect()

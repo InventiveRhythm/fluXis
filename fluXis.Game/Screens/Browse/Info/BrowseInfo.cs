@@ -31,7 +31,7 @@ public partial class BrowseInfo : Container
     private TextureStore textures { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -319,7 +319,7 @@ public partial class BrowseInfo : Container
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, Fluxel fluxel)
+        private void load(TextureStore textures, FluxelClient fluxel)
         {
             RelativeSizeAxes = Axes.Both;
             FillMode = FillMode.Fill;
@@ -339,7 +339,7 @@ public partial class BrowseInfo : Container
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, Fluxel fluxel)
+        private void load(TextureStore textures, FluxelClient fluxel)
         {
             RelativeSizeAxes = Axes.Both;
             FillMode = FillMode.Fill;

@@ -89,7 +89,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected MusicPlayer MusicPlayer { get; private set; }
     protected GlobalBackground GlobalBackground { get; private set; }
     protected UISamples Samples { get; private set; }
-    protected Fluxel Fluxel { get; private set; }
+    protected FluxelClient Fluxel { get; private set; }
     protected MultiplayerClient MultiplayerClient { get; private set; }
     protected FluXisConfig Config { get; private set; }
     protected MapStore MapStore { get; private set; }
@@ -153,7 +153,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         dependencies.Cache(realm = new FluXisRealm(storage));
         dependencies.Cache(NotificationManager = new NotificationManager());
 
-        Fluxel = new Fluxel(endpoint);
+        Fluxel = new FluxelClient(endpoint);
         LoadComponent(Fluxel);
         dependencies.Cache(Fluxel);
 

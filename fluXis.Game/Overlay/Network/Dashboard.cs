@@ -20,7 +20,7 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
     private const int rounding = 20;
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private Container content;
     private DashboardSidebar sidebar;

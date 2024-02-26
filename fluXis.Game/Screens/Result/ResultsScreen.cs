@@ -38,7 +38,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;

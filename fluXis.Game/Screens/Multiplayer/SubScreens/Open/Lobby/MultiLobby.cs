@@ -48,7 +48,7 @@ public partial class MultiLobby : MultiSubScreen
     private MultiplayerScreen multiScreen { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private MultiplayerClient client { get; set; }

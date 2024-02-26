@@ -36,7 +36,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     public override UserActivity InitialActivity => new UserActivity.BrowsingMaps();
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private GlobalClock clock { get; set; }

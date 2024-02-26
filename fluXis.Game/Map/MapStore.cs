@@ -39,7 +39,7 @@ public partial class MapStore : Component
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private AudioManager audio { get; set; }

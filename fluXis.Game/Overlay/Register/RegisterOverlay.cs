@@ -25,7 +25,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
     private NotificationManager notifications { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }

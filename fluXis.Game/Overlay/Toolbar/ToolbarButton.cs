@@ -31,7 +31,7 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip, IK
     private UISamples samples { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }

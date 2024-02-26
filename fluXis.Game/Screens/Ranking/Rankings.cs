@@ -28,7 +28,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
     public override bool AutoPlayNext => true;
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private FillFlowContainer flow;
     private CornerButton backButton;

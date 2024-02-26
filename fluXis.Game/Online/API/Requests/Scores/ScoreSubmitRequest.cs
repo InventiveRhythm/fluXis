@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Online.API.Models.Scores;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Scoring;
 using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
@@ -19,7 +20,7 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
         this.score = score;
     }
 
-    public override void Perform(Fluxel.Fluxel fluxel)
+    public override void Perform(FluxelClient fluxel)
     {
         if (fluxel.Token == null)
         {

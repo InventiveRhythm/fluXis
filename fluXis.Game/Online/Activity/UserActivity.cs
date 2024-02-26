@@ -1,5 +1,6 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.Fluxel;
 using JetBrains.Annotations;
 
 namespace fluXis.Game.Online.Activity;
@@ -10,7 +11,7 @@ public abstract class UserActivity
     public virtual string Details => "";
     public virtual string Icon => "icon";
 
-    public Fluxel.Fluxel Fluxel { get; set; }
+    public FluxelClient Fluxel { get; set; }
 
     #region Menus
 

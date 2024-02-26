@@ -22,7 +22,7 @@ namespace fluXis.Game.Overlay.User;
 public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private APIUser user;
     private Container content;

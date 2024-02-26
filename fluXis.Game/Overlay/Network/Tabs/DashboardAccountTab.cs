@@ -25,7 +25,7 @@ public partial class DashboardAccountTab : DashboardTab
     public override IconUsage Icon => FontAwesome6.Solid.Gear;
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }

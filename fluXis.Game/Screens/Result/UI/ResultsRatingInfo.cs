@@ -15,7 +15,7 @@ namespace fluXis.Game.Screens.Result.UI;
 public partial class ResultsRatingInfo : Container
 {
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private readonly bool showPlayData;
 

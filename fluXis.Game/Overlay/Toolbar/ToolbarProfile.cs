@@ -33,7 +33,7 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
     private LoginOverlay loginOverlay { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private FluXisGameBase game { get; set; }

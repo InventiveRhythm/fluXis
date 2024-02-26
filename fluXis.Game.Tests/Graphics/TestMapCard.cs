@@ -11,7 +11,7 @@ namespace fluXis.Game.Tests.Graphics;
 public partial class TestMapCard : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(Fluxel fluxel)
+    private void load(FluxelClient fluxel)
     {
         var req = fluxel.CreateAPIRequest("/mapset/4");
         req.Perform();

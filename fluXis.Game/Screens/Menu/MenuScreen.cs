@@ -60,7 +60,7 @@ public partial class MenuScreen : FluXisScreen
     private GlobalClock clock { get; set; }
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     [Resolved]
     private FluXisConfig config { get; set; }

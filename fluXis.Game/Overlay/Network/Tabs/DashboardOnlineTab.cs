@@ -18,7 +18,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
     public override IconUsage Icon => FontAwesome6.Solid.EarthAmericas;
 
     [Resolved]
-    private Fluxel fluxel { get; set; }
+    private FluxelClient fluxel { get; set; }
 
     private bool visible;
     private FillFlowContainer flow;
