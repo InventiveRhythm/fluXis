@@ -17,7 +17,13 @@ public class DiscordActivity
     public void Initialize(FluxelClient fluxel, Bindable<UserActivity> bind)
     {
         client = new DiscordRpcClient("975141679583604767");
-        client.Initialize();
+        var sucess = client.Initialize();
+
+        if (!sucess)
+        {
+            Logger.Log("Discord Rich Presence failed to initialize!", LoggingTarget.Network, LogLevel.Error);
+            return;
+        }
 
         this.fluxel = fluxel;
 
@@ -29,7 +35,7 @@ public class DiscordActivity
 
             activity.Fluxel = fluxel;
             update(activity.Details, activity.Status, activity.Icon);
-        });
+        }, true);
     }
 
     private void update(string state = "", string details = "", string largeImageKey = "")

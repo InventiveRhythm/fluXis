@@ -93,7 +93,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(globalBackground = new GlobalBackground(), buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
-        loadComponent(screenStack = new FluXisScreenStack(), screenContainer.Add, true);
+        loadComponent(screenStack = new FluXisScreenStack(Activity), screenContainer.Add, true);
 
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(new Dashboard(), overlayContainer.Add, true);
