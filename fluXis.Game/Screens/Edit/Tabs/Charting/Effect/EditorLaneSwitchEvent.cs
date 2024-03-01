@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
@@ -19,9 +20,6 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
-
-    [Resolved]
     private ChartingContainer chartingContainer { get; set; }
 
     public LaneSwitchEvent Event { get; set; }
@@ -30,7 +28,7 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
     private int count;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(PanelContainer panels)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomLeft;
@@ -40,7 +38,7 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
         {
             if (chartingContainer.BlueprintContainer.CurrentTool is SelectTool)
             {
-                game.Overlay = new LaneSwtichEditorPanel
+                panels.Content = new LaneSwtichEditorPanel
                 {
                     Event = Event,
                     MapInfo = values.MapInfo,

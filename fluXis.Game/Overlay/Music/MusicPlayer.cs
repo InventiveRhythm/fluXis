@@ -34,7 +34,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     [Resolved]
     private MapStore maps { get; set; }
 
-    public FluXisScreenStack ScreenStack { get; set; }
+    [Resolved]
+    private FluXisScreenStack screens { get; set; }
 
     private const int inner_padding = 40;
     private const int rounding = 20;
@@ -181,7 +182,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                             Icon = FontAwesome6.Solid.BackwardStep,
                                                             Action = () =>
                                                             {
-                                                                if (ScreenStack.AllowMusicControl)
+                                                                if (screens.AllowMusicControl)
                                                                     game.PreviousSong();
                                                             }
                                                         },
@@ -190,7 +191,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                             Icon = FontAwesome6.Solid.Play,
                                                             Action = () =>
                                                             {
-                                                                if (!ScreenStack.AllowMusicControl)
+                                                                if (!screens.AllowMusicControl)
                                                                     return;
 
                                                                 if (globalClock.IsRunning)
@@ -204,7 +205,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                             Icon = FontAwesome6.Solid.ForwardStep,
                                                             Action = () =>
                                                             {
-                                                                if (ScreenStack.AllowMusicControl)
+                                                                if (screens.AllowMusicControl)
                                                                     game.NextSong();
                                                             }
                                                         }

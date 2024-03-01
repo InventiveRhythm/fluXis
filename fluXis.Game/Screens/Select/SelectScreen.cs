@@ -75,6 +75,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     [Resolved]
     private ReplayStorage replays { get; set; }
 
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
     private DependencyContainer dependencies;
 
     protected List<RealmMapSet> Maps { get; } = new();
@@ -435,7 +438,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (set == null)
             return;
 
-        Game.Overlay ??= new ConfirmDeletionPanel(() =>
+        panels.Content ??= new ConfirmDeletionPanel(() =>
         {
             MapStore.DeleteMapSet(set);
             MapList.Remove(lookup[set], false);

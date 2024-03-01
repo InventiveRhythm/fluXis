@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 using osu.Framework.Allocation;
@@ -18,15 +19,12 @@ public partial class EditorFlashEvent : Container
     [Resolved]
     private EditorValues values { get; set; }
 
-    [Resolved]
-    private FluXisGameBase game { get; set; }
-
     public FlashEvent FlashEvent { get; init; }
 
     private CircularContainer line;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(PanelContainer panels)
     {
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.BottomLeft;
@@ -48,7 +46,7 @@ public partial class EditorFlashEvent : Container
                         Colour = ColourInfo.GradientVertical(FlashEvent.EndColor.Opacity(FlashEvent.EndOpacity), FlashEvent.StartColor.Opacity(FlashEvent.StartOpacity))
                     }
                 },
-                Action = () => game.Overlay = new FlashEditorPanel
+                Action = () => panels.Content = new FlashEditorPanel
                 {
                     Event = FlashEvent,
                     EditorClock = clock,

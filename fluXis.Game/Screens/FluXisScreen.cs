@@ -25,7 +25,7 @@ public partial class FluXisScreen : Screen
 
     private Sample backSample;
 
-    protected new FluXisGameBase Game => base.Game as FluXisGameBase;
+    protected new FluXisGame Game => base.Game as FluXisGame;
 
     protected FluXisScreen()
     {

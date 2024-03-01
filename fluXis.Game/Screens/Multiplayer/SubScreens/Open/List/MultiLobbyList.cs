@@ -27,10 +27,10 @@ public partial class MultiLobbyList : MultiSubScreen
     private FluxelClient fluxel { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private NotificationManager notifications { get; set; }
 
     [Resolved]
-    private NotificationManager notifications { get; set; }
+    private PanelContainer panels { get; set; }
 
     private LoadingPanel loadingPanel;
 
@@ -90,7 +90,7 @@ public partial class MultiLobbyList : MultiSubScreen
 
     public void JoinLobby(MultiplayerRoom room)
     {
-        game.Overlay = loadingPanel = new LoadingPanel
+        panels.Content = loadingPanel = new LoadingPanel
         {
             Text = "Joining lobby...",
         };

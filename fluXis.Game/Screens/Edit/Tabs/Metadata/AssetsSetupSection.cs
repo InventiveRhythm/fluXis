@@ -3,6 +3,7 @@ using System.IO;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Files;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -123,7 +124,7 @@ public partial class AssetsSetupSection : SetupSection
         private InputManager inputManager;
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(PanelContainer panels)
         {
             RelativeSizeAxes = Axes.X;
             Height = 40;
@@ -168,7 +169,7 @@ public partial class AssetsSetupSection : SetupSection
                     Padding = new MarginPadding { Left = 150 },
                     Action = () =>
                     {
-                        game.Overlay = new FileSelect
+                        panels.Content = new FileSelect
                         {
                             AllowedExtensions = AllowedExtensions,
                             MapDirectory = storage.GetFullPath($"maps/{values.Editor.Map.MapSet.ID}"),

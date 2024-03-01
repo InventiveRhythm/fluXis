@@ -9,7 +9,9 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Plugins;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Graphics;
@@ -42,8 +44,9 @@ public partial class ImportManager : Component
     [Resolved]
     private GameHost host { get; set; }
 
-    [Resolved]
-    private FluXisGameBase game { get; set; }
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private Toolbar toolbar { get; set; }
 
     private Dictionary<Plugin, MapImporter> importersByPlugin { get; } = new();
     private Dictionary<MapImporter, List<RealmMapSet>> importedMaps { get; } = new();
@@ -139,16 +142,19 @@ public partial class ImportManager : Component
 
     private void setToolbarText(string text)
     {
+        if (toolbar == null)
+            return;
+
         Schedule(() =>
         {
             if (string.IsNullOrEmpty(text))
             {
-                game.Toolbar.CenterText.FadeOut(200);
+                toolbar.CenterText.FadeOut(200);
                 return;
             }
 
-            game.Toolbar.CenterText.Text = text;
-            game.Toolbar.CenterText.FadeIn(200);
+            toolbar.CenterText.Text = text;
+            toolbar.CenterText.FadeIn(200);
         });
     }
 

@@ -36,7 +36,7 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
     private FluxelClient fluxel { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private PanelContainer panels { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -181,7 +181,7 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
     {
         if (e.Button != MouseButton.Right) return false;
 
-        game.Overlay = new ButtonPanel
+        panels.Content = new ButtonPanel
         {
             Text = "Are you sure you want to log out?",
             ButtonWidth = 200,

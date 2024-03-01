@@ -20,7 +20,7 @@ public partial class AudioOffsetSection : SettingsSubSection
     private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisGameBase game)
+    private void load(FluXisScreenStack screens, SettingsMenu settings)
     {
         AddRange(new Drawable[]
         {
@@ -44,10 +44,11 @@ public partial class AudioOffsetSection : SettingsSubSection
                 ButtonText = "Open",
                 Action = () =>
                 {
-                    if (game.ScreenStack.CurrentScreen is OffsetSetup or not FluXisScreen { AllowExit: true }) return;
+                    if (screens.CurrentScreen is OffsetSetup or not FluXisScreen { AllowExit: true })
+                        return;
 
-                    game.Settings.Hide();
-                    game.ScreenStack.Push(new OffsetSetup());
+                    settings.Hide();
+                    screens.Push(new OffsetSetup());
                 }
             }
         });

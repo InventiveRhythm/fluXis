@@ -59,7 +59,7 @@ public class APIRequest<T> where T : class
             fluxel.Schedule(() => Success?.Invoke(Response));
     }
 
-    public Task PerformAsync(Fluxel.FluxelClient fluxel)
+    public Task PerformAsync(FluxelClient fluxel)
     {
         var task = new Task(() => Perform(fluxel));
         task.Start();

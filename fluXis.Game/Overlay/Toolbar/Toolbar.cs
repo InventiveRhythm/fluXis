@@ -39,6 +39,9 @@ public partial class Toolbar : Container
     [Resolved]
     private FluXisGameBase game { get; set; }
 
+    [Resolved]
+    private FluXisScreenStack screens { get; set; }
+
     public FluXisSpriteText CenterText { get; private set; }
 
     public BindableBool ShowToolbar { get; } = new();
@@ -188,14 +191,14 @@ public partial class Toolbar : Container
 
     private void goToScreen(IScreen screen)
     {
-        if (game.ScreenStack.CurrentScreen is not null && game.ScreenStack.CurrentScreen.GetType() == screen.GetType())
+        if (screens.CurrentScreen is not null && screens.CurrentScreen.GetType() == screen.GetType())
             return;
 
-        if (game.ScreenStack.CurrentScreen is FluXisScreen { AllowExit: false })
+        if (screens.CurrentScreen is FluXisScreen { AllowExit: false })
             return;
 
         game.MenuScreen.MakeCurrent();
-        game.ScreenStack.Push(screen);
+        screens.Push(screen);
     }
 
     private void OnShowToolbarChanged(ValueChangedEvent<bool> e)

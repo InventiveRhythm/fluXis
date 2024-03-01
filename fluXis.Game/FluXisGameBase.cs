@@ -24,22 +24,11 @@ using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
-using fluXis.Game.Overlay.Chat;
-using fluXis.Game.Overlay.Toolbar;
-using fluXis.Game.Overlay.Login;
-using fluXis.Game.Overlay.Mouse;
-using fluXis.Game.Overlay.Music;
-using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Register;
-using fluXis.Game.Overlay.Settings;
-using fluXis.Game.Overlay.User;
 using fluXis.Game.Plugins;
 using fluXis.Game.Scoring;
-using fluXis.Game.Screens;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
-using fluXis.Game.Screens.Skin;
 using fluXis.Game.Skinning;
 using fluXis.Game.UI;
 using fluXis.Game.UI.Tips;
@@ -53,6 +42,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
@@ -65,7 +55,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     // It allows for caching global dependencies that should be accessible to tests, or changing
     // the screen scaling for all components including the test browser and framework overlays.
 
-    private DependencyContainer dependencies;
+    protected DependencyContainer GameDependencies { get; private set; }
 
     public Vector2 ContentSize => content.DrawSize;
 
@@ -78,39 +68,19 @@ public partial class FluXisGameBase : osu.Framework.Game
     private int exceptionCount;
     protected virtual int MaxExceptions => IsDebug ? 5 : 1;
 
-    protected GlobalClock GlobalClock { get; private set; }
-    protected GlobalCursorOverlay CursorOverlay { get; private set; }
-    protected LoginOverlay LoginOverlay { get; private set; }
-    protected ChatOverlay ChatOverlay { get; private set; }
-    protected UserProfileOverlay ProfileOverlay { get; private set; }
-    protected RegisterOverlay RegisterOverlay { get; private set; }
-    protected NotificationManager NotificationManager { get; private set; }
-    protected MusicPlayer MusicPlayer { get; private set; }
-    protected GlobalBackground GlobalBackground { get; private set; }
-    protected UISamples Samples { get; private set; }
-    protected FluxelClient Fluxel { get; private set; }
-    protected MultiplayerClient MultiplayerClient { get; private set; }
     protected FluXisConfig Config { get; private set; }
+    protected NotificationManager NotificationManager { get; private set; }
+    protected FluxelClient Fluxel { get; private set; }
     protected MapStore MapStore { get; private set; }
+    protected SkinManager SkinManager { get; private set; }
 
-    public SettingsMenu Settings { get; private set; }
-    public Toolbar Toolbar { get; private set; }
-    public FluXisScreenStack ScreenStack { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
-    public Dashboard Dashboard { get; private set; }
 
-    private FluXisRealm realm;
     private KeybindStore keybindStore;
-    private LightController lightController;
-    private SkinManager skinManager;
-    private PluginManager pluginManager;
     private ImportManager importManager;
-    private PreviewManager previewManager;
 
     protected Bindable<UserActivity> Activity { get; } = new();
     public Season CurrentSeason { get; private set; }
-
-    public virtual Drawable Overlay { get; set; }
 
     public static string VersionString => Version != null ? IsDebug ? "local development build" : $"v{Version.Major}.{Version.Minor}.{Version.Build}" : "unknown version";
     public static Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
@@ -138,67 +108,44 @@ public partial class FluXisGameBase : osu.Framework.Game
         Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
         initFonts();
 
-        MapFiles.Initialize(storage.GetStorageForDirectory("maps"));
-
         CurrentSeason = getSeason();
 
         var endpoint = getApiEndpoint();
 
-        dependencies.CacheAs(this);
-        dependencies.CacheAs(Config = new FluXisConfig(storage));
+        cacheComponent(this);
+
+        var realm = new FluXisRealm(storage);
+        cacheComponent(realm);
+
+        cacheComponent(Config = new FluXisConfig(storage));
         uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
 
-        dependencies.Cache(GlobalClock = new GlobalClock());
-        dependencies.Cache(realm = new FluXisRealm(storage));
-        dependencies.Cache(NotificationManager = new NotificationManager());
+        cacheComponent(NotificationManager = new NotificationManager());
 
-        Fluxel = new FluxelClient(endpoint);
-        LoadComponent(Fluxel);
-        dependencies.Cache(Fluxel);
-
-        dependencies.CacheAs(MultiplayerClient = new OnlineMultiplayerClient());
+        cacheComponent(Fluxel = new FluxelClient(endpoint), true, true);
+        cacheComponent(new OnlineMultiplayerClient(), true, true);
 
         UserCache.Init(Fluxel);
 
-        dependencies.Cache(new BackgroundTextureStore(Host, storage.GetStorageForDirectory("maps")));
-        dependencies.Cache(new CroppedBackgroundStore(Host, storage.GetStorageForDirectory("maps")));
-        dependencies.Cache(new OnlineTextureStore(Host, endpoint));
+        var mapStorage = storage.GetStorageForDirectory("maps");
 
-        LoadComponent(MapStore = new MapStore());
-        dependencies.Cache(MapStore);
+        MapFiles.Initialize(mapStorage);
 
-        dependencies.Cache(new ReplayStorage(storage.GetStorageForDirectory("replays")));
+        cacheComponent(new BackgroundTextureStore(Host, mapStorage));
+        cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
+        cacheComponent(new OnlineTextureStore(Host, endpoint));
 
-        LoadComponent(pluginManager = new PluginManager());
-        dependencies.Cache(pluginManager);
+        cacheComponent(MapStore = new MapStore(), true);
+        cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));
 
-        LoadComponent(importManager = new ImportManager());
-        dependencies.Cache(importManager);
+        cacheComponent(new PluginManager(), true);
+        cacheComponent(importManager = new ImportManager(), true, true);
+        cacheComponent(SkinManager = new SkinManager(), true, true);
+        cacheComponent(new LayoutManager(), true);
+        cacheComponent(new PreviewManager(), true);
 
-        LoadComponent(Samples = new UISamples());
-        dependencies.Cache(Samples);
-
-        dependencies.Cache(GlobalBackground = new GlobalBackground());
-        dependencies.Cache(CursorOverlay = new GlobalCursorOverlay());
-        dependencies.Cache(Settings = new SettingsMenu());
-        dependencies.Cache(LoginOverlay = new LoginOverlay());
-        dependencies.Cache(ChatOverlay = new ChatOverlay());
-        dependencies.CacheAs(RegisterOverlay = new RegisterOverlay());
-        dependencies.Cache(Toolbar = new Toolbar());
-        dependencies.Cache(ScreenStack = new FluXisScreenStack { Activity = Activity });
-        dependencies.Cache(ProfileOverlay = new UserProfileOverlay());
-        dependencies.CacheAs(lightController = CreateLightController());
-        dependencies.Cache(skinManager = new SkinManager());
-        dependencies.Cache(MusicPlayer = new MusicPlayer { ScreenStack = ScreenStack });
-        dependencies.Cache(Dashboard = new Dashboard());
-
-        previewManager = new PreviewManager();
-        LoadComponent(previewManager);
-        dependencies.Cache(previewManager);
-
-        var layoutManager = new LayoutManager();
-        LoadComponent(layoutManager);
-        dependencies.Cache(layoutManager);
+        cacheComponent(new UISamples(), true, true);
+        cacheComponent(CreateLightController(), true, true);
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -213,18 +160,11 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    MultiplayerClient,
                     keybinds = new GlobalKeybindContainer(this, realm)
                     {
-                        Children = new Drawable[]
+                        Child = content = new Container
                         {
-                            importManager,
-                            lightController,
-                            skinManager,
-                            content = new Container
-                            {
-                                RelativeSizeAxes = Axes.Both
-                            }
+                            RelativeSizeAxes = Axes.Both
                         }
                     },
                     new GamepadHandler()
@@ -236,9 +176,35 @@ public partial class FluXisGameBase : osu.Framework.Game
         keybindStore.AssignDefaults(keybinds);
         keybindStore.AssignDefaults(new GameplayKeybindContainer(realm, 0));
 
-        dependencies.Cache(keybinds);
+        cacheComponent(keybinds);
         MenuSplashes.Load(Host.CacheStorage);
         LoadingTips.Load(Host.CacheStorage);
+    }
+
+    private void cacheComponent<T>(T component, bool load = false, bool add = false)
+        where T : class
+    {
+        var loadable = component is Drawable;
+        var drawable = component as Drawable;
+
+        if (loadable && drawable == null)
+            throw new InvalidOperationException($"Component of type {typeof(T)} is not a drawable.");
+
+        GameDependencies.CacheAs(component);
+
+        if (load && loadable)
+        {
+            Schedule(() =>
+            {
+                Logger.Log($"Loading {component.GetType().Name}...", LoggingTarget.Runtime, LogLevel.Debug);
+
+                if (!drawable.IsLoaded)
+                    LoadComponent(drawable);
+
+                if (add)
+                    base.Content.Add(drawable);
+            });
+        }
     }
 
     protected override void LoadComplete()
@@ -345,20 +311,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         return base.OnExiting();
     }
 
-    public void OpenSkinEditor()
-    {
-        if (ScreenStack.CurrentScreen is SkinEditor)
-        {
-            NotificationManager.SendText("You are already in the Skin editor.", "", FontAwesome6.Solid.Bomb);
-            return;
-        }
-
-        if (skinManager.IsDefault) return;
-
-        Settings.Hide();
-        ScreenStack.Push(new SkinEditor());
-    }
-
     public void NextSong() => changeSong(1);
     public void PreviousSong() => changeSong(-1);
 
@@ -382,18 +334,16 @@ public partial class FluXisGameBase : osu.Framework.Game
         SelectMapSet(set);
     }
 
-    public void SelectMapSet(RealmMapSet set)
+    public virtual void SelectMapSet(RealmMapSet set)
     {
         MapStore.CurrentMapSet = set;
-        var map = set.Maps.First();
-        GlobalBackground.AddBackgroundFromMap(map);
     }
 
     public virtual void CloseOverlays() { }
     public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player) { }
     public virtual void ShowMap(RealmMapSet map) { }
 
-    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => GameDependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     #region Localization
 

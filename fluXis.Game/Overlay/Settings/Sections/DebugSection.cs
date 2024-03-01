@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Files;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
@@ -19,7 +20,7 @@ public partial class DebugSection : SettingsSection
     private SettingsDebugStrings strings => LocalizationStrings.Settings.Debug;
 
     [BackgroundDependencyLoader]
-    private void load(FrameworkConfigManager frameworkConfig, FluXisGameBase game)
+    private void load(FrameworkConfigManager frameworkConfig, FluXisGameBase game, PanelContainer panels)
     {
         AddRange(new Drawable[]
         {
@@ -34,7 +35,7 @@ public partial class DebugSection : SettingsSection
                 ButtonText = "Import",
                 Action = () =>
                 {
-                    game.Overlay = new FileSelect
+                    panels.Content = new FileSelect
                     {
                         OnFileSelected = file => game.HandleDragDrop(file.FullName)
                     };
@@ -47,7 +48,7 @@ public partial class DebugSection : SettingsSection
                 ButtonText = "Find",
                 Action = () =>
                 {
-                    game.Overlay = new FileSelect
+                    panels.Content = new FileSelect
                     {
                         AllowedExtensions = new[] { ".zip" },
                         OnFileSelected = file => game.CreateUpdatePerformer()?.UpdateFromFile(file)

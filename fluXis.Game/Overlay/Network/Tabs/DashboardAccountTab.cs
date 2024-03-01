@@ -2,6 +2,7 @@ using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Files;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Account;
@@ -31,14 +32,11 @@ public partial class DashboardAccountTab : DashboardTab
     private NotificationManager notifications { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private PanelContainer panels { get; set; }
 
     private APIEditingUser user;
     private Container editContent;
     private LoadingIcon loadingIcon;
-
-    private DrawableAvatar avatar;
-    private DrawableBanner banner;
 
     private IdleTracker socialsTracker;
     private DashboardAccountCategory socialsCategory;
@@ -97,7 +95,7 @@ public partial class DashboardAccountTab : DashboardTab
                             Size = new Vector2(250),
                             CornerRadius = 30,
                             Masking = true,
-                            Child = avatar = new DrawableAvatar(user)
+                            Child = new DrawableAvatar(user)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
@@ -106,11 +104,11 @@ public partial class DashboardAccountTab : DashboardTab
                             },
                             Action = () =>
                             {
-                                game.Overlay = new FileSelect
+                                panels.Content = new FileSelect
                                 {
                                     OnFileSelected = file =>
                                     {
-                                        var notif = new TaskNotificationData()
+                                        var notif = new TaskNotificationData
                                         {
                                             Text = "Avatar Update",
                                             TextWorking = "Uploading..."
@@ -143,7 +141,7 @@ public partial class DashboardAccountTab : DashboardTab
                             Masking = true,
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
-                            Child = banner = new DrawableBanner(user)
+                            Child = new DrawableBanner(user)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
@@ -152,11 +150,11 @@ public partial class DashboardAccountTab : DashboardTab
                             },
                             Action = () =>
                             {
-                                game.Overlay = new FileSelect
+                                panels.Content = new FileSelect
                                 {
                                     OnFileSelected = file =>
                                     {
-                                        var notif = new TaskNotificationData()
+                                        var notif = new TaskNotificationData
                                         {
                                             Text = "Banner Update",
                                             TextWorking = "Uploading..."

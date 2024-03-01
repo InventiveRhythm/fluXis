@@ -39,7 +39,7 @@ public partial class FooterOptions : FocusedOverlayContainer
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private PanelContainer panels { get; set; }
 
     private FooterOptionSection setSection;
     private FooterOptionSection mapSection;
@@ -150,7 +150,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                                 {
                                     State.Value = Visibility.Hidden;
 
-                                    game.Overlay = new ButtonPanel
+                                    panels.Content = new ButtonPanel
                                     {
                                         Text = "Are you sure you want to wipe all local scores for this difficulty?",
                                         SubText = "This action cannot be undone.",

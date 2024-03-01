@@ -11,6 +11,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Settings;
+using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Edit;
 using fluXis.Game.Screens.Menu.UI;
@@ -64,6 +65,12 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private FluXisConfig config { get; set; }
+
+    [Resolved]
+    private Toolbar toolbar { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
@@ -344,7 +351,7 @@ public partial class MenuScreen : FluXisScreen
 
         this.Delay(800).FadeIn().OnComplete(_ =>
         {
-            Game.Toolbar.ShowToolbar.Value = true;
+            toolbar.ShowToolbar.Value = true;
             showMenu(1000);
             login.Show();
         });
@@ -354,7 +361,7 @@ public partial class MenuScreen : FluXisScreen
 
     private void revertStartAnimation()
     {
-        Game.Toolbar.ShowToolbar.Value = false;
+        toolbar.ShowToolbar.Value = false;
         backgrounds.Zoom = 1.2f;
         hideMenu();
 
@@ -369,7 +376,7 @@ public partial class MenuScreen : FluXisScreen
     {
         if (e.Key == Key.Escape)
         {
-            Game.Overlay ??= new ConfirmExitPanel();
+            panels.Content ??= new ConfirmExitPanel();
             return true;
         }
 

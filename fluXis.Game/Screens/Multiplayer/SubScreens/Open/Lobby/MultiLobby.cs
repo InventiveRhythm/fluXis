@@ -30,9 +30,6 @@ public partial class MultiLobby : MultiSubScreen
     public override string SubTitle => "Lobby";
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
-
-    [Resolved]
     private MapStore mapStore { get; set; }
 
     [Resolved]
@@ -52,6 +49,9 @@ public partial class MultiLobby : MultiSubScreen
 
     [Resolved]
     private MultiplayerClient client { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     public MultiplayerRoom Room { get; set; }
 
@@ -196,7 +196,7 @@ public partial class MultiLobby : MultiSubScreen
             return false;
         }
 
-        game.Overlay ??= new ButtonPanel
+        panels.Content ??= new ButtonPanel
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,

@@ -5,6 +5,7 @@ using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.Screens;
 using fluXis.Game.Screens.Select;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -25,7 +26,7 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
     private AudioManager audioManager { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private FluXisScreenStack screens { get; set; }
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -131,7 +132,7 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
         loadMap(e.NewValue);
         trackPath = newPath;
 
-        if (game.ScreenStack.CurrentScreen is SelectScreen) Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
+        if (screens.CurrentScreen is SelectScreen) Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
     }
 
     private void loadMap(RealmMap info)

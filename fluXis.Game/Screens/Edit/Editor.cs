@@ -71,6 +71,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     [Resolved]
     private FluxelClient fluxel { get; set; }
 
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
     private ITrackStore trackStore { get; set; }
 
     private EditorLoader loader { get; }
@@ -187,7 +190,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         {
                             new("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { Enabled = HasChanges },
                             new FluXisMenuSpacer(),
-                            new("Create new difficulty", FontAwesome6.Solid.Plus, () => Game.Overlay = new EditorDifficultyCreationPanel
+                            new("Create new difficulty", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                             {
                                 OnCreateNewDifficulty = diffname => createNewDiff(diffname, false),
                                 OnCopyDifficulty = diffname => createNewDiff(diffname, true)
@@ -199,7 +202,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             },
                             new("Delete difficulty", FontAwesome6.Solid.Trash, () =>
                             {
-                                Game.Overlay = new ConfirmDeletionPanel(() =>
+                                panels.Content = new ConfirmDeletionPanel(() =>
                                 {
                                     // delete diff
                                     mapStore.DeleteDifficultyFromMapSet(Map.MapSet, Map);
@@ -335,7 +338,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void applyOffset()
     {
-        Game.Overlay = new EditorOffsetPanel
+        panels.Content = new EditorOffsetPanel
         {
             OnApplyOffset = offset => MapInfo.ApplyOffsetToAll(offset)
         };
@@ -345,7 +348,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         if (diffExists(diffname)) return;
 
-        Game.Overlay.Hide();
+        panels.Content.Hide();
         loader.CreateNewDifficulty(Map, MapInfo, diffname, copy);
 
         bool diffExists(string name)
@@ -379,7 +382,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (Map.Status >= 100)
         {
-            Game.Overlay = new ButtonPanel
+            panels.Content = new ButtonPanel
             {
                 Text = "This map is from another game!",
                 SubText = "You can edit and playtest, but not save or upload.",
@@ -475,7 +478,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         if (HasChanges() && !exitConfirmed && Map.Status < 100)
         {
-            Game.Overlay ??= new ButtonPanel
+            panels.Content ??= new ButtonPanel
             {
                 Text = "There are unsaved changes.",
                 SubText = "Are you sure you want to exit?",
@@ -516,7 +519,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         exitAnimation();
         clock.Stop();
         globalClock.Seek((float)clock.CurrentTime);
-        Game.Overlay?.Hide();
+        panels.Content?.Hide();
         return base.OnExiting(e);
     }
 
@@ -789,7 +792,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             SubText = "Checking for duplicate diffs..."
         };
 
-        Schedule(() => Game.Overlay = overlay);
+        Schedule(() => panels.Content = overlay);
 
         // check for duplicate diffs
         var diffs = Map.MapSet.Maps.Select(m => m.Difficulty).ToList();

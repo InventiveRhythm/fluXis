@@ -5,6 +5,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Skinning;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -27,7 +28,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
     private BindableBool buttonsEnabled;
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skinManager, FluXisGameBase gameBase)
+    private void load(SkinManager skinManager, [CanBeNull] FluXisGame game, PanelContainer panels)
     {
         buttonsEnabled = new BindableBool(true);
 
@@ -52,7 +53,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 Label = strings.SkinOpenEditor,
                 Description = strings.SkinOpenEditorDescription,
                 ButtonText = "Open",
-                Action = gameBase.OpenSkinEditor,
+                Action = () => game?.OpenSkinEditor(),
                 EnabledBindable = buttonsEnabled
             },
             new SettingsButton
@@ -82,7 +83,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
                     if (skinManager.IsDefault)
                         return;
 
-                    gameBase.Overlay = new ConfirmDeletionPanel(() => skinManager.Delete(skinManager.SkinFolder), itemName: "skin");
+                    panels.Content = new ConfirmDeletionPanel(() => skinManager.Delete(skinManager.SkinFolder), itemName: "skin");
                 }
             }
         });

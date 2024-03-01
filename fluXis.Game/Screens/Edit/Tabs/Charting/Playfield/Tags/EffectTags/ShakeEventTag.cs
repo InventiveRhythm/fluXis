@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
@@ -9,7 +10,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.EffectTags;
 public partial class ShakeEventTag : EditorTag
 {
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    private PanelContainer panels { get; set; }
 
     [Resolved]
     private EditorValues values { get; set; }
@@ -34,7 +35,7 @@ public partial class ShakeEventTag : EditorTag
 
     protected override bool OnClick(ClickEvent e)
     {
-        game.Overlay = new ShakeEditorPanel
+        panels.Content = new ShakeEditorPanel
         {
             Event = Shake,
             MapEvents = values.MapEvents,

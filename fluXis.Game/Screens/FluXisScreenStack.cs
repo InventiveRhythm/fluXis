@@ -18,10 +18,12 @@ public partial class FluXisScreenStack : ScreenStack
 
     public bool AllowMusicControl => CurrentScreen is FluXisScreen { AllowMusicControl: true };
 
-    public Bindable<UserActivity> Activity { get; init; } = new();
+    private Bindable<UserActivity> activity { get; } = new();
 
-    public FluXisScreenStack()
+    public FluXisScreenStack(Bindable<UserActivity> activity = null)
     {
+        this.activity = activity ?? this.activity;
+
         RelativeSizeAxes = Axes.Both;
         ScreenPushed += updateScreen;
         ScreenExited += updateScreen;
@@ -31,12 +33,12 @@ public partial class FluXisScreenStack : ScreenStack
     {
         if (last is FluXisScreen lastScreen)
         {
-            Activity.UnbindFrom(lastScreen.Activity);
+            activity.UnbindFrom(lastScreen.Activity);
         }
 
         if (next is FluXisScreen nextScreen)
         {
-            Activity.BindTo(nextScreen.Activity);
+            activity.BindTo(nextScreen.Activity);
 
             if (nextScreen.ApplyValuesAfterLoad && !nextScreen.IsLoaded) nextScreen.OnLoadComplete += _ => updateValues(nextScreen);
             else updateValues(nextScreen);
