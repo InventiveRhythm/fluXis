@@ -14,6 +14,8 @@ public partial class TestMultiResults : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(MapStore store)
     {
+        CreateClock();
+
         var background = new GlobalBackground();
         TestDependencies.Cache(background);
         Add(background);

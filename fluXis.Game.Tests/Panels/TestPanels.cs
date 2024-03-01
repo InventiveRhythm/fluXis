@@ -10,6 +10,8 @@ public partial class TestPanels : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
+        CreateClock();
+
         var panelContainer = new PanelContainer();
         Add(panelContainer);
 

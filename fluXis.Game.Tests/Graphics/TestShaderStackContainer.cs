@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Shaders;
 using fluXis.Game.Graphics.Shaders.Chromatic;
@@ -27,15 +26,17 @@ public partial class TestShaderStackContainer : FluXisTestScene
         const string map_id = "3b55b380-e533-4eea-bf16-4b98d9776583";
 
         var map = maps.GetFromGuid(set_id)?.Maps.FirstOrDefault(m => m.ID == Guid.Parse(map_id));
-        if (map is null) return;
 
-        var clock = new GlobalClock();
-        TestDependencies.Cache(clock);
+        if (map is null)
+            return;
+
+        CreateClock();
 
         var backgrounds = new GlobalBackground();
         TestDependencies.Cache(backgrounds);
 
         var screenStack = new FluXisScreenStack { RelativeSizeAxes = Axes.Both };
+        TestDependencies.Cache(screenStack);
 
         var stack = new ShaderStackContainer { RelativeSizeAxes = Axes.Both };
 
@@ -53,7 +54,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
 
         stack.AddContent(new Drawable[]
         {
-            clock,
+            GlobalClock,
             backgrounds,
             screenStack
         });

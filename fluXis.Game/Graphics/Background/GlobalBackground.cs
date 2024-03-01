@@ -17,7 +17,7 @@ namespace fluXis.Game.Graphics.Background;
 public partial class GlobalBackground : CompositeDrawable
 {
     [Resolved]
-    private GlobalClock clock { get; set; }
+    private IAmplitudeProvider amplitudeProvider { get; set; }
 
     public RealmMap DefaultMap { get; init; }
     public float InitialBlur { get; init; } = 0.01f;
@@ -103,7 +103,7 @@ public partial class GlobalBackground : CompositeDrawable
 
         if (backgroundPulse.Value)
         {
-            var amplitude = clock.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
+            var amplitude = amplitudeProvider.Amplitudes.Where((_, i) => i is > 0 and < 4).ToList().Average();
             Scale = new Vector2(1 + amplitude * .02f);
         }
 

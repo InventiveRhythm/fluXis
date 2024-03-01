@@ -1,3 +1,5 @@
+using System;
+using fluXis.Game.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Testing;
 
@@ -6,6 +8,18 @@ namespace fluXis.Game.Tests;
 public partial class FluXisTestScene : TestScene
 {
     protected DependencyContainer TestDependencies { get; private set; }
+    protected GlobalClock GlobalClock => TestDependencies.Get<GlobalClock>();
+
+    protected void CreateClock()
+    {
+        var clock = new GlobalClock();
+        TestDependencies.CacheAs(clock);
+        TestDependencies.CacheAs<IBeatSyncProvider>(clock);
+        TestDependencies.CacheAs<IAmplitudeProvider>(clock);
+    }
+
+    protected void CreateDummyBeatSync() => TestDependencies.CacheAs<IBeatSyncProvider>(new DummyBeatSyncProvider());
+    protected void CreateDummyAmplitude() => TestDependencies.CacheAs<IAmplitudeProvider>(new DummyAmplitudeProvider());
 
     protected override ITestSceneTestRunner CreateRunner() => new FluXisTestSceneTestRunner();
 
@@ -23,5 +37,17 @@ public partial class FluXisTestScene : TestScene
         }
 
         public void RunTestBlocking(TestScene test) => runner.RunTestBlocking(test);
+    }
+
+    private class DummyBeatSyncProvider : IBeatSyncProvider
+    {
+        public double StepTime => 200;
+        public double BeatTime => StepTime * 4;
+        public Action<int> OnBeat { get; set; }
+    }
+
+    private class DummyAmplitudeProvider : IAmplitudeProvider
+    {
+        public float[] Amplitudes { get; } = new float[256];
     }
 }

@@ -5,7 +5,6 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Scores;
-using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens;
@@ -19,8 +18,13 @@ namespace fluXis.Game.Tests.Results;
 public partial class TestNewResults : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(MapStore maps, GlobalBackground backgrounds, Toolbar toolbar)
+    private void load(MapStore maps)
     {
+        CreateClock();
+
+        var backgrounds = new GlobalBackground();
+        TestDependencies.Cache(backgrounds);
+
         var score = new ScoreInfo
         {
             Accuracy = 98.661736f,
@@ -46,8 +50,7 @@ public partial class TestNewResults : FluXisTestScene
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Top = 60 },
                 Child = stack
-            },
-            toolbar
+            }
         });
 
         var set = maps.GetFromGuid("9896365c-5541-4612-9f39-5a44aa1012ed");

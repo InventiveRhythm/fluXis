@@ -1,11 +1,15 @@
 using fluXis.Game.Overlay.Settings;
+using osu.Framework.Allocation;
 
 namespace fluXis.Game.Tests.Settings;
 
 public partial class TestSettingsMenu : FluXisTestScene
 {
-    public TestSettingsMenu()
+    [BackgroundDependencyLoader]
+    private void load()
     {
+        CreateClock();
+
         var menu = new SettingsMenu();
         Add(menu);
 

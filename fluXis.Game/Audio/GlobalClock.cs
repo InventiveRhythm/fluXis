@@ -20,7 +20,7 @@ using osu.Framework.Timing;
 
 namespace fluXis.Game.Audio;
 
-public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
+public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock, IBeatSyncProvider, IAmplitudeProvider
 {
     [Resolved]
     private AudioManager audioManager { get; set; }

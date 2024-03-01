@@ -163,7 +163,7 @@ public partial class FluXisTextBox : BasicTextBox
     public partial class FluXisCaret : Caret
     {
         [Resolved]
-        private GlobalClock clock { get; set; }
+        private IBeatSyncProvider beatSync { get; set; }
 
         private bool shouldPulse = true;
 
@@ -193,14 +193,14 @@ public partial class FluXisTextBox : BasicTextBox
 
             base.LoadComplete();
 
-            clock.OnBeat += onBeat;
+            beatSync.OnBeat += onBeat;
         }
 
         private void onBeat(int beat)
         {
             if (!shouldPulse) return;
 
-            this.FadeIn().FadeTo(.5f, clock.BeatTime);
+            this.FadeIn().FadeTo(.5f, beatSync.BeatTime);
         }
 
         public override void Show()
@@ -236,7 +236,7 @@ public partial class FluXisTextBox : BasicTextBox
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            clock.OnBeat -= onBeat;
+            beatSync.OnBeat -= onBeat;
         }
     }
 }

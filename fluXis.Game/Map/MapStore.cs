@@ -43,7 +43,8 @@ public partial class MapStore : Component
     [Resolved]
     private AudioManager audio { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private GlobalClock clock { get; set; }
 
     [Resolved]
@@ -152,6 +153,10 @@ public partial class MapStore : Component
     public void Select(RealmMap map, bool loop = false, bool preview = true)
     {
         CurrentMap = map;
+
+        if (clock == null)
+            return;
+
         clock.Looping = loop;
 
         if (loop)

@@ -27,7 +27,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
     private SettingsDropdown<string> currentDropdown;
     private BindableBool buttonsEnabled;
 
-    [BackgroundDependencyLoader]
+    [BackgroundDependencyLoader(true)]
     private void load(SkinManager skinManager, [CanBeNull] FluXisGame game, PanelContainer panels)
     {
         buttonsEnabled = new BindableBool(true);

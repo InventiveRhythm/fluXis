@@ -11,6 +11,8 @@ public partial class TestFileSelect : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
+        CreateDummyBeatSync();
+
         AddRange(new Drawable[]
         {
             new MapBackground(null)

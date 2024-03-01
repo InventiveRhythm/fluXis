@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Overlay.Toolbar;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -13,7 +14,8 @@ public partial class FluXisScreenStack : ScreenStack
     [Resolved]
     private GlobalBackground backgrounds { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private Toolbar toolbar { get; set; }
 
     public bool AllowMusicControl => CurrentScreen is FluXisScreen { AllowMusicControl: true };
@@ -54,7 +56,8 @@ public partial class FluXisScreenStack : ScreenStack
 
     private void updateValues(FluXisScreen screen)
     {
-        if (backgrounds == null || toolbar == null) return;
+        if (backgrounds == null || toolbar == null)
+            return;
 
         backgrounds.Zoom = screen.Zoom;
         backgrounds.ParallaxStrength = screen.ParallaxStrength;

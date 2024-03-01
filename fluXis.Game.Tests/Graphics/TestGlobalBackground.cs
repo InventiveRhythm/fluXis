@@ -1,14 +1,15 @@
 using fluXis.Game.Graphics.Background;
 using osu.Framework.Allocation;
-using osu.Framework.Testing;
 
 namespace fluXis.Game.Tests.Graphics;
 
-public partial class TestGlobalBackground : TestScene
+public partial class TestGlobalBackground : FluXisTestScene
 {
     [BackgroundDependencyLoader]
     private void load()
     {
+        CreateDummyAmplitude();
+
         var stack = new GlobalBackground();
         Add(stack);
 

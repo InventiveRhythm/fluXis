@@ -10,6 +10,8 @@ public partial class TestAchievementOverlay : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
+        CreateClock();
+
         var panels = new PanelContainer();
         Add(panels);
 

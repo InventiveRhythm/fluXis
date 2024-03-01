@@ -1,14 +1,28 @@
+using fluXis.Game.Graphics.Background;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Skin;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Tests.Screens;
 
 public partial class TestSkinEditor : FluXisTestScene
 {
-    public TestSkinEditor()
+    [BackgroundDependencyLoader]
+    private void load()
     {
+        CreateClock();
+
+        var background = new GlobalBackground();
+        TestDependencies.Cache(background);
+
         var stack = new FluXisScreenStack();
-        Add(stack);
+
+        AddRange(new Drawable[]
+        {
+            background,
+            stack
+        });
 
         AddStep("Push Skin Editor", () => stack.Push(new SkinEditor()));
     }

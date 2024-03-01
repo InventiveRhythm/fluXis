@@ -19,7 +19,7 @@ public partial class DebugSection : SettingsSection
 
     private SettingsDebugStrings strings => LocalizationStrings.Settings.Debug;
 
-    [BackgroundDependencyLoader]
+    [BackgroundDependencyLoader(true)]
     private void load(FrameworkConfigManager frameworkConfig, FluXisGameBase game, PanelContainer panels)
     {
         AddRange(new Drawable[]

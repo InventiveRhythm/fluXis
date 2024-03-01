@@ -401,6 +401,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         base.Dispose(isDisposing);
 
+        clock.Stop();
         backgroundDim.UnbindAll();
         backgroundBlur.UnbindAll();
     }

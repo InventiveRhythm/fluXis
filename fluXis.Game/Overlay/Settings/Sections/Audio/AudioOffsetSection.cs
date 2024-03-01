@@ -19,7 +19,7 @@ public partial class AudioOffsetSection : SettingsSubSection
 
     private SettingsAudioStrings strings => LocalizationStrings.Settings.Audio;
 
-    [BackgroundDependencyLoader]
+    [BackgroundDependencyLoader(true)]
     private void load(FluXisScreenStack screens, SettingsMenu settings)
     {
         AddRange(new Drawable[]
