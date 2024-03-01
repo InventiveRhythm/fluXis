@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Storyboards;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -132,6 +133,8 @@ public class MapInfo
         var content = File.ReadAllText(MapFiles.GetFullPath(effectFile));
         return MapEvents.Load<T>(content);
     }
+
+    public Storyboard GetStoryboard() => new();
 
     public TimingPoint GetTimingPoint(double time)
     {

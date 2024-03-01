@@ -129,13 +129,24 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
 
         if (newPath == trackPath) return;
 
-        loadMap(e.NewValue);
+        LoadMap(e.NewValue);
         trackPath = newPath;
 
         if (screens.CurrentScreen is SelectScreen) Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
     }
 
-    private void loadMap(RealmMap info)
+    public void LoadVirtual(float length = 10000)
+    {
+        AllowLimitedLoop = false; // reset
+        Volume = 1;
+
+        Stop();
+        Seek(0);
+        ChangeSource(realmTrackStore.GetVirtual(length));
+        Start();
+    }
+
+    public void LoadMap(RealmMap info)
     {
         AllowLimitedLoop = true; // reset
         Volume = 1;
