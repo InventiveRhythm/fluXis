@@ -45,6 +45,22 @@ public class OsuImport : MapImporter
 
             var osz = ZipFile.OpenRead(path);
 
+            var sb = osz.Entries.FirstOrDefault(e => e.FullName.EndsWith(".osb"))?.FullName;
+
+            if (sb != null)
+            {
+                var entry = osz.GetEntry(sb);
+
+                if (entry == null)
+                    throw new Exception("Storyboard file not found");
+
+                var data = new StreamReader(entry.Open()).ReadToEnd();
+                var storyboard = new OsuStoryboardParser().Parse(data);
+                var json = storyboard.Serialize();
+                WriteFile(json, folder, $"{sb}.fsb");
+                sb = $"{sb}.fsb";
+            }
+
             var success = 0;
             var failed = 0;
 
@@ -55,28 +71,15 @@ public class OsuImport : MapImporter
                     try
                     {
                         var map = parseOsuMap(entry);
-                        var json = map.ToMapInfo().Serialize();
-                        WriteFile(json, folder, $"{entry.FullName}.fsc");
+                        var info = map.ToMapInfo();
+                        info.StoryboardFile = sb ?? string.Empty;
+                        WriteFile(info.Serialize(), folder, $"{entry.FullName}.fsc");
                         success++;
                     }
                     catch (Exception e)
                     {
                         Logger.Error(e, "Error while importing osu! map");
                         failed++;
-                    }
-                }
-                else if (entry.FullName.EndsWith(".osb"))
-                {
-                    try
-                    {
-                        var data = new StreamReader(entry.Open()).ReadToEnd();
-                        var storyboard = new OsuStoryboardParser().Parse(data);
-                        var json = storyboard.Serialize();
-                        WriteFile(json, folder, $"{entry.FullName}.fsb");
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e, "Error while importing osu! storyboard");
                     }
                 }
                 else
