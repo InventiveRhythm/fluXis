@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Game.Map;
@@ -91,7 +92,10 @@ public class OsuMap
         keyCounts.Sort();
 
         foreach (var hitObject in HitObjects)
-            mapInfo.HitObjects.Add(hitObject.ToHitObjectInfo(keyCounts.IndexOf(hitObject.X)));
+        {
+            var lane = (int)Math.Floor(hitObject.X * CircleSize / 512);
+            mapInfo.HitObjects.Add(hitObject.ToHitObjectInfo(lane));
+        }
 
         foreach (var timingPoint in TimingPoints)
         {

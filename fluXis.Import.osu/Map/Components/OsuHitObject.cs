@@ -11,10 +11,13 @@ public class OsuHitObject
 
     public HitObject ToHitObjectInfo(int lane)
     {
-        float holdTime = 0;
-        if (EndTime > 0) holdTime = EndTime - StartTime;
+        var holdTime = 0f;
 
-        if (holdTime < 0) holdTime = 0;
+        if (EndTime > 0)
+            holdTime = EndTime - StartTime;
+
+        if (holdTime < 0)
+            holdTime = 0;
 
         return new HitObject
         {
