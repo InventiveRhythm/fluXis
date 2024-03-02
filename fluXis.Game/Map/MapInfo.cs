@@ -9,7 +9,6 @@ using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Map;
 
@@ -138,20 +137,37 @@ public class MapInfo
         return MapEvents.Load<T>(content);
     }
 
-    public Storyboard GetStoryboard()
+    public virtual Storyboard GetStoryboard()
     {
-        var path = MapFiles.GetFullPath(Map?.MapSet.GetPathForFile(StoryboardFile));
+        var file = Map?.MapSet.GetPathForFile(StoryboardFile);
 
-        Logger.Log($"Loading storyboard from {path}");
+        if (string.IsNullOrEmpty(file))
+            return new Storyboard();
+
+        var path = MapFiles.GetFullPath(file);
+
         if (string.IsNullOrEmpty(path) || !File.Exists(path))
             return new Storyboard();
 
         var json = File.ReadAllText(path);
-        Logger.Log($"Loaded storyboard from {path}");
         return json.Deserialize<Storyboard>();
     }
 
-    public DrawableStoryboard CreateDrawableStoryboard() => new(GetStoryboard(), MapFiles.GetFullPath(Map!.MapSet.ID.ToString()));
+    public virtual DrawableStoryboard CreateDrawableStoryboard()
+    {
+        var sb = GetStoryboard();
+        var folderName = Map?.MapSet.ID.ToString();
+
+        if (string.IsNullOrEmpty(folderName))
+            return new DrawableStoryboard(sb, ".");
+
+        var path = MapFiles.GetFullPath(folderName);
+
+        if (!Directory.Exists(path))
+            return new DrawableStoryboard(sb, ".");
+
+        return new DrawableStoryboard(sb, MapFiles.GetFullPath(Map!.MapSet.ID.ToString()));
+    }
 
     public TimingPoint GetTimingPoint(double time)
     {
