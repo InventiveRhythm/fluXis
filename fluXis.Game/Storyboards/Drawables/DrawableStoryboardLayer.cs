@@ -33,6 +33,7 @@ public partial class DrawableStoryboardLayer : Container<DrawableStoryboardEleme
             {
                 StoryboardElementType.Box => new DrawableStoryboardBox(element),
                 StoryboardElementType.Sprite => new DrawableStoryboardSprite(element),
+                StoryboardElementType.Text => new DrawableStoryboardText(element),
                 _ => new DrawableStoryboardElement(element),
             };
 

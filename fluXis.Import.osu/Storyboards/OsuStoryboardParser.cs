@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -107,7 +108,7 @@ public class OsuStoryboardParser
                         Origin = origin,
                         StartX = x,
                         StartY = y,
-                        Parameters = new Dictionary<string, string>
+                        Parameters = new Dictionary<string, JToken>
                         {
                             { "file", path }
                         }

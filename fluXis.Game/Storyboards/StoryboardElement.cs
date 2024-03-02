@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Storyboards;
@@ -54,7 +55,7 @@ public class StoryboardElement
     public uint Color { get; set; } = 0xFFFFFFFF;
 
     [JsonProperty("parameters")]
-    public Dictionary<string, string> Parameters { get; set; } = new();
+    public Dictionary<string, JToken> Parameters { get; set; } = new();
 
     [JsonProperty("animations")]
     public List<StoryboardAnimation> Animations { get; set; } = new();

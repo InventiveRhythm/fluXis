@@ -19,11 +19,13 @@ public partial class DrawableStoryboardSprite : DrawableStoryboardElement
     private void load(StoryboardStorage storage)
     {
         AutoSizeAxes = Axes.Both;
-        Name = Element.Parameters["file"];
+
+        var file = Element.Parameters["file"].ToObject<string>();
+        Name = file;
 
         InternalChild = new Sprite
         {
-            Texture = storage.Textures.Get(Element.Parameters["file"])
+            Texture = storage.Textures.Get(file)
         };
     }
 }
