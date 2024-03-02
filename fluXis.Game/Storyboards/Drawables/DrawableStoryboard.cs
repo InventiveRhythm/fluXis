@@ -8,14 +8,14 @@ namespace fluXis.Game.Storyboards.Drawables;
 
 public partial class DrawableStoryboard : CompositeDrawable
 {
-    private Storyboard storyboard { get; }
+    public Storyboard Storyboard { get; }
     private string path { get; }
 
     private StoryboardStorage storage { get; set; }
 
     public DrawableStoryboard(Storyboard storyboard, string path)
     {
-        this.storyboard = storyboard;
+        Storyboard = storyboard;
         this.path = path;
     }
 
@@ -26,5 +26,5 @@ public partial class DrawableStoryboard : CompositeDrawable
     }
 
     public DrawableStoryboardLayer GetLayer(StoryboardLayer layer)
-        => new(storage, storyboard.Elements.Where(e => e.Layer == layer).ToList());
+        => new(storage, Storyboard.Elements.Where(e => e.Layer == layer).ToList());
 }

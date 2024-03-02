@@ -7,6 +7,7 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Utils;
+using osuTK;
 
 namespace fluXis.Import.osu.Storyboards;
 
@@ -22,7 +23,10 @@ public class OsuStoryboardParser
     public Storyboard Parse(string data)
     {
         var lines = data.Split("\n");
-        storyboard = new Storyboard();
+        storyboard = new Storyboard
+        {
+            Resolution = new Vector2(widescreen_width, 480)
+        };
 
         var idx = 0;
 

@@ -36,17 +36,20 @@ using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
+using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay;
 
@@ -116,6 +119,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private GameplayKeybindContainer keybindContainer;
     private GlobalBackground background;
     private BackgroundVideo backgroundVideo;
+    private Box backgroundDimBox;
     private GameplayClockContainer clockContainer;
     public Playfield Playfield { get; private set; }
     private Container hud { get; set; }
@@ -235,6 +239,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             replayRecorder = new ReplayRecorder()
         }, UseGlobalOffset);
 
+        var storyboard = Map.CreateDrawableStoryboard();
+        LoadComponent(storyboard);
+
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
 
         InternalChildren = new Drawable[]
@@ -263,12 +270,21 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                 },
                                 backgroundVideo = new BackgroundVideo
                                 {
+                                    ShowDim = false,
                                     Clock = GameplayClock,
                                     Map = RealmMap,
                                     Info = Map
                                 },
+                                new DrawableStoryboardWrapper(GameplayClock, storyboard, DrawableStoryboardWrapper.StoryboardLayerGroup.Background),
+                                backgroundDimBox = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Color4.Black,
+                                    Alpha = BackgroundDim
+                                },
                                 clockContainer,
-                                new KeyOverlay()
+                                new KeyOverlay(),
+                                new DrawableStoryboardWrapper(GameplayClock, storyboard, DrawableStoryboardWrapper.StoryboardLayerGroup.Foreground)
                             }
                         },
                         hud = new Container
@@ -282,6 +298,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         },
                         CreateTextOverlay(),
                         new DangerHealthOverlay(),
+                        new DrawableStoryboardWrapper(GameplayClock, storyboard, DrawableStoryboardWrapper.StoryboardLayerGroup.Overlay),
                         new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                         new SkipOverlay(),
                     }),
@@ -311,7 +328,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 Samples.Miss();
         };
 
-        background.SetDim(BackgroundDim);
         background.ParallaxStrength = 0;
 
         Playfield.Manager.OnFinished = () =>

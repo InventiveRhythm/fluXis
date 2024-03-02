@@ -10,6 +10,7 @@ using fluXis.Import.osu.Map;
 using fluXis.Import.osu.Map.Enums;
 using fluXis.Game.Utils;
 using fluXis.Import.osu.AutoImport;
+using fluXis.Import.osu.Storyboards;
 using JetBrains.Annotations;
 using osu_database_reader.BinaryFiles;
 using osu.Framework.Bindables;
@@ -62,6 +63,20 @@ public class OsuImport : MapImporter
                     {
                         Logger.Error(e, "Error while importing osu! map");
                         failed++;
+                    }
+                }
+                else if (entry.FullName.EndsWith(".osb"))
+                {
+                    try
+                    {
+                        var data = new StreamReader(entry.Open()).ReadToEnd();
+                        var storyboard = new OsuStoryboardParser().Parse(data);
+                        var json = storyboard.Serialize();
+                        WriteFile(json, folder, $"{entry.FullName}.fsb");
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e, "Error while importing osu! storyboard");
                     }
                 }
                 else

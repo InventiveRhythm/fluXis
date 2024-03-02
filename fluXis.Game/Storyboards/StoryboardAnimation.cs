@@ -37,13 +37,13 @@ public class StoryboardAnimation
     /// <summary>
     /// The start value of the animation.
     /// </summary>
-    [JsonProperty("start")]
+    [JsonProperty("start-value")]
     public string ValueStart { get; set; }
 
     /// <summary>
     /// The end value of the animation.
     /// </summary>
-    [JsonProperty("end")]
+    [JsonProperty("end-value")]
     public string ValueEnd { get; set; }
 
     [JsonIgnore]

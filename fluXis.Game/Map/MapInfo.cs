@@ -5,8 +5,11 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Storyboards;
+using fluXis.Game.Storyboards.Drawables;
+using fluXis.Game.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Map;
 
@@ -17,6 +20,7 @@ public class MapInfo
     public string CoverFile { get; set; } = string.Empty;
     public string VideoFile { get; set; } = string.Empty;
     public string EffectFile { get; set; } = string.Empty;
+    public string StoryboardFile { get; set; } = string.Empty;
     public MapMetadata Metadata { get; set; }
     public List<HitObject> HitObjects { get; set; }
     public List<TimingPoint> TimingPoints { get; set; }
@@ -134,7 +138,20 @@ public class MapInfo
         return MapEvents.Load<T>(content);
     }
 
-    public Storyboard GetStoryboard() => new();
+    public Storyboard GetStoryboard()
+    {
+        var path = MapFiles.GetFullPath(Map?.MapSet.GetPathForFile(StoryboardFile));
+
+        Logger.Log($"Loading storyboard from {path}");
+        if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            return new Storyboard();
+
+        var json = File.ReadAllText(path);
+        Logger.Log($"Loaded storyboard from {path}");
+        return json.Deserialize<Storyboard>();
+    }
+
+    public DrawableStoryboard CreateDrawableStoryboard() => new(GetStoryboard(), MapFiles.GetFullPath(Map!.MapSet.ID.ToString()));
 
     public TimingPoint GetTimingPoint(double time)
     {
