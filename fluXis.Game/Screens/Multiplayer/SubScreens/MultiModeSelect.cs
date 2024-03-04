@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Ranked;
@@ -27,6 +28,10 @@ public partial class MultiModeSelect : MultiSubScreen
 
     private readonly Bindable<Mode> mode = new();
 
+    private const int max_clicks = 10;
+    private int clickCount;
+    private FluXisTextFlow hiddenText;
+
     private Box redBox;
     private Container buttons;
     private MultiModeButton rankedButton;
@@ -52,6 +57,16 @@ public partial class MultiModeSelect : MultiSubScreen
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
+                    hiddenText = new FluXisTextFlow
+                    {
+                        AutoSizeAxes = Axes.X,
+                        TextAnchor = Anchor.TopCentre,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        X = 200,
+                        FontSize = 48,
+                        Alpha = 0
+                    },
                     rankedButton = new MultiModeButton
                     {
                         /*Title = "Ranked",
@@ -66,6 +81,12 @@ public partial class MultiModeSelect : MultiSubScreen
                         {
                             this.Shake(200, 15);
                             redBox.FadeTo(.5f).FadeOut(600);
+
+                            if (++clickCount < max_clicks)
+                                return;
+
+                            rankedButton.FadeOut();
+                            hiddenText.FadeIn();
                         },
                         HoverAction = () => mode.Value = Mode.Ranked,
                         HoverLostAction = () => mode.Value = Mode.None
@@ -104,6 +125,14 @@ public partial class MultiModeSelect : MultiSubScreen
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        hiddenText.AddParagraph("too much clicking");
+        hiddenText.AddParagraph("no more button for you", t =>
+        {
+            var text = (FluXisSpriteText)t;
+            text.FontSize = 24;
+            text.Alpha = .8f;
+        });
 
         mode.BindValueChanged(e =>
         {
