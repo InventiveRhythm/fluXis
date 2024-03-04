@@ -16,11 +16,13 @@ public partial class MultiResultsScore : CompositeDrawable
 {
     private ScoreInfo score { get; }
     private APIUserShort user { get; }
+    private int rank { get; }
 
-    public MultiResultsScore(ScoreInfo score, APIUserShort user)
+    public MultiResultsScore(ScoreInfo score, APIUserShort user, int rank)
     {
         this.score = score;
         this.user = user;
+        this.rank = rank;
     }
 
     [BackgroundDependencyLoader]
@@ -39,6 +41,19 @@ public partial class MultiResultsScore : CompositeDrawable
                 Spacing = new Vector2(8),
                 Children = new Drawable[]
                 {
+                    new Container
+                    {
+                        Size = new Vector2(60),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Child = new FluXisSpriteText
+                        {
+                            Text = $"#{rank}",
+                            WebFontSize = 20,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre
+                        }
+                    },
                     new Container
                     {
                         Size = new Vector2(60),

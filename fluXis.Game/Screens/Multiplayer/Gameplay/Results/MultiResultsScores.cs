@@ -32,7 +32,7 @@ public partial class MultiResultsScores : FluXisScrollContainer
             Direction = FillDirection.Vertical,
             Padding = new MarginPadding(40),
             Spacing = new Vector2(0, 10),
-            ChildrenEnumerable = scores.Select(score => new MultiResultsScore(score, UserCache.GetUser(score.PlayerID)))
+            ChildrenEnumerable = scores.Select(score => new MultiResultsScore(score, UserCache.GetUser(score.PlayerID), scores.IndexOf(score) + 1))
         };
     }
 }
