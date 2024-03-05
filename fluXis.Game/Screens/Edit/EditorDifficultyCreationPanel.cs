@@ -61,7 +61,7 @@ public partial class EditorDifficultyCreationPanel : Panel
                         new FluXisButton
                         {
                             Text = "New",
-                            TooltipText = "Create a new difficulty from scratch with only metadata and timing points.",
+                            Tooltip = "Create a new difficulty from scratch with only metadata and timing points.",
                             Action = () =>
                             {
                                 if (string.IsNullOrEmpty(textBox.Text))
@@ -80,7 +80,7 @@ public partial class EditorDifficultyCreationPanel : Panel
                         new FluXisButton
                         {
                             Text = "Copy",
-                            TooltipText = "Create a new difficulty by copying the map data from an existing difficulty.",
+                            Tooltip = "Create a new difficulty by copying the map data from an existing difficulty.",
                             Action = () =>
                             {
                                 if (string.IsNullOrEmpty(textBox.Text))

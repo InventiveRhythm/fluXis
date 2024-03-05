@@ -1,83 +1,99 @@
+using System;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
-using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Panel;
 
 public partial class ButtonPanel : Panel, ICloseable
 {
-    public string Text { get; set; }
-    public string SubText { get; set; }
-    public ButtonData[] Buttons { get; set; }
-    public float ButtonWidth { get; init; } = 150;
+    public const string COMMON_CONFIRM = "Yes, do it.";
+    public const string COMMON_CANCEL = "Wait, no nevermind.";
 
-    public ButtonPanel()
-    {
-        Width = 600;
-        Height = 400;
-    }
+    public IconUsage Icon { get; init; } = FontAwesome.Solid.QuestionCircle;
+    public LocalisableString Text { get; init; } = "Default Text";
+    public LocalisableString SubText { get; init; }
+    public ButtonData[] Buttons { get; init; } = Array.Empty<ButtonData>();
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        Width = 490;
+        AutoSizeAxes = Axes.Y;
+
+        Content.RelativeSizeAxes = Axes.X;
+        Content.AutoSizeAxes = Axes.Y;
+        Content.Padding = new MarginPadding(20) { Top = 30 };
         Content.Children = new Drawable[]
         {
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Spacing = new Vector2(10),
+                Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
-                    new FluXisTextFlow
+                    new SpriteIcon
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Text = Text,
-                        FontSize = 30,
-                        TextAnchor = Anchor.TopCentre,
-                        Shadow = true
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Icon = Icon,
+                        Size = new Vector2(64),
+                        Margin = new MarginPadding { Bottom = 10 }
                     },
                     new FluXisTextFlow
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
-                        Text = SubText,
-                        FontSize = 22,
-                        Colour = FluXisColors.Text2,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
                         TextAnchor = Anchor.TopCentre,
-                        Shadow = true
+                        Text = Text,
+                        FontSize = FluXisSpriteText.GetWebFontSize(20),
+                        Shadow = false
+                    },
+                    new FluXisTextFlow
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        TextAnchor = Anchor.TopCentre,
+                        Text = SubText,
+                        FontSize = FluXisSpriteText.GetWebFontSize(14),
+                        Alpha = string.IsNullOrEmpty(SubText.ToString()) ? 0 : .8f,
+                        Shadow = false
+                    },
+                    new FillFlowContainer
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Spacing = new Vector2(10),
+                        Direction = FillDirection.Vertical,
+                        Margin = new MarginPadding { Top = 20 },
+                        ChildrenEnumerable = Buttons.Select(b => new FluXisButton
+                        {
+                            Width = 450,
+                            Height = 50,
+                            Data = b,
+                            FontSize = FluXisSpriteText.GetWebFontSize(16),
+                            Action = () =>
+                            {
+                                b.Action?.Invoke();
+                                Hide();
+                            }
+                        })
                     }
                 }
-            },
-            new FillFlowContainer
-            {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Direction = FillDirection.Full,
-                Spacing = new Vector2(20),
-                Children = Buttons.Select(b => new FluXisButton
-                {
-                    Width = ButtonWidth,
-                    Height = 50,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Data = b,
-                    Action = () =>
-                    {
-                        b.Action?.Invoke();
-                        Hide();
-                    }
-                }).ToArray()
             }
         };
     }

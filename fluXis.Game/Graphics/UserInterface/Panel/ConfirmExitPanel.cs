@@ -1,5 +1,6 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
-using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using osu.Framework.Allocation;
 
 namespace fluXis.Game.Graphics.UserInterface.Panel;
@@ -11,20 +12,12 @@ public partial class ConfirmExitPanel : ButtonPanel
 
     public ConfirmExitPanel()
     {
-        Text = "Are you sure you want to exit the game?";
+        Icon = FontAwesome6.Solid.DoorOpen;
+        Text = "Are you sure you want to exit?";
         Buttons = new ButtonData[]
         {
-            new()
-            {
-                Text = "Yes",
-                Color = FluXisColors.ButtonRed,
-                Action = () => game.Exit()
-            },
-            new()
-            {
-                Text = "No",
-                Action = Hide
-            }
+            new DangerButtonData(COMMON_CONFIRM, () => game.Exit()),
+            new CancelButtonData(COMMON_CANCEL)
         };
     }
 }

@@ -6,6 +6,7 @@ using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
@@ -152,31 +153,22 @@ public partial class FooterOptions : FocusedOverlayContainer
 
                                     panels.Content = new ButtonPanel
                                     {
+                                        Icon = FontAwesome6.Solid.Eraser,
                                         Text = "Are you sure you want to wipe all local scores for this difficulty?",
                                         SubText = "This action cannot be undone.",
-                                        ButtonWidth = 200,
                                         Buttons = new ButtonData[]
                                         {
-                                            new()
+                                            new DangerButtonData(ButtonPanel.COMMON_CONFIRM, () =>
                                             {
-                                                Text = "Yes, do it.",
-                                                Color = FluXisColors.ButtonRed,
-                                                HoldToConfirm = true,
-                                                Action = () =>
+                                                realm.RunWrite(r =>
                                                 {
-                                                    realm.RunWrite(r =>
-                                                    {
-                                                        var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
-                                                        r.RemoveRange(scores);
-                                                    });
+                                                    var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
+                                                    r.RemoveRange(scores);
+                                                });
 
-                                                    ScoresWiped?.Invoke();
-                                                }
-                                            },
-                                            new()
-                                            {
-                                                Text = "No, nevermind."
-                                            }
+                                                ScoresWiped?.Invoke();
+                                            }, true),
+                                            new CancelButtonData(ButtonPanel.COMMON_CANCEL)
                                         }
                                     };
                                 }

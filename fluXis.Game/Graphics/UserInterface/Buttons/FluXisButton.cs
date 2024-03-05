@@ -17,14 +17,13 @@ namespace fluXis.Game.Graphics.UserInterface.Buttons;
 
 public partial class FluXisButton : ClickableContainer, IHasTextTooltip
 {
-    public LocalisableString Tooltip => TooltipText;
-    public string TooltipText { get; set; }
+    public LocalisableString Tooltip { get; init; }
 
-    public int FontSize { get; set; } = 24;
+    public float FontSize { get; init; } = 24;
     public string Text { get; set; } = "Default Text";
     public Colour4 Color { get; set; } = FluXisColors.Background4;
+    public Colour4 TextColor { get; set; } = FluXisColors.Text;
     public bool HoldToConfirm { get; set; }
-    public bool FadeOnDisabled { get; init; } = true;
 
     public ButtonData Data
     {
@@ -33,6 +32,7 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
             Text = value.Text;
             Action = value.Action;
             Color = value.Color;
+            TextColor = value.TextColor;
             HoldToConfirm = value.HoldToConfirm;
         }
     }
@@ -47,8 +47,6 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
         {
             base.Enabled.Value = value;
             EnabledBindable.Value = value;
-
-            if (!FadeOnDisabled) return;
 
             if (IsLoaded)
                 this.FadeTo(value ? 1 : 0.5f, 200);
@@ -112,6 +110,7 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
                     {
                         Text = Text,
                         FontSize = FontSize,
+                        Colour = TextColor,
                         Shadow = true,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
@@ -185,7 +184,8 @@ public partial class FluXisButton : ClickableContainer, IHasTextTooltip
 public class ButtonData
 {
     public string Text { get; init; } = "Default Text";
-    public Colour4 Color { get; init; } = FluXisColors.Background2;
+    public Colour4 TextColor { get; init; } = FluXisColors.Text;
+    public Colour4 Color { get; init; } = FluXisColors.Background4;
     public Action Action { get; init; } = () => { };
     public bool HoldToConfirm { get; init; }
 }

@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.API.Models.Users;
@@ -183,20 +184,12 @@ public partial class ToolbarProfile : Container, IHasTextTooltip
 
         panels.Content = new ButtonPanel
         {
+            Icon = FontAwesome6.Solid.DoorOpen,
             Text = "Are you sure you want to log out?",
-            ButtonWidth = 200,
             Buttons = new ButtonData[]
             {
-                new()
-                {
-                    Text = "Yes, do it",
-                    Action = () => fluxel.Logout(),
-                    Color = FluXisColors.ButtonRed
-                },
-                new()
-                {
-                    Text = "No, nevermind"
-                }
+                new DangerButtonData(ButtonPanel.COMMON_CONFIRM, () => fluxel.Logout()),
+                new CancelButtonData(ButtonPanel.COMMON_CANCEL)
             }
         };
 

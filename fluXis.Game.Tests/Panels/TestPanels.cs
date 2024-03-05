@@ -21,7 +21,6 @@ public partial class TestPanels : FluXisTestScene
             {
                 Text = "Test",
                 SubText = "Test Subtext",
-                ButtonWidth = 200,
                 Buttons = new[]
                 {
                     new ButtonData

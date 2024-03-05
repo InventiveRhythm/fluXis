@@ -4,7 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
-using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -198,22 +198,16 @@ public partial class MultiLobby : MultiSubScreen
 
         panels.Content ??= new ButtonPanel
         {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
+            Icon = FontAwesome6.Solid.DoorOpen,
             Text = "Are you sure you want to exit the lobby?",
-            Buttons = new[]
+            Buttons = new ButtonData[]
             {
-                new ButtonData
+                new DangerButtonData(ButtonPanel.COMMON_CONFIRM, () =>
                 {
-                    Text = "Leave",
-                    Color = FluXisColors.ButtonRed,
-                    Action = () =>
-                    {
-                        confirmExit = true;
-                        this.Exit();
-                    }
-                },
-                new ButtonData { Text = "Stay" }
+                    confirmExit = true;
+                    this.Exit();
+                }),
+                new CancelButtonData(ButtonPanel.COMMON_CANCEL)
             }
         };
 

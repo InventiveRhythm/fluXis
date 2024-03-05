@@ -115,6 +115,7 @@ public class FontAwesome6
         public static IconUsage WindowRestore => getSolid(0xf2d2);
         public static IconUsage WineGlassEmpty => getSolid(0xf5ce);
         public static IconUsage XMark => getSolid(0xf00d);
+        public static IconUsage ExclamationTriangle => getSolid(0xf071);
     }
 
     public static class Regular

@@ -9,6 +9,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Menus;
@@ -384,11 +385,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             panels.Content = new ButtonPanel
             {
+                Icon = FontAwesome6.Solid.ExclamationTriangle,
                 Text = "This map is from another game!",
                 SubText = "You can edit and playtest, but not save or upload.",
                 Buttons = new ButtonData[]
                 {
-                    new() { Text = "Okay" }
+                    new CancelButtonData("Okay")
                 }
             };
         }
@@ -481,36 +483,25 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             panels.Content ??= new ButtonPanel
             {
+                Icon = FontAwesome6.Solid.ExclamationTriangle,
                 Text = "There are unsaved changes.",
                 SubText = "Are you sure you want to exit?",
-                Width = 800,
-                Height = 600,
-                ButtonWidth = 280,
                 Buttons = new ButtonData[]
                 {
-                    new()
+                    new PrimaryButtonData("Save and exit.", () =>
                     {
-                        Text = "Save and exit.",
-                        Color = FluXisColors.ButtonGreen,
-                        Action = () =>
-                        {
-                            if (!save()) return;
+                        if (!save())
+                            return;
 
-                            exitConfirmed = true;
-                            this.Exit();
-                        }
-                    },
-                    new()
+                        exitConfirmed = true;
+                        this.Exit();
+                    }),
+                    new DangerButtonData("Exit without saving.", () =>
                     {
-                        Text = "Exit without saving.",
-                        Color = FluXisColors.ButtonRed,
-                        Action = () =>
-                        {
-                            exitConfirmed = true;
-                            this.Exit();
-                        }
-                    },
-                    new() { Text = "Nevermind, back to editing." }
+                        exitConfirmed = true;
+                        this.Exit();
+                    }),
+                    new CancelButtonData("Nevermind, back to editing.")
                 }
             };
 

@@ -7,7 +7,7 @@ namespace fluXis.Game.Graphics.UserInterface.Text;
 
 public partial class FluXisTextFlow : TextFlowContainer
 {
-    public int FontSize { get; set; } = 20;
+    public float FontSize { get; set; } = 20;
     public bool Shadow { get; set; } = true;
 
     public FluXisTextFlow(Action<SpriteText> defaultCreationParameters = null)
