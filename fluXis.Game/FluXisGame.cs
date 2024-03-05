@@ -69,6 +69,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private FloatingNotificationContainer notificationContainer;
     private ExitAnimation exitAnimation;
 
+    private bool isExiting;
+
     private readonly BindableDouble inactiveVolume = new(1f);
 
     [UsedImplicitly]
@@ -315,11 +317,37 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             NextSong();
     }
 
+    protected override bool OnExiting()
+    {
+        if (panelContainer.Content != null && panelContainer.Content is not ConfirmExitPanel)
+        {
+            Logger.Log("Blocking exit due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);
+            var panel = panelContainer.Content as Panel;
+            panel?.Flash();
+            return true;
+        }
+
+        if (screenStack.CurrentScreen is not Screens.Menu.MenuScreen)
+        {
+            Logger.Log("Blocking exit due to non-mainmenu screen being open.", LoggingTarget.Runtime, LogLevel.Debug);
+            MenuScreen.MakeCurrent();
+            panelContainer.Content = new ConfirmExitPanel();
+            return true;
+        }
+
+        Logger.Log("Exiting...", LoggingTarget.Runtime, LogLevel.Debug);
+
+        panelContainer.Content?.Hide();
+        Schedule(Exit);
+        return !isExiting;
+    }
+
     public override void Exit()
     {
         toolbar.ShowToolbar.Value = false;
         globalClock.FadeOut(1500);
         exitAnimation.Show(buffer.Hide, base.Exit);
+        isExiting = true;
     }
 
     private void loadLocales()
