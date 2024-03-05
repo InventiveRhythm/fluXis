@@ -60,7 +60,8 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
             pointsList = new PointsList
             {
                 Alpha = 0,
-                ShowSettings = showPointSettings
+                ShowSettings = showPointSettings,
+                RequestClose = close
             },
             settingsWrapper = new ClickableContainer
             {

@@ -49,6 +49,6 @@ public partial class ScrollVelocitySettings : PointSettings<ScrollVelocity>
         Point.Time = time;
         Point.Multiplier = multiplier;
 
-        Values.MapInfo.Change(Point);
+        Values.MapInfo.Update(Point);
     }
 }

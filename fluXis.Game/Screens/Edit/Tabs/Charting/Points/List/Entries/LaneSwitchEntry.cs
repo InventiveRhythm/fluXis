@@ -10,6 +10,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.List.Entries;
 
 public partial class LaneSwitchEntry : PointListEntry
 {
+    protected override string Text => "Lane Switch";
     protected override Colour4 Color => Colour4.FromHex("#FF6666");
 
     private LaneSwitchEvent laneSwitch => Object as LaneSwitchEvent;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Points.Settings.Preset;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -15,9 +16,11 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.List;
 
 public partial class PointListEntry : Container
 {
+    protected virtual string Text => "Timed Point";
     protected virtual Colour4 Color => Colour4.White;
 
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
+    public Action RequestClose { get; set; }
     public TimedObject Object { get; }
 
     [Resolved]
@@ -74,7 +77,23 @@ public partial class PointListEntry : Container
 
     protected virtual string CreateValueText() => "";
 
-    protected virtual IEnumerable<Drawable> CreateSettings() => new Drawable[] { new PointSettingsTime(Values.MapInfo, Object) };
+    public void OpenSettings()
+    {
+        ShowSettings?.Invoke(CreateSettings());
+    }
+
+    protected virtual IEnumerable<Drawable> CreateSettings()
+    {
+        return new Drawable[]
+        {
+            new PointSettingsTitle(Text, () =>
+            {
+                Values.MapInfo.Remove(Object);
+                RequestClose?.Invoke();
+            }),
+            new PointSettingsTime(Values.MapInfo, Object)
+        };
+    }
 
     public void UpdateValues()
     {
@@ -97,7 +116,7 @@ public partial class PointListEntry : Container
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        ShowSettings?.Invoke(CreateSettings());
+        OpenSettings();
         return true;
     }
 }

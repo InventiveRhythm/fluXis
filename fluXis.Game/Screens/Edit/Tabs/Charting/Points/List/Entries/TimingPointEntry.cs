@@ -11,6 +11,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.List.Entries;
 
 public partial class TimingPointEntry : PointListEntry
 {
+    protected override string Text => "Timing Point";
     protected override Colour4 Color => Colour4.FromHex("#00FF80");
 
     private TimingPoint timing => Object as TimingPoint;

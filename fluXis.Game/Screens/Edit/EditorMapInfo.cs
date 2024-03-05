@@ -28,22 +28,28 @@ public class EditorMapInfo : MapInfo
     {
     }
 
-    public static EditorMapInfo FromMapInfo(MapInfo info)
+    public void Add(TimedObject obj)
     {
-        return new EditorMapInfo(info.Metadata)
+        switch (obj)
         {
-            AudioFile = info.AudioFile,
-            BackgroundFile = info.BackgroundFile,
-            CoverFile = info.CoverFile,
-            VideoFile = info.VideoFile,
-            EffectFile = info.EffectFile,
-            HitObjects = info.HitObjects,
-            TimingPoints = info.TimingPoints,
-            ScrollVelocities = info.ScrollVelocities,
-            InitialKeyCount = info.InitialKeyCount,
-            AccuracyDifficulty = info.AccuracyDifficulty,
-            MapEvents = info.GetMapEvents<EditorMapEvents>()
-        };
+            case HitObject hit:
+                HitObjects.Add(hit);
+                HitObjectAdded?.Invoke(hit);
+                break;
+
+            case TimingPoint timing:
+                TimingPoints.Add(timing);
+                TimingPointAdded?.Invoke(timing);
+                break;
+
+            case ScrollVelocity sv:
+                ScrollVelocities.Add(sv);
+                ScrollVelocityAdded?.Invoke(sv);
+                break;
+
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     public void Update(TimedObject obj)
@@ -68,54 +74,31 @@ public class EditorMapInfo : MapInfo
         }
     }
 
-    public void Add(HitObject hitObject)
+    public void Remove(TimedObject obj)
     {
-        HitObjects.Add(hitObject);
-        HitObjectAdded?.Invoke(hitObject);
+        switch (obj)
+        {
+            case HitObject hit:
+                HitObjects.Remove(hit);
+                HitObjectRemoved?.Invoke(hit);
+                break;
+
+            case TimingPoint timing:
+                TimingPoints.Remove(timing);
+                TimingPointRemoved?.Invoke(timing);
+                break;
+
+            case ScrollVelocity sv:
+                ScrollVelocities.Remove(sv);
+                ScrollVelocityRemoved?.Invoke(sv);
+                break;
+
+            default:
+                throw new NotImplementedException();
+        }
     }
 
-    public void Remove(HitObject hitObject)
-    {
-        HitObjects.Remove(hitObject);
-        HitObjectRemoved?.Invoke(hitObject);
-    }
-
-    public void ChangeHitSounds() =>
-        HitSoundsChanged?.Invoke();
-
-    public void Add(TimingPoint timingPoint)
-    {
-        TimingPoints.Add(timingPoint);
-        TimingPointAdded?.Invoke(timingPoint);
-    }
-
-    public void Remove(TimingPoint timingPoint)
-    {
-        TimingPoints.Remove(timingPoint);
-        TimingPointRemoved?.Invoke(timingPoint);
-    }
-
-    public void Change(TimingPoint timingPoint)
-    {
-        TimingPointChanged?.Invoke(timingPoint);
-    }
-
-    public void Add(ScrollVelocity scrollVelocity)
-    {
-        ScrollVelocities.Add(scrollVelocity);
-        ScrollVelocityAdded?.Invoke(scrollVelocity);
-    }
-
-    public void Remove(ScrollVelocity scrollVelocity)
-    {
-        ScrollVelocities.Remove(scrollVelocity);
-        ScrollVelocityRemoved?.Invoke(scrollVelocity);
-    }
-
-    public void Change(ScrollVelocity scrollVelocity)
-    {
-        ScrollVelocityChanged?.Invoke(scrollVelocity);
-    }
+    public void ChangeHitSounds() => HitSoundsChanged?.Invoke();
 
     public override T GetMapEvents<T>() => MapEvents as T;
 
@@ -140,6 +123,24 @@ public class EditorMapInfo : MapInfo
         }
 
         MapEvents.ApplyOffsetToAll(offset);
+    }
+
+    public static EditorMapInfo FromMapInfo(MapInfo info)
+    {
+        return new EditorMapInfo(info.Metadata)
+        {
+            AudioFile = info.AudioFile,
+            BackgroundFile = info.BackgroundFile,
+            CoverFile = info.CoverFile,
+            VideoFile = info.VideoFile,
+            EffectFile = info.EffectFile,
+            HitObjects = info.HitObjects,
+            TimingPoints = info.TimingPoints,
+            ScrollVelocities = info.ScrollVelocities,
+            InitialKeyCount = info.InitialKeyCount,
+            AccuracyDifficulty = info.AccuracyDifficulty,
+            MapEvents = info.GetMapEvents<EditorMapEvents>()
+        };
     }
 
     public new EditorMapInfo Clone()

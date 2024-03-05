@@ -10,6 +10,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.List.Entries;
 
 public partial class ScrollVelocityEntry : PointListEntry
 {
+    protected override string Text => "Scroll Velocity";
     protected override Colour4 Color => Colour4.FromHex("#00D4FF");
 
     private ScrollVelocity sv => Object as ScrollVelocity;

@@ -63,6 +63,6 @@ public partial class TimingPointSettings : PointSettings<TimingPoint>
         Point.BPM = bpm;
         Point.Signature = signature;
 
-        Values.MapInfo.Change(Point);
+        Values.MapInfo.Update(Point);
     }
 }
