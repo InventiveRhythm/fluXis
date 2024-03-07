@@ -836,6 +836,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
                 map.OnlineID = loadedMap.OnlineID = onlineMap.Id;
             }
+
+            var detatch = set.Detach();
+            Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), detatch));
         });
 
         Schedule(overlay.Hide);
