@@ -1,5 +1,5 @@
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Shared.Components.Maps;
+using fluXis.Shared.Components.Users;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Maps;

@@ -38,8 +38,7 @@ public static class UserCache
             {
                 ID = fluxel.LoggedInUser?.ID ?? -1,
                 Username = fluxel.LoggedInUser?.Username ?? "Guest",
-                CountryCode = fluxel.LoggedInUser?.CountryCode ?? "XX",
-                Role = fluxel.LoggedInUser?.Role ?? 0
+                CountryCode = fluxel.LoggedInUser?.CountryCode ?? "XX"
             };
         }
 

@@ -1,6 +1,6 @@
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;

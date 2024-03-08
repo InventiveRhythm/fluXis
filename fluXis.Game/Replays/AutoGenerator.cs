@@ -3,8 +3,8 @@ using System.Linq;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Gameplay.Input;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
 
 namespace fluXis.Game.Replays;

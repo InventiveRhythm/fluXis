@@ -24,7 +24,7 @@ public class MultiJoinPacket : IPacket
     public IMultiplayerRoom? Room { get; init; }
 
     [JsonProperty("user")]
-    public IAPIUserShort? Player { get; init; }
+    public APIUserShort? Player { get; init; }
 
     [JsonIgnore]
     public bool JoinRequest => Room != null;
@@ -38,5 +38,5 @@ public class MultiJoinPacket : IPacket
         => new() { LobbyID = lobbyID, Password = password };
 
     public static MultiJoinPacket CreateS2CInitialJoin(IMultiplayerRoom room) => new() { Room = room };
-    public static MultiJoinPacket CreateS2CUserJoin(IAPIUserShort player) => new() { Player = player };
+    public static MultiJoinPacket CreateS2CUserJoin(APIUserShort player) => new() { Player = player };
 }

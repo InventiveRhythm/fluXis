@@ -9,5 +9,5 @@ public class ChatMessage : IChatMessage
     public long CreatedAtUnix { get; init; }
     public string Content { get; init; } = null!;
     public string Channel { get; init; } = null!;
-    public IAPIUserShort Sender { get; init; } = null!;
+    public APIUserShort Sender { get; init; } = null!;
 }

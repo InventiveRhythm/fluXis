@@ -85,4 +85,12 @@ public class APIUser : APIUserShort, IAPIUser
             _ => "User"
         };
     }
+
+    public class APIUserSocials : IAPIUserSocials
+    {
+        public string Twitter { get; set; } = string.Empty;
+        public string Twitch { get; set; } = string.Empty;
+        public string YouTube { get; set; } = string.Empty;
+        public string Discord { get; set; } = string.Empty;
+    }
 }

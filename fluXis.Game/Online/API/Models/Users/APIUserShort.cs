@@ -1,10 +1,9 @@
 using System;
-using fluXis.Shared.Components.Users;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Users;
 
-public class APIUserShort : IAPIUserShort
+public class APIUserShortOld
 {
     [JsonProperty("id")]
     public long ID { get; set; } = -1;
@@ -25,7 +24,6 @@ public class APIUserShort : IAPIUserShort
     public int Role { get; set; }
 
     public string GetAvatarUrl(APIEndpointConfig endpoint) => endpoint.AssetUrl + "/avatar/" + ID;
-    public string GetBannerUrl(APIEndpointConfig endpoint) => endpoint.AssetUrl + "/banner/" + ID;
 
     public string GetName() => string.IsNullOrEmpty(DisplayName) ? Username : DisplayName;
 
@@ -48,24 +46,5 @@ public class APIUserShort : IAPIUserShort
             return Online.CountryCode.Unknown;
 
         return Enum.TryParse(code.ToUpper(), out CountryCode cc) ? cc : Online.CountryCode.Unknown;
-    }
-
-    public static APIUserShort Dummy => new() { ID = -1, Username = "Dummy Player" };
-    public static APIUserShort Default => new() { ID = -1, Username = "Player" };
-    public static APIUserShort AutoPlay => new() { ID = 0, Username = "AutoPlay" };
-
-    public class APIUserSocials
-    {
-        [JsonProperty("twitter")]
-        public string Twitter { get; set; } = string.Empty;
-
-        [JsonProperty("twitch")]
-        public string Twitch { get; set; } = string.Empty;
-
-        [JsonProperty("youtube")]
-        public string YouTube { get; set; } = string.Empty;
-
-        [JsonProperty("discord")]
-        public string Discord { get; set; } = string.Empty;
     }
 }

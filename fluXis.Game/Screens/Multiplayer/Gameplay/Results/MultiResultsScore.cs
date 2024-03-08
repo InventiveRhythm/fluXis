@@ -1,8 +1,8 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
@@ -72,7 +72,7 @@ public partial class MultiResultsScore : CompositeDrawable
                     },
                     new FluXisSpriteText
                     {
-                        Text = user.GetName(),
+                        Text = user.PreferredName,
                         WebFontSize = 24,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft

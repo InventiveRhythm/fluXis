@@ -1,8 +1,8 @@
 using System;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
+using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -31,7 +31,7 @@ public partial class TestDrawableCountry : FluXisTestScene
             });
         }
 
-        flow.Add(new DrawableCountry(APIUserShort.GetCountryCode("nonexisitent"))
+        flow.Add(new DrawableCountry(CountryUtils.GetCountryCode("nonexisitent"))
         {
             Width = 80
         });

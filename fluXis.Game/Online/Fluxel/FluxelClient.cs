@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Shared.API;
 using fluXis.Shared.API.Packets;
@@ -16,6 +15,7 @@ using fluXis.Shared.API.Packets.Account;
 using fluXis.Shared.API.Packets.Chat;
 using fluXis.Shared.API.Packets.Multiplayer;
 using fluXis.Shared.API.Packets.Other;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -432,7 +432,7 @@ public partial class FluxelClient : Component
             return;
         }
 
-        LoggedInUser = (APIUserShort)reply.Data.User;
+        LoggedInUser = reply.Data.User;
         Status = ConnectionStatus.Online;
     }
 
@@ -447,7 +447,7 @@ public partial class FluxelClient : Component
         }
 
         tokenBindable.Value = reply.Data!.Token;
-        LoggedInUser = (APIUserShort)reply.Data.User;
+        LoggedInUser = reply.Data.User;
         registering = false;
         Status = ConnectionStatus.Online;
     }

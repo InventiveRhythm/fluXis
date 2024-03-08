@@ -1,5 +1,4 @@
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Shared.Components.Users;
@@ -17,9 +16,9 @@ public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
 
     public bool ShowTooltip { get; set; }
 
-    private IAPIUserShort user;
+    private APIUserShort user;
 
-    public DrawableAvatar(IAPIUserShort user)
+    public DrawableAvatar(APIUserShort user)
     {
         this.user = user ?? APIUserShort.Dummy;
         Alpha = 0;

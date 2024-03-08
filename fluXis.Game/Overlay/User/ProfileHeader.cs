@@ -131,7 +131,7 @@ public partial class ProfileHeader : Container
                                             {
                                                 new FluXisSpriteText
                                                 {
-                                                    Text = user.GetName(),
+                                                    Text = user.PreferredName,
                                                     WebFontSize = 48,
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
@@ -176,7 +176,7 @@ public partial class ProfileHeader : Container
                                     new HeaderPlacementChip
                                     {
                                         Placement = user.CountryRank,
-                                        CreateIcon = () => new DrawableCountry(user.Country)
+                                        CreateIcon = () => new DrawableCountry(user.GetCountry())
                                         {
                                             Size = new Vector2(20)
                                         }

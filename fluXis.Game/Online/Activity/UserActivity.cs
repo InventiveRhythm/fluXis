@@ -1,6 +1,6 @@
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Shared.Components.Users;
 using JetBrains.Annotations;
 
 namespace fluXis.Game.Online.Activity;

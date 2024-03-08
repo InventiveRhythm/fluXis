@@ -120,7 +120,7 @@ public partial class LeaderboardUser : Container
                                 Spacing = new Vector2(6),
                                 Children = new Drawable[]
                                 {
-                                    new DrawableCountry(user.Country)
+                                    new DrawableCountry(user.GetCountry())
                                     {
                                         Width = 35,
                                         Anchor = Anchor.CentreLeft,
@@ -129,7 +129,7 @@ public partial class LeaderboardUser : Container
                                     },
                                     new FluXisSpriteText
                                     {
-                                        Text = user.Country.GetDescription(),
+                                        Text = user.GetCountry().GetDescription(),
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
                                         Shadow = true,

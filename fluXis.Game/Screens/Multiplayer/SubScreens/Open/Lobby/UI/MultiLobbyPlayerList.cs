@@ -2,8 +2,8 @@ using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Multi;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
+using fluXis.Shared.Components.Users;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -56,7 +56,7 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
     {
         foreach (var user in Room.Users)
         {
-            playerList.Add(new PlayerListEntry { User = (APIUserShort)user });
+            playerList.Add(new PlayerListEntry { User = user });
         }
     }
 

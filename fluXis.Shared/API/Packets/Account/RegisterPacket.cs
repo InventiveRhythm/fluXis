@@ -26,12 +26,12 @@ public class RegisterPacket : IPacket
     public string Token { get; set; } = null!;
 
     [JsonProperty("user")]
-    public IAPIUserShort User { get; set; } = null!;
+    public APIUserShort User { get; set; } = null!;
 
     #endregion
 
     public static RegisterPacket CreateC2S(string username, string email, string password)
         => new() { Username = username, Email = email, Password = password };
 
-    public static RegisterPacket CreateS2C(string token, IAPIUserShort user) => new() { Token = token, User = user };
+    public static RegisterPacket CreateS2C(string token, APIUserShort user) => new() { Token = token, User = user };
 }

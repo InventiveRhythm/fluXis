@@ -13,10 +13,10 @@ public interface IMultiplayerRoom
     IMultiplayerRoomSettings Settings { get; set; }
 
     [JsonProperty("host")]
-    IAPIUserShort Host { get; set; }
+    APIUserShort Host { get; set; }
 
     [JsonProperty("users")]
-    List<IAPIUserShort> Users { get; set; }
+    List<APIUserShort> Users { get; set; }
 
     [JsonProperty("maps")]
     List<IAPIMapShort> Maps { get; set; }

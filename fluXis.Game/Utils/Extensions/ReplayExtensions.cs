@@ -1,5 +1,5 @@
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Users;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
 
 namespace fluXis.Game.Utils.Extensions;

@@ -9,7 +9,7 @@ public class MultiplayerRoom : IMultiplayerRoom
 {
     public long RoomID { get; init; }
     public IMultiplayerRoomSettings Settings { get; set; } = new MultiplayerRoomSettings();
-    public IAPIUserShort Host { get; set; } = null!;
-    public List<IAPIUserShort> Users { get; set; } = null!;
+    public APIUserShort Host { get; set; } = null!;
+    public List<APIUserShort> Users { get; set; } = null!;
     public List<IAPIMapShort> Maps { get; set; } = null!;
 }

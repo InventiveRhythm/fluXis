@@ -99,8 +99,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
-        JsonUtils.RegisterTypeConversion<IAPIUserShort, APIUserShort>();
         JsonUtils.RegisterTypeConversion<IAPIUser, APIUser>();
+        JsonUtils.RegisterTypeConversion<IAPIUserSocials, APIUser.APIUserSocials>();
         JsonUtils.RegisterTypeConversion<IAPIMapShort, APIMapShort>();
         JsonUtils.RegisterTypeConversion<IMultiplayerRoom, MultiplayerRoom>();
         JsonUtils.RegisterTypeConversion<IMultiplayerRoomSettings, MultiplayerRoomSettings>();

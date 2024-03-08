@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Shared.API;
 using fluXis.Shared.API.Packets.Multiplayer;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 
@@ -37,7 +37,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         fluxel.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
-    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined((APIUserShort)reply.Data.Player);
+    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined(reply.Data.Player);
     private void onUserLeave(FluxelReply<MultiLeavePacket> reply) => impl.UserLeft(reply.Data.UserID);
     private void onReadyUpdate(FluxelReply<MultiReadyPacket> reply) => impl.ReadyStateChanged(reply.Data.PlayerID, reply.Data.Ready);
     private void onStartGame(FluxelReply<MultiStartPacket> reply) => impl.Starting();

@@ -1,6 +1,6 @@
 namespace fluXis.Shared.Components.Users;
 
-public interface IAPIUser : IAPIUserShort
+public interface IAPIUser
 {
 
 }

@@ -189,7 +189,7 @@ public partial class MapCard : Container, IHasContextMenu
                                         new TruncatingText
                                         {
                                             RelativeSizeAxes = Axes.X,
-                                            Text = $"mapped by {MapSet.Creator?.GetName()}",
+                                            Text = $"mapped by {MapSet.Creator?.PreferredName}",
                                             FontSize = 16,
                                             Shadow = true
                                         },

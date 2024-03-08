@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Online.API.Models.Multi;
-using fluXis.Game.Online.API.Models.Users;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -69,7 +69,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     {
         Scheduler.Add(() =>
         {
-            if (Room?.Users.FirstOrDefault(u => u.ID == id) is not APIUserShort user)
+            if (Room?.Users.FirstOrDefault(u => u.ID == id) is not { } user)
                 return;
 
             Room.Users.Remove(user);

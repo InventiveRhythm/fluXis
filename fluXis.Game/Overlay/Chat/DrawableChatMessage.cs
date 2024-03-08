@@ -7,7 +7,6 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.API.Models.Chat;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.User;
@@ -96,7 +95,7 @@ public partial class DrawableChatMessage : Container
             }
         };
 
-        LoadComponentAsync(new DrawableAvatar((APIUserShort)InitialMessage.Sender)
+        LoadComponentAsync(new DrawableAvatar(InitialMessage.Sender)
         {
             RelativeSizeAxes = Axes.Both,
             ShowTooltip = true

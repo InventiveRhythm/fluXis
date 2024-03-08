@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Graphics.UserInterface.Context;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Select.Info.Scores;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics;

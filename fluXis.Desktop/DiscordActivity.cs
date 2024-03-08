@@ -2,8 +2,8 @@ using System;
 using DiscordRPC;
 using fluXis.Game;
 using fluXis.Game.Online.Activity;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 
@@ -50,7 +50,7 @@ public class DiscordActivity
 
         if (user != null)
         {
-            assets.SmallImageKey = user.GetAvatarUrl(fluxel.Endpoint);
+            assets.SmallImageKey = $"{fluxel.Endpoint.AssetUrl}/avatar/{user.ID}";
             assets.SmallImageText = user.Username;
         }
 
