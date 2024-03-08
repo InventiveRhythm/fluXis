@@ -12,6 +12,7 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using fluXis.Shared.API.Packets.Chat;
+using fluXis.Shared.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -42,6 +43,14 @@ public partial class DrawableChatMessage : Container
 
         ClickableContainer avatarContainer;
 
+        var nameColor = FluXisColors.Text;
+
+        if (InitialMessage.Sender.Groups.Any())
+        {
+            var group = InitialMessage.Sender.Groups.First();
+            nameColor = Colour4.TryParseHex(group.Color, out var c) ? c : FluXisColors.Text;
+        }
+
         InternalChildren = new Drawable[]
         {
             avatarContainer = new ClickableContainer
@@ -71,7 +80,7 @@ public partial class DrawableChatMessage : Container
                             {
                                 Text = InitialMessage.Sender.Username,
                                 FontSize = 22,
-                                // Colour = InitialMessage.Sender.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(InitialMessage.Sender.Role)
+                                Colour = nameColor
                             },
                             new FluXisTooltipText
                             {
@@ -166,7 +175,7 @@ public partial class DrawableChatMessage : Container
             {
                 List<MenuItem> items = new List<MenuItem>
                 {
-                    Fluxel.LoggedInUser?.Role >= 3
+                    Fluxel.LoggedInUser?.CanModerate() ?? false
                         ? new FluXisMenuItem("Delete", MenuItemType.Dangerous, delete)
                         : new FluXisMenuItem("Report", MenuItemType.Dangerous, report)
                 };

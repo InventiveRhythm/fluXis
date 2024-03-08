@@ -1,3 +1,4 @@
+using fluXis.Shared.Components.Groups;
 using Newtonsoft.Json;
 
 namespace fluXis.Shared.Components.Users;
@@ -16,11 +17,11 @@ public class APIUserShort
     [JsonProperty("country")]
     public string? CountryCode { get; init; }
 
-    [JsonProperty("role")]
-    public int Role { get; init; }
+    [JsonProperty("groups")]
+    public List<IAPIGroup> Groups { get; init; } = new();
 
     [JsonIgnore]
-    public string PreferredName => DisplayName ?? Username;
+    public string PreferredName => string.IsNullOrWhiteSpace(DisplayName) ? Username : DisplayName;
 
     [JsonIgnore]
     public string NameWithApostrophe

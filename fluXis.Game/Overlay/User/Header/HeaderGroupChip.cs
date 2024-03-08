@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Shared.Components.Groups;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,9 +10,14 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User.Header;
 
-public partial class HeaderRoleChip : Container
+public partial class HeaderGroupChip : Container
 {
-    public int RoleId { get; init; } = 0;
+    private IAPIGroup group { get; }
+
+    public HeaderGroupChip(IAPIGroup group)
+    {
+        this.group = group;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -20,6 +26,8 @@ public partial class HeaderRoleChip : Container
         Height = 30;
         CornerRadius = 15;
         Masking = true;
+
+        var color = Colour4.FromHex(group.Color);
 
         InternalChildren = new Drawable[]
         {
@@ -42,13 +50,13 @@ public partial class HeaderRoleChip : Container
                     {
                         Icon = getIcon(),
                         Size = new Vector2(18),
-                        Colour = FluXisColors.GetRoleColor(RoleId)
+                        Colour = color
                     },
                     new FluXisSpriteText
                     {
-                        Text = getText(),
+                        Text = group.Name,
                         WebFontSize = 14,
-                        Colour = FluXisColors.GetRoleColor(RoleId)
+                        Colour = color
                     }
                 }
             }
@@ -57,27 +65,14 @@ public partial class HeaderRoleChip : Container
 
     private IconUsage getIcon()
     {
-        return RoleId switch
+        return group.ID switch
         {
-            1 => FontAwesome6.Solid.Star,
-            2 => FontAwesome6.Solid.Diamond, // we dont have the icon that the website uses
-            3 => FontAwesome6.Solid.ShieldHalved,
-            4 => FontAwesome6.Solid.UserShield,
-            5 => FontAwesome6.Solid.UserAstronaut,
+            "fa" => FontAwesome6.Solid.Star,
+            "purifier" => FontAwesome6.Solid.Diamond, // we dont have the icon that the website uses
+            "moderators" => FontAwesome6.Solid.ShieldHalved,
+            "dev" => FontAwesome6.Solid.UserShield,
+            "bot" => FontAwesome6.Solid.UserAstronaut,
             _ => FontAwesome6.Solid.User
-        };
-    }
-
-    private string getText()
-    {
-        return RoleId switch
-        {
-            1 => "Featured Artist",
-            2 => "Purifier",
-            3 => "Moderator",
-            4 => "Admin",
-            5 => "fluxel",
-            _ => "User"
         };
     }
 }

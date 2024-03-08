@@ -1,8 +1,10 @@
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Online.API.Models.Groups;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
@@ -108,11 +110,22 @@ public partial class ProfileHeader : Container
                                             AutoSizeAxes = Axes.Y,
                                             Children = new[]
                                             {
-                                                new HeaderRoleChip
+                                                new FillFlowContainer
                                                 {
-                                                    RoleId = user.Role,
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Direction = FillDirection.Horizontal,
+                                                    Spacing = new Vector2(10),
+                                                    ChildrenEnumerable = user.Groups.Any()
+                                                        ? user.Groups.Select(g => new HeaderGroupChip(g))
+                                                        : new Drawable[]
+                                                        {
+                                                            new HeaderGroupChip(new APIGroup
+                                                            {
+                                                                ID = "member",
+                                                                Name = "Member",
+                                                                Color = "#AA99FF"
+                                                            })
+                                                        }
                                                 },
                                                 getOnlineStatus().With(d =>
                                                 {

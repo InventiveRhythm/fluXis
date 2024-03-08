@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
@@ -214,12 +215,20 @@ public partial class LeaderboardUser : Container
             Spacing = new Vector2(6)
         };
 
+        var color = FluXisColors.Text;
+
+        if (user.Groups.Any())
+        {
+            var group = user.Groups.First();
+            color = Colour4.TryParseHex(group.Color, out var c) ? c : color;
+        }
+
         if (string.IsNullOrEmpty(user.DisplayName) || user.DisplayName == user.Username)
         {
             flow.Child = new FluXisSpriteText
             {
                 Text = user.Username,
-                Colour = user.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(user.Role),
+                Colour = color,
                 FontSize = 36,
                 Shadow = true
             };
@@ -231,7 +240,7 @@ public partial class LeaderboardUser : Container
                 new FluXisSpriteText
                 {
                     Text = user.DisplayName,
-                    Colour = user.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(user.Role),
+                    Colour = color,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     FontSize = 36,

@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
@@ -71,12 +72,11 @@ public partial class UserCard : Container
                         Direction = FillDirection.Vertical,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        Children = new Drawable[]
+                        Children = new[]
                         {
                             new FluXisSpriteText
                             {
                                 Text = string.IsNullOrEmpty(User.DisplayName) ? User.Username : User.DisplayName,
-                                Colour = FluXisColors.GetNameColor(User.Role),
                                 Shadow = true,
                                 FontSize = 24
                             },
@@ -87,20 +87,15 @@ public partial class UserCard : Container
                                 Colour = FluXisColors.Text2,
                                 FontSize = 14
                             },
-                            new FluXisSpriteText
-                            {
-                                Text = User.Role switch
+                            !User.Groups.Any()
+                                ? Empty()
+                                : new FluXisSpriteText
                                 {
-                                    1 => "Featured Artist",
-                                    2 => "Purifier",
-                                    3 => "Moderator",
-                                    4 => "Admin",
-                                    _ => "User"
-                                },
-                                Colour = FluXisColors.GetRoleColor(User.Role),
-                                Shadow = true,
-                                FontSize = 16
-                            }
+                                    Text = User.Groups.First().Name,
+                                    Colour = Colour4.FromHex(User.Groups.First().Color),
+                                    Shadow = true,
+                                    FontSize = 16
+                                }
                         }
                     }
                 }
