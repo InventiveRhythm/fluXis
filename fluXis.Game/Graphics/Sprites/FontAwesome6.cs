@@ -58,6 +58,8 @@ public class FontAwesome6
         public static IconUsage HardDrive => getSolid(0xf0a0);
         public static IconUsage Hashtag => getSolid(0x23);
         public static IconUsage Headphones => getSolid(0xf025);
+        public static IconUsage Heart => getSolid(0xf004);
+        public static IconUsage HeartCrack => getSolid(0xf7a9);
         public static IconUsage House => getSolid(0xf015);
         public static IconUsage Image => getSolid(0xf03e);
         public static IconUsage Images => getSolid(0xf302);

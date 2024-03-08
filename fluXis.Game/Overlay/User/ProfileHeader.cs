@@ -146,6 +146,7 @@ public partial class ProfileHeader : Container
                                                 {
                                                     Text = user.PreferredName,
                                                     WebFontSize = 48,
+                                                    Shadow = true,
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
                                                 },
@@ -153,6 +154,7 @@ public partial class ProfileHeader : Container
                                                 {
                                                     Text = user.Username,
                                                     WebFontSize = 24,
+                                                    Shadow = true,
                                                     Alpha = string.IsNullOrEmpty(user.DisplayName) ? 0 : .8f,
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
@@ -173,6 +175,8 @@ public partial class ProfileHeader : Container
                             new FillFlowContainer
                             {
                                 AutoSizeAxes = Axes.Both,
+                                AutoSizeDuration = 400,
+                                AutoSizeEasing = Easing.OutQuint,
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(10),
                                 Children = new Drawable[]
@@ -199,6 +203,8 @@ public partial class ProfileHeader : Container
                             new FillFlowContainer
                             {
                                 AutoSizeAxes = Axes.Both,
+                                AutoSizeDuration = 400,
+                                AutoSizeEasing = Easing.OutQuint,
                                 Direction = FillDirection.Horizontal,
                                 Spacing = new Vector2(10),
                                 Anchor = Anchor.CentreRight,
@@ -209,11 +215,9 @@ public partial class ProfileHeader : Container
                                     {
                                         Icon = FontAwesome6.Solid.ShareNodes
                                     },
-                                    new HeaderButton
+                                    new HeaderFollowButton(user)
                                     {
-                                        Icon = FontAwesome6.Solid.UserPlus,
-                                        Alpha = user.ID == fluxel.LoggedInUser?.ID ? 0 : 1,
-                                        Text = "Follow"
+                                        Alpha = fluxel.LoggedInUser?.ID == user.ID ? 0 : 1
                                     }
                                 }
                             }
@@ -231,6 +235,7 @@ public partial class ProfileHeader : Container
             return new FluXisSpriteText
             {
                 Text = "Currently Online",
+                Shadow = true,
                 WebFontSize = 16
             };
         }
@@ -245,12 +250,14 @@ public partial class ProfileHeader : Container
                 new FluXisSpriteText
                 {
                     Text = "Last Online",
+                    Shadow = true,
                     WebFontSize = 16,
                     Alpha = .8f
                 },
                 new FluXisSpriteText
                 {
                     Text = TimeUtils.Ago(TimeUtils.GetFromSeconds(user.LastLogin)),
+                    Shadow = true,
                     WebFontSize = 16
                 }
             }

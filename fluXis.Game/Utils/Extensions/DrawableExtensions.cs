@@ -29,6 +29,15 @@ public static class DrawableExtensions
         sequence.MoveTo(Vector2.Zero, shakeDuration / 5, Easing.InSine);
     }
 
+    public static void Vibrate(this Drawable target, double duration, float magnitude)
+    {
+        target.MoveToX(magnitude, duration / 2, Easing.OutSine)
+              .Then().MoveToX(-magnitude, duration, Easing.InOutSine)
+              .Then().MoveToX(magnitude, duration, Easing.InOutSine)
+              .Then().MoveToX(-magnitude, duration, Easing.InOutSine)
+              .Then().MoveToX(0, duration / 2, Easing.InSine);
+    }
+
     public static void RunOnUpdate(this Drawable _, Scheduler scheduler, Action action)
     {
         if (ThreadSafety.IsUpdateThread)
