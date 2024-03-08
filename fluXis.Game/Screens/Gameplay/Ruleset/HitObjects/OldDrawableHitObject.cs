@@ -1,8 +1,8 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Default.HitObject;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -17,9 +17,6 @@ public partial class OldDrawableHitObject : CompositeDrawable
 
     [Resolved]
     private GameplayScreen screen { get; set; }
-
-    [Resolved]
-    private Playfield playfield { get; set; }
 
     public HitObject Data { get; }
     private double scrollVelocityTime { get; }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Online;
-using fluXis.Game.Scoring;
+using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

@@ -11,7 +11,7 @@ using fluXis.Game.Mods;
 using fluXis.Game.Replays;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Gameplay;
-using fluXis.Game.Screens.Gameplay.Replay;
+using fluXis.Game.Screens.Gameplay.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 

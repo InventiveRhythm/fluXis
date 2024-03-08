@@ -1,5 +1,4 @@
 using System;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Default.Health;
 using fluXis.Game.Skinning.Default.HitObject;
@@ -7,6 +6,7 @@ using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
 using fluXis.Game.Skinning.Default.Stage;
 using fluXis.Game.Skinning.Json;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

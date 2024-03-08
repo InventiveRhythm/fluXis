@@ -1,5 +1,5 @@
 using System.IO;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 using osu.Framework.Platform;

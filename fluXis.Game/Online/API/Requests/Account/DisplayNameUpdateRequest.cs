@@ -1,5 +1,4 @@
 using System.Net.Http;
-using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Account;
 
@@ -15,7 +14,7 @@ public class DisplayNameUpdateRequest : APIRequest<dynamic>
         this.displayName = displayName;
     }
 
-    protected override void CreatePostData(JsonWebRequest<APIResponse<dynamic>> request)
+    protected override void CreatePostData(FluXisJsonWebRequest<dynamic> request)
     {
         request.AddRaw(displayName);
     }

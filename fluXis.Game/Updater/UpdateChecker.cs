@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Configuration;
 using fluXis.Game.Updater.GitHub;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 

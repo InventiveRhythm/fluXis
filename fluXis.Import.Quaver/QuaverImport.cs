@@ -6,8 +6,8 @@ using System.IO.Compression;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Import;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Utils;
 using fluXis.Import.Quaver.Map;
+using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
@@ -111,7 +111,7 @@ public class QuaverImport : MapImporter
 
         try
         {
-            SQLiteConnection connection = new SQLiteConnection($"Data Source={dbPath};Version=3;");
+            SQLiteConnection connection = new SQLiteConnection($"Message Source={dbPath};Version=3;");
             connection.Open();
 
             SQLiteCommand command = new SQLiteCommand("SELECT * FROM Map", connection);

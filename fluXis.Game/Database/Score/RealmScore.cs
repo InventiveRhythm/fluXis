@@ -3,9 +3,9 @@ using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
-using fluXis.Game.Scoring;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Utils;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
 using JetBrains.Annotations;
 using Realms;
 
@@ -30,7 +30,7 @@ public class RealmScore : RealmObject
     public string Mods { get; set; } = string.Empty;
     public Guid MapID { get; set; }
     public DateTimeOffset Date { get; set; }
-    public int PlayerID { get; set; }
+    public long PlayerID { get; set; }
 
     [Ignored]
     public ScoreRank Rank

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using fluXis.Game.Replays;
-using fluXis.Game.Utils;
+using fluXis.Shared.Replays;
+using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Platform;
 

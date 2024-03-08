@@ -16,7 +16,7 @@ namespace fluXis.Game.Online.Drawables;
 
 public partial class UserTooltip : Container
 {
-    public int UserID { get; set; }
+    public long UserID { get; set; }
 
     private FluXisSpriteText username;
     private FluXisSpriteText onlineStatus;

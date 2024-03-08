@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
-using fluXis.Game.Scoring;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Multiplayer.Gameplay;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
 
 namespace fluXis.Game.Tests.Multiplayer;

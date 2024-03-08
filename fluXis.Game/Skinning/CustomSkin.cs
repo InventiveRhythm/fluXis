@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Custom.Health;
 using fluXis.Game.Skinning.Custom.Lighting;
 using fluXis.Game.Skinning.Json;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

@@ -1,4 +1,4 @@
-using fluXis.Game.Scoring.Structs;
+using fluXis.Shared.Scoring.Structs;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Structures;

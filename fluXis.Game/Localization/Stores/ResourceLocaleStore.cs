@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 

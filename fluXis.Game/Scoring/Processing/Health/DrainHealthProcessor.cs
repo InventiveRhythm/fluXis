@@ -1,6 +1,6 @@
 using System;
-using fluXis.Game.Scoring.Enums;
-using fluXis.Game.Scoring.Structs;
+using fluXis.Shared.Scoring.Enums;
+using fluXis.Shared.Scoring.Structs;
 
 namespace fluXis.Game.Scoring.Processing.Health;
 

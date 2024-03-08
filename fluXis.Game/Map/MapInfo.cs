@@ -6,7 +6,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

@@ -5,8 +5,9 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.API.Models.Users;
-using fluXis.Game.Scoring.Enums;
-using fluXis.Game.Scoring.Structs;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
+using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Bindables;
 
 namespace fluXis.Game.Scoring.Processing;

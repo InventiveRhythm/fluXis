@@ -11,12 +11,12 @@ using fluXis.Game.Mods;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Multiplayer.Gameplay;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Game.UI;
+using fluXis.Shared.API.Packets.Multiplayer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -136,7 +136,7 @@ public partial class MultiLobby : MultiSubScreen
     private void toggleReadyState()
     {
         ready = !ready;
-        fluxel.SendPacketAsync(new MultiplayerReadyPacket(ready));
+        fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(ready));
         readyButton.ButtonText = ready ? "Unready" : "Ready";
     }
 
@@ -191,7 +191,7 @@ public partial class MultiLobby : MultiSubScreen
             clock.Looping = false;
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
-            fluxel.SendPacketAsync(new MultiplayerLeavePacket());
+            fluxel.SendPacketAsync(new MultiLeavePacket());
             readyButton.Hide();
             return false;
         }
@@ -226,13 +226,13 @@ public partial class MultiLobby : MultiSubScreen
     {
         menuMusic.StopAll();
 
-        var map = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == Room.Maps[0].Id));
+        var map = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == Room.Maps[0].ID));
 
         if (map != null)
         {
             mapStore.CurrentMapSet = map;
 
-            var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Maps[0].Id);
+            var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Maps[0].ID);
             if (mapInfo == null) return; // what
 
             clock.FadeOut(); // because it sets itself to 1

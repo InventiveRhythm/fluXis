@@ -5,6 +5,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Screens.Gameplay.Input;
+using fluXis.Shared.Replays;
 
 namespace fluXis.Game.Replays;
 
@@ -65,7 +66,7 @@ public class AutoGenerator
                 }
             }
 
-            frames.Add(new ReplayFrame(action.First().Time, currentKeys.ToArray()));
+            frames.Add(new ReplayFrame(action.First().Time, currentKeys.Cast<int>().ToArray()));
         }
     }
 

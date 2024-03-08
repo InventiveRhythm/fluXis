@@ -5,6 +5,7 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
 using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

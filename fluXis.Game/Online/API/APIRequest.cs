@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
@@ -29,7 +30,7 @@ public class APIRequest<T> where T : class
 
         Logger.Log($"Performing API request {GetType().Name.Split('.').Last()}...", LoggingTarget.Network);
 
-        var request = new JsonWebRequest<APIResponse<T>>($"{RootUrl}{Path}");
+        var request = new FluXisJsonWebRequest<T>($"{RootUrl}{Path}");
         request.Method = Method;
         request.AllowInsecureRequests = true;
         request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
@@ -66,5 +67,23 @@ public class APIRequest<T> where T : class
         return task;
     }
 
-    protected virtual void CreatePostData(JsonWebRequest<APIResponse<T>> request) { }
+    protected virtual void CreatePostData(FluXisJsonWebRequest<T> request) { }
+}
+
+public class FluXisJsonWebRequest<T2> : JsonWebRequest<APIResponse<T2>>
+{
+    public new APIResponse<T2> ResponseObject { get; private set; }
+
+    public FluXisJsonWebRequest(string url = null, params object[] args)
+        : base(url, args)
+    {
+    }
+
+    protected override void ProcessResponse()
+    {
+        var response = GetResponseString();
+
+        if (response != null)
+            ResponseObject = response.Deserialize<APIResponse<T2>>();
+    }
 }

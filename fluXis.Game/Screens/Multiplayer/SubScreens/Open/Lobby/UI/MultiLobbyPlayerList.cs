@@ -56,7 +56,7 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
     {
         foreach (var user in Room.Users)
         {
-            playerList.Add(new PlayerListEntry { User = user });
+            playerList.Add(new PlayerListEntry { User = (APIUserShort)user });
         }
     }
 
@@ -71,7 +71,7 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
         playerList.Add(new PlayerListEntry { User = user });
     }
 
-    public void RemovePlayer(int id)
+    public void RemovePlayer(long id)
     {
         playerList.Children.FirstOrDefault(p => p.User.ID == id)?.Expire();
     }

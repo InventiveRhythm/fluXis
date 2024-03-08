@@ -1,12 +1,9 @@
-using Newtonsoft.Json;
+using fluXis.Shared.Components.Multi;
 
 namespace fluXis.Game.Online.API.Models.Multi;
 
-public class MultiplayerRoomSettings
+public class MultiplayerRoomSettings : IMultiplayerRoomSettings
 {
-    [JsonProperty("name")]
     public string Name { get; set; } = string.Empty;
-
-    [JsonProperty("password")]
     public bool HasPassword { get; set; }
 }

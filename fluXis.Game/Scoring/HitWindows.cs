@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Utils;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Scoring;

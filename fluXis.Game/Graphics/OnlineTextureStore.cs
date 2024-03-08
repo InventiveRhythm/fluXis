@@ -21,16 +21,16 @@ public class OnlineTextureStore : TextureStore
         UserCache.OnBannerUpdate = id => purge(AssetType.Banner, id);
     }
 
-    public Texture GetAvatar(int id) => get(AssetType.Avatar, id);
-    public Texture GetBanner(int id) => get(AssetType.Banner, id);
-    public Texture GetBackground(int id) => get(AssetType.Background, id);
-    public Texture GetCover(int id) => get(AssetType.Cover, id);
-    public Texture GetClubIcon(int id) => get(AssetType.ClubIcon, id);
-    public Texture GetClubBanner(int id) => get(AssetType.ClubBanner, id);
+    public Texture GetAvatar(long id) => get(AssetType.Avatar, id);
+    public Texture GetBanner(long id) => get(AssetType.Banner, id);
+    public Texture GetBackground(long id) => get(AssetType.Background, id);
+    public Texture GetCover(long id) => get(AssetType.Cover, id);
+    public Texture GetClubIcon(long id) => get(AssetType.ClubIcon, id);
+    public Texture GetClubBanner(long id) => get(AssetType.ClubBanner, id);
 
-    private Texture get(AssetType type, int id) => Get(getUrl(type, id));
+    private Texture get(AssetType type, long id) => Get(getUrl(type, id));
 
-    private string getUrl(AssetType type, int id)
+    private string getUrl(AssetType type, long id)
     {
         var typeStr = type switch
         {
@@ -48,7 +48,7 @@ public class OnlineTextureStore : TextureStore
     private static string getLookup(string name, WrapMode wrapModeS = default, WrapMode wrapModeT = default)
         => $"{name}:wrap-{(int)wrapModeS}-{(int)wrapModeT}";
 
-    private void purge(AssetType type, int id)
+    private void purge(AssetType type, long id)
     {
         var url = getUrl(type, id);
         if (TryGetCached(getLookup(url), out var tex))

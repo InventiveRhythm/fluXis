@@ -1,12 +1,13 @@
 using fluXis.Game.Online.API.Models.Clubs;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Models.Scores;
+using fluXis.Shared.Components.Users;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Users;
 
-public class APIUser : APIUserShort
+public class APIUser : APIUserShort, IAPIUser
 {
     [JsonProperty("aboutme")]
     public string AboutMe { get; set; } = string.Empty;

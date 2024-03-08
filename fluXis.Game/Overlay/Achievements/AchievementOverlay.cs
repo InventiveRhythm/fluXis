@@ -1,7 +1,8 @@
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
-using fluXis.Game.Online.API.Models.Other;
+using fluXis.Shared.Components.Other;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -43,9 +44,11 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
 
+        var color = getColor();
+
         InternalChildren = new Drawable[]
         {
-            backgroundSquare = new Square(achievement.Color)
+            backgroundSquare = new Square(color)
             {
                 Alpha = .6f
             },
@@ -57,9 +60,9 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
                     2 => 4,
                     3 => 8,
                     _ => 1
-                }).Select(_ => new Square(achievement.Color))
+                }).Select(_ => new Square(color))
             },
-            mainSquare = new Square(achievement.Color, 50)
+            mainSquare = new Square(color, 50)
             {
                 Size = new Vector2(0)
             },
@@ -68,7 +71,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
                 Size = new Vector2(0),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = achievement.Color,
+                Colour = color,
                 Rotation = 45
             },
             new Sprite
@@ -107,7 +110,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
                     }
                 }
             },
-            bigSquare = new Square(achievement.Color, 50)
+            bigSquare = new Square(color, 50)
             {
                 Size = new Vector2(2000)
             }
@@ -147,6 +150,26 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
     }
 
     public void Close() => this.ScaleTo(.9f, 400, Easing.OutQuint).FadeOut(200);
+
+    private ColourInfo getColor()
+    {
+        if (achievement.Level == 1)
+            return Colour4.FromHex("#bf8970");
+        if (achievement.Level == 2)
+            return Colour4.FromHex("#d4af37");
+        if (achievement.Level == 3)
+            return getHighestColor();
+
+        return FluXisColors.Highlight;
+    }
+
+    private static ColourInfo getHighestColor() => new()
+    {
+        TopLeft = Colour4.FromHex("#c2752c"),
+        TopRight = Colour4.FromHex("#4cb5d6"),
+        BottomLeft = Colour4.FromHex("#c37182"),
+        BottomRight = Colour4.FromHex("#b570e8")
+    };
 
     private partial class Square : CompositeDrawable
     {

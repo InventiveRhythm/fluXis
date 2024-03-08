@@ -12,7 +12,7 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Points;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
 using fluXis.Game.Screens.Gameplay;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using fluXis.Game.Online.API.Models.Maps;
-using fluXis.Game.Scoring;
-using fluXis.Game.Scoring.Enums;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Scores;
@@ -79,7 +79,7 @@ public class APIScore
             Okay = OkayCount,
             Miss = MissCount,
             HitResults = null,
-            MapID = Map.Id,
+            MapID = Map.ID,
             MapHash = null,
             ScrollSpeed = ScrollSpeed,
             Timestamp = Time,

@@ -1,12 +1,13 @@
 using System;
+using fluXis.Shared.Components.Users;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Users;
 
-public class APIUserShort
+public class APIUserShort : IAPIUserShort
 {
     [JsonProperty("id")]
-    public int ID { get; set; } = -1;
+    public long ID { get; set; } = -1;
 
     [JsonProperty("username")]
     public string Username { get; set; } = string.Empty;

@@ -1,7 +1,7 @@
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
-using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result;
+using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;

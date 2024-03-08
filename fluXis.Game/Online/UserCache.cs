@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Users;
+using fluXis.Game.Online.Fluxel;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online;
 
 public static class UserCache
 {
-    private static readonly Dictionary<int, APIUser> users = new();
-    private static Fluxel.FluxelClient fluxel;
+    private static readonly Dictionary<long, APIUser> users = new();
+    private static FluxelClient fluxel;
 
-    public static Action<int> OnAvatarUpdate { get; set; }
-    public static Action<int> OnBannerUpdate { get; set; }
+    public static Action<long> OnAvatarUpdate { get; set; }
+    public static Action<long> OnBannerUpdate { get; set; }
 
-    private static readonly Dictionary<int, List<Action>> avatar_update_callbacks = new();
-    private static readonly Dictionary<int, List<Action>> banner_update_callbacks = new();
+    private static readonly Dictionary<long, List<Action>> avatar_update_callbacks = new();
+    private static readonly Dictionary<long, List<Action>> banner_update_callbacks = new();
 
-    public static void Init(Fluxel.FluxelClient api)
+    public static void Init(FluxelClient api)
     {
         fluxel = api;
     }
 
-    public static async Task<APIUser> GetUserAsync(int id, bool forceReload = false)
+    public static async Task<APIUser> GetUserAsync(long id, bool forceReload = false)
     {
         var user = await Task.Run(() => GetUser(id, forceReload));
         return user;
     }
 
-    public static APIUser GetUser(int id, bool forceReload = false)
+    public static APIUser GetUser(long id, bool forceReload = false)
     {
         if (id == -1)
         {
@@ -73,7 +74,7 @@ public static class UserCache
         }
     }
 
-    public static List<Action> GetAvatarUpdateCallbacks(int id)
+    public static List<Action> GetAvatarUpdateCallbacks(long id)
     {
         if (!avatar_update_callbacks.ContainsKey(id))
             avatar_update_callbacks[id] = new List<Action>();
@@ -81,7 +82,7 @@ public static class UserCache
         return avatar_update_callbacks[id];
     }
 
-    public static void TriggerAvatarUpdate(int id)
+    public static void TriggerAvatarUpdate(long id)
     {
         OnAvatarUpdate?.Invoke(id);
 
@@ -91,7 +92,7 @@ public static class UserCache
             callback.Invoke();
     }
 
-    public static List<Action> GetBannerUpdateCallbacks(int id)
+    public static List<Action> GetBannerUpdateCallbacks(long id)
     {
         if (!banner_update_callbacks.ContainsKey(id))
             banner_update_callbacks[id] = new List<Action>();
@@ -99,7 +100,7 @@ public static class UserCache
         return banner_update_callbacks[id];
     }
 
-    public static void TriggerBannerUpdate(int id)
+    public static void TriggerBannerUpdate(long id)
     {
         OnBannerUpdate?.Invoke(id);
 

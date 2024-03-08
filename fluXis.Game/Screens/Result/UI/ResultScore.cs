@@ -1,8 +1,8 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map;
-using fluXis.Game.Scoring;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

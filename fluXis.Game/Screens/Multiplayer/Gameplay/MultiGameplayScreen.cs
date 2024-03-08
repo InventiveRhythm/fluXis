@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Multiplayer;
-using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay;
+using fluXis.Shared.Scoring;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Multiplayer.Gameplay;

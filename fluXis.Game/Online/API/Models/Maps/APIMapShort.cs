@@ -1,15 +1,16 @@
 using fluXis.Game.Online.API.Models.Users;
+using fluXis.Shared.Components.Maps;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Maps;
 
-public class APIMapShort
+public class APIMapShort : IAPIMapShort
 {
     [JsonProperty("id")]
-    public int Id { get; set; }
+    public long ID { get; init; }
 
     [JsonProperty("mapset")]
-    public int MapSet { get; set; }
+    public long MapSet { get; set; }
 
     [JsonProperty("hash")]
     public string Hash { get; set; } = "";

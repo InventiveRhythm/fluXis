@@ -30,6 +30,7 @@ using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;

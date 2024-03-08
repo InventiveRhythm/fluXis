@@ -1,24 +1,15 @@
 using System.Collections.Generic;
-using fluXis.Game.Online.API.Models.Maps;
-using fluXis.Game.Online.API.Models.Users;
-using Newtonsoft.Json;
+using fluXis.Shared.Components.Maps;
+using fluXis.Shared.Components.Multi;
+using fluXis.Shared.Components.Users;
 
 namespace fluXis.Game.Online.API.Models.Multi;
 
-public class MultiplayerRoom
+public class MultiplayerRoom : IMultiplayerRoom
 {
-    [JsonProperty("id")]
-    public int RoomID { get; set; }
-
-    [JsonProperty("settings")]
-    public MultiplayerRoomSettings Settings { get; set; }
-
-    [JsonProperty("host")]
-    public APIUserShort Host { get; set; }
-
-    [JsonProperty("users")]
-    public List<APIUserShort> Users { get; set; }
-
-    [JsonProperty("maps")]
-    public List<APIMapShort> Maps { get; set; }
+    public long RoomID { get; init; }
+    public IMultiplayerRoomSettings Settings { get; set; } = new MultiplayerRoomSettings();
+    public IAPIUserShort Host { get; set; } = null!;
+    public List<IAPIUserShort> Users { get; set; } = null!;
+    public List<IAPIMapShort> Maps { get; set; } = null!;
 }

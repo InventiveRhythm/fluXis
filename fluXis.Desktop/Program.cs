@@ -6,7 +6,7 @@ using fluXis.Game;
 using fluXis.Game.IPC;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using osu.Framework.Platform;
 using osu.Framework;
 using osu.Framework.Localisation;

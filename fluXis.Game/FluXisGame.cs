@@ -9,7 +9,6 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Stores;
-using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Achievements;
@@ -28,7 +27,6 @@ using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Overlay.Volume;
-using fluXis.Game.Scoring;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Result;
@@ -36,6 +34,9 @@ using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Skin;
 using fluXis.Game.Screens.Warning;
 using fluXis.Game.Utils;
+using fluXis.Shared.API.Packets.Other;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -177,15 +178,15 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             LoadComponent(MenuScreen);
         });
 
-        Fluxel.RegisterListener<Achievement>(EventType.Achievement, res =>
+        Fluxel.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
         {
-            var achievement = res.Data;
+            var achievement = res.Data.Achievement;
             Schedule(() => panelContainer.Content = new AchievementOverlay(achievement));
         });
 
-        Fluxel.RegisterListener<ServerMessage>(EventType.ServerMessage, res =>
+        Fluxel.RegisterListener<ServerMessagePacket>(EventType.ServerMessage, res =>
         {
-            var data = res.Data;
+            var data = res.Data.Message;
 
             switch (data.Type)
             {

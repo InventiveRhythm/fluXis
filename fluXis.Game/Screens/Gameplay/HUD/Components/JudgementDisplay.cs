@@ -2,8 +2,8 @@ using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Integration;
-using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
+using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -87,13 +87,13 @@ public partial class JudgementDisplay : GameplayHUDComponent
     {
         var judgement = result.Judgement;
 
-        if (hideFlawless.Value && judgement == Scoring.Enums.Judgement.Flawless) return;
+        if (hideFlawless.Value && judgement == Shared.Scoring.Enums.Judgement.Flawless) return;
 
         const int random_angle = 7;
         float scale = 1.4f;
         float rotation = 0;
 
-        if (judgement == Scoring.Enums.Judgement.Miss)
+        if (judgement == Shared.Scoring.Enums.Judgement.Miss)
         {
             scale = 1.8f;
             rotation = new Random().Next(-random_angle, random_angle);
@@ -133,7 +133,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
                   .ScaleTo(0f)
                   .ScaleTo(1.4f, 500, Easing.OutQuint);
 
-            if (judgement != Scoring.Enums.Judgement.Miss)
+            if (judgement != Shared.Scoring.Enums.Judgement.Miss)
             {
                 splash.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
                 splash.Splat();
@@ -143,7 +143,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
         lightController.FadeColour(skinManager.SkinJson.GetColorForJudgement(judgement))
                        .FadeColour(Color4.Black, 400);
 
-        if (showEarlyLate.Value && judgement != Scoring.Enums.Judgement.Flawless && judgement != Scoring.Enums.Judgement.Miss)
+        if (showEarlyLate.Value && judgement != Shared.Scoring.Enums.Judgement.Flawless && judgement != Shared.Scoring.Enums.Judgement.Miss)
         {
             bool early = result.Difference > 0;
             textEarlyLate.Text = early ? "Early" : "Late";

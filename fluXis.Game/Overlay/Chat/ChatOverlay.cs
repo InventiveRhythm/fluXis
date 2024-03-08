@@ -8,11 +8,11 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
-using fluXis.Game.Online.Chat;
+using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Chat;
 using fluXis.Game.Overlay.Chat.UI;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Shared.API.Packets.Chat;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -178,8 +178,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         textBox.OnCommit += (sender, _) =>
         {
-            fluxel.SendPacketAsync(new ChatMessagePacket(sender.Text, Channel));
-
+            fluxel.SendPacketAsync(ChatMessagePacket.CreateC2S(textBox.Text, Channel));
             sender.Text = "";
         };
 
@@ -190,7 +189,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 switch (status)
                 {
                     case ConnectionStatus.Online:
-                        fluxel.SendPacketAsync(new ChatHistoryPacket(Channel));
+                        fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
                         break;
 
                     case ConnectionStatus.Offline:
@@ -205,20 +204,25 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             });
         };
 
-        fluxel.RegisterListener<ChatMessage>(EventType.ChatMessage, response =>
+        fluxel.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, response =>
         {
-            var list = messages.GetValueOrDefault(response.Data.Channel, new List<ChatMessage>());
-            list.Add(response.Data);
-            messages[response.Data.Channel] = list;
+            if (response.Data == null)
+                return;
 
-            if (response.Data.Channel == Channel)
-                addMessage(response.Data);
+            var channel = response.Data.ChatMessage.Channel;
+            var list = messages.GetValueOrDefault(channel, new List<ChatMessage>());
+
+            var message = (ChatMessage)response.Data.ChatMessage;
+            list.Add(message);
+            messages[channel] = list;
+
+            if (channel == Channel)
+                addMessage(message);
         });
 
-        fluxel.RegisterListener<ChatMessage[]>(EventType.ChatHistory, response =>
+        fluxel.RegisterListener<ChatHistoryPacket>(EventType.ChatHistory, response =>
         {
-            var data = response.Data.OrderBy(x => x.Timestamp).ToArray();
-
+            var data = response.Data!.Messages.OrderBy(x => x.CreatedAtUnix).Cast<ChatMessage>().ToArray();
             var first = data.FirstOrDefault();
 
             if (first == null)
@@ -237,9 +241,9 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             foreach (var message in data) addMessage(message);
         });
 
-        fluxel.RegisterListener<string>(EventType.ChatMessageDelete, res =>
+        fluxel.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, res =>
         {
-            if (res.Status != 200)
+            if (!res.Success)
             {
                 notifications.SendError(res.Message);
                 return;
@@ -247,15 +251,15 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
             Schedule(() =>
             {
-                var message = flow.FirstOrDefault(x => x.Messages.Any(m => m.Id == res.Data));
-                message?.RemoveMessage(res.Data);
+                var message = flow.FirstOrDefault(x => x.Messages.Any(m => m.ID == res.Data.MessageID));
+                message?.RemoveMessage(res.Data.MessageID);
                 if (message?.Messages.Count == 0)
                     flow.Remove(message, true);
             });
         });
 
         if (fluxel.Status == ConnectionStatus.Online)
-            fluxel.SendPacketAsync(new ChatHistoryPacket(Channel));
+            fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
     }
 
     private void addMessage(ChatMessage message)

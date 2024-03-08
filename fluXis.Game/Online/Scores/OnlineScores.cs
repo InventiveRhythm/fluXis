@@ -3,7 +3,7 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Scoring;
+using fluXis.Shared.Scoring;
 
 namespace fluXis.Game.Online.Scores;
 

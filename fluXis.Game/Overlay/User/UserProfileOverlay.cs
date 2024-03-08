@@ -91,13 +91,15 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
         };
     }
 
-    public void ShowUser(int id)
+    public void ShowUser(long id)
     {
         Show();
-        if (user?.ID != id) fetch(id);
+
+        if (user?.ID != id)
+            fetch(id);
     }
 
-    private async void fetch(int id)
+    private async void fetch(long id)
     {
         user = await UserCache.GetUserAsync(id);
         if (user == null) return;

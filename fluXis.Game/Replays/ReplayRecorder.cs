@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Input;
+using fluXis.Shared.Replays;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Replays;
@@ -24,6 +26,6 @@ public partial class ReplayRecorder : Component
 
     private void captureFrame()
     {
-        Replay.Frames.Add(new ReplayFrame((float)Time.Current, currentPressed.ToArray()));
+        Replay.Frames.Add(new ReplayFrame((float)Time.Current, currentPressed.Cast<int>().ToArray()));
     }
 }

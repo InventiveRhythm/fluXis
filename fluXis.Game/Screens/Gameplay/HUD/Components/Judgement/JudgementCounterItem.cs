@@ -54,22 +54,22 @@ public partial class JudgementCounterItem : Container
     {
         switch (timing.Judgement)
         {
-            case Scoring.Enums.Judgement.Miss:
+            case Shared.Scoring.Enums.Judgement.Miss:
                 return scoreProcessor.Miss;
 
-            case Scoring.Enums.Judgement.Okay:
+            case Shared.Scoring.Enums.Judgement.Okay:
                 return scoreProcessor.Okay;
 
-            case Scoring.Enums.Judgement.Alright:
+            case Shared.Scoring.Enums.Judgement.Alright:
                 return scoreProcessor.Alright;
 
-            case Scoring.Enums.Judgement.Great:
+            case Shared.Scoring.Enums.Judgement.Great:
                 return scoreProcessor.Great;
 
-            case Scoring.Enums.Judgement.Perfect:
+            case Shared.Scoring.Enums.Judgement.Perfect:
                 return scoreProcessor.Perfect;
 
-            case Scoring.Enums.Judgement.Flawless:
+            case Shared.Scoring.Enums.Judgement.Flawless:
                 return scoreProcessor.Flawless;
 
             default:
@@ -102,12 +102,12 @@ public partial class JudgementCounterItem : Container
         {
             text.Text = timing.Judgement switch
             {
-                Scoring.Enums.Judgement.Flawless => "FL",
-                Scoring.Enums.Judgement.Perfect => "PF",
-                Scoring.Enums.Judgement.Great => "GR",
-                Scoring.Enums.Judgement.Alright => "AL",
-                Scoring.Enums.Judgement.Okay => "OK",
-                Scoring.Enums.Judgement.Miss => "MS",
+                Shared.Scoring.Enums.Judgement.Flawless => "FL",
+                Shared.Scoring.Enums.Judgement.Perfect => "PF",
+                Shared.Scoring.Enums.Judgement.Great => "GR",
+                Shared.Scoring.Enums.Judgement.Alright => "AL",
+                Shared.Scoring.Enums.Judgement.Okay => "OK",
+                Shared.Scoring.Enums.Judgement.Miss => "MS",
                 _ => "??"
             };
         }

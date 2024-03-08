@@ -6,12 +6,13 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Text;
-using fluXis.Game.Online.Chat;
+using fluXis.Game.Online.API.Models.Chat;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Chat;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
+using fluXis.Shared.API.Packets.Chat;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -71,7 +72,7 @@ public partial class DrawableChatMessage : Container
                             {
                                 Text = InitialMessage.Sender.Username,
                                 FontSize = 22,
-                                Colour = InitialMessage.Sender.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(InitialMessage.Sender.Role)
+                                // Colour = InitialMessage.Sender.Role == 0 ? FluXisColors.Text : FluXisColors.GetRoleColor(InitialMessage.Sender.Role)
                             },
                             new FluXisTooltipText
                             {
@@ -95,7 +96,7 @@ public partial class DrawableChatMessage : Container
             }
         };
 
-        LoadComponentAsync(new DrawableAvatar(InitialMessage.Sender)
+        LoadComponentAsync(new DrawableAvatar((APIUserShort)InitialMessage.Sender)
         {
             RelativeSizeAxes = Axes.Both,
             ShowTooltip = true
@@ -120,13 +121,13 @@ public partial class DrawableChatMessage : Container
 
     public void RemoveMessage(string id)
     {
-        flow.Remove(flow.FirstOrDefault(m => m.Message.Id == id), true);
-        Messages.Remove(Messages.FirstOrDefault(m => m.Id == id));
+        flow.Remove(flow.FirstOrDefault(m => m.Message.ID == id), true);
+        Messages.Remove(Messages.FirstOrDefault(m => m.ID == id));
     }
 
     private string getTime()
     {
-        var date = TimeUtils.GetFromSeconds(InitialMessage.Timestamp);
+        var date = TimeUtils.GetFromSeconds(InitialMessage.CreatedAtUnix);
         var today = DateTimeOffset.Now;
 
         if (date.Day == today.Day && date.Month == today.Month && date.Year == today.Year)
@@ -139,7 +140,7 @@ public partial class DrawableChatMessage : Container
 
     private string getTooltip()
     {
-        var date = TimeUtils.GetFromSeconds(InitialMessage.Timestamp);
+        var date = TimeUtils.GetFromSeconds(InitialMessage.CreatedAtUnix);
         return $"{date.GetWeekDay()}, {date.Day} {date.GetMonth()} {date.Year} at {date.Hour:00}:{date.Minute:00}";
     }
 
@@ -177,7 +178,7 @@ public partial class DrawableChatMessage : Container
 
         private async void delete()
         {
-            await Fluxel.SendPacket(new ChatMessageDeletePacket(Message.Id));
+            await Fluxel.SendPacket(ChatDeletePacket.Create(Message.ID));
         }
 
         private /* async*/ void report()

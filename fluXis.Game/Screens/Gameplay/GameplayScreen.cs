@@ -25,7 +25,6 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Replays;
 using fluXis.Game.Scoring;
-using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.Audio;
@@ -37,7 +36,8 @@ using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Storyboards.Drawables;
-using fluXis.Game.Utils;
+using fluXis.Shared.Scoring.Enums;
+using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -471,7 +471,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
     }
 
-    protected Replays.Replay SaveReplay(Guid scoreID)
+    protected Shared.Replays.Replay SaveReplay(Guid scoreID)
     {
         try
         {

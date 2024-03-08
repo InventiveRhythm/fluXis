@@ -3,7 +3,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Replays;
-using fluXis.Game.Screens.Gameplay.Replay;
+using fluXis.Game.Screens.Gameplay.Replays;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.Playtest;

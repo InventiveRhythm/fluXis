@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
-using fluXis.Game.Scoring;
+using fluXis.Shared.API;
+using fluXis.Shared.API.Packets.Multiplayer;
+using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 
 namespace fluXis.Game.Online.Multiplayer;
@@ -19,36 +19,33 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     [BackgroundDependencyLoader]
     private void load()
     {
-        fluxel.RegisterListener<MultiplayerJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
-        fluxel.RegisterListener<MultiplayerLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
-        fluxel.RegisterListener<MultiplayerRoomUpdate>(EventType.MultiplayerRoomUpdate, onRoomUpdate);
-        fluxel.RegisterListener<MultiplayerReadyUpdate>(EventType.MultiplayerReady, onReadyUpdate);
-        fluxel.RegisterListener<dynamic>(EventType.MultiplayerStartGame, onStartGame);
-        fluxel.RegisterListener<MultiplayerFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
+        fluxel.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
+        fluxel.RegisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
+        fluxel.RegisterListener<MultiReadyPacket>(EventType.MultiplayerReady, onReadyUpdate);
+        fluxel.RegisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
+        fluxel.RegisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        fluxel.UnregisterListener<MultiplayerJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
-        fluxel.UnregisterListener<MultiplayerLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
-        fluxel.UnregisterListener<MultiplayerRoomUpdate>(EventType.MultiplayerRoomUpdate, onRoomUpdate);
-        fluxel.UnregisterListener<MultiplayerReadyUpdate>(EventType.MultiplayerReady, onReadyUpdate);
-        fluxel.UnregisterListener<dynamic>(EventType.MultiplayerStartGame, onStartGame);
-        fluxel.UnregisterListener<MultiplayerFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
+        fluxel.UnregisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
+        fluxel.UnregisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
+        fluxel.UnregisterListener<MultiReadyPacket>(EventType.MultiplayerReady, onReadyUpdate);
+        fluxel.UnregisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
+        fluxel.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
-    private void onUserJoined(FluxelResponse<MultiplayerJoinPacket> response) => impl.UserJoined(response.Data.Player);
-    private void onUserLeave(FluxelResponse<MultiplayerLeavePacket> response) => impl.UserLeft(response.Data.UserID);
-    private void onRoomUpdate(FluxelResponse<MultiplayerRoomUpdate> response) => impl.SettingsChanged(response.Data.Data);
-    private void onReadyUpdate(FluxelResponse<MultiplayerReadyUpdate> response) => impl.ReadyStateChanged(response.Data.PlayerID, response.Data.Ready);
-    private void onStartGame(FluxelResponse<dynamic> response) => impl.Starting();
-    private void onGameFinished(FluxelResponse<MultiplayerFinishPacket> response) => impl.ResultsReady(response.Data.Scores);
+    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined((APIUserShort)reply.Data.Player);
+    private void onUserLeave(FluxelReply<MultiLeavePacket> reply) => impl.UserLeft(reply.Data.UserID);
+    private void onReadyUpdate(FluxelReply<MultiReadyPacket> reply) => impl.ReadyStateChanged(reply.Data.PlayerID, reply.Data.Ready);
+    private void onStartGame(FluxelReply<MultiStartPacket> reply) => impl.Starting();
+    private void onGameFinished(FluxelReply<MultiFinishPacket> reply) => impl.ResultsReady(reply.Data.Scores);
 
     public override Task Finished(ScoreInfo score)
     {
-        fluxel.SendPacketAsync(new MultiplayerCompletePacket(score));
+        fluxel.SendPacketAsync(MultiCompletePacket.CreateC2S(score));
         return Task.CompletedTask;
     }
 }

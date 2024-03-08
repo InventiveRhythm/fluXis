@@ -8,17 +8,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Online.API.Models.Account;
-using fluXis.Game.Online.API.Models.Multi;
-using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.API.Models.Users;
-using fluXis.Game.Online.Chat;
-using fluXis.Game.Online.Fluxel.Packets;
-using fluXis.Game.Online.Fluxel.Packets.Account;
-using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Utils;
-using Newtonsoft.Json.Linq;
+using fluXis.Shared.API;
+using fluXis.Shared.API.Packets;
+using fluXis.Shared.API.Packets.Account;
+using fluXis.Shared.API.Packets.Chat;
+using fluXis.Shared.API.Packets.Multiplayer;
+using fluXis.Shared.API.Packets.Other;
+using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -98,10 +96,10 @@ public partial class FluxelClient : Component
         var thread = new Thread(loop) { IsBackground = true };
         thread.Start();
 
-        RegisterListener<string>(EventType.Token, onAuthResponse);
-        RegisterListener<APIUserShort>(EventType.Login, onLoginResponse);
-        RegisterListener<APIRegisterResponse>(EventType.Register, onRegisterResponse);
-        RegisterListener<object>(EventType.Logout, onLogout);
+        RegisterListener<AuthPacket>(EventType.Token, onAuthResponse);
+        RegisterListener<LoginPacket>(EventType.Login, onLoginResponse);
+        RegisterListener<RegisterPacket>(EventType.Register, onRegisterResponse);
+        RegisterListener<LogoutPacket>(EventType.Logout, onLogout);
     }
 
     private async void loop()
@@ -151,9 +149,9 @@ public partial class FluxelClient : Component
                 waitTime = 5;
 
                 if (string.IsNullOrEmpty(Token))
-                    await SendPacket(new AuthPacket(username, password));
+                    await SendPacket(AuthPacket.CreateC2S(username, password));
                 else
-                    await SendPacket(new LoginPacket(Token));
+                    await SendPacket(LoginPacket.CreateC2S(Token));
             }
             else
             {
@@ -163,7 +161,7 @@ public partial class FluxelClient : Component
                 if (string.IsNullOrEmpty(email))
                     throw new Exception("Email is required for registration!");
 
-                await SendPacket(new RegisterPacket(username, password, email));
+                await SendPacket(RegisterPacket.CreateC2S(username, password, email));
             }
 
             // ReSharper disable once AsyncVoidLambda
@@ -248,12 +246,14 @@ public partial class FluxelClient : Component
 
                 // handler logic
         void handleListener<T>(string msg)
+            where T : IPacket
         {
-            var response = msg.Deserialize<FluxelResponse<T>>();
+            Logger.Log($"Received packet {msg}!", LoggingTarget.Network, LogLevel.Debug);
+            var response = msg.Deserialize<FluxelReply<T>>();
+            var type = getType(response.ID);
 
-            var type = getType(response.Type);
-
-            if (!responseListeners.ContainsKey(type)) return;
+            if (!responseListeners.ContainsKey(type))
+                return;
 
             foreach (var listener
                      in (IEnumerable<Action<object>>)responseListeners.GetValueOrDefault(type)
@@ -263,27 +263,27 @@ public partial class FluxelClient : Component
             }
         }
 
-        var idString = message.Deserialize<JObject>()["id"]!.ToObject<string>();
+        var idString = message.Deserialize<FluxelReply<EmptyPacket>>().ID;
         Logger.Log($"Received packet {idString}!", LoggingTarget.Network);
 
         // find right handler
         Action<string> handler = getType(idString) switch
         {
-            EventType.Token => handleListener<string>,
-            EventType.Login => handleListener<APIUserShort>,
-            EventType.Register => handleListener<APIRegisterResponse>,
-            EventType.Logout => handleListener<object>,
-            EventType.Achievement => handleListener<Achievement>,
-            EventType.ServerMessage => handleListener<ServerMessage>,
-            EventType.ChatMessage => handleListener<ChatMessage>,
-            EventType.ChatHistory => handleListener<ChatMessage[]>,
-            EventType.ChatMessageDelete => handleListener<string>,
-            EventType.MultiplayerJoin => handleListener<MultiplayerJoinPacket>,
-            EventType.MultiplayerLeave => handleListener<MultiplayerLeavePacket>,
-            EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
-            EventType.MultiplayerReady => handleListener<MultiplayerReadyUpdate>,
-            EventType.MultiplayerStartGame => handleListener<dynamic>,
-            EventType.MultiplayerFinish => handleListener<MultiplayerFinishPacket>,
+            EventType.Token => handleListener<AuthPacket>,
+            EventType.Login => handleListener<LoginPacket>,
+            EventType.Register => handleListener<RegisterPacket>,
+            EventType.Logout => handleListener<LogoutPacket>,
+            EventType.Achievement => handleListener<AchievementPacket>,
+            EventType.ServerMessage => handleListener<ServerMessagePacket>,
+            EventType.ChatMessage => handleListener<ChatMessagePacket>,
+            EventType.ChatHistory => handleListener<ChatHistoryPacket>,
+            EventType.ChatMessageDelete => handleListener<ChatDeletePacket>,
+            EventType.MultiplayerJoin => handleListener<MultiJoinPacket>,
+            EventType.MultiplayerLeave => handleListener<MultiLeavePacket>,
+            // EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
+            EventType.MultiplayerReady => handleListener<MultiReadyPacket>,
+            EventType.MultiplayerStartGame => handleListener<MultiStartPacket>,
+            EventType.MultiplayerFinish => handleListener<MultiFinishPacket>,
             _ => _ => { }
         };
 
@@ -296,7 +296,7 @@ public partial class FluxelClient : Component
         this.username = username;
         this.password = password;
 
-        await SendPacket(new AuthPacket(username, password));
+        await SendPacket(AuthPacket.CreateC2S(username, password));
     }
 
     public void Register(string username, string password, string email)
@@ -352,23 +352,26 @@ public partial class FluxelClient : Component
         }
     }
 
-    public async void SendPacketAsync(Packet packet) => await SendPacket(packet);
+    public async void SendPacketAsync(IPacket packet) => await SendPacket(packet);
 
-    public async Task SendPacket(Packet packet)
+    public async Task SendPacket<T>(T packet)
+        where T : IPacket
     {
-        FluxelRequest request = new FluxelRequest(packet.ID, packet);
+        var request = new FluxelRequest<T>(packet.ID, packet);
         await send(request.Serialize());
     }
 
-    public void RegisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
+    public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener)
+        where T : IPacket
     {
-        responseListeners.GetOrAdd(id, _ => new List<Action<object>>()).Add(response => listener((FluxelResponse<T>)response));
+        responseListeners.GetOrAdd(id, _ => new List<Action<object>>()).Add(response => listener((FluxelReply<T>)response));
     }
 
-    public void UnregisterListener<T>(EventType id, Action<FluxelResponse<T>> listener)
+    public void UnregisterListener<T>(EventType id, Action<FluxelReply<T>> listener)
+        where T : IPacket
     {
         if (responseListeners.TryGetValue(id, out var listeners))
-            listeners.Remove(response => listener((FluxelResponse<T>)response));
+            listeners.Remove(response => listener((FluxelReply<T>)response));
     }
 
     public void Reset()
@@ -404,54 +407,52 @@ public partial class FluxelClient : Component
 
     internal new void Schedule(Action action) => base.Schedule(action);
 
-    private void onAuthResponse(FluxelResponse<string> response)
+    private void onAuthResponse(FluxelReply<AuthPacket> reply)
     {
-        if (response.Status == 200)
-        {
-            tokenBindable.Value = response.Data;
-            waitTime = 5; // reset wait time for login
-            SendPacketAsync(new LoginPacket(Token));
-        }
-        else
+        if (!reply.Success)
         {
             Logout();
-            LastError = response.Message;
-            Status = ConnectionStatus.Failing;
-        }
-    }
-
-    private void onLoginResponse(FluxelResponse<APIUserShort> response)
-    {
-        if (response.Status == 200)
-        {
-            LoggedInUser = response.Data;
-            Status = ConnectionStatus.Online;
-        }
-        else
-        {
-            Logout();
-            LastError = response.Message;
-            Status = ConnectionStatus.Failing;
-        }
-    }
-
-    private void onRegisterResponse(FluxelResponse<APIRegisterResponse> response)
-    {
-        if (response.Status != 200)
-        {
-            Logout();
-            LastError = response.Message;
+            LastError = reply.Message;
             Status = ConnectionStatus.Failing;
             return;
         }
 
-        tokenBindable.Value = response.Data.Token;
-        LoggedInUser = response.Data.User;
+        tokenBindable.Value = reply.Data.Token;
+        waitTime = 5; // reset wait time for login
+        SendPacketAsync(LoginPacket.CreateC2S(reply.Data.Token));
+    }
+
+    private void onLoginResponse(FluxelReply<LoginPacket> reply)
+    {
+        if (!reply.Success)
+        {
+            Logout();
+            LastError = reply.Message;
+            Status = ConnectionStatus.Failing;
+            return;
+        }
+
+        LoggedInUser = (APIUserShort)reply.Data.User;
+        Status = ConnectionStatus.Online;
+    }
+
+    private void onRegisterResponse(FluxelReply<RegisterPacket> reply)
+    {
+        if (!reply.Success)
+        {
+            Logout();
+            LastError = reply.Message;
+            Status = ConnectionStatus.Failing;
+            return;
+        }
+
+        tokenBindable.Value = reply.Data!.Token;
+        LoggedInUser = (APIUserShort)reply.Data.User;
         registering = false;
         Status = ConnectionStatus.Online;
     }
 
-    private void onLogout(FluxelResponse<object> response)
+    private void onLogout(FluxelReply<LogoutPacket> reply)
     {
         Logout();
         notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome6.Solid.TriangleExclamation);
@@ -461,7 +462,7 @@ public partial class FluxelClient : Component
     {
         return id switch
         {
-            "account/auth" => EventType.Token,
+            PacketIDs.AUTH => EventType.Token,
             "account/login" => EventType.Login,
             "account/register" => EventType.Register,
             "account/logout" => EventType.Logout,

@@ -21,12 +21,14 @@ using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
+using fluXis.Game.Online.API.Models.Chat;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Plugins;
-using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Skinning;
@@ -35,6 +37,12 @@ using fluXis.Game.UI.Tips;
 using fluXis.Game.Updater;
 using fluXis.Game.Utils;
 using fluXis.Resources;
+using fluXis.Shared.Components.Chat;
+using fluXis.Shared.Components.Maps;
+using fluXis.Shared.Components.Multi;
+using fluXis.Shared.Components.Users;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Configuration;
@@ -91,6 +99,12 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
+        JsonUtils.RegisterTypeConversion<IAPIUserShort, APIUserShort>();
+        JsonUtils.RegisterTypeConversion<IAPIUser, APIUser>();
+        JsonUtils.RegisterTypeConversion<IAPIMapShort, APIMapShort>();
+        JsonUtils.RegisterTypeConversion<IMultiplayerRoom, MultiplayerRoom>();
+        JsonUtils.RegisterTypeConversion<IMultiplayerRoomSettings, MultiplayerRoomSettings>();
+        JsonUtils.RegisterTypeConversion<IChatMessage, ChatMessage>();
     }
 
     [BackgroundDependencyLoader]

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using fluXis.Game.Map.Events;
-using fluXis.Game.Utils;
+using fluXis.Shared.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;

@@ -1,7 +1,6 @@
 using System.Net.Http;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Online.API.Models.Maps;
-using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.MapSets;
 
@@ -21,7 +20,7 @@ public class MapSetUploadRequest : APIRequest<APIMapSet>
         this.map = map;
     }
 
-    protected override void CreatePostData(JsonWebRequest<APIResponse<APIMapSet>> request)
+    protected override void CreatePostData(FluXisJsonWebRequest<APIMapSet> request)
     {
         request.AddFile("file", file);
     }

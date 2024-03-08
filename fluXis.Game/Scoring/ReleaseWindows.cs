@@ -1,4 +1,4 @@
-using fluXis.Game.Scoring.Enums;
+using fluXis.Shared.Scoring.Enums;
 
 namespace fluXis.Game.Scoring;
 

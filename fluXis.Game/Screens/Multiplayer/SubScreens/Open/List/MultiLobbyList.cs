@@ -3,10 +3,11 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Requests.Multiplayer;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Fluxel.Packets.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
+using fluXis.Shared.API;
+using fluXis.Shared.API.Packets.Multiplayer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -63,7 +64,7 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         base.LoadComplete();
 
-        fluxel.RegisterListener<MultiplayerJoinPacket>(EventType.MultiplayerJoin, onLobbyJoin);
+        fluxel.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onLobbyJoin);
 
         loadLobbies();
     }
@@ -95,25 +96,28 @@ public partial class MultiLobbyList : MultiSubScreen
             Text = "Joining lobby...",
         };
 
-        fluxel.SendPacketAsync(new MultiplayerJoinPacket(room.RoomID, ""));
+        fluxel.SendPacketAsync(MultiJoinPacket.CreateC2SInitialJoin(room.RoomID, ""));
     }
 
-    private void onLobbyJoin(FluxelResponse<MultiplayerJoinPacket> res)
+    private void onLobbyJoin(FluxelReply<MultiJoinPacket> res)
     {
-        if (res.Status == -1) return;
-        if (!res.Data.JoinRequest) return;
+        if (res.Data == null)
+            return;
+
+        if (!res.Data.JoinRequest)
+            return;
 
         Schedule(() =>
         {
-            if (res.Status == 200)
+            if (res.Success)
             {
                 loadingPanel?.Hide();
-                this.Push(new MultiLobby { Room = res.Data.Room });
+                this.Push(new MultiLobby { Room = (MultiplayerRoom)res.Data.Room });
             }
             else
             {
                 loadingPanel?.Hide();
-                notifications.SendError($"Failed to join lobby", res.Message);
+                notifications.SendError("Failed to join lobby", res.Message);
             }
         });
     }
