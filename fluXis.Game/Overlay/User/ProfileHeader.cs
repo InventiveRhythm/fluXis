@@ -226,7 +226,7 @@ public partial class ProfileHeader : Container
 
     private Drawable getOnlineStatus()
     {
-        if (user.Online)
+        if (user.IsOnline)
         {
             return new FluXisSpriteText
             {

@@ -3,19 +3,19 @@ using Newtonsoft.Json;
 
 namespace fluXis.Shared.Components.Users;
 
-public class APIUserShort
+public class APIUserShort : IAPIUserShort
 {
     [JsonProperty("id")]
     public long ID { get; init; }
 
     [JsonProperty("username")]
-    public string Username { get; init; } = null!;
+    public string Username { get; set; } = null!;
 
     [JsonProperty("displayname")]
-    public string? DisplayName { get; init; }
+    public string? DisplayName { get; set; }
 
     [JsonProperty("country")]
-    public string? CountryCode { get; init; }
+    public string? CountryCode { get; set; }
 
     [JsonProperty("groups")]
     public List<IAPIGroup> Groups { get; init; } = new();
