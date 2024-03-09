@@ -4,7 +4,7 @@ namespace fluXis.Shared.API.Packets.Chat;
 
 public class ChatDeletePacket : IPacket
 {
-    public string ID => PacketIDs.CHAT_MESSAGE;
+    public string ID => PacketIDs.CHAT_DELETE;
 
     [JsonProperty("id")]
     public string? MessageID { get; set; }
