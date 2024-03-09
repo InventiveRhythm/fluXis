@@ -284,7 +284,7 @@ public partial class ScoreList : GridContainer
                     return;
                 }
 
-                var onlineScores = getScores();
+                var onlineScores = getScores(cancellationToken);
                 if (onlineScores == null) return;
 
                 scores.AddRange(onlineScores);
@@ -327,10 +327,13 @@ public partial class ScoreList : GridContainer
     }
 
     [CanBeNull]
-    private List<ScoreListEntry> getScores()
+    private List<ScoreListEntry> getScores(CancellationToken cancellationToken)
     {
         var req = new MapLeaderboardRequest(type, map.OnlineID);
         req.Perform(fluxel);
+
+        if (cancellationToken.IsCancellationRequested)
+            return null;
 
         if (req.Response.Status != 200)
         {
