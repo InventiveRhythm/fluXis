@@ -50,6 +50,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // UI // Main Menu
         SetDefault(FluXisSetting.IntroTheme, true);
+        SetDefault(FluXisSetting.ForceSnow, false);
         SetDefault(FluXisSetting.MainMenuVisualizer, true);
         SetDefault(FluXisSetting.MainMenuVisualizerSway, false);
 
@@ -120,6 +121,7 @@ public enum FluXisSetting
 
     // UI // Main Menu
     IntroTheme,
+    ForceSnow,
     MainMenuVisualizer,
     MainMenuVisualizerSway,
 

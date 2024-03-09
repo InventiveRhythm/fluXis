@@ -33,6 +33,9 @@ public class SettingsUIStrings : LocalizationCategory
     public TranslatableString IntroMusic => Get("intro-music", "fluXis intro music");
     public TranslatableString IntroMusicDescription => Get("intro-music-description", "Play the fluXis intro music on startup. Disabling this will play a random song from your library instead.");
 
+    public LocalisableString ForceSnow => Get("force-snow", "Force Snow");
+    public LocalisableString ForceSnowDescription => Get("force-snow-description", "Makes the snow always visible, not just in the winter.");
+
     public TranslatableString BubbleVisualizer => Get("bubble-visualizer", "Bubble Visualizer");
     public TranslatableString BubbleVisualizerDescription => Get("bubble-visualizer-description", "Enable the bubble visualizer on the main menu.");
 

@@ -30,6 +30,12 @@ public partial class UserInterfaceMainMenuSection : SettingsSubSection
             },
             new SettingsToggle
             {
+                Label = strings.ForceSnow,
+                Description = strings.ForceSnowDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.ForceSnow)
+            },
+            new SettingsToggle
+            {
                 Label = strings.BubbleVisualizer,
                 Description = strings.BubbleVisualizerDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.MainMenuVisualizer)

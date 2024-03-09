@@ -25,6 +25,7 @@ using fluXis.Game.Screens.Select;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -74,9 +75,14 @@ public partial class MenuScreen : FluXisScreen
 
     private FluXisTextFlow splashText;
     private FluXisSpriteText pressAnyKeyText;
-    private MenuVisualizer visualizer;
 
-    private bool shouldSnow => Game.CurrentSeason == Season.Winter;
+    private ParallaxContainer visualizerContainer;
+    private MenuVisualizer visualizer;
+    private ParallaxContainer snowContainer;
+
+    private bool shouldSnow => Game.CurrentSeason == Season.Winter || forceSnow.Value;
+
+    private Bindable<bool> forceSnow;
 
     private Container textContainer;
     private Container buttonContainer;
@@ -103,9 +109,11 @@ public partial class MenuScreen : FluXisScreen
     {
         menuStart = samples.Get("UI/accept");
 
+        forceSnow = config.GetBindable<bool>(FluXisSetting.ForceSnow);
+
         InternalChildren = new Drawable[]
         {
-            new ParallaxContainer
+            visualizerContainer = new ParallaxContainer
             {
                 Child = visualizer = new MenuVisualizer(),
                 RelativeSizeAxes = Axes.Both,
@@ -295,7 +303,7 @@ public partial class MenuScreen : FluXisScreen
                     }
                 }
             },
-            new ParallaxContainer
+            snowContainer = new ParallaxContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Child = new MenuSnow(),
@@ -311,6 +319,12 @@ public partial class MenuScreen : FluXisScreen
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        forceSnow.BindValueChanged(_ =>
+        {
+            visualizerContainer.FadeTo(shouldSnow ? 0 : 1, 600, Easing.OutQuint);
+            snowContainer.FadeTo(shouldSnow ? 1 : 0, 600, Easing.OutQuint);
+        });
 
         updateButtons();
         fluxel.OnUserChanged += _ => Schedule(updateButtons);

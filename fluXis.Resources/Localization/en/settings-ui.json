@@ -12,6 +12,8 @@
   "main-menu-title": "Main Menu",
   "intro-music": "fluXis intro music",
   "intro-music-description": "Play the fluXis intro music on startup. Disabling this will play a random song from your library instead.",
+  "force-snow": "Force Snow",
+  "force-snow-description": "Makes the snow always visible, not just in the winter.",
   "bubble-visualizer": "Bubble Visualizer",
   "bubble-visualizer-description": "Enable the bubble visualizer on the main menu.",
   "bubble-sway": "Bubble Sway",
