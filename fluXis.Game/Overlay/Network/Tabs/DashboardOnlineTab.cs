@@ -1,8 +1,8 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Requests.Users;
+using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Network.Tabs.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,8 +50,14 @@ public partial class DashboardOnlineTab : DashboardWipTab
                 {
                     Schedule(() =>
                     {
-                        if (!visible) return;
-                        flow.Add(new UserCard(user));
+                        if (!visible)
+                            return;
+
+                        flow.Add(new DrawableUserCard(user)
+                        {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre
+                        });
                     });
                 }
             }
