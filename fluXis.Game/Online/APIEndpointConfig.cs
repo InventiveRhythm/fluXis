@@ -16,6 +16,9 @@ public class APIEndpointConfig
     [JsonProperty("website")]
     public string WebsiteRootUrl { get; private set; }
 
+    [JsonProperty("wiki")]
+    public string WikiRootUrl { get; private set; }
+
     public APIEndpointConfig AddDefaults()
     {
         if (string.IsNullOrWhiteSpace(APIUrl))
@@ -26,6 +29,8 @@ public class APIEndpointConfig
             WebsocketUrl = "wss://fluxel.flux.moe";
         if (string.IsNullOrWhiteSpace(WebsiteRootUrl))
             WebsiteRootUrl = "https://fluxis.flux.moe";
+        if (string.IsNullOrWhiteSpace(WikiRootUrl))
+            WikiRootUrl = "https://fluxis.flux.moe/wiki";
 
         return this;
     }

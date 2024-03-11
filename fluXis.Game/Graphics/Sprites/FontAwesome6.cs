@@ -14,8 +14,8 @@ public class FontAwesome6
 
         public static IconUsage AngleDoubleRight => getSolid(0xf101);
         public static IconUsage ArrowDown => getSolid(0xf063);
-        public static IconUsage ArrowRight => getSolid(0xf061);
         public static IconUsage ArrowPointer => getSolid(0xf245);
+        public static IconUsage ArrowRight => getSolid(0xf061);
         public static IconUsage ArrowsRotate => getSolid(0xf021);
         public static IconUsage BackwardStep => getSolid(0xf048);
         public static IconUsage Bars => getSolid(0xf0c9);
@@ -45,6 +45,7 @@ public class FontAwesome6
         public static IconUsage Drum => getSolid(0xf569);
         public static IconUsage EarthAmericas => getSolid(0xf57d);
         public static IconUsage Eraser => getSolid(0xf12d);
+        public static IconUsage ExclamationTriangle => getSolid(0xf071);
         public static IconUsage Eye => getSolid(0xf06e);
         public static IconUsage File => getSolid(0xf15b);
         public static IconUsage Film => getSolid(0xf008);
@@ -67,6 +68,7 @@ public class FontAwesome6
         public static IconUsage Keyboard => getSolid(0xf11c);
         public static IconUsage LayerGroup => getSolid(0xf5fd);
         public static IconUsage LeftRight => getSolid(0xf337);
+        public static IconUsage Link => getSolid(0xf0c1);
         public static IconUsage Magnet => getSolid(0xf076);
         public static IconUsage MagnifyingGlass => getSolid(0xf002);
         public static IconUsage Map => getSolid(0xf279);
@@ -117,7 +119,6 @@ public class FontAwesome6
         public static IconUsage WindowRestore => getSolid(0xf2d2);
         public static IconUsage WineGlassEmpty => getSolid(0xf5ce);
         public static IconUsage XMark => getSolid(0xf00d);
-        public static IconUsage ExclamationTriangle => getSolid(0xf071);
     }
 
     public static class Regular

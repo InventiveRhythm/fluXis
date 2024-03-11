@@ -235,6 +235,21 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         globalBackground.AddBackgroundFromMap(set.Maps.First());
     }
 
+    public void OpenLink(string link)
+    {
+        if (panelContainer.Content != null)
+        {
+            Logger.Log("Blocking link open due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);
+            var panel = panelContainer.Content as Panel;
+            panel?.Flash();
+            return;
+        }
+
+        Logger.Log($"Opening link: {link}", LoggingTarget.Runtime, LogLevel.Debug);
+
+        panelContainer.Content = new ExternalLinkPanel(link);
+    }
+
     public void OpenSkinEditor()
     {
         if (screenStack.CurrentScreen is SkinEditor)

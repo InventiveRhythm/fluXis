@@ -313,7 +313,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 Map.Metadata.PreviewTime = (int)clock.CurrentTime;
                             })
                         }
-                    }
+                    },
+                    new("Wiki", FontAwesome6.Solid.Book, openHelp)
                 }
             },
             tabSwitcher = new EditorTabSwitcher
@@ -427,6 +428,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
     }
 
+    private void openHelp() => Game.OpenLink($"{fluxel.Endpoint.WikiRootUrl}/editor");
+
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         if (e.ControlPressed)
@@ -447,6 +450,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     save();
                     return true;
             }
+        }
+
+        switch (e.Key)
+        {
+            case Key.F1:
+                openHelp();
+                break;
         }
 
         return false;
