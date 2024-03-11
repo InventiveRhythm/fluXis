@@ -67,6 +67,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     private DependencyContainer dependencies;
     private InputManager inputManager;
     private double scrollAccumulation;
+    private bool recordingInput;
 
     private Container playfieldContainer;
     private Box dim;
@@ -152,6 +153,13 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     {
         switch (e.Key)
         {
+            case >= Key.Number1 and <= Key.Number9 when recordingInput && !e.ControlPressed:
+            {
+                var index = e.Key - Key.Number1;
+                placeNote(index + 1);
+                return true;
+            }
+
             case >= Key.Number1 and <= Key.Number9 when !e.ControlPressed:
             {
                 var index = e.Key - Key.Number1;
@@ -159,6 +167,18 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
                 if (index >= Tools.Count) return false;
 
                 BlueprintContainer.CurrentTool = Tools[index];
+                return true;
+            }
+
+            case Key.R when e.ControlPressed:
+            {
+                recordingInput = !recordingInput;
+
+                if (recordingInput)
+                    notifications.SendSmallText("Recording input.", FontAwesome6.Solid.Check);
+                else
+                    notifications.SendSmallText("Stopped recording input.", FontAwesome6.Solid.XMark);
+
                 return true;
             }
 
@@ -243,6 +263,31 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             clock.SeekBackward(amount);
         else
             clock.SeekForward(amount);
+    }
+
+    private void placeNote(int lane)
+    {
+        if (lane > values.Editor.Map.KeyCount)
+            return;
+
+        var time = (float)clock.CurrentTime;
+        var snapped = Playfield.HitObjectContainer.SnapTime(time);
+
+        var tp = values.MapInfo.GetTimingPoint(time);
+        float increase = tp.Signature * tp.MsPerBeat / (4 * values.SnapDivisor);
+        var next = Playfield.HitObjectContainer.SnapTime(time + increase);
+
+        // take the closest snap
+        time = Math.Abs(time - snapped) < Math.Abs(time - next) ? snapped : next;
+
+        var note = new HitObject
+        {
+            Time = time,
+            HitSound = CurrentHitSound.Value,
+            Lane = lane
+        };
+
+        values.ActionStack.Add(new NotePlaceAction(note, values.MapInfo));
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
