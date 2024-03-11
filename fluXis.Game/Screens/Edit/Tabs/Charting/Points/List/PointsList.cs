@@ -111,7 +111,7 @@ public partial class PointsList : Container
         sortPoints();
     }
 
-    private void create(TimedObject obj)
+    private void create(ITimedObject obj)
     {
         obj.Time = (float)clock.CurrentTime;
         values.MapInfo.Add(obj);
@@ -125,7 +125,7 @@ public partial class PointsList : Container
         flow.OrderBy(e => e.Object.Time).ForEach(e => flow.SetLayoutPosition(e, e.Object.Time));
     }
 
-    private void addPoint(TimedObject obj)
+    private void addPoint(ITimedObject obj)
     {
         PointListEntry entry = obj switch
         {
@@ -146,7 +146,7 @@ public partial class PointsList : Container
             sortPoints();
     }
 
-    private void updatePoint(TimedObject obj)
+    private void updatePoint(ITimedObject obj)
     {
         var entry = flow.FirstOrDefault(e => e.Object == obj);
         entry?.UpdateValues();
@@ -154,7 +154,7 @@ public partial class PointsList : Container
         sortPoints();
     }
 
-    private void removePoint(TimedObject obj)
+    private void removePoint(ITimedObject obj)
     {
         var entry = flow.FirstOrDefault(e => e.Object == obj);
 
@@ -164,16 +164,16 @@ public partial class PointsList : Container
 
     private partial class AddButton : PointsListIconButton, IHasPopover
     {
-        private Action<TimedObject> create { get; }
+        private Action<ITimedObject> create { get; }
 
-        public AddButton(Action<TimedObject> create)
+        public AddButton(Action<ITimedObject> create)
             : base(null)
         {
             this.create = create;
             Action = this.ShowPopover;
         }
 
-        private void createAndHide(TimedObject obj)
+        private void createAndHide(ITimedObject obj)
         {
             create(obj);
             this.HidePopover();

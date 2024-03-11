@@ -12,7 +12,7 @@ public partial class PreviewPointTag : EditorTag
     public override Colour4 TagColour => Colour4.FromHex("FDD27F");
 
     public PreviewPointTag(EditorTagContainer parent)
-        : base(parent, new TimedObject())
+        : base(parent, new PreviewPointObject())
     {
     }
 
@@ -26,5 +26,11 @@ public partial class PreviewPointTag : EditorTag
     {
         TimedObject.Time = values.MapInfo.Metadata.PreviewTime;
         base.Update();
+    }
+
+    // placeholder class for the preview point
+    private class PreviewPointObject : ITimedObject
+    {
+        public float Time { get; set; }
     }
 }

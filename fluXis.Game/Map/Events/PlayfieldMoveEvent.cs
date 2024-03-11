@@ -4,8 +4,11 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Events;
 
-public class PlayfieldMoveEvent : TimedObject
+public class PlayfieldMoveEvent : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
     [JsonProperty("x")]
     public float OffsetX { get; set; }
 

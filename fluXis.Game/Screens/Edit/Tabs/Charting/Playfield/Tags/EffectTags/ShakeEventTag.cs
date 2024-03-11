@@ -22,7 +22,7 @@ public partial class ShakeEventTag : EditorTag
 
     public ShakeEvent Shake => (ShakeEvent)TimedObject;
 
-    public ShakeEventTag(EditorTagContainer parent, TimedObject timedObject)
+    public ShakeEventTag(EditorTagContainer parent, ITimedObject timedObject)
         : base(parent, timedObject)
     {
     }

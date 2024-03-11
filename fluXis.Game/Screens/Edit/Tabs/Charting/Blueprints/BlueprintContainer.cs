@@ -43,7 +43,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
     private ChartingTool currentTool;
 
-    protected readonly BindableList<TimedObject> SelectedObjects = new();
+    protected readonly BindableList<ITimedObject> SelectedObjects = new();
 
     public SelectionBox SelectionBox { get; private set; }
     public SelectionBlueprints SelectionBlueprints { get; private set; }
@@ -51,7 +51,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
     private InputManager inputManager;
     private MouseButtonEvent lastDragEvent;
-    private readonly Dictionary<TimedObject, SelectionBlueprint> blueprints = new();
+    private readonly Dictionary<ITimedObject, SelectionBlueprint> blueprints = new();
 
     // movement
     private bool isDragging;
@@ -136,7 +136,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
         SelectionBox.Hide();
     }
 
-    public void AddBlueprint(TimedObject info)
+    public void AddBlueprint(ITimedObject info)
     {
         if (blueprints.ContainsKey(info))
             return;
@@ -148,7 +148,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
         SelectionBlueprints.Add(blueprint);
     }
 
-    public void RemoveBlueprint(TimedObject obj)
+    public void RemoveBlueprint(ITimedObject obj)
     {
         if (!blueprints.Remove(obj, out var blueprint))
             return;
@@ -159,7 +159,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
         SelectionBlueprints.Remove(blueprint, true);
     }
 
-    private SelectionBlueprint createBlueprint(TimedObject obj)
+    private SelectionBlueprint createBlueprint(ITimedObject obj)
     {
         SelectionBlueprint blueprint = null!;
 

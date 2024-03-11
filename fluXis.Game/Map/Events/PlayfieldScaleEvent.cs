@@ -4,8 +4,11 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Events;
 
-public class PlayfieldScaleEvent : TimedObject
+public class PlayfieldScaleEvent : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
     [JsonProperty("x")]
     public float ScaleX { get; set; }
 

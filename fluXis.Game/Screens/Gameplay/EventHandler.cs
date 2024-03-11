@@ -6,7 +6,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay;
 
-public partial class EventHandler<T> : Component where T : TimedObject
+public partial class EventHandler<T> : Component where T : ITimedObject
 {
     private List<T> objects { get; }
     private List<T> previous { get; } = new();

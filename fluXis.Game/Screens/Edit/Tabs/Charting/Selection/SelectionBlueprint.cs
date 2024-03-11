@@ -17,7 +17,7 @@ public partial class SelectionBlueprint : Container
 
     protected EditorHitObjectContainer HitObjectContainer => playfield.HitObjectContainer;
 
-    public TimedObject Object { get; }
+    public ITimedObject Object { get; }
     public Drawable Drawable { get; internal set; }
 
     public event Action<SelectionBlueprint> Selected;
@@ -35,7 +35,7 @@ public partial class SelectionBlueprint : Container
     public override bool HandlePositionalInput => ShouldBeAlive;
     public override bool RemoveWhenNotAlive => false;
 
-    protected SelectionBlueprint(TimedObject info)
+    protected SelectionBlueprint(ITimedObject info)
     {
         Object = info;
         AlwaysPresent = true;

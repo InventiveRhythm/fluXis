@@ -16,9 +16,9 @@ public partial class PlacementBlueprint : Container
     protected EditorValues EditorValues { get; private set; }
 
     public PlacementState State { get; set; }
-    public TimedObject Object { get; set; }
+    public ITimedObject Object { get; set; }
 
-    protected PlacementBlueprint(TimedObject obj)
+    protected PlacementBlueprint(ITimedObject obj)
     {
         Object = obj;
     }

@@ -21,7 +21,7 @@ public partial class PointListEntry : Container
 
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
     public Action RequestClose { get; set; }
-    public TimedObject Object { get; }
+    public ITimedObject Object { get; }
 
     [Resolved]
     protected EditorValues Values { get; private set; }
@@ -33,7 +33,7 @@ public partial class PointListEntry : Container
     private FluXisSpriteText timeText;
     private FluXisSpriteText valueText;
 
-    protected PointListEntry(TimedObject obj)
+    protected PointListEntry(ITimedObject obj)
     {
         Object = obj;
     }

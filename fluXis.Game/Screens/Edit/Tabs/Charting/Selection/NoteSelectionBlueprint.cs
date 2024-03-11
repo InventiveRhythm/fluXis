@@ -11,7 +11,7 @@ public partial class NoteSelectionBlueprint : SelectionBlueprint
 
     public override float SecondComparer => Object.EndTime;
 
-    public NoteSelectionBlueprint(TimedObject info)
+    public NoteSelectionBlueprint(ITimedObject info)
         : base(info)
     {
         Width = EditorHitObjectContainer.NOTEWIDTH;

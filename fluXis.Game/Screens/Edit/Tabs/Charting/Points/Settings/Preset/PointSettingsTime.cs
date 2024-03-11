@@ -6,7 +6,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.Settings.Preset;
 
 public partial class PointSettingsTime : PointSettingsTextBox
 {
-    public PointSettingsTime(EditorMapInfo info, TimedObject obj)
+    public PointSettingsTime(EditorMapInfo info, ITimedObject obj)
     {
         Text = "Time";
         DefaultText = obj.Time.ToStringInvariant();

@@ -4,8 +4,11 @@ using Newtonsoft.Json.Linq;
 
 namespace fluXis.Game.Map.Events;
 
-public class ShaderEvent : TimedObject
+public class ShaderEvent : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
     [JsonProperty("shader")]
     public string ShaderName { get; set; } = string.Empty;
 

@@ -2,10 +2,18 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Structures;
 
-public class TimingPoint : TimedObject
+public class TimingPoint : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
+    [JsonProperty("bpm")]
     public float BPM { get; set; }
+
+    [JsonProperty("signature")]
     public int Signature { get; set; }
+
+    [JsonProperty("hide-lines")]
     public bool HideLines { get; set; }
 
     [JsonIgnore]

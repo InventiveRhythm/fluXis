@@ -3,8 +3,11 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
-public class LaneSwitchEvent : TimedObject
+public class LaneSwitchEvent : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
     [JsonProperty("count")]
     public int Count { get; set; } = 1;
 

@@ -34,7 +34,7 @@ public partial class EditorTagContainer : Container<EditorTag>
         Tags.Add(tag);
     }
 
-    protected void RemoveTag(TimedObject obj)
+    protected void RemoveTag(ITimedObject obj)
     {
         var tag = Tags.FirstOrDefault(t => t.TimedObject == obj);
         tag ??= Children.FirstOrDefault(t => t.TimedObject == obj);

@@ -3,16 +3,25 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Structures;
 
-public class HitObject : TimedObject
+public class HitObject : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
+    [JsonProperty("lane")]
     public int Lane { get; set; }
+
+    [JsonProperty("length")]
     public float HoldTime { get; set; }
+
+    [JsonProperty("sound")]
     public string HitSound { get; set; }
 
     /// <summary>
     /// 0 = Normal / Long
     /// 1 = Tick
     /// </summary>
+    [JsonProperty("type")]
     public int Type { get; set; }
 
     [JsonIgnore]

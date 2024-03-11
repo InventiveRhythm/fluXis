@@ -26,7 +26,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
     public IReadOnlyList<SelectionBlueprint> Selected => selected;
     private readonly List<SelectionBlueprint> selected = new();
 
-    public readonly BindableList<TimedObject> SelectedObjects = new();
+    public readonly BindableList<ITimedObject> SelectedObjects = new();
 
     private SelectionOutline outline;
     private bool wasVisible;
@@ -119,7 +119,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
             DeleteSelected();
     }
 
-    public void Delete(IEnumerable<TimedObject> objects)
+    public void Delete(IEnumerable<ITimedObject> objects)
     {
         if (objects == null) return;
 
@@ -133,7 +133,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
                 values.ActionStack.Add(new NoteRemoveAction(hits, values.MapInfo));
         }
 
-        foreach (TimedObject obj in objs)
+        foreach (ITimedObject obj in objs)
         {
             switch (obj)
             {

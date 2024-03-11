@@ -3,8 +3,11 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
-public class PlayfieldFadeEvent : TimedObject
+public class PlayfieldFadeEvent : ITimedObject
 {
+    [JsonProperty("time")]
+    public float Time { get; set; }
+
     [JsonProperty("duration")]
     public float FadeTime { get; set; }
 

@@ -19,11 +19,11 @@ public partial class EditorTag : Container
 
     private EditorTagContainer parent { get; }
 
-    public TimedObject TimedObject { get; }
+    public ITimedObject TimedObject { get; }
     protected FluXisSpriteText Text { get; private set; }
     public bool RightSide { get; set; }
 
-    public EditorTag(EditorTagContainer parent, TimedObject timedObject)
+    public EditorTag(EditorTagContainer parent, ITimedObject timedObject)
     {
         this.parent = parent;
         TimedObject = timedObject;

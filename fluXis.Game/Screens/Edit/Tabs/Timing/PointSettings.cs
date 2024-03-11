@@ -9,7 +9,7 @@ using osuTK;
 namespace fluXis.Game.Screens.Edit.Tabs.Timing;
 
 public partial class PointSettings<T> : PointSettings
-    where T : TimedObject
+    where T : ITimedObject
 {
     public T Point { get; }
 

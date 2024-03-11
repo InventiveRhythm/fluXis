@@ -20,7 +20,7 @@ public class EditorMapEvents : MapEvents
     public event Action<ShakeEvent> ShakeEventAdded;
     public event Action<ShakeEvent> ShakeEventRemoved;
 
-    public void Update(TimedObject obj)
+    public void Update(ITimedObject obj)
     {
         switch (obj)
         {

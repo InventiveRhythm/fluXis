@@ -28,7 +28,7 @@ public class EditorMapInfo : MapInfo
     {
     }
 
-    public void Add(TimedObject obj)
+    public void Add(ITimedObject obj)
     {
         switch (obj)
         {
@@ -52,7 +52,7 @@ public class EditorMapInfo : MapInfo
         }
     }
 
-    public void Update(TimedObject obj)
+    public void Update(ITimedObject obj)
     {
         switch (obj)
         {
@@ -74,7 +74,7 @@ public class EditorMapInfo : MapInfo
         }
     }
 
-    public void Remove(TimedObject obj)
+    public void Remove(ITimedObject obj)
     {
         switch (obj)
         {
