@@ -1,16 +1,20 @@
+using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Edit.TabSwitcher;
 
 public partial class EditorTabSwitcherButton : ClickableContainer
 {
-    public string Text { get; set; }
+    private IconUsage icon { get; }
+    private string text { get; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -18,13 +22,18 @@ public partial class EditorTabSwitcherButton : ClickableContainer
     private Box hover;
     private Box flash;
 
+    public EditorTabSwitcherButton(IconUsage icon, string text, Action action)
+    {
+        this.icon = icon;
+        this.text = text;
+        Action = action;
+    }
+
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Y;
         AutoSizeAxes = Axes.X;
-        CornerRadius = 5;
-        Masking = true;
         Children = new Drawable[]
         {
             hover = new Box
@@ -37,13 +46,29 @@ public partial class EditorTabSwitcherButton : ClickableContainer
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            new FluXisSpriteText
+            new FillFlowContainer
             {
-                Text = Text,
-                FontSize = 22,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Padding = new MarginPadding { Horizontal = 15 }
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Horizontal,
+                Children = new Drawable[]
+                {
+                    new SpriteIcon
+                    {
+                        Icon = icon,
+                        Size = new Vector2(20),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Margin = new MarginPadding(12)
+                    },
+                    new FluXisSpriteText
+                    {
+                        Text = text,
+                        WebFontSize = 16,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Margin = new MarginPadding { Right = 12 }
+                    }
+                }
             }
         };
     }

@@ -14,6 +14,5 @@ public partial class EditorTabSwitcher : FillFlowContainer
         AutoSizeAxes = Axes.X;
         Direction = FillDirection.Horizontal;
         Height = 45;
-        Padding = new MarginPadding(5);
     }
 }

@@ -317,21 +317,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 Children = new EditorTabSwitcherButton[]
                 {
-                    new()
-                    {
-                        Text = "Setup",
-                        Action = () => changeTab(0)
-                    },
-                    new()
-                    {
-                        Text = "Charting",
-                        Action = () => changeTab(1)
-                    },
-                    new()
-                    {
-                        Text = "Timing",
-                        Action = () => changeTab(2)
-                    }
+                    new(FontAwesome6.Solid.ScrewdriverWrench, "Setup", () => changeTab(0)),
+                    new(FontAwesome6.Solid.PenRuler, "Charting", () => changeTab(1)),
+                    new(FontAwesome6.Solid.Clock, "Timing", () => changeTab(2))
                 }
             },
             bottomBar = new EditorBottomBar()
