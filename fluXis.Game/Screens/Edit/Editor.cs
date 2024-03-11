@@ -176,7 +176,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         Children = new EditorTab[]
                         {
                             new SetupTab(this),
-                            new ChartingTab(this)
+                            new ChartingTab(this),
+                            new WipEditorTab(this, FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
+                            new WipEditorTab(this, FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
+                            new WipEditorTab(this, FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
                         }
                     }
                 }
@@ -414,8 +417,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         for (var i = 0; i < tabs.Children.Count; i++)
         {
-            Drawable tab = tabs.Children[i];
-            tab.FadeTo(i == currentTab ? 1 : 0);
+            var tab = tabs.Children[i];
+
+            if (i == currentTab)
+                tab.Show();
+            else
+                tab.Hide();
         }
     }
 
