@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Map;
 using osu.Framework.Audio;
@@ -11,7 +12,7 @@ using osu.Framework.Utils;
 
 namespace fluXis.Game.Screens.Edit;
 
-public partial class EditorClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock
+public partial class EditorClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock, IBeatSyncProvider
 {
     public IBindable<Track> Track => track;
     public float TrackLength => (float)(track.Value?.Length ?? 10000);
@@ -30,8 +31,6 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     double IClock.Rate => underlying.Rate;
 
     private double currentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
-
-    public double BeatTime { get; private set; }
 
     private readonly FramedMapClock underlying;
     private readonly Bindable<Track> track = new();
@@ -164,8 +163,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
             if (CurrentTime > TrackLength) underlying.Seek(TrackLength);
         }
 
-        var tp = MapInfo.GetTimingPoint((float)CurrentTime);
-        BeatTime = tp.MsPerBeat;
+        updateStep();
     }
 
     public override void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();
@@ -180,5 +178,33 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         underlying.ChangeSource(source);
 
         TrackChanged?.Invoke(Track.Value);
+    }
+
+    public double StepTime => stepTime / Rate;
+    public double BeatTime => StepTime * 4;
+    public Action<int> OnBeat { get; set; }
+
+    private int lastStep;
+    private int step;
+    private float stepTime;
+
+    private void updateStep()
+    {
+        lastStep = step;
+        step = 0;
+        stepTime = 1000;
+
+        if (MapInfo == null) return;
+        if (!MapInfo.TimingPoints.Any()) return;
+
+        var point = MapInfo.GetTimingPoint(CurrentTime);
+
+        stepTime = 60000f / point.BPM / point.Signature;
+
+        var timeSinceTimingPoint = CurrentTime - point.Time;
+        step = (int)(timeSinceTimingPoint / stepTime);
+
+        if (lastStep != step && step % 4 == 0)
+            OnBeat?.Invoke(step / 4);
     }
 }

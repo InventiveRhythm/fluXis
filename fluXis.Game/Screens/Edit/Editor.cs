@@ -157,6 +157,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         clock = new EditorClock(MapInfo) { SnapDivisor = values.SnapDivisorBindable };
         clock.ChangeSource(loadMapTrack());
         dependencies.CacheAs(clock);
+        dependencies.CacheAs<IBeatSyncProvider>(clock);
 
         InternalChildren = new Drawable[]
         {

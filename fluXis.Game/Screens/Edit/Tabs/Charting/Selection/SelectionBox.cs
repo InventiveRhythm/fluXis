@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,7 +14,12 @@ public partial class SelectionBox : Container
 {
     public EditorPlayfield Playfield { get; init; }
 
+    [Resolved]
+    private IBeatSyncProvider beatSync { get; set; }
+
     public Container Box { get; set; }
+    private Box box;
+
     private float? startTime;
 
     [BackgroundDependencyLoader]
@@ -29,11 +35,22 @@ public partial class SelectionBox : Container
             BorderThickness = 4,
             CornerRadius = 10,
             Masking = true,
-            Child = new Box
+            Child = box = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0.2f
             }
+        };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        beatSync.OnBeat += _ =>
+        {
+            box.FadeTo(.3f)
+               .FadeTo(.2f, beatSync.BeatTime);
         };
     }
 
