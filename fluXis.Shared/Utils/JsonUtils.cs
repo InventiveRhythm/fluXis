@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace fluXis.Shared.Utils;
 
@@ -19,30 +18,8 @@ public static class JsonUtils
         Formatting = indent ? Formatting.Indented : Formatting.None,
         ObjectCreationHandling = ObjectCreationHandling.Replace,
         NullValueHandling = NullValueHandling.Ignore,
-        Converters = new List<JsonConverter> { new TypeConverter() },
-        ContractResolver = new ContractResolver()
+        Converters = new List<JsonConverter> { new TypeConverter() }
     };
-
-    private class ContractResolver : DefaultContractResolver
-    {
-        private static readonly Dictionary<string, string> mapping = new()
-        {
-            { "Time", "time" },
-            { "Lane", "lane" },
-            { "HoldTime", "length" },
-            { "HitSound", "sound" },
-            { "Type", "type" },
-            { "BPM", "bpm" },
-            { "Signature", "signature" },
-            { "HideLines", "hide-lines" },
-            { "Multiplier", "multiplier" }
-        };
-
-        protected override string ResolvePropertyName(string propertyName)
-        {
-            return mapping.TryGetValue(propertyName, out var value) ? value : base.ResolvePropertyName(propertyName);
-        }
-    }
 
     private class TypeConverter : JsonConverter
     {

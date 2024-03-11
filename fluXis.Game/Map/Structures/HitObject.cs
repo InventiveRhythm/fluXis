@@ -11,10 +11,10 @@ public class HitObject : ITimedObject
     [JsonProperty("lane")]
     public int Lane { get; set; }
 
-    [JsonProperty("length")]
+    [JsonProperty("holdtime")]
     public float HoldTime { get; set; }
 
-    [JsonProperty("sound")]
+    [JsonProperty("hitsound")]
     public string HitSound { get; set; }
 
     /// <summary>
