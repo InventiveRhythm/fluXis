@@ -83,7 +83,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public RealmMap Map { get; private set; }
     public EditorMapInfo MapInfo { get; private set; }
 
-    private Container tabs;
+    private Container<EditorTab> tabs;
     private int currentTab;
 
     private EditorMenuBar menuBar;
@@ -167,17 +167,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 Child = new PopoverContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Child = tabs = new Container
+                    Child = tabs = new Container<EditorTab>
                     {
                         Padding = new MarginPadding { Top = 45, Bottom = 60 },
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Children = new Drawable[]
+                        Children = new EditorTab[]
                         {
                             new SetupTab(this),
-                            new ChartingTab(this),
-                            new TimingTab(this)
+                            new ChartingTab(this)
                         }
                     }
                 }
@@ -315,12 +314,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             },
             tabSwitcher = new EditorTabSwitcher
             {
-                Children = new EditorTabSwitcherButton[]
-                {
-                    new(FontAwesome6.Solid.ScrewdriverWrench, "Setup", () => changeTab(0)),
-                    new(FontAwesome6.Solid.PenRuler, "Charting", () => changeTab(1)),
-                    new(FontAwesome6.Solid.Clock, "Timing", () => changeTab(2))
-                }
+                ChildrenEnumerable = tabs.Select(x => new EditorTabSwitcherButton(x.Icon, x.TabName, () => changeTab(tabs.IndexOf(x))))
             },
             bottomBar = new EditorBottomBar()
         };

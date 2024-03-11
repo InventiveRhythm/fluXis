@@ -8,12 +8,16 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs;
 
 public partial class SetupTab : EditorTab
 {
+    public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
+    public override string TabName => "Setup";
+
     [Resolved]
     private EditorValues values { get; set; }
 

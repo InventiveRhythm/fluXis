@@ -1,13 +1,18 @@
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs;
 
 public partial class ChartingTab : EditorTab
 {
+    public override IconUsage Icon => FontAwesome6.Solid.PenRuler;
+    public override string TabName => "Charting";
+
     private LoadingIcon loadingIcon;
 
     public ChartingTab(Editor screen)
