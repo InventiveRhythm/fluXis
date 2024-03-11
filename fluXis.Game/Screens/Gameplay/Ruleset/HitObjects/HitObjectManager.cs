@@ -13,7 +13,6 @@ using fluXis.Game.Skinning;
 using fluXis.Shared.Scoring.Structs;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -315,23 +314,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         // when hitting them as a normal note
         if (hitObject is { Type: 1 } && userTriggered) return;
 
-        Sample sample = null;
-
-        if (hitObject != null && !string.IsNullOrEmpty(hitObject.HitSound))
-        {
-            var isCustom = !hitObject.HitSound.StartsWith(Hitsounding.DEFAULT_PREFIX);
-
-            // its more readable this way
-            // ReSharper disable once ConvertIfStatementToSwitchStatement
-            if (!isCustom) // default hitsounds
-                sample = screen.Hitsounding.GetSample(hitObject.HitSound);
-
-            if (isCustom && hitsounds.Value) // custom hitsounds and hitsounding is enabled
-                sample = screen.Hitsounding.GetSample(hitObject.HitSound);
-        }
-
-        sample ??= screen.Samples.HitSample;
-        sample?.Play();
+        var channel = screen.Hitsounding.GetSample(hitObject.HitSound, hitsounds.Value);
+        channel?.Play();
     }
 
     private void loadMap()

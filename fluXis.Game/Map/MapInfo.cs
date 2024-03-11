@@ -24,6 +24,7 @@ public class MapInfo
     public List<HitObject> HitObjects { get; set; }
     public List<TimingPoint> TimingPoints { get; set; }
     public List<ScrollVelocity> ScrollVelocities { get; set; }
+    public List<HitSoundFade> HitSoundFades { get; set; }
 
     public float AccuracyDifficulty { get; set; } = 8;
 
@@ -67,6 +68,7 @@ public class MapInfo
         HitObjects = new List<HitObject>();
         TimingPoints = new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }; // Add default timing point to avoid issues
         ScrollVelocities = new List<ScrollVelocity>();
+        HitSoundFades = new List<HitSoundFade>();
     }
 
     public bool Validate(out string issue)
@@ -113,6 +115,7 @@ public class MapInfo
         HitObjects.Sort((a, b) => a.Time == b.Time ? a.Lane.CompareTo(b.Lane) : a.Time.CompareTo(b.Time));
         TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
+        HitSoundFades?.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
     public MapEvents GetMapEvents() => GetMapEvents<MapEvents>();
@@ -199,6 +202,7 @@ public class MapInfo
             HitObjects = HitObjects,
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
+            HitSoundFades = HitSoundFades,
             InitialKeyCount = InitialKeyCount,
             AccuracyDifficulty = AccuracyDifficulty,
             Map = Map

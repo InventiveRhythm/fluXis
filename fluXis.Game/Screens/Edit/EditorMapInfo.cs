@@ -137,6 +137,7 @@ public class EditorMapInfo : MapInfo
             HitObjects = info.HitObjects,
             TimingPoints = info.TimingPoints,
             ScrollVelocities = info.ScrollVelocities,
+            HitSoundFades = info.HitSoundFades,
             InitialKeyCount = info.InitialKeyCount,
             AccuracyDifficulty = info.AccuracyDifficulty,
             MapEvents = info.GetMapEvents<EditorMapEvents>()
@@ -155,6 +156,7 @@ public class EditorMapInfo : MapInfo
             HitObjects = HitObjects,
             TimingPoints = TimingPoints,
             ScrollVelocities = ScrollVelocities,
+            HitSoundFades = HitSoundFades,
             InitialKeyCount = InitialKeyCount,
             Map = Map,
             MapEvents = MapEvents

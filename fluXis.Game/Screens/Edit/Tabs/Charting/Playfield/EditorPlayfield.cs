@@ -3,7 +3,7 @@ using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
-using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -48,7 +48,11 @@ public partial class EditorPlayfield : Container
 
         InternalChildren = new Drawable[]
         {
-            hitsounding = new Hitsounding(values.Editor.Map.MapSet, clock.RateBindable),
+            hitsounding = new Hitsounding(values.Editor.Map.MapSet, values.MapInfo.HitSoundFades, clock.RateBindable)
+            {
+                DirectVolume = true,
+                Clock = clock
+            },
             new DefaultStageBackground(),
             new DefaultStageBorderLeft(),
             new DefaultStageBorderRight(),
@@ -89,9 +93,5 @@ public partial class EditorPlayfield : Container
             hitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
     }
 
-    public void PlayHitSound(HitObject info)
-    {
-        var sample = hitsounding.GetSample(info.HitSound) ?? hitSound;
-        sample?.Play();
-    }
+    public void PlayHitSound(HitObject info) => hitsounding.GetSample(info.HitSound).Play();
 }

@@ -28,6 +28,7 @@ using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.Audio;
+using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
@@ -252,7 +253,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 {
                     Input,
                     Samples,
-                    Hitsounding = new Hitsounding(RealmMap.MapSet, GameplayClock.RateBindable),
+                    Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock },
                     shaders.AddContent(new[]
                     {
                         new DrawSizePreservingFillContainer
