@@ -111,7 +111,7 @@ public class QuaverImport : MapImporter
 
         try
         {
-            SQLiteConnection connection = new SQLiteConnection($"Message Source={dbPath};Version=3;");
+            SQLiteConnection connection = new SQLiteConnection($"Data Source={dbPath};Version=3;");
             connection.Open();
 
             SQLiteCommand command = new SQLiteCommand("SELECT * FROM Map", connection);
