@@ -66,7 +66,7 @@ public class RealmMapSet : RealmObject
     public void SetStatus(int status)
     {
         foreach (RealmMap map in Maps)
-            map.Status = status;
+            map.StatusInt = status;
 
         StatusChanged?.Invoke();
     }

@@ -99,7 +99,7 @@ public class StepmaniaImport : MapImporter
                     Difficulty = info.Metadata.Difficulty,
                     FileName = Path.GetFileName(file),
                     KeyCount = 4,
-                    Status = ID,
+                    StatusInt = ID,
                     MapInfo = info,
                     Metadata = new RealmMapMetadata
                     {

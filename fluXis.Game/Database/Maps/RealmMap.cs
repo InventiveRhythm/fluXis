@@ -30,7 +30,11 @@ public class RealmMap : RealmObject
      * 3 = Pure
      * everything over 100 is from other games
      */
-    public int Status { get; set; } = -2;
+    [MapTo(nameof(Status))]
+    public int StatusInt { get; set; } = -2;
+
+    [Ignored]
+    public MapStatus Status { set => StatusInt = (int)value; }
 
     public string FileName { get; set; } = string.Empty;
     public int OnlineID { get; set; } = -1;
@@ -98,13 +102,21 @@ public class RealmMap : RealmObject
 
     public static RealmMap CreateNew()
     {
-        RealmMap map = new RealmMap
+        var set = new RealmMapSet(new List<RealmMap>
         {
-            Metadata = new RealmMapMetadata(),
-            ID = Guid.NewGuid()
-        };
-        RealmMapSet set = new RealmMapSet(new List<RealmMap> { map });
-        map.MapSet = set;
-        return map;
+            new(null) { Filters = new RealmMapFilters() }
+        });
+
+        return set.Maps[0];
     }
+}
+
+public enum MapStatus
+{
+    Local = -2,
+    Blacklisted = -1,
+    Unsubmitted = 0,
+    Pending = 1,
+    Impure = 2,
+    Pure = 3
 }

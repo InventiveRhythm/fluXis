@@ -443,7 +443,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 
-            if (Mods.All(m => m.Rankable) && SubmitScore && RealmMap.Status < 100)
+            if (Mods.All(m => m.Rankable) && SubmitScore && RealmMap.StatusInt < 100)
             {
                 var scoreId = realm.RunWrite(r =>
                 {

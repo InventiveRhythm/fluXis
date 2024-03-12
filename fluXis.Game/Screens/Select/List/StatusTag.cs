@@ -91,12 +91,12 @@ public partial class StatusTag : CircularContainer
 
     private (string, Colour4) getStatus()
     {
-        var color = FluXisColors.GetStatusColor(map.Status);
+        var color = FluXisColors.GetStatusColor(map.StatusInt);
 
-        switch (map.Status)
+        switch (map.StatusInt)
         {
             case < 100:
-                return map.Status switch
+                return map.StatusInt switch
                 {
                     -2 => ("LOCAL", color),
                     -1 => ("UNSUBMITTED", color), // blacklisted, but we show it as "unsubmitted"
@@ -110,12 +110,12 @@ public partial class StatusTag : CircularContainer
             case >= 100:
                 return realm.Run(r =>
                 {
-                    var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == map.Status);
+                    var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Id == map.StatusInt);
 
                     if (info != null)
                         return (info.Name, Colour4.TryParseHex(info.Color, out var c) ? c : color);
 
-                    Logger.Log($"ImporterInfo with id {map.Status} not found!", level: LogLevel.Error);
+                    Logger.Log($"ImporterInfo with id {map.StatusInt} not found!", level: LogLevel.Error);
 
                     return ("UNKNOWN", color);
                 });

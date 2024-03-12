@@ -153,7 +153,7 @@ public class QuaverImport : MapImporter
                         Audio = audio,
                         PreviewTime = previewTime
                     },
-                    Status = ID,
+                    StatusInt = ID,
                     OnlineID = 0,
                     Filters = new RealmMapFilters
                     {

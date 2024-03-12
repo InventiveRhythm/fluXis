@@ -12,10 +12,8 @@ namespace fluXis.Game.Utils;
 
 public static class MapUtils
 {
-    public static RealmMapFilters GetMapFilters(MapInfo map, MapEvents events)
+    public static RealmMapFilters UpdateFilters(this RealmMapFilters filters, MapInfo map, MapEvents events)
     {
-        RealmMapFilters filters = new RealmMapFilters();
-
         foreach (var hitObject in map.HitObjects)
         {
             filters.Length = Math.Max(filters.Length, hitObject.EndTime);
@@ -46,11 +44,17 @@ public static class MapUtils
             }
         }
 
-        filters.HasLaneSwitch = events.LaneSwitchEvents.Count > 0;
-        filters.HasFlash = events.FlashEvents.Count > 0;
+        if (events != null)
+        {
+            filters.HasLaneSwitch = events.LaneSwitchEvents.Count > 0;
+            filters.HasFlash = events.FlashEvents.Count > 0;
+        }
 
         return filters;
     }
+
+    public static RealmMapFilters GetMapFilters(MapInfo map, MapEvents events)
+        => new RealmMapFilters().UpdateFilters(map, events);
 
     private static float getNps(List<HitObject> hitObjects)
     {
@@ -61,10 +65,8 @@ public static class MapUtils
         foreach (var hitObject in hitObjects)
         {
             int second = (int)hitObject.Time / 1000;
-            if (seconds.ContainsKey(second))
+            if (!seconds.TryAdd(second, 1))
                 seconds[second]++;
-            else
-                seconds.Add(second, 1);
         }
 
         return (float)seconds.Average(x => x.Value);

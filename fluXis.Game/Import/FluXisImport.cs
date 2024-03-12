@@ -96,7 +96,7 @@ public class FluXisImport : MapImporter
                         Hash = hash,
                         KeyCount = keys,
                         Rating = 0,
-                        Status = MapStatus,
+                        StatusInt = MapStatus,
                         FileName = filename
                     };
 
@@ -116,7 +116,7 @@ public class FluXisImport : MapImporter
                         mapSet.Cover = mapInfo.CoverFile;
 
                     // skip metadata lookup if the map is from a different game
-                    if (map.Status >= 100) continue;
+                    if (map.StatusInt >= 100) continue;
 
                     try
                     {
@@ -124,7 +124,7 @@ public class FluXisImport : MapImporter
                         if (onlineMap == null) continue;
 
                         map.OnlineID = onlineMap.Id;
-                        map.Status = onlineMap.Status;
+                        map.StatusInt = onlineMap.Status;
                         mapSet.OnlineID = onlineMap.SetId;
                     }
                     catch (Exception e)

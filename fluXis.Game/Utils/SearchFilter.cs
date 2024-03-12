@@ -95,7 +95,7 @@ public class SearchFilters
 
         if (Status.Count > 0)
         {
-            if (!Status.Contains(map.Status))
+            if (!Status.Contains(map.StatusInt))
                 return false;
         }
 

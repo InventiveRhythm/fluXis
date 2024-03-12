@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -117,16 +118,16 @@ public partial class MapStore : Component
             {
                 foreach (var map in set.Maps)
                 {
-                    if (map.Status == -3)
+                    if (map.StatusInt == -3)
                     {
                         var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == "Quaver");
-                        if (info != null) map.Status = info.Id;
+                        if (info != null) map.StatusInt = info.Id;
                     }
 
-                    if (map.Status == -4)
+                    if (map.StatusInt == -4)
                     {
                         var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == "osu!mania");
-                        if (info != null) map.Status = info.Id;
+                        if (info != null) map.StatusInt = info.Id;
                     }
                 }
             }
@@ -167,6 +168,53 @@ public partial class MapStore : Component
     public void Present(RealmMapSet map)
     {
         game.ShowMap(map);
+    }
+
+    public void Save(RealmMap map, MapInfo info, MapEvents events, bool setStatus)
+    {
+        if (map == null || info == null)
+            throw new ArgumentNullException();
+
+        var set = map.MapSet;
+
+        if (setStatus)
+        {
+            // map.LastUpdate = DateTimeOffset.Now;
+            map.Status = MapStatus.Local;
+            map.OnlineID = -1;
+        }
+
+        var directory = MapFiles.GetFullPath(set.GetPathForFile(""));
+
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        if (events is { Empty: false })
+        {
+            var effectFilename = string.IsNullOrWhiteSpace(info.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : info.EffectFile;
+            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(effectFilename)), events.Save());
+            info.EffectFile = effectFilename;
+        }
+        else
+            info.EffectFile = "";
+
+        realm.RunWrite(r =>
+        {
+            var stream = new MemoryStream();
+            stream.Write(Encoding.UTF8.GetBytes(info.Serialize()));
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var mapFilename = string.IsNullOrWhiteSpace(map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : map.FileName;
+            File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(mapFilename)), stream.ToArray());
+
+            var hash = MapUtils.GetHash(stream);
+            map.Hash = hash;
+            map.FileName = mapFilename;
+            map.Filters.UpdateFilters(info, events);
+
+            var existing = r.Find<RealmMap>(map.ID)!;
+            set.CopyChanges(existing.MapSet);
+        });
     }
 
     public void AddMapSet(RealmMapSet mapSet, bool notify = true)
@@ -290,7 +338,13 @@ public partial class MapStore : Component
         var map = RealmMap.CreateNew();
         map.Metadata.Mapper = fluxel.LoggedInUser?.Username ?? "Me";
         map.MapSet.Resources = resources;
-        return map;
+        return realm.RunWrite(r =>
+        {
+            var set = r.Add(map.MapSet);
+            set = set.Detach();
+            AddMapSet(set);
+            return set.Maps.FirstOrDefault(m => m.ID == map.ID);
+        });
     }
 
     public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, string name, MapInfo refInfo = null)

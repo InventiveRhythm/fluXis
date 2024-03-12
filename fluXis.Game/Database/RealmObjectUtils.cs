@@ -4,18 +4,85 @@ using AutoMapper.Internal;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
+using fluXis.Shared.Utils;
+using osu.Framework.Logging;
 using Realms;
 
 namespace fluXis.Game.Database;
 
 public static class RealmObjectUtils
 {
+    private static readonly IMapper write_mapper = new MapperConfiguration(c =>
+    {
+        c.ShouldMapField = _ => false;
+        c.ShouldMapProperty = pi => pi.SetMethod?.IsPublic == true;
+        Logger.LogPrint("Creating write mapper", LoggingTarget.Database, LogLevel.Debug);
+
+        c.CreateMap<RealmMapMetadata, RealmMapMetadata>().AfterMap((s, d) =>
+        {
+            Logger.LogPrint("Mapped metadata", LoggingTarget.Database, LogLevel.Debug);
+
+            Logger.Log(s.Serialize(), LoggingTarget.Database, LogLevel.Debug);
+            Logger.Log(d.Serialize(), LoggingTarget.Database, LogLevel.Debug);
+        });
+        c.CreateMap<RealmMapFilters, RealmMapFilters>();
+        c.CreateMap<RealmMap, RealmMap>()
+         .ForMember(s => s.Metadata, cc => cc.Ignore())
+         .ForMember(s => s.Filters, cc => cc.Ignore())
+         .ForMember(s => s.MapSet, cc => cc.Ignore())
+         .AfterMap((s, d) =>
+         {
+             copyChanges(s.Filters, d.Filters);
+             copyChanges(s.Metadata, d.Metadata);
+         });
+        c.CreateMap<RealmMapSet, RealmMapSet>()
+         .ConstructUsing(_ => new RealmMapSet(null))
+         .ForMember(s => s.Maps, cc => cc.Ignore())
+         .AfterMap((s, d) =>
+         {
+             foreach (var map in s.Maps)
+             {
+                 var existing = d.Realm!.Find<RealmMap>(map.ID);
+
+                 if (existing != null)
+                 {
+                     if (!d.Maps.Contains(existing))
+                         d.Maps.Add(existing);
+
+                     copyChanges(map, existing);
+                 }
+                 else
+                 {
+                     var newBeatmap = new RealmMap()
+                     {
+                         ID = map.ID,
+                         MapSet = d
+                     };
+
+                     d.Maps.Add(newBeatmap);
+                     copyChanges(map, newBeatmap);
+                 }
+             }
+         });
+
+        c.Internal().ForAllMaps((_, expression) =>
+        {
+            expression.ForAllMembers(m =>
+            {
+                if (m.DestinationMember.Has<IgnoredAttribute>()
+                    || m.DestinationMember.Has<BacklinkAttribute>()
+                    || m.DestinationMember.Has<IgnoreDataMemberAttribute>())
+                    m.Ignore();
+            });
+        });
+    }).CreateMapper();
+
     private static readonly IMapper mapper = new MapperConfiguration(c =>
     {
         setConfiguration(c);
 
         c.CreateMap<RealmMapSet, RealmMapSet>()
-         .ConstructUsing(_ => new RealmMapSet())
+         .ConstructUsing(_ => new RealmMapSet(null))
          .MaxDepth(2)
          .AfterMap((_, d) =>
          {
@@ -43,7 +110,7 @@ public static class RealmObjectUtils
         setConfiguration(c);
 
         c.CreateMap<RealmMapSet, RealmMapSet>()
-         .ConstructUsing(_ => new RealmMapSet())
+         .ConstructUsing(_ => new RealmMapSet(null))
          .MaxDepth(2)
          .AfterMap((_, d) =>
          {
@@ -85,4 +152,10 @@ public static class RealmObjectUtils
 
         return mapper.Map<T>(realmObject);
     }
+
+    public static void CopyChanges(this RealmMapSet source, RealmMapSet dest)
+        => copyChanges(source, dest);
+
+    private static void copyChanges<T>(T source, T dest) where T : RealmObjectBase
+        => write_mapper.Map(source, dest);
 }

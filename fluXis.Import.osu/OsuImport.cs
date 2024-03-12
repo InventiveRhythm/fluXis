@@ -212,7 +212,7 @@ public class OsuImport : MapImporter
                             PreviewTime = map.AudioPreviewTime
                         },
                         MapSet = realmMapSet,
-                        Status = ID,
+                        StatusInt = ID,
                         FileName = map.BeatmapFileName,
                         OnlineID = 0,
                         Hash = null,

@@ -346,7 +346,7 @@ public partial class ScoreList : GridContainer
             return null;
         }
 
-        if (map.Status != req.Response.Data.Map.Status)
+        if (map.StatusInt != req.Response.Data.Map.Status)
         {
             map.MapSet.SetStatus(req.Response.Data.Map.Status);
             realm?.RunWrite(r =>

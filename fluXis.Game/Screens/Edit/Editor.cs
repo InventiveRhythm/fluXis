@@ -103,7 +103,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private string lastMapHash;
     private string lastEffectHash;
 
-    private bool canSave => Map.Status < 100;
+    private bool canSave => Map.StatusInt < 100;
 
     public bool HasUnsavedChanges
     {
@@ -533,6 +533,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return true;
         }
 
+        if (isNewMap) // delete the map if it was new and not saved
+            mapStore.DeleteMapSet(Map.MapSet);
+
         exitAnimation();
         clock.Stop();
         globalClock.Seek((float)clock.CurrentTime);
@@ -601,102 +604,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return true;
         }
 
-        string effects = values.MapEvents.Save();
+        mapStore.Save(Map, MapInfo, values.MapEvents, setStatus);
+        Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), Map.MapSet));
 
-        if (string.IsNullOrEmpty(effects))
-            MapInfo.EffectFile = "";
-        else
-        {
-            var fileName = string.IsNullOrEmpty(MapInfo.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : MapInfo.EffectFile;
-            var effectsPath = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(fileName));
-            var effectsDir = Path.GetDirectoryName(effectsPath);
-
-            if (!Directory.Exists(effectsDir))
-                Directory.CreateDirectory(effectsDir);
-
-            File.WriteAllText(effectsPath, effects);
-            MapInfo.EffectFile = fileName;
-        }
-
-        // get map as json
-        string json = MapInfo.Serialize();
-        string hash = MapUtils.GetHash(json);
-
-        Map.FileName = string.IsNullOrEmpty(Map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : Map.FileName;
-
-        // write to file
-        string path = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(Map.FileName));
-        string dir = Path.GetDirectoryName(path);
-
-        if (!Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
-
-        File.WriteAllText(path, json);
-
-        // update realm
-        realm.RunWrite(r =>
-        {
-            var existingMap = r.All<RealmMap>().FirstOrDefault(m => m.ID == Map.ID);
-
-            if (existingMap != null)
-            {
-                var set = existingMap.MapSet;
-                if (setStatus) set.SetStatus(-2);
-                var prevFile = existingMap.MapSet.GetPathForFile(existingMap.Hash);
-
-                if (prevFile == null)
-                {
-                    notifications.SendError("Failed to find previous map file!");
-                    return;
-                }
-
-                existingMap.Hash = hash;
-                Map.Hash = hash;
-                r.Remove(existingMap.Filters);
-                existingMap.Filters = MapUtils.GetMapFilters(MapInfo, values.MapEvents);
-
-                r.Remove(existingMap.Metadata);
-                existingMap.Difficulty = MapInfo.Metadata.Difficulty;
-                existingMap.MapSet.Cover = Map.MapSet.Cover;
-                existingMap.KeyCount = Map.KeyCount;
-                existingMap.Metadata = new RealmMapMetadata
-                {
-                    Title = MapInfo.Metadata.Title,
-                    Artist = MapInfo.Metadata.Artist,
-                    Mapper = MapInfo.Metadata.Mapper,
-                    Source = MapInfo.Metadata.Source,
-                    Tags = MapInfo.Metadata.Tags,
-                    Background = MapInfo.BackgroundFile,
-                    Audio = MapInfo.AudioFile,
-                    PreviewTime = MapInfo.Metadata.PreviewTime
-                };
-
-                var detach = set.Detach();
-                Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), detach));
-            }
-            else
-            {
-                Map.Hash = hash;
-                Map.Filters = MapUtils.GetMapFilters(MapInfo, new MapEvents());
-                Map.Difficulty = MapInfo.Metadata.Difficulty;
-                Map.Metadata = new RealmMapMetadata
-                {
-                    Title = MapInfo.Metadata.Title,
-                    Artist = MapInfo.Metadata.Artist,
-                    Mapper = MapInfo.Metadata.Mapper,
-                    Source = MapInfo.Metadata.Source,
-                    Tags = MapInfo.Metadata.Tags,
-                    Background = MapInfo.BackgroundFile,
-                    Audio = MapInfo.AudioFile,
-                    PreviewTime = MapInfo.Metadata.PreviewTime
-                };
-
-                r.Add(Map.MapSet);
-                mapStore.AddMapSet(Map.MapSet.Detach());
-                Map = Map.Detach(); // unlink from realm again
-            }
-        });
-
+        isNewMap = false;
         updateStateHash();
         notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
         return true;

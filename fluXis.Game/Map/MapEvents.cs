@@ -36,6 +36,16 @@ public class MapEvents
     [JsonProperty("shader")]
     public List<ShaderEvent> ShaderEvents { get; init; } = new();
 
+    [JsonIgnore]
+    public bool Empty => LaneSwitchEvents.Count == 0
+                         && FlashEvents.Count == 0
+                         && PulseEvents.Count == 0
+                         && PlayfieldMoveEvents.Count == 0
+                         && PlayfieldScaleEvents.Count == 0
+                         && ShakeEvents.Count == 0
+                         && PlayfieldFadeEvents.Count == 0
+                         && ShaderEvents.Count == 0;
+
     public static T Load<T>(string content)
         where T : MapEvents, new()
     {
