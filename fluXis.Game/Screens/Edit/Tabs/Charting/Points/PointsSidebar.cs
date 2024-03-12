@@ -31,6 +31,9 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
     [Resolved]
     private ChartingContainer chartingContainer { get; set; }
 
+    [Resolved]
+    private EditorValues values { get; set; }
+
     private SelectionHandler selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
 
     private bool showingSettings;
@@ -132,6 +135,7 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
                 break;
 
             case 1:
+            {
                 var selected = selectionHandler.SelectedObjects.Single();
                 inspector.AddSection("Type", selected.GetType().ReadableName());
                 inspector.AddSection("Time", TimeUtils.Format(selected.Time));
@@ -158,11 +162,37 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
                 }
 
                 break;
+            }
 
             default:
                 inspector.AddSection("Selected", $"{selectionHandler.SelectedObjects.Count} objects");
                 inspector.AddSection("Start", TimeUtils.Format(selectionHandler.SelectedObjects.Min(o => o.Time)));
                 inspector.AddSection("End", TimeUtils.Format(selectionHandler.SelectedObjects.Max(o => o.Time)));
+
+                if (selectionHandler.SelectedObjects.All(o => o is HitObject))
+                {
+                    var evenCount = values.Editor.Map.KeyCount % 2 == 0;
+                    var laneCount = values.Editor.Map.KeyCount / 2;
+                    var middleLane = laneCount + 1;
+
+                    var leftCount = selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane <= laneCount);
+                    var middleCount = selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane == middleLane);
+                    var rightCount = evenCount
+                        ? selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane > laneCount)
+                        : selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane > middleLane);
+
+                    var leftPercentage = (float)leftCount / selectionHandler.SelectedObjects.Count * 100;
+                    var middlePercentage = (float)middleCount / selectionHandler.SelectedObjects.Count * 100;
+                    var rightPercentage = (float)rightCount / selectionHandler.SelectedObjects.Count * 100;
+
+                    inspector.AddSection("Side Balance - Left", $"{leftCount} ({leftPercentage:0.##}%)");
+
+                    if (!evenCount)
+                        inspector.AddSection("Side Balance - Middle", $"{middleCount} ({middlePercentage:0.##}%)");
+
+                    inspector.AddSection("Side Balance - Right", $"{rightCount} ({rightPercentage:0.##}%)");
+                }
+
                 break;
         }
     }

@@ -62,7 +62,8 @@ public partial class SelectionInspector : FillFlowContainer
                 new FluXisSpriteText
                 {
                     Text = value,
-                    WebFontSize = 18
+                    WebFontSize = 18,
+                    AllowMultiline = true
                 }
             };
         }
