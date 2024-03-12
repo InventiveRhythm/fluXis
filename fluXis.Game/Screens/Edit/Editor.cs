@@ -99,7 +99,25 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private DependencyContainer dependencies;
     private bool exitConfirmed;
     private bool isNewMap;
-    private string effectHash;
+
+    private string lastMapHash;
+    private string lastEffectHash;
+
+    private bool canSave => Map.Status < 100;
+
+    public bool HasUnsavedChanges
+    {
+        get
+        {
+            if (!canSave)
+                return false;
+
+            var mapHash = MapUtils.GetHash(MapInfo.Serialize());
+            var effectHash = MapUtils.GetHash(values.MapEvents.Save());
+
+            return mapHash != lastMapHash || effectHash != lastEffectHash;
+        }
+    }
 
     private Bindable<float> backgroundDim;
     private Bindable<float> backgroundBlur;
@@ -152,7 +170,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             }
         });
 
-        effectHash = MapUtils.GetHash(values.MapEvents.Save());
+        updateStateHash();
 
         clock = new EditorClock(MapInfo) { SnapDivisor = values.SnapDivisorBindable };
         clock.ChangeSource(loadMapTrack());
@@ -193,13 +211,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { Enabled = HasChanges },
+                            new("Save", FontAwesome6.Solid.FloppyDisk, () => save()) { Enabled = () => HasUnsavedChanges },
                             new FluXisMenuSpacer(),
                             new("Create new difficulty", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                             {
                                 OnCreateNewDifficulty = diffname => createNewDiff(diffname, false),
                                 OnCopyDifficulty = diffname => createNewDiff(diffname, true)
-                            }),
+                            }) { Enabled = () => canSave },
                             new("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
                             {
                                 Enabled = () => Map.MapSet.Maps.Count > 1,
@@ -221,11 +239,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 }, itemName: "difficulty");
                             })
                             {
-                                Enabled = () => Map.MapSet.Maps.Count > 1
+                                Enabled = () => Map.MapSet.Maps.Count > 1 && canSave
                             },
                             new FluXisMenuSpacer(),
                             new("Export", FontAwesome6.Solid.BoxOpen, export),
-                            new("Upload", FontAwesome6.Solid.Upload, startUpload),
+                            new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave },
                             new FluXisMenuSpacer(),
                             new("Open Song Folder", FontAwesome6.Solid.FolderOpen, () => PathUtils.OpenFolder(MapFiles.GetFullPath(Map.MapSet.GetPathForFile("")))),
                             new FluXisMenuSpacer(),
@@ -325,6 +343,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         };
     }
 
+    private void updateStateHash()
+    {
+        lastMapHash = MapUtils.GetHash(MapInfo.Serialize());
+        lastEffectHash = MapUtils.GetHash(values.MapEvents.Save());
+    }
+
     private void applyOffset()
     {
         panels.Content = new EditorOffsetPanel
@@ -369,7 +393,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         changeTab(isNewMap ? 0 : 1);
 
-        if (Map.Status >= 100)
+        if (!canSave)
         {
             panels.Content = new ButtonPanel
             {
@@ -480,7 +504,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        if (HasChanges() && !exitConfirmed && Map.Status < 100)
+        if (HasUnsavedChanges && !exitConfirmed)
         {
             panels.Content ??= new ButtonPanel
             {
@@ -551,7 +575,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (Map == null)
             return false;
 
-        if (Map.Status >= 100)
+        if (!canSave)
         {
             notifications.SendError("Map is from another game!");
             return false;
@@ -570,6 +594,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         MapInfo.Sort();
+
+        if (!HasUnsavedChanges)
+        {
+            notifications.SendSmallText("Map is already up to date", FontAwesome6.Solid.Check);
+            return true;
+        }
 
         string effects = values.MapEvents.Save();
 
@@ -591,15 +621,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         // get map as json
         string json = MapInfo.Serialize();
         string hash = MapUtils.GetHash(json);
-        string effHash = MapUtils.GetHash(values.MapEvents.Save());
-
-        if (hash == Map.Hash && effHash == effectHash)
-        {
-            notifications.SendSmallText("Map is already up to date", FontAwesome6.Solid.Check);
-            return true;
-        }
-
-        effectHash = MapUtils.GetHash(values.MapEvents.Save());
 
         Map.FileName = string.IsNullOrEmpty(Map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : Map.FileName;
 
@@ -676,15 +697,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             }
         });
 
+        updateStateHash();
         notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
         return true;
-    }
-
-    public bool HasChanges()
-    {
-        string json = MapInfo.Serialize();
-        string hash = MapUtils.GetHash(json);
-        return hash != Map.Hash;
     }
 
     private void export()
@@ -699,7 +714,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     }
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
-    private void sendWipNotification() => notifications.SendText("This is still in development", "Come back later!");
 
     public void SetKeyMode(int keyMode)
     {
@@ -773,7 +787,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private async void uploadSet()
     {
-        if (Map.Status >= 100)
+        if (!canSave)
         {
             notifications.SendError("Map is from another game!");
             return;
