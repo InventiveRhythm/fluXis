@@ -180,6 +180,13 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         TrackChanged?.Invoke(Track.Value);
     }
 
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        track.Value?.Dispose();
+    }
+
     public double StepTime => stepTime / Rate;
     public double BeatTime => StepTime * 4;
     public Action<int> OnBeat { get; set; }
