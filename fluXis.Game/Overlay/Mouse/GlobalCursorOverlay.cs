@@ -116,7 +116,7 @@ public partial class GlobalCursorOverlay : Container
             firstMoveTime = Time.Current;
         }
 
-        if (Vector2Extensions.Distance(firstMove, e.MousePosition) < 50) return false;
+        if (Vector2Extensions.Distance(firstMove, e.MousePosition) < 10) return false;
 
         timeInactive = 0;
         firstMoveTime = 0;
