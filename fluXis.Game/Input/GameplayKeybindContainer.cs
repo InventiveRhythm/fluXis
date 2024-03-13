@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
+using fluXis.Game.Input.Bindings;
 using osu.Framework.Input.Bindings;
 
 namespace fluXis.Game.Input;

@@ -6,15 +6,15 @@ using fluXis.Game.Database.Input;
 using osu.Framework.Input.Bindings;
 using Realms;
 
-namespace fluXis.Game.Input;
+namespace fluXis.Game.Input.Bindings;
 
 public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<T>
     where T : struct
 {
     private readonly FluXisRealm realm;
 
-    public RealmKeyBindingContainer(FluXisRealm realm, SimultaneousBindingMode simultaneousMode = SimultaneousBindingMode.None,
-                                    KeyCombinationMatchingMode matchingMode = KeyCombinationMatchingMode.Any)
+    protected RealmKeyBindingContainer(FluXisRealm realm, SimultaneousBindingMode simultaneousMode = SimultaneousBindingMode.None,
+                                       KeyCombinationMatchingMode matchingMode = KeyCombinationMatchingMode.Any)
         : base(simultaneousMode, matchingMode)
     {
         this.realm = realm;
