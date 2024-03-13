@@ -126,6 +126,7 @@ public class FluXisImport : MapImporter
                         map.OnlineID = onlineMap.Id;
                         map.StatusInt = onlineMap.Status;
                         mapSet.OnlineID = onlineMap.SetId;
+                        // mapSet.DateSubmitted = onlineMap.DateSubmitted;
                     }
                     catch (Exception e)
                     {

@@ -346,17 +346,28 @@ public partial class ScoreList : GridContainer
             return null;
         }
 
-        if (map.StatusInt != req.Response.Data.Map.Status)
-        {
-            map.MapSet.SetStatus(req.Response.Data.Map.Status);
-            realm?.RunWrite(r =>
-            {
-                var m = r.Find<RealmMap>(map.ID);
-                m.MapSet.SetStatus(req.Response.Data.Map.Status);
-            });
-        }
+        var onlineMap = req.Response.Data.Map;
 
-        if (map.Hash != req.Response.Data.Map.Hash)
+        realm?.RunWrite(r =>
+        {
+            var m = r.Find<RealmMap>(map.ID);
+
+            if (m == null)
+                return;
+
+            m.OnlineHash = map.OnlineHash = onlineMap.Hash;
+
+            // i would like to know why i didn't put "last update" on the map but on the mapset
+            // m.LastOnlineUpdate = map.LastOnlineUpdate = onlineMap.LastUpdate;
+
+            if (m.StatusInt != onlineMap.Status)
+            {
+                m.MapSet.SetStatus(onlineMap.Status);
+                map.MapSet.SetStatus(onlineMap.Status);
+            }
+        });
+
+        if (!map.UpToDate)
             Schedule(() => outOfDateContainer.FadeIn(200));
 
         return req.Response.Data.Scores.Select(x => new ScoreListEntry

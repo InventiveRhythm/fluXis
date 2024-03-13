@@ -23,7 +23,7 @@ public partial class DifficultySetupSection : SetupSection
         {
             Title = "Accuracy",
             Default = values.Editor.MapInfo.AccuracyDifficulty,
-            OnValueChanged = value => values.Editor.MapInfo.AccuracyDifficulty = value
+            OnValueChanged = value => values.Editor.MapInfo.AccuracyDifficulty = values.Editor.Map.AccuracyDifficulty = value
         });
     }
 
