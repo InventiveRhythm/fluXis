@@ -68,6 +68,14 @@ public class RealmMap : RealmObject
 
     public override string ToString() => $"{ID} - {Metadata}";
 
+    public void ResetOnlineInfo()
+    {
+        OnlineID = -1;
+        LastOnlineUpdate = null;
+        OnlineHash = string.Empty;
+        Status = MapStatus.Local;
+    }
+
     [CanBeNull]
     public virtual MapInfo GetMapInfo()
     {

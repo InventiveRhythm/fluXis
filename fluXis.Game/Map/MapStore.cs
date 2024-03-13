@@ -179,9 +179,9 @@ public partial class MapStore : Component
 
         if (setStatus)
         {
-            // map.LastUpdate = DateTimeOffset.Now;
+            map.LastLocalUpdate = DateTimeOffset.Now;
             map.Status = MapStatus.Local;
-            map.OnlineID = -1;
+            map.ResetOnlineInfo();
         }
 
         var directory = MapFiles.GetFullPath(set.GetPathForFile(""));
