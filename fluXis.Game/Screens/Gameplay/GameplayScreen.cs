@@ -541,6 +541,17 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         GameplayClock.Seek(GameplayStartTime - 2000 * Rate);
         GameplayClock.RateTo(Rate, 0);
 
+        if (SubmitScore)
+        {
+            realm.RunWrite(r =>
+            {
+                var map = r.Find<RealmMap>(RealmMap.ID);
+
+                if (map != null)
+                    map.LastPlayed = DateTimeOffset.Now;
+            });
+        }
+
         IsPaused.BindValueChanged(_ => updateRpc(), true);
 
         this.ScaleTo(1.2f).FadeOut()
