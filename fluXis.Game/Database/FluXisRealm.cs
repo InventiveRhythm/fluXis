@@ -29,8 +29,11 @@ public class FluXisRealm : IDisposable
     /// 10 - Changed storage system
     /// 11 - Added ColorHex to RealmMapMetadata
     /// 12 - Added ID to RealmKeybind
+    /// 13 - Added RealmMapSet.DateAdded, RealmMapSet.DateSubmitted, RealmMapSet.DateRanked,
+    ///    - RealmMap.LastLocalUpdate, RealmMap.LastOnlineUpdate, RealmMap.LastPlayed,
+    ///    - RealmMap.OnlineHash, RealmMap.AccuracyDifficulty and RealmMap.HealthDifficulty
     /// </summary>
-    private const int schema_version = 12;
+    private const int schema_version = 13;
 
     private Realm updateRealm;
 
@@ -203,6 +206,26 @@ public class FluXisRealm : IDisposable
                 }
 
                 break;
+
+            case 13:
+            {
+                var sets = migration.NewRealm.All<RealmMapSet>().ToList();
+
+                foreach (var set in sets)
+                {
+                    set.DateAdded = DateTimeOffset.Now;
+
+                    foreach (var map in set.Maps)
+                    {
+                        map.LastLocalUpdate = DateTimeOffset.Now;
+
+                        var info = map.GetMapInfo();
+                        map.AccuracyDifficulty = info?.AccuracyDifficulty ?? 8;
+                    }
+                }
+
+                break;
+            }
         }
     }
 

@@ -38,10 +38,22 @@ public class RealmMap : RealmObject
 
     public string FileName { get; set; } = string.Empty;
     public int OnlineID { get; set; } = -1;
-    public string Hash { get; set; } = string.Empty;
     public RealmMapFilters Filters { get; set; } = null!;
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
+
+    public string Hash { get; set; } = string.Empty;
+    public string OnlineHash { get; set; } = string.Empty;
+
+    [Ignored]
+    public bool UpToDate => Hash == OnlineHash;
+
+    public float AccuracyDifficulty { get; set; } = 8;
+    public float HealthDifficulty { get; set; } = 8;
+
+    public DateTimeOffset LastLocalUpdate { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset? LastOnlineUpdate { get; set; }
+    public DateTimeOffset? LastPlayed { get; set; }
 
     public RealmMap([CanBeNull] RealmMapMetadata meta = null)
     {

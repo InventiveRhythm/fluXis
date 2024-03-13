@@ -18,6 +18,10 @@ public class RealmMapSet : RealmObject
     public string Cover { get; set; } = "cover.png";
     public IList<RealmMap> Maps { get; } = null!;
 
+    public DateTimeOffset DateAdded { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset? DateSubmitted { get; set; }
+    public DateTimeOffset? DateRanked { get; set; }
+
     [Ignored]
     public RealmMapMetadata Metadata => Maps.FirstOrDefault()?.Metadata ?? new RealmMapMetadata();
 

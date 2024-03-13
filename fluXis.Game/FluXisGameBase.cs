@@ -131,6 +131,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         cacheComponent(this);
 
+        var mapStorage = storage.GetStorageForDirectory("maps");
+        MapFiles.Initialize(mapStorage);
+
         var realm = new FluXisRealm(storage);
         cacheComponent(realm);
 
@@ -143,10 +146,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
 
         UserCache.Init(Fluxel);
-
-        var mapStorage = storage.GetStorageForDirectory("maps");
-
-        MapFiles.Initialize(mapStorage);
 
         cacheComponent(new BackgroundTextureStore(Host, mapStorage));
         cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
