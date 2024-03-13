@@ -164,6 +164,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             MapInfo = MapInfo,
             MapEvents = MapInfo.MapEvents ?? new EditorMapEvents(),
             Editor = this,
+            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples),
             ActionStack = new EditorActionStack
             {
                 // Notifications = notifications
@@ -318,7 +319,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 }
                             },
                             new FluXisMenuSpacer(),
-                            new("Show sample on notes", FontAwesome6.Solid.LayerGroup, values.ShowSamples.Toggle) { IsActive = () => values.ShowSamples.Value }
+                            new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => values.ShowSamples.Value = !values.ShowSamples.Value) { IsActive = () => values.ShowSamples.Value }
                         }
                     },
                     new("Timing", FontAwesome6.Solid.Clock)
