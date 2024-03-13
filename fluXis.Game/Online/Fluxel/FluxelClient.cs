@@ -161,7 +161,7 @@ public partial class FluxelClient : Component
                 if (string.IsNullOrEmpty(email))
                     throw new Exception("Email is required for registration!");
 
-                await SendPacket(RegisterPacket.CreateC2S(username, password, email));
+                await SendPacket(RegisterPacket.CreateC2S(username, email, password));
             }
 
             // ReSharper disable once AsyncVoidLambda
