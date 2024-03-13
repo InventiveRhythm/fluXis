@@ -36,6 +36,9 @@ public static class FluXisColors
 
     public static Colour4 Selection => Highlight;
 
+    public static Colour4 DownloadFinished => Colour4.FromHex("#7BE87B");
+    public static Colour4 DownloadQueued => Colour4.FromHex("#7BB1E8");
+
     public static Colour4 RoleAdmin => Colour4.FromHex("#f7b373");
     public static Colour4 RoleMod => Colour4.FromHex("#73d173");
     public static Colour4 RolePurifier => Colour4.FromHex("#55b2ff");

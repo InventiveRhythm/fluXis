@@ -24,6 +24,8 @@ public class APIRequest<T> where T : class
 
     public APIResponse<T> Response { get; protected set; }
 
+    public bool IsSuccessful => Response?.Success ?? false;
+
     public virtual void Perform(FluxelClient fluxel)
     {
         this.fluxel = fluxel;

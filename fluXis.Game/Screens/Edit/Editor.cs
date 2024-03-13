@@ -750,7 +750,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         realm.RunWrite(r =>
         {
             var set = r.Find<RealmMapSet>(Map.MapSet.ID);
-            set.OnlineID = Map.MapSet.OnlineID = request.Response.Data.Id;
+            set.OnlineID = Map.MapSet.OnlineID = request.Response.Data.ID;
             set.SetStatus(request.Response.Data.Status);
             Map.MapSet.SetStatus(request.Response.Data.Status);
 

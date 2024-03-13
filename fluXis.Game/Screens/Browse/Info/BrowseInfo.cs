@@ -325,7 +325,7 @@ public partial class BrowseInfo : Container
             FillMode = FillMode.Fill;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/cover/{mapSet.Id}");
+            Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/cover/{mapSet.ID}");
         }
     }
 
@@ -345,7 +345,7 @@ public partial class BrowseInfo : Container
             FillMode = FillMode.Fill;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/background/{mapSet.Id}");
+            Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/background/{mapSet.ID}");
         }
     }
 }

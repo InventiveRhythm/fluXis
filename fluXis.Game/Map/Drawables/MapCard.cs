@@ -55,11 +55,11 @@ public partial class MapCard : Container, IHasContextMenu
     private Box background;
     private Container content;
 
-    private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.Id);
-    private bool downloading => maps.DownloadQueue.Any(x => x.Id == MapSet.Id);
+    private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.ID);
+    private bool downloading => maps.DownloadQueue.Any(x => x.ID == MapSet.ID);
 
     [CanBeNull]
-    private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet.Id);
+    private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet.ID);
 
     public MapCard(APIMapSet mapSet)
     {
@@ -342,9 +342,9 @@ public partial class MapCard : Container, IHasContextMenu
         content.ResizeWidthTo(shouldShow ? CardWidth - 10 : CardWidth, 400, Easing.OutQuint);
 
         if (downloading)
-            background.Colour = Colour4.FromHex("#7BB1E8");
+            background.Colour = FluXisColors.DownloadQueued;
         else if (downloaded)
-            background.Colour = Colour4.FromHex("#7BE87B");
+            background.Colour = FluXisColors.DownloadFinished;
         else
             background.Colour = FluXisColors.Background3;
     }

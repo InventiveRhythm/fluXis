@@ -204,7 +204,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                     EdgeEffect = FluXisStyles.ShadowSmall,
                     OnClickAction = set =>
                     {
-                        previews.PlayPreview(set.Id);
+                        previews.PlayPreview(set.ID);
                         selectedSet.Value = set;
                     }
                 });

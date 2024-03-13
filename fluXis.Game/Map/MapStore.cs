@@ -536,13 +536,13 @@ public partial class MapStore : Component
         if (set == null)
             return;
 
-        if (MapSets.Any(x => x.OnlineID == set.Id))
+        if (MapSets.Any(x => x.OnlineID == set.ID))
         {
             notifications.SendText("Mapset already downloaded.");
             return;
         }
 
-        if (DownloadQueue.Any(x => x.Id == set.Id))
+        if (DownloadQueue.Any(x => x.ID == set.ID))
             return;
 
         var notification = new TaskNotificationData
@@ -552,7 +552,7 @@ public partial class MapStore : Component
             TextFinished = "Done! Click to view."
         };
 
-        var req = fluxel.CreateAPIRequest($"/mapset/{set.Id}/download");
+        var req = fluxel.CreateAPIRequest($"/mapset/{set.ID}/download");
         req.DownloadProgress += (current, total) => notification.Progress = (float)current / total;
         req.Started += () => Logger.Log($"Downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
         req.Failed += exception =>
@@ -579,7 +579,7 @@ public partial class MapStore : Component
                 }
 
                 // write data to file
-                var path = storage.GetFullPath($"download/{set.Id}.zip");
+                var path = storage.GetFullPath($"download/{set.ID}.zip");
                 var dir = Path.GetDirectoryName(path);
 
                 if (!Directory.Exists(dir))

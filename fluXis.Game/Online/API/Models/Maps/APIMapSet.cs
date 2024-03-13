@@ -7,7 +7,7 @@ namespace fluXis.Game.Online.API.Models.Maps;
 public class APIMapSet
 {
     [JsonProperty("id")]
-    public int Id { get; init; }
+    public int ID { get; init; }
 
     [JsonProperty("creator")]
     public APIUserShort Creator { get; init; }
