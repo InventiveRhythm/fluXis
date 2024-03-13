@@ -18,6 +18,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -326,9 +327,9 @@ public partial class MapStore : Component
     }
 
     [CanBeNull]
-    public APIMap LookUpHash(string hash)
+    public APIMapLookup LookUpHash(string hash)
     {
-        var req = new MapHashLookupRequest(hash);
+        var req = new MapLookupRequest(hash);
         req.Perform(fluxel);
         return req.Response.Status != 200 ? null : req.Response.Data;
     }

@@ -123,10 +123,13 @@ public class FluXisImport : MapImporter
                         var onlineMap = MapStore.LookUpHash(hash);
                         if (onlineMap == null) continue;
 
-                        map.OnlineID = onlineMap.Id;
+                        map.OnlineID = (int)onlineMap.ID;
                         map.StatusInt = onlineMap.Status;
-                        mapSet.OnlineID = onlineMap.SetId;
-                        // mapSet.DateSubmitted = onlineMap.DateSubmitted;
+                        mapSet.OnlineID = (int)onlineMap.SetID;
+                        mapSet.DateSubmitted = TimeUtils.GetFromSeconds(onlineMap.DateSubmitted);
+
+                        if (onlineMap.DateRanked != null)
+                            mapSet.DateRanked = TimeUtils.GetFromSeconds((long)onlineMap.DateRanked);
                     }
                     catch (Exception e)
                     {
