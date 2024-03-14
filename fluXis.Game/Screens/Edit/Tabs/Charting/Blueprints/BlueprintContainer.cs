@@ -117,7 +117,9 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        return selectByClick(e) || prepareMovement();
+        var foundByClick = selectByClick(e);
+        var canMove = prepareMovement();
+        return foundByClick || canMove;
     }
 
     protected override void OnDrag(DragEvent e)
@@ -128,7 +130,10 @@ public partial class BlueprintContainer : Container, ICursorDrag
             moveCurrentSelection(e);
     }
 
-    protected override void OnDragEnd(DragEndEvent e)
+    protected override void OnMouseUp(MouseUpEvent e) => clearDragStuff();
+    protected override void OnDragEnd(DragEndEvent e) => clearDragStuff();
+
+    private void clearDragStuff()
     {
         lastDragEvent = null;
         isDragging = false;
