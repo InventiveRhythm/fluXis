@@ -88,7 +88,6 @@ public class OsuStoryboardParser
             {
                 case "Sprite" or "Animation":
                 {
-                    var layer = split[1] == "Background" ? StoryboardLayer.B1 : StoryboardLayer.F1;
                     var origin = parseOrigin(split[2]);
                     var path = cleanFilename(split[3]);
                     var x = split[4].ToFloatInvariant() + x_adjust;
@@ -103,7 +102,7 @@ public class OsuStoryboardParser
                     currentElement = new StoryboardElement
                     {
                         Type = StoryboardElementType.Sprite,
-                        Layer = layer,
+                        Layer = StoryboardLayer.Background,
                         Anchor = Anchor.TopLeft,
                         Origin = origin,
                         StartX = x,

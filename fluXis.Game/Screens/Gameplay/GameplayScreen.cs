@@ -36,6 +36,7 @@ using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
 using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
@@ -276,7 +277,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                     Map = RealmMap,
                                     Info = Map
                                 },
-                                new DrawableStoryboardWrapper(GameplayClock, storyboard, DrawableStoryboardWrapper.StoryboardLayerGroup.Background),
+                                new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
                                 backgroundDimBox = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
@@ -285,7 +286,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                 },
                                 clockContainer,
                                 new KeyOverlay(),
-                                new DrawableStoryboardWrapper(GameplayClock, storyboard, DrawableStoryboardWrapper.StoryboardLayerGroup.Foreground)
+                                new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
                             }
                         },
                         hud = new Container
@@ -299,7 +300,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         },
                         CreateTextOverlay(),
                         new DangerHealthOverlay(),
-                        new DrawableStoryboardWrapper(GameplayClock, storyboard, DrawableStoryboardWrapper.StoryboardLayerGroup.Overlay),
+                        new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay),
                         new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
                         new SkipOverlay(),
                     }),

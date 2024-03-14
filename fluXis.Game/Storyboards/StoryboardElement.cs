@@ -17,7 +17,13 @@ public class StoryboardElement
     /// The layer of the element.
     /// </summary>
     [JsonProperty("layer")]
-    public StoryboardLayer Layer { get; set; } = StoryboardLayer.B1;
+    public StoryboardLayer Layer { get; set; } = StoryboardLayer.Background;
+
+    /// <summary>
+    /// The depth of the element.
+    /// </summary>
+    [JsonProperty("z-index")]
+    public int ZIndex { get; set; }
 
     /// <summary>
     /// The start time of the element.
@@ -70,17 +76,7 @@ public enum StoryboardElementType
 
 public enum StoryboardLayer
 {
-    // Background layers (behind playfield)
-    B4 = -3,
-    B3 = -2,
-    B2 = -1,
-    B1 = 0,
-
-    // Foreground layers (in front of playfield)
-    F1 = 1,
-    F2 = 2,
-
-    // Overlay layers (in front of everything)
-    O1 = 10,
-    O2 = 11
+    Background = 0,
+    Foreground = 1,
+    Overlay = 2
 }

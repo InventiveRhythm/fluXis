@@ -25,6 +25,6 @@ public partial class DrawableStoryboard : CompositeDrawable
         storage = new StoryboardStorage(host, path);
     }
 
-    public DrawableStoryboardLayer GetLayer(StoryboardLayer layer)
-        => new(storage, Storyboard.Elements.Where(e => e.Layer == layer).ToList());
+    public DrawableStoryboardLayer GetLayer(StoryboardLayer layer, int z)
+        => new(storage, Storyboard.Elements.Where(e => e.Layer == layer && e.ZIndex == z).ToList());
 }
