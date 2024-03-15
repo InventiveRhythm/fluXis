@@ -128,7 +128,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         });
 
         loadComponent(new FpsOverlay(), Add);
-        loadComponent(new GlobalCursorOverlay(), Add);
+        loadComponent(new GlobalCursorOverlay(), Add, true);
         loadComponent(exitAnimation = new ExitAnimation(), Add);
 
         Audio.AddAdjustment(AdjustableProperty.Volume, inactiveVolume);

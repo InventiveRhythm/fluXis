@@ -10,6 +10,8 @@ namespace fluXis.Game.Overlay.Mouse;
 
 public partial class GlobalCursorOverlay : Container
 {
+    public Vector2 RelativePosition => new(cursor.Position.X / DrawWidth, cursor.Position.Y / DrawHeight);
+
     private readonly Cursor cursor;
 
     private InputManager inputManager;
