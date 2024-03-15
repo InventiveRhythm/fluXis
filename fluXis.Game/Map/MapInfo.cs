@@ -63,8 +63,14 @@ public class MapInfo
     public string Hash { get; set; }
 
     public MapInfo(MapMetadata metadata)
+        : this()
     {
         Metadata = metadata;
+    }
+
+    public MapInfo()
+    {
+        Metadata = new MapMetadata();
         HitObjects = new List<HitObject>();
         TimingPoints = new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }; // Add default timing point to avoid issues
         ScrollVelocities = new List<ScrollVelocity>();

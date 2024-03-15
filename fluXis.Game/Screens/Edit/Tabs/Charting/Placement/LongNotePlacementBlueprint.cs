@@ -83,12 +83,12 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        var notesBetween = EditorValues.MapInfo.HitObjects.Where(h => h.Time > Hit.Time && h.Time < Hit.EndTime && h.Lane == Hit.Lane).ToList();
+        var notesBetween = Map.MapInfo.HitObjects.Where(h => h.Time > Hit.Time && h.Time < Hit.EndTime && h.Lane == Hit.Lane).ToList();
 
         if (notesBetween.Count > 0)
         {
             foreach (var note in notesBetween)
-                EditorValues.MapInfo.Remove(note);
+                Map.Remove(note);
         }
 
         base.OnPlacementFinished(commit);

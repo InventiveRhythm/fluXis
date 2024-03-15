@@ -7,7 +7,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 public partial class PreviewPointTag : EditorTag
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     public override Colour4 TagColour => Colour4.FromHex("FDD27F");
 
@@ -24,7 +24,7 @@ public partial class PreviewPointTag : EditorTag
 
     protected override void Update()
     {
-        TimedObject.Time = values.MapInfo.Metadata.PreviewTime;
+        TimedObject.Time = map.MapInfo.Metadata.PreviewTime;
         base.Update();
     }
 

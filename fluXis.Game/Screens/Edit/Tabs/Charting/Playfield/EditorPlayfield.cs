@@ -18,13 +18,13 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 public partial class EditorPlayfield : Container
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private EditorMap map { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
-
-    [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
 
     [Resolved]
     private FluXisConfig config { get; set; }
@@ -40,7 +40,7 @@ public partial class EditorPlayfield : Container
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
     {
-        Width = EditorHitObjectContainer.NOTEWIDTH * values.Editor.Map.KeyCount;
+        Width = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount;
         RelativeSizeAxes = Axes.Y;
         Anchor = Origin = Anchor.Centre;
 
@@ -48,7 +48,7 @@ public partial class EditorPlayfield : Container
 
         InternalChildren = new Drawable[]
         {
-            hitsounding = new Hitsounding(values.Editor.Map.MapSet, values.MapInfo.HitSoundFades, clock.RateBindable)
+            hitsounding = new Hitsounding(map.RealmMap.MapSet, map.MapInfo.HitSoundFades, clock.RateBindable)
             {
                 DirectVolume = true,
                 Clock = clock
@@ -58,7 +58,7 @@ public partial class EditorPlayfield : Container
             new DefaultStageBorderRight(),
             waveform = new WaveformGraph
             {
-                Height = EditorHitObjectContainer.NOTEWIDTH * values.Editor.Map.KeyCount,
+                Height = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount,
                 Anchor = Anchor.BottomRight,
                 Origin = Anchor.BottomLeft,
                 Rotation = -90,
@@ -70,21 +70,21 @@ public partial class EditorPlayfield : Container
             new EffectTagContainer()
         };
 
-        changeHandler.OnKeyModeChanged += count =>
+        map.KeyModeChanged += count =>
         {
             var newWidth = EditorHitObjectContainer.NOTEWIDTH * count;
             Width = waveform.Height = newWidth;
         };
         waveformBind.BindValueChanged(w => waveform.Waveform = w.NewValue, true);
-        values.WaveformOpacity.BindValueChanged(opacity => waveform.FadeTo(opacity.NewValue, 200), true);
+        settings.WaveformOpacity.BindValueChanged(opacity => waveform.FadeTo(opacity.NewValue, 200), true);
     }
 
     protected override void Update()
     {
         base.Update();
 
-        float songLengthInPixels = .5f * (clock.TrackLength * values.Zoom);
-        float songTimeInPixels = -EditorHitObjectContainer.HITPOSITION - .5f * (-(float)(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * values.Zoom);
+        float songLengthInPixels = .5f * (clock.TrackLength * settings.Zoom);
+        float songTimeInPixels = -EditorHitObjectContainer.HITPOSITION - .5f * (-(float)(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * settings.Zoom);
 
         waveform.Width = songLengthInPixels;
         waveform.Y = songTimeInPixels;

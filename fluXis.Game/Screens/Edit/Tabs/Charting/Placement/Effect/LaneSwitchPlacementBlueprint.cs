@@ -49,7 +49,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
 
         if (Object is not LaneSwitchEvent ls) return;
 
-        ls.Count = Math.Clamp(ls.Count, 1, EditorValues.Editor.Map.KeyCount);
+        ls.Count = Math.Clamp(ls.Count, 1, Map.RealmMap.KeyCount);
 
         head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time, 1));
         end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time + ls.Speed, ls.Count + 1));
@@ -90,6 +90,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        if (commit) EditorValues.MapEvents.Add(Object as LaneSwitchEvent);
+        if (commit)
+            Map.Add(Object);
     }
 }

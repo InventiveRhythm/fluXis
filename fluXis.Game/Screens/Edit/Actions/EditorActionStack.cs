@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using fluXis.Game.Screens.Edit.Actions;
 
-namespace fluXis.Game.Screens.Edit;
+namespace fluXis.Game.Screens.Edit.Actions;
 
 public class EditorActionStack
 {

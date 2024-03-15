@@ -14,7 +14,7 @@ public partial class LaneSwitchEntry : PointListEntry
     protected override Colour4 Color => Colour4.FromHex("#FF6666");
 
     private LaneSwitchEvent laneSwitch => Object as LaneSwitchEvent;
-    private float beatLength => Values.MapInfo.GetTimingPoint(laneSwitch.Time).MsPerBeat;
+    private float beatLength => Map.MapInfo.GetTimingPoint(laneSwitch.Time).MsPerBeat;
 
     public LaneSwitchEntry(LaneSwitchEvent laneSwitch)
         : base(laneSwitch)
@@ -37,7 +37,7 @@ public partial class LaneSwitchEntry : PointListEntry
                 {
                     if (int.TryParse(box.Text, out var result))
                     {
-                        if (result > Values.MapInfo.Map!.KeyCount || result < 1)
+                        if (result > Map.MapInfo.Map!.KeyCount || result < 1)
                             box.NotifyError();
                         else
                             laneSwitch.Count = result;
@@ -45,7 +45,7 @@ public partial class LaneSwitchEntry : PointListEntry
                     else
                         box.NotifyError();
 
-                    Values.MapEvents.Update(laneSwitch);
+                    Map.Update(laneSwitch);
                 }
             },
             new PointSettingsTextBox
@@ -61,7 +61,7 @@ public partial class LaneSwitchEntry : PointListEntry
                     else
                         box.NotifyError();
 
-                    Values.MapEvents.Update(laneSwitch);
+                    Map.Update(laneSwitch);
                 }
             }
         });

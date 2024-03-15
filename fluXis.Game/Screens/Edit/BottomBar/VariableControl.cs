@@ -18,7 +18,7 @@ public partial class VariableControl : FillFlowContainer
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
 
     private BindableFloat rateBindable;
 
@@ -46,7 +46,7 @@ public partial class VariableControl : FillFlowContainer
             new VariableControlContainer
             {
                 Title = "Zoom",
-                Bindable = values.ZoomBindable
+                Bindable = settings.ZoomBindable
             }
         };
     }

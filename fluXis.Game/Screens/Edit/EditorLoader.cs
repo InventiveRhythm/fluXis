@@ -61,7 +61,13 @@ public partial class EditorLoader : FluXisScreen
 
     private void pushEditor()
     {
-        LoadComponentAsync(new Editor(this, map, mapInfo), this.Push);
+        var editorMap = map?.GetMapInfo<EditorMap.EditorMapInfo>();
+        var events = mapInfo?.GetMapEvents();
+
+        if (editorMap != null && events != null)
+            editorMap.MapEvents = events;
+
+        LoadComponentAsync(new Editor(this, map, editorMap), this.Push);
         ValidForResume = false;
     }
 

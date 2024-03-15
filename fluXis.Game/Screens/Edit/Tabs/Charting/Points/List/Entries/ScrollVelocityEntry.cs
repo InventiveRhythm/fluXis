@@ -39,7 +39,7 @@ public partial class ScrollVelocityEntry : PointListEntry
                     else
                         box.NotifyError();
 
-                    Values.MapInfo.Update(sv);
+                    Map.Update(sv);
                 }
             }
         });

@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Overlay.Notifications;
+using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
@@ -51,10 +52,16 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private Editor editor { get; set; }
 
     [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
+    private EditorActionStack actions { get; set; }
+
+    [Resolved]
+    private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private EditorMap map { get; set; }
 
     [Resolved]
     private Clipboard clipboard { get; set; }
@@ -85,7 +92,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        values.Editor.ChartingContainer = this;
+        editor.ChartingContainer = this;
 
         dependencies.Cache(this);
         dependencies.CacheAs(Playfield = new EditorPlayfield());
@@ -215,13 +222,13 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         if (e.ControlPressed)
         {
-            values.Zoom += delta * .1f;
-            values.Zoom = Math.Clamp(values.Zoom, .5f, 5f);
+            settings.Zoom += delta * .1f;
+            settings.Zoom = Math.Clamp(settings.Zoom, .5f, 5f);
         }
         else if (e.ShiftPressed)
         {
             var snaps = SNAP_DIVISORS;
-            var index = Array.IndexOf(snaps, values.SnapDivisor);
+            var index = Array.IndexOf(snaps, settings.SnapDivisor);
             index += delta;
 
             if (index < 0)
@@ -229,8 +236,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             else if (index >= snaps.Length)
                 index = 0;
 
-            values.SnapDivisor = snaps[index];
-            changeHandler.SnapDivisorChanged?.Invoke();
+            settings.SnapDivisor = snaps[index];
         }
         else
         {
@@ -255,7 +261,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         if (clock.IsRunning)
         {
-            var tp = values.MapInfo.GetTimingPoint(clock.CurrentTime);
+            var tp = map.MapInfo.GetTimingPoint(clock.CurrentTime);
             amount *= 4 * (tp.BPM / 120);
         }
 
@@ -267,14 +273,14 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
     private void placeNote(int lane)
     {
-        if (lane > values.Editor.Map.KeyCount)
+        if (lane > map.RealmMap.KeyCount)
             return;
 
         var time = (float)clock.CurrentTime;
         var snapped = Playfield.HitObjectContainer.SnapTime(time);
 
-        var tp = values.MapInfo.GetTimingPoint(time);
-        float increase = tp.Signature * tp.MsPerBeat / (4 * values.SnapDivisor);
+        var tp = map.MapInfo.GetTimingPoint(time);
+        float increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
         var next = Playfield.HitObjectContainer.SnapTime(time + increase);
 
         // take the closest snap
@@ -287,7 +293,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             Lane = lane
         };
 
-        values.ActionStack.Add(new NotePlaceAction(note, values.MapInfo));
+        actions.Add(new NotePlaceAction(note, map));
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -369,7 +375,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
             hitObject.Time += (float)clock.CurrentTime;
         }
 
-        values.ActionStack.Add(new NotePasteAction(content.HitObjects.ToArray(), values.MapInfo));
+        actions.Add(new NotePasteAction(content.HitObjects.ToArray(), map));
 
         notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
     }
@@ -379,11 +385,11 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
         switch (e.Action)
         {
             case FluXisGlobalKeybind.Undo:
-                values.ActionStack.Undo();
+                actions.Undo();
                 return true;
 
             case FluXisGlobalKeybind.Redo:
-                values.ActionStack.Redo();
+                actions.Redo();
                 return true;
         }
 

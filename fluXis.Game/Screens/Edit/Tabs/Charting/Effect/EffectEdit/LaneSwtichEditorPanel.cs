@@ -1,10 +1,8 @@
 using System.Globalization;
-using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
-using fluXis.Game.Map;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
@@ -19,9 +17,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 public partial class LaneSwtichEditorPanel : Panel
 {
     public LaneSwitchEvent Event { get; set; }
-    public MapInfo MapInfo { get; init; }
-    public RealmMap RealmMap { get; init; }
-    public EditorMapEvents MapEvents { get; init; }
+    public EditorMap Map { get; init; }
     public EditorClock EditorClock { get; set; }
 
     [Resolved]
@@ -103,7 +99,7 @@ public partial class LaneSwtichEditorPanel : Panel
                     {
                         if (int.TryParse(textBox.Text, out var result))
                         {
-                            if (result > RealmMap.KeyCount || result < 1)
+                            if (result > Map.RealmMap.KeyCount || result < 1)
                                 textBox.NotifyError();
                             else
                                 Event.Count = result;
@@ -129,7 +125,7 @@ public partial class LaneSwtichEditorPanel : Panel
                             Color = FluXisColors.ButtonRed,
                             Action = () =>
                             {
-                                MapEvents.Remove(Event);
+                                Map.Remove(Event);
                                 Hide();
                             }
                         },

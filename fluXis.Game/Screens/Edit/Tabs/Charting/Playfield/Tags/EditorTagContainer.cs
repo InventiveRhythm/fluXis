@@ -10,7 +10,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
 public partial class EditorTagContainer : Container<EditorTag>
 {
     [Resolved]
-    protected EditorValues Values { get; private set; }
+    protected EditorSettings Settings { get; private set; }
+
+    [Resolved]
+    protected EditorMap Map { get; private set; }
 
     [Resolved]
     protected EditorClock EditorClock { get; private set; }

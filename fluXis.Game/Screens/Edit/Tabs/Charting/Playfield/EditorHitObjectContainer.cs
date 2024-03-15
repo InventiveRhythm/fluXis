@@ -17,7 +17,10 @@ public partial class EditorHitObjectContainer : Container
     public IEnumerable<EditorHitObject> HitObjects => InternalChildren.OfType<EditorHitObject>();
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private EditorMap map { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -27,10 +30,9 @@ public partial class EditorHitObjectContainer : Container
     {
         RelativeSizeAxes = Axes.Both;
 
-        values.MapInfo.HitObjectAdded += add;
-        values.MapInfo.HitObjectRemoved += remove;
-
-        values.MapInfo.HitObjects.ForEach(add);
+        map.HitObjectAdded += add;
+        map.HitObjectRemoved += remove;
+        map.MapInfo.HitObjects.ForEach(add);
 
         Add(new Box
         {
@@ -54,19 +56,19 @@ public partial class EditorHitObjectContainer : Container
     }
 
     public Vector2 ScreenSpacePositionAtTime(float time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));
-    public float PositionAtTime(float time) => DrawHeight - HITPOSITION - .5f * ((time - (float)clock.CurrentTime) * values.Zoom);
+    public float PositionAtTime(float time) => DrawHeight - HITPOSITION - .5f * ((time - (float)clock.CurrentTime) * settings.Zoom);
     public float PositionFromLane(int lane) => (lane - 1) * NOTEWIDTH;
 
     public float TimeAtScreenSpacePosition(Vector2 screenSpacePosition) => TimeAtPosition(ToLocalSpace(screenSpacePosition).Y);
     public int LaneAtScreenSpacePosition(Vector2 postition) => LaneAtPosition(ToLocalSpace(postition).X);
-    public float TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / values.Zoom + (float)clock.CurrentTime;
+    public float TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / settings.Zoom + (float)clock.CurrentTime;
     public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH);
 
     public float SnapTime(float time)
     {
-        var tp = values.MapInfo.GetTimingPoint(time);
+        var tp = map.MapInfo.GetTimingPoint(time);
         float t = tp.Time;
-        float increase = tp.Signature * tp.MsPerBeat / (4 * values.SnapDivisor);
+        float increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
         if (increase == 0) return time; // no snapping, the game will just freeze because it loops infinitely
 
         if (time < t)

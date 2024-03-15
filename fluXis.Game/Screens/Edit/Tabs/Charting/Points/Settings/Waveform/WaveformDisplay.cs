@@ -16,10 +16,10 @@ public partial class WaveformDisplay : Container
     private const int count = 7;
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorClock clock { get; set; }
+    private EditorMap map { get; set; }
 
     private TimingPoint point { get; }
 
@@ -61,9 +61,9 @@ public partial class WaveformDisplay : Container
     {
         base.LoadComplete();
 
-        var next = values.MapInfo.TimingPoints
-                         .SkipWhile(g => g != point).Skip(1)
-                         .FirstOrDefault();
+        var next = map.MapInfo.TimingPoints
+                      .SkipWhile(g => g != point).Skip(1)
+                      .FirstOrDefault();
 
         endTime = next?.Time ?? clock.TrackLength;
     }
@@ -115,7 +115,7 @@ public partial class WaveformDisplay : Container
         private bool middle { get; }
 
         [Resolved]
-        private EditorValues values { get; set; }
+        private Editor editor { get; set; }
 
         private WaveformGraph graph;
 
@@ -153,7 +153,7 @@ public partial class WaveformDisplay : Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     RelativePositionAxes = Axes.Both,
-                    Waveform = values.Editor.Waveform.Value,
+                    Waveform = editor.Waveform.Value,
                     Resolution = 1,
                     BaseColour = FluXisColors.Highlight.Darken(1f),
                     LowColour = FluXisColors.Highlight.Darken(.5f),

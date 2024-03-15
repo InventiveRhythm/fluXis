@@ -1,4 +1,5 @@
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
@@ -13,7 +14,13 @@ public partial class PlacementBlueprint : Container
     protected EditorPlayfield Playfield { get; private set; }
 
     [Resolved]
-    protected EditorValues EditorValues { get; private set; }
+    protected EditorActionStack Actions { get; private set; }
+
+    [Resolved]
+    protected EditorSettings Settings { get; private set; }
+
+    [Resolved]
+    protected EditorMap Map { get; private set; }
 
     public PlacementState State { get; set; }
     public ITimedObject Object { get; set; }

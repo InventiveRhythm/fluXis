@@ -18,7 +18,7 @@ public partial class EditorHitObject : Container
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
 
     public HitObject Data { get; init; }
 
@@ -93,7 +93,7 @@ public partial class EditorHitObject : Container
         base.Update();
 
         text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
-        text.Alpha = values.ShowSamples.Value ? 1 : 0;
+        text.Alpha = settings.ShowSamples.Value ? 1 : 0;
 
         X = playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = playfield.HitObjectContainer.PositionAtTime(Data.Time);

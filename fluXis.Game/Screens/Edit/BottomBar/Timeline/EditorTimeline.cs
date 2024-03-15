@@ -15,7 +15,7 @@ public partial class EditorTimeline : Container
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     private TimelineIndicator indicator;
     private Container chorusPoints;
@@ -56,7 +56,7 @@ public partial class EditorTimeline : Container
             indicator = new TimelineIndicator()
         };
 
-        foreach (var timingPoint in values.Editor.MapInfo.TimingPoints)
+        foreach (var timingPoint in map.MapInfo.TimingPoints)
         {
             var x = timingPoint.Time == 0 ? 0 : timingPoint.Time / clock.TrackLength;
             if (!double.IsFinite(x) || double.IsNaN(x)) x = 0;

@@ -19,17 +19,12 @@ public partial class SetupTab : EditorTab
     public override string TabName => "Setup";
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     private MapBackground background;
     private MapCover cover;
     private TruncatingText titleText;
     private TruncatingText artistText;
-
-    public SetupTab(Editor screen)
-        : base(screen)
-    {
-    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -56,14 +51,10 @@ public partial class SetupTab : EditorTab
                             AutoSizeAxes = Axes.Y,
                             Children = new Drawable[]
                             {
-                                new AssetsSetupSection
-                                {
-                                    BackgroundChanged = () => background.Map = Screen.Map,
-                                    CoverChanged = () => cover.MapSet = Screen.Map.MapSet
-                                },
-                                new MetadataSetupSection(values.MapInfo.Metadata),
+                                new AssetsSetupSection(),
+                                new MetadataSetupSection(),
                                 new DifficultySetupSection(),
-                                new KeyModeSetupSection(Screen.Map)
+                                new KeyModeSetupSection()
                             }
                         }
                     },
@@ -74,7 +65,7 @@ public partial class SetupTab : EditorTab
                         Masking = true,
                         Children = new Drawable[]
                         {
-                            background = new MapBackground(Screen.Map)
+                            background = new MapBackground(map.RealmMap)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
@@ -102,7 +93,7 @@ public partial class SetupTab : EditorTab
                                         CornerRadius = 20,
                                         Masking = true,
                                         EdgeEffect = FluXisStyles.ShadowMedium,
-                                        Child = cover = new MapCover(Screen.Map.MapSet)
+                                        Child = cover = new MapCover(map.MapSet)
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Anchor = Anchor.Centre,
@@ -121,14 +112,14 @@ public partial class SetupTab : EditorTab
                                         {
                                             titleText = new TruncatingText
                                             {
-                                                Text = Screen.Map.Metadata.Title,
+                                                Text = map.RealmMap.Metadata.Title,
                                                 RelativeSizeAxes = Axes.X,
                                                 FontSize = 38,
                                                 Shadow = true
                                             },
                                             artistText = new TruncatingText
                                             {
-                                                Text = Screen.Map.Metadata.Artist,
+                                                Text = map.RealmMap.Metadata.Artist,
                                                 RelativeSizeAxes = Axes.X,
                                                 FontSize = 24,
                                                 Shadow = true
@@ -144,9 +135,17 @@ public partial class SetupTab : EditorTab
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        map.BackgroundChanged += () => background.Map = map.RealmMap;
+        map.CoverChanged += () => cover.MapSet = map.RealmMap.MapSet;
+    }
+
     protected override void Update()
     {
-        titleText.Text = values.MapInfo.Metadata.Title;
-        artistText.Text = values.MapInfo.Metadata.Artist;
+        titleText.Text = map.MapInfo.Metadata.Title;
+        artistText.Text = map.MapInfo.Metadata.Artist;
     }
 }

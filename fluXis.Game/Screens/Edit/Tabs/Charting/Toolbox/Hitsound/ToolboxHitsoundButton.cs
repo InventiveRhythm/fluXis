@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
@@ -33,7 +34,10 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorActionStack actions { get; set; }
+
+    [Resolved]
+    private EditorMap map { get; set; }
 
     [Resolved]
     private EditorPlayfield playfield { get; set; }
@@ -75,7 +79,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     {
         base.LoadComplete();
         BlueprintContainer.SelectionHandler.SelectedObjects.BindCollectionChanged((_, _) => UpdateSelectionState(), true);
-        values.MapInfo.HitSoundsChanged += UpdateSelectionState;
+        map.HitSoundsChanged += UpdateSelectionState;
 
         chartingContainer.CurrentHitSound.BindValueChanged(_ => UpdateSelectionState(), true);
     }
@@ -88,7 +92,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
             return;
         }
 
-        values.ActionStack.Add(new NoteHitsoundChangeAction(values.MapInfo, hits.ToArray(), sampleFormatted));
+        actions.Add(new NoteHitsoundChangeAction(map, hits.ToArray(), sampleFormatted));
         UpdateSelectionState();
     }
 

@@ -3,7 +3,7 @@ using osu.Framework.Bindables;
 
 namespace fluXis.Game.Screens.Edit;
 
-public class EditorValues
+public class EditorSettings
 {
     public float Zoom
     {
@@ -21,11 +21,6 @@ public class EditorValues
     public BindableBool FlashUnderlay { get; } = new();
     public BindableColour4 FlashUnderlayColor { get; } = new(FluXisColors.Background1);
     public Bindable<bool> ShowSamples { get; init; }
-
-    public EditorMapInfo MapInfo { get; init; }
-    public EditorMapEvents MapEvents { get; init; } = new();
-    public Editor Editor { get; init; }
-    public EditorActionStack ActionStack { get; init; }
 
     public BindableFloat ZoomBindable { get; } = new(2f)
     {

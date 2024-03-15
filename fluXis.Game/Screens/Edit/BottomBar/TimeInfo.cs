@@ -18,7 +18,7 @@ public partial class TimeInfo : Container
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -81,7 +81,7 @@ public partial class TimeInfo : Container
     protected override void Update()
     {
         timeText.Text = TimeUtils.Format(clock.CurrentTime);
-        bpmText.Text = $"{values.Editor.MapInfo.GetTimingPoint((float)clock.CurrentTime)?.BPM} BPM";
+        bpmText.Text = $"{map.MapInfo.GetTimingPoint((float)clock.CurrentTime)?.BPM} BPM";
     }
 
     protected override bool OnHover(HoverEvent e)

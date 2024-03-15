@@ -22,6 +22,7 @@ using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
+using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Game.Screens.Edit.BottomBar;
 using fluXis.Game.Screens.Edit.MenuBar;
@@ -30,7 +31,6 @@ using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
-using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -80,9 +80,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private EditorLoader loader { get; }
 
-    public RealmMap Map { get; private set; }
-    public EditorMapInfo MapInfo { get; private set; }
-
     private Container<EditorTab> tabs;
     private int currentTab;
 
@@ -91,10 +88,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorBottomBar bottomBar;
 
     public Bindable<Waveform> Waveform { get; private set; }
+    private EditorMap editorMap { get; }
 
     private EditorClock clock;
-    private EditorChangeHandler changeHandler;
-    private EditorValues values;
+    private EditorSettings settings;
+    private EditorActionStack actionStack;
 
     private DependencyContainer dependencies;
     private bool exitConfirmed;
@@ -103,7 +101,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private string lastMapHash;
     private string lastEffectHash;
 
-    private bool canSave => Map.StatusInt < 100;
+    private bool canSave => editorMap.RealmMap.StatusInt < 100;
 
     public bool HasUnsavedChanges
     {
@@ -112,10 +110,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!canSave)
                 return false;
 
-            var mapHash = MapUtils.GetHash(MapInfo.Serialize());
-            var effectHash = MapUtils.GetHash(values.MapEvents.Save());
-
-            return mapHash != lastMapHash || effectHash != lastEffectHash;
+            return editorMap.MapEventsHash != lastEffectHash || editorMap.MapInfoHash != lastMapHash;
         }
     }
 
@@ -124,12 +119,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     public ChartingContainer ChartingContainer { get; set; }
 
-    public Editor(EditorLoader loader, RealmMap realmMap = null, MapInfo map = null)
+    public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
         this.loader = loader;
 
-        Map = realmMap;
-        MapInfo = getEditorMapInfo(map);
+        editorMap = new EditorMap
+        {
+            RealmMap = realmMap,
+            MapInfo = map
+        };
     }
 
     [BackgroundDependencyLoader]
@@ -141,39 +139,35 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         globalClock.Looping = false;
         globalClock.Stop(); // the editor clock will handle this
 
-        isNewMap = MapInfo == null && Map == null;
+        isNewMap = editorMap.IsNew;
 
-        if (Map == null)
-            Map = mapStore.CreateNew();
+        if (editorMap.RealmMap == null)
+            editorMap.RealmMap = mapStore.CreateNew();
         else
         {
-            var resources = Map.MapSet.Resources;
-            Map = Map.Detach();
-            Map.MapSet.Resources = resources;
+            var resources = editorMap.RealmMap.MapSet.Resources;
+            editorMap.RealmMap = editorMap.RealmMap.Detach();
+            editorMap.RealmMap.MapSet.Resources = resources;
         }
 
-        MapInfo ??= new EditorMapInfo(new MapMetadata { Mapper = Map.Metadata.Mapper });
+        editorMap.MapInfo ??= new EditorMap.EditorMapInfo(new MapMetadata { Mapper = editorMap.RealmMap.Metadata.Mapper });
+        editorMap.MapInfo.MapEvents ??= new MapEvents();
 
-        backgrounds.AddBackgroundFromMap(Map);
+        backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("maps")));
 
+        dependencies.CacheAs(this);
+        dependencies.CacheAs(editorMap);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
-        dependencies.CacheAs(changeHandler = new EditorChangeHandler());
-        dependencies.CacheAs(values = new EditorValues
+        dependencies.CacheAs(actionStack = new EditorActionStack());
+        dependencies.CacheAs(settings = new EditorSettings
         {
-            MapInfo = MapInfo,
-            MapEvents = MapInfo.MapEvents ?? new EditorMapEvents(),
-            Editor = this,
-            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples),
-            ActionStack = new EditorActionStack
-            {
-                // Notifications = notifications
-            }
+            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
         });
 
         updateStateHash();
 
-        clock = new EditorClock(MapInfo) { SnapDivisor = values.SnapDivisorBindable };
+        clock = new EditorClock(editorMap.MapInfo) { SnapDivisor = settings.SnapDivisorBindable };
         clock.ChangeSource(loadMapTrack());
         dependencies.CacheAs(clock);
         dependencies.CacheAs<IBeatSyncProvider>(clock);
@@ -195,11 +189,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         Origin = Anchor.Centre,
                         Children = new EditorTab[]
                         {
-                            new SetupTab(this),
-                            new ChartingTab(this),
-                            new WipEditorTab(this, FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
-                            new WipEditorTab(this, FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
-                            new WipEditorTab(this, FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
+                            new SetupTab(),
+                            new ChartingTab(),
+                            new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
+                            new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
+                            new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
                         }
                     }
                 }
@@ -221,32 +215,33 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             }) { Enabled = () => canSave },
                             new("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
                             {
-                                Enabled = () => Map.MapSet.Maps.Count > 1,
-                                Items = Map.MapSet.Maps.Where(x => x.ID != Map.ID).Select(x => new FluXisMenuItem(x.Difficulty, () => loader.SwitchTo(x))).ToList()
+                                Enabled = () => editorMap.MapSet.Maps.Count > 1,
+                                Items = editorMap.MapSet.Maps.Where(x => x.ID != editorMap.RealmMap.ID)
+                                                 .Select(x => new FluXisMenuItem(x.Difficulty, () => loader.SwitchTo(x))).ToList()
                             },
                             new("Delete difficulty", FontAwesome6.Solid.Trash, () =>
                             {
                                 panels.Content = new ConfirmDeletionPanel(() =>
                                 {
                                     // delete diff
-                                    mapStore.DeleteDifficultyFromMapSet(Map.MapSet, Map);
+                                    mapStore.DeleteDifficultyFromMapSet(editorMap.MapSet, editorMap.RealmMap);
 
                                     // requery mapset
-                                    var set = mapStore.GetFromGuid(Map.MapSet.ID);
+                                    var set = mapStore.GetFromGuid(editorMap.MapSet.ID);
 
                                     // switch to other diff
-                                    var other = set.Maps.FirstOrDefault(x => x.ID != Map.ID);
+                                    var other = set.Maps.FirstOrDefault(x => x.ID != editorMap.RealmMap.ID);
                                     loader.SwitchTo(other);
                                 }, itemName: "difficulty");
                             })
                             {
-                                Enabled = () => Map.MapSet.Maps.Count > 1 && canSave
+                                Enabled = () => editorMap.MapSet.Maps.Count > 1 && canSave
                             },
                             new FluXisMenuSpacer(),
                             new("Export", FontAwesome6.Solid.BoxOpen, export),
                             new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave },
                             new FluXisMenuSpacer(),
-                            new("Open Song Folder", FontAwesome6.Solid.FolderOpen, () => PathUtils.OpenFolder(MapFiles.GetFullPath(Map.MapSet.GetPathForFile("")))),
+                            new("Open Song Folder", FontAwesome6.Solid.FolderOpen, () => PathUtils.OpenFolder(MapFiles.GetFullPath(editorMap.MapSet.GetPathForFile("")))),
                             new FluXisMenuSpacer(),
                             new("Exit", FontAwesome6.Solid.XMark, MenuItemType.Dangerous, tryExit)
                         }
@@ -255,15 +250,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                     {
                         Items = new FluXisMenuItem[]
                         {
-                            new("Undo", FontAwesome6.Solid.RotateLeft, values.ActionStack.Undo) { Enabled = () => values.ActionStack.CanUndo },
-                            new("Redo", FontAwesome6.Solid.RotateRight, values.ActionStack.Redo) { Enabled = () => values.ActionStack.CanRedo },
+                            new("Undo", FontAwesome6.Solid.RotateLeft, actionStack.Undo) { Enabled = () => actionStack.CanUndo },
+                            new("Redo", FontAwesome6.Solid.RotateRight, actionStack.Redo) { Enabled = () => actionStack.CanRedo },
                             new FluXisMenuSpacer(),
                             new("Copy", FontAwesome6.Solid.Copy, () => ChartingContainer?.Copy()) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
                             new("Cut", FontAwesome6.Solid.Cut, () => ChartingContainer?.Copy(true)) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any() ?? false },
                             new("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
                             new FluXisMenuSpacer(),
                             new("Apply Offset", FontAwesome6.Solid.Clock, applyOffset),
-                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => values.ActionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), Map.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
+                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => actionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), editorMap.RealmMap.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
                             new FluXisMenuSpacer(),
                             new("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
                             new("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
@@ -301,25 +296,25 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             {
                                 Items = new FluXisMenuItem[]
                                 {
-                                    new("0%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0) { IsActive = () => values.WaveformOpacity.Value == 0 },
-                                    new("25%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0.25f) { IsActive = () => values.WaveformOpacity.Value == 0.25f },
-                                    new("50%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0.5f) { IsActive = () => values.WaveformOpacity.Value == 0.5f },
-                                    new("75%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 0.75f) { IsActive = () => values.WaveformOpacity.Value == 0.75f },
-                                    new("100%", FontAwesome6.Solid.Percent, () => values.WaveformOpacity.Value = 1) { IsActive = () => values.WaveformOpacity.Value == 1 }
+                                    new("0%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0) { IsActive = () => settings.WaveformOpacity.Value == 0 },
+                                    new("25%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.25f) { IsActive = () => settings.WaveformOpacity.Value == 0.25f },
+                                    new("50%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.5f) { IsActive = () => settings.WaveformOpacity.Value == 0.5f },
+                                    new("75%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.75f) { IsActive = () => settings.WaveformOpacity.Value == 0.75f },
+                                    new("100%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 1) { IsActive = () => settings.WaveformOpacity.Value == 1 }
                                 }
                             },
                             new FluXisMenuSpacer(),
-                            new("Flash underlay", FontAwesome6.Solid.LayerGroup, values.FlashUnderlay.Toggle) { IsActive = () => values.FlashUnderlay.Value },
+                            new("Flash underlay", FontAwesome6.Solid.LayerGroup, settings.FlashUnderlay.Toggle) { IsActive = () => settings.FlashUnderlay.Value },
                             new("Underlay color", FontAwesome6.Solid.Palette)
                             {
                                 Items = new FluXisMenuItem[]
                                 {
-                                    new("Dark", () => values.FlashUnderlayColor.Value = FluXisColors.Background1) { IsActive = () => values.FlashUnderlayColor.Value == FluXisColors.Background1 },
-                                    new("Light", () => values.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => values.FlashUnderlayColor.Value == Colour4.White }
+                                    new("Dark", () => settings.FlashUnderlayColor.Value = FluXisColors.Background1) { IsActive = () => settings.FlashUnderlayColor.Value == FluXisColors.Background1 },
+                                    new("Light", () => settings.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => settings.FlashUnderlayColor.Value == Colour4.White }
                                 }
                             },
                             new FluXisMenuSpacer(),
-                            new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => values.ShowSamples.Value = !values.ShowSamples.Value) { IsActive = () => values.ShowSamples.Value }
+                            new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value) { IsActive = () => settings.ShowSamples.Value }
                         }
                     },
                     new("Timing", FontAwesome6.Solid.Clock)
@@ -328,8 +323,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         {
                             new("Set preview point to current time", FontAwesome6.Solid.Stopwatch, () =>
                             {
-                                MapInfo.Metadata.PreviewTime = (int)clock.CurrentTime;
-                                Map.Metadata.PreviewTime = (int)clock.CurrentTime;
+                                editorMap.MapInfo.Metadata.PreviewTime
+                                    = editorMap.RealmMap.Metadata.PreviewTime
+                                        = (int)clock.CurrentTime;
                             })
                         }
                     },
@@ -346,28 +342,30 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void updateStateHash()
     {
-        lastMapHash = MapUtils.GetHash(MapInfo.Serialize());
-        lastEffectHash = MapUtils.GetHash(values.MapEvents.Save());
+        lastMapHash = editorMap.MapInfoHash;
+        lastEffectHash = editorMap.MapEventsHash;
     }
 
     private void applyOffset()
     {
         panels.Content = new EditorOffsetPanel
         {
-            OnApplyOffset = offset => MapInfo.ApplyOffsetToAll(offset)
+            OnApplyOffset = offset => editorMap.ApplyOffsetToAll(offset)
         };
     }
 
     private void createNewDiff(string diffname, bool copy)
     {
-        if (diffExists(diffname)) return;
+        if (diffExists(diffname))
+            return;
 
         panels.Content.Hide();
-        loader.CreateNewDifficulty(Map, MapInfo, diffname, copy);
+        loader.CreateNewDifficulty(editorMap.RealmMap, editorMap.MapInfo, diffname, copy);
 
         bool diffExists(string name)
         {
-            if (!Map.MapSet.Maps.Any(x => string.Equals(x.Difficulty, name, StringComparison.CurrentCultureIgnoreCase))) return false;
+            if (!editorMap.MapSet.Maps.Any(x => string.Equals(x.Difficulty, name, StringComparison.CurrentCultureIgnoreCase)))
+                return false;
 
             notifications.SendError("A difficulty with that name already exists!");
             return true;
@@ -376,7 +374,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private Track loadMapTrack()
     {
-        string path = Map.MapSet?.GetPathForFile(Map.Metadata?.Audio);
+        string path = editorMap.MapSet?.GetPathForFile(editorMap.RealmMap.Metadata?.Audio);
 
         Waveform w = null;
 
@@ -387,7 +385,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         Waveform.Value = w;
-        return Map.GetTrack() ?? trackStore.GetVirtual(10000);
+        return editorMap.RealmMap.GetTrack() ?? trackStore.GetVirtual(10000);
     }
 
     protected override void LoadComplete()
@@ -408,8 +406,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             };
         }
 
-        backgroundDim.BindValueChanged(updateDim);
-        backgroundBlur.BindValueChanged(updateBlur);
+        backgroundDim.BindValueChanged(updateDim, true);
+        backgroundBlur.BindValueChanged(updateBlur, true);
+
+        editorMap.AudioChanged += () => clock.ChangeSource(loadMapTrack());
+        editorMap.BackgroundChanged += () => backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -423,15 +424,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void updateDim(ValueChangedEvent<float> e) => backgrounds.SetDim(e.NewValue, 400);
     private void updateBlur(ValueChangedEvent<float> e) => backgrounds.SetBlur(e.NewValue, 400);
-
-    public void SortEverything()
-    {
-        MapInfo.HitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
-        MapInfo.TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
-        MapInfo.ScrollVelocities.Sort((a, b) => a.Time.CompareTo(b.Time));
-        values.MapEvents.FlashEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        values.MapEvents.LaneSwitchEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-    }
 
     private void changeTab(int to)
     {
@@ -535,7 +527,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
 
         if (isNewMap) // delete the map if it was new and not saved
-            mapStore.DeleteMapSet(Map.MapSet);
+            mapStore.DeleteMapSet(editorMap.MapSet);
 
         exitAnimation();
         clock.Stop();
@@ -566,7 +558,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         tabs.ScaleTo(1, 300, Easing.OutQuint);
 
         // this check wont work 100% of the time, we need a better way of storing the mappers
-        if (Map.Metadata.Mapper == fluxel.LoggedInUser?.Username)
+        if (editorMap.RealmMap.Metadata.Mapper == fluxel.LoggedInUser?.Username)
             Activity.Value = new UserActivity.Editing();
         else
             Activity.Value = new UserActivity.Modding();
@@ -576,28 +568,25 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private bool save(bool setStatus = true)
     {
-        if (Map == null)
-            return false;
-
         if (!canSave)
         {
             notifications.SendError("Map is from another game!");
             return false;
         }
 
-        if (MapInfo.HitObjects.Count == 0)
+        if (editorMap.MapInfo.HitObjects.Count == 0)
         {
             notifications.SendError("Map has no hit objects!");
             return false;
         }
 
-        if (MapInfo.TimingPoints.Count == 0)
+        if (editorMap.MapInfo.TimingPoints.Count == 0)
         {
             notifications.SendError("Map has no timing points!");
             return false;
         }
 
-        MapInfo.Sort();
+        editorMap.Sort();
 
         if (!HasUnsavedChanges)
         {
@@ -605,8 +594,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return true;
         }
 
-        mapStore.Save(Map, MapInfo, values.MapEvents, setStatus);
-        Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), Map.MapSet));
+        mapStore.Save(editorMap.RealmMap, editorMap.MapInfo, editorMap.MapEvents, setStatus);
+        Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), editorMap.MapSet));
 
         isNewMap = false;
         updateStateHash();
@@ -618,82 +607,14 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         if (!save(false)) return;
 
-        mapStore.Export(Map.MapSet, new TaskNotificationData
+        mapStore.Export(editorMap.MapSet, new TaskNotificationData
         {
-            Text = $"{MapInfo.Metadata.Title} - {MapInfo.Metadata.Artist}",
+            Text = $"{editorMap.MapInfo.Metadata.Title} - {editorMap.MapInfo.Metadata.Artist}",
             TextWorking = "Exporting..."
         });
     }
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
-
-    public void SetKeyMode(int keyMode)
-    {
-        if (keyMode < Map.KeyCount)
-        {
-            // check if can be changed
-        }
-
-        Map.KeyCount = keyMode;
-        changeHandler.OnKeyModeChanged.Invoke(keyMode);
-    }
-
-    public void SetAudio(FileInfo file)
-    {
-        if (file == null)
-            return;
-
-        copyFile(file);
-        MapInfo.AudioFile = file.Name;
-        Map.Metadata.Audio = file.Name;
-        clock.ChangeSource(loadMapTrack());
-    }
-
-    public void SetBackground(FileInfo file)
-    {
-        if (file == null)
-            return;
-
-        copyFile(file);
-        MapInfo.BackgroundFile = file.Name;
-        Map.Metadata.Background = file.Name;
-        backgrounds.AddBackgroundFromMap(Map);
-    }
-
-    public void SetCover(FileInfo file)
-    {
-        if (file == null)
-            return;
-
-        copyFile(file);
-        Map.MapSet.Cover = file.Name;
-        MapInfo.CoverFile = file.Name;
-    }
-
-    public void SetVideo(FileInfo file)
-    {
-        if (file == null)
-            return;
-
-        copyFile(file);
-        MapInfo.VideoFile = file.Name;
-    }
-
-    private void copyFile(FileInfo file)
-    {
-        var mapDir = new DirectoryInfo(MapFiles.GetFullPath(Map.MapSet.ID.ToString()));
-
-        if (file.Directory != null && file.Directory.FullName == mapDir.FullName)
-            return;
-
-        string path = MapFiles.GetFullPath(Map.MapSet.GetPathForFile(file.Name));
-        var dir = Path.GetDirectoryName(path);
-
-        if (!Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
-
-        File.Copy(file.FullName, path, true);
-    }
 
     private void startUpload() => Task.Run(uploadSet);
 
@@ -714,7 +635,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         Schedule(() => panels.Content = overlay);
 
         // check for duplicate diffs
-        var diffs = Map.MapSet.Maps.Select(m => m.Difficulty).ToList();
+        var diffs = editorMap.MapSet.Maps.Select(m => m.Difficulty).ToList();
         var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
         if (duplicate.Count > 0)
@@ -729,11 +650,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         overlay.SubText = "Uploading mapset...";
 
-        var realmMapSet = mapStore.GetFromGuid(Map.MapSet.ID);
+        var realmMapSet = mapStore.GetFromGuid(editorMap.MapSet.ID);
         var path = mapStore.Export(realmMapSet.Detach(), new TaskNotificationData(), false);
         var buffer = await File.ReadAllBytesAsync(path);
 
-        var request = new MapSetUploadRequest(buffer, Map.MapSet);
+        var request = new MapSetUploadRequest(buffer, editorMap.MapSet);
         request.Progress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
         await request.PerformAsync(fluxel);
 
@@ -750,33 +671,24 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         realm.RunWrite(r =>
         {
-            var set = r.Find<RealmMapSet>(Map.MapSet.ID);
-            set.OnlineID = Map.MapSet.OnlineID = request.Response.Data.ID;
+            var set = r.Find<RealmMapSet>(editorMap.MapSet.ID);
+            set.OnlineID = editorMap.MapSet.OnlineID = request.Response.Data.ID;
             set.SetStatus(request.Response.Data.Status);
-            Map.MapSet.SetStatus(request.Response.Data.Status);
+            editorMap.MapSet.SetStatus(request.Response.Data.Status);
 
             for (var index = 0; index < set.Maps.Count; index++)
             {
                 var onlineMap = request.Response.Data.Maps[index];
                 var map = set.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
-                var loadedMap = Map.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
+                var loadedMap = editorMap.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
 
                 map.OnlineID = loadedMap.OnlineID = onlineMap.Id;
             }
 
             var detatch = set.Detach();
-            Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(Map.MapSet.ID), detatch));
+            Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), detatch));
         });
 
         Schedule(overlay.Hide);
-    }
-
-    private EditorMapInfo getEditorMapInfo(MapInfo map)
-    {
-        if (map == null) return null;
-
-        var eMap = EditorMapInfo.FromMapInfo(map.Clone());
-        eMap.Map = Map;
-        return eMap;
     }
 }

@@ -7,34 +7,35 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
+using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Map;
 
-public class MapEvents
+public class MapEvents : IDeepCloneable<MapEvents>
 {
     [JsonProperty("laneswitch")]
-    public List<LaneSwitchEvent> LaneSwitchEvents { get; init; } = new();
+    public List<LaneSwitchEvent> LaneSwitchEvents { get; private set; } = new();
 
     [JsonProperty("flash")]
-    public List<FlashEvent> FlashEvents { get; init; } = new();
+    public List<FlashEvent> FlashEvents { get; private set; } = new();
 
     [JsonProperty("pulse")]
-    public List<PulseEvent> PulseEvents { get; init; } = new();
+    public List<PulseEvent> PulseEvents { get; private set; } = new();
 
     [JsonProperty("playfieldmove")]
-    public List<PlayfieldMoveEvent> PlayfieldMoveEvents { get; init; } = new();
+    public List<PlayfieldMoveEvent> PlayfieldMoveEvents { get; private set; } = new();
 
     [JsonProperty("playfieldscale")]
-    public List<PlayfieldScaleEvent> PlayfieldScaleEvents { get; init; } = new();
+    public List<PlayfieldScaleEvent> PlayfieldScaleEvents { get; private set; } = new();
 
     [JsonProperty("shake")]
-    public List<ShakeEvent> ShakeEvents { get; init; } = new();
+    public List<ShakeEvent> ShakeEvents { get; private set; } = new();
 
     [JsonProperty("playfieldfade")]
-    public List<PlayfieldFadeEvent> PlayfieldFadeEvents { get; init; } = new();
+    public List<PlayfieldFadeEvent> PlayfieldFadeEvents { get; private set; } = new();
 
     [JsonProperty("shader")]
-    public List<ShaderEvent> ShaderEvents { get; init; } = new();
+    public List<ShaderEvent> ShaderEvents { get; private set; } = new();
 
     [JsonIgnore]
     public bool Empty => LaneSwitchEvents.Count == 0
@@ -53,7 +54,7 @@ public class MapEvents
             return new T().loadLegacy(content) as T;
 
         var events = content.Deserialize<T>();
-        return events.sorted() as T;
+        return events.Sort() as T;
     }
 
     private MapEvents loadLegacy(string content)
@@ -195,10 +196,10 @@ public class MapEvents
             }
         }
 
-        return sorted();
+        return Sort();
     }
 
-    private MapEvents sorted()
+    public MapEvents Sort()
     {
         LaneSwitchEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         FlashEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
@@ -212,5 +213,23 @@ public class MapEvents
         return this;
     }
 
-    public string Save() => sorted().Serialize();
+    public string Save() => Sort().Serialize();
+
+    public MapEvents DeepClone()
+    {
+        var clone = MemberwiseClone() as MapEvents;
+
+        if (clone == null)
+            throw new InvalidOperationException("Failed to clone MapEvents");
+
+        clone.LaneSwitchEvents = new List<LaneSwitchEvent>(LaneSwitchEvents);
+        clone.FlashEvents = new List<FlashEvent>(FlashEvents);
+        clone.PulseEvents = new List<PulseEvent>(PulseEvents);
+        clone.PlayfieldMoveEvents = new List<PlayfieldMoveEvent>(PlayfieldMoveEvents);
+        clone.PlayfieldScaleEvents = new List<PlayfieldScaleEvent>(PlayfieldScaleEvents);
+        clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);
+        clone.PlayfieldFadeEvents = new List<PlayfieldFadeEvent>(PlayfieldFadeEvents);
+        clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);
+        return clone;
+    }
 }

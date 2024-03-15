@@ -76,15 +76,18 @@ public class RealmMap : RealmObject
         Status = MapStatus.Local;
     }
 
+    public virtual MapInfo GetMapInfo() => GetMapInfo<MapInfo>();
+
     [CanBeNull]
-    public virtual MapInfo GetMapInfo()
+    public virtual T GetMapInfo<T>()
+        where T : MapInfo, new()
     {
         try
         {
             var path = MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
             var json = File.ReadAllText(path);
             var hash = MapUtils.GetHash(json);
-            var map = json.Deserialize<MapInfo>();
+            var map = json.Deserialize<T>();
             map.Map = this;
             map.Hash = hash;
             return map;

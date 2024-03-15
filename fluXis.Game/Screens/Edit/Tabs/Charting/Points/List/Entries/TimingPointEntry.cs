@@ -39,7 +39,7 @@ public partial class TimingPointEntry : PointListEntry
                     else
                         box.NotifyError();
 
-                    Values.MapInfo.Update(timing);
+                    Map.Update(timing);
                 }
             },
             new PointSettingsTextBox
@@ -55,7 +55,7 @@ public partial class TimingPointEntry : PointListEntry
                     else
                         box.NotifyError();
 
-                    Values.MapInfo.Update(timing);
+                    Map.Update(timing);
                 }
             }
         });

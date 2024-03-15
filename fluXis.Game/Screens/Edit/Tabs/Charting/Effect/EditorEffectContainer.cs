@@ -12,10 +12,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 public partial class EditorEffectContainer : Container
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
 
     [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
+    private EditorMap map { get; set; }
 
     private Box flashUnderlay;
 
@@ -57,31 +57,31 @@ public partial class EditorEffectContainer : Container
 
         loadEvents();
 
-        changeHandler.OnKeyModeChanged += _ =>
+        map.KeyModeChanged += _ =>
         {
             ClearAll();
             loadEvents();
         };
 
-        values.FlashUnderlay.BindValueChanged(val => flashUnderlay.FadeTo(val.NewValue ? 1 : 0, 200), true);
-        values.FlashUnderlayColor.BindValueChanged(val => flashUnderlay.Colour = val.NewValue, true);
+        settings.FlashUnderlay.BindValueChanged(val => flashUnderlay.FadeTo(val.NewValue ? 1 : 0, 200), true);
+        settings.FlashUnderlayColor.BindValueChanged(val => flashUnderlay.Colour = val.NewValue, true);
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        values.MapEvents.FlashEventAdded += AddFlash;
-        values.MapEvents.LaneSwitchEventAdded += AddLaneSwitch;
+        map.FlashEventAdded += AddFlash;
+        map.LaneSwitchEventAdded += AddLaneSwitch;
 
-        values.MapEvents.FlashEventRemoved += flash =>
+        map.FlashEventRemoved += flash =>
         {
             var editorFlash = Flashes.FirstOrDefault(f => f.FlashEvent == flash);
             if (editorFlash != null)
                 Flashes.Remove(editorFlash, true);
         };
 
-        values.MapEvents.LaneSwitchEventRemoved += ls =>
+        map.LaneSwitchEventRemoved += ls =>
         {
             var editorLs = LaneSwitches.FirstOrDefault(l => l.Event == ls);
             if (editorLs != null)
@@ -91,10 +91,10 @@ public partial class EditorEffectContainer : Container
 
     private void loadEvents()
     {
-        foreach (var flashEvent in values.MapEvents.FlashEvents)
+        foreach (var flashEvent in map.MapEvents.FlashEvents)
             AddFlash(flashEvent);
 
-        foreach (var laneSwitch in values.MapEvents.LaneSwitchEvents)
+        foreach (var laneSwitch in map.MapEvents.LaneSwitchEvents)
             AddLaneSwitch(laneSwitch);
     }
 

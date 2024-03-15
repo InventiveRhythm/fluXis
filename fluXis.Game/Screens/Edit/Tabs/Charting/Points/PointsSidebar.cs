@@ -32,7 +32,7 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
     private ChartingContainer chartingContainer { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     private SelectionHandler selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
 
@@ -171,8 +171,8 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
 
                 if (selectionHandler.SelectedObjects.All(o => o is HitObject))
                 {
-                    var evenCount = values.Editor.Map.KeyCount % 2 == 0;
-                    var laneCount = values.Editor.Map.KeyCount / 2;
+                    var evenCount = map.RealmMap.KeyCount % 2 == 0;
+                    var laneCount = map.RealmMap.KeyCount / 2;
                     var middleLane = laneCount + 1;
 
                     var leftCount = selectionHandler.SelectedObjects.Count(o => ((HitObject)o).Lane <= laneCount);

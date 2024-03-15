@@ -9,11 +9,11 @@ public partial class EffectTagContainer : EditorTagContainer
 
     protected override void LoadComplete()
     {
-        foreach (var shake in Values.MapEvents.ShakeEvents)
+        foreach (var shake in Map.MapEvents.ShakeEvents)
             addShake(shake);
 
-        Values.MapEvents.ShakeEventAdded += addShake;
-        Values.MapEvents.ShakeEventRemoved += RemoveTag;
+        Map.ShakeEventAdded += addShake;
+        Map.ShakeEventRemoved += RemoveTag;
     }
 
     private void addShake(ShakeEvent shake) => AddTag(new ShakeEventTag(this, shake));

@@ -13,7 +13,7 @@ public partial class ShakeEventTag : EditorTag
     private PanelContainer panels { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -38,7 +38,7 @@ public partial class ShakeEventTag : EditorTag
         panels.Content = new ShakeEditorPanel
         {
             Event = Shake,
-            MapEvents = values.MapEvents,
+            Map = map,
             EditorClock = clock
         };
         return true;

@@ -2,27 +2,34 @@ using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
-public partial class SetupSection : FillFlowContainer
+public abstract partial class SetupSection : FillFlowContainer
 {
-    public SetupSection(string title)
+    protected abstract LocalisableString Title { get; }
+
+    [Resolved]
+    protected EditorMap Map { get; private set; }
+
+    protected SetupSection()
     {
         Direction = FillDirection.Vertical;
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Padding = new MarginPadding { Horizontal = 160 };
 
-        Add(new MetadataSectionHeader(title));
+        Add(new MetadataSectionHeader(Title));
     }
 }
 
 public partial class MetadataSectionHeader : FluXisSpriteText
 {
-    public MetadataSectionHeader(string text)
+    public MetadataSectionHeader(LocalisableString text)
     {
         Text = text;
         Shadow = true;

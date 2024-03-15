@@ -24,7 +24,10 @@ public partial class EditorBottomBar : Container
     private NotificationManager notifications { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
+
+    [Resolved]
+    private Editor editor { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -98,30 +101,30 @@ public partial class EditorBottomBar : Container
                                     Corner = Corner.BottomRight,
                                     Action = () =>
                                     {
-                                        if (values.Editor.Map == null)
+                                        if (map.MapInfo == null)
                                         {
                                             notifications.SendError("Map is null!", "i dont know how this happened but it did");
                                             return;
                                         }
 
-                                        if (values.Editor.MapInfo?.HitObjects == null || values.Editor.MapInfo.HitObjects.Count == 0)
+                                        if (map.MapInfo?.HitObjects == null || map.MapInfo.HitObjects.Count == 0)
                                         {
                                             notifications.SendError("This map has no hitobjects!");
                                             return;
                                         }
 
-                                        if (values.Editor.MapInfo?.TimingPoints == null || values.Editor.MapInfo.TimingPoints.Count == 0)
+                                        if (map.MapInfo?.TimingPoints == null || map.MapInfo.TimingPoints.Count == 0)
                                         {
                                             notifications.SendError("This map has no timing points!");
                                             return;
                                         }
 
-                                        values.Editor.SortEverything();
+                                        map.Sort();
 
                                         clock.Stop();
                                         var startTime = clock.CurrentTime;
 
-                                        var clone = values.Editor.MapInfo.Clone();
+                                        var clone = map.MapInfo.DeepClone();
                                         clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
 
                                         var shouldAutoPlay = GetContainingInputManager().CurrentState.Keyboard.ControlPressed;
@@ -133,12 +136,12 @@ public partial class EditorBottomBar : Container
                                         else
                                             mods.Add(new NoFailMod());
 
-                                        values.Editor.Push(new GameplayLoader(values.Editor.Map, mods, () =>
+                                        editor.Push(new GameplayLoader(map.RealmMap, mods, () =>
                                         {
                                             if (shouldAutoPlay)
-                                                return new EditorAutoPlaytestScreen(values.Editor.Map, clone, startTime);
+                                                return new EditorAutoPlaytestScreen(map.RealmMap, clone, startTime);
 
-                                            return new EditorPlaytestScreen(values.Editor.Map, clone, startTime);
+                                            return new EditorPlaytestScreen(map.RealmMap, clone, startTime);
                                         }));
                                     }
                                 }

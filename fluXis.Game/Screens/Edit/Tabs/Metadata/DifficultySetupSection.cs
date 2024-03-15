@@ -6,24 +6,22 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
 public partial class DifficultySetupSection : SetupSection
 {
-    public DifficultySetupSection()
-        : base("Difficulty")
-    {
-    }
+    protected override LocalisableString Title => "Difficulty";
 
     [BackgroundDependencyLoader]
-    private void load(EditorValues values)
+    private void load()
     {
         Add(new SetupSlider
         {
             Title = "Accuracy",
-            Default = values.Editor.MapInfo.AccuracyDifficulty,
-            OnValueChanged = value => values.Editor.MapInfo.AccuracyDifficulty = values.Editor.Map.AccuracyDifficulty = value
+            Default = Map.MapInfo.AccuracyDifficulty,
+            OnValueChanged = value => Map.MapInfo.AccuracyDifficulty = Map.RealmMap.AccuracyDifficulty = value
         });
     }
 

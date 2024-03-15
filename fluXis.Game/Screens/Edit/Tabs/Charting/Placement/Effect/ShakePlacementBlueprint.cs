@@ -82,7 +82,8 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        if (commit) EditorValues.MapEvents.Add(Object as ShakeEvent);
+        if (commit)
+            Map.Add(Object);
     }
 }
 

@@ -11,15 +11,13 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 public partial class EditorTimingLines : Container<EditorTimingLine>
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
 
     [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
+    private EditorMap map { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
-
-    private EditorMapInfo mapInfo => values.MapInfo;
 
     private readonly List<EditorTimingLine> storedLines = new();
 
@@ -27,12 +25,11 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        createLines();
 
-        changeHandler.SnapDivisorChanged += () => scheduleRedraw(null);
-        values.MapInfo.TimingPointAdded += scheduleRedraw;
-        values.MapInfo.TimingPointRemoved += scheduleRedraw;
-        values.MapInfo.TimingPointChanged += scheduleRedraw;
+        settings.SnapDivisorBindable.BindValueChanged(_ => scheduleRedraw(null), true);
+        map.TimingPointAdded += scheduleRedraw;
+        map.TimingPointRemoved += scheduleRedraw;
+        map.TimingPointUpdated += scheduleRedraw;
     }
 
     private void scheduleRedraw(TimingPoint _)
@@ -66,15 +63,17 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
 
     private void createLines()
     {
-        for (int i = 0; i < mapInfo.TimingPoints.Count; i++)
+        var points = map.MapInfo.TimingPoints;
+
+        for (int i = 0; i < points.Count; i++)
         {
-            var point = mapInfo.TimingPoints[i];
+            var point = points[i];
 
             if (point.HideLines || point.Signature == 0)
                 continue;
 
-            float target = i + 1 < mapInfo.TimingPoints.Count ? mapInfo.TimingPoints[i + 1].Time : clock.TrackLength;
-            float increase = point.Signature * point.MsPerBeat / (4 * values.SnapDivisor);
+            float target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
+            float increase = point.Signature * point.MsPerBeat / (4 * settings.SnapDivisor);
             float position = point.Time;
 
             int j = 0;
@@ -84,7 +83,7 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
                 storedLines.Add(new EditorTimingLine
                 {
                     Time = position,
-                    Colour = getSnapColor(j % values.SnapDivisor, j)
+                    Colour = getSnapColor(j % settings.SnapDivisor, j)
                 });
                 position += increase;
                 j++;
@@ -94,7 +93,7 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
 
     private Colour4 getSnapColor(int val, int i)
     {
-        switch (values.SnapDivisor)
+        switch (settings.SnapDivisor)
         {
             case 1:
                 return Colour4.White;
@@ -127,7 +126,7 @@ public partial class EditorTimingLines : Container<EditorTimingLine>
             default:
                 if (val != 0) return Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7");
 
-                Logger.Log($"Unknown snap value: {values.SnapDivisor}", LoggingTarget.Runtime, LogLevel.Important);
+                Logger.Log($"Unknown snap value: {settings.SnapDivisor}", LoggingTarget.Runtime, LogLevel.Important);
                 return Colour4.White;
         }
     }

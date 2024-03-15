@@ -20,7 +20,7 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
     public override void UpdatePlacement(float time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        ((HitObject)Object).Lane = Math.Clamp(lane, 1, EditorValues.Editor.Map.KeyCount);
+        ((HitObject)Object).Lane = Math.Clamp(lane, 1, Map.RealmMap.KeyCount);
     }
 
     public override void OnPlacementFinished(bool commit)
@@ -29,6 +29,6 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
             return;
 
         Hit.HitSound = chartingContainer.CurrentHitSound.Value;
-        EditorValues.ActionStack.Add(new NotePlaceAction(Hit, EditorValues.MapInfo));
+        Actions.Add(new NotePlaceAction(Hit, Map));
     }
 }

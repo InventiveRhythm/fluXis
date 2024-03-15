@@ -1,26 +1,24 @@
 using fluXis.Game.Audio;
-using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using TicTac = fluXis.Game.Graphics.Drawables.TicTac;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
 public partial class KeyModeSetupSection : SetupSection
 {
-    [Resolved]
-    private EditorValues values { get; set; }
+    protected override LocalisableString Title => "Key Mode";
 
-    private readonly FillFlowContainer<KeyModeButton> keyModeContainer;
+    private FillFlowContainer<KeyModeButton> keyModeContainer;
 
-    public KeyModeSetupSection(RealmMap map)
-        : base("Keys")
+    [BackgroundDependencyLoader]
+    private void load()
     {
         AddInternal(new Container
         {
@@ -51,13 +49,19 @@ public partial class KeyModeSetupSection : SetupSection
             }
         });
 
-        setKeyMode(map.KeyCount);
+        Map.KeyModeChanged += keyModeChanged;
+        keyModeChanged(Map.RealmMap.KeyCount);
+    }
+
+    private void keyModeChanged(int mode)
+    {
+        foreach (var keyModeButton in keyModeContainer)
+            keyModeButton.Selected = keyModeButton.KeyMode == mode;
     }
 
     private void setKeyMode(int keyMode)
     {
-        keyModeContainer.Children.ForEach(b => b.Selected = b.KeyMode == keyMode);
-        values?.Editor.SetKeyMode(keyMode);
+        Map.SetKeyMode(keyMode);
     }
 
     private partial class KeyModeButton : Container

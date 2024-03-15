@@ -5,14 +5,14 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
 
 public class NoteHitsoundChangeAction : EditorAction
 {
-    private readonly HitObject[] infos;
-    private readonly EditorMapInfo mapInfo;
-    private readonly string newSample;
-    private readonly string[] samples;
+    private HitObject[] infos { get; }
+    private EditorMap map { get; }
+    private string newSample { get; }
+    private string[] samples { get; }
 
-    public NoteHitsoundChangeAction(EditorMapInfo mapInfo, HitObject[] infos, string newSample)
+    public NoteHitsoundChangeAction(EditorMap map, HitObject[] infos, string newSample)
     {
-        this.mapInfo = mapInfo;
+        this.map = map;
         this.infos = infos;
         this.newSample = newSample;
 
@@ -24,7 +24,7 @@ public class NoteHitsoundChangeAction : EditorAction
         foreach (var info in infos)
             info.HitSound = newSample;
 
-        mapInfo.ChangeHitSounds();
+        map.UpdateHitSounds();
     }
 
     public override void Undo()
@@ -32,6 +32,6 @@ public class NoteHitsoundChangeAction : EditorAction
         for (int i = 0; i < infos.Length; i++)
             infos[i].HitSound = samples[i];
 
-        mapInfo.ChangeHitSounds();
+        map.UpdateHitSounds();
     }
 }

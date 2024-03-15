@@ -14,10 +14,13 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 public partial class EditorLaneSwitchEvent : ClickableContainer
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorClock clock { get; set; }
+    private EditorMap map { get; set; }
+
+    [Resolved]
+    private EditorSettings settings { get; set; }
 
     [Resolved]
     private ChartingContainer chartingContainer { get; set; }
@@ -41,22 +44,20 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
                 panels.Content = new LaneSwtichEditorPanel
                 {
                     Event = Event,
-                    MapInfo = values.MapInfo,
-                    RealmMap = values.Editor.Map,
-                    EditorClock = clock,
-                    MapEvents = values.MapEvents
+                    Map = map,
+                    EditorClock = clock
                 };
             }
         };
 
         count = Event.Count;
 
-        var nextEvent = values.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
+        var nextEvent = map.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
         length = (nextEvent?.Time ?? clock.TrackLength) - Event.Time;
 
-        if (Event.Count >= values.Editor.Map.KeyCount)
+        if (Event.Count >= map.RealmMap.KeyCount)
         {
-            for (int i = 0; i < values.Editor.Map.KeyCount; i++)
+            for (int i = 0; i < map.RealmMap.KeyCount; i++)
             {
                 Add(new Box
                 {
@@ -70,10 +71,10 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
         }
         else
         {
-            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[values.Editor.Map.KeyCount - 2];
+            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[map.RealmMap.KeyCount - 2];
             bool[] current = mode[Event.Count - 1];
 
-            for (int i = 0; i < values.Editor.Map.KeyCount; i++)
+            for (int i = 0; i < map.RealmMap.KeyCount; i++)
             {
                 Add(new Box
                 {
@@ -89,13 +90,13 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
 
     protected override void Update()
     {
-        if (!values.MapEvents.LaneSwitchEvents.Contains(Event))
+        if (!map.MapEvents.LaneSwitchEvents.Contains(Event))
         {
             Expire();
             return;
         }
 
-        var nextEvent = values.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
+        var nextEvent = map.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
         if (nextEvent != null)
             length = nextEvent.Time - Event.Time;
         else
@@ -103,9 +104,9 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
 
         if (Event.Count != count)
         {
-            if (Event.Count == values.Editor.Map.KeyCount)
+            if (Event.Count == map.RealmMap.KeyCount)
             {
-                for (int i = 0; i < values.Editor.Map.KeyCount; i++)
+                for (int i = 0; i < map.RealmMap.KeyCount; i++)
                 {
                     var box = Children[i];
                     if (box != null)
@@ -114,10 +115,10 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
             }
             else
             {
-                bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[values.Editor.Map.KeyCount - 2];
+                bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[map.RealmMap.KeyCount - 2];
                 bool[] current = mode[Event.Count - 1];
 
-                for (int i = 0; i < values.Editor.Map.KeyCount; i++)
+                for (int i = 0; i < map.RealmMap.KeyCount; i++)
                 {
                     var box = Children[i];
                     if (box != null)
@@ -128,7 +129,7 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
             count = Event.Count;
         }
 
-        Height = .5f * (length * values.Zoom);
-        Y = -.5f * ((Event.Time - (float)clock.CurrentTime) * values.Zoom);
+        Height = .5f * (length * settings.Zoom);
+        Y = -.5f * ((Event.Time - (float)clock.CurrentTime) * settings.Zoom);
     }
 }

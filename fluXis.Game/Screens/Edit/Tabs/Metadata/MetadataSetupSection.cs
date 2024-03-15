@@ -1,22 +1,21 @@
-using fluXis.Game.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
 public partial class MetadataSetupSection : SetupSection
 {
-    [Resolved]
-    private EditorValues values { get; set; }
+    protected override LocalisableString Title => "Metadata";
 
-    private readonly SetupTextBox titleTextBox;
-    private readonly SetupTextBox artistTextBox;
-    private readonly SetupTextBox mapperTextBox;
-    private readonly SetupTextBox difficultyTextBox;
-    private readonly SetupTextBox sourceTextBox;
-    private readonly SetupTextBox tagsTextBox;
+    private SetupTextBox titleTextBox;
+    private SetupTextBox artistTextBox;
+    private SetupTextBox mapperTextBox;
+    private SetupTextBox difficultyTextBox;
+    private SetupTextBox sourceTextBox;
+    private SetupTextBox tagsTextBox;
 
-    public MetadataSetupSection(MapMetadata metadata)
-        : base("Metadata")
+    [BackgroundDependencyLoader]
+    private void load()
     {
         AddInternal(titleTextBox = new SetupTextBox("Title"));
         AddInternal(artistTextBox = new SetupTextBox("Artist"));
@@ -25,12 +24,12 @@ public partial class MetadataSetupSection : SetupSection
         AddInternal(sourceTextBox = new SetupTextBox("Source"));
         AddInternal(tagsTextBox = new SetupTextBox("Tags"));
 
-        titleTextBox.Text = metadata.Title;
-        artistTextBox.Text = metadata.Artist;
-        mapperTextBox.Text = metadata.Mapper;
-        difficultyTextBox.Text = metadata.Difficulty;
-        sourceTextBox.Text = metadata.Source;
-        tagsTextBox.Text = metadata.Tags;
+        titleTextBox.Text = Map.MapInfo.Metadata.Title;
+        artistTextBox.Text = Map.MapInfo.Metadata.Artist;
+        mapperTextBox.Text = Map.MapInfo.Metadata.Mapper;
+        difficultyTextBox.Text = Map.MapInfo.Metadata.Difficulty;
+        sourceTextBox.Text = Map.MapInfo.Metadata.Source;
+        tagsTextBox.Text = Map.MapInfo.Metadata.Tags;
 
         titleTextBox.OnTextChanged = updateMetadata;
         artistTextBox.OnTextChanged = updateMetadata;
@@ -42,11 +41,11 @@ public partial class MetadataSetupSection : SetupSection
 
     private void updateMetadata()
     {
-        values.MapInfo.Metadata.Title = values.Editor.Map.Metadata.Title = titleTextBox.Text;
-        values.MapInfo.Metadata.Artist = values.Editor.Map.Metadata.Artist = artistTextBox.Text;
-        values.MapInfo.Metadata.Mapper = values.Editor.Map.Metadata.Mapper = mapperTextBox.Text;
-        values.MapInfo.Metadata.Difficulty = values.Editor.Map.Difficulty = difficultyTextBox.Text;
-        values.MapInfo.Metadata.Source = values.Editor.Map.Metadata.Source = sourceTextBox.Text;
-        values.MapInfo.Metadata.Tags = values.Editor.Map.Metadata.Tags = tagsTextBox.Text;
+        Map.MapInfo.Metadata.Title = Map.RealmMap.Metadata.Title = titleTextBox.Text;
+        Map.MapInfo.Metadata.Artist = Map.RealmMap.Metadata.Artist = artistTextBox.Text;
+        Map.MapInfo.Metadata.Mapper = Map.RealmMap.Metadata.Mapper = mapperTextBox.Text;
+        Map.MapInfo.Metadata.Difficulty = Map.RealmMap.Difficulty = difficultyTextBox.Text;
+        Map.MapInfo.Metadata.Source = Map.RealmMap.Metadata.Source = sourceTextBox.Text;
+        Map.MapInfo.Metadata.Tags = Map.RealmMap.Metadata.Tags = tagsTextBox.Text;
     }
 }

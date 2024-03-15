@@ -6,7 +6,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.Settings.Preset;
 
 public partial class PointSettingsTime : PointSettingsTextBox
 {
-    public PointSettingsTime(EditorMapInfo info, ITimedObject obj)
+    public PointSettingsTime(EditorMap map, ITimedObject obj)
     {
         Text = "Time";
         DefaultText = obj.Time.ToStringInvariant();
@@ -15,7 +15,7 @@ public partial class PointSettingsTime : PointSettingsTextBox
             if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var time))
             {
                 obj.Time = time;
-                info.Update(obj);
+                map.Update(obj);
             }
             else TextBox.NotifyError();
         };

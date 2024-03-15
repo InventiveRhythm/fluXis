@@ -4,22 +4,15 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NotePlaceAction : EditorAction
 {
-    private readonly HitObject info;
-    private readonly EditorMapInfo mapInfo;
+    private HitObject info { get; }
+    private EditorMap map { get; }
 
-    public NotePlaceAction(HitObject info, EditorMapInfo mapInfo)
+    public NotePlaceAction(HitObject info, EditorMap map)
     {
         this.info = info;
-        this.mapInfo = mapInfo;
+        this.map = map;
     }
 
-    public override void Run()
-    {
-        mapInfo.Add(info);
-    }
-
-    public override void Undo()
-    {
-        mapInfo.Remove(info);
-    }
+    public override void Run() => map.Add(info);
+    public override void Undo() => map.Remove(info);
 }

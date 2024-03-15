@@ -25,7 +25,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.List;
 public partial class PointsList : Container
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -92,20 +92,20 @@ public partial class PointsList : Container
     {
         base.LoadComplete();
 
-        values.MapInfo.TimingPointAdded += addPoint;
-        values.MapInfo.TimingPointChanged += updatePoint;
-        values.MapInfo.TimingPointRemoved += removePoint;
-        values.MapInfo.TimingPoints.ForEach(addPoint);
+        map.TimingPointAdded += addPoint;
+        map.TimingPointUpdated += updatePoint;
+        map.TimingPointRemoved += removePoint;
+        map.MapInfo.TimingPoints.ForEach(addPoint);
 
-        values.MapInfo.ScrollVelocityAdded += addPoint;
-        values.MapInfo.ScrollVelocityChanged += updatePoint;
-        values.MapInfo.ScrollVelocityRemoved += removePoint;
-        values.MapInfo.ScrollVelocities.ForEach(addPoint);
+        map.ScrollVelocityAdded += addPoint;
+        map.ScrollVelocityUpdated += updatePoint;
+        map.ScrollVelocityRemoved += removePoint;
+        map.MapInfo.ScrollVelocities.ForEach(addPoint);
 
-        values.MapEvents.LaneSwitchEventAdded += addPoint;
-        values.MapEvents.LaneSwitchEventChanged += updatePoint;
-        values.MapEvents.LaneSwitchEventRemoved += removePoint;
-        values.MapEvents.LaneSwitchEvents.ForEach(addPoint);
+        map.LaneSwitchEventAdded += addPoint;
+        map.LaneSwitchEventUpdated += updatePoint;
+        map.LaneSwitchEventRemoved += removePoint;
+        map.MapEvents.LaneSwitchEvents.ForEach(addPoint);
 
         initialLoad = false;
         sortPoints();
@@ -114,7 +114,7 @@ public partial class PointsList : Container
     private void create(ITimedObject obj)
     {
         obj.Time = (float)clock.CurrentTime;
-        values.MapInfo.Add(obj);
+        map.Add(obj);
 
         var entry = flow.FirstOrDefault(e => e.Object == obj);
         entry?.OpenSettings();

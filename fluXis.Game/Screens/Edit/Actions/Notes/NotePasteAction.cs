@@ -4,28 +4,24 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NotePasteAction : EditorAction
 {
-    private readonly HitObject[] infos;
-    private readonly EditorMapInfo mapInfo;
+    private HitObject[] infos { get; }
+    private EditorMap map { get; }
 
-    public NotePasteAction(HitObject[] infos, EditorMapInfo mapInfo)
+    public NotePasteAction(HitObject[] infos, EditorMap map)
     {
         this.infos = infos;
-        this.mapInfo = mapInfo;
+        this.map = map;
     }
 
     public override void Run()
     {
         foreach (var info in infos)
-        {
-            mapInfo.Add(info);
-        }
+            map.Add(info);
     }
 
     public override void Undo()
     {
         foreach (var info in infos)
-        {
-            mapInfo.Remove(info);
-        }
+            map.Remove(info);
     }
 }

@@ -12,13 +12,10 @@ public partial class ToolboxSnapButton : ToolboxButton
 {
     protected override string Text => $"1/{snap}{getSuffix()}";
     public override LocalisableString Tooltip => $"Snap to 1/{snap}{getSuffix()} of a beat";
-    protected override bool IsSelected => values.SnapDivisor == snap;
+    protected override bool IsSelected => settings.SnapDivisor == snap;
 
     [Resolved]
-    private EditorValues values { get; set; }
-
-    [Resolved]
-    private EditorChangeHandler changeHandler { get; set; }
+    private EditorSettings settings { get; set; }
 
     private int snap { get; }
 
@@ -29,8 +26,7 @@ public partial class ToolboxSnapButton : ToolboxButton
 
     protected override void LoadComplete()
     {
-        changeHandler.SnapDivisorChanged += UpdateSelectionState;
-        UpdateSelectionState();
+        settings.SnapDivisorBindable.BindValueChanged(_ => UpdateSelectionState(), true);
     }
 
     protected override Drawable CreateIcon()
@@ -83,8 +79,7 @@ public partial class ToolboxSnapButton : ToolboxButton
     public override void Select()
     {
         base.Select();
-        values.SnapDivisor = snap;
-        changeHandler.SnapDivisorChanged();
+        settings.SnapDivisor = snap;
     }
 
     private string getSuffix()

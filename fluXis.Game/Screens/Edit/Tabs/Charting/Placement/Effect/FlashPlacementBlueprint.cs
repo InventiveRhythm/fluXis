@@ -82,6 +82,7 @@ public partial class FlashPlacementBlueprint : PlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        if (commit) EditorValues.MapEvents.Add(Object as FlashEvent);
+        if (commit)
+            Map.Add(Object);
     }
 }

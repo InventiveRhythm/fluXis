@@ -17,8 +17,7 @@ public partial class WipEditorTab : EditorTab
 
     private Container content;
 
-    public WipEditorTab(Editor screen, IconUsage icon, string tabName, string description)
-        : base(screen)
+    public WipEditorTab(IconUsage icon, string tabName, string description)
     {
         Icon = icon;
         TabName = tabName;

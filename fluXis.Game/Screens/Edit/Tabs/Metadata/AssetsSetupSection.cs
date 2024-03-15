@@ -10,6 +10,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 
@@ -17,21 +18,12 @@ namespace fluXis.Game.Screens.Edit.Tabs.Metadata;
 
 public partial class AssetsSetupSection : SetupSection
 {
-    [Resolved]
-    private EditorValues values { get; set; }
-
-    public Action BackgroundChanged { get; set; }
-    public Action CoverChanged { get; set; }
+    protected override LocalisableString Title => "Assets";
 
     private AssetsSetupTextBox audioTextBox;
     private AssetsSetupTextBox backgroundTextBox;
     private AssetsSetupTextBox coverTextBox;
     private AssetsSetupTextBox videoTextBox;
-
-    public AssetsSetupSection()
-        : base("Assets")
-    {
-    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -42,46 +34,44 @@ public partial class AssetsSetupSection : SetupSection
             {
                 Label = "Audio",
                 AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
-                FileName = values.MapInfo.AudioFile,
+                FileName = Map.MapInfo.AudioFile,
                 OnFileSelected = file =>
                 {
-                    values.Editor.SetAudio(file);
-                    audioTextBox!.FileName = values.MapInfo.AudioFile;
+                    Map.SetAudio(file);
+                    audioTextBox!.FileName = Map.MapInfo.AudioFile;
                 }
             },
             backgroundTextBox = new AssetsSetupTextBox
             {
                 Label = "Background",
                 AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                FileName = values.MapInfo.BackgroundFile,
+                FileName = Map.MapInfo.BackgroundFile,
                 OnFileSelected = file =>
                 {
-                    values.Editor.SetBackground(file);
-                    BackgroundChanged?.Invoke();
-                    backgroundTextBox!.FileName = values.MapInfo.BackgroundFile;
+                    Map.SetBackground(file);
+                    backgroundTextBox!.FileName = Map.MapInfo.BackgroundFile;
                 }
             },
             coverTextBox = new AssetsSetupTextBox
             {
                 Label = "Cover",
                 AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
-                FileName = values.MapInfo.CoverFile,
+                FileName = Map.MapInfo.CoverFile,
                 OnFileSelected = file =>
                 {
-                    values.Editor.SetCover(file);
-                    CoverChanged?.Invoke();
-                    coverTextBox!.FileName = values.MapInfo.CoverFile;
+                    Map.SetCover(file);
+                    coverTextBox!.FileName = Map.MapInfo.CoverFile;
                 }
             },
             videoTextBox = new AssetsSetupTextBox
             {
                 Label = "Video",
                 AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
-                FileName = values.MapInfo.VideoFile,
+                FileName = Map.MapInfo.VideoFile,
                 OnFileSelected = file =>
                 {
-                    values.Editor.SetVideo(file);
-                    videoTextBox!.FileName = values.MapInfo.VideoFile;
+                    Map.SetVideo(file);
+                    videoTextBox!.FileName = Map.MapInfo.VideoFile;
                 }
             }
         });
@@ -95,7 +85,7 @@ public partial class AssetsSetupSection : SetupSection
         private FluXisGameBase game { get; set; }
 
         [Resolved]
-        private EditorValues values { get; set; }
+        private EditorMap map { get; set; }
 
         [Resolved]
         private Storage storage { get; set; }
@@ -172,7 +162,7 @@ public partial class AssetsSetupSection : SetupSection
                         panels.Content = new FileSelect
                         {
                             AllowedExtensions = AllowedExtensions,
-                            MapDirectory = storage.GetFullPath($"maps/{values.Editor.Map.MapSet.ID}"),
+                            MapDirectory = storage.GetFullPath($"maps/{map.MapSet.ID}"),
                             OnFileSelected = file => OnFileSelected?.Invoke(file)
                         };
                     }

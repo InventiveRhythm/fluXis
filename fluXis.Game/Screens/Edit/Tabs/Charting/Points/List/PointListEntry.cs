@@ -24,7 +24,10 @@ public partial class PointListEntry : Container
     public ITimedObject Object { get; }
 
     [Resolved]
-    protected EditorValues Values { get; private set; }
+    protected EditorSettings Settings { get; private set; }
+
+    [Resolved]
+    protected EditorMap Map { get; private set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -88,10 +91,10 @@ public partial class PointListEntry : Container
         {
             new PointSettingsTitle(Text, () =>
             {
-                Values.MapInfo.Remove(Object);
+                Map.Remove(Object);
                 RequestClose?.Invoke();
             }),
-            new PointSettingsTime(Values.MapInfo, Object)
+            new PointSettingsTime(Map, Object)
         };
     }
 

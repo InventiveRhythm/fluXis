@@ -9,16 +9,16 @@ public partial class TimingTagContainer : EditorTagContainer
     {
         AddTag(new PreviewPointTag(this));
 
-        foreach (var timingPoint in Values.MapInfo.TimingPoints)
+        foreach (var timingPoint in Map.MapInfo.TimingPoints)
             addTimingPoint(timingPoint);
 
-        foreach (var sv in Values.MapInfo.ScrollVelocities)
+        foreach (var sv in Map.MapInfo.ScrollVelocities)
             addScrollVelocity(sv);
 
-        Values.MapInfo.TimingPointAdded += addTimingPoint;
-        Values.MapInfo.TimingPointRemoved += RemoveTag;
-        Values.MapInfo.ScrollVelocityAdded += addScrollVelocity;
-        Values.MapInfo.ScrollVelocityRemoved += RemoveTag;
+        Map.TimingPointAdded += addTimingPoint;
+        Map.TimingPointRemoved += RemoveTag;
+        Map.ScrollVelocityAdded += addScrollVelocity;
+        Map.ScrollVelocityRemoved += RemoveTag;
     }
 
     private void addTimingPoint(TimingPoint tp) => AddTag(new TimingPointTag(this, tp));

@@ -23,7 +23,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 public partial class BlueprintContainer : Container, ICursorDrag
 {
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     public ChartingContainer ChartingContainer { get; init; }
 
@@ -85,11 +85,11 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
         if (ChartingContainer == null) return;
 
-        values.MapInfo.HitObjectAdded += AddBlueprint;
-        values.MapInfo.HitObjectRemoved += RemoveBlueprint;
+        map.HitObjectAdded += AddBlueprint;
+        map.HitObjectRemoved += RemoveBlueprint;
 
-        values.MapEvents.FlashEventAdded += AddBlueprint;
-        values.MapEvents.FlashEventRemoved += RemoveBlueprint;
+        map.FlashEventAdded += AddBlueprint;
+        map.FlashEventRemoved += RemoveBlueprint;
 
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
@@ -338,7 +338,7 @@ public partial class BlueprintContainer : Container, ICursorDrag
             var minLane = hitBlueprints.Min(b => b.Object.Lane);
             var maxLane = hitBlueprints.Max(b => b.Object.Lane);
 
-            if (minLane + laneDelta <= 0 || maxLane + laneDelta > values.Editor.Map.KeyCount)
+            if (minLane + laneDelta <= 0 || maxLane + laneDelta > map.RealmMap.KeyCount)
                 laneDelta = 0;
         }
 

@@ -17,7 +17,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 public partial class ShakeEditorPanel : Panel
 {
     public ShakeEvent Event { get; set; }
-    public EditorMapEvents MapEvents { get; init; }
+    public EditorMap Map { get; init; }
     public EditorClock EditorClock { get; set; }
 
     [Resolved]
@@ -120,7 +120,7 @@ public partial class ShakeEditorPanel : Panel
                             Color = FluXisColors.ButtonRed,
                             Action = () =>
                             {
-                                MapEvents.Remove(Event);
+                                Map.Remove(Event);
                                 Hide();
                             }
                         },

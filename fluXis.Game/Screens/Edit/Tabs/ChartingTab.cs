@@ -15,11 +15,6 @@ public partial class ChartingTab : EditorTab
 
     private LoadingIcon loadingIcon;
 
-    public ChartingTab(Editor screen)
-        : base(screen)
-    {
-    }
-
     [BackgroundDependencyLoader]
     private void load()
     {

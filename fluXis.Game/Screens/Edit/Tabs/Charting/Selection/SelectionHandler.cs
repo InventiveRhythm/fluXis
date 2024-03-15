@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -21,7 +22,10 @@ public partial class SelectionHandler : Container, IHasContextMenu
     public MenuItem[] ContextMenuItems => Array.Empty<MenuItem>();
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorActionStack actions { get; set; }
+
+    [Resolved]
+    private EditorMap map { get; set; }
 
     public IReadOnlyList<SelectionBlueprint> Selected => selected;
     private readonly List<SelectionBlueprint> selected = new();
@@ -130,7 +134,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
             var hits = objs.OfType<HitObject>().ToArray();
 
             if (hits.Length > 0)
-                values.ActionStack.Add(new NoteRemoveAction(hits, values.MapInfo));
+                actions.Add(new NoteRemoveAction(hits, map));
         }
 
         foreach (ITimedObject obj in objs)
@@ -138,7 +142,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
             switch (obj)
             {
                 case FlashEvent flash:
-                    values.MapEvents.Remove(flash);
+                    map.Remove(flash);
                     break;
             }
         }

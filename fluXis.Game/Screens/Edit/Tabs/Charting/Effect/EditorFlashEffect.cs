@@ -17,7 +17,10 @@ public partial class EditorFlashEvent : Container
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
+
+    [Resolved]
+    private EditorMap map { get; set; }
 
     public FlashEvent FlashEvent { get; init; }
 
@@ -50,7 +53,7 @@ public partial class EditorFlashEvent : Container
                 {
                     Event = FlashEvent,
                     EditorClock = clock,
-                    MapEvents = values.MapEvents
+                    Map = map
                 }
             }
         };
@@ -58,14 +61,14 @@ public partial class EditorFlashEvent : Container
 
     protected override void Update()
     {
-        if (!values.MapEvents.FlashEvents.Contains(FlashEvent))
+        if (!map.MapEvents.FlashEvents.Contains(FlashEvent))
         {
             Expire();
             return;
         }
 
-        Y = -((FlashEvent.Time - (float)clock.CurrentTime) * values.Zoom) * 0.5f;
-        line.Height = .5f * (FlashEvent.Duration * values.Zoom);
+        Y = -((FlashEvent.Time - (float)clock.CurrentTime) * settings.Zoom) * 0.5f;
+        line.Height = .5f * (FlashEvent.Duration * settings.Zoom);
         line.Height = Math.Max(line.Height, 10);
         line.Child.Colour = Colour = ColourInfo.GradientVertical(FlashEvent.EndColor.Opacity(FlashEvent.EndOpacity), FlashEvent.StartColor.Opacity(FlashEvent.StartOpacity));
     }

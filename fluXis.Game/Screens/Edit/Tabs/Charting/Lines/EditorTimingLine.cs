@@ -11,7 +11,7 @@ public partial class EditorTimingLine : Box
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorSettings settings { get; set; }
 
     public new float Time { get; set; }
 
@@ -21,7 +21,7 @@ public partial class EditorTimingLine : Box
         {
             if (clock == null) return true;
 
-            return clock.CurrentTime <= Time + 1000 && clock.CurrentTime >= Time - 3000 / values.Zoom;
+            return clock.CurrentTime <= Time + 1000 && clock.CurrentTime >= Time - 3000 / settings.Zoom;
         }
     }
 
@@ -35,6 +35,6 @@ public partial class EditorTimingLine : Box
 
     protected override void Update()
     {
-        Y = -EditorHitObjectContainer.HITPOSITION - .5f * ((Time - (float)clock.CurrentTime) * values.Zoom);
+        Y = -EditorHitObjectContainer.HITPOSITION - .5f * ((Time - (float)clock.CurrentTime) * settings.Zoom);
     }
 }

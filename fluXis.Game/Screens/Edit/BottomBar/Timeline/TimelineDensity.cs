@@ -15,10 +15,9 @@ public partial class TimelineDensity : FillFlowContainer
     private EditorClock clock { get; set; }
 
     [Resolved]
-    private EditorValues values { get; set; }
+    private EditorMap map { get; set; }
 
     private Track track => clock.Track.Value;
-    private EditorMapInfo map => values.MapInfo;
 
     private const int sections = 200;
     private const float section_width = 1f / sections;
@@ -75,7 +74,7 @@ public partial class TimelineDensity : FillFlowContainer
             var start = sectionLength * i;
             var end = start + sectionLength;
 
-            var density = map.HitObjects.Count(h => h.Time >= start && h.EndTime <= end);
+            var density = map.MapInfo.HitObjects.Count(h => h.Time >= start && h.EndTime <= end);
             counts[i] = density;
         }
 

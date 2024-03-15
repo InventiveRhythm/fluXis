@@ -41,7 +41,7 @@ public partial class SingleNotePlacementBlueprint : NotePlacementBlueprint
 
     public override void OnPlacementFinished(bool commit)
     {
-        if (EditorValues.MapInfo.HitObjects.Any(h => (int)h.Time == (int)Hit.Time && h.Lane == Hit.Lane))
+        if (Map.MapInfo.HitObjects.Any(h => (int)h.Time == (int)Hit.Time && h.Lane == Hit.Lane))
             return;
 
         base.OnPlacementFinished(commit);
