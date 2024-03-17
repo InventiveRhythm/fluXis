@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
 using Newtonsoft.Json;
@@ -13,7 +14,7 @@ public class APIScore
     public int Id { get; set; }
 
     [JsonProperty("user")]
-    public int UserId { get; set; }
+    public APIUserShort User { get; set; }
 
     [JsonProperty("map")]
     public APIMapShort Map { get; set; }
@@ -84,7 +85,7 @@ public class APIScore
             ScrollSpeed = ScrollSpeed,
             Timestamp = Time,
             Mods = Mods.Split(",").ToList(),
-            PlayerID = UserId
+            PlayerID = User.ID
         };
     }
 }

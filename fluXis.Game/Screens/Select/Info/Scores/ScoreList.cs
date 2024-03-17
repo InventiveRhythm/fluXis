@@ -15,7 +15,6 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.IO;
 using fluXis.Game.Map;
-using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -374,7 +373,7 @@ public partial class ScoreList : GridContainer
         {
             ScoreInfo = x.ToScoreInfo(),
             Map = map,
-            Player = UserCache.GetUser(x.UserId),
+            Player = x.User,
             DownloadAction = () => downloadScore(map, x)
         }).ToList();
     }
