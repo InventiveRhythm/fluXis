@@ -1,6 +1,6 @@
 namespace fluXis.Shared.API;
 
-public class PacketIDs
+public static class PacketIDs
 {
     public const string AUTH = "account/auth";
     public const string LOGIN = "account/login";
@@ -16,6 +16,7 @@ public class PacketIDs
     public const string CHAT_MESSAGE = "chat/message";
     public const string CHAT_HISTORY = "chat/history";
     public const string CHAT_DELETE = "chat/delete";
+
     public const string MULTIPLAYER_CREATE = "multi/create";
     public const string MULTIPLAYER_JOIN = "multi/join";
     public const string MULTIPLAYER_LEAVE = "multi/leave";

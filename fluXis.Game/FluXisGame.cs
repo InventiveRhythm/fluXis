@@ -5,6 +5,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
@@ -34,6 +35,7 @@ using fluXis.Game.Screens.Skin;
 using fluXis.Game.Screens.Warning;
 using fluXis.Game.Utils;
 using fluXis.Shared.API.Packets.Other;
+using fluXis.Shared.API.Packets.User;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Utils;
@@ -187,9 +189,21 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             });
         });
 
+        Fluxel.RegisterListener<FriendOnlinePacket>(EventType.FriendOnline, res =>
+        {
+            var user = res.Data!.User!;
+            Schedule(() => NotificationManager.SendSmallText($"{user.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
+        });
+
+        Fluxel.RegisterListener<FriendOnlinePacket>(EventType.FriendOffline, res =>
+        {
+            var user = res.Data!.User!;
+            Schedule(() => NotificationManager.SendSmallText($"{user.PreferredName} is now offline.", FontAwesome6.Solid.UserMinus));
+        });
+
         Fluxel.RegisterListener<ServerMessagePacket>(EventType.ServerMessage, res =>
         {
-            var data = res.Data.Message;
+            var data = res.Data!.Message;
 
             switch (data.Type)
             {

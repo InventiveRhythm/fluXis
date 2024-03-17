@@ -111,6 +111,7 @@ public class FontAwesome6
         public static IconUsage User => getSolid(0xf007);
         public static IconUsage UserAstronaut => getSolid(0xf4fb);
         public static IconUsage UserGroup => getSolid(0xf500);
+        public static IconUsage UserMinus => getSolid(0xf503);
         public static IconUsage UserPlus => getSolid(0xf234);
         public static IconUsage UserShield => getSolid(0xf505);
         public static IconUsage Users => getSolid(0xf0c0);

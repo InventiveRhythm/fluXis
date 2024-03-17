@@ -15,6 +15,7 @@ using fluXis.Shared.API.Packets.Account;
 using fluXis.Shared.API.Packets.Chat;
 using fluXis.Shared.API.Packets.Multiplayer;
 using fluXis.Shared.API.Packets.Other;
+using fluXis.Shared.API.Packets.User;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
@@ -273,11 +274,17 @@ public partial class FluxelClient : Component
             EventType.Login => handleListener<LoginPacket>,
             EventType.Register => handleListener<RegisterPacket>,
             EventType.Logout => handleListener<LogoutPacket>,
+
             EventType.Achievement => handleListener<AchievementPacket>,
             EventType.ServerMessage => handleListener<ServerMessagePacket>,
+
+            EventType.FriendOnline => handleListener<FriendOnlinePacket>,
+            EventType.FriendOffline => handleListener<FriendOnlinePacket>,
+
             EventType.ChatMessage => handleListener<ChatMessagePacket>,
             EventType.ChatHistory => handleListener<ChatHistoryPacket>,
             EventType.ChatMessageDelete => handleListener<ChatDeletePacket>,
+
             EventType.MultiplayerJoin => handleListener<MultiJoinPacket>,
             EventType.MultiplayerLeave => handleListener<MultiLeavePacket>,
             // EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
@@ -458,31 +465,34 @@ public partial class FluxelClient : Component
         notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome6.Solid.TriangleExclamation);
     }
 
-    private EventType getType(string id)
+    private static EventType getType(string id)
     {
         return id switch
         {
             PacketIDs.AUTH => EventType.Token,
-            "account/login" => EventType.Login,
-            "account/register" => EventType.Register,
-            "account/logout" => EventType.Logout,
+            PacketIDs.LOGIN => EventType.Login,
+            PacketIDs.REGISTER => EventType.Register,
+            PacketIDs.LOGOUT => EventType.Logout,
 
-            "achievement" => EventType.Achievement,
-            "server/message" => EventType.ServerMessage,
+            PacketIDs.ACHIEVEMENT => EventType.Achievement,
+            PacketIDs.SERVER_MESSAGE => EventType.ServerMessage,
 
-            "chat/message" => EventType.ChatMessage,
-            "chat/history" => EventType.ChatHistory,
-            "chat/delete" => EventType.ChatMessageDelete,
+            PacketIDs.FRIEND_ONLINE => EventType.FriendOnline,
+            PacketIDs.FRIEND_OFFLINE => EventType.FriendOffline,
 
-            "multi/create" => EventType.MultiplayerCreateLobby,
-            "multi/join" => EventType.MultiplayerJoin,
-            "multi/leave" => EventType.MultiplayerLeave,
-            "multi/update" => EventType.MultiplayerRoomUpdate,
-            "multi/ready" => EventType.MultiplayerReady,
-            "multi/start" => EventType.MultiplayerStartGame,
-            "multi/finish" => EventType.MultiplayerFinish,
+            PacketIDs.CHAT_MESSAGE => EventType.ChatMessage,
+            PacketIDs.CHAT_HISTORY => EventType.ChatHistory,
+            PacketIDs.CHAT_DELETE => EventType.ChatMessageDelete,
 
-            _ => throw new ArgumentOutOfRangeException(nameof(id), id, null)
+            PacketIDs.MULTIPLAYER_CREATE => EventType.MultiplayerCreateLobby,
+            PacketIDs.MULTIPLAYER_JOIN => EventType.MultiplayerJoin,
+            PacketIDs.MULTIPLAYER_LEAVE => EventType.MultiplayerLeave,
+            PacketIDs.MULTIPLAYER_UPDATE => EventType.MultiplayerRoomUpdate,
+            PacketIDs.MULTIPLAYER_READY => EventType.MultiplayerReady,
+            PacketIDs.MULTIPLAYER_START => EventType.MultiplayerStartGame,
+            PacketIDs.MULTIPLAYER_FINISH => EventType.MultiplayerFinish,
+
+            _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown packet ID!")
         };
     }
 }
@@ -507,6 +517,9 @@ public enum EventType
     /// Logged out by the server, because the same account logged in somewhere else.
     /// </summary>
     Logout,
+
+    FriendOnline,
+    FriendOffline,
 
     Achievement,
     ServerMessage,
