@@ -180,8 +180,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         Fluxel.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
         {
-            var achievement = res.Data.Achievement;
-            Schedule(() => panelContainer.Content = new AchievementOverlay(achievement));
+            var achievement = res.Data!.Achievement;
+            Schedule(() =>
+            {
+                LoadComponentAsync(new AchievementOverlay(achievement), ov => Schedule(() => panelContainer.Content = ov));
+            });
         });
 
         Fluxel.RegisterListener<ServerMessagePacket>(EventType.ServerMessage, res =>

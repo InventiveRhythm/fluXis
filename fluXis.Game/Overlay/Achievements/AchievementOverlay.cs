@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
@@ -10,7 +11,6 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Achievements;
@@ -27,7 +27,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
     private Square backgroundSquare;
     private Container speedySquares;
     private Square mainSquare;
-    private Box miniSquare;
+    private Sprite icon;
     private Square bigSquare;
     private FillFlowContainer textContainer;
 
@@ -37,7 +37,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
     }
 
     [BackgroundDependencyLoader]
-    private void load(TextureStore textures, ISampleStore samples)
+    private void load(OnlineTextureStore textures, ISampleStore samples)
     {
         sample = samples.Get($"Achievement/{achievement.Level}");
 
@@ -62,24 +62,17 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
                     _ => 1
                 }).Select(_ => new Square(color))
             },
-            mainSquare = new Square(color, 50)
+            mainSquare = new Square(color, 60)
             {
                 Size = new Vector2(0)
             },
-            miniSquare = new Box
-            {
-                Size = new Vector2(0),
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Colour = color,
-                Rotation = 45
-            },
-            new Sprite
+            icon = new Sprite
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Texture = textures.Get($"Achievements/{achievement.ID}"),
-                Size = new Vector2(200)
+                Texture = textures.GetAchievement(achievement.ID),
+                Size = new Vector2(350),
+                Scale = new Vector2(0)
             },
             textContainer = new FillFlowContainer
             {
@@ -141,9 +134,9 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
         if (achievement.Level == 3)
             backgroundSquare.Delay(initial_delay).ResizeTo(2000, square_duration * 2, Easing.OutQuint);
 
-        mainSquare.BorderTo(initial_delay, 10, square_duration, Easing.OutQuint);
+        mainSquare.BorderTo(initial_delay, 20, square_duration, Easing.OutQuint);
         mainSquare.Delay(initial_delay).ResizeTo(400, square_duration, Easing.OutQuint);
-        miniSquare.Delay(initial_delay).ResizeTo(100, square_duration, Easing.OutQuint);
+        icon.Delay(initial_delay).ScaleTo(1, square_duration, Easing.OutQuint);
         textContainer.Delay(initial_delay + 600).FadeIn(200);
 
         sample?.Play();
