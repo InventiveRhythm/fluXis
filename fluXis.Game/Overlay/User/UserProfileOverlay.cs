@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Online;
@@ -28,6 +29,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer flow;
+    private LoadingIcon loading;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -84,6 +86,13 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                 Padding = new MarginPadding { Top = 70, Bottom = 20, Horizontal = 20 },
                                 Spacing = new Vector2(20)
                             }
+                        },
+                        loading = new LoadingIcon
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(50),
+                            Alpha = 0
                         }
                     }
                 }
@@ -101,18 +110,27 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
 
     private async void fetch(long id)
     {
+        Schedule(() =>
+        {
+            flow.Clear();
+            loading.Show();
+        });
+
         user = await UserCache.GetUserAsync(id);
         if (user == null) return;
 
         var mapsReq = new UserMapsRequest(id);
         await mapsReq.PerformAsync(fluxel);
 
-        Schedule(() => displayData(user, mapsReq.Response.Data));
+        Schedule(() =>
+        {
+            loading.Hide();
+            displayData(user, mapsReq.Response.Data);
+        });
     }
 
     private void displayData(APIUser user, APIUserMaps maps)
     {
-        flow.Clear();
         flow.Children = new Drawable[]
         {
             new ProfileHeader(user),
