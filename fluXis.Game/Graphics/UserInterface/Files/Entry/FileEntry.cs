@@ -59,4 +59,10 @@ public partial class FileEntry : GenericEntry
         base.Dispose(isDisposing);
         selector.FileChanged -= fileChanged;
     }
+
+    protected override bool OnDoubleClick(DoubleClickEvent e)
+    {
+        selector.OnSelect();
+        return base.OnDoubleClick(e);
+    }
 }

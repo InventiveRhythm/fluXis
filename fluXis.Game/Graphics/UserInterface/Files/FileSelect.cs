@@ -275,7 +275,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                             FontSize = 20,
                                             Text = "Select",
                                             Color = FluXisColors.Accent2,
-                                            Action = onSelect,
+                                            Action = OnSelect,
                                             Enabled = false
                                         }
                                     }
@@ -531,7 +531,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         drivesFlow.FadeInFromZero(200);
     }
 
-    private void onSelect()
+    public void OnSelect()
     {
         if (ShowFiles)
         {
