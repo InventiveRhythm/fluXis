@@ -7,7 +7,10 @@ public class FluxelRequest<T>
     where T : IPacket
 {
     [JsonProperty("id")]
-    public string ID { get; set; } = null!;
+    public string ID { get; set; }
+
+    [JsonProperty("token")]
+    public Guid Token { get; set; }
 
     [JsonProperty("data")]
     public T? Data { get; set; }
@@ -15,6 +18,7 @@ public class FluxelRequest<T>
     public FluxelRequest(string id, T? data)
     {
         ID = id;
+        Token = Guid.NewGuid();
         Data = data;
     }
 }

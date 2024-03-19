@@ -18,6 +18,6 @@ public interface IMultiplayerRoom
     [JsonProperty("users")]
     List<APIUserShort> Users { get; set; }
 
-    [JsonProperty("maps")]
-    List<IAPIMapShort> Maps { get; set; }
+    [JsonProperty("map")]
+    IAPIMapShort Map { get; set; }
 }

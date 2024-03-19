@@ -1,18 +1,21 @@
+using System;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Requests.Multiplayer;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
-using fluXis.Shared.API;
-using fluXis.Shared.API.Packets.Multiplayer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 
@@ -33,7 +36,8 @@ public partial class MultiLobbyList : MultiSubScreen
     [Resolved]
     private PanelContainer panels { get; set; }
 
-    private LoadingPanel loadingPanel;
+    [Resolved]
+    private MultiplayerClient client { get; set; }
 
     private FillFlowContainer lobbyList;
     private LoadingIcon loadingIcon;
@@ -64,8 +68,6 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         base.LoadComplete();
 
-        fluxel.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onLobbyJoin);
-
         loadLobbies();
     }
 
@@ -89,37 +91,24 @@ public partial class MultiLobbyList : MultiSubScreen
         lobbyList.FadeIn(200);
     }
 
-    public void JoinLobby(MultiplayerRoom room)
+    public async void JoinLobby(MultiplayerRoom room, string password = "")
     {
-        panels.Content = loadingPanel = new LoadingPanel
+        var panel = new LoadingPanel { Text = "Joining lobby...", };
+        Schedule(() => panels.Content = panel);
+
+        try
         {
-            Text = "Joining lobby...",
-        };
+            await client.Join(room, password);
 
-        fluxel.SendPacketAsync(MultiJoinPacket.CreateC2SInitialJoin(room.RoomID, ""));
-    }
-
-    private void onLobbyJoin(FluxelReply<MultiJoinPacket> res)
-    {
-        if (res.Data == null)
-            return;
-
-        if (!res.Data.JoinRequest)
-            return;
-
-        Schedule(() =>
+            if (client.Room != null)
+                Schedule(() => this.Push(new MultiLobby()));
+        }
+        catch (Exception e)
         {
-            if (res.Success)
-            {
-                loadingPanel?.Hide();
-                this.Push(new MultiLobby { Room = (MultiplayerRoom)res.Data.Room });
-            }
-            else
-            {
-                loadingPanel?.Hide();
-                notifications.SendError("Failed to join lobby", res.Message);
-            }
-        });
+            notifications.SendError("Failed to join lobby", e.Message);
+        }
+
+        Schedule(() => panel.Hide());
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -139,5 +128,37 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         menuMusic.GoToLayer(0, 1);
         base.OnResuming(e);
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        switch (e.Key)
+        {
+            case Key.C:
+                this.Push(new MultiSongSelect(create));
+                return true;
+        }
+
+        return base.OnKeyDown(e);
+    }
+
+    private async void create(RealmMap map)
+    {
+        var panel = new LoadingPanel { Text = "Creating lobby...", };
+        Schedule(() => panels.Content = panel);
+
+        try
+        {
+            await client.Create($"{client.Player.NameWithApostrophe} Room", map.OnlineID, map.Hash);
+
+            if (client.Room != null)
+                Schedule(() => this.Push(new MultiLobby()));
+        }
+        catch (Exception e)
+        {
+            notifications.SendError("Failed to join lobby", e.Message);
+        }
+
+        Schedule(() => panel.Hide());
     }
 }

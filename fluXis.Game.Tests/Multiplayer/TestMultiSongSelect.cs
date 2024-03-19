@@ -38,6 +38,6 @@ public partial class TestMultiSongSelect : FluXisTestScene
 
         store.CurrentMap = store.GetRandom()?.LowestDifficulty;
 
-        AddStep("Push SongSelect", () => stack.Push(new MultiSongSelect()));
+        AddStep("Push SongSelect", () => stack.Push(new MultiSongSelect(null)));
     }
 }

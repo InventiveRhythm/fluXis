@@ -21,6 +21,7 @@ public static class PacketIDs
     public const string MULTIPLAYER_JOIN = "multi/join";
     public const string MULTIPLAYER_LEAVE = "multi/leave";
     public const string MULTIPLAYER_KICK = "multi/kick";
+    public const string MULTIPLAYER_MAP = "multi/map";
     public const string MULTIPLAYER_UPDATE = "multi/update";
     public const string MULTIPLAYER_READY = "multi/ready";
     public const string MULTIPLAYER_START = "multi/start";

@@ -49,6 +49,7 @@ public partial class FluxelClient : Component
 
     private readonly List<string> packetQueue = new();
     private readonly ConcurrentDictionary<EventType, List<Action<object>>> responseListeners = new();
+    private readonly Dictionary<Guid, Action<object>> waitingForResponse = new();
     private ClientWebSocket connection;
     private ConnectionStatus status = ConnectionStatus.Offline;
     private APIUserShort loggedInUser;
@@ -253,6 +254,13 @@ public partial class FluxelClient : Component
             var response = msg.Deserialize<FluxelReply<T>>();
             var type = getType(response.ID);
 
+            if (waitingForResponse.TryGetValue(response.Token, out var action))
+            {
+                action(response);
+                waitingForResponse.Remove(response.Token);
+                return;
+            }
+
             if (!responseListeners.ContainsKey(type))
                 return;
 
@@ -285,8 +293,10 @@ public partial class FluxelClient : Component
             EventType.ChatHistory => handleListener<ChatHistoryPacket>,
             EventType.ChatMessageDelete => handleListener<ChatDeletePacket>,
 
+            EventType.MultiplayerCreateLobby => handleListener<MultiCreatePacket>,
             EventType.MultiplayerJoin => handleListener<MultiJoinPacket>,
             EventType.MultiplayerLeave => handleListener<MultiLeavePacket>,
+            EventType.MultiplayerMap => handleListener<MultiMapPacket>,
             // EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
             EventType.MultiplayerReady => handleListener<MultiReadyPacket>,
             EventType.MultiplayerStartGame => handleListener<MultiStartPacket>,
@@ -359,6 +369,30 @@ public partial class FluxelClient : Component
         }
     }
 
+    /// <summary>
+    /// Sends a packet and waits for a response. Throws a <see cref="TimeoutException"/> if the time set in <paramref name="timeout"/> is exceeded.
+    /// </summary>
+    /// <param name="packet">The packet to send.</param>
+    /// <param name="timeout">The time to wait for a response in milliseconds.</param>
+    /// <typeparam name="T">The type of the packet.</typeparam>
+    /// <returns>The response packet.</returns>
+    public async Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000)
+        where T : IPacket
+    {
+        var request = new FluxelRequest<T>(packet.ID, packet);
+
+        var task = new TaskCompletionSource<FluxelReply<T>>();
+        waitingForResponse.Add(request.Token, response => task.SetResult((FluxelReply<T>)response));
+
+        await send(request.Serialize());
+        await Task.WhenAny(task.Task, Task.Delay((int)timeout));
+
+        if (!task.Task.IsCompleted)
+            throw new TimeoutException("The request timed out!");
+
+        return await task.Task;
+    }
+
     public async void SendPacketAsync(IPacket packet) => await SendPacket(packet);
 
     public async Task SendPacket<T>(T packet)
@@ -424,7 +458,7 @@ public partial class FluxelClient : Component
             return;
         }
 
-        tokenBindable.Value = reply.Data.Token;
+        tokenBindable.Value = reply.Data!.Token;
         waitTime = 5; // reset wait time for login
         SendPacketAsync(LoginPacket.CreateC2S(reply.Data.Token));
     }
@@ -487,6 +521,7 @@ public partial class FluxelClient : Component
             PacketIDs.MULTIPLAYER_CREATE => EventType.MultiplayerCreateLobby,
             PacketIDs.MULTIPLAYER_JOIN => EventType.MultiplayerJoin,
             PacketIDs.MULTIPLAYER_LEAVE => EventType.MultiplayerLeave,
+            PacketIDs.MULTIPLAYER_MAP => EventType.MultiplayerMap,
             PacketIDs.MULTIPLAYER_UPDATE => EventType.MultiplayerRoomUpdate,
             PacketIDs.MULTIPLAYER_READY => EventType.MultiplayerReady,
             PacketIDs.MULTIPLAYER_START => EventType.MultiplayerStartGame,
@@ -531,6 +566,7 @@ public enum EventType
     MultiplayerCreateLobby,
     MultiplayerJoin,
     MultiplayerLeave,
+    MultiplayerMap,
     MultiplayerRoomUpdate,
     MultiplayerReady,
     MultiplayerStartGame,

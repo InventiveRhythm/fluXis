@@ -11,16 +11,20 @@ using fluXis.Game.Mods;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Multiplayer.Gameplay;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Game.UI;
 using fluXis.Shared.API.Packets.Multiplayer;
+using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 
@@ -39,6 +43,9 @@ public partial class MultiLobby : MultiSubScreen
     private GlobalClock clock { get; set; }
 
     [Resolved]
+    private NotificationManager notifications { get; set; }
+
+    [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }
 
     [Resolved]
@@ -53,7 +60,7 @@ public partial class MultiLobby : MultiSubScreen
     [Resolved]
     private PanelContainer panels { get; set; }
 
-    public MultiplayerRoom Room { get; set; }
+    public MultiplayerRoom Room => client.Room;
 
     private bool ready;
 
@@ -65,8 +72,6 @@ public partial class MultiLobby : MultiSubScreen
     [BackgroundDependencyLoader]
     private void load()
     {
-        client.Room = Room;
-
         InternalChildren = new Drawable[]
         {
             new FillFlowContainer
@@ -146,6 +151,8 @@ public partial class MultiLobby : MultiSubScreen
 
         client.UserJoined += onUserJoined;
         client.UserLeft += onUserLeft;
+        client.MapChanged += mapChanged;
+        client.MapChangedFailed += mapChangeFailed;
         client.ReadyStateChanged += updateReadyState;
         client.Starting += startLoading;
     }
@@ -156,6 +163,8 @@ public partial class MultiLobby : MultiSubScreen
 
         client.UserJoined -= onUserJoined;
         client.UserLeft -= onUserLeft;
+        client.MapChanged -= mapChanged;
+        client.MapChangedFailed -= mapChangeFailed;
         client.ReadyStateChanged -= updateReadyState;
         client.Starting -= startLoading;
     }
@@ -168,6 +177,32 @@ public partial class MultiLobby : MultiSubScreen
     private void onUserLeft(APIUserShort user)
     {
         playerList.RemovePlayer(user.ID);
+    }
+
+    private void mapChanged(IAPIMapShort map)
+    {
+        var mapSet = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == map.ID));
+
+        if (mapSet == null)
+        {
+            stopClockMusic();
+            backgrounds.AddBackgroundFromMap(null);
+            return;
+        }
+
+        var localMap = mapSet.Maps.FirstOrDefault(m => m.OnlineID == map.ID);
+        mapStore.CurrentMap = localMap;
+
+        clock.FadeOut(); // because it sets itself to 1
+        clock.RestartPoint = 0;
+        clock.AllowLimitedLoop = false;
+        backgrounds.AddBackgroundFromMap(localMap);
+        startClockMusic();
+    }
+
+    private void mapChangeFailed(string error)
+    {
+        notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
     }
 
     private void updateReadyState(long id, bool ready)
@@ -184,6 +219,18 @@ public partial class MultiLobby : MultiSubScreen
         multiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
     }
 
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        switch (e.Key)
+        {
+            case Key.C:
+                multiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
+                return true;
+        }
+
+        return false;
+    }
+
     public override bool OnExiting(ScreenExitEvent e)
     {
         if (confirmExit)
@@ -191,6 +238,7 @@ public partial class MultiLobby : MultiSubScreen
             clock.Looping = false;
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
+            client.LeaveRoom();
             fluxel.SendPacketAsync(new MultiLeavePacket());
             readyButton.Hide();
             return false;
@@ -226,13 +274,13 @@ public partial class MultiLobby : MultiSubScreen
     {
         menuMusic.StopAll();
 
-        var map = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == Room.Maps[0].ID));
+        var map = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == Room.Map.ID));
 
         if (map != null)
         {
             mapStore.CurrentMapSet = map;
 
-            var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Maps[0].ID);
+            var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Map.ID);
             if (mapInfo == null) return; // what
 
             clock.FadeOut(); // because it sets itself to 1

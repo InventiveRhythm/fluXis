@@ -10,6 +10,9 @@ public class FluxelReply<T>
     [JsonProperty("success")]
     public bool Success { get; set; }
 
+    [JsonProperty("token")]
+    public Guid Token { get; set; }
+
     [JsonProperty("message")]
     public string Message { get; set; } = "OK";
 
