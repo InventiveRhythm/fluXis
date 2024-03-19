@@ -1,16 +1,22 @@
+using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface;
 
 public partial class LoadingIcon : Container
 {
-    public bool ShowBackground { get; set; } = false;
+    private const int circle_count = 3;
+    private const float max_fill = 0.25f;
+    private const float factor = 1 / 3f;
+    private const float rotation = 360 * factor;
 
-    private CircularContainer container;
+    private Bindable<double> progress { get; } = new();
+    private Container<CircularProgress> circles;
 
     public LoadingIcon()
     {
@@ -25,50 +31,41 @@ public partial class LoadingIcon : Container
 
         InternalChildren = new Drawable[]
         {
-            new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black.Opacity(0.5f),
-                Alpha = ShowBackground ? 1 : 0
-            },
-            new Container
+            circles = new Container<CircularProgress>
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Size = new Vector2(.8f, .16f),
-                Child = container = new CircularContainer
+                ChildrenEnumerable = Enumerable.Range(0, circle_count).Select(i => new CircularProgress
                 {
-                    RelativePositionAxes = Axes.Both,
                     RelativeSizeAxes = Axes.Both,
-                    Width = 0.2f,
-                    Masking = true,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.White
-                    },
-                    EdgeEffect = FluXisStyles.ShadowSmall
-                }
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Current = progress,
+                    RoundedCaps = true,
+                    InnerRadius = 0.3f,
+                    Rotation = 360 * (factor * i)
+                })
             }
         };
     }
 
     protected override void LoadComplete()
     {
-        const float duration = 600;
-        const Easing easing = Easing.InOutExpo;
+        rotate();
+    }
 
-        container.ResizeWidthTo(1f, duration, easing)
-                 .Then()
-                 .MoveToX(0.8f, duration, easing)
-                 .ResizeWidthTo(.2f, duration, easing)
-                 .Then()
-                 .ResizeWidthTo(1f, duration, easing)
-                 .MoveToX(0, duration, easing)
-                 .Then()
-                 .ResizeWidthTo(.2f, duration, easing)
-                 .Loop();
+    private void rotate()
+    {
+        const float duration = 600;
+
+        circles.RotateTo(circles.Rotation + rotation, duration)
+               .TransformBindableTo(progress, max_fill, duration, Easing.InOutCubic)
+               .Then()
+               .RotateTo(circles.Rotation + rotation * 2.2f, duration / 2)
+               .TransformBindableTo(progress, 0, duration / 2)
+               .Then()
+               .OnComplete(_ => rotate());
     }
 
     public override void Show() => this.FadeIn(200);
