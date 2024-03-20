@@ -22,8 +22,8 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     {
         fluxel.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
         fluxel.RegisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
+        fluxel.RegisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
         fluxel.RegisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
-        fluxel.RegisterListener<MultiReadyPacket>(EventType.MultiplayerReady, onReadyUpdate);
         fluxel.RegisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
         fluxel.RegisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
@@ -34,16 +34,16 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
 
         fluxel.UnregisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
         fluxel.UnregisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
+        fluxel.UnregisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
         fluxel.UnregisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
-        fluxel.UnregisterListener<MultiReadyPacket>(EventType.MultiplayerReady, onReadyUpdate);
         fluxel.UnregisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
         fluxel.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
-    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined(reply.Data.Player);
+    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined(reply.Data.Participant as MultiplayerParticipant);
     private void onUserLeave(FluxelReply<MultiLeavePacket> reply) => impl.UserLeft(reply.Data.UserID);
+    private void onUserStateChange(FluxelReply<MultiStatePacket> reply) => impl.UserStateChanged(reply.Data!.UserID, reply.Data.State);
     private void onMapChange(FluxelReply<MultiMapPacket> reply) => impl.MapChanged(reply.Success, reply.Data.Map, reply.Message);
-    private void onReadyUpdate(FluxelReply<MultiReadyPacket> reply) => impl.ReadyStateChanged(reply.Data!.PlayerID, reply.Data.Ready);
     private void onStartGame(FluxelReply<MultiStartPacket> reply) => impl.Starting();
     private void onGameFinished(FluxelReply<MultiFinishPacket> reply) => impl.ResultsReady(reply.Data.Scores);
 
@@ -62,7 +62,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     public override Task LeaveRoom()
     {
         fluxel.SendPacketAsync(new MultiLeavePacket());
-        return base.LeaveRoom();
+        return Task.CompletedTask;
     }
 
     public override Task ChangeMap(long map, string hash)
@@ -71,7 +71,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         return Task.CompletedTask;
     }
 
-    public override Task Finished(ScoreInfo score)
+    public override Task Finish(ScoreInfo score)
     {
         fluxel.SendPacketAsync(MultiCompletePacket.CreateC2S(score));
         return Task.CompletedTask;

@@ -1,20 +1,26 @@
-using fluXis.Game.Graphics.Drawables;
-using fluXis.Game.Graphics.Sprites;
-using fluXis.Shared.Components.Users;
+using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
 
 public partial class PlayerListEntry : Container
 {
-    public APIUserShort User { get; set; }
+    public MultiplayerParticipant Participant { get; }
 
-    private SpriteIcon readyIcon;
+    private PlayerListEntryContent content;
+    private LoadingIcon loadingIcon;
+
+    public PlayerListEntry(MultiplayerParticipant participant)
+    {
+        Participant = participant;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -32,67 +38,24 @@ public partial class PlayerListEntry : Container
                 Colour = Colour4.Black,
                 Alpha = 0.5f
             },
-            new DrawableAvatar(User)
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Size = new Vector2(50)
-            },
-            new Container
+            new LoadWrapper<PlayerListEntryContent>
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Left = 50 },
-                Children = new Drawable[]
+                LoadContent = () => content = new PlayerListEntryContent(Participant),
+                OnComplete = d =>
                 {
-                    new DrawableBanner(User)
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft
-                    },
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = 0.3f
-                    },
-                    new FillFlowContainer
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Vertical,
-                        Spacing = new Vector2(0, 5),
-                        Padding = new MarginPadding { Left = 10 },
-                        Children = new Drawable[]
-                        {
-                            new FluXisSpriteText
-                            {
-                                Text = User.Username,
-                                Anchor = Anchor.TopLeft,
-                                Origin = Anchor.TopLeft,
-                                FontSize = 30
-                            }
-                        }
-                    },
-                    readyIcon = new SpriteIcon
-                    {
-                        Anchor = Anchor.CentreRight,
-                        Origin = Anchor.CentreRight,
-                        Icon = FontAwesome6.Solid.Check,
-                        Size = new Vector2(20),
-                        Shadow = true,
-                        Margin = new MarginPadding { Right = 10 },
-                        Alpha = 0,
-                        Colour = Colour4.FromHex("#7BE87B")
-                    }
+                    d.FadeInFromZero(200);
+                    loadingIcon.FadeOut(200);
                 }
+            },
+            loadingIcon = new LoadingIcon
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(30)
             }
         };
     }
 
-    public void SetReady(bool ready)
-    {
-        readyIcon.Alpha = ready ? 1 : 0;
-    }
+    public void SetState(MultiplayerUserState state) => content.SetState(state);
 }

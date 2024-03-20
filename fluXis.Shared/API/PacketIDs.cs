@@ -21,11 +21,12 @@ public static class PacketIDs
     public const string MULTIPLAYER_JOIN = "multi/join";
     public const string MULTIPLAYER_LEAVE = "multi/leave";
     public const string MULTIPLAYER_KICK = "multi/kick";
+    public const string MULTIPLAYER_STATE = "multi/state"; // player state update
     public const string MULTIPLAYER_MAP = "multi/map";
     public const string MULTIPLAYER_UPDATE = "multi/update";
-    public const string MULTIPLAYER_READY = "multi/ready";
-    public const string MULTIPLAYER_START = "multi/start";
-    public const string MULTIPLAYER_COMPLETE = "multi/complete";
-    public const string MULTIPLAYER_FINISH = "multi/finish";
-    public const string MULTIPLAYER_SCORE = "multi/score";
+    public const string MULTIPLAYER_READY = "multi/ready"; // player ready state
+    public const string MULTIPLAYER_START = "multi/start"; // game start
+    public const string MULTIPLAYER_COMPLETE = "multi/complete"; // player finished
+    public const string MULTIPLAYER_FINISH = "multi/finish"; // game finished
+    public const string MULTIPLAYER_SCORE = "multi/score"; // mid-game score update
 }

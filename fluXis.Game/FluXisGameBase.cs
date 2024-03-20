@@ -103,6 +103,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         JsonUtils.RegisterTypeConversion<IAPIUser, APIUser>();
         JsonUtils.RegisterTypeConversion<IAPIUserSocials, APIUser.APIUserSocials>();
+        JsonUtils.RegisterTypeConversion<IMultiplayerParticipant, MultiplayerParticipant>();
         JsonUtils.RegisterTypeConversion<IAPIGroup, APIGroup>();
         JsonUtils.RegisterTypeConversion<IAPIMapShort, APIMapShort>();
         JsonUtils.RegisterTypeConversion<IMultiplayerRoom, MultiplayerRoom>();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Shared.Components.Maps;
+using fluXis.Shared.Components.Multi;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using osu.Framework.Graphics;
@@ -13,14 +14,15 @@ namespace fluXis.Game.Online.Multiplayer;
 
 public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 {
-    public event Action<APIUserShort> UserJoined;
-    public event Action<APIUserShort> UserLeft;
-    public event Action RoomUpdated;
+    public event Action<MultiplayerParticipant> UserJoined;
+    public event Action<MultiplayerParticipant> UserLeft;
+    public event Action<long, MultiplayerUserState> UserStateChanged;
+
+    // public event Action RoomUpdated;
 
     public event Action<string> MapChangedFailed;
     public event Action<IAPIMapShort> MapChanged;
 
-    public event Action<long, bool> ReadyStateChanged;
     public event Action Starting;
     public event Action<List<ScoreInfo>> ResultsReady;
 
@@ -35,8 +37,6 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Room = await CreateRoom(name, mapid, hash);
     }
 
-    protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
-
     public async Task Join(MultiplayerRoom room, string password = "")
     {
         if (Room != null)
@@ -45,28 +45,31 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Room = await JoinRoom(room.RoomID, password);
     }
 
+    #region Abstract Methods
+
     protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
+    protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
+    public abstract Task LeaveRoom();
+    public abstract Task ChangeMap(long map, string hash);
+    public abstract Task Finish(ScoreInfo score);
 
-    public virtual Task LeaveRoom()
-    {
-        Room = null;
-        return Task.CompletedTask;
-    }
+    #endregion
 
-    Task IMultiplayerClient.UserJoined(APIUserShort user)
+    #region IMultiplayerClient Implementation
+
+    Task IMultiplayerClient.UserJoined(MultiplayerParticipant participant)
     {
         Schedule(() =>
         {
             if (Room == null)
                 return;
 
-            if (Room.Users.Any(u => u.ID == user.ID))
+            if (Room.Participants.Any(u => u.ID == participant.ID))
                 return;
 
-            Room.Users.Add(user);
+            Room.Participants.Add(participant);
 
-            UserJoined?.Invoke(user);
-            RoomUpdated?.Invoke();
+            UserJoined?.Invoke(participant);
         });
 
         return Task.CompletedTask;
@@ -74,12 +77,23 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     Task IMultiplayerClient.UserLeft(long id) => handleLeave(id, UserLeft);
 
-    Task IMultiplayerClient.SettingsChanged(MultiplayerRoom room) => Task.CompletedTask;
-
-    public virtual Task ChangeMap(long map, string hash)
+    Task IMultiplayerClient.UserStateChanged(long id, MultiplayerUserState state)
     {
-        throw new NotImplementedException();
+        Schedule(() =>
+        {
+            if (Room?.Participants.FirstOrDefault(u => u.ID == id) is not { } participant)
+                return;
+
+            var user = participant as MultiplayerParticipant;
+            user!.State = state;
+
+            UserStateChanged?.Invoke(id, state);
+        });
+
+        return Task.CompletedTask;
     }
+
+    Task IMultiplayerClient.SettingsChanged(MultiplayerRoom room) => Task.CompletedTask;
 
     Task IMultiplayerClient.MapChanged(bool success, IAPIMapShort map, string error)
     {
@@ -102,43 +116,26 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    Task IMultiplayerClient.ReadyStateChanged(long userId, bool isReady)
-    {
-        Schedule(() =>
-        {
-            if (Room == null)
-                return;
-
-            ReadyStateChanged?.Invoke(userId, isReady);
-            RoomUpdated?.Invoke();
-        });
-
-        return Task.CompletedTask;
-    }
-
     Task IMultiplayerClient.Starting()
     {
         Schedule(() => Starting?.Invoke());
         return Task.CompletedTask;
     }
 
-    private Task handleLeave(long id, Action<APIUserShort> callback)
+    private Task handleLeave(long id, Action<MultiplayerParticipant> callback)
     {
         Scheduler.Add(() =>
         {
-            if (Room?.Users.FirstOrDefault(u => u.ID == id) is not { } user)
+            if (Room?.Participants.FirstOrDefault(u => u.ID == id) is not { } participant)
                 return;
 
-            Room.Users.Remove(user);
+            Room.Participants.Remove(participant);
 
-            callback?.Invoke(user);
-            RoomUpdated?.Invoke();
+            callback?.Invoke(participant as MultiplayerParticipant);
         }, false);
 
         return Task.CompletedTask;
     }
-
-    public virtual Task Finished(ScoreInfo score) => Task.CompletedTask;
 
     Task IMultiplayerClient.ResultsReady(List<ScoreInfo> scores)
     {
@@ -146,4 +143,6 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Schedule(() => ResultsReady?.Invoke(scores));
         return Task.CompletedTask;
     }
+
+    #endregion
 }

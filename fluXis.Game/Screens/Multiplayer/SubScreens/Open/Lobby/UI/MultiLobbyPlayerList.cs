@@ -3,7 +3,6 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
-using fluXis.Shared.Components.Users;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -54,25 +53,26 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
 
     protected override void LoadComplete()
     {
-        foreach (var user in Room.Users)
+        foreach (var participant in Room.Participants)
         {
-            playerList.Add(new PlayerListEntry { User = user });
+            var impl = participant as MultiplayerParticipant;
+            playerList.Add(new PlayerListEntry(impl));
         }
     }
 
     [CanBeNull]
     public PlayerListEntry GetPlayer(long id)
     {
-        return playerList.Children.FirstOrDefault(p => p.User.ID == id);
+        return playerList.Children.FirstOrDefault(p => p.Participant.ID == id);
     }
 
-    public void AddPlayer(APIUserShort user)
+    public void AddPlayer(MultiplayerParticipant participant)
     {
-        playerList.Add(new PlayerListEntry { User = user });
+        playerList.Add(new PlayerListEntry(participant));
     }
 
     public void RemovePlayer(long id)
     {
-        playerList.Children.FirstOrDefault(p => p.User.ID == id)?.Expire();
+        playerList.Children.FirstOrDefault(p => p.Participant.ID == id)?.Expire();
     }
 }

@@ -37,7 +37,7 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     protected override void End()
     {
-        client.Finished(ScoreProcessor.ToScoreInfo(client.Player));
+        client.Finish(ScoreProcessor.ToScoreInfo(client.Player));
     }
 
     private void onResultsReady(List<ScoreInfo> scores) => this.Push(new MultiResults(RealmMap, scores));

@@ -1,5 +1,4 @@
 ﻿using fluXis.Shared.Components.Multi;
-using fluXis.Shared.Components.Users;
 using Newtonsoft.Json;
 
 namespace fluXis.Shared.API.Packets.Multiplayer;
@@ -23,14 +22,14 @@ public class MultiJoinPacket : IPacket
     [JsonProperty("lobby")]
     public IMultiplayerRoom? Room { get; init; }
 
-    [JsonProperty("user")]
-    public APIUserShort? Player { get; init; }
+    [JsonProperty("participant")]
+    public IMultiplayerParticipant? Participant { get; init; }
 
     [JsonIgnore]
     public bool JoinRequest => Room != null;
 
     [JsonIgnore]
-    public bool SomeoneJoined => Player != null;
+    public bool SomeoneJoined => Participant != null;
 
     #endregion
 
@@ -38,5 +37,5 @@ public class MultiJoinPacket : IPacket
         => new() { LobbyID = lobbyID, Password = password };
 
     public static MultiJoinPacket CreateS2CInitialJoin(IMultiplayerRoom room) => new() { Room = room };
-    public static MultiJoinPacket CreateS2CUserJoin(APIUserShort player) => new() { Player = player };
+    public static MultiJoinPacket CreateS2CUserJoin(IMultiplayerParticipant participant) => new() { Participant = participant };
 }

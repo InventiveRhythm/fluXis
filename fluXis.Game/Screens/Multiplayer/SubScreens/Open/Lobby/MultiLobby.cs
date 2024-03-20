@@ -18,7 +18,7 @@ using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Game.UI;
 using fluXis.Shared.API.Packets.Multiplayer;
 using fluXis.Shared.Components.Maps;
-using fluXis.Shared.Components.Users;
+using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -151,9 +151,9 @@ public partial class MultiLobby : MultiSubScreen
 
         client.UserJoined += onUserJoined;
         client.UserLeft += onUserLeft;
+        client.UserStateChanged += updateUserState;
         client.MapChanged += mapChanged;
         client.MapChangedFailed += mapChangeFailed;
-        client.ReadyStateChanged += updateReadyState;
         client.Starting += startLoading;
     }
 
@@ -163,18 +163,18 @@ public partial class MultiLobby : MultiSubScreen
 
         client.UserJoined -= onUserJoined;
         client.UserLeft -= onUserLeft;
+        client.UserStateChanged -= updateUserState;
         client.MapChanged -= mapChanged;
         client.MapChangedFailed -= mapChangeFailed;
-        client.ReadyStateChanged -= updateReadyState;
         client.Starting -= startLoading;
     }
 
-    private void onUserJoined(APIUserShort user)
+    private void onUserJoined(MultiplayerParticipant user)
     {
         playerList.AddPlayer(user);
     }
 
-    private void onUserLeft(APIUserShort user)
+    private void onUserLeft(MultiplayerParticipant user)
     {
         playerList.RemovePlayer(user.ID);
     }
@@ -205,10 +205,10 @@ public partial class MultiLobby : MultiSubScreen
         notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
     }
 
-    private void updateReadyState(long id, bool ready)
+    private void updateUserState(long id, MultiplayerUserState state)
     {
         var player = playerList.GetPlayer(id);
-        player?.SetReady(ready);
+        player?.SetState(state);
     }
 
     private void startLoading()
