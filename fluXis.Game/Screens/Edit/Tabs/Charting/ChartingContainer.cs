@@ -96,6 +96,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
 
         dependencies.Cache(this);
         dependencies.CacheAs(Playfield = new EditorPlayfield());
+        dependencies.CacheAs(sidebar = new PointsSidebar());
 
         InternalChildren = new Drawable[]
         {
@@ -122,7 +123,7 @@ public partial class ChartingContainer : Container, IKeyBindingHandler<PlatformA
                 Alpha = 0,
                 Action = () => sidebar.OnWrapperClick?.Invoke()
             },
-            sidebar = new PointsSidebar()
+            sidebar
         };
     }
 

@@ -146,6 +146,12 @@ public partial class PointsList : Container
             sortPoints();
     }
 
+    public void ShowPoint(ITimedObject obj)
+    {
+        var entry = flow.FirstOrDefault(e => e.Object == obj);
+        entry?.OpenSettings();
+    }
+
     private void updatePoint(ITimedObject obj)
     {
         var entry = flow.FirstOrDefault(e => e.Object == obj);

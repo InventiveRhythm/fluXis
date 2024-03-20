@@ -124,6 +124,12 @@ public partial class PointsSidebar : ExpandingContainer, IKeyBindingHandler<FluX
         }, true);
     }
 
+    public void ShowPoint(ITimedObject obj)
+    {
+        Expanded.Value = true;
+        pointsList.ShowPoint(obj);
+    }
+
     private void updateSelection()
     {
         inspector.Clear();

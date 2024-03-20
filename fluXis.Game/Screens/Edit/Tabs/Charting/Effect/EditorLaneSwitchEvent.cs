@@ -1,9 +1,7 @@
 using System.Linq;
-using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map.Events;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Points;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -31,24 +29,13 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
     private int count;
 
     [BackgroundDependencyLoader]
-    private void load(PanelContainer panels)
+    private void load(PointsSidebar points)
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomLeft;
         Origin = Anchor.BottomLeft;
 
-        Action = () =>
-        {
-            if (chartingContainer.BlueprintContainer.CurrentTool is SelectTool)
-            {
-                panels.Content = new LaneSwtichEditorPanel
-                {
-                    Event = Event,
-                    Map = map,
-                    EditorClock = clock
-                };
-            }
-        };
+        Action = () => points.ShowPoint(Event);
 
         count = Event.Count;
 
