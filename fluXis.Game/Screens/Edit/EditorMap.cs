@@ -71,8 +71,8 @@ public class EditorMap
 
     public bool CanChangeTo(int mode)
     {
-        var highestLane = MapInfo.HitObjects.MaxBy(o => o.Lane).Lane;
-        highestLane = Math.Max(highestLane, MapEvents.LaneSwitchEvents.MaxBy(o => o.Count).Count);
+        var highestLane = MapInfo.HitObjects.MaxBy(o => o.Lane)?.Lane ?? 0;
+        highestLane = Math.Max(highestLane, MapEvents.LaneSwitchEvents.MaxBy(o => o.Count)?.Count ?? 0);
         return highestLane <= mode;
     }
 
