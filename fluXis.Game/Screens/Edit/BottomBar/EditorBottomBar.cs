@@ -83,7 +83,7 @@ public partial class EditorBottomBar : Container
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Padding = new MarginPadding(20),
+                                        Padding = new MarginPadding { Horizontal = 20 },
                                         Child = new EditorTimeline()
                                     }
                                 }
