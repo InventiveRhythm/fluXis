@@ -11,6 +11,6 @@ public class CancelButtonData : ButtonData
         Text = text;
         Action = action;
         Color = FluXisColors.Background2;
-        TextColor = FluXisColors.Foreground;
+        TextColor = FluXisColors.Text;
     }
 }
