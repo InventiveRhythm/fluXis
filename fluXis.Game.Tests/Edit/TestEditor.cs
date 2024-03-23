@@ -32,7 +32,7 @@ public partial class TestEditor : FluXisTestScene
         Add(screenStack);
         Add(panels);
 
-        var map = maps.GetFromGuid("4820fd48-69b3-4c05-983b-46923697680f")?
+        var map = maps.GetFromGuid("127b9249-d17a-4ee7-9629-3c2691478d8b")?
             .Maps.FirstOrDefault();
 
         var editor = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
