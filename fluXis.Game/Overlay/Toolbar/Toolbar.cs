@@ -42,9 +42,10 @@ public partial class Toolbar : Container
     [Resolved]
     private FluXisScreenStack screens { get; set; }
 
-    public FluXisSpriteText CenterText { get; private set; }
-
     public BindableBool ShowToolbar { get; } = new();
+
+    private string centerTextString;
+    private FluXisSpriteText centerText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -129,10 +130,12 @@ public partial class Toolbar : Container
                             }
                         }
                     },
-                    CenterText = new FluXisSpriteText
+                    centerText = new FluXisSpriteText
                     {
+                        Text = centerTextString,
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
+                        Origin = Anchor.Centre,
+                        Alpha = string.IsNullOrEmpty(centerTextString) ? 0 : 1
                     },
                     new FillFlowContainer
                     {
@@ -206,5 +209,21 @@ public partial class Toolbar : Container
         if (e.OldValue == e.NewValue) return;
 
         this.MoveToY(e.NewValue ? 0 : -Height, 500, Easing.OutQuint);
+    }
+
+    public void SetCenterText(string text)
+    {
+        centerTextString = text;
+
+        if (centerText == null)
+            return;
+
+        if (string.IsNullOrEmpty(text))
+            centerText.FadeOut(400, Easing.OutQuint);
+        else
+        {
+            centerText.Text = text;
+            centerText.FadeIn(400, Easing.OutQuint);
+        }
     }
 }

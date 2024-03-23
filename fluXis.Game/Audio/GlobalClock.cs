@@ -45,7 +45,7 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
     public double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => new() { Elapsed = ElapsedFrameTime, Current = CurrentTime };
 
-    public override double CurrentTime => underlying.CurrentTime - offset.Value;
+    public override double CurrentTime => underlying.CurrentTime - (offset?.Value ?? 0);
     public IClock Source => underlying.Source;
     public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;

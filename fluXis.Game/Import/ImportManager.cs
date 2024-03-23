@@ -145,17 +145,7 @@ public partial class ImportManager : Component
         if (toolbar == null)
             return;
 
-        Schedule(() =>
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                toolbar.CenterText.FadeOut(200);
-                return;
-            }
-
-            toolbar.CenterText.Text = text;
-            toolbar.CenterText.FadeIn(200);
-        });
+        Schedule(() => toolbar.SetCenterText(text));
     }
 
     public MapImporter GetImporter(Plugin plugin) => importersByPlugin[plugin];

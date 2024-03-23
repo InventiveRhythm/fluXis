@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Audio;
@@ -28,11 +29,11 @@ using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens;
+using fluXis.Game.Screens.Loading;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Skin;
-using fluXis.Game.Screens.Warning;
 using fluXis.Game.Utils;
 using fluXis.Shared.API.Packets.Other;
 using fluXis.Shared.API.Packets.User;
@@ -71,6 +72,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private PanelContainer panelContainer;
     private FloatingNotificationContainer notificationContainer;
     private ExitAnimation exitAnimation;
+
+    private LoadInfo loadInfo { get; } = new();
+    private Dictionary<Drawable, Action<Drawable>> loadQueue { get; } = new();
 
     private bool isExiting;
 
@@ -133,6 +137,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(new GlobalCursorOverlay(), Add, true);
         loadComponent(exitAnimation = new ExitAnimation(), Add);
 
+        loadComponent(MenuScreen = new MenuScreen(), _ => { });
+
         Audio.AddAdjustment(AdjustableProperty.Volume, inactiveVolume);
 
         IsActive.BindValueChanged(active =>
@@ -155,15 +161,39 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return component;
         }
 
-        Schedule(() =>
-        {
-            Logger.Log($"Loading {component.GetType().Name}...", LoggingTarget.Runtime, LogLevel.Debug);
-
-            LoadComponent(component);
-            action(component);
-        });
+        loadInfo.Increment();
+        loadQueue[component] = _ => action(component);
+        Scheduler.AddOnce(loadNext);
 
         return component;
+    }
+
+    private void loadNext()
+    {
+        if (screenStack.CurrentScreen is not LoadingScreen)
+        {
+            Schedule(loadNext);
+            return;
+        }
+
+        if (loadQueue.Count == 0)
+            return;
+
+        var next = loadQueue.First();
+        loadQueue.Remove(next.Key);
+
+        var (component, action) = next;
+
+        var name = component.GetType().Name;
+        Logger.Log($"Loading {name}...", LoggingTarget.Runtime, LogLevel.Debug);
+        loadInfo.StartNext(name);
+
+        LoadComponentAsync(component, c =>
+        {
+            action(c);
+            loadInfo.FinishCurrent();
+            loadNext();
+        });
     }
 
     protected override void LoadComplete()
@@ -173,12 +203,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadLocales();
 
-        ScheduleAfterChildren(() =>
-        {
-            screenStack.Push(new WarningScreen());
-            MenuScreen = new MenuScreen();
-            LoadComponent(MenuScreen);
-        });
+        ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(loadInfo)));
 
         Fluxel.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
         {
@@ -408,5 +433,29 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         }).Where(m => m != null);
 
         Localisation.AddLocaleMappings(mappings);
+    }
+
+    public class LoadInfo
+    {
+        public long TasksDone { get; private set; }
+        public long TotalTasks { get; private set; }
+
+        public event Action<string> TaskStarted;
+        public event Action AllFinished;
+
+        public void Increment()
+        {
+            TotalTasks++;
+        }
+
+        public void StartNext(string task) => TaskStarted?.Invoke(task);
+
+        public void FinishCurrent()
+        {
+            TasksDone++;
+
+            if (TasksDone == TotalTasks)
+                AllFinished?.Invoke();
+        }
     }
 }

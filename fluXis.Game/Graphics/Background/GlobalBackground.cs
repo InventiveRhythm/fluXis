@@ -58,7 +58,7 @@ public partial class GlobalBackground : CompositeDrawable
             {
                 Colour = Colour4.Black,
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0
+                Alpha = 1
             },
             swipeAnimation = new Box
             {
