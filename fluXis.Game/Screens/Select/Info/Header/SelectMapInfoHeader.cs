@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
@@ -249,12 +250,37 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
     private partial class BpmDisplay : StatDisplay
     {
+        [Resolved]
+        private GlobalClock clock { get; set; }
+
+        private const float min_alpha = .6f;
+
         private float min = 0;
         private float max = 0;
 
         public BpmDisplay()
             : base("BPM", _ => "")
         {
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            Alpha = min_alpha;
+            clock.OnBeat += onBeat;
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+
+            clock.OnBeat -= onBeat;
+        }
+
+        private void onBeat(int beat)
+        {
+            ValueText.FadeIn().FadeTo(min_alpha, clock.BeatTime);
         }
 
         public void SetValue(float mi, float ma)
