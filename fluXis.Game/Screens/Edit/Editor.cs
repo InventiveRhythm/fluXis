@@ -391,7 +391,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     protected override void LoadComplete()
     {
-        changeTab(isNewMap ? 0 : 2);
+        changeTab(isNewMap ? 0 : 1);
 
         if (!canSave)
         {
