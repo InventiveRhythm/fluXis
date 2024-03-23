@@ -267,7 +267,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         {
             base.LoadComplete();
 
-            Alpha = min_alpha;
+            ValueText.Alpha = min_alpha;
             clock.OnBeat += onBeat;
         }
 
