@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Audio;
@@ -62,6 +61,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     public static readonly string[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
     public static readonly string[] VIDEO_EXTENSIONS = { ".mp4", ".mov", ".avi", ".flv", ".mpg", ".wmv", ".m4v" };
 
+    protected override bool LoadComponentsLazy => true;
+
     private BufferedContainer buffer;
     private GlobalClock globalClock;
     private GlobalBackground globalBackground;
@@ -74,7 +75,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private ExitAnimation exitAnimation;
 
     private LoadInfo loadInfo { get; } = new();
-    private Dictionary<Drawable, Action<Drawable>> loadQueue { get; } = new();
 
     private bool isExiting;
 
@@ -161,8 +161,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return component;
         }
 
-        loadInfo.Increment();
-        loadQueue[component] = _ => action(component);
+        LoadQueue[component] = _ => action(component);
+        loadInfo.TotalTasks = LoadQueue.Count;
         Scheduler.AddOnce(loadNext);
 
         return component;
@@ -176,11 +176,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        if (loadQueue.Count == 0)
+        if (LoadQueue.Count == 0)
             return;
 
-        var next = loadQueue.First();
-        loadQueue.Remove(next.Key);
+        var next = LoadQueue.First();
+        LoadQueue.Remove(next.Key);
 
         var (component, action) = next;
 
@@ -438,15 +438,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     public class LoadInfo
     {
         public long TasksDone { get; private set; }
-        public long TotalTasks { get; private set; }
+        public long TotalTasks { get; set; }
 
         public event Action<string> TaskStarted;
         public event Action AllFinished;
-
-        public void Increment()
-        {
-            TotalTasks++;
-        }
 
         public void StartNext(string task) => TaskStarted?.Invoke(task);
 

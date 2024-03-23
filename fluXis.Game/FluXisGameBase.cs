@@ -69,6 +69,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public Vector2 ContentSize => content.DrawSize;
 
+    protected virtual bool LoadComponentsLazy => false;
+    protected Dictionary<Drawable, Action<Drawable>> LoadQueue { get; } = new();
+
     private Vector2 targetDrawSize => new(1920, 1080);
     private DrawSizePreservingFillContainer drawSizePreserver;
     private Bindable<float> uiScale;
@@ -201,27 +204,37 @@ public partial class FluXisGameBase : osu.Framework.Game
     private void cacheComponent<T>(T component, bool load = false, bool add = false)
         where T : class
     {
-        var loadable = component is Drawable;
         var drawable = component as Drawable;
 
-        if (loadable && drawable == null)
+        if (load && drawable == null)
             throw new InvalidOperationException($"Component of type {typeof(T)} is not a drawable.");
 
         GameDependencies.CacheAs(component);
 
-        if (load && loadable)
+        if (!load)
+            return;
+
+        if (LoadComponentsLazy)
         {
-            Schedule(() =>
+            LoadQueue[drawable] = d =>
             {
-                Logger.Log($"Loading {component.GetType().Name}...", LoggingTarget.Runtime, LogLevel.Debug);
-
-                if (!drawable.IsLoaded)
-                    LoadComponent(drawable);
-
                 if (add)
-                    base.Content.Add(drawable);
-            });
+                    base.Content.Add(d);
+            };
+
+            return;
         }
+
+        Schedule(() =>
+        {
+            Logger.Log($"Loading {component.GetType().Name}...", LoggingTarget.Runtime, LogLevel.Debug);
+
+            if (!drawable.IsLoaded)
+                LoadComponent(drawable);
+
+            if (add)
+                base.Content.Add(drawable);
+        });
     }
 
     protected override void LoadComplete()
