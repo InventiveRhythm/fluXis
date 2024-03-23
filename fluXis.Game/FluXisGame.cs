@@ -103,7 +103,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(NotificationManager, Add);
 
-        loadComponent(globalBackground = new GlobalBackground(), buffer.Add, true);
+        loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(screenStack = new FluXisScreenStack(Activity), screenContainer.Add, true);
 

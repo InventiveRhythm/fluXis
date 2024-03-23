@@ -21,6 +21,7 @@ public partial class GlobalBackground : CompositeDrawable
 
     public RealmMap DefaultMap { get; init; }
     public float InitialBlur { get; init; } = 0.01f;
+    public float InitialDim { get; init; } = 0;
 
     private SpriteStack<BlurableBackground> stack;
     private ParallaxContainer parallaxContainer;
@@ -58,7 +59,7 @@ public partial class GlobalBackground : CompositeDrawable
             {
                 Colour = Colour4.Black,
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 1
+                Alpha = InitialDim
             },
             swipeAnimation = new Box
             {
