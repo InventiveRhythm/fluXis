@@ -248,11 +248,14 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         drawable.Keybind = screen.Input.Keys[hitObject.Lane - 1];
         drawable.OnHit += hit;
 
-        for (var i = 0; i < screen.Input.Pressed.Length; i++)
+        drawable.OnLoadComplete += _ =>
         {
-            var bind = screen.Input.Keys[i];
-            drawable.OnPressed(bind);
-        }
+            for (var i = 0; i < screen.Input.Pressed.Length; i++)
+            {
+                var bind = screen.Input.Keys[i];
+                drawable.OnPressed(bind);
+            }
+        };
 
         return drawable;
     }
