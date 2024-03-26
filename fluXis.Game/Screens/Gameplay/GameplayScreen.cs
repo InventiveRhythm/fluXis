@@ -446,7 +446,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 
-            if (Mods.All(m => m.Rankable) && SubmitScore && RealmMap.StatusInt < 100)
+            if (Mods.All(m => m.SaveScore) && SubmitScore && RealmMap.StatusInt < 100)
             {
                 var scoreId = realm.RunWrite(r =>
                 {
@@ -455,20 +455,23 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     return rScore.ID;
                 });
 
-                var request = new ScoreSubmitRequest(score);
-                screen.SubmitRequest = request;
-                request.Perform(fluxel);
-
-                if (request.Response.Success && request.Response.Data.ID != 0)
+                if (Mods.All(m => m.Rankable))
                 {
-                    realm.RunWrite(r =>
-                    {
-                        var rScore = r.Find<RealmScore>(scoreId);
-                        rScore.OnlineID = request.Response.Data.ID;
-                    });
-                }
+                    var request = new ScoreSubmitRequest(score);
+                    screen.SubmitRequest = request;
+                    request.Perform(fluxel);
 
-                Schedule(() => scoreSubmissionOverlay.FadeOut(400));
+                    if (request.Response.Success && request.Response.Data.ID != 0)
+                    {
+                        realm.RunWrite(r =>
+                        {
+                            var rScore = r.Find<RealmScore>(scoreId);
+                            rScore.OnlineID = request.Response.Data.ID;
+                        });
+                    }
+
+                    Schedule(() => scoreSubmissionOverlay.FadeOut(400));
+                }
             }
 
             Schedule(() => this.Delay(600).FadeOut(400).OnComplete(_ => this.Push(screen)));

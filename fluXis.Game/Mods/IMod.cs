@@ -13,6 +13,7 @@ public interface IMod
 
     float ScoreMultiplier { get; }
     bool Rankable { get; }
+    bool SaveScore => Rankable;
     Type[] IncompatibleMods { get; }
 }
 
