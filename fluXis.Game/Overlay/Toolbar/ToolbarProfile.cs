@@ -8,12 +8,12 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.User;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -23,9 +23,9 @@ using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarProfile : Container, IHasTextTooltip
+public partial class ToolbarProfile : Container, IHasTooltip
 {
-    public LocalisableString Tooltip => loadingContainer.Alpha > 0 ? "Connecting..." : "";
+    public LocalisableString TooltipText => loadingContainer.Alpha > 0 ? "Connecting..." : "";
 
     [Resolved]
     private UserProfileOverlay profile { get; set; }

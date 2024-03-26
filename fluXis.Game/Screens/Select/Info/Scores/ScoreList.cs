@@ -269,6 +269,8 @@ public partial class ScoreList : GridContainer
 
                                     r2.Remove(realmScore);
                                 });
+
+                                Refresh();
                             },
                             ReplayAction = replays.Exists(s.ID) ? () => screen?.ViewReplay(map, detach) : null
                         });

@@ -1,6 +1,5 @@
 using fluXis.Game.Online;
 using fluXis.Game.Online.Drawables;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +8,7 @@ using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Graphics.Drawables;
 
-public partial class DrawableAvatar : Sprite, IHasDrawableTooltip
+public partial class DrawableAvatar : Sprite
 {
     [Resolved]
     private OnlineTextureStore store { get; set; }

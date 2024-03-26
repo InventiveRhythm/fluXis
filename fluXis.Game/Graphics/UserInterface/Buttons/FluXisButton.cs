@@ -3,21 +3,21 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 
 namespace fluXis.Game.Graphics.UserInterface.Buttons;
 
-public partial class FluXisButton : ClickableContainer, IHasTextTooltip
+public partial class FluXisButton : ClickableContainer, IHasTooltip
 {
-    public LocalisableString Tooltip { get; init; }
+    public LocalisableString TooltipText { get; init; }
 
     public float FontSize { get; init; } = 24;
     public string Text { get; set; } = "Default Text";

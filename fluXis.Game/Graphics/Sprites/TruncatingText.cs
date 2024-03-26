@@ -1,12 +1,12 @@
-using fluXis.Game.Overlay.Mouse;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 
 namespace fluXis.Game.Graphics.Sprites;
 
-public partial class TruncatingText : FluXisSpriteText, IHasTextTooltip
+public partial class TruncatingText : FluXisSpriteText, IHasTooltip
 {
-    public LocalisableString Tooltip => Text;
+    public LocalisableString TooltipText => Text;
 
     public override bool HandlePositionalInput => IsTruncated && tooltip;
 

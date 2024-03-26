@@ -62,6 +62,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
+    public override bool ShowCursor => HealthProcessor.Failed || IsPaused.Value;
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
@@ -127,6 +128,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private Container hud { get; set; }
     private ScoreSubmissionOverlay scoreSubmissionOverlay;
 
+    private PauseMenu pauseMenu;
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
     private QuickActionOverlay quickActionOverlay;
@@ -308,7 +310,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     fcOverlay = new FullComboOverlay(),
                     quickActionOverlay = new QuickActionOverlay(),
                     new GameplayTouchInput(),
-                    new PauseMenu()
+                    pauseMenu = new PauseMenu()
                 },
             },
             scoreSubmissionOverlay = new ScoreSubmissionOverlay()

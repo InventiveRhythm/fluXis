@@ -1,7 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
@@ -9,6 +8,7 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -17,7 +17,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 
-public partial class ToolboxButton : Container, IHasTextTooltip
+public partial class ToolboxButton : Container, IHasTooltip
 {
     [Resolved]
     protected ChartingContainer ChartingContainer { get; private set; }
@@ -25,7 +25,7 @@ public partial class ToolboxButton : Container, IHasTextTooltip
     public BlueprintContainer BlueprintContainer => ChartingContainer.BlueprintContainer;
 
     public ChartingTool Tool { get; init; }
-    public virtual LocalisableString Tooltip => Tool.Description;
+    public virtual LocalisableString TooltipText => Tool.Description;
 
     protected virtual string Text => Tool.Name;
     protected virtual bool IsSelected => BlueprintContainer.CurrentTool == Tool;

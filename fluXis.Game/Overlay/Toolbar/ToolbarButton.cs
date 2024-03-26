@@ -10,22 +10,27 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<ToolbarButton>, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public string TooltipTitle { get; init; }
     public string TooltipSub { get; init; }
     public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public FluXisGlobalKeybind Keybind { get; init; } = FluXisGlobalKeybind.None;
     public bool RequireLogin { get; init; }
+
+    public ToolbarButton TooltipContent => this;
+    private string keybindText => Keybind != FluXisGlobalKeybind.None ? $" ({keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(Keybind, realm).KeyCombination)})" : string.Empty;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -140,56 +145,70 @@ public partial class ToolbarButton : ClickableContainer, IHasDrawableTooltip, IK
 
     private void updateState() => Enabled.Value = fluxel.LoggedInUser != null;
 
-    public Drawable GetTooltip()
+    public ITooltip<ToolbarButton> GetCustomTooltip() => new ToolbarButtonTooltip();
+
+    private partial class ToolbarButtonTooltip : CustomTooltipContainer<ToolbarButton>
     {
-        if (!Enabled.Value)
+        private SpriteIcon icon { get; }
+        private FluXisSpriteText title { get; }
+        private FluXisTextFlow description { get; }
+
+        private LocalisableString currentDesc;
+
+        public ToolbarButtonTooltip()
         {
-            return new FluXisSpriteText
+            Child = new FillFlowContainer
             {
-                Text = "Log in to use this feature.",
-                Margin = new MarginPadding { Horizontal = 10, Vertical = 6 }
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Margin = new MarginPadding { Horizontal = 10, Vertical = 6 },
+                Children = new Drawable[]
+                {
+                    new FillFlowContainer
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Horizontal,
+                        Spacing = new Vector2(5),
+                        Children = new Drawable[]
+                        {
+                            icon = new SpriteIcon
+                            {
+                                Size = new Vector2(16),
+                                Margin = new MarginPadding(4)
+                            },
+                            title = new FluXisSpriteText
+                            {
+                                FontSize = 24
+                            }
+                        }
+                    },
+                    description = new FluXisTextFlow
+                    {
+                        AutoSizeAxes = Axes.Both,
+                        FontSize = 18
+                    }
+                }
             };
         }
 
-        var title = TooltipTitle;
-
-        if (Keybind != FluXisGlobalKeybind.None)
-            title += $" ({keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(Keybind, realm).KeyCombination)})";
-
-        return new FillFlowContainer
+        public override void SetContent(ToolbarButton content)
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Margin = new MarginPadding { Horizontal = 10, Vertical = 6 },
-            Children = new Drawable[]
+            if (!content.Enabled.Value)
             {
-                new FillFlowContainer
-                {
-                    AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(5),
-                    Children = new Drawable[]
-                    {
-                        new SpriteIcon
-                        {
-                            Icon = Icon,
-                            Size = new Vector2(16),
-                            Margin = new MarginPadding(4)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = title,
-                            FontSize = 24
-                        }
-                    }
-                },
-                new FluXisTextFlow
-                {
-                    AutoSizeAxes = Axes.Both,
-                    Text = TooltipSub,
-                    FontSize = 18
-                }
+                icon.Alpha = 0;
+                title.Text = "Log in to use this feature.";
+                description.Alpha = 0;
+                return;
             }
-        };
+
+            icon.Alpha = 1;
+            description.Alpha = 1;
+
+            icon.Icon = content.Icon;
+            title.Text = content.TooltipTitle + content.keybindText;
+
+            if (currentDesc != content.TooltipSub)
+                description.Text = currentDesc = content.TooltipSub;
+        }
     }
 }

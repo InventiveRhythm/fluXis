@@ -85,7 +85,7 @@ public partial class DrawableChatMessage : Container
                             new FluXisTooltipText
                             {
                                 Text = getTime(),
-                                Tooltip = getTooltip(),
+                                TooltipText = getTooltip(),
                                 FontSize = 18,
                                 Colour = FluXisColors.Text2,
                                 Anchor = Anchor.CentreLeft,

@@ -16,7 +16,6 @@ using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Exit;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Login;
-using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Notifications;
@@ -134,7 +133,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         });
 
         loadComponent(new FpsOverlay(), Add);
-        loadComponent(new GlobalCursorOverlay(), Add, true);
         loadComponent(exitAnimation = new ExitAnimation(), Add);
 
         loadComponent(MenuScreen = new MenuScreen(), _ => { });
@@ -370,6 +368,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         screenContainer.Padding = new MarginPadding { Top = toolbar.Height + toolbar.Y };
         notificationContainer.Y = toolbar.Height + toolbar.Y;
+
+        CursorOverlay.ShowCursor = screenStack.CurrentScreen is not FluXisScreen screen || screen.ShowCursor;
 
         if (globalClock.Finished && screenStack.CurrentScreen is FluXisScreen { AutoPlayNext: true })
             NextSong();

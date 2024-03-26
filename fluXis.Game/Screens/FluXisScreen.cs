@@ -15,6 +15,7 @@ public partial class FluXisScreen : Screen
     public virtual float BackgroundDim => 0.25f;
     public virtual float BackgroundBlur => 0f;
     public virtual bool AllowMusicControl => true;
+    public virtual bool ShowCursor => true;
     public virtual bool ApplyValuesAfterLoad => false;
     public virtual bool AllowExit => true;
     public virtual bool PlayBackSound => true;

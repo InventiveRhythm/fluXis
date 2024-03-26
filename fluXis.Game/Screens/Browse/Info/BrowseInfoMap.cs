@@ -2,10 +2,10 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.API.Models.Maps;
-using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
@@ -13,9 +13,9 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Browse.Info;
 
-public partial class BrowseInfoMap : Container, IHasTextTooltip
+public partial class BrowseInfoMap : Container, IHasTooltip
 {
-    public LocalisableString Tooltip => map.Difficulty;
+    public LocalisableString TooltipText => map.Difficulty;
 
     private bool mapperIsCreator => map.Mapper.ID == set.Creator.ID;
 

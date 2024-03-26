@@ -2,10 +2,10 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -14,9 +14,9 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
-public partial class MenuButton : ClickableContainer, IHasTextTooltip
+public partial class MenuButton : ClickableContainer, IHasTooltip
 {
-    public LocalisableString Tooltip => Enabled.Value ? "" : "Log in to use this feature.";
+    public LocalisableString TooltipText => Enabled.Value ? "" : "Log in to use this feature.";
 
     public LocalisableString Text { get; init; }
     public LocalisableString Description { get; init; }

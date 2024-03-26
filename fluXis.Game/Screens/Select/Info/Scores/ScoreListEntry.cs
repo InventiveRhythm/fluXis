@@ -4,7 +4,6 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Skinning;
@@ -23,11 +22,8 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Scores;
 
-public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContextMenu
+public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, IHasContextMenu
 {
-    [Resolved]
-    private SkinManager skinManager { get; set; }
-
     [Resolved]
     private UISamples samples { get; set; }
 
@@ -38,12 +34,10 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     {
         get
         {
-            var items = new List<MenuItem>();
-
-            if (deleted)
-                return items.ToArray();
-
-            items.Add(new FluXisMenuItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails));
+            var items = new List<MenuItem>
+            {
+                new FluXisMenuItem("View Details", FontAwesome6.Solid.Info, MenuItemType.Highlighted, viewDetails)
+            };
 
             if (DownloadAction != null)
                 items.Add(new FluXisMenuItem("Download Replay", FontAwesome6.Solid.ArrowDown, MenuItemType.Normal, () => DownloadAction.Invoke()));
@@ -56,14 +50,14 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
                 items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () =>
                 {
                     DeleteAction.Invoke();
-                    deleted = true;
-                    deletedContainer.FadeIn(200);
                 }));
             }
 
             return items.ToArray();
         }
     }
+
+    public ScoreInfo TooltipContent => ScoreInfo;
 
     public ScoreInfo ScoreInfo { get; init; }
     public RealmMap Map { get; init; }
@@ -75,12 +69,10 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     public Action DeleteAction { get; init; }
 
     private DateTimeOffset date;
-    private bool deleted;
 
     private FluXisSpriteText timeText;
     private Container bannerContainer;
     private Container avatarContainer;
-    private Container deletedContainer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -226,26 +218,6 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
                         }
                     }
                 }
-            },
-            deletedContainer = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
-                    },
-                    new FluXisSpriteText
-                    {
-                        Text = "Deleted.",
-                        FontSize = 28,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    }
-                }
             }
         };
 
@@ -276,13 +248,11 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        return !deleted;
+        return true;
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (deleted) return true;
-
         samples.Click();
         viewDetails();
 
@@ -291,63 +261,73 @@ public partial class ScoreListEntry : Container, IHasDrawableTooltip, IHasContex
 
     private void viewDetails() => game.PresentScore(Map, ScoreInfo, Player);
 
-    public Drawable GetTooltip()
-    {
-        if (deleted) return null;
+    public ITooltip<ScoreInfo> GetCustomTooltip() => new ScoreListEntryTooltip();
 
-        return new FillFlowContainer
+    private partial class ScoreListEntryTooltip : CustomTooltipContainer<ScoreInfo>
+    {
+        private FluXisSpriteText dateText { get; }
+        private FluXisSpriteText flawlessText { get; }
+        private FluXisSpriteText perfectText { get; }
+        private FluXisSpriteText greatText { get; }
+        private FluXisSpriteText alrightText { get; }
+        private FluXisSpriteText okayText { get; }
+        private FluXisSpriteText missText { get; }
+
+        public ScoreListEntryTooltip()
         {
-            Padding = new MarginPadding(10),
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Spacing = new Vector2(10),
-            Children = new Drawable[]
+            CornerRadius = 10;
+            Child = new FillFlowContainer
             {
-                new FluXisSpriteText
+                Padding = new MarginPadding(10),
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(10),
+                Children = new Drawable[]
                 {
-                    Text = $"Played on {date:dd MMMM yyyy} at {date:HH:mm}"
-                },
-                new FillFlowContainer
-                {
-                    AutoSizeAxes = Axes.Y,
-                    Direction = FillDirection.Full,
-                    Spacing = new Vector2(10, 5),
-                    Width = 290,
-                    Children = new Drawable[]
+                    dateText = new FluXisSpriteText(),
+                    new FillFlowContainer
                     {
-                        new FluXisSpriteText
+                        AutoSizeAxes = Axes.Y,
+                        Direction = FillDirection.Full,
+                        Spacing = new Vector2(10, 5),
+                        Width = 290,
+                        Children = new Drawable[]
                         {
-                            Text = $"FLAWLESS {ScoreInfo.Flawless}",
-                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Flawless)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = $"PERFECT {ScoreInfo.Perfect}",
-                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Perfect)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = $"GREAT {ScoreInfo.Great}",
-                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Great)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = $"ALRIGHT {ScoreInfo.Alright}",
-                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Alright)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = $"OKAY {ScoreInfo.Okay}",
-                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Okay)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = $"MISS {ScoreInfo.Miss}",
-                            Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Miss)
+                            flawlessText = new FluXisSpriteText(),
+                            perfectText = new FluXisSpriteText(),
+                            greatText = new FluXisSpriteText(),
+                            alrightText = new FluXisSpriteText(),
+                            okayText = new FluXisSpriteText(),
+                            missText = new FluXisSpriteText()
                         }
                     }
                 }
-            }
-        };
+            };
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(SkinManager skinManager)
+        {
+            flawlessText.Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Flawless);
+            perfectText.Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Perfect);
+            greatText.Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Great);
+            alrightText.Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Alright);
+            okayText.Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Okay);
+            missText.Colour = skinManager.SkinJson.GetColorForJudgement(Judgement.Miss);
+        }
+
+        public override void SetContent(ScoreInfo score)
+        {
+            var date = TimeUtils.GetFromSeconds(score.Timestamp);
+
+            dateText.Text = $"Played on {date:dd MMMM yyyy} at {date:HH:mm}";
+
+            flawlessText.Text = $"FLAWLESS {score.Flawless}";
+            perfectText.Text = $"PERFECT {score.Perfect}";
+            greatText.Text = $"GREAT {score.Great}";
+            alrightText.Text = $"ALRIGHT {score.Alright}";
+            okayText.Text = $"OKAY {score.Okay}";
+            missText.Text = $"MISS {score.Miss}";
+        }
     }
 }

@@ -32,7 +32,7 @@ public partial class UserTooltip : Container
         Width = 300;
         CornerRadius = 20;
 
-        InternalChildren = new Drawable[]
+        Children = new Drawable[]
         {
             banner = new DrawableBanner(null)
             {

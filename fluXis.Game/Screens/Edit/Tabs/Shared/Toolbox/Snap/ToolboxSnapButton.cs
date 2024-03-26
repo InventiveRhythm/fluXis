@@ -11,7 +11,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox.Snap;
 public partial class ToolboxSnapButton : ToolboxButton
 {
     protected override string Text => $"1/{snap}{getSuffix()}";
-    public override LocalisableString Tooltip => $"Snap to 1/{snap}{getSuffix()} of a beat";
+    public override LocalisableString TooltipText => $"Snap to 1/{snap}{getSuffix()} of a beat";
     protected override bool IsSelected => settings.SnapDivisor == snap;
 
     [Resolved]

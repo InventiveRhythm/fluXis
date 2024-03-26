@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
@@ -11,6 +12,7 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
@@ -18,8 +20,10 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.Mods;
 
-public partial class ModEntry : Container, IHasDrawableTooltip
+public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
 {
+    public ModEntry TooltipContent => this;
+
     public ModSelector Selector { get; set; }
 
     public IMod Mod { get; init; }
@@ -148,50 +152,70 @@ public partial class ModEntry : Container, IHasDrawableTooltip
         hover.FadeTo(0, 200);
     }
 
-    public Drawable GetTooltip()
-    {
-        var flow = new FillFlowContainer
-        {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Padding = new MarginPadding(10),
-            Children = new Drawable[]
-            {
-                new FluXisSpriteText
-                {
-                    Text = LocalizationStrings.Mods.GetName(Mod),
-                    FontSize = 28,
-                    Shadow = true
-                },
-                new FluXisSpriteText
-                {
-                    Text = LocalizationStrings.Mods.GetDescription(Mod),
-                    FontSize = 20,
-                    Colour = FluXisColors.Text2,
-                    Shadow = true
-                }
-            }
-        };
+    public ITooltip<ModEntry> GetCustomTooltip() => new ModEntryTooltip();
 
-        if (Mod.IncompatibleMods.Length > 0)
+    private partial class ModEntryTooltip : CustomTooltipContainer<ModEntry>
+    {
+        private FluXisSpriteText name { get; }
+        private FluXisSpriteText description { get; }
+        private FluXisSpriteText incompatibleMods { get; }
+        private ModList modList { get; }
+
+        public ModEntryTooltip()
         {
-            flow.AddRange(new Drawable[]
+            CornerRadius = 10;
+            Child = new FillFlowContainer
             {
-                new FluXisSpriteText
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Padding = new MarginPadding(10),
+                Children = new Drawable[]
                 {
-                    Text = LocalizationStrings.ModSelect.IncompatibleMods,
-                    FontSize = 20,
-                    Margin = new MarginPadding { Top = 10, Bottom = 5 },
-                    Shadow = true
-                },
-                new ModList
-                {
-                    Scale = new Vector2(.8f),
-                    Mods = Mod.IncompatibleMods.Select(ModUtils.GetFromAcronym).ToList()
+                    name = new FluXisSpriteText
+                    {
+                        FontSize = 28,
+                        Shadow = true
+                    },
+                    description = new FluXisSpriteText
+                    {
+                        FontSize = 20,
+                        Colour = FluXisColors.Text2,
+                        Shadow = true
+                    },
+                    incompatibleMods = new FluXisSpriteText
+                    {
+                        Text = LocalizationStrings.ModSelect.IncompatibleMods,
+                        FontSize = 20,
+                        Margin = new MarginPadding { Top = 10, Bottom = 5 },
+                        Shadow = true
+                    },
+                    modList = new ModList
+                    {
+                        Scale = new Vector2(.8f),
+                        Mods = new List<IMod>()
+                    }
                 }
-            });
+            };
         }
 
-        return flow;
+        public override void SetContent(ModEntry content)
+        {
+            var mod = content.Mod;
+
+            name.Text = LocalizationStrings.Mods.GetName(mod);
+            description.Text = LocalizationStrings.Mods.GetDescription(mod);
+
+            if (mod.IncompatibleMods.Length > 0)
+            {
+                incompatibleMods.FadeIn();
+                modList.FadeIn();
+                modList.Mods = mod.IncompatibleMods.Select(ModUtils.GetFromAcronym).ToList();
+            }
+            else
+            {
+                incompatibleMods.FadeOut();
+                modList.FadeOut();
+            }
+        }
     }
 }

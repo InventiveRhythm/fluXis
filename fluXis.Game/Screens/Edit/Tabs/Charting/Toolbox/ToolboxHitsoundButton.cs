@@ -19,7 +19,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 {
     protected override string Text { get; }
 
-    public override LocalisableString Tooltip
+    public override LocalisableString TooltipText
     {
         get
         {

@@ -16,7 +16,14 @@ public partial class ModList : FillFlowContainer<ModIcon>
         get => mods;
         set
         {
-            if (mods == null) return;
+            if (mods == null)
+                return;
+
+            var current = mods.Select(mod => mod.Acronym).ToList();
+            var valueList = value.Select(mod => mod.Acronym).ToList();
+
+            if (current.SequenceEqual(valueList))
+                return;
 
             mods.RemoveAll(mod => mod is null);
 

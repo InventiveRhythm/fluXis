@@ -5,7 +5,6 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
-using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -240,15 +239,15 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             outline.FadeOut(200);
     }
 
-    private partial class GimmickIcon : FluXisIcon, IHasTextTooltip
+    private partial class GimmickIcon : FluXisIcon, IHasTooltip
     {
-        public LocalisableString Tooltip { get; }
+        public LocalisableString TooltipText { get; }
 
         public GimmickIcon(FluXisIconType type, string tooltip, bool show)
         {
             Size = new Vector2(14);
             Type = type;
-            Tooltip = tooltip;
+            TooltipText = tooltip;
             Alpha = show ? 1 : 0;
         }
 

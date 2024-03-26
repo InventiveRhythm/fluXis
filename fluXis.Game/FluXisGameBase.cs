@@ -28,6 +28,7 @@ using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Plugins;
 using fluXis.Game.Screens.Gameplay.HUD;
@@ -86,6 +87,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected FluxelClient Fluxel { get; private set; }
     protected MapStore MapStore { get; private set; }
     protected SkinManager SkinManager { get; private set; }
+    protected GlobalCursorOverlay CursorOverlay { get; private set; }
 
     public MenuScreen MenuScreen { get; protected set; }
 
@@ -166,6 +168,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         cacheComponent(new UISamples(), true, true);
         cacheComponent(CreateLightController(), true, true);
+        cacheComponent(CursorOverlay = new GlobalCursorOverlay());
 
         Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -182,10 +185,10 @@ public partial class FluXisGameBase : osu.Framework.Game
                 {
                     keybinds = new GlobalKeybindContainer(this, realm)
                     {
-                        Child = content = new Container
+                        Child = CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
                         {
                             RelativeSizeAxes = Axes.Both
-                        }
+                        })
                     },
                     new GamepadHandler()
                 }
