@@ -35,7 +35,7 @@ public partial class ModSelectRate : Container
         RateBindable = new BindableFloat(1f)
         {
             MinValue = 0.5f,
-            MaxValue = 3f,
+            MaxValue = 2f,
             Precision = 0.05f
         };
 
@@ -136,8 +136,7 @@ public partial class ModSelectRate : Container
                                     {
                                         new() { Value = 0.5f },
                                         new() { Value = 1 },
-                                        new() { Value = 2 },
-                                        new() { Value = 3 }
+                                        new() { Value = 2 }
                                     }
                                 }
                             }
@@ -176,7 +175,7 @@ public partial class ModSelectRate : Container
         {
             AutoSizeAxes = Axes.Both;
             RelativePositionAxes = Axes.Both;
-            X = (Value - 0.5f) / 2.5f;
+            X = (Value - 0.5f) / 1.5f;
             Origin = Anchor.TopCentre;
 
             InternalChildren = new Drawable[]
