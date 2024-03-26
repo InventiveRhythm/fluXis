@@ -128,6 +128,10 @@ public class FluXisImport : MapImporter
                         Logger.Log("Failed to load background for color extraction");
 
                     var events = mapInfo.GetMapEvents();
+
+                    foreach (var switchEvent in events.LaneSwitchEvents)
+                        map.KeyCount = Math.Max(map.KeyCount, switchEvent.Count);
+
                     map.Filters = MapUtils.GetMapFilters(mapInfo, events);
                     maps.Add(map);
 
