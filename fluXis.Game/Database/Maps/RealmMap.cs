@@ -108,6 +108,7 @@ public class RealmMap : RealmObject
     public virtual Stream GetBackgroundStream()
     {
         var backgrounds = MapSet.Resources?.BackgroundStore;
+        Logger.Log("Backgrounds: " + backgrounds);
         return backgrounds?.GetStream(MapSet.GetPathForFile(Metadata.Background));
     }
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
@@ -10,6 +9,7 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Import;
@@ -46,13 +46,25 @@ public class FluXisImport : MapImporter
 
             List<RealmMap> maps = new();
 
-            RealmMapSet mapSet = new(maps);
+            var mapSet = new RealmMapSet(maps);
+            MapStore.AssignResouces(mapSet);
+
+            var fullPath = MapFiles.GetFullPath(mapSet.ID.ToString()) + "/";
+
+            if (!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+
+            foreach (var entry in archive.Entries)
+            {
+                var filePath = fullPath + entry.FullName;
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                entry.ExtractToFile(filePath, true);
+            }
 
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
-                string hash = GetHash(entry);
-
-                string filename = entry.FullName;
+                var hash = GetHash(entry);
+                var filename = entry.FullName;
 
                 if (filename.EndsWith(".fsc"))
                 {
@@ -79,18 +91,19 @@ public class FluXisImport : MapImporter
                         keys = Math.Max(keys, hitObject.Lane);
                     }
 
-                    RealmMap map = new RealmMap(new RealmMapMetadata
+                    var map = new RealmMap
                     {
-                        Title = mapInfo.Metadata.Title ?? "Untitled",
-                        Artist = mapInfo.Metadata.Artist ?? "Unknown",
-                        Mapper = mapInfo.Metadata.Mapper ?? "Unknown",
-                        Source = mapInfo.Metadata.Source ?? "",
-                        Tags = mapInfo.Metadata.Tags ?? "",
-                        Audio = mapInfo.AudioFile,
-                        Background = mapInfo.BackgroundFile,
-                        PreviewTime = mapInfo.Metadata.PreviewTime
-                    })
-                    {
+                        Metadata = new RealmMapMetadata
+                        {
+                            Title = mapInfo.Metadata.Title ?? "Untitled",
+                            Artist = mapInfo.Metadata.Artist ?? "Unknown",
+                            Mapper = mapInfo.Metadata.Mapper ?? "Unknown",
+                            Source = mapInfo.Metadata.Source ?? "",
+                            Tags = mapInfo.Metadata.Tags ?? "",
+                            Audio = mapInfo.AudioFile,
+                            Background = mapInfo.BackgroundFile,
+                            PreviewTime = mapInfo.Metadata.PreviewTime
+                        },
                         Difficulty = mapInfo.Metadata.Difficulty ?? "Unknown",
                         MapSet = mapSet,
                         Hash = hash,
@@ -100,15 +113,21 @@ public class FluXisImport : MapImporter
                         FileName = filename
                     };
 
-                    MapEvents events = new MapEvents();
-                    var effectFileEntry = archive.Entries.FirstOrDefault(e => e.FullName == mapInfo.EffectFile);
+                    mapInfo.Map = map;
 
-                    if (effectFileEntry != null)
+                    var background = map.GetBackgroundStream();
+
+                    if (background != null)
                     {
-                        string content = new StreamReader(effectFileEntry.Open()).ReadToEnd();
-                        events = MapEvents.Load<MapEvents>(content);
-                    }
+                        var color = ImageUtils.GetAverageColour(background);
 
+                        if (color != Colour4.Transparent)
+                            map.Metadata.Color = color;
+                    }
+                    else
+                        Logger.Log("Failed to load background for color extraction");
+
+                    var events = mapInfo.GetMapEvents();
                     map.Filters = MapUtils.GetMapFilters(mapInfo, events);
                     maps.Add(map);
 
@@ -120,16 +139,16 @@ public class FluXisImport : MapImporter
 
                     try
                     {
-                        var onlineMap = MapStore.LookUpHash(hash);
-                        if (onlineMap == null) continue;
+                        var lookup = MapStore.LookUpHash(hash);
+                        if (lookup == null) continue;
 
-                        map.OnlineID = (int)onlineMap.ID;
-                        map.StatusInt = onlineMap.Status;
-                        mapSet.OnlineID = (int)onlineMap.SetID;
-                        mapSet.DateSubmitted = TimeUtils.GetFromSeconds(onlineMap.DateSubmitted);
+                        map.OnlineID = (int)lookup.ID;
+                        map.StatusInt = lookup.Status;
+                        mapSet.OnlineID = (int)lookup.SetID;
+                        mapSet.DateSubmitted = TimeUtils.GetFromSeconds(lookup.DateSubmitted);
 
-                        if (onlineMap.DateRanked != null)
-                            mapSet.DateRanked = TimeUtils.GetFromSeconds((long)onlineMap.DateRanked);
+                        if (lookup.DateRanked != null)
+                            mapSet.DateRanked = TimeUtils.GetFromSeconds((long)lookup.DateRanked);
                     }
                     catch (Exception e)
                     {
@@ -138,25 +157,13 @@ public class FluXisImport : MapImporter
                 }
             }
 
+            archive.Dispose();
+
             if (maps.Count > 0)
             {
                 Realm.RunWrite(realm =>
                 {
                     realm.Add(mapSet);
-
-                    var fullPath = MapFiles.GetFullPath(mapSet.ID.ToString()) + "/";
-
-                    if (!Directory.Exists(fullPath))
-                        Directory.CreateDirectory(fullPath);
-
-                    foreach (var entry in archive.Entries)
-                    {
-                        var filePath = fullPath + entry.FullName;
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                        entry.ExtractToFile(filePath, true);
-                    }
-
-                    archive.Dispose();
 
                     mapSet = mapSet.Detach();
                     MapStore.AddMapSet(mapSet);

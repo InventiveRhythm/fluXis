@@ -23,9 +23,9 @@ public class RealmMapMetadata : RealmObject
         get
         {
             if (string.IsNullOrEmpty(ColorHex))
-                return FluXisColors.Background2;
+                return FluXisColors.Accent2;
 
-            return Colour4.TryParseHex(ColorHex, out var color) ? color : FluXisColors.Background2;
+            return Colour4.TryParseHex(ColorHex, out var color) ? color : FluXisColors.Accent2;
         }
         set => ColorHex = value.ToHex();
     }

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -17,9 +17,9 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
 
@@ -60,17 +60,23 @@ public partial class MapSetHeader : Container, IHasContextMenu
 
     private readonly MapListEntry parent;
     private readonly RealmMapSet mapset;
+
+    private float contentWrapperPadding
+    {
+        get => contentWrapper.Padding.Right;
+        set => contentWrapper.Padding = new MarginPadding { Right = arrowContainer.Width = value };
+    }
+
+    private Box colorBrighten; // what do you call the opposite of dim?
+    private Container contentWrapper;
     private DelayedLoadWrapper backgroundWrapper;
     private MapBackground background;
-    private DelayedLoadWrapper coverWrapper;
-    private DelayedLoadWrapper textWrapper;
-
-    private HeaderDim dim;
-    private HeaderDim colorDim;
+    private HeaderDim gradientBlack;
+    private HeaderDim gradientColor;
+    private DelayedLoadWrapper contentLoader;
     private FillFlowContainer diffsContainer;
-
-    private bool colorsLoaded;
-    private bool colorsTaskRunning;
+    private Outline outlineBrighten;
+    private Container arrowContainer;
 
     public MapSetHeader(MapListEntry parent, RealmMapSet mapset)
     {
@@ -81,50 +87,100 @@ public partial class MapSetHeader : Container, IHasContextMenu
     [BackgroundDependencyLoader]
     private void load()
     {
-        var color = Colour4.Transparent;
-
-        if (!string.IsNullOrEmpty(mapset.Metadata.ColorHex) && Colour4.TryParseHex(mapset.Metadata.ColorHex, out var c))
-            color = c;
-
-        colorsLoaded = color != Colour4.Transparent;
+        var color = mapset.Metadata.Color;
 
         RelativeSizeAxes = Axes.X;
         Height = 80;
         CornerRadius = 10;
         Masking = true;
-        BorderColour = colorsLoaded ? ColourInfo.GradientVertical(color.Lighten(1), color) : Colour4.White;
         Children = new Drawable[]
         {
-            backgroundWrapper = new DelayedLoadUnloadWrapper(() => background = new MapBackground(mapset.Maps[0], true)
+            new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
-            }, 100, 200)
-            {
-                RelativeSizeAxes = Axes.Both
+                Colour = color
             },
-            dim = new HeaderDim { Colour = Colour4.Black },
-            colorDim = new HeaderDim { Colour = color },
-            textWrapper = new DelayedLoadUnloadWrapper(getContent, 100, 200)
+            colorBrighten = new Box
             {
-                RelativeSizeAxes = Axes.Both
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.White.Opacity(.5f),
+                Alpha = 0
+            },
+            contentWrapper = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Right = 10 },
+                Child = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    CornerRadius = 10,
+                    Masking = true,
+                    Children = new Drawable[]
+                    {
+                        backgroundWrapper = new DelayedLoadUnloadWrapper(() => background = new MapBackground(mapset.Maps[0], true)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre
+                        }, 100, 200)
+                        {
+                            RelativeSizeAxes = Axes.Both
+                        },
+                        gradientBlack = new HeaderDim { Colour = Colour4.Black },
+                        gradientColor = new HeaderDim { Colour = color },
+                        contentLoader = new DelayedLoadUnloadWrapper(getContent, 100, 200)
+                        {
+                            RelativeSizeAxes = Axes.Both
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Width = .5f,
+                            Anchor = Anchor.CentreRight,
+                            Origin = Anchor.CentreRight,
+                            Padding = new MarginPadding { Right = -1 }, // to fix the 1px seam
+                            Children = new Drawable[]
+                            {
+                                new Outline
+                                {
+                                    BorderColour = ColourInfo.GradientHorizontal(color.Opacity(0), color),
+                                },
+                                outlineBrighten = new Outline
+                                {
+                                    BorderColour = ColourInfo.GradientHorizontal(Colour4.White.Opacity(0), Colour4.White.Opacity(.5f)),
+                                    Alpha = 0
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            arrowContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                Child = new SpriteIcon
+                {
+                    X = -2,
+                    Icon = FontAwesome6.Solid.ChevronLeft,
+                    Size = new Vector2(16),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Colour = color
+                }
             }
         };
 
         backgroundWrapper.DelayedLoadComplete += background => background.FadeInFromZero(200);
-        textWrapper.DelayedLoadComplete += text =>
-        {
-            text.FadeInFromZero(200);
-            coverWrapper.DelayedLoadComplete += cover => cover.FadeInFromZero(200);
-        };
+        contentLoader.DelayedLoadComplete += content => content.FadeInFromZero(200);
     }
 
     private Drawable getContent()
     {
         var content = new Container
         {
-            Padding = new MarginPadding(10),
+            Padding = new MarginPadding { Right = 17 },
             RelativeSizeAxes = Axes.Both,
             Children = new Drawable[]
             {
@@ -133,7 +189,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                     RelativeSizeAxes = Axes.Both,
                     ColumnDimensions = new[]
                     {
-                        new Dimension(GridSizeMode.Absolute, 60),
+                        new Dimension(GridSizeMode.Absolute, 80),
                         new Dimension(GridSizeMode.Absolute, 10),
                         new Dimension(),
                         new Dimension(GridSizeMode.Absolute, 10),
@@ -143,21 +199,18 @@ public partial class MapSetHeader : Container, IHasContextMenu
                     {
                         new[]
                         {
-                            coverWrapper = new DelayedLoadUnloadWrapper(() => new Container
+                            new LoadWrapper<MapCover>
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Masking = true,
                                 CornerRadius = 10,
-                                Child = new MapCover(mapset)
+                                Masking = true,
+                                LoadContent = () => new MapCover(mapset)
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre
                                 },
-                                EdgeEffect = FluXisStyles.ShadowSmall
-                            }, 100, 200)
-                            {
-                                Size = new Vector2(60)
+                                OnComplete = cover => cover.FadeInFromZero(200)
                             },
                             Empty(),
                             new FillFlowContainer
@@ -171,14 +224,14 @@ public partial class MapSetHeader : Container, IHasContextMenu
                                 {
                                     new TruncatingText
                                     {
-                                        FontSize = 32,
+                                        WebFontSize = 20,
                                         Text = mapset.Metadata.Title,
                                         RelativeSizeAxes = Axes.X,
                                         Shadow = true
                                     },
                                     new TruncatingText
                                     {
-                                        FontSize = 24,
+                                        WebFontSize = 14,
                                         Text = mapset.Metadata.Artist,
                                         RelativeSizeAxes = Axes.X,
                                         Shadow = true
@@ -192,7 +245,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight,
                                 Direction = FillDirection.Vertical,
-                                Spacing = new Vector2(0, 4),
+                                Spacing = new Vector2(6),
                                 Children = new Drawable[]
                                 {
                                     new StatusTag(mapset)
@@ -286,57 +339,50 @@ public partial class MapSetHeader : Container, IHasContextMenu
         return content;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-
-        if (colorsLoaded || colorsTaskRunning || background == null) return;
-
-        colorsTaskRunning = true;
-
-        Task.Run(() =>
-        {
-            var color = background.GetColour();
-
-            if (color == Colour4.Transparent)
-                return;
-
-            Logger.Log($"Color for {mapset.Metadata.Title} is {color}");
-
-            realm.RunWrite(r =>
-            {
-                var set = r.Find<RealmMapSet>(mapset.ID);
-
-                foreach (var realmMap in set.Maps)
-                    realmMap.Metadata.ColorHex = color.ToHex();
-            });
-
-            colorDim.Colour = color;
-        });
-    }
-
     protected override bool OnHover(HoverEvent e)
     {
-        dim.Show();
-        colorDim.Show();
+        gradientBlack.Show();
+        gradientColor.Show();
         samples.Hover();
         return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        dim.Hide();
-        colorDim.Hide();
+        gradientBlack.Hide();
+        gradientColor.Hide();
     }
 
     public override void Show()
     {
-        BorderThickness = 5;
+        this.TransformTo(nameof(contentWrapperPadding), 27f, 400, Easing.OutQuint);
+        colorBrighten.FadeIn(200);
+        outlineBrighten.FadeIn(200);
     }
 
     public override void Hide()
     {
-        BorderThickness = 0;
+        this.TransformTo(nameof(contentWrapperPadding), 10f, 400, Easing.OutQuint);
+        colorBrighten.FadeOut(200);
+        outlineBrighten.FadeOut(200);
+    }
+
+    private partial class Outline : Container
+    {
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            RelativeSizeAxes = Axes.Both;
+            Masking = true;
+            CornerRadius = 10;
+            BorderThickness = 3;
+
+            Child = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.Transparent
+            };
+        }
     }
 
     private partial class HeaderDim : Container
