@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics.Sprites;
 
@@ -12,5 +13,5 @@ public class FlawlessMod : IMod
     public ModType Type => ModType.DifficultyIncrease;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "NF", "AP", "FR" };
+    public Type[] IncompatibleMods => new[] { typeof(NoFailMod), typeof(AutoPlayMod), typeof(FragileMod) };
 }

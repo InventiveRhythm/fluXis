@@ -13,5 +13,5 @@ public class NoLnMod : IMod
     public ModType Type => ModType.Misc;
     public float ScoreMultiplier => .8f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => Array.Empty<string>();
+    public Type[] IncompatibleMods => Array.Empty<Type>();
 }

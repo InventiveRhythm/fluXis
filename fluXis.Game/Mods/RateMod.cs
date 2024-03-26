@@ -12,7 +12,7 @@ public class RateMod : IMod
     public IconUsage Icon => FontAwesome6.Solid.Clock;
     public ModType Type => ModType.Rate;
     public bool Rankable => true;
-    public string[] IncompatibleMods => Array.Empty<string>();
+    public Type[] IncompatibleMods => Array.Empty<Type>();
 
     public string Acronym => $"{Math.Round(Rate, 2).ToStringInvariant()}x";
     public float ScoreMultiplier => 1f + (Rate - 1f) * 0.4f;

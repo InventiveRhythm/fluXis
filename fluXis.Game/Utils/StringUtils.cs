@@ -9,8 +9,13 @@ public static class StringUtils
     public static string ToStringInvariant(this double value, string style = "") => value.ToString(style, CultureInfo.InvariantCulture);
 
     public static int ToIntInvariant(this string value) => int.Parse(value, CultureInfo.InvariantCulture);
+    public static bool TryParseIntInvariant(this string value, out int result) => int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out result);
+
     public static float ToFloatInvariant(this string value) => float.Parse(value, CultureInfo.InvariantCulture);
+    public static bool TryParseFloatInvariant(this string value, out float result) => float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+
     public static double ToDoubleInvariant(this string value) => double.Parse(value, CultureInfo.InvariantCulture);
+    public static bool TryParseDoubleInvariant(this string value, out double result) => double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 
     public static string CensorEmail(string mail)
     {

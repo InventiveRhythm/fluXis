@@ -105,12 +105,14 @@ public partial class ModSelectRate : Container
                                     {
                                         rateText = new FluXisSpriteText
                                         {
+                                            Text = "1x",
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
                                             FontSize = 22
                                         },
                                         multiplierText = new FluXisSpriteText
                                         {
+                                            Text = "0%",
                                             Anchor = Anchor.CentreRight,
                                             Origin = Anchor.CentreRight,
                                             FontSize = 22

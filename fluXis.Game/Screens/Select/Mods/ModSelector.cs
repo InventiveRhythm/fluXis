@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Localization;
 using fluXis.Game.Mods;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -259,7 +260,7 @@ public partial class ModSelector : Container
     {
         foreach (var selectedMod in SelectedMods)
         {
-            if (mod.IncompatibleMods.Contains(selectedMod.Acronym) || selectedMod.IncompatibleMods.Contains(mod.Acronym))
+            if (ModUtils.IsIncompatible(selectedMod, mod) || ModUtils.IsIncompatible(mod, selectedMod))
             {
                 var entry = mappings[selectedMod];
 

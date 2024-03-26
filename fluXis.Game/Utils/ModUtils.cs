@@ -1,5 +1,5 @@
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using fluXis.Game.Mods;
@@ -8,18 +8,26 @@ namespace fluXis.Game.Utils;
 
 public static class ModUtils
 {
+    public static IMod Create(Type type)
+    {
+        if (type == null || !isMod(type))
+            return null;
+
+        return (IMod)Activator.CreateInstance(type);
+    }
+
     public static IMod GetFromAcronym(string acronym)
     {
         if (string.IsNullOrEmpty(acronym))
             return null;
 
-        if (acronym.EndsWith("x"))
+        if (acronym.EndsWith('x'))
         {
-            var rate = acronym.Substring(0, acronym.Length - 1);
-            return float.TryParse(rate, NumberStyles.Float, CultureInfo.InvariantCulture, out var rateValue) ? new RateMod { Rate = rateValue } : null;
+            var rate = acronym[..^1];
+            return rate.TryParseFloatInvariant(out var rateValue) ? new RateMod { Rate = rateValue } : null;
         }
 
-        Assembly assembly = Assembly.GetAssembly(typeof(IMod));
+        var assembly = Assembly.GetAssembly(typeof(IMod));
 
         if (assembly != null)
         {
@@ -32,5 +40,18 @@ public static class ModUtils
         }
 
         return null;
+    }
+
+    public static bool HasIncompatibleMods(IEnumerable<IMod> combo, out IEnumerable<IMod> incompatibleMods)
+    {
+        incompatibleMods = combo.Where(mod => combo.Any(otherMod => IsIncompatible(mod, otherMod)));
+        return incompatibleMods.Any();
+    }
+
+    public static bool IsIncompatible(IMod mod, IMod otherMod) => mod.IncompatibleMods.Contains(otherMod.GetType());
+
+    private static bool isMod(Type type)
+    {
+        return type?.GetInterface(nameof(IMod)) != null;
     }
 }

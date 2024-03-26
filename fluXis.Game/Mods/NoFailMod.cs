@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics.Sprites;
 
@@ -12,5 +13,5 @@ public class NoFailMod : IMod
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.5f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "EZ", "AP", "HD", "FR", "FL" };
+    public Type[] IncompatibleMods => new[] { typeof(EasyMod), typeof(AutoPlayMod), typeof(HardMod), typeof(FragileMod), typeof(FlawlessMod) };
 }

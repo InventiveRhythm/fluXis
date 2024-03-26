@@ -209,7 +209,7 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
             {
                 incompatibleMods.FadeIn();
                 modList.FadeIn();
-                modList.Mods = mod.IncompatibleMods.Select(ModUtils.GetFromAcronym).ToList();
+                modList.Mods = mod.IncompatibleMods.Select(ModUtils.Create).ToList();
             }
             else
             {

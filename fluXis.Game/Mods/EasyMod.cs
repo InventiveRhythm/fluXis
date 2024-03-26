@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics.Sprites;
 
@@ -12,7 +13,7 @@ public class EasyMod : IMod
     public ModType Type => ModType.DifficultyDecrease;
     public float ScoreMultiplier => 0.7f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => new[] { "HD", "NF" };
+    public Type[] IncompatibleMods => new[] { typeof(HardMod), typeof(NoFailMod) };
 
     public const float HEALTH_REQUIREMENT = 80f;
 }

@@ -13,5 +13,5 @@ public class PausedMod : IMod
     public ModType Type => ModType.Special;
     public float ScoreMultiplier => 1.0f;
     public bool Rankable => true;
-    public string[] IncompatibleMods => Array.Empty<string>();
+    public Type[] IncompatibleMods => Array.Empty<Type>();
 }
