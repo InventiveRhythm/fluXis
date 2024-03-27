@@ -13,6 +13,11 @@ public partial class DesignPointsList : PointsList
         Map.FlashEventUpdated += UpdatePoint;
         Map.FlashEventRemoved += RemovePoint;
         Map.MapEvents.FlashEvents.ForEach(AddPoint);
+
+        Map.ShakeEventAdded += AddPoint;
+        Map.ShakeEventUpdated += UpdatePoint;
+        Map.ShakeEventRemoved += RemovePoint;
+        Map.MapEvents.ShakeEvents.ForEach(AddPoint);
     }
 
     protected override PointListEntry CreateEntryFor(ITimedObject obj)
@@ -20,6 +25,7 @@ public partial class DesignPointsList : PointsList
         return obj switch
         {
             FlashEvent flash => new FlashEntry(flash),
+            ShakeEvent shake => new ShakeEntry(shake),
             _ => null
         };
     }

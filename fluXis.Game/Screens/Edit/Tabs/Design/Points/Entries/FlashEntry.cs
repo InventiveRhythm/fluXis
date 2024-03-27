@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class FlashEntry : PointListEntry
 {
     protected override string Text => "Flash";
-    protected override Colour4 Color => Colour4.FromHex("#ffffff");
+    protected override Colour4 Color => Colour4.FromHex("#FFCC66");
 
     private FlashEvent flash => Object as FlashEvent;
 
