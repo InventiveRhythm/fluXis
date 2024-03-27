@@ -16,5 +16,5 @@ public class PlayfieldMoveEvent : ITimedObject, IHasDuration
     public float Duration { get; set; }
 
     [JsonProperty("ease")]
-    public Easing Easing { get; set; }
+    public Easing Easing { get; set; } = Easing.OutQuint;
 }

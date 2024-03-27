@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Points.Entries;
@@ -35,4 +36,10 @@ public partial class ChartingPointsList : PointsList
             _ => null
         };
     }
+
+    protected override IEnumerable<AddButtonEntry> CreateAddEntries() => new AddButtonEntry[]
+    {
+        new("Timing Point", () => Create(new TimingPoint { BPM = 120 })),
+        new("Scroll Velocity", () => Create(new ScrollVelocity { Multiplier = 1 }))
+    };
 }

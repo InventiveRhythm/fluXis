@@ -10,14 +10,14 @@ public class PlayfieldScaleEvent : ITimedObject, IHasDuration
     public float Time { get; set; }
 
     [JsonProperty("x")]
-    public float ScaleX { get; set; }
+    public float ScaleX { get; set; } = 1;
 
     [JsonProperty("y")]
-    public float ScaleY { get; set; }
+    public float ScaleY { get; set; } = 1;
 
     [JsonProperty("duration")]
     public float Duration { get; set; }
 
     [JsonProperty("ease")]
-    public Easing Easing { get; set; }
+    public Easing Easing { get; set; } = Easing.OutQuint;
 }

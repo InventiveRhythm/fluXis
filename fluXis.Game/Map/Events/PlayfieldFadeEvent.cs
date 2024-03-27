@@ -12,5 +12,5 @@ public class PlayfieldFadeEvent : ITimedObject, IHasDuration
     public float Duration { get; set; }
 
     [JsonProperty("alpha")]
-    public float Alpha { get; set; }
+    public float Alpha { get; set; } = 1;
 }

@@ -58,6 +58,18 @@ public class EditorMap
     public event Action<ShakeEvent> ShakeEventRemoved;
     public event Action<ShakeEvent> ShakeEventUpdated;
 
+    public event Action<PlayfieldFadeEvent> PlayfieldFadeEventAdded;
+    public event Action<PlayfieldFadeEvent> PlayfieldFadeEventRemoved;
+    public event Action<PlayfieldFadeEvent> PlayfieldFadeEventUpdated;
+
+    public event Action<PlayfieldMoveEvent> PlayfieldMoveEventAdded;
+    public event Action<PlayfieldMoveEvent> PlayfieldMoveEventRemoved;
+    public event Action<PlayfieldMoveEvent> PlayfieldMoveEventUpdated;
+
+    public event Action<PlayfieldScaleEvent> PlayfieldScaleEventAdded;
+    public event Action<PlayfieldScaleEvent> PlayfieldScaleEventRemoved;
+    public event Action<PlayfieldScaleEvent> PlayfieldScaleEventUpdated;
+
     #endregion
 
     public void SetKeyMode(int mode)
@@ -174,6 +186,21 @@ public class EditorMap
                 ShakeEventAdded?.Invoke(shakeEvent);
                 break;
 
+            case PlayfieldFadeEvent fadeEvent:
+                MapEvents.PlayfieldFadeEvents.Add(fadeEvent);
+                PlayfieldFadeEventAdded?.Invoke(fadeEvent);
+                break;
+
+            case PlayfieldMoveEvent moveEvent:
+                MapEvents.PlayfieldMoveEvents.Add(moveEvent);
+                PlayfieldMoveEventAdded?.Invoke(moveEvent);
+                break;
+
+            case PlayfieldScaleEvent scaleEvent:
+                MapEvents.PlayfieldScaleEvents.Add(scaleEvent);
+                PlayfieldScaleEventAdded?.Invoke(scaleEvent);
+                break;
+
             default:
                 throw new NotImplementedException();
         }
@@ -205,6 +232,18 @@ public class EditorMap
 
             case ShakeEvent shakeEvent:
                 ShakeEventUpdated?.Invoke(shakeEvent);
+                break;
+
+            case PlayfieldFadeEvent fadeEvent:
+                PlayfieldFadeEventUpdated?.Invoke(fadeEvent);
+                break;
+
+            case PlayfieldMoveEvent moveEvent:
+                PlayfieldMoveEventUpdated?.Invoke(moveEvent);
+                break;
+
+            case PlayfieldScaleEvent scaleEvent:
+                PlayfieldScaleEventUpdated?.Invoke(scaleEvent);
                 break;
 
             default:
@@ -246,6 +285,21 @@ public class EditorMap
             case ShakeEvent shakeEvent:
                 MapEvents.ShakeEvents.Remove(shakeEvent);
                 ShakeEventRemoved?.Invoke(shakeEvent);
+                break;
+
+            case PlayfieldFadeEvent fadeEvent:
+                MapEvents.PlayfieldFadeEvents.Remove(fadeEvent);
+                PlayfieldFadeEventRemoved?.Invoke(fadeEvent);
+                break;
+
+            case PlayfieldMoveEvent moveEvent:
+                MapEvents.PlayfieldMoveEvents.Remove(moveEvent);
+                PlayfieldMoveEventRemoved?.Invoke(moveEvent);
+                break;
+
+            case PlayfieldScaleEvent scaleEvent:
+                MapEvents.PlayfieldScaleEvents.Remove(scaleEvent);
+                PlayfieldScaleEventRemoved?.Invoke(scaleEvent);
                 break;
 
             default:

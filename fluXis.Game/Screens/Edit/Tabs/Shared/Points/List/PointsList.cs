@@ -67,7 +67,7 @@ public abstract partial class PointsList : Container
                                 WebFontSize = 20,
                                 Text = "Points"
                             },
-                            new AddButton(create)
+                            new AddButton(CreateAddEntries())
                             {
                                 Anchor = Anchor.CentreRight,
                                 Origin = Anchor.CentreRight
@@ -100,7 +100,9 @@ public abstract partial class PointsList : Container
 
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
 
-    private void create(ITimedObject obj)
+    protected abstract IEnumerable<AddButtonEntry> CreateAddEntries();
+
+    protected void Create(ITimedObject obj)
     {
         obj.Time = (float)clock.CurrentTime;
         Map.Add(obj);
@@ -155,18 +157,18 @@ public abstract partial class PointsList : Container
 
     private partial class AddButton : PointsListIconButton, IHasPopover
     {
-        private Action<ITimedObject> create { get; }
+        private IEnumerable<AddButtonEntry> entries { get; }
 
-        public AddButton(Action<ITimedObject> create)
+        public AddButton(IEnumerable<AddButtonEntry> entries)
             : base(null)
         {
-            this.create = create;
+            this.entries = entries;
             Action = this.ShowPopover;
         }
 
-        private void createAndHide(ITimedObject obj)
+        private void createAndHide(Action action)
         {
-            create(obj);
+            action();
             this.HidePopover();
         }
 
@@ -181,11 +183,7 @@ public abstract partial class PointsList : Container
                 {
                     AutoSizeAxes = Axes.Both,
                     Direction = FillDirection.Vertical,
-                    Children = new Drawable[]
-                    {
-                        new Entry("Timing Point", () => createAndHide(new TimingPoint { BPM = 120 })),
-                        new Entry("Scroll Velocity", () => createAndHide(new ScrollVelocity { Multiplier = 1 }))
-                    }
+                    ChildrenEnumerable = entries.Select(x => new Entry(x.Text, () => createAndHide(x.CreateAction)))
                 }
             };
         }
@@ -229,6 +227,18 @@ public abstract partial class PointsList : Container
                 create();
                 return false;
             }
+        }
+    }
+
+    protected class AddButtonEntry
+    {
+        public string Text { get; }
+        public Action CreateAction { get; }
+
+        public AddButtonEntry(string text, Action create)
+        {
+            Text = text;
+            CreateAction = create;
         }
     }
 
