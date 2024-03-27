@@ -41,12 +41,26 @@ public partial class PlayfieldMoveEntry : PointListEntry
             new PointSettingsLength<PlayfieldMoveEvent>(Map, move, BeatLength),
             new PointSettingsTextBox
             {
-                Text = "X Offset",
+                Text = "Offset X",
                 DefaultText = move.OffsetX.ToStringInvariant(),
                 OnTextChanged = box =>
                 {
                     if (box.Text.TryParseFloatInvariant(out var result))
                         move.OffsetX = result;
+                    else
+                        box.NotifyError();
+
+                    Map.Update(move);
+                }
+            },
+            new PointSettingsTextBox
+            {
+                Text = "Offset Y",
+                DefaultText = move.OffsetY.ToStringInvariant(),
+                OnTextChanged = box =>
+                {
+                    if (box.Text.TryParseFloatInvariant(out var result))
+                        move.OffsetY = result;
                     else
                         box.NotifyError();
 

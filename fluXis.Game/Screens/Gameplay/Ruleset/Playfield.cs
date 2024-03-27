@@ -94,7 +94,11 @@ public partial class Playfield : Container
                     bottomCover = skinManager.GetLaneCover(true)
                 }
             },
-            new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents, move => this.MoveToX(move.OffsetX, move.Duration, move.Easing)),
+            new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents, move =>
+            {
+                this.MoveToX(move.OffsetX, move.Duration, move.Easing);
+                this.MoveToY(move.OffsetY, move.Duration, move.Easing);
+            }),
             new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents, scale =>
             {
                 var yScale = scale.ScaleY;

@@ -12,6 +12,9 @@ public class PlayfieldMoveEvent : ITimedObject, IHasDuration
     [JsonProperty("x")]
     public float OffsetX { get; set; }
 
+    [JsonProperty("y")]
+    public float OffsetY { get; set; }
+
     [JsonProperty("duration")]
     public float Duration { get; set; }
 
