@@ -5,7 +5,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Map.Events;
 
-public class FlashEvent : ITimedObject
+public class FlashEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
     public float Time { get; set; }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
-public class LaneSwitchEvent : ITimedObject
+public class LaneSwitchEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
     public float Time { get; set; }
@@ -12,7 +12,7 @@ public class LaneSwitchEvent : ITimedObject
     public int Count { get; set; } = 1;
 
     [JsonProperty("speed")]
-    public float Speed { get; set; }
+    public float Duration { get; set; }
 
     public static readonly bool[][][] SWITCH_VISIBILITY =
     {

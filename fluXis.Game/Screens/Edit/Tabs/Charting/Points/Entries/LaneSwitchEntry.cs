@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
-using fluXis.Game.Utils;
+using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.Entries;
@@ -16,7 +15,6 @@ public partial class LaneSwitchEntry : PointListEntry
     protected override Colour4 Color => Colour4.FromHex("#FF6666");
 
     private LaneSwitchEvent laneSwitch => Object as LaneSwitchEvent;
-    private float beatLength => Map.MapInfo.GetTimingPoint(laneSwitch.Time).MsPerBeat;
 
     public LaneSwitchEntry(LaneSwitchEvent laneSwitch)
         : base(laneSwitch)
@@ -29,7 +27,7 @@ public partial class LaneSwitchEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{laneSwitch.Count}K {(int)laneSwitch.Speed}ms",
+                Text = $"{laneSwitch.Count}K {(int)laneSwitch.Duration}ms",
                 Colour = Color
             }
         };
@@ -60,22 +58,7 @@ public partial class LaneSwitchEntry : PointListEntry
                     Map.Update(laneSwitch);
                 }
             },
-            new PointSettingsTextBox
-            {
-                Text = "Animation Length",
-                ExtraText = "beat(s)",
-                TextBoxWidth = 100,
-                DefaultText = (laneSwitch.Speed / beatLength).ToStringInvariant(),
-                OnTextChanged = box =>
-                {
-                    if (float.TryParse(box.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
-                        laneSwitch.Speed = result * beatLength;
-                    else
-                        box.NotifyError();
-
-                    Map.Update(laneSwitch);
-                }
-            }
+            new PointSettingsLength<LaneSwitchEvent>(Map, laneSwitch, BeatLength)
         });
     }
 }

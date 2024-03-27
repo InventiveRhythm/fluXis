@@ -151,6 +151,8 @@ public abstract partial class PointsList : Container
             flow.Remove(entry, true);
     }
 
+    protected override bool OnClick(ClickEvent e) => true;
+
     private partial class AddButton : PointsListIconButton, IHasPopover
     {
         private Action<ITimedObject> create { get; }

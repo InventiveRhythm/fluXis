@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Events;
 
-public class ShakeEvent : ITimedObject
+public class ShakeEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
     public float Time { get; set; }

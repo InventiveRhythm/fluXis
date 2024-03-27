@@ -52,7 +52,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
         ls.Count = Math.Clamp(ls.Count, 1, Map.RealmMap.KeyCount);
 
         head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time, 1));
-        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time + ls.Speed, ls.Count + 1));
+        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time + ls.Duration, ls.Count + 1));
         body.Height = Math.Abs(head.Y - end.Y);
         body.Position = new Vector2(head.X, head.Y - head.DrawHeight / 2);
 
@@ -83,7 +83,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
         if (State == PlacementState.Working)
         {
             ls.Time = time < originalStartTime ? time : originalStartTime;
-            ls.Speed = Math.Abs(time - originalStartTime);
+            ls.Duration = Math.Abs(time - originalStartTime);
         }
         else originalStartTime = ls.Time = time;
     }

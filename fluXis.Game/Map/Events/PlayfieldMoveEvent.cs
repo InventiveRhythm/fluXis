@@ -4,7 +4,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Events;
 
-public class PlayfieldMoveEvent : ITimedObject
+public class PlayfieldMoveEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
     public float Time { get; set; }

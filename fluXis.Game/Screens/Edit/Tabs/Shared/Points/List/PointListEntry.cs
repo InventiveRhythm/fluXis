@@ -23,6 +23,8 @@ public abstract partial class PointListEntry : Container
     public Action RequestClose { get; set; }
     public ITimedObject Object { get; }
 
+    protected float BeatLength => Map.MapInfo.GetTimingPoint(Object.Time).MsPerBeat;
+
     [Resolved]
     protected EditorSettings Settings { get; private set; }
 

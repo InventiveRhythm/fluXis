@@ -83,7 +83,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                     };
 
                     if (args.Length > 2)
-                        laneSwitch.Speed = float.Parse(args[2], CultureInfo.InvariantCulture);
+                        laneSwitch.Duration = float.Parse(args[2], CultureInfo.InvariantCulture);
 
                     LaneSwitchEvents.Add(laneSwitch);
                     break;
@@ -167,7 +167,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                     PlayfieldFadeEvents.Add(new PlayfieldFadeEvent
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture),
-                        FadeTime = float.Parse(args[1], CultureInfo.InvariantCulture),
+                        Duration = float.Parse(args[1], CultureInfo.InvariantCulture),
                         Alpha = float.Parse(args[2], CultureInfo.InvariantCulture)
                     });
                     break;
