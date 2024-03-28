@@ -7,6 +7,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.HUD;
 
@@ -78,7 +79,14 @@ public partial class GameplayHUD : Container
         base.Update();
 
         playfieldComponents.Position = screen.Playfield.Position;
-        playfieldComponents.Width = screen.Playfield.DrawWidth * screen.Playfield.Scale.X;
+        playfieldComponents.Width = screen.Playfield.DrawWidth;
+
+        var scale = screen.Playfield.Scale;
+
+        if (screen.Playfield.IsUpScroll)
+            scale *= new Vector2(0, -1);
+
+        playfieldComponents.Scale = scale;
     }
 
     private void bindableRefreshLayout(ValueChangedEvent<HUDLayout> _)
