@@ -10,7 +10,6 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Screens;
-using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -237,7 +236,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         maps.MapBindable.ValueChanged -= mapChanged;
     }
 
-    private void mapChanged(ValueChangedEvent<RealmMap> e) => Scheduler.ScheduleOnceIfNeeded(songChanged);
+    private void mapChanged(ValueChangedEvent<RealmMap> e) => Scheduler.AddOnce(songChanged);
 
     private void songChanged()
     {
