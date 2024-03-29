@@ -4,12 +4,14 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 
-public partial class EditorLaneSwitchEvent : ClickableContainer
+public partial class EditorLaneSwitchEvent : FillFlowContainer
 {
     [Resolved]
     private EditorClock clock { get; set; }
@@ -21,102 +23,201 @@ public partial class EditorLaneSwitchEvent : ClickableContainer
     private EditorSettings settings { get; set; }
 
     [Resolved]
-    private ChartingContainer chartingContainer { get; set; }
+    private PointsSidebar points { get; set; }
 
-    public LaneSwitchEvent Event { get; set; }
+    public LaneSwitchEvent Event { get; }
 
     private float length;
-    private int count;
+
+    public EditorLaneSwitchEvent(LaneSwitchEvent laneSwitch)
+    {
+        Event = laneSwitch;
+    }
 
     [BackgroundDependencyLoader]
-    private void load(PointsSidebar points)
+    private void load()
     {
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomLeft;
         Origin = Anchor.BottomLeft;
+        Direction = FillDirection.Horizontal;
 
-        Action = () => points.ShowPoint(Event);
-
-        count = Event.Count;
-
-        var nextEvent = map.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
-        length = (nextEvent?.Time ?? clock.TrackLength) - Event.Time;
-
-        if (Event.Count >= map.RealmMap.KeyCount)
+        for (int i = 0; i < map.RealmMap.KeyCount; i++)
         {
-            for (int i = 0; i < map.RealmMap.KeyCount; i++)
-            {
-                Add(new Box
-                {
-                    RelativeSizeAxes = Axes.Y,
-                    Height = 0,
-                    Width = EditorHitObjectContainer.NOTEWIDTH,
-                    X = i * EditorHitObjectContainer.NOTEWIDTH,
-                    Colour = Colour4.FromHex("#FF5555").Opacity(0.4f)
-                });
-            }
-        }
-        else
-        {
-            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[map.RealmMap.KeyCount - 2];
-            bool[] current = mode[Event.Count - 1];
-
-            for (int i = 0; i < map.RealmMap.KeyCount; i++)
-            {
-                Add(new Box
-                {
-                    RelativeSizeAxes = Axes.Y,
-                    Height = !current[i] ? 1 : 0,
-                    Width = EditorHitObjectContainer.NOTEWIDTH,
-                    X = i * EditorHitObjectContainer.NOTEWIDTH,
-                    Colour = Colour4.FromHex("#FF5555").Opacity(0.4f)
-                });
-            }
+            Add(new Column());
         }
     }
 
-    protected override void Update()
+    protected override void LoadComplete()
     {
-        if (!map.MapEvents.LaneSwitchEvents.Contains(Event))
-        {
-            Expire();
-            return;
-        }
+        base.LoadComplete();
 
+        map.LaneSwitchEventAdded += updateWrapper;
+        map.LaneSwitchEventUpdated += updateWrapper;
+        map.LaneSwitchEventRemoved += onRemove;
+
+        update();
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        if (map == null)
+            return;
+
+        map.LaneSwitchEventAdded -= updateWrapper;
+        map.LaneSwitchEventUpdated -= updateWrapper;
+        map.LaneSwitchEventRemoved -= onRemove;
+    }
+
+    private void updateWrapper(LaneSwitchEvent switchEvent) => update();
+
+    private void update()
+    {
         var nextEvent = map.MapEvents.LaneSwitchEvents.FirstOrDefault(e => e.Time > Event.Time);
+
         if (nextEvent != null)
             length = nextEvent.Time - Event.Time;
         else
             length = clock.TrackLength - Event.Time;
 
-        if (Event.Count != count)
+        bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[map.RealmMap.KeyCount - 2];
+        StateChange[] states = new StateChange[map.RealmMap.KeyCount];
+
+        var current = Event.Count == map.RealmMap.KeyCount
+            ? Enumerable.Repeat(true, map.RealmMap.KeyCount).ToArray()
+            : mode[Event.Count - 1];
+
+        var previousEvent = map.MapEvents.LaneSwitchEvents.LastOrDefault(e => e.Time < Event.Time);
+
+        if (previousEvent != null)
         {
-            if (Event.Count == map.RealmMap.KeyCount)
+            var prev = previousEvent.Count == map.RealmMap.KeyCount
+                ? Enumerable.Repeat(true, map.RealmMap.KeyCount).ToArray()
+                : mode[previousEvent.Count - 1];
+
+            for (int i = 0; i < map.RealmMap.KeyCount; i++)
             {
-                for (int i = 0; i < map.RealmMap.KeyCount; i++)
+                if (prev[i] != current[i])
                 {
-                    var box = Children[i];
-                    if (box != null)
-                        box.Height = 0;
+                    if (current[i])
+                        states[i] = StateChange.NowShowing;
+                    else
+                        states[i] = StateChange.NowHiding;
                 }
+                else
+                    states[i] = StateChange.TheSame;
+            }
+        }
+
+        var factor = Event.Duration / length;
+
+        if (float.IsNaN(factor))
+        {
+            factor = 0;
+        }
+
+        for (int i = 0; i < map.RealmMap.KeyCount; i++)
+        {
+            var hidden = !current[i];
+            var column = Children[i] as Column;
+            var state = states[i];
+
+            if (column == null)
+                continue;
+
+            if (state == StateChange.TheSame)
+            {
+                if (hidden)
+                    column.Show();
+                else
+                    column.Hide();
+
+                column.SetDuration(0);
             }
             else
             {
-                bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[map.RealmMap.KeyCount - 2];
-                bool[] current = mode[Event.Count - 1];
-
-                for (int i = 0; i < map.RealmMap.KeyCount; i++)
-                {
-                    var box = Children[i];
-                    if (box != null)
-                        box.Height = !current[i] ? 1 : 0;
-                }
+                column.Show();
+                column.SetDuration(factor, state == StateChange.NowShowing);
             }
-
-            count = Event.Count;
         }
+    }
 
+    private void onRemove(LaneSwitchEvent switchEvent)
+    {
+        if (switchEvent == Event)
+            Expire();
+        else
+            update();
+    }
+
+    protected override void Update()
+    {
         Height = .5f * (length * settings.Zoom);
         Y = -.5f * ((Event.Time - (float)clock.CurrentTime) * settings.Zoom);
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        points.ShowPoint(Event);
+        return true;
+    }
+
+    private partial class Column : CompositeDrawable
+    {
+        private Box full;
+        private Box gradient;
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Width = EditorHitObjectContainer.NOTEWIDTH;
+            RelativeSizeAxes = Axes.Y;
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            Colour = Colour4.FromHex("#FF5555");
+            Masking = true;
+
+            InternalChildren = new Drawable[]
+            {
+                full = new Box
+                {
+                    RelativeSizeAxes = Axes.Both
+                },
+                gradient = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = ColourInfo.GradientVertical(Colour4.White, Colour4.White.Opacity(0)),
+                    Anchor = Anchor.BottomLeft,
+                    Origin = Anchor.BottomLeft
+                }
+            };
+        }
+
+        public void SetDuration(float factor, bool reverse = false)
+        {
+            if (reverse)
+            {
+                full.Height = 0;
+                gradient.Height = -factor;
+                gradient.Origin = Anchor.TopLeft;
+                return;
+            }
+
+            full.Height = 1 - factor;
+            gradient.Height = factor;
+            gradient.Origin = Anchor.BottomLeft;
+        }
+
+        public override void Show() => this.FadeTo(0.6f);
+        public override void Hide() => this.FadeTo(.0002f);
+    }
+
+    private enum StateChange
+    {
+        TheSame,
+        NowShowing,
+        NowHiding
     }
 }
