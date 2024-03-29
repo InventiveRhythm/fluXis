@@ -22,11 +22,11 @@ public class APIEndpointConfig
     public APIEndpointConfig AddDefaults()
     {
         if (string.IsNullOrWhiteSpace(APIUrl))
-            APIUrl = "https://api.fluxis.flux.moe";
+            APIUrl = "https://fluxis.flux.moe/api";
         if (string.IsNullOrWhiteSpace(AssetUrl))
             AssetUrl = "https://assets.flux.moe";
         if (string.IsNullOrWhiteSpace(WebsocketUrl))
-            WebsocketUrl = "wss://fluxel.flux.moe";
+            WebsocketUrl = "wss://fluxis.flux.moe/socket";
         if (string.IsNullOrWhiteSpace(WebsiteRootUrl))
             WebsiteRootUrl = "https://fluxis.flux.moe";
         if (string.IsNullOrWhiteSpace(WikiRootUrl))
