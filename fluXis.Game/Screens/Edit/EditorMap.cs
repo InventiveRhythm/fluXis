@@ -8,6 +8,7 @@ using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
+using osu.Framework.Graphics;
 using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Screens.Edit;
@@ -110,6 +111,15 @@ public class EditorMap
         MapInfo.BackgroundFile = file.Name;
         RealmMap.Metadata.Background = file.Name;
         BackgroundChanged?.Invoke();
+
+        // update accent color
+        using var stream = RealmMap.GetBackgroundStream();
+        var color = ImageUtils.GetAverageColour(stream);
+
+        if (color != Colour4.Transparent)
+            RealmMap.Metadata.Color = color;
+        else
+            RealmMap.Metadata.ColorHex = string.Empty;
     }
 
     public void SetCover(FileInfo file)
