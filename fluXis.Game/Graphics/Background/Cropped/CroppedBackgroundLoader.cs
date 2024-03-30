@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osuTK;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -48,7 +49,7 @@ public class CroppedBackgroundLoader : IResourceStore<TextureUpload>
 
     private static TextureUpload cropTexture(TextureUpload tex)
     {
-        var image = Image.LoadPixelData(tex.Data.ToArray(), tex.Width, tex.Height);
+        var image = Image.LoadPixelData<Rgba32>(tex.Data.ToArray(), tex.Width, tex.Height);
 
         var visibleSize = new Vector2(1000, 100);
         var ratio = visibleSize.X / visibleSize.Y;

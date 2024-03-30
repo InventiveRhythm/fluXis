@@ -1,6 +1,7 @@
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -41,7 +42,6 @@ public partial class LoadingIcon : Container
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Current = progress,
                     RoundedCaps = true,
                     InnerRadius = 0.3f,
                     Rotation = 360 * (factor * i)
@@ -53,6 +53,8 @@ public partial class LoadingIcon : Container
     protected override void LoadComplete()
     {
         rotate();
+
+        progress.BindValueChanged(e => circles.ForEach(c => c.Progress = e.NewValue));
     }
 
     private void rotate()

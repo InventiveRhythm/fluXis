@@ -59,7 +59,7 @@ public partial class BloomContainer
 
             using (BindFrameBuffer(target))
             {
-                float radians = MathUtils.DegreesToRadians(rotation);
+                float radians = float.DegreesToRadians(rotation);
 
                 blurParametersBuffer.Data = blurParametersBuffer.Data with
                 {

@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Mouse;
@@ -39,7 +38,7 @@ public partial class MenuCursor : CursorContainer
 
             if (rotating)
             {
-                var angle = MathUtils.RadiansToDegrees(MathF.Atan2(-mouseDelta.X, mouseDelta.Y)) + 24.3f;
+                var angle = float.RadiansToDegrees(MathF.Atan2(-mouseDelta.X, mouseDelta.Y)) + 24.3f;
 
                 float delta = (angle - cursor.Rotation) % 360;
                 if (delta < -180) delta += 360;

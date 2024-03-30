@@ -24,12 +24,10 @@ public abstract partial class RealmKeyBindingContainer<T> : KeyBindingContainer<
     {
         realm.Run(r =>
         {
-            r.All<RealmKeybind>().SubscribeForNotifications((sender, changes, error) =>
+            r.All<RealmKeybind>().SubscribeForNotifications((sender, changes) =>
             {
                 if (changes == null)
-                {
                     return;
-                }
 
                 ReloadMappings(sender.AsQueryable());
             });
