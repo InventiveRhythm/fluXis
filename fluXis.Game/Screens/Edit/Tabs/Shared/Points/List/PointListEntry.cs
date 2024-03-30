@@ -26,7 +26,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     {
         new FluXisMenuItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
         new FluXisMenuItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
-        new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete)
+        new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => delete(false))
     };
 
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
@@ -107,7 +107,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     {
         return new Drawable[]
         {
-            new PointSettingsTitle(Text, delete),
+            new PointSettingsTitle(Text, () => delete()),
             new PointSettingsTime(Map, Object)
         };
     }
@@ -115,14 +115,15 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     private void clone()
     {
         var clone = CreateClone();
-        RequestClose?.Invoke();
         OnClone?.Invoke(clone);
     }
 
-    private void delete()
+    private void delete(bool close = true)
     {
         Map.Remove(Object);
-        RequestClose?.Invoke();
+
+        if (close)
+            RequestClose?.Invoke();
     }
 
     public void UpdateValues()

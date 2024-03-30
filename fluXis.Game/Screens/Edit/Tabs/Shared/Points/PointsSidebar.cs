@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 
@@ -148,6 +149,15 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
 
         settingsWrapper.FadeOut(200).ScaleTo(1.2f, 400, Easing.OutQuint);
         pointsList.FadeIn(200).ScaleTo(1, 400, Easing.OutQuint);
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        // prevent sidebar from closing when using context menus
+        if (e.Button == MouseButton.Right)
+            Locked.Value = true;
+
+        return false;
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
