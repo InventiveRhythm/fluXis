@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Game.Screens.Edit.Tabs.Design.Effects;
+using fluXis.Game.Screens.Edit.Tabs.Design.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Design.Points;
 using fluXis.Game.Screens.Edit.Tabs.Design.Toolbox;
 using fluXis.Game.Screens.Edit.Tabs.Shared;
@@ -16,6 +17,7 @@ public partial class DesignContainer : EditorTabContainer
         return new Drawable[]
         {
             new EditorFlashLayer { InBackground = true },
+            new EditorDesignPlayfield(),
             new EditorFlashLayer()
         };
     }
