@@ -97,7 +97,27 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected Bindable<UserActivity> Activity { get; } = new();
     public Season CurrentSeason { get; private set; }
 
-    public static string VersionString => Version != null ? IsDebug ? "local development build" : $"v{Version.Major}.{Version.Minor}.{Version.Build}" : "unknown version";
+    public static string VersionString
+    {
+        get
+        {
+            var v = Version;
+
+            if (v == null)
+                return "unknown version";
+
+            if (IsDebug)
+                return "local development build";
+
+            var str = $"v{v.Major}.{v.Minor}.{v.Build}";
+
+            if (v.Revision > 0)
+                str += $".{v.Revision}";
+
+            return str;
+        }
+    }
+
     public static Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
     public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
