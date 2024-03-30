@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -21,6 +22,15 @@ public partial class PlayfieldScaleEntry : PointListEntry
         : base(obj)
     {
     }
+
+    protected override ITimedObject CreateClone() => new PlayfieldScaleEvent
+    {
+        Time = Object.Time,
+        ScaleX = scale.ScaleX,
+        ScaleY = scale.ScaleY,
+        Duration = scale.Duration,
+        Easing = scale.Easing
+    };
 
     protected override Drawable[] CreateValueContent()
     {

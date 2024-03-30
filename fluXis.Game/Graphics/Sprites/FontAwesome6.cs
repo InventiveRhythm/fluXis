@@ -33,6 +33,7 @@ public class FontAwesome6
         public static IconUsage ChevronUp => getSolid(0xf077);
         public static IconUsage Circle => getSolid(0xf111);
         public static IconUsage Clock => getSolid(0xf017);
+        public static IconUsage Clone => getSolid(0xf24d);
         public static IconUsage ComputerMouse => getSolid(0xf8cc);
         public static IconUsage Copy => getSolid(0xf0c5);
         public static IconUsage Cube => getSolid(0xf1b2);

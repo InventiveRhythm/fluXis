@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -22,6 +23,18 @@ public partial class FlashEntry : PointListEntry
         : base(obj)
     {
     }
+
+    protected override ITimedObject CreateClone() => new FlashEvent
+    {
+        Time = Object.Time,
+        Duration = flash.Duration,
+        StartOpacity = flash.StartOpacity,
+        StartColor = flash.StartColor,
+        EndOpacity = flash.EndOpacity,
+        EndColor = flash.EndColor,
+        InBackground = flash.InBackground,
+        Easing = flash.Easing
+    };
 
     protected override Drawable[] CreateValueContent()
     {

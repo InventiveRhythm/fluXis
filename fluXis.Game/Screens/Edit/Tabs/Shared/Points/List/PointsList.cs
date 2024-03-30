@@ -124,6 +124,7 @@ public abstract partial class PointsList : Container
         {
             entry.ShowSettings = ShowSettings;
             entry.RequestClose = RequestClose;
+            entry.OnClone = Create;
             flow.Add(entry);
         }
 

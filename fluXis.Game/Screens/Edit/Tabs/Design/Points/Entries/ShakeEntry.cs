@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -21,6 +22,13 @@ public partial class ShakeEntry : PointListEntry
         : base(obj)
     {
     }
+
+    protected override ITimedObject CreateClone() => new ShakeEvent
+    {
+        Time = Object.Time,
+        Magnitude = shake.Magnitude,
+        Duration = shake.Duration
+    };
 
     protected override Drawable[] CreateValueContent()
     {

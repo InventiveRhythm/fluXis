@@ -23,6 +23,14 @@ public partial class TimingPointEntry : PointListEntry
     {
     }
 
+    protected override ITimedObject CreateClone() => new TimingPoint
+    {
+        Time = Object.Time,
+        BPM = timing.BPM,
+        Signature = timing.Signature,
+        HideLines = timing.HideLines
+    };
+
     protected override Drawable[] CreateValueContent()
     {
         return new Drawable[]

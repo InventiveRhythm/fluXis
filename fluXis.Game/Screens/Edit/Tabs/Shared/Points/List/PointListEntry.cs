@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -9,18 +10,28 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 
-public abstract partial class PointListEntry : Container
+public abstract partial class PointListEntry : Container, IHasContextMenu
 {
     protected abstract string Text { get; }
     protected abstract Colour4 Color { get; }
 
+    public MenuItem[] ContextMenuItems => new MenuItem[]
+    {
+        new FluXisMenuItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
+        new FluXisMenuItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
+        new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete)
+    };
+
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
     public Action RequestClose { get; set; }
+    public Action<ITimedObject> OnClone { get; set; }
     public ITimedObject Object { get; }
 
     protected float BeatLength => Map.MapInfo.GetTimingPoint(Object.Time).MsPerBeat;
@@ -83,24 +94,35 @@ public abstract partial class PointListEntry : Container
         UpdateValues();
     }
 
-    protected abstract Drawable[] CreateValueContent();
-
     public void OpenSettings()
     {
         ShowSettings?.Invoke(CreateSettings());
     }
 
+    protected abstract ITimedObject CreateClone();
+
+    protected abstract Drawable[] CreateValueContent();
+
     protected virtual IEnumerable<Drawable> CreateSettings()
     {
         return new Drawable[]
         {
-            new PointSettingsTitle(Text, () =>
-            {
-                Map.Remove(Object);
-                RequestClose?.Invoke();
-            }),
+            new PointSettingsTitle(Text, delete),
             new PointSettingsTime(Map, Object)
         };
+    }
+
+    private void clone()
+    {
+        var clone = CreateClone();
+        RequestClose?.Invoke();
+        OnClone?.Invoke(clone);
+    }
+
+    private void delete()
+    {
+        Map.Remove(Object);
+        RequestClose?.Invoke();
     }
 
     public void UpdateValues()
