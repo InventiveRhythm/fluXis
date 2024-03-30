@@ -84,7 +84,7 @@ public partial class Progressbar : GameplayHUDComponent
                 if (value < 0) value = 0;
                 if (value > 1) value = 1;
 
-                bar.ResizeWidthTo(value, 200, Easing.OutQuint);
+                bar.ResizeWidthTo(value, 200);
             }
         }
 
@@ -93,7 +93,7 @@ public partial class Progressbar : GameplayHUDComponent
 
         public Progressbar Progressbar { get; init; }
 
-        private Box bar;
+        private Circle bar;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -102,7 +102,7 @@ public partial class Progressbar : GameplayHUDComponent
             Height = 10;
             Masking = true;
 
-            InternalChildren = new[]
+            InternalChildren = new Drawable[]
             {
                 new Box
                 {
@@ -110,7 +110,7 @@ public partial class Progressbar : GameplayHUDComponent
                     Alpha = .2f,
                     Blending = BlendingParameters.Additive
                 },
-                bar = new Box
+                bar = new Circle
                 {
                     RelativeSizeAxes = Axes.Both
                 }
