@@ -53,6 +53,7 @@ public partial class PointSettingsTextBox : Container
                         Text = DefaultText,
                         SidePadding = 10,
                         TextContainerHeight = .7f,
+                        CommitOnFocusLost = true,
                         BackgroundInactive = FluXisColors.Background3,
                         BackgroundActive = FluXisColors.Background4,
                         OnTextChanged = () => OnTextChanged?.Invoke(TextBox),
