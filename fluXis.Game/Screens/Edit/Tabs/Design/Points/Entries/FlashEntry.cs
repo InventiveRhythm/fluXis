@@ -41,7 +41,7 @@ public partial class FlashEntry : PointListEntry
             },
             new FluXisSpriteText
             {
-                Text = $"{flash.Duration}ms",
+                Text = $"{(int)flash.Duration}ms",
                 Colour = Color
             }
         };

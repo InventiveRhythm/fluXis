@@ -12,7 +12,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 
 public partial class PlayfieldScaleEntry : PointListEntry
 {
-    protected override string Text => "Playfield Fade";
+    protected override string Text => "Playfield Scale";
     protected override Colour4 Color => Colour4.FromHex("#D279C4");
 
     private PlayfieldScaleEvent scale => Object as PlayfieldScaleEvent;
@@ -28,7 +28,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{scale.ScaleX.ToStringInvariant()}x{scale.ScaleY.ToStringInvariant()} {scale.Duration.ToStringInvariant()}ms",
+                Text = $"{scale.ScaleX.ToStringInvariant("0.00")}x{scale.ScaleY.ToStringInvariant("0.00")} {(int)scale.Duration}ms",
                 Colour = Color
             }
         };

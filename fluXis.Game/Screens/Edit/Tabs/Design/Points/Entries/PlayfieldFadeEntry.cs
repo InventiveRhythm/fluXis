@@ -28,7 +28,7 @@ public partial class PlayfieldFadeEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{(fade.Alpha * 100).ToStringInvariant()}% {fade.Duration.ToStringInvariant()}ms",
+                Text = $"{(fade.Alpha * 100).ToStringInvariant()}% {(int)fade.Duration}ms",
                 Colour = Color
             }
         };

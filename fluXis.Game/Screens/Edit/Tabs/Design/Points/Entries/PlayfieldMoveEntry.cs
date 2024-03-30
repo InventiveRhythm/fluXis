@@ -28,7 +28,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{move.OffsetX.ToStringInvariant()}x {move.Duration.ToStringInvariant()}ms",
+                Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.Duration}ms",
                 Colour = Color
             }
         };
