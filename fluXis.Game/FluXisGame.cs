@@ -27,6 +27,7 @@ using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens;
+using fluXis.Game.Screens.Browse;
 using fluXis.Game.Screens.Loading;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Result;
@@ -377,6 +378,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     protected override bool OnExiting()
     {
+        if (screenStack.CurrentScreen is Bluescreen)
+            return true; // youre not leaving...
+
         if (panelContainer.Content != null && panelContainer.Content is not ConfirmExitPanel)
         {
             Logger.Log("Blocking exit due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);
@@ -406,6 +410,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         globalClock.FadeOut(1500);
         exitAnimation.Show(buffer.Hide, base.Exit);
         isExiting = true;
+    }
+
+    public void TheThing()
+    {
+        MenuScreen.MakeCurrent();
+        toolbar.Hide();
+        screenStack.Push(new Bluescreen());
     }
 
     private void loadLocales()
