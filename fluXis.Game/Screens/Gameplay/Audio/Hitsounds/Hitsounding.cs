@@ -17,14 +17,13 @@ public partial class Hitsounding : CompositeDrawable
 {
     public const string DEFAULT_PREFIX = ":";
 
-    private string[] defaults { get; } =
-    {
-        "kick",
-        "clap",
-        "snare"
-    };
+    private const string hit_normal = "normal";
+    private const string hit_kick = "kick";
+    private const string hit_clap = "clap";
+    private const string hit_snare = "snare";
 
-    private HitSoundChannel defaultChannel { get; set; }
+    public static IEnumerable<string> Defaults { get; } = new[] { hit_normal, hit_kick, hit_clap, hit_snare };
+
     private List<HitSoundChannel> channels { get; } = new();
 
     private RealmMapSet set { get; }
@@ -51,14 +50,11 @@ public partial class Hitsounding : CompositeDrawable
     {
         volume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
 
-        var defaultSample = skinManager.GetHitSample();
-        defaultSample.Frequency.BindTo(rate);
-        defaultChannel = new HitSoundChannel($"{DEFAULT_PREFIX}normal", defaultSample, volume, fades.Where(x => x.HitSound == $"{DEFAULT_PREFIX}normal").ToList());
-        channels.Add(defaultChannel);
-
-        foreach (var sample in defaults)
+        foreach (var sample in Defaults)
         {
-            var s = defaultSamples.Get($"Gameplay/{sample}");
+            var s = sample == hit_normal
+                ? skinManager.GetHitSample()
+                : defaultSamples.Get($"Gameplay/{sample}");
 
             if (s == null)
                 continue;
@@ -70,20 +66,20 @@ public partial class Hitsounding : CompositeDrawable
 
         var dir = MapFiles.GetFullPath(set.ID.ToString());
 
-        if (!Directory.Exists(dir))
-            return;
-
-        foreach (var file in Directory.GetFiles(dir, "*.wav"))
+        if (Directory.Exists(dir))
         {
-            var name = Path.GetFileNameWithoutExtension(file);
-            var s = set.Resources?.SampleStore?.Get($"{set.ID}/{name}");
+            foreach (var file in Directory.GetFiles(dir, "*.wav"))
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                var s = set.Resources?.SampleStore?.Get($"{set.ID}/{name}");
 
-            if (s == null)
-                continue;
+                if (s == null)
+                    continue;
 
-            s.Frequency.BindTo(rate);
-            var fade = fades.Where(x => x.HitSound == name).ToList();
-            channels.Add(new HitSoundChannel(name, s, volume, fade));
+                s.Frequency.BindTo(rate);
+                var fade = fades.Where(x => x.HitSound == name).ToList();
+                channels.Add(new HitSoundChannel(name, s, volume, fade));
+            }
         }
 
         channels.ForEach(x => x.DirectVolume = DirectVolume);
@@ -92,6 +88,9 @@ public partial class Hitsounding : CompositeDrawable
 
     public HitSoundChannel GetSample(string sample, bool allowCustom = true)
     {
+        // should always be the first channel so this is safe
+        var defaultChannel = channels.FirstOrDefault();
+
         if (string.IsNullOrEmpty(sample))
             return defaultChannel;
 
