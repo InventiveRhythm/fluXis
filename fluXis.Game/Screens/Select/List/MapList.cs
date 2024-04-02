@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using osu.Framework.Allocation;
@@ -46,11 +45,13 @@ public partial class MapList : FluXisScrollContainer
 
     public void Insert(int index, MapListEntry entry)
     {
-        List<MapListEntry> entries = Content.Children.ToList();
+        Content.Insert(index, entry);
 
-        entries.Insert(index, entry);
-        Content.Clear(false);
-        Content.AddRange(entries);
+        var sorted = Content.Children.ToList();
+        sorted.Sort((a, b) => a.CompareTo(b));
+
+        for (int i = 0; i < sorted.Count; i++)
+            Content.SetLayoutPosition(sorted[i], i);
     }
 
     public void ScrollToSelected()

@@ -31,6 +31,7 @@ using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Screens.Select.Search;
 using fluXis.Game.Screens.Select.UI;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -263,21 +264,24 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void addMapSet(RealmMapSet set)
     {
-        int index = MapStore.MapSetsSorted.IndexOf(set);
-        if (index == -1) return;
-
-        var entry = new MapListEntry(set)
+        Scheduler.ScheduleIfNeeded(() =>
         {
-            SelectAction = Accept,
-            EditAction = EditMap,
-            DeleteAction = DeleteMapSet,
-            ExportAction = ExportMapSet
-        };
+            int index = MapStore.MapSetsSorted.IndexOf(set);
+            if (index == -1) return;
 
-        MapList.Insert(index, entry);
-        lookup[set] = entry;
-        // mapStore.Select(set.LowestDifficulty, true);
-        noMapsContainer.Hide();
+            var entry = new MapListEntry(set)
+            {
+                SelectAction = Accept,
+                EditAction = EditMap,
+                DeleteAction = DeleteMapSet,
+                ExportAction = ExportMapSet
+            };
+
+            MapList.Insert(index, entry);
+            lookup[set] = entry;
+            // mapStore.Select(set.LowestDifficulty, true);
+            noMapsContainer.Hide();
+        });
     }
 
     private void replaceMapSet(RealmMapSet oldSet, RealmMapSet newSet)

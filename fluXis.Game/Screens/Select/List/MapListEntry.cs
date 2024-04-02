@@ -12,7 +12,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
-public partial class MapListEntry : Container
+public partial class MapListEntry : Container, IComparable<MapListEntry>
 {
     [Resolved]
     private MapStore maps { get; set; }
@@ -92,6 +92,18 @@ public partial class MapListEntry : Container
         base.Dispose(isDisposing);
 
         maps.MapSetBindable.ValueChanged -= updateSelected;
+    }
+
+    public int CompareTo(MapListEntry other)
+    {
+        // compare title
+        var compare = string.Compare(MapSet.Metadata.Title, other.MapSet.Metadata.Title, StringComparison.Ordinal);
+
+        if (compare != 0)
+            return compare;
+
+        compare = other.MapSet.DateAdded.CompareTo(MapSet.DateAdded);
+        return compare;
     }
 
     private void updateSelected(ValueChangedEvent<RealmMapSet> set)
