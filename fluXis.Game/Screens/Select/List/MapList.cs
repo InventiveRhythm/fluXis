@@ -11,6 +11,8 @@ public partial class MapList : FluXisScrollContainer
 {
     public new FillFlowContainer<MapListEntry> Content { get; private set; }
 
+    private bool bulkInserting;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -27,11 +29,6 @@ public partial class MapList : FluXisScrollContainer
         };
     }
 
-    public void AddMap(MapListEntry entry)
-    {
-        Content.Add(entry);
-    }
-
     public override bool Remove(Drawable drawable, bool disposeImmediately)
     {
         if (drawable is MapListEntry entry)
@@ -43,10 +40,26 @@ public partial class MapList : FluXisScrollContainer
         return base.Remove(drawable, disposeImmediately);
     }
 
-    public void Insert(int index, MapListEntry entry)
-    {
-        Content.Insert(index, entry);
+    public void StartBulkInsert() => bulkInserting = true;
 
+    public void Insert(MapListEntry entry)
+    {
+        Content.Add(entry);
+
+        if (bulkInserting)
+            return;
+
+        sort();
+    }
+
+    public void EndBulkInsert()
+    {
+        bulkInserting = false;
+        sort();
+    }
+
+    private void sort()
+    {
         var sorted = Content.Children.ToList();
         sorted.Sort((a, b) => a.CompareTo(b));
 

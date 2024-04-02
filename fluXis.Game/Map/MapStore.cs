@@ -84,7 +84,6 @@ public partial class MapStore : Component
     }
 
     public List<RealmMapSet> MapSets { get; } = new();
-    public List<RealmMapSet> MapSetsSorted => MapSets.OrderBy(x => x.Metadata.Title).ToList();
 
     public Action<RealmMapSet> MapSetAdded;
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;

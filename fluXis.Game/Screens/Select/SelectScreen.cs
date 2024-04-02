@@ -202,7 +202,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         inputManager = GetContainingInputManager();
 
-        if (MapStore.CurrentMap.Hash == "dummy" && MapStore.MapSetsSorted.Any())
+        if (MapStore.CurrentMap.Hash == "dummy" && MapStore.MapSets.Any())
             MapStore.Select(MapStore.GetRandom()?.LowestDifficulty, true);
 
         Task.Run(() =>
@@ -241,7 +241,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void loadMapSets()
     {
-        var sets = MapStore.MapSetsSorted;
+        var sets = MapStore.MapSets;
+
+        MapList.StartBulkInsert();
 
         foreach (RealmMapSet set in sets)
         {
@@ -254,21 +256,21 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             };
 
             LoadComponent(entry);
-            Schedule(() => MapList.AddMap(entry));
+            Schedule(() => MapList.Insert(entry));
             lookup[set] = entry;
             Maps.Add(set);
         }
 
-        if (!sets.Any()) Schedule(noMapsContainer.Show);
+        ScheduleAfterChildren(() => MapList.EndBulkInsert());
+
+        if (!sets.Any())
+            Schedule(noMapsContainer.Show);
     }
 
     private void addMapSet(RealmMapSet set)
     {
         Scheduler.ScheduleIfNeeded(() =>
         {
-            int index = MapStore.MapSetsSorted.IndexOf(set);
-            if (index == -1) return;
-
             var entry = new MapListEntry(set)
             {
                 SelectAction = Accept,
@@ -277,10 +279,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 ExportAction = ExportMapSet
             };
 
-            MapList.Insert(index, entry);
-            lookup[set] = entry;
-            // mapStore.Select(set.LowestDifficulty, true);
-            noMapsContainer.Hide();
+            LoadComponentAsync(entry, _ =>
+            {
+                MapList.Insert(entry);
+                Maps.Add(set);
+                lookup[set] = entry;
+                noMapsContainer.Hide();
+            });
         });
     }
 
