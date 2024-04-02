@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Json;
@@ -15,6 +16,8 @@ public interface ISkin : IDisposable
     public SkinJson SkinJson { get; }
 
     public Texture GetDefaultBackground();
+
+    public Sample GetUISample(UISamples.SampleType type);
 
     public Drawable GetStageBackground();
     public Drawable GetStageBorder(bool right);

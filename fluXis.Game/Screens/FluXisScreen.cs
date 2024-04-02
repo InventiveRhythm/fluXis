@@ -1,6 +1,6 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Online.Activity;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
@@ -24,7 +24,8 @@ public partial class FluXisScreen : Screen
     public virtual UserActivity InitialActivity => new UserActivity.MenuGeneral();
     public Bindable<UserActivity> Activity { get; }
 
-    private Sample backSample;
+    [Resolved]
+    protected UISamples UISamples { get; private set; }
 
     protected new FluXisGame Game => base.Game as FluXisGame;
 
@@ -35,16 +36,10 @@ public partial class FluXisScreen : Screen
         Activity = new Bindable<UserActivity>(InitialActivity);
     }
 
-    [BackgroundDependencyLoader]
-    private void load(ISampleStore samples)
-    {
-        backSample = samples.Get("UI/back");
-    }
-
     public override bool OnExiting(ScreenExitEvent e)
     {
         if (PlayBackSound)
-            backSample.Play();
+            UISamples?.Back();
 
         return base.OnExiting(e);
     }

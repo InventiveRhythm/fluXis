@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Default.Health;
@@ -18,7 +19,7 @@ namespace fluXis.Game.Skinning.Default;
 
 public class DefaultSkin : ISkin
 {
-    public SkinJson SkinJson { get; protected set; }
+    public SkinJson SkinJson { get; }
     private TextureStore textures { get; }
     private ISampleStore samples { get; }
 
@@ -32,6 +33,20 @@ public class DefaultSkin : ISkin
     protected virtual SkinJson CreateJson() => new DefaultSkinJson();
 
     public Texture GetDefaultBackground() => textures.Get("Backgrounds/default.png");
+
+    public Sample GetUISample(UISamples.SampleType type)
+    {
+        return type switch
+        {
+            UISamples.SampleType.Back => samples.Get("UI/back"),
+            UISamples.SampleType.Select => samples.Get("UI/accept"),
+            UISamples.SampleType.Hover => samples.Get("UI/hover"),
+            UISamples.SampleType.Click => samples.Get("UI/click"),
+            UISamples.SampleType.ClickDisabled => samples.Get("UI/click-disabled"),
+            _ => null
+        };
+    }
+
     public Drawable GetStageBackground() => new DefaultStageBackground();
     public Drawable GetStageBorder(bool right) => right ? new DefaultStageBorderRight() : new DefaultStageBorderLeft();
     public Drawable GetLaneCover(bool bottom) => bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Custom.Health;
@@ -35,6 +36,19 @@ public class CustomSkin : ISkin
     {
         string path = SkinJson.GetOverrideOrDefault("UserInterface/background") + ".png";
         return storage.Exists(path) ? textures.Get(path) : null;
+    }
+
+    public Sample GetUISample(UISamples.SampleType type)
+    {
+        return type switch
+        {
+            UISamples.SampleType.Back => samples.Get("Samples/UI/back"),
+            UISamples.SampleType.Select => samples.Get("Samples/UI/select"),
+            UISamples.SampleType.Hover => samples.Get("Samples/UI/hover"),
+            UISamples.SampleType.Click => samples.Get("Samples/UI/click"),
+            UISamples.SampleType.ClickDisabled => samples.Get("Samples/UI/click-disabled"),
+            _ => null
+        };
     }
 
     public Drawable GetStageBackground()

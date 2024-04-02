@@ -100,15 +100,12 @@ public partial class MenuScreen : FluXisScreen
     private MenuButton browseButton;
 
     private bool pressedStart;
-    private Sample menuStart;
     private double inactivityTime;
     private const double inactivity_timeout = 60 * 1000;
 
     [BackgroundDependencyLoader]
     private void load(GameHost host, ISampleStore samples, TextureStore textures)
     {
-        menuStart = samples.Get("UI/accept");
-
         forceSnow = config.GetBindable<bool>(FluXisSetting.ForceSnow);
 
         InternalChildren = new Drawable[]
@@ -355,7 +352,7 @@ public partial class MenuScreen : FluXisScreen
     {
         pressedStart = true;
         inactivityTime = 0;
-        menuStart?.Play();
+        UISamples?.Select();
         randomizeSplash();
         backgrounds.Zoom = 1f;
 

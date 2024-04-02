@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Processing.Health;
@@ -251,6 +252,9 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase) || string.Equals(skinName, default_bright_skin_name, StringComparison.CurrentCultureIgnoreCase);
 
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
+
+    public Sample GetUISample(UISamples.SampleType type) => currentSkin.GetUISample(type) ?? defaultSkin.GetUISample(type);
+
     public Drawable GetStageBackground() => currentSkin.GetStageBackground() ?? defaultSkin.GetStageBackground();
     public Drawable GetStageBorder(bool right) => currentSkin.GetStageBorder(right) ?? defaultSkin.GetStageBorder(right);
     public Drawable GetLaneCover(bool bottom) => currentSkin.GetLaneCover(bottom) ?? defaultSkin.GetLaneCover(bottom);

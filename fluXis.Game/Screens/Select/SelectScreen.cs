@@ -90,7 +90,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private SelectFooter footer;
     private ModSelector modSelector;
 
-    private Sample menuAccept;
     private Sample menuScroll;
     private Sample randomClick;
     private Sample rewindClick;
@@ -110,7 +109,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples, FluXisConfig config)
     {
-        menuAccept = samples.Get("UI/accept.mp3");
         menuScroll = samples.Get("UI/scroll.mp3");
         randomClick = samples.Get("UI/Select/Random.wav");
         rewindClick = samples.Get("UI/Select/Rewind.wav");
@@ -330,7 +328,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (MapStore.CurrentMap == null)
             return;
 
-        menuAccept.Play();
+        UISamples.Select();
         backgrounds.AddBackgroundFromMap(MapStore.CurrentMap);
         backgrounds.SwipeAnimation();
 

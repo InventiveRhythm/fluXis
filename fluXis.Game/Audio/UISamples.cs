@@ -1,5 +1,7 @@
 using System;
 using fluXis.Game.Overlay.Mouse;
+using fluXis.Game.Skinning;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
@@ -9,11 +11,18 @@ namespace fluXis.Game.Audio;
 
 public partial class UISamples : Component
 {
+    [CanBeNull]
     [Resolved(CanBeNull = true)]
     private GlobalCursorOverlay cursorOverlay { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private SkinManager skinManager { get; set; }
+
     private float pan => cursorOverlay?.RelativePosition.X ?? 0;
 
+    private Sample back;
+    private Sample select;
     private Sample hover;
     private Sample click;
     private Sample clickDisabled;
@@ -31,30 +40,61 @@ public partial class UISamples : Component
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        hover = samples.Get("UI/hover");
-        click = samples.Get("UI/click");
-        clickDisabled = samples.Get("UI/click-disabled");
+        back = skinManager?.GetUISample(SampleType.Back);
+        select = skinManager?.GetUISample(SampleType.Select);
+        hover = skinManager?.GetUISample(SampleType.Hover);
+        click = skinManager?.GetUISample(SampleType.Click);
+        clickDisabled = skinManager?.GetUISample(SampleType.ClickDisabled);
         dropdownOpen = samples.Get("UI/dropdown-open");
         dropdownClose = samples.Get("UI/dropdown-close");
         overlayOpen = samples.Get("UI/Overlay/open");
         overlayClose = samples.Get("UI/Overlay/close");
     }
 
-    public void PlayPanned(Sample sample, float pan, bool randomizePitch = false)
+    protected override void LoadComplete()
     {
-        if (sample == null)
-            return;
+        base.LoadComplete();
 
-        pan = Math.Clamp(pan, 0, 1);
-
-        var channel = sample.GetChannel();
-        channel.Balance.Value = (pan * 2 - 1) * pan_strength;
-
-        if (randomizePitch)
-            channel.Frequency.Value = 1f - pitch_variation / 2f + RNG.NextDouble(pitch_variation);
-
-        channel.Play();
+        if (skinManager != null)
+            skinManager.SkinChanged += onSkinChanged;
     }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        if (skinManager != null)
+            skinManager.SkinChanged -= onSkinChanged;
+
+        back?.Dispose();
+        select?.Dispose();
+        hover?.Dispose();
+        click?.Dispose();
+        clickDisabled?.Dispose();
+        dropdownOpen?.Dispose();
+        dropdownClose?.Dispose();
+        overlayOpen?.Dispose();
+        overlayClose?.Dispose();
+    }
+
+    private void onSkinChanged()
+    {
+        back?.Dispose();
+        select?.Dispose();
+        hover?.Dispose();
+        click?.Dispose();
+        clickDisabled?.Dispose();
+
+        // we're sure skinManager is not null here
+        back = skinManager!.GetUISample(SampleType.Back);
+        select = skinManager.GetUISample(SampleType.Select);
+        hover = skinManager.GetUISample(SampleType.Hover);
+        click = skinManager.GetUISample(SampleType.Click);
+        clickDisabled = skinManager.GetUISample(SampleType.ClickDisabled);
+    }
+
+    public void Back() => back?.Play();
+    public void Select() => select?.Play();
 
     public void Hover(float customPan = -1)
     {
@@ -86,5 +126,30 @@ public partial class UISamples : Component
             overlayClose?.Play();
         else
             overlayOpen?.Play();
+    }
+
+    public static void PlayPanned(Sample sample, float pan, bool randomizePitch = false)
+    {
+        if (sample == null)
+            return;
+
+        pan = Math.Clamp(pan, 0, 1);
+
+        var channel = sample.GetChannel();
+        channel.Balance.Value = (pan * 2 - 1) * pan_strength;
+
+        if (randomizePitch)
+            channel.Frequency.Value = 1f - pitch_variation / 2f + RNG.NextDouble(pitch_variation);
+
+        channel.Play();
+    }
+
+    public enum SampleType
+    {
+        Back,
+        Select,
+        Hover,
+        Click,
+        ClickDisabled
     }
 }
