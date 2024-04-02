@@ -1,10 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using fluXis.Game.Audio;
+﻿using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
-using fluXis.Game.Overlay.Mouse;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -24,9 +21,6 @@ public partial class Bluescreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     public override bool AllowMusicControl => false;
     public override bool ShowCursor => false;
     public override bool AllowExit => false;
-
-    [Resolved]
-    private GlobalCursorOverlay cursorOverlay { get; set; }
 
     private BindableDouble progress { get; } = new();
     private FluXisSpriteText loadingText;
@@ -92,34 +86,7 @@ public partial class Bluescreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     {
         base.LoadComplete();
 
-        progress.BindValueChanged(e =>
-        {
-            if (e.NewValue >= 1)
-            {
-                loadingText.Text = "100%";
-
-                try
-                {
-                    // restart the computer :>
-                    var shutdown = new ProcessStartInfo("shutdown", "/r /t 0")
-                    {
-                        CreateNoWindow = true,
-                        UseShellExecute = false
-                    };
-
-                    Process.Start(shutdown);
-                }
-                catch (Exception)
-                {
-                    // just exit then
-                    Environment.Exit(0);
-                }
-
-                return;
-            }
-
-            loadingText.Text = $"{e.NewValue * 100:0}%";
-        }, true);
+        progress.BindValueChanged(e => loadingText.Text = $"{e.NewValue * 100:0}%", true);
     }
 
     protected override void Update()
@@ -127,21 +94,14 @@ public partial class Bluescreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         progress.Value += Clock.ElapsedFrameTime / 20000;
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
-    {
-        cursorOverlay.FadeIn();
-
-        return base.OnExiting(e);
-    }
-
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        /*switch (e.Action)
+        switch (e.Action)
         {
             case FluXisGlobalKeybind.Back:
                 this.Exit();
                 return true;
-        }*/
+        }
 
         return false;
     }

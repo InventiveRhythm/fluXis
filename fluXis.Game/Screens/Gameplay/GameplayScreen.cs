@@ -50,7 +50,6 @@ using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -331,9 +330,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             if (!Playfield.Manager.Seeking)
                 Samples.Miss();
-
-            if (RNG.NextSingle() < 4 / 100f)
-                Game.TheThing();
         };
 
         background.ParallaxStrength = 0;
