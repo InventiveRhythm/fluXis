@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Custom.Health;
+using fluXis.Game.Skinning.Custom.Judgements;
 using fluXis.Game.Skinning.Custom.Lighting;
 using fluXis.Game.Skinning.Json;
 using fluXis.Shared.Scoring.Enums;
@@ -242,8 +243,12 @@ public class CustomSkin : ISkin
 
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate)
     {
-        /*var path = SkinJson.GetOverrideOrDefault($"Judgement/{judgement.ToString().ToLower()}") + ".png";
-        return storage.Exists(path) ? new Sprite { Texture = textures.Get(path) } : null;*/
+        var path = SkinJson.GetOverrideOrDefault($"Judgement/{judgement.ToString().ToLower()}") + ".png";
+        var texture = storage.Exists(path) ? textures.Get(path) : null;
+
+        if (texture != null)
+            return new SkinnableJudgementText(texture, judgement, isLate);
+
         return null;
     }
 
