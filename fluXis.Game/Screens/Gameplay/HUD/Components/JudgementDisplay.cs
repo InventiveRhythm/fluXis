@@ -1,8 +1,9 @@
 using System;
+using System.Linq;
 using fluXis.Game.Configuration;
-using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Integration;
 using fluXis.Game.Skinning;
+using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -23,15 +24,13 @@ public partial class JudgementDisplay : GameplayHUDComponent
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    private FluXisSpriteText text;
-    private FluXisSpriteText textEarlyLate;
+    private AbstractJudgementText missGhost;
     private Container skinnableTextContainer;
 
     private Bindable<bool> hideFlawless;
     private Bindable<bool> showEarlyLate;
     private Bindable<bool> judgementSplash;
 
-    private CircularContainer circle;
     private Splash splash;
 
     [BackgroundDependencyLoader]
@@ -45,40 +44,19 @@ public partial class JudgementDisplay : GameplayHUDComponent
 
         InternalChildren = new Drawable[]
         {
-            circle = new CircularContainer
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = new Vector2(100),
-                Masking = true,
-                BorderThickness = 5,
-                Alpha = 0,
-                Child = new Box
-                {
-                    AlwaysPresent = true,
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                }
-            },
             splash = new Splash(),
-            text = new FluXisSpriteText
+            missGhost = skinManager.GetJudgement(Shared.Scoring.Enums.Judgement.Miss, false).With(d =>
             {
-                FontSize = 48,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
-            },
+                d.Alpha = 0.5f;
+                d.Scale = new Vector2(1.4f);
+                d.Anchor = Anchor.Centre;
+                d.Origin = Anchor.Centre;
+            }),
             skinnableTextContainer = new Container
             {
                 AutoSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
-            },
-            textEarlyLate = new FluXisSpriteText
-            {
-                FontSize = 24,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Margin = new MarginPadding { Top = 48 }
             }
         };
     }
@@ -87,115 +65,140 @@ public partial class JudgementDisplay : GameplayHUDComponent
     {
         var judgement = result.Judgement;
 
-        if (hideFlawless.Value && judgement == Shared.Scoring.Enums.Judgement.Flawless) return;
+        if (hideFlawless.Value && judgement == Shared.Scoring.Enums.Judgement.Flawless)
+            return;
 
-        const int random_angle = 7;
-        float scale = 1.4f;
-        float rotation = 0;
+        skinnableTextContainer.RemoveAll(_ => true, true);
+
+        var judgementText = skinManager.GetJudgement(judgement, result.Difference < 0);
+        skinnableTextContainer.Add(judgementText);
+        judgementText.Animate(showEarlyLate.Value);
 
         if (judgement == Shared.Scoring.Enums.Judgement.Miss)
-        {
-            scale = 1.8f;
-            rotation = new Random().Next(-random_angle, random_angle);
-        }
-
-        var skinTexture = skinManager.GetJudgement(judgement);
-
-        if (skinTexture != null)
-        {
-            text.FadeOut();
-
-            skinnableTextContainer.Clear();
-            skinnableTextContainer.Add(skinTexture);
-
-            skinnableTextContainer.RotateTo(rotation).ScaleTo(1f).FadeIn()
-                                  .ScaleTo(scale, 1000, Easing.OutQuint)
-                                  .Delay(600).FadeOut(400);
-        }
-        else
-        {
-            skinnableTextContainer.FadeOut();
-
-            text.Text = judgement.ToString();
-            text.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
-            text.RotateTo(rotation).ScaleTo(1f).FadeIn().TransformSpacingTo(new Vector2(0, 0))
-                .ScaleTo(scale, 1000, Easing.OutQuint)
-                .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
-                .Delay(600).FadeOut(400);
-        }
+            missGhost.Animate(false);
 
         if (judgementSplash.Value)
-        {
-            circle.BorderColour = skinManager.SkinJson.GetColorForJudgement(judgement);
-            circle.FadeInFromZero(200)
-                  .TransformTo(nameof(circle.BorderThickness), 20f)
-                  .TransformTo(nameof(circle.BorderThickness), 0f, 700, Easing.OutQuint)
-                  .ScaleTo(0f)
-                  .ScaleTo(1.4f, 500, Easing.OutQuint);
-
-            if (judgement != Shared.Scoring.Enums.Judgement.Miss)
-            {
-                splash.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
-                splash.Splat();
-            }
-        }
+            doSplash(judgement);
 
         lightController.FadeColour(skinManager.SkinJson.GetColorForJudgement(judgement))
                        .FadeColour(Color4.Black, 400);
-
-        if (showEarlyLate.Value && judgement != Shared.Scoring.Enums.Judgement.Flawless && judgement != Shared.Scoring.Enums.Judgement.Miss)
-        {
-            bool early = result.Difference > 0;
-            textEarlyLate.Text = early ? "Early" : "Late";
-            textEarlyLate.Colour = early ? Colour4.FromHex("#37cbfb") : Colour4.FromHex("#fb9d37");
-
-            textEarlyLate.ScaleTo(1f)
-                         .FadeIn()
-                         .TransformSpacingTo(new Vector2(0, 0))
-                         .ScaleTo(scale, 1000, Easing.OutQuint)
-                         .TransformSpacingTo(new Vector2(5, 0), 1000, Easing.OutQuint)
-                         .Delay(600).FadeOut(400);
-        }
-        else textEarlyLate.FadeOut();
     }
 
-    private partial class Splash : Container<CircularContainer>
+    private void doSplash(Shared.Scoring.Enums.Judgement judgement)
     {
+        splash.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
+        splash.Splat(judgement);
+    }
+
+    private partial class Splash : CompositeDrawable
+    {
+        private CircularContainer circle;
+        private Container<Circle> dots;
+
         [BackgroundDependencyLoader]
         private void load()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
-            for (int i = 0; i < 10; i++)
+            InternalChildren = new Drawable[]
             {
-                AddInternal(new CircularContainer
+                circle = new CircularContainer
+                {
+                    Size = new Vector2(100),
+                    Scale = Vector2.Zero,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    BorderColour = Color4.White,
+                    BorderThickness = 5,
+                    Masking = true,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        AlwaysPresent = true,
+                        Alpha = 0
+                    }
+                },
+                dots = new Container<Circle>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(20),
-                    Masking = true,
-                    Alpha = 0,
-                    Child = new Box
+                    ChildrenEnumerable = Enumerable.Range(0, 8).Select(_ => new Circle
                     {
-                        AlwaysPresent = true,
-                        RelativeSizeAxes = Axes.Both
-                    }
-                });
-            }
+                        Size = new Vector2(20),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Alpha = 0
+                    })
+                }
+            };
         }
 
-        public void Splat()
+        public void Splat(Shared.Scoring.Enums.Judgement judgement)
         {
-            foreach (var circle in InternalChildren)
-            {
-                var randomVelocity = new Vector2(RNG.NextSingle(-1f, 1f), RNG.NextSingle(-1f, 1f));
-                var randomScale = RNG.NextSingle(0.5f, 1f);
-                var randomSpeed = RNG.NextSingle(200, 800);
+            const float base_travel = 80;
 
-                circle.Scale = new Vector2(randomScale);
-                circle.MoveTo(Vector2.Zero).MoveTo(randomVelocity * 80, randomSpeed + 400, Easing.OutQuint);
-                circle.FadeIn().Delay(randomSpeed - 200).FadeOutFromOne(300);
+            var count = 1;
+            var travel = base_travel;
+
+            switch (judgement)
+            {
+                case Shared.Scoring.Enums.Judgement.Flawless:
+                    count = 8;
+                    travel *= 1f;
+                    break;
+
+                case Shared.Scoring.Enums.Judgement.Perfect:
+                case Shared.Scoring.Enums.Judgement.Great:
+                    count = 4;
+                    travel *= 0.8f;
+                    break;
+
+                case Shared.Scoring.Enums.Judgement.Alright:
+                case Shared.Scoring.Enums.Judgement.Okay:
+                    count = 2;
+                    travel *= 0.4f;
+                    break;
+
+                case Shared.Scoring.Enums.Judgement.Miss:
+                    count = 0;
+                    travel *= 1.2f;
+                    break;
+
+                case Shared.Scoring.Enums.Judgement.None:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(judgement), judgement, null);
+            }
+
+            circle.TransformTo(nameof(BorderThickness), 20f)
+                  .TransformTo(nameof(BorderThickness), 0f, 1000, Easing.OutQuint)
+                  .ScaleTo(0f).ScaleTo(1.4f * (travel / base_travel), 600, Easing.OutQuint);
+
+            var idx = 0;
+
+            foreach (var dot in dots)
+            {
+                if (idx++ >= count)
+                {
+                    dot.FadeOut();
+                    continue;
+                }
+
+                var direction = RNG.NextSingle(0, 360);
+                var distance = RNG.NextSingle(travel / 2, travel);
+                var randomScale = RNG.NextSingle(0.5f, 1f);
+
+                var vec = new Vector2(
+                    MathF.Cos(direction) * distance,
+                    MathF.Sin(direction) * distance
+                );
+
+                dot.Scale = new Vector2(randomScale);
+                dot.MoveTo(Vector2.Zero)
+                   .MoveTo(vec, 800, Easing.OutCirc)
+                   .FadeIn().Delay(200).FadeOut(400);
             }
         }
     }

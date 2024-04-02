@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Custom.Health;
 using fluXis.Game.Skinning.Custom.Lighting;
 using fluXis.Game.Skinning.Json;
@@ -239,10 +240,11 @@ public class CustomSkin : ISkin
         return null;
     }
 
-    public Drawable GetJudgement(Judgement judgement)
+    public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate)
     {
-        var path = SkinJson.GetOverrideOrDefault($"Judgement/{judgement.ToString().ToLower()}") + ".png";
-        return storage.Exists(path) ? new Sprite { Texture = textures.Get(path) } : null;
+        /*var path = SkinJson.GetOverrideOrDefault($"Judgement/{judgement.ToString().ToLower()}") + ".png";
+        return storage.Exists(path) ? new Sprite { Texture = textures.Get(path) } : null;*/
+        return null;
     }
 
     public Sample GetHitSample() => samples.Get("Samples/Gameplay/hit");

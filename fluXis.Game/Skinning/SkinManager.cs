@@ -6,6 +6,7 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Default;
 using fluXis.Game.Skinning.Json;
 using fluXis.Game.Utils;
@@ -264,7 +265,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     public VisibilityContainer GetColumnLighting(int lane, int keyCount) => currentSkin.GetColumnLighting(lane, keyCount) ?? defaultSkin.GetColumnLighting(lane, keyCount);
     public Drawable GetReceptor(int lane, int keyCount, bool down) => currentSkin.GetReceptor(lane, keyCount, down) ?? defaultSkin.GetReceptor(lane, keyCount, down);
     public Drawable GetHitLine() => currentSkin.GetHitLine() ?? defaultSkin.GetHitLine();
-    public Drawable GetJudgement(Judgement judgement) => currentSkin.GetJudgement(judgement) ?? defaultSkin.GetJudgement(judgement);
+    public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => currentSkin.GetJudgement(judgement, isLate) ?? defaultSkin.GetJudgement(judgement, isLate);
 
     public Sample GetHitSample() => currentSkin.GetHitSample() ?? defaultSkin.GetHitSample();
     public Sample[] GetMissSamples() => currentSkin.GetMissSamples() ?? defaultSkin.GetMissSamples();

@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Json;
 using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Audio.Sample;
@@ -31,7 +32,7 @@ public interface ISkin : IDisposable
     public Drawable GetReceptor(int lane, int keyCount, bool down);
     public Drawable GetHitLine();
 
-    public Drawable GetJudgement(Judgement judgement);
+    public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate);
 
     public Sample GetHitSample();
     public Sample[] GetMissSamples();

@@ -1,7 +1,9 @@
 using System;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Default.Health;
 using fluXis.Game.Skinning.Default.HitObject;
+using fluXis.Game.Skinning.Default.Judgements;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
 using fluXis.Game.Skinning.Default.Stage;
@@ -76,7 +78,7 @@ public class DefaultSkin : ISkin
     }
 
     public Drawable GetHitLine() => new DefaultHitLine();
-    public Drawable GetJudgement(Judgement judgement) => null;
+    public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
 
     public Sample GetHitSample() => samples.Get("Gameplay/hitsound");
     public Sample[] GetMissSamples() => new[] { samples.Get("Gameplay/combobreak") };
