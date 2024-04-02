@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -12,7 +13,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
-public partial class MapListEntry : Container, IComparable<MapListEntry>
+public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
 {
     [Resolved]
     private MapStore maps { get; set; }
@@ -24,7 +25,9 @@ public partial class MapListEntry : Container, IComparable<MapListEntry>
 
     public readonly RealmMapSet MapSet;
 
-    public bool Selected => Equals(maps.CurrentMapSet, MapSet);
+    private SelectedState selectedState = SelectedState.Deselected;
+
+    public bool Selected => MapSet.ID == maps.MapSetBindable.Value.ID;
 
     public List<RealmMap> Maps
     {
@@ -116,14 +119,22 @@ public partial class MapListEntry : Container, IComparable<MapListEntry>
 
     private void select()
     {
+        if (selectedState == SelectedState.Selected)
+            return;
+
         header.Show();
         difficultyContainer.FadeIn(200);
+        selectedState = SelectedState.Selected;
     }
 
     private void deselect()
     {
+        if (selectedState == SelectedState.Deselected)
+            return;
+
         header.Hide();
         difficultyContainer.FadeOut(200);
+        selectedState = SelectedState.Deselected;
     }
 
     protected override bool OnClick(ClickEvent e)
