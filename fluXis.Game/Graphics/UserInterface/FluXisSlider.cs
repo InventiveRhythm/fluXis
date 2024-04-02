@@ -17,6 +17,9 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
     public Bindable<T> Bindable { get; init; }
     public float Step { get; init; }
     public bool PlaySample { get; init; } = true;
+    public bool ShowArrowButtons { get; init; } = true;
+
+    private float pad => ShowArrowButtons ? 20 : 0;
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
     private BasicSliderBar<T> sliderBar;
@@ -28,11 +31,14 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
     private Bindable<double> valueChangePitch;
     private bool firstPlay = true;
 
+    public FluXisSlider()
+    {
+        Height = 20;
+    }
+
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        Height = 20;
-
         InternalChildren = new Drawable[]
         {
             leftIcon = new ClickableSpriteIcon
@@ -42,12 +48,13 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 5 },
-                Action = () => changeValue(-1)
+                Action = () => changeValue(-1),
+                Alpha = ShowArrowButtons ? 1 : 0
             },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Left = 20, Right = 20 },
+                Padding = new MarginPadding { Left = pad, Right = pad },
                 Child = new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -69,7 +76,8 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Margin = new MarginPadding { Right = 5 },
-                Action = () => changeValue(1)
+                Action = () => changeValue(1),
+                Alpha = ShowArrowButtons ? 1 : 0
             }
         };
 

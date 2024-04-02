@@ -67,30 +67,10 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
                     Direction = FillDirection.Vertical,
                     Children = new[]
                     {
-                        new VolumeCategory
-                        {
-                            Text = "Master",
-                            VolumeOverlay = this,
-                            Bindable = audioManager.Volume
-                        },
-                        new VolumeCategory
-                        {
-                            Text = "Music",
-                            VolumeOverlay = this,
-                            Bindable = audioManager.VolumeTrack
-                        },
-                        new VolumeCategory
-                        {
-                            Text = "Effects",
-                            VolumeOverlay = this,
-                            Bindable = audioManager.VolumeSample
-                        },
-                        new VolumeCategory
-                        {
-                            Text = "Hitsounds",
-                            VolumeOverlay = this,
-                            Bindable = config.GetBindable<double>(FluXisSetting.HitSoundVolume)
-                        }
+                        new VolumeCategory("Master", audioManager.Volume, this),
+                        new VolumeCategory("Music", audioManager.VolumeTrack, this),
+                        new VolumeCategory("Effects", audioManager.VolumeSample, this),
+                        new VolumeCategory("Hitsounds", config.GetBindable<double>(FluXisSetting.HitSoundVolume), this),
                     }
                 }
             }

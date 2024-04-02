@@ -1,43 +1,32 @@
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osuTK;
 
 namespace fluXis.Game.Overlay.Volume;
 
-public partial class VolumeCategory : Container
+public partial class VolumeCategory : CompositeDrawable
 {
-    public VolumeOverlay VolumeOverlay { get; set; }
+    private string text { get; }
+    public Bindable<double> Bindable { get; }
+    private VolumeOverlay volumeOverlay { get; }
 
-    public string Text
+    private FluXisSpriteText percentText;
+    private Box background;
+
+    public VolumeCategory(string text, Bindable<double> bindable, VolumeOverlay volumeOverlay)
     {
-        get => text.Text.ToString();
-        set => text.Text = value;
+        this.text = text;
+        Bindable = bindable;
+        this.volumeOverlay = volumeOverlay;
     }
 
-    public Bindable<double> Bindable
-    {
-        get => bindable;
-        set
-        {
-            bindable = value;
-            bindable.BindValueChanged(v => updateProgress(v.NewValue), true);
-        }
-    }
-
-    private readonly FluXisSpriteText text;
-    private readonly FluXisSpriteText percentText;
-    private readonly Box background;
-    private readonly Box progressBackground;
-    private readonly Box progress;
-
-    private Bindable<double> bindable;
-
-    public VolumeCategory()
+    [BackgroundDependencyLoader]
+    private void load()
     {
         AutoSizeAxes = Axes.Y;
         RelativeSizeAxes = Axes.X;
@@ -51,51 +40,63 @@ public partial class VolumeCategory : Container
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            new Container
+            new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Y,
                 RelativeSizeAxes = Axes.X,
                 Padding = new MarginPadding(5),
                 Children = new Drawable[]
                 {
-                    text = new FluXisSpriteText(),
-                    percentText = new FluXisSpriteText
+                    new Container
                     {
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Children = new Drawable[]
+                        {
+                            new FluXisSpriteText
+                            {
+                                Text = text,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
+                            percentText = new FluXisSpriteText
+                            {
+                                Anchor = Anchor.CentreRight,
+                                Origin = Anchor.CentreRight
+                            },
+                        }
                     },
-                    new CircularContainer
+                    new FluXisSlider<double>
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 10,
-                        Masking = true,
-                        Margin = new MarginPadding { Top = 20 },
-                        Children = new Drawable[]
-                        {
-                            progressBackground = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = .5f
-                            },
-                            progress = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both
-                            }
-                        }
-                    }
+                        Bindable = Bindable,
+                        Step = 0.01f,
+                        PlaySample = false,
+                        ShowArrowButtons = false
+                    },
                 }
             }
         });
     }
 
-    private void updateProgress(double value)
+    protected override void LoadComplete()
     {
-        progress.ResizeWidthTo((float)value, 100, Easing.OutQuint);
-        percentText.Text = $"{value:P0}";
+        base.LoadComplete();
 
-        var color = FluXisColors.AccentGradient.Interpolate(new Vector2((float)value));
-        progress.FadeColour(color, 100);
-        progressBackground.FadeColour(color, 100);
+        Bindable.BindValueChanged(updateProgress, true);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        Bindable.ValueChanged -= updateProgress;
+    }
+
+    private void updateProgress(ValueChangedEvent<double> e)
+    {
+        percentText.Text = $"{e.NewValue:P0}";
     }
 
     public void UpdateSelected(bool newValue)
@@ -105,7 +106,7 @@ public partial class VolumeCategory : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        VolumeOverlay.SelectCategory(this);
+        volumeOverlay.SelectCategory(this);
         return true;
     }
 }
