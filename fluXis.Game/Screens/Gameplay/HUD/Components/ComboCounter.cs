@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Components;
@@ -28,20 +29,29 @@ public partial class ComboCounter : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.ScoreProcessor.Combo.BindValueChanged(e =>
-        {
-            switch (e.NewValue)
-            {
-                case 0:
-                    text.FadeColour(Colour4.Red).FadeColour(Colour4.White, 200).FadeOut(200).ScaleTo(1.4f, 300);
-                    break;
+        Screen.ScoreProcessor.Combo.BindValueChanged(comboChanged, true);
+    }
 
-                case >= 5:
-                    text.Text = $"{e.NewValue}";
-                    text.FadeColour(Colour4.White).FadeIn(400);
-                    text.ScaleTo(1.05f).ScaleTo(1f, 200, Easing.OutQuint);
-                    break;
-            }
-        }, true);
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        Screen.ScoreProcessor.Combo.ValueChanged -= comboChanged;
+    }
+
+    private void comboChanged(ValueChangedEvent<int> e)
+    {
+        switch (e.NewValue)
+        {
+            case 0:
+                text.FadeColour(Colour4.Red).FadeColour(Colour4.White, 200).FadeOut(200).ScaleTo(1.4f, 300);
+                break;
+
+            case >= 5:
+                text.Text = $"{e.NewValue}";
+                text.FadeColour(Colour4.White).FadeIn(400);
+                text.ScaleTo(1.05f).ScaleTo(1f, 200, Easing.OutQuint);
+                break;
+        }
     }
 }

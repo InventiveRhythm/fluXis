@@ -1,6 +1,8 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -38,8 +40,26 @@ public partial class AccuracyDisplay : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.ScoreProcessor.Accuracy.BindValueChanged(e => this.TransformTo(nameof(accuracy), e.NewValue, 400, Easing.OutQuint), true);
-        Screen.ScoreProcessor.Rank.BindValueChanged(e => drawableScoreRank.Rank = e.NewValue, true);
+        Screen.ScoreProcessor.Accuracy.BindValueChanged(accuracyChanged, true);
+        Screen.ScoreProcessor.Rank.BindValueChanged(rankChanged, true);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        Screen.ScoreProcessor.Accuracy.ValueChanged -= accuracyChanged;
+        Screen.ScoreProcessor.Rank.ValueChanged -= rankChanged;
+    }
+
+    private void accuracyChanged(ValueChangedEvent<float> e)
+    {
+        this.TransformTo(nameof(accuracy), e.NewValue, 400, Easing.OutQuint);
+    }
+
+    private void rankChanged(ValueChangedEvent<ScoreRank> e)
+    {
+        drawableScoreRank.Rank = e.NewValue;
     }
 
     protected override void Update()

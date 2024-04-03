@@ -40,8 +40,6 @@ public partial class JudgementDisplay : GameplayHUDComponent
         showEarlyLate = config.GetBindable<bool>(FluXisSetting.ShowEarlyLate);
         judgementSplash = config.GetBindable<bool>(FluXisSetting.JudgementSplash);
 
-        Screen.JudgementProcessor.ResultAdded += popUp;
-
         InternalChildren = new Drawable[]
         {
             splash = new Splash(),
@@ -59,6 +57,20 @@ public partial class JudgementDisplay : GameplayHUDComponent
                 Origin = Anchor.Centre
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Screen.JudgementProcessor.ResultAdded += popUp;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        Screen.JudgementProcessor.ResultAdded -= popUp;
     }
 
     private void popUp(HitResult result)

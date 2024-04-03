@@ -26,8 +26,6 @@ public partial class HitErrorBar : GameplayHUDComponent
         AutoSizeAxes = Axes.Y;
         Width = Screen.HitWindows.TimingFor(Screen.HitWindows.LowestHitable) * 2f / Screen.Rate;
 
-        Screen.JudgementProcessor.ResultAdded += addHit;
-
         Container colors;
 
         InternalChildren = new Drawable[]
@@ -98,6 +96,20 @@ public partial class HitErrorBar : GameplayHUDComponent
                 }
             });
         }
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Screen.JudgementProcessor.ResultAdded += addHit;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        Screen.JudgementProcessor.ResultAdded -= addHit;
     }
 
     private void addHit(HitResult result)
