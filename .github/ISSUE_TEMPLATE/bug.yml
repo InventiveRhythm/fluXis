@@ -1,42 +1,30 @@
 name: Bug report
-description: Create a report to help us improve the game.
+description: Report something that is not working as expected.
 labels: [bug]
 body:
-  - type: checkboxes
+  - type: markdown
     attributes:
-      label: Is this a new issue?
-      description: Please check the other issues if this was already reported.
+      value: Before submitting a bug report, please check that the bug is not already reported in the [issues](https://github.com/TeamFluXis/fluXis/issues)
+  - type: dropdown
+    attributes:
+      label: Type
       options:
-        - label: Yes, I checked the other issues.
-          required: true
-  - type: textarea
-    attributes:
-      label: fluXis version
-      description: What version of fluXis are you using? (Visible on the first page of the settings menu)
+        - Crash/Error/Exception
+        - Behavior
+        - Performance
+        - Other
     validations:
       required: true
-  - type: textarea
+  - type: input
     attributes:
-      label: Device
-      description: What device are you using? (Windows 10, Windows 11, etc.)
+      label: Version
+      description: The version you encountered the bug on. (At the bottom of the first page of the settings menu)
     validations:
       required: true
   - type: textarea
     attributes:
       label: Description of the bug
       description: What exactly is happening?
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Expected behavior
-      description: What should have happened?
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Steps to reproduce
-      description: How can we reproduce the bug?
     validations:
       required: true
   - type: textarea
