@@ -251,10 +251,12 @@ public partial class NormalResults : Container
                                 RelativeSizeAxes = Axes.X,
                                 Height = 80,
                                 Direction = FillDirection.Vertical,
+                                Padding = new MarginPadding { Horizontal = 20 },
                                 Children = new Drawable[]
                                 {
                                     new TruncatingText
                                     {
+                                        RelativeSizeAxes = Axes.X,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = map.Metadata.Title,
@@ -262,6 +264,7 @@ public partial class NormalResults : Container
                                     },
                                     new TruncatingText
                                     {
+                                        RelativeSizeAxes = Axes.X,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = map.Metadata.Artist,
