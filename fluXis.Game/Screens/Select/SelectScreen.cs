@@ -261,6 +261,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             Maps.Add(set);
         }
 
+        Maps.Sort(MapUtils.CompareSets);
+
         ScheduleAfterChildren(() => MapList.EndBulkInsert());
 
         if (!sets.Any())
@@ -283,6 +285,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             {
                 MapList.Insert(entry);
                 Maps.Add(set);
+                Maps.Sort(MapUtils.CompareSets);
                 lookup[set] = entry;
                 noMapsContainer.Hide();
             });
@@ -718,6 +721,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             else
                 child.Hide();
         }
+
+        Maps.Sort(MapUtils.CompareSets);
 
         if (!Maps.Any())
             noMapsContainer.Show();

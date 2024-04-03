@@ -12,6 +12,18 @@ namespace fluXis.Game.Utils;
 
 public static class MapUtils
 {
+    public static int CompareSets(RealmMapSet first, RealmMapSet second)
+    {
+        // compare title
+        var compare = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.Ordinal);
+
+        if (compare != 0)
+            return compare;
+
+        compare = second.DateAdded.CompareTo(first.DateAdded);
+        return compare;
+    }
+
     public static RealmMapFilters UpdateFilters(this RealmMapFilters filters, MapInfo map, MapEvents events)
     {
         foreach (var hitObject in map.HitObjects)

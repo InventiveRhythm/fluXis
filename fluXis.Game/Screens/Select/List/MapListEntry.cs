@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.UI;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -97,17 +98,7 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
         maps.MapSetBindable.ValueChanged -= updateSelected;
     }
 
-    public int CompareTo(MapListEntry other)
-    {
-        // compare title
-        var compare = string.Compare(MapSet.Metadata.Title, other.MapSet.Metadata.Title, StringComparison.Ordinal);
-
-        if (compare != 0)
-            return compare;
-
-        compare = other.MapSet.DateAdded.CompareTo(MapSet.DateAdded);
-        return compare;
-    }
+    public int CompareTo(MapListEntry other) => MapUtils.CompareSets(MapSet, other.MapSet);
 
     private void updateSelected(ValueChangedEvent<RealmMapSet> set)
     {
