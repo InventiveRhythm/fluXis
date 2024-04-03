@@ -16,7 +16,19 @@ public class RealmMapFilters : RealmObject
     public float NotesPerSecond { get; set; }
 
     [Ignored]
-    public float LongNotePercentage => (float)LongNoteCount / (NoteCount + LongNoteCount);
+    public float LongNotePercentage
+    {
+        get
+        {
+            if (NoteCount + LongNoteCount == 0)
+                return 0;
+
+            if (LongNoteCount == 0)
+                return 0;
+
+            return (float)LongNoteCount / (NoteCount + LongNoteCount);
+        }
+    }
 
     // gimmick stuffs
     public bool HasScrollVelocity { get; set; }
