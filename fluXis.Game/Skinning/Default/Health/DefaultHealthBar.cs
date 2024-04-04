@@ -2,17 +2,17 @@ using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Skinning.Default.Health;
 
-public partial class DefaultHealthBar : Container
+public partial class DefaultHealthBar : DefaultSkinDrawable
 {
     private HealthProcessor processor { get; }
 
@@ -21,7 +21,8 @@ public partial class DefaultHealthBar : Container
     private readonly ColourInfo drainGradient = ColourInfo.GradientHorizontal(Colour4.FromHex("#40aef8"), Colour4.FromHex("#751010"));
     private double drainRate;
 
-    public DefaultHealthBar(HealthProcessor processor)
+    public DefaultHealthBar(SkinJson skinJson, HealthProcessor processor)
+        : base(skinJson)
     {
         this.processor = processor;
     }
@@ -34,9 +35,9 @@ public partial class DefaultHealthBar : Container
         Origin = Anchor.BottomLeft;
         CornerRadius = 10;
         Masking = true;
-        BorderColour = ColourInfo.GradientVertical(FluXisColors.Accent, FluXisColors.Accent4);
+        BorderColour = ColourInfo.GradientVertical(GetIndexOrFallback(1, FluXisColors.Accent), GetIndexOrFallback(2, FluXisColors.Accent4));
         BorderThickness = 4;
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new Box
             {
@@ -47,7 +48,7 @@ public partial class DefaultHealthBar : Container
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Colour = FluXisColors.Accent,
+                Colour = GetIndexOrFallback(1, FluXisColors.Accent),
                 FontSize = 18,
                 Y = 10
             }

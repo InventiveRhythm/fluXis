@@ -48,11 +48,11 @@ public class DefaultSkin : ISkin
     }
 
     public Drawable GetStageBackground() => new DefaultStageBackground();
-    public Drawable GetStageBorder(bool right) => right ? new DefaultStageBorderRight() : new DefaultStageBorderLeft();
+    public Drawable GetStageBorder(bool right) => right ? new DefaultStageBorderRight(SkinJson) : new DefaultStageBorderLeft(SkinJson);
     public Drawable GetLaneCover(bool bottom) => bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();
 
     public Drawable GetHealthBarBackground() => new DefaultHealthBackground();
-    public Drawable GetHealthBar(HealthProcessor processor) => new DefaultHealthBar(processor);
+    public Drawable GetHealthBar(HealthProcessor processor) => new DefaultHealthBar(SkinJson, processor);
 
     public Drawable GetHitObject(int lane, int keyCount)
     {
@@ -92,7 +92,7 @@ public class DefaultSkin : ISkin
         return receptor;
     }
 
-    public Drawable GetHitLine() => new DefaultHitLine();
+    public Drawable GetHitLine() => new DefaultHitLine(SkinJson);
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
 
     public Sample GetHitSample() => samples.Get("Gameplay/hitsound");

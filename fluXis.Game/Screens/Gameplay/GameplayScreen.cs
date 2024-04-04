@@ -36,6 +36,7 @@ using fluXis.Game.Screens.Gameplay.Overlay.Effect;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
+using fluXis.Game.Skinning.Default;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
 using fluXis.Shared.Scoring.Enums;
@@ -185,6 +186,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         MapEvents = Map.GetMapEvents();
         Map.Sort();
         getKeyCountFromEvents();
+
+        dependencies.CacheAs<ICustomColorProvider>(Map.Colors);
 
         var difficulty = Map.AccuracyDifficulty == 0 ? 8 : Map.AccuracyDifficulty;
         difficulty *= Mods.Any(m => m is HardMod) ? 1.5f : 1;

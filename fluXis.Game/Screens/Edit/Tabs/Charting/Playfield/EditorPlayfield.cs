@@ -54,8 +54,8 @@ public partial class EditorPlayfield : Container
                 Clock = clock
             },
             new DefaultStageBackground(),
-            new DefaultStageBorderLeft(),
-            new DefaultStageBorderRight(),
+            new DefaultStageBorderLeft(null),
+            new DefaultStageBorderRight(null),
             waveform = new WaveformGraph
             {
                 Height = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount,

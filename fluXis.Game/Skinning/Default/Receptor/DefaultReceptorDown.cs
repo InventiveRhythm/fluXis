@@ -1,4 +1,5 @@
 using fluXis.Game.Skinning.Json;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Skinning.Default.Receptor;
 
@@ -9,5 +10,5 @@ public partial class DefaultReceptorDown : DefaultReceptorUp
     {
     }
 
-    public override void UpdateColor(int lane, int keyCount) => Diamond.BorderColour = SkinJson.GetLaneColor(lane, keyCount);
+    protected override void SetColor(Colour4 color) => Diamond.BorderColour = color;
 }

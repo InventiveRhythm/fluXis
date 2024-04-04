@@ -1,13 +1,18 @@
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Skinning.Default.Stage;
 
-public partial class DefaultStageBorderLeft : Container
+public partial class DefaultStageBorderLeft : DefaultSkinDrawable
 {
+    public DefaultStageBorderLeft(SkinJson skinJson)
+        : base(skinJson)
+    {
+    }
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -16,7 +21,7 @@ public partial class DefaultStageBorderLeft : Container
         Anchor = Anchor.TopLeft;
         Origin = Anchor.TopRight;
 
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new Box
             {
@@ -30,7 +35,7 @@ public partial class DefaultStageBorderLeft : Container
                 RelativeSizeAxes = Axes.Y,
                 Width = 2,
                 Alpha = .5f,
-                Colour = FluXisColors.Accent3
+                Colour = GetIndexOrFallback(1, FluXisColors.Accent3)
             }
         };
     }

@@ -7,19 +7,17 @@ using osuTK;
 
 namespace fluXis.Game.Skinning.Default.Receptor;
 
-public partial class DefaultReceptorUp : Container
+public partial class DefaultReceptorUp : DefaultSkinDrawable
 {
-    protected readonly Container Diamond;
-    protected SkinJson SkinJson { get; }
+    protected Container Diamond { get; }
 
     public DefaultReceptorUp(SkinJson skinJson)
+        : base(skinJson)
     {
-        SkinJson = skinJson;
-
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new Box
             {
@@ -45,6 +43,4 @@ public partial class DefaultReceptorUp : Container
             }
         };
     }
-
-    public virtual void UpdateColor(int lane, int keyCount) { }
 }

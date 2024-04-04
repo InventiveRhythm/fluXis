@@ -1,11 +1,8 @@
-using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Skinning;
-using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
@@ -56,7 +53,7 @@ public partial class OldDrawableHitObject : CompositeDrawable
             notePiece = skinManager.GetHitObject(Data.Lane, manager.KeyCount)
         };
 
-        if (manager.UseSnapColors)
+        /*if (manager.UseSnapColors)
         {
             var colorStart = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.Time));
             var colorEnd = FluXisColors.GetSnapColor(manager.GetSnapIndex((int)Data.EndTime));
@@ -69,7 +66,7 @@ public partial class OldDrawableHitObject : CompositeDrawable
 
             if (holdEndPiece is DefaultHitObjectEnd defaultEnd) defaultEnd.SetColor(colorEnd.Darken(.4f));
             else holdEndPiece.Colour = colorEnd.Darken(.4f);
-        }
+        }*/
     }
 
     public void MissLongNote()

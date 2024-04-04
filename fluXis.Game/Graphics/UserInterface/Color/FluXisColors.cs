@@ -140,56 +140,72 @@ public static class FluXisColors
     }
 
     public static Colour4 GetLaneColor(int lane, int keyCount)
+        => GetLaneColor(GetLaneColorIndex(lane, keyCount));
+
+    public static Colour4 GetLaneColor(int index)
+    {
+        var colors = new[]
+        {
+            Colour4.White,
+            Accent,
+            Accent4,
+            Accent.Lighten(.4f)
+        };
+
+        return colors[index];
+    }
+
+    public static int GetLaneColorIndex(int lane, int keyCount)
     {
         return keyCount switch
         {
-            1 => Accent.Lighten(.4f),
-            2 => Accent4,
+            1 => 3,
+            2 => 2,
             3 => lane switch
             {
-                1 or 3 => Accent4,
-                _ => Accent.Lighten(.4f)
+                1 or 3 => 2,
+                _ => 3
             },
             4 => lane switch
             {
-                1 or 4 => Accent,
-                _ => Accent4
+                1 or 4 => 1,
+                _ => 2
             },
             5 => lane switch
             {
-                1 or 5 => Accent,
-                2 or 4 => Accent4,
-                _ => Accent.Lighten(.4f)
+                1 or 5 => 1,
+                2 or 4 => 2,
+                _ => 3
             },
             6 => lane switch
             {
-                1 or 3 or 4 or 6 => Accent4,
-                _ => Accent
+                1 or 3 or 4 or 6 => 2,
+                _ => 1
             },
             7 => lane switch
             {
-                1 or 3 or 5 or 7 => Accent4,
-                2 or 6 => Accent,
-                _ => Accent.Lighten(.4f)
+                1 or 3 or 5 or 7 => 2,
+                2 or 6 => 1,
+                _ => 3
             },
             8 => lane switch
             {
-                1 or 3 or 6 or 8 => Accent,
-                _ => Accent4
+                1 or 3 or 6 or 8 => 1,
+                _ => 2
             },
             9 => lane switch
             {
-                1 or 3 or 7 or 9 => Accent,
-                2 or 4 or 6 or 8 => Accent4,
-                _ => Accent.Lighten(.4f)
+                1 or 3 or 7 or 9 => 1,
+                2 or 4 or 6 or 8 => 2,
+                _ => 3
             },
             10 => lane switch
             {
-                1 or 10 => Accent.Lighten(.4f),
-                3 or 5 or 6 or 8 => Accent4,
-                _ => Accent
+                1 or 10 => 3,
+                3 or 5 or 6 or 8 => 2,
+                _ => 1
             },
-            _ => Colour4.White
+            _ => 0
         };
     }
 
