@@ -21,6 +21,10 @@ public class MapInfo
     public string EffectFile { get; set; } = string.Empty;
     public string StoryboardFile { get; set; } = string.Empty;
     public MapMetadata Metadata { get; set; }
+
+    [JsonProperty("colors")]
+    public MapColors Colors { get; set; } = new();
+
     public List<HitObject> HitObjects { get; set; }
     public List<TimingPoint> TimingPoints { get; set; }
     public List<ScrollVelocity> ScrollVelocities { get; set; }

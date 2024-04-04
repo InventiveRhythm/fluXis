@@ -117,9 +117,9 @@ public class EditorMap
         var color = ImageUtils.GetAverageColour(stream);
 
         if (color != Colour4.Transparent)
-            RealmMap.Metadata.Color = color;
+            RealmMap.Metadata.Color = MapInfo.Colors.Accent = color;
         else
-            RealmMap.Metadata.ColorHex = string.Empty;
+            RealmMap.Metadata.ColorHex = MapInfo.Colors.AccentHex = string.Empty;
     }
 
     public void SetCover(FileInfo file)

@@ -102,7 +102,8 @@ public class FluXisImport : MapImporter
                             Tags = mapInfo.Metadata.Tags ?? "",
                             Audio = mapInfo.AudioFile,
                             Background = mapInfo.BackgroundFile,
-                            PreviewTime = mapInfo.Metadata.PreviewTime
+                            PreviewTime = mapInfo.Metadata.PreviewTime,
+                            ColorHex = string.IsNullOrEmpty(mapInfo.Colors.AccentHex) ? "" : mapInfo.Colors.AccentHex,
                         },
                         Difficulty = mapInfo.Metadata.Difficulty ?? "Unknown",
                         MapSet = mapSet,
@@ -115,17 +116,20 @@ public class FluXisImport : MapImporter
 
                     mapInfo.Map = map;
 
-                    var background = map.GetBackgroundStream();
-
-                    if (background != null)
+                    if (string.IsNullOrEmpty(map.Metadata.ColorHex))
                     {
-                        var color = ImageUtils.GetAverageColour(background);
+                        var background = map.GetBackgroundStream();
 
-                        if (color != Colour4.Transparent)
-                            map.Metadata.Color = color;
+                        if (background != null)
+                        {
+                            var color = ImageUtils.GetAverageColour(background);
+
+                            if (color != Colour4.Transparent)
+                                map.Metadata.Color = color;
+                        }
+                        else
+                            Logger.Log("Failed to load background for color extraction");
                     }
-                    else
-                        Logger.Log("Failed to load background for color extraction");
 
                     var events = mapInfo.GetMapEvents();
 
