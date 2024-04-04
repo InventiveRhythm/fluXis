@@ -8,6 +8,7 @@ using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using SixLabors.ImageSharp;
 
@@ -366,6 +367,7 @@ public class EditorMap
 
     public class EditorMapInfo : MapInfo, IDeepCloneable<EditorMapInfo>
     {
+        [JsonIgnore]
         public MapEvents MapEvents { get; set; }
 
         public EditorMapInfo(MapMetadata metadata)
