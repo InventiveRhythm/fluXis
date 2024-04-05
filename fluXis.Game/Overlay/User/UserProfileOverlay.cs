@@ -102,17 +102,25 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
 
     public void ShowUser(long id)
     {
+        var visible = State.Value == Visibility.Visible;
         Show();
 
         if (user?.ID != id)
-            fetch(id);
+            fetch(id, visible);
     }
 
-    private async void fetch(long id)
+    private async void fetch(long id, bool wasVisible)
     {
+        if (wasVisible)
+        {
+            Schedule(() => flow.FadeOut(200).OnComplete(_ => fetch(id, false)));
+            return;
+        }
+
         Schedule(() =>
         {
             flow.Clear();
+            flow.Show();
             loading.Show();
         });
 
@@ -174,7 +182,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                         {
                                             Alpha = user.Club?.ID == 0 ? 0 : 1
                                         },
-                                        new ProfileFollowerList()
+                                        new ProfileFollowerList(user.ID),
                                     }
                                 },
                                 Empty(),

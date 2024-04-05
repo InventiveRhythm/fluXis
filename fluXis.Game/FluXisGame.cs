@@ -68,6 +68,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private Container screenContainer;
     private FluXisScreenStack screenStack;
     private Container<VisibilityContainer> overlayContainer;
+    private UserProfileOverlay userProfileOverlay;
     private Toolbar toolbar;
     private PanelContainer panelContainer;
     private FloatingNotificationContainer notificationContainer;
@@ -109,7 +110,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(new Dashboard(), overlayContainer.Add, true);
         loadComponent(new ChatOverlay(), overlayContainer.Add, true);
-        loadComponent(new UserProfileOverlay(), overlayContainer.Add, true);
+        loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);
 
@@ -311,6 +312,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         screenStack.Push(new SoloResults(map, score, player));
     }
+
+    public void PresentUser(long id)
+        => userProfileOverlay.ShowUser(id);
 
     public override void ShowMap(RealmMapSet set)
     {
