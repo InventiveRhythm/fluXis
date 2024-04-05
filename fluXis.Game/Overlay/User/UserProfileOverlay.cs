@@ -172,7 +172,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                     {
                                         new ProfileSidebarClub(user.Club ?? new APIClubShort())
                                         {
-                                            Alpha = user.Club == null ? 0 : 1
+                                            Alpha = user.Club?.ID == 0 ? 0 : 1
                                         },
                                         new ProfileFollowerList()
                                     }
