@@ -15,7 +15,7 @@ public static class MapUtils
     public static int CompareSets(RealmMapSet first, RealmMapSet second)
     {
         // compare title
-        var compare = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.Ordinal);
+        var compare = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.OrdinalIgnoreCase);
 
         if (compare != 0)
             return compare;
