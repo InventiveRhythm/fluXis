@@ -82,6 +82,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                             {
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
+                                AlwaysPresent = true,
                                 Direction = FillDirection.Vertical,
                                 Padding = new MarginPadding { Top = 70, Bottom = 20, Horizontal = 20 },
                                 Spacing = new Vector2(20)
@@ -120,7 +121,6 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
         Schedule(() =>
         {
             flow.Clear();
-            flow.Show();
             loading.Show();
         });
 
@@ -139,6 +139,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
 
     private void displayData(APIUser user, APIUserMaps maps)
     {
+        flow.Show();
         flow.Children = new Drawable[]
         {
             new ProfileHeader(user),
