@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
@@ -59,19 +60,20 @@ public class OsuMap
     public MapInfo ToMapInfo()
     {
         if (Mode != 3)
-            throw new System.Exception("Only osu!mania maps are supported.");
+            throw new Exception("Only osu!mania maps are supported.");
 
-        MapInfo mapInfo = new(new MapMetadata
+        var mapInfo = new MapInfo
         {
-            Title = Title?.Trim() ?? "",
-            Artist = Artist?.Trim() ?? "",
-            Mapper = Creator?.Trim() ?? "",
-            Difficulty = Version?.Trim() ?? "",
-            Source = Source?.Trim() ?? "",
-            Tags = Tags?.Trim() ?? "",
-            PreviewTime = PreviewTime
-        })
-        {
+            Metadata = new MapMetadata
+            {
+                Title = Title?.Trim() ?? "",
+                Artist = Artist?.Trim() ?? "",
+                Mapper = Creator?.Trim() ?? "",
+                Difficulty = Version?.Trim() ?? "",
+                Source = Source?.Trim() ?? "",
+                Tags = Tags?.Trim() ?? "",
+                PreviewTime = PreviewTime
+            },
             AudioFile = AudioFilename.Trim(),
             BackgroundFile = "",
             HitObjects = new List<HitObject>(),
@@ -81,22 +83,6 @@ public class OsuMap
             AccuracyDifficulty = OverallDifficulty
         };
 
-        List<int> keyCounts = new();
-
-        foreach (var hitObject in HitObjects)
-        {
-            if (!keyCounts.Contains(hitObject.X))
-                keyCounts.Add(hitObject.X);
-        }
-
-        keyCounts.Sort();
-
-        foreach (var hitObject in HitObjects)
-        {
-            var lane = (int)Math.Floor(hitObject.X * CircleSize / 512);
-            mapInfo.HitObjects.Add(hitObject.ToHitObjectInfo(lane));
-        }
-
         foreach (var timingPoint in TimingPoints)
         {
             if (timingPoint.IsScrollVelocity)
@@ -104,6 +90,8 @@ public class OsuMap
             else
                 mapInfo.TimingPoints.Add(timingPoint.ToTimingPointInfo());
         }
+
+        mapInfo.HitObjects.AddRange(HitObjects.Select(h => h.ToHitObjectInfo(this)));
 
         foreach (var osuEvent in Events)
         {

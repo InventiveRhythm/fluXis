@@ -1,29 +1,21 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using fluXis.Game.Utils;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Import.osu.Map.Enums;
+using osu.Framework.Graphics.Primitives;
 
 namespace fluXis.Import.osu.Map;
 
 public class OsuParser
 {
-    private List<string> general { get; }
-    private List<string> metadata { get; }
-    private List<string> difficulty { get; }
-    private List<string> events { get; }
-    private List<string> timingPoints { get; }
-    private List<string> hitObjects { get; }
-
-    public OsuParser()
-    {
-        general = new List<string>();
-        metadata = new List<string>();
-        difficulty = new List<string>();
-        events = new List<string>();
-        timingPoints = new List<string>();
-        hitObjects = new List<string>();
-    }
+    private List<string> general { get; } = new();
+    private List<string> metadata { get; } = new();
+    private List<string> difficulty { get; } = new();
+    private List<string> events { get; } = new();
+    private List<string> timingPoints { get; } = new();
+    private List<string> hitObjects { get; } = new();
 
     public void AddLine(string line, OsuFileSection section)
     {
@@ -195,15 +187,27 @@ public class OsuParser
         foreach (var line in hitObjects)
         {
             string[] split = line.Split(',');
-            string[] colonSplit = split[5].Split(":");
+            string[] colonSplit = split[5].Split(':');
 
-            map.HitObjects.Add(new OsuHitObject
+            var pos = new Vector2I(int.Parse(split[0]), int.Parse(split[1]));
+            var startTime = split[2].ToFloatInvariant();
+            var type = (OsuHitObjectType)int.Parse(split[3]);
+            var sound = (OsuHitSound)int.Parse(split[4]);
+            var customSound = colonSplit.LastOrDefault();
+
+            var hit = new OsuHitObject
             {
-                X = int.Parse(split[0]),
-                StartTime = int.Parse(split[2]),
-                EndTime = int.Parse(colonSplit[0]),
-                HitSound = colonSplit.LastOrDefault() ?? ""
-            });
+                Position = pos,
+                StartTime = startTime,
+                HitSound = sound,
+                CustomHitSound = customSound,
+                Type = type
+            };
+
+            if (type.HasFlag(OsuHitObjectType.Hold))
+                hit.EndTime = colonSplit[0].ToFloatInvariant();
+
+            map.HitObjects.Add(hit);
         }
     }
 }
