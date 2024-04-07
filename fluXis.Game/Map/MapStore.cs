@@ -420,7 +420,7 @@ public partial class MapStore : Component
 
         if (!string.IsNullOrEmpty(refEffectString))
         {
-            effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fse";
+            effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx";
             string effectPath = MapFiles.GetFullPath(set.GetPathForFile(effectName));
             File.WriteAllText(effectPath, refEffectString);
         }
