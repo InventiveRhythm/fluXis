@@ -23,6 +23,9 @@ public class DefaultSkin : ISkin
     private TextureStore textures { get; }
     private ISampleStore samples { get; }
 
+    public const float BORDER_BASE = 8;
+    public const float BORDER_COLOR = 4;
+
     public DefaultSkin(TextureStore textures, ISampleStore samples)
     {
         SkinJson = CreateJson();
