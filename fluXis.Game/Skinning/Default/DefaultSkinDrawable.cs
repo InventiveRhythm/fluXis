@@ -34,9 +34,9 @@ public partial class DefaultSkinDrawable : CompositeDrawable
 
     protected Colour4 GetIndexOrFallback(int index, Colour4 fallback)
     {
-        var col = ColorProvider?.GetColor(index);
+        var col = ColorProvider?.GetColor(index, fallback);
 
-        if (col == null || col == Colour4.Transparent)
+        if (col == null)
             return fallback;
 
         return col.Value;

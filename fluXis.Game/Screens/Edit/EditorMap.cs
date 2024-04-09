@@ -74,13 +74,14 @@ public class EditorMap
 
     #endregion
 
-    public void SetKeyMode(int mode)
+    public bool SetKeyMode(int mode)
     {
         if (!CanChangeTo(mode))
-            return;
+            return false;
 
         RealmMap.KeyCount = mode;
         KeyModeChanged?.Invoke(mode);
+        return true;
     }
 
     public bool CanChangeTo(int mode)

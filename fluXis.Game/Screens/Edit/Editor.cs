@@ -191,6 +191,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         Children = new EditorTab[]
                         {
                             new SetupTab(),
+                            // new OldSetupTab(),
                             new ChartingTab(),
                             DebugUtils.IsDebugBuild ? new DesignTab() : new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
                             new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),

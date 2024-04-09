@@ -71,11 +71,11 @@ public class MapColors : ICustomColorProvider
     public bool HasColorFor(int lane, int keyCount, out Colour4 colour)
     {
         var index = FluXisColors.GetLaneColorIndex(lane, keyCount);
-        colour = GetColor(index);
+        colour = GetColor(index, Colour4.Transparent);
         return colour != Colour4.Transparent;
     }
 
-    public Colour4 GetColor(int index)
+    public Colour4 GetColor(int index, Colour4 fallback)
     {
         var colors = new[]
         {
@@ -85,6 +85,14 @@ public class MapColors : ICustomColorProvider
             Middle
         };
 
-        return colors[index];
+        if (index < 0 || index >= colors.Length)
+            return fallback;
+
+        var col = colors[index];
+
+        if (col == Colour4.Transparent)
+            return fallback;
+
+        return col;
     }
 }

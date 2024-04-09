@@ -1,9 +1,8 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Drawables;
-using fluXis.Game.Screens.Edit.Tabs.Metadata;
+using fluXis.Game.Screens.Edit.Tabs.Setup;
+using fluXis.Game.Screens.Edit.Tabs.Setup.Entries;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,111 +17,185 @@ public partial class SetupTab : EditorTab
     public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
     public override string TabName => "Setup";
 
-    [Resolved]
-    private EditorMap map { get; set; }
-
-    private MapBackground background;
-    private MapCover cover;
-    private TruncatingText titleText;
-    private TruncatingText artistText;
-
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(EditorMap map)
     {
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2
             },
-            new Container
+            new FluXisScrollContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]
+                ScrollbarVisible = false,
+                Child = new FillFlowContainer
                 {
-                    new FluXisScrollContainer
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Spacing = new Vector2(30),
+                    Padding = new MarginPadding { Horizontal = 200, Vertical = 50 },
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Padding = new MarginPadding { Top = 300 },
-                        Child = new FillFlowContainer
+                        new SetupHeader(),
+                        new Container
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
-                            Children = new Drawable[]
-                            {
-                                new AssetsSetupSection(),
-                                new MetadataSetupSection(),
-                                new DifficultySetupSection(),
-                                new KeyModeSetupSection()
-                            }
-                        }
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 300,
-                        Masking = true,
-                        Children = new Drawable[]
-                        {
-                            background = new MapBackground(map.RealmMap)
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                FillMode = FillMode.Fill
-                            },
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Colour4.Black,
-                                Alpha = 0.25f
-                            },
-                            new Container
+                            Padding = new MarginPadding { Horizontal = 40 },
+                            Child = new GridContainer
                             {
                                 RelativeSizeAxes = Axes.X,
-                                Height = 150,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Padding = new MarginPadding { Horizontal = 220 },
-                                Children = new Drawable[]
+                                AutoSizeAxes = Axes.Y,
+                                ColumnDimensions = new[]
                                 {
-                                    new Container
+                                    new Dimension(),
+                                    new Dimension(GridSizeMode.Absolute, 20),
+                                    new Dimension()
+                                },
+                                RowDimensions = new[]
+                                {
+                                    new Dimension(GridSizeMode.AutoSize),
+                                },
+                                Content = new[]
+                                {
+                                    new[]
                                     {
-                                        Size = new Vector2(150),
-                                        CornerRadius = 20,
-                                        Masking = true,
-                                        EdgeEffect = FluXisStyles.ShadowMedium,
-                                        Child = cover = new MapCover(map.MapSet)
+                                        new FillFlowContainer
                                         {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre
-                                        }
-                                    },
-                                    new FillFlowContainer
-                                    {
-                                        RelativeSizeAxes = Axes.X,
-                                        AutoSizeAxes = Axes.Y,
-                                        Anchor = Anchor.CentreLeft,
-                                        Origin = Anchor.CentreLeft,
-                                        Direction = FillDirection.Vertical,
-                                        Padding = new MarginPadding { Left = 170 },
-                                        Children = new Drawable[]
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(30),
+                                            Children = new Drawable[]
+                                            {
+                                                new SetupSection("Metadata")
+                                                {
+                                                    Entries = new Drawable[]
+                                                    {
+                                                        new SetupTextBox("Title")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.Title,
+                                                            Placeholder = "...",
+                                                            OnChange = value => map.MapInfo.Metadata.Title = map.RealmMap.Metadata.Title = value
+                                                        },
+                                                        new SetupTextBox("Artist")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.Artist,
+                                                            Placeholder = "...",
+                                                            OnChange = value => map.MapInfo.Metadata.Artist = map.RealmMap.Metadata.Artist = value
+                                                        },
+                                                        new SetupTextBox("Mapper")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.Mapper,
+                                                            Placeholder = "...",
+                                                            OnChange = value => map.MapInfo.Metadata.Mapper = map.RealmMap.Metadata.Mapper = value
+                                                        },
+                                                        new SetupTextBox("Difficulty")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.Difficulty,
+                                                            Placeholder = "...",
+                                                            OnChange = value => map.MapInfo.Metadata.Difficulty = map.RealmMap.Difficulty = value
+                                                        },
+                                                        new SetupTextBox("Source")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.Source,
+                                                            Placeholder = "No Source",
+                                                            OnChange = value => map.MapInfo.Metadata.Source = map.RealmMap.Metadata.Source = value
+                                                        },
+                                                        new SetupTextBox("Tags")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.Tags,
+                                                            Placeholder = "No Tags",
+                                                            OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value
+                                                        },
+                                                    }
+                                                },
+                                                new SetupSection("Colors")
+                                                {
+                                                    Entries = new Drawable[]
+                                                    {
+                                                        new SetupColor("Accent")
+                                                        {
+                                                            Color = map.RealmMap.Metadata.Color,
+                                                            OnColorChanged = color => map.MapInfo.Colors.Accent = map.RealmMap.Metadata.Color = color
+                                                        },
+                                                        new SetupColor("Primary")
+                                                        {
+                                                            Color = map.MapInfo.Colors.GetColor(1, Colour4.White),
+                                                            OnColorChanged = color => map.MapInfo.Colors.PrimaryHex = color.ToHex()
+                                                        },
+                                                        new SetupColor("Secondary")
+                                                        {
+                                                            Color = map.MapInfo.Colors.GetColor(2, Colour4.White),
+                                                            OnColorChanged = color => map.MapInfo.Colors.SecondaryHex = color.ToHex()
+                                                        },
+                                                        new SetupColor("Middle")
+                                                        {
+                                                            Color = map.MapInfo.Colors.GetColor(3, Colour4.White),
+                                                            OnColorChanged = color => map.MapInfo.Colors.MiddleHex = color.ToHex()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        Empty(),
+                                        new FillFlowContainer
                                         {
-                                            titleText = new TruncatingText
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(30),
+                                            Children = new Drawable[]
                                             {
-                                                Text = map.RealmMap.Metadata.Title,
-                                                RelativeSizeAxes = Axes.X,
-                                                FontSize = 38,
-                                                Shadow = true
-                                            },
-                                            artistText = new TruncatingText
-                                            {
-                                                Text = map.RealmMap.Metadata.Artist,
-                                                RelativeSizeAxes = Axes.X,
-                                                FontSize = 24,
-                                                Shadow = true
+                                                new SetupSection("Assets")
+                                                {
+                                                    Entries = new Drawable[]
+                                                    {
+                                                        new SetupAsset("Audio")
+                                                        {
+                                                            AllowedExtensions = FluXisGame.AUDIO_EXTENSIONS,
+                                                            Path = map.MapInfo.AudioFile,
+                                                            OnChange = map.SetAudio
+                                                        },
+                                                        new SetupAsset("Background")
+                                                        {
+                                                            AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                                                            Path = map.MapInfo.BackgroundFile,
+                                                            OnChange = map.SetBackground
+                                                        },
+                                                        new SetupAsset("Cover")
+                                                        {
+                                                            AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS,
+                                                            Path = map.MapInfo.CoverFile,
+                                                            OnChange = map.SetCover
+                                                        },
+                                                        new SetupAsset("Video")
+                                                        {
+                                                            AllowedExtensions = FluXisGame.VIDEO_EXTENSIONS,
+                                                            Path = map.MapInfo.VideoFile,
+                                                            OnChange = map.SetVideo
+                                                        }
+                                                    }
+                                                },
+                                                new SetupSection("Keymode")
+                                                {
+                                                    Entries = new Drawable[] { new SetupKeymode() }
+                                                },
+                                                new SetupSection("Difficulty")
+                                                {
+                                                    Entries = new Drawable[]
+                                                    {
+                                                        new SetupSlider("Accuracy")
+                                                        {
+                                                            Default = map.MapInfo.AccuracyDifficulty,
+                                                            OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
+                                                        },
+                                                        // new SetupSlider("Health") { Default = map.MapInfo.HealthDifficulty },
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -133,19 +206,5 @@ public partial class SetupTab : EditorTab
                 }
             }
         };
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        map.BackgroundChanged += () => background.Map = map.RealmMap;
-        map.CoverChanged += () => cover.MapSet = map.RealmMap.MapSet;
-    }
-
-    protected override void Update()
-    {
-        titleText.Text = map.MapInfo.Metadata.Title;
-        artistText.Text = map.MapInfo.Metadata.Artist;
     }
 }

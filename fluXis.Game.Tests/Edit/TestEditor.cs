@@ -32,10 +32,19 @@ public partial class TestEditor : FluXisTestScene
         Add(screenStack);
         Add(panels);
 
-        var map = maps.GetFromGuid("127b9249-d17a-4ee7-9629-3c2691478d8b")?
-            .Maps.FirstOrDefault();
+        AddStep("Push existing map", () =>
+        {
+            var map = maps.GetFromGuid("127b9249-d17a-4ee7-9629-3c2691478d8b")?
+                .Maps.FirstOrDefault();
 
-        var editor = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
-        screenStack.Push(editor);
+            var editor = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
+            screenStack.Push(editor);
+        });
+
+        AddStep("Push new map", () =>
+        {
+            var editor = new EditorLoader();
+            screenStack.Push(editor);
+        });
     }
 }
