@@ -8,7 +8,7 @@ namespace fluXis.Game.Graphics.UserInterface;
 
 public partial class SectionedGradient : CompositeDrawable
 {
-    public float SplitPoint { get; set; } = .2f;
+    public float SplitPoint { get; init; } = .2f;
 
     [BackgroundDependencyLoader]
     private void load()

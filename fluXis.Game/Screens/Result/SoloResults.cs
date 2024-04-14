@@ -126,8 +126,12 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
         backgrounds.SetBlur(state ? .5f : .2f, 400);
         backgrounds.SetDim(state ? .8f : .5f, 400);
 
-        normal.Delay(state ? 0 : 200).FadeTo(state ? 0f : 1f, 200).MoveToY(state ? -100 : 0, 400, Easing.Out);
-        extended.Delay(state ? 200 : 0).FadeTo(state ? 1f : 0f, 200).MoveToY(state ? 0 : 100, 400, Easing.Out);
+        const float distance = 150;
+        const float delay = 180;
+        const float duration = 400;
+
+        normal.Delay(state ? 0 : delay).FadeTo(state ? 0f : 1f, duration / 2).MoveToY(state ? -distance : 0, duration, Easing.Out);
+        extended.Delay(state ? delay : 0).FadeTo(state ? 1f : 0f, duration / 2).MoveToY(state ? 0 : distance, duration, Easing.Out);
     }
 
     protected override bool OnScroll(ScrollEvent e)

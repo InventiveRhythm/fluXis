@@ -256,7 +256,7 @@ public partial class NormalResults : Container
                                 {
                                     new TruncatingText
                                     {
-                                        RelativeSizeAxes = Axes.X,
+                                        MaxWidth = 800,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = map.Metadata.Title,
@@ -264,7 +264,7 @@ public partial class NormalResults : Container
                                     },
                                     new TruncatingText
                                     {
-                                        RelativeSizeAxes = Axes.X,
+                                        MaxWidth = 800,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = map.Metadata.Artist,
