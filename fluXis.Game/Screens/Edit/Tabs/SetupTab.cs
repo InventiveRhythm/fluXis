@@ -1,9 +1,11 @@
+using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Setup;
 using fluXis.Game.Screens.Edit.Tabs.Setup.Entries;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -16,6 +18,8 @@ public partial class SetupTab : EditorTab
 {
     public override IconUsage Icon => FontAwesome6.Solid.ScrewdriverWrench;
     public override string TabName => "Setup";
+
+    private SetupSection metadata;
 
     [BackgroundDependencyLoader]
     private void load(EditorMap map)
@@ -71,7 +75,7 @@ public partial class SetupTab : EditorTab
                                             Spacing = new Vector2(30),
                                             Children = new Drawable[]
                                             {
-                                                new SetupSection("Metadata")
+                                                metadata = new SetupSection("Metadata")
                                                 {
                                                     Entries = new Drawable[]
                                                     {
@@ -110,7 +114,7 @@ public partial class SetupTab : EditorTab
                                                             Default = map.MapInfo.Metadata.Tags,
                                                             Placeholder = "No Tags",
                                                             OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value
-                                                        },
+                                                        }
                                                     }
                                                 },
                                                 new SetupSection("Colors")
@@ -206,5 +210,8 @@ public partial class SetupTab : EditorTab
                 }
             }
         };
+
+        // tabbing support
+        metadata.OfType<SetupTextBox>().ForEach(textBox => textBox.TabbableContentContainer = metadata);
     }
 }
