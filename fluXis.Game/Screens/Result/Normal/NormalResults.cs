@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Mods.Drawables;
+using fluXis.Game.Screens.Result.UI;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
 using fluXis.Shared.Components.Users;
@@ -457,6 +458,12 @@ public partial class NormalResults : Container
                         }
                     }
                 }
+            },
+            new ResultsScrollForMore
+            {
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Margin = new MarginPadding { Bottom = 60 }
             }
         };
     }
