@@ -195,10 +195,18 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         });
     }
 
+    public void WaitForReady(Action action)
+    {
+        if (screenStack?.CurrentScreen is null or LoadingScreen)
+            Schedule(() => WaitForReady(action));
+        else
+            action();
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        PerformUpdateCheck(true);
+        WaitForReady(() => PerformUpdateCheck(true));
 
         loadLocales();
 

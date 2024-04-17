@@ -6,14 +6,14 @@ namespace fluXis.Game.IPC;
 
 public class IPCImportChannel : IpcChannel<IPCImportRequest>
 {
-    public IPCImportChannel(IIpcHost host, FluXisGameBase game = null)
+    public IPCImportChannel(IIpcHost host, FluXisGame game = null)
         : base(host)
     {
         MessageReceived += msg =>
         {
             Logger.Log($"IPCImportChannel: {msg.Path}", LoggingTarget.Runtime, LogLevel.Important);
 
-            game?.HandleDragDrop(new[] { msg.Path });
+            game?.WaitForReady(() => game.HandleDragDrop(new[] { msg.Path }));
             return null;
         };
     }

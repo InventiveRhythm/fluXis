@@ -12,6 +12,8 @@ namespace fluXis.Desktop;
 
 public partial class FluXisGameDesktop : FluXisGame
 {
+    private IPCImportChannel ipc;
+
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
@@ -26,7 +28,7 @@ public partial class FluXisGameDesktop : FluXisGame
     [BackgroundDependencyLoader]
     private void load()
     {
-        new IPCImportChannel(Host, this);
+        ipc = new IPCImportChannel(Host, this);
     }
 
     protected override void LoadComplete()
@@ -35,8 +37,14 @@ public partial class FluXisGameDesktop : FluXisGame
         new DiscordActivity().Initialize(Fluxel, Activity);
 
         var args = Program.Args.ToList();
-        args.RemoveAll(a => a.StartsWith("-"));
-        HandleDragDrop(args.ToArray());
+        args.RemoveAll(a => a.StartsWith('-'));
+        WaitForReady(() => HandleDragDrop(args.ToArray()));
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        ipc?.Dispose();
     }
 
     public override LightController CreateLightController() => new OpenRGBController();
