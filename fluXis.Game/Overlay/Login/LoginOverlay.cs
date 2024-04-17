@@ -1,3 +1,4 @@
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -36,7 +37,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
     private Container loadingContainer;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
@@ -91,6 +92,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
                             {
                                 TabbableContentContainer = this,
                                 PlaceholderText = "Username",
+                                Text = config.Get<string>(FluXisSetting.Username),
                                 RelativeSizeAxes = Axes.X,
                                 Height = 30
                             },

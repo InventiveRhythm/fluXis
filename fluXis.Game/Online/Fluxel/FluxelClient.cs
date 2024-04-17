@@ -39,13 +39,13 @@ public partial class FluxelClient : Component
     public string Token => tokenBindable.Value;
     private Bindable<string> tokenBindable;
 
-    private string username;
+    private Bindable<string> username;
     private string password;
     private string email;
     private double waitTime;
     private bool registering;
 
-    private bool hasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
+    private bool hasValidCredentials => !string.IsNullOrEmpty(Token) || (!string.IsNullOrEmpty(username.Value) && !string.IsNullOrEmpty(password));
 
     private readonly List<string> packetQueue = new();
     private readonly ConcurrentDictionary<EventType, List<Action<object>>> responseListeners = new();
@@ -93,6 +93,7 @@ public partial class FluxelClient : Component
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
+        username = config.GetBindable<string>(FluXisSetting.Username);
         tokenBindable = config.GetBindable<string>(FluXisSetting.Token);
 
         var thread = new Thread(loop) { IsBackground = true };
@@ -151,7 +152,7 @@ public partial class FluxelClient : Component
                 waitTime = 5;
 
                 if (string.IsNullOrEmpty(Token))
-                    await SendPacket(AuthPacket.CreateC2S(username, password));
+                    await SendPacket(AuthPacket.CreateC2S(username.Value, password));
                 else
                     await SendPacket(LoginPacket.CreateC2S(Token));
             }
@@ -163,7 +164,7 @@ public partial class FluxelClient : Component
                 if (string.IsNullOrEmpty(email))
                     throw new Exception("Email is required for registration!");
 
-                await SendPacket(RegisterPacket.CreateC2S(username, email, password));
+                await SendPacket(RegisterPacket.CreateC2S(username.Value, email, password));
             }
 
             // ReSharper disable once AsyncVoidLambda
@@ -311,7 +312,7 @@ public partial class FluxelClient : Component
 
     public async void Login(string username, string password)
     {
-        this.username = username;
+        this.username.Value = username;
         this.password = password;
 
         await SendPacket(AuthPacket.CreateC2S(username, password));
@@ -319,7 +320,7 @@ public partial class FluxelClient : Component
 
     public void Register(string username, string password, string email)
     {
-        this.username = username;
+        this.username.Value = username;
         this.password = password;
         this.email = email;
         registering = true;
@@ -330,7 +331,6 @@ public partial class FluxelClient : Component
         await connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Logout Requested", CancellationToken.None);
         LoggedInUser = null;
         tokenBindable.Value = "";
-        username = "";
         password = "";
 
         Status = ConnectionStatus.Offline;

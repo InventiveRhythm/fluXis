@@ -75,6 +75,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.ShowFps, false);
 
         // Account
+        SetDefault(FluXisSetting.Username, string.Empty);
         SetDefault(FluXisSetting.Token, string.Empty);
 
         // Misc
@@ -145,6 +146,7 @@ public enum FluXisSetting
     ShowFps,
 
     // Account
+    Username,
     Token,
 
     // Misc
