@@ -193,6 +193,12 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             FutureHitObjects.RemoveAt(0);
         }
 
+        while (HitObjects.Count > 0 && !ShouldDisplay(HitObjects.Last().Data.Time))
+        {
+            var hit = HitObjects.Last();
+            removeHitObject(hit, true);
+        }
+
         foreach (var hitObject in HitObjects.Where(h => h.CanBeRemoved).ToList())
             removeHitObject(hitObject);
 
@@ -260,13 +266,20 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         return drawable;
     }
 
-    private void removeHitObject(DrawableHitObject hitObject)
+    private void removeHitObject(DrawableHitObject hitObject, bool addToFuture = false)
     {
-        hitObject.OnKill();
+        if (!addToFuture)
+            hitObject.OnKill();
+
         hitObject.OnHit -= hit;
 
         HitObjects.Remove(hitObject);
-        PastHitObjects.Add(hitObject.Data);
+
+        if (addToFuture)
+            FutureHitObjects.Insert(0, hitObject.Data);
+        else
+            PastHitObjects.Add(hitObject.Data);
+
         RemoveInternal(hitObject, true);
     }
 
