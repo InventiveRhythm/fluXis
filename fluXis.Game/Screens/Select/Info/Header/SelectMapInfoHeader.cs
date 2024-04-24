@@ -251,7 +251,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private partial class BpmDisplay : StatDisplay
     {
         [Resolved]
-        private GlobalClock clock { get; set; }
+        private IBeatSyncProvider beatSync { get; set; }
 
         private const float min_alpha = .6f;
 
@@ -268,19 +268,19 @@ public partial class SelectMapInfoHeader : CompositeDrawable
             base.LoadComplete();
 
             ValueText.Alpha = min_alpha;
-            clock.OnBeat += onBeat;
+            beatSync.OnBeat += onBeat;
         }
 
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
 
-            clock.OnBeat -= onBeat;
+            beatSync.OnBeat -= onBeat;
         }
 
         private void onBeat(int beat)
         {
-            ValueText.FadeIn().FadeTo(min_alpha, clock.BeatTime);
+            ValueText.FadeIn().FadeTo(min_alpha, beatSync.BeatTime);
         }
 
         public void SetValue(float mi, float ma)

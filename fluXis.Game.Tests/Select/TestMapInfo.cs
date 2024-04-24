@@ -14,6 +14,8 @@ public partial class TestMapInfo : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
+        CreateDummyBeatSync();
+
         var info = new SelectMapInfo();
         Add(info);
 
