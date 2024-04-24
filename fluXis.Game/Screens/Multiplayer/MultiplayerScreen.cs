@@ -79,10 +79,10 @@ public partial class MultiplayerScreen : FluXisScreen
         if (!canExit()) return true;
 
         menuMusic.StopAll();
-        this.Delay(200).FadeOut();
+        this.Delay(FADE_DURATION).FadeOut();
 
         globalClock.Start();
-        globalClock.FadeIn(400);
+        globalClock.FadeIn(FADE_DURATION);
         backgrounds.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
         return false;
     }

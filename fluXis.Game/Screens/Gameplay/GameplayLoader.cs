@@ -256,9 +256,9 @@ public partial class GameplayLoader : FluXisScreen
             else
             {
                 ValidForResume = false;
-                loadingContainer.FadeOut(200);
-                clock.Delay(500).Schedule(() => clock.FadeOut(500));
-                this.Delay(1000).Schedule(() =>
+                loadingContainer.FadeOut(FADE_DURATION);
+                clock.Delay(MOVE_DURATION).Schedule(() => clock.FadeOut(MOVE_DURATION));
+                this.Delay(MOVE_DURATION * 2).Schedule(() =>
                 {
                     clock.Stop();
                     this.Push(GameplayScreen);
@@ -284,26 +284,35 @@ public partial class GameplayLoader : FluXisScreen
         if (fadeBackToGlobalClock)
             clock.Start();
 
-        clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
+        contentOut(false);
         return base.OnExiting(e);
     }
 
     private void contentIn()
     {
-        tip.FadeIn();
-        this.ScaleTo(.9f).ScaleTo(1, 400, Easing.OutQuint).FadeInFromZero(200).Then().Schedule(loadGameplay);
-        content.MoveToY(0);
-        loadingContainer.FadeIn(200);
-        clock.LowPassFilter.CutoffTo(1000, 400, Easing.OutQuint);
+        this.FadeOut();
+
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.ScaleTo(.9f).ScaleTo(1, MOVE_DURATION, Easing.OutQuint)
+                .FadeIn(FADE_DURATION).Then().Schedule(loadGameplay);
+
+            tip.FadeIn();
+            content.MoveToY(0);
+            loadingContainer.FadeIn(FADE_DURATION);
+            clock.LowPassFilter.CutoffTo(LowPassFilter.MIN, MOVE_DURATION, Easing.OutQuint);
+        }
 
         tip.Text = LoadingTips.RandomTip;
     }
 
-    private void contentOut()
+    private void contentOut(bool moveDown = true)
     {
-        tip.FadeOut(400);
-        this.Delay(800).FadeOut(200);
-        content.MoveToY(800, 1200, Easing.InQuint);
+        this.Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
+        tip.FadeOut(FADE_DURATION);
         clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
+
+        if (moveDown)
+            content.MoveToY(800, MOVE_DURATION + FADE_DURATION + 300, Easing.InQuint);
     }
 }

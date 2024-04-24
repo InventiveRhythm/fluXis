@@ -4,6 +4,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Screens;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -86,9 +87,9 @@ public partial class GlobalBackground : CompositeDrawable
         }, true);
     }
 
-    public void SetDim(float alpha, float duration = 200) => backgroundDim.FadeTo(alpha, duration);
+    public void SetDim(float alpha, float duration = FluXisScreen.FADE_DURATION) => backgroundDim.FadeTo(alpha, duration);
 
-    public void SetBlur(float blur, float duration = 300)
+    public void SetBlur(float blur, float duration = FluXisScreen.FADE_DURATION)
     {
         if (this.blur == blur)
             return;

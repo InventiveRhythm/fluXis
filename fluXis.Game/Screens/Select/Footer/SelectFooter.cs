@@ -214,7 +214,7 @@ public partial class SelectFooter : Container
     {
         backButton.Show();
         playButton.Show();
-        backgroundContainer.MoveToY(0, 500, Easing.OutQuint);
+        backgroundContainer.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         ButtonContainer.MoveToY(0);
         ButtonContainer.ForEach(b => b.Show());
     }
@@ -223,8 +223,8 @@ public partial class SelectFooter : Container
     {
         backButton.Hide();
         playButton.Hide();
-        backgroundContainer.MoveToY(80, 500, Easing.OutQuint);
-        ButtonContainer.MoveToY(100, 500, Easing.OutQuint);
+        backgroundContainer.MoveToY(80, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        ButtonContainer.MoveToY(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 
     private void randomMap()

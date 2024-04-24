@@ -363,7 +363,7 @@ public partial class MenuScreen : FluXisScreen
         this.Delay(800).FadeIn().OnComplete(_ =>
         {
             toolbar.ShowToolbar.Value = true;
-            showMenu(1000);
+            showMenu(true);
             login.Show();
         });
 
@@ -398,24 +398,33 @@ public partial class MenuScreen : FluXisScreen
     protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
     protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
 
-    private void showMenu(int duration = 400)
+    private void showMenu(bool longer = false)
     {
-        textContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
-        buttonContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
-        // linkContainer.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+        // we dont need the delay
+        var delay = longer ? 0 : ENTER_DELAY;
 
-        updates.CanShow = true;
-        updates.Show(duration);
+        using (BeginDelayedSequence(delay))
+        {
+            var moveDuration = longer ? 1000 : MOVE_DURATION;
+            var fadeDuration = longer ? 800 : FADE_DURATION;
+
+            textContainer.MoveToX(0, moveDuration, Easing.OutQuint).FadeIn(fadeDuration);
+            buttonContainer.MoveToX(0, moveDuration, Easing.OutQuint).FadeIn(fadeDuration);
+            // linkContainer.MoveToX(0, moveDuration, Easing.OutQuint).FadeIn(fadeDuration);
+
+            updates.CanShow = true;
+            updates.Show(moveDuration, fadeDuration);
+        }
     }
 
-    private void hideMenu(int duration = 400)
+    private void hideMenu()
     {
-        textContainer.MoveToX(-200, duration, Easing.OutQuint).FadeOut(duration / 2f);
-        buttonContainer.MoveToX(-200, duration, Easing.OutQuint).FadeOut(duration / 2f);
+        textContainer.MoveToX(-100, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
+        buttonContainer.MoveToX(-100, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
         // linkContainer.MoveToX(200, duration, Easing.OutQuint).FadeOut(duration / 2f);
 
         updates.CanShow = false;
-        updates.MoveToX(200, duration, Easing.OutQuint).FadeOut(duration / 2f);
+        updates.Hide();
     }
 
     private void randomizeSplash() => splashText.Text = MenuSplashes.RandomSplash;
@@ -460,15 +469,17 @@ public partial class MenuScreen : FluXisScreen
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        this.FadeOut(200);
+        this.FadeOut(300);
         hideMenu();
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
+        using (BeginDelayedSequence(ENTER_DELAY))
+            showMenu();
+
         randomizeSplash();
-        showMenu();
-        this.FadeIn(200);
+        this.FadeIn(300);
         inactivityTime = 0;
     }
 

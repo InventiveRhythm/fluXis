@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Screens;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -171,7 +172,7 @@ public partial class CornerButton : Container
             _ => 0
         };
 
-        this.MoveToX(x, 500, Easing.OutQuint);
+        this.MoveToX(x, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 
     public override void Hide()
@@ -183,6 +184,6 @@ public partial class CornerButton : Container
             _ => 0
         };
 
-        this.MoveToX(x, 500, Easing.OutQuint);
+        this.MoveToX(x, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 }

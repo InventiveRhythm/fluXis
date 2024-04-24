@@ -428,8 +428,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless)
             fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
 
-        keybindContainer.Delay(400).FadeOut(400);
-        if (SubmitScore) scoreSubmissionOverlay.FadeIn(400);
+        keybindContainer.Delay(FADE_DURATION).FadeOut(FADE_DURATION);
+        if (SubmitScore) scoreSubmissionOverlay.FadeIn(FADE_DURATION);
 
         Task.Run(() =>
         {
@@ -473,11 +473,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         });
                     }
 
-                    Schedule(() => scoreSubmissionOverlay.FadeOut(400));
+                    Schedule(() => scoreSubmissionOverlay.FadeOut(FADE_DURATION));
                 }
             }
 
-            Schedule(() => this.Delay(600).FadeOut(400).OnComplete(_ => this.Push(screen)));
+            Schedule(() => this.Delay(600).FadeOut(FADE_DURATION).OnComplete(_ => this.Push(screen)));
         });
     }
 
@@ -524,20 +524,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         if (FadeBackToGlobalClock)
         {
-            globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 500);
             globalClock.RateTo(GameplayClock.Rate, 0);
             ScheduleAfterChildren(() =>
             {
                 globalClock.Seek(GameplayClock.CurrentTime);
-                globalClock.RateTo(Rate, 500, Easing.InQuint);
+                globalClock.RateTo(Rate, MOVE_DURATION, Easing.InQuint);
             });
         }
-        else
-        {
-            // we definetly want to reset the cutoff
-            globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
-        }
 
+        globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, MOVE_DURATION);
         GameplayClock.Stop();
         Samples.CancelFail();
 
@@ -563,11 +558,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         IsPaused.BindValueChanged(_ => updateRpc(), true);
 
-        this.ScaleTo(1.2f).FadeOut()
-            .ScaleTo(1f, 800, Easing.OutQuint).FadeIn(400);
+        this.ScaleTo(1.2f).FadeOut();
+
+        using (BeginDelayedSequence(ENTER_DELAY))
+            this.ScaleTo(1f, MOVE_DURATION, Easing.OutQuint).FadeIn(FADE_DURATION);
     }
 
-    private void fadeOut() => this.FadeOut(restarting ? 100 : 300);
+    private void fadeOut() => this.FadeOut(restarting ? FADE_DURATION / 2 : FADE_DURATION);
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {

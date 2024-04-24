@@ -217,13 +217,6 @@ public partial class FooterOptions : FocusedOverlayContainer
 
     protected override void OnFocusLost(FocusLostEvent e) => Hide();
 
-    protected override void PopIn()
-    {
-        this.FadeIn(200).MoveToY(0, 400, Easing.OutQuint);
-    }
-
-    protected override void PopOut()
-    {
-        this.FadeOut(200).MoveToY(40, 400, Easing.OutQuint);
-    }
+    protected override void PopIn() => this.FadeIn(300).MoveToY(0, 600, Easing.OutQuint);
+    protected override void PopOut() => this.FadeOut(300).MoveToY(40, 600, Easing.OutQuint);
 }

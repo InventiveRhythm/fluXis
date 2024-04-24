@@ -84,17 +84,17 @@ public partial class MenuUpdates : CompositeDrawable
         cycle();
     }
 
-    public void Show(float duration = 400)
+    public void Show(float move = FluXisScreen.MOVE_DURATION, float fade = FluXisScreen.FADE_DURATION)
     {
         if (!finishedLoading || !CanShow)
             return;
 
-        this.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+        this.MoveToX(0, move, Easing.OutQuint).FadeIn(fade);
     }
 
-    public void Hide(float duration = 400)
+    public override void Hide()
     {
-        this.MoveToX(0, duration, Easing.OutQuint).FadeIn(duration / 2f);
+        this.MoveToX(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint).FadeOut(FluXisScreen.FADE_DURATION);
     }
 
     private void cycle(bool initial = false)

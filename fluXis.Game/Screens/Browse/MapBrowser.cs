@@ -216,20 +216,27 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.FadeInFromZero(250);
-        backButton.Show();
+        this.FadeOut();
 
-        clock.FadeOut(500);
-        clock.Delay(500).OnComplete(_ => clock.Stop());
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.FadeInFromZero(FADE_DURATION);
+            backButton.Show();
+
+            clock.FadeOut(FADE_DURATION);
+            clock.Delay(FADE_DURATION).OnComplete(_ => clock.Stop());
+        }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOut(250);
+        this.FadeOut(FADE_DURATION);
+
         backButton.Hide();
-        clock.Start();
-        clock.FadeIn(500);
         previews.StopPreview();
+
+        clock.Start();
+        clock.FadeIn(FADE_DURATION);
         return false;
     }
 

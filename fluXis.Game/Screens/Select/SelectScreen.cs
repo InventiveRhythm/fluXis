@@ -478,29 +478,21 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        this.FadeOut(200);
+        playExitAnimation();
         clock.Looping = false;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
-
-        MapList.MoveToX(-200, 500, Easing.OutQuint);
-        selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
-        searchBar.Hide();
-        footer.Hide();
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        this.FadeIn(200);
-        lightController.FadeColour(FluXisColors.GetKeyColor(MapStore.CurrentMap.KeyCount), 400);
-        songSelectBlur.ValueChanged += updateBackgroundBlur;
+        playEnterAnimation();
 
-        MapList.MoveToX(0, 500, Easing.OutQuint);
-        selectMapInfo.MoveToX(0, 500, Easing.OutQuint);
-        searchBar.Show();
-        footer.Show();
+        songSelectBlur.ValueChanged += updateBackgroundBlur;
 
         if (MapStore.CurrentMap != null)
         {
+            lightController.FadeColour(FluXisColors.GetKeyColor(MapStore.CurrentMap.KeyCount), 400);
+
             clock.RestartPoint = MapStore.CurrentMap.Metadata.PreviewTime;
 
             if (!clock.IsRunning)
@@ -512,17 +504,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.FadeInFromZero(200);
+        playEnterAnimation();
+
         songSelectBlur.ValueChanged += updateBackgroundBlur;
-
-        MapList.MoveToX(-200)
-               .MoveToX(0, 500, Easing.OutQuint);
-
-        selectMapInfo.MoveToX(200)
-                     .MoveToX(0, 500, Easing.OutQuint);
-
-        searchBar.Show();
-        footer.Show();
 
         if (MapStore.CurrentMap != null)
             clock.RestartPoint = MapStore.CurrentMap.Metadata.PreviewTime;
@@ -530,17 +514,40 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOut(200);
         clock.Looping = false;
-
-        MapList.MoveToX(-200, 500, Easing.OutQuint);
-        selectMapInfo.MoveToX(200, 500, Easing.OutQuint);
-        searchBar.Hide();
-        footer.Hide();
-
         clock.RateTo(1f);
 
+        playExitAnimation();
         return base.OnExiting(e);
+    }
+
+    private void playEnterAnimation()
+    {
+        this.FadeOut();
+
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.FadeIn(FADE_DURATION);
+
+            MapList.MoveToX(-100)
+                   .MoveToX(0, MOVE_DURATION, Easing.OutQuint);
+
+            selectMapInfo.MoveToX(100)
+                         .MoveToX(0, MOVE_DURATION, Easing.OutQuint);
+
+            searchBar.Show();
+            footer.Show();
+        }
+    }
+
+    private void playExitAnimation()
+    {
+        this.FadeOut(FADE_DURATION);
+
+        MapList.MoveToX(-100, MOVE_DURATION, Easing.OutQuint);
+        selectMapInfo.MoveToX(100, MOVE_DURATION, Easing.OutQuint);
+        searchBar.Hide();
+        footer.Hide();
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

@@ -69,7 +69,7 @@ public partial class LowPassFilter : Component
         Cutoff = MAX;
     }
 
-    public void CutoffTo(int value, int duration = 0, Easing easing = Easing.None)
+    public void CutoffTo(int value, float duration = 0, Easing easing = Easing.None)
     {
         if (value >= MAX)
             removeFilter();

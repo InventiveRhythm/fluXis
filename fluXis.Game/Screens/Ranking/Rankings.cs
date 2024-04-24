@@ -203,15 +203,19 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        base.OnEntering(e);
-        backButton.Show();
-        this.FadeInFromZero(200);
+        this.FadeOut();
+
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.FadeInFromZero(FADE_DURATION);
+            backButton.Show();
+        }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         backButton.Hide();
-        this.FadeOut(200);
+        this.FadeOut(FADE_DURATION);
         return base.OnExiting(e);
     }
 

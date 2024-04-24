@@ -121,8 +121,8 @@ public partial class SearchBar : Container
         else dropdown.Hide();
     }
 
-    public override void Show() => this.MoveToX(-200).MoveToX(-10, 400, Easing.OutQuint);
-    public override void Hide() => this.MoveToX(-200, 400, Easing.OutQuint);
+    public override void Show() => this.MoveToX(-100).MoveToX(-10, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    public override void Hide() => this.MoveToX(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
     protected override bool OnClick(ClickEvent e) => true;
 }

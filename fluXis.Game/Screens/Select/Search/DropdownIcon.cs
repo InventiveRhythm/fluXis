@@ -53,20 +53,20 @@ public partial class DropdownIcon : Container
         samples.Click();
 
         rotation += 180;
-        icon.RotateTo(rotation, 400, Easing.OutQuint);
+        icon.RotateTo(rotation, 800, Easing.OutElasticQuarter);
 
         return true;
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        content.ScaleTo(.9f, 4000, Easing.OutQuint);
+        content.ScaleTo(.8f, 1000, Easing.OutQuint);
         return true;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        content.ScaleTo(1, 800, Easing.OutElastic);
+        content.ScaleTo(1, 800, Easing.OutElasticHalf);
     }
 
     protected override bool OnHover(HoverEvent e)

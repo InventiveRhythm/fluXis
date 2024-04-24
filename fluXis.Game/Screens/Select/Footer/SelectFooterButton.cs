@@ -107,7 +107,8 @@ public partial class SelectFooterButton : Container
 
     public override void Show()
     {
-        this.MoveToY(100).Delay(100 * Index).MoveToY(20, 500, Easing.OutQuint);
+        this.MoveToY(100).Delay(100 * Index)
+            .MoveToY(20, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 
     protected override bool OnClick(ClickEvent e)

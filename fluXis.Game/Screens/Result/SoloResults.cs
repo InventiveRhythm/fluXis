@@ -142,18 +142,23 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.FadeInFromZero(400, Easing.OutQuint);
-        normal.ScaleTo(.8f).ScaleTo(1f, 600, Easing.OutQuint);
+        this.FadeOut();
 
-        backButton.Show();
-        retryButton.Show();
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.FadeInFromZero(FADE_DURATION);
+            normal.ScaleTo(.8f).ScaleTo(1f, MOVE_DURATION, Easing.OutQuint);
+
+            backButton.Show();
+            retryButton.Show();
+        }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOut(400, Easing.OutQuint);
-        normal.ScaleTo(.8f, 600, Easing.OutQuint);
-        extended.ScaleTo(.8f, 600, Easing.OutQuint);
+        this.FadeOut(FADE_DURATION);
+        normal.ScaleTo(.8f, MOVE_DURATION, Easing.OutQuint);
+        extended.ScaleTo(.8f, MOVE_DURATION, Easing.OutQuint);
 
         backButton.Hide();
         retryButton.Hide();
