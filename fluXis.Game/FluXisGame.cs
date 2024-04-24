@@ -68,6 +68,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private Container screenContainer;
     private FluXisScreenStack screenStack;
     private Container<VisibilityContainer> overlayContainer;
+    private Dashboard dashboard;
     private UserProfileOverlay userProfileOverlay;
     private Toolbar toolbar;
     private PanelContainer panelContainer;
@@ -108,7 +109,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(screenStack = new FluXisScreenStack(Activity), screenContainer.Add, true);
 
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
-        loadComponent(new Dashboard(), overlayContainer.Add, true);
+        loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
         loadComponent(new ChatOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
@@ -297,6 +298,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         Logger.Log($"Opening link: {link}", LoggingTarget.Runtime, LogLevel.Debug);
 
         panelContainer.Content = new ExternalLinkPanel(link);
+    }
+
+    public void OpenDashboard(DashboardTabType type)
+    {
+        CloseOverlays();
+        dashboard.Show(type);
     }
 
     public void OpenSkinEditor()

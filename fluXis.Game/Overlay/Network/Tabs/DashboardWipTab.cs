@@ -7,7 +7,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Network.Tabs;
 
-public partial class DashboardWipTab : DashboardTab
+public abstract partial class DashboardWipTab : DashboardTab
 {
     protected DashboardWipTab() { }
 

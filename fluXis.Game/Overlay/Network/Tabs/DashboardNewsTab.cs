@@ -7,4 +7,5 @@ public partial class DashboardNewsTab : DashboardWipTab
 {
     public override string Title => "News";
     public override IconUsage Icon => FontAwesome6.Solid.Newspaper;
+    public override DashboardTabType Type => DashboardTabType.News;
 }

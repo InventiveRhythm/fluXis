@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -160,6 +161,17 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
         selectedTab?.Exit();
         selectedTab = tab;
         selectedTab.Enter();
+    }
+
+    public void Show(DashboardTabType type)
+    {
+        var tab = tabsContainer.FirstOrDefault(t => t.Type == type);
+
+        if (tab == null)
+            throw new InvalidOperationException($"Cannot show a tab of type {type} as it is not added to the {nameof(Dashboard)}.");
+
+        selectTab(tab);
+        Show();
     }
 
     protected override void PopIn()

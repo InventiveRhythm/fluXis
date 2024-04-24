@@ -6,10 +6,11 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.Network;
 
-public partial class DashboardTab : Container
+public abstract partial class DashboardTab : Container
 {
-    public virtual string Title => "Untitled";
-    public virtual IconUsage Icon => FontAwesome6.Solid.Question;
+    public abstract string Title { get; }
+    public abstract IconUsage Icon { get; }
+    public abstract DashboardTabType Type { get; }
 
     protected new Container Content { get; private set; }
 
@@ -80,4 +81,13 @@ public partial class DashboardTab : Container
 
     public virtual void Enter() { }
     public virtual void Exit() { }
+}
+
+public enum DashboardTabType
+{
+    Notifications,
+    News,
+    Friends,
+    Online,
+    Account
 }

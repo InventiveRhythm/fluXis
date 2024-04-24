@@ -215,10 +215,9 @@ public partial class ProfileHeader : Container
                                     {
                                         Icon = FontAwesome6.Solid.ShareNodes
                                     },
-                                    new HeaderFollowButton(user)
-                                    {
-                                        Alpha = fluxel.LoggedInUser?.ID == user.ID ? 0 : 1
-                                    }
+                                    fluxel.LoggedInUser?.ID == user.ID
+                                        ? new HeaderEditButton()
+                                        : new HeaderFollowButton(user)
                                 }
                             }
                         }

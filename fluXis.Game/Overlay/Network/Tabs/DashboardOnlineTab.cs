@@ -16,6 +16,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
 {
     public override string Title => "Online";
     public override IconUsage Icon => FontAwesome6.Solid.EarthAmericas;
+    public override DashboardTabType Type => DashboardTabType.Online;
 
     [Resolved]
     private FluxelClient fluxel { get; set; }

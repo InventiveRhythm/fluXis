@@ -24,6 +24,7 @@ public partial class DashboardAccountTab : DashboardTab
 {
     public override string Title => "Account";
     public override IconUsage Icon => FontAwesome6.Solid.Gear;
+    public override DashboardTabType Type => DashboardTabType.Account;
 
     [Resolved]
     private FluxelClient fluxel { get; set; }
