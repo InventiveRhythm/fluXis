@@ -2,6 +2,9 @@ using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.UI;
+using JetBrains.Annotations;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,13 +15,32 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.UI.Menus;
 
-public partial class GameplayMenuButton : Container
+public partial class GameplayMenuButton : Container, IStateful<SelectedState>
 {
     public string Text { get; init; }
     public string SubText { get; init; }
     public IconUsage Icon { get; init; }
     public Action Action { get; init; }
     public Colour4 Color { get; init; } = FluXisColors.Text;
+
+    private SelectedState state;
+
+    public SelectedState State
+    {
+        get => state;
+        set
+        {
+            if (state == value)
+                return;
+
+            state = value;
+            StateChanged?.Invoke(state);
+            updateState();
+        }
+    }
+
+    [CanBeNull]
+    public event Action<SelectedState> StateChanged;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -87,7 +109,8 @@ public partial class GameplayMenuButton : Container
                         new FluXisSpriteText
                         {
                             Text = SubText,
-                            Colour = Color.Darken(1)
+                            Colour = Color,
+                            Alpha = .6f
                         }
                     }
                 }
@@ -116,13 +139,27 @@ public partial class GameplayMenuButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
-        samples.Hover();
+        state = SelectedState.Selected;
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        state = SelectedState.Deselected;
+    }
+
+    private void updateState()
+    {
+        switch (state)
+        {
+            case SelectedState.Selected:
+                hover.FadeTo(.2f, 50);
+                samples.Hover();
+                break;
+
+            case SelectedState.Deselected:
+                hover.FadeOut(200);
+                break;
+        }
     }
 }

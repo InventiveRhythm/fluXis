@@ -1,18 +1,22 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.UI.Menus;
 
-public partial class FailMenu : Container
+public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
     private GameplayScreen screen { get; set; }
@@ -22,9 +26,11 @@ public partial class FailMenu : Container
     private Box dim;
     private CircularContainer circle;
     private FluXisSpriteText text;
-    private Container buttons;
+    private Container buttonsContainer;
+    private SelectionCycleContainer<GameplayMenuButton> buttons;
 
     private Bindable<bool> dimOnLowHealth;
+    private bool failed;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
@@ -76,7 +82,7 @@ public partial class FailMenu : Container
                         FontSize = 100,
                         Scale = new Vector2(1.2f)
                     },
-                    buttons = new Container
+                    buttonsContainer = new Container
                     {
                         Width = 300,
                         AutoSizeAxes = Axes.Y,
@@ -93,23 +99,23 @@ public partial class FailMenu : Container
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = FluXisColors.Background2
                             },
-                            new FillFlowContainer
+                            buttons = new SelectionCycleContainer<GameplayMenuButton>()
                             {
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
                                 Direction = FillDirection.Vertical,
                                 Padding = new MarginPadding(10),
                                 Spacing = new Vector2(5),
-                                Children = new Drawable[]
+                                Children = new GameplayMenuButton[]
                                 {
-                                    new GameplayMenuButton
+                                    new()
                                     {
                                         Text = "Restart",
                                         SubText = "Try again?",
                                         Icon = FontAwesome6.Solid.RotateRight,
                                         Action = () => screen?.RestartMap()
                                     },
-                                    new GameplayMenuButton
+                                    new()
                                     {
                                         Text = "Quit",
                                         Color = FluXisColors.Red,
@@ -137,8 +143,35 @@ public partial class FailMenu : Container
     {
         this.FadeIn(200);
 
+        failed = true;
+
         this.Delay(800).FadeIn().OnComplete(_ => samples.Fail());
-        text.ScaleTo(1, 800, Easing.InQuint).Delay(2500).FadeIn().OnComplete(_ => buttons.FadeIn(200));
+        text.ScaleTo(1, 800, Easing.InQuint).Delay(2500).FadeIn().OnComplete(_ => buttonsContainer.FadeIn(200));
         circle.Delay(800).ResizeTo(400, 400, Easing.OutQuint).TransformTo(nameof(circle.BorderThickness), 0f, 1200, Easing.OutQuint);
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        if (!failed)
+            return false;
+
+        switch (e.Action)
+        {
+            case FluXisGlobalKeybind.Next:
+                buttons.Next();
+                return true;
+
+            case FluXisGlobalKeybind.Previous:
+                buttons.Previous();
+                return true;
+
+            case FluXisGlobalKeybind.Select:
+                buttons.Current?.TriggerClick();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }
