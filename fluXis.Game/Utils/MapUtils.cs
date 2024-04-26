@@ -72,16 +72,23 @@ public static class MapUtils
     {
         if (hitObjects.Count == 0) return 0;
 
-        Dictionary<int, int> seconds = new Dictionary<int, int>();
+        Dictionary<int, float> seconds = new Dictionary<int, float>();
 
         foreach (var hitObject in hitObjects)
         {
             int second = (int)hitObject.Time / 1000;
-            if (!seconds.TryAdd(second, 1))
-                seconds[second]++;
+
+            var value = hitObject.Type switch
+            {
+                1 => 0.1f, // tick
+                _ => 1
+            };
+
+            if (!seconds.TryAdd(second, value))
+                seconds[second] += value;
         }
 
-        return (float)seconds.Average(x => x.Value);
+        return seconds.Average(x => x.Value);
     }
 
     public static string GetHash(string input) => BitConverter.ToString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(input))).Replace("-", "").ToLower();
