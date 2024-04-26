@@ -4,6 +4,7 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NoteRemoveAction : EditorAction
 {
+    public override string Description => $"Remove {infos.Length} note(s)";
     private HitObject[] infos { get; }
     private EditorMap map { get; }
 

@@ -2,6 +2,8 @@ namespace fluXis.Game.Screens.Edit.Actions;
 
 public class ApplyOffsetAction : EditorAction
 {
+    public override string Description => $"Add offset of {offset}ms to everything";
+
     private EditorMap map { get; }
     private float offset { get; }
 

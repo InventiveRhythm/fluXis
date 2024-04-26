@@ -5,6 +5,8 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
 
 public class NoteFlipAction : EditorAction
 {
+    public override string Description => "Flip Selection";
+
     private IEnumerable<HitObject> notes { get; }
     private int keyCount { get; }
 

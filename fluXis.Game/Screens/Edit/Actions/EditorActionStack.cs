@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Overlay.Notifications;
+using JetBrains.Annotations;
 
 namespace fluXis.Game.Screens.Edit.Actions;
 
@@ -10,9 +13,14 @@ public class EditorActionStack
     public bool CanUndo => index > -1;
     public bool CanRedo => index < stack.Count - 1;
 
+    [CanBeNull]
+    public NotificationManager NotificationManager { get; init; }
+
     public void Add(EditorAction action)
     {
-        if (index < stack.Count - 1)
+        if (index < 0)
+            stack.Clear();
+        else if (index < stack.Count - 1)
             stack.RemoveRange(index, stack.Count - index);
 
         action.Run();
@@ -23,19 +31,44 @@ public class EditorActionStack
     public void Undo()
     {
         if (!CanUndo)
+        {
+            NotificationManager?.SendSmallText("Nothing to undo.", FontAwesome6.Solid.XMark);
             return;
+        }
 
-        stack[index].Undo();
+        var action = stack[index];
+        action.Undo();
+
+        var desc = action.Description;
+
+        if (!string.IsNullOrWhiteSpace(desc))
+            NotificationManager?.SendSmallText($"Undo '{desc}'.", FontAwesome6.Solid.RotateLeft);
+
         index--;
     }
 
     public void Redo()
     {
         if (!CanRedo)
+        {
+            NotificationManager?.SendSmallText("Nothing to redo.", FontAwesome6.Solid.XMark);
             return;
+        }
 
         index++;
-        stack[index].Run();
+
+        var action = stack[index];
+        action.Run();
+
+        var desc = action.Description;
+
+        if (!string.IsNullOrWhiteSpace(desc))
+            NotificationManager?.SendSmallText($"Redo '{desc}'.", FontAwesome6.Solid.RotateRight);
+    }
+
+    public override string ToString()
+    {
+        return $"Index: {index}, Items: {stack.Count}, CanUndo: {CanUndo}, CanRedo: {CanRedo}";
     }
 }
 

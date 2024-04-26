@@ -4,6 +4,8 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NotePasteAction : EditorAction
 {
+    public override string Description => $"Paste {infos.Length} note(s)";
+
     private HitObject[] infos { get; }
     private EditorMap map { get; }
 

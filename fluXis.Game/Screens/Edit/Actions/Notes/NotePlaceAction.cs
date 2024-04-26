@@ -4,6 +4,7 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes;
 
 public class NotePlaceAction : EditorAction
 {
+    public override string Description => $"Place note at {(int)info.Time}ms on lane {info.Lane}";
     private HitObject info { get; }
     private EditorMap map { get; }
 

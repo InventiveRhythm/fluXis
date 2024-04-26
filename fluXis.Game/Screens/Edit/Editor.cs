@@ -160,7 +160,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs(this);
         dependencies.CacheAs(editorMap);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
-        dependencies.CacheAs(actionStack = new EditorActionStack());
+        dependencies.CacheAs(actionStack = new EditorActionStack { NotificationManager = notifications });
         dependencies.CacheAs(settings = new EditorSettings
         {
             ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
@@ -260,7 +260,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             new("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
                             new FluXisMenuSpacer(),
                             new("Apply Offset", FontAwesome6.Solid.Clock, applyOffset),
-                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => actionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>(), editorMap.RealmMap.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
+                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => actionStack.Add(new NoteFlipAction(ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Where(t => t is HitObject).Cast<HitObject>().ToList(), editorMap.RealmMap.KeyCount))) { Enabled = () => ChartingContainer?.BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject) ?? false },
                             new FluXisMenuSpacer(),
                             new("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
                             new("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
@@ -352,7 +352,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         panels.Content = new EditorOffsetPanel
         {
-            OnApplyOffset = offset => editorMap.ApplyOffsetToAll(offset)
+            OnApplyOffset = offset => actionStack.Add(new ApplyOffsetAction(editorMap, offset))
         };
     }
 

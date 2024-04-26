@@ -5,6 +5,8 @@ namespace fluXis.Game.Screens.Edit.Actions.Notes.Hitsound;
 
 public class NoteHitsoundChangeAction : EditorAction
 {
+    public override string Description => $"Change sounds of {infos.Length} note(s) to {newSample}";
+
     private HitObject[] infos { get; }
     private EditorMap map { get; }
     private string newSample { get; }
