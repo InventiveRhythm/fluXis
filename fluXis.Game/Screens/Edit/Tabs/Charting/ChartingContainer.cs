@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Notes;
+using fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
+using fluXis.Game.Screens.Edit.Input;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Points;
@@ -30,7 +31,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting;
 
-public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<EditorKeybinding>
 {
     public const float WAVEFORM_OFFSET = 20;
 
@@ -75,6 +76,8 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     public BlueprintContainer BlueprintContainer { get; private set; }
     public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
     public bool CursorInPlacementArea => Playfield.ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
+
+    public bool CanFlipSelection => BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject);
 
     protected override void BeforeLoad()
     {
@@ -232,6 +235,28 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
     }
 
+    public bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
+    {
+        switch (e.Action)
+        {
+            case EditorKeybinding.FlipSelection:
+                FlipSelection();
+                return true;
+
+            case EditorKeybinding.Undo:
+                actions.Undo();
+                return true;
+
+            case EditorKeybinding.Redo:
+                actions.Redo();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e) { }
+
     public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
     {
         switch (e.Action)
@@ -261,6 +286,19 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     }
 
     public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e) { }
+
+    public void FlipSelection()
+    {
+        var objects = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().ToList();
+
+        if (!objects.Any())
+        {
+            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            return;
+        }
+
+        actions.Add(new NoteFlipAction(objects, Map.RealmMap.KeyCount));
+    }
 
     public void Copy(bool deleteAfter = false)
     {
@@ -310,22 +348,4 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
     }
-
-    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
-    {
-        switch (e.Action)
-        {
-            case FluXisGlobalKeybind.Undo:
-                actions.Undo();
-                return true;
-
-            case FluXisGlobalKeybind.Redo:
-                actions.Redo();
-                return true;
-        }
-
-        return false;
-    }
-
-    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

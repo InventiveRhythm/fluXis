@@ -5,6 +5,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings.UI;
+using fluXis.Game.Screens.Edit.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -96,12 +97,12 @@ public partial class InputKeybindingsSection : SettingsSubSection
             new SettingsKeybind
             {
                 Label = strings.Undo,
-                Keybinds = new object[] { FluXisGlobalKeybind.Undo }
+                Keybinds = new object[] { EditorKeybinding.Undo }
             },
             new SettingsKeybind
             {
                 Label = strings.Redo,
-                Keybinds = new object[] { FluXisGlobalKeybind.Redo }
+                Keybinds = new object[] { EditorKeybinding.Redo }
             },
             new KeybindSectionTitle { Text = strings.Overlays },
             new SettingsKeybind

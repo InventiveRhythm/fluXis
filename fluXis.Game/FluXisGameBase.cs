@@ -31,6 +31,7 @@ using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Plugins;
+using fluXis.Game.Screens.Edit.Input;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Skinning;
@@ -214,6 +215,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         keybindStore = new KeybindStore(realm);
         keybindStore.AssignDefaults(keybinds);
         keybindStore.AssignDefaults(new GameplayKeybindContainer(realm, 0));
+        keybindStore.AssignDefaults(new EditorKeybindingContainer(null, realm));
 
         cacheComponent(keybinds);
         MenuSplashes.Load(Host.CacheStorage);
