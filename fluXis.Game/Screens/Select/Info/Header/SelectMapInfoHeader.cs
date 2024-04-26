@@ -14,7 +14,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Info.Header;
@@ -223,6 +225,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         length.SetValue(map.Filters.Length);
         notesPerSecond.SetValue(map.Filters.NotesPerSecond);
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
+        longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
         /*accuracy.SetValue(map.Accuracy);
         health.SetValue(map.Health);*/
 
@@ -303,8 +306,10 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         }
     }
 
-    private partial class StatDisplay : CompositeDrawable
+    private partial class StatDisplay : CompositeDrawable, IHasTooltip
     {
+        public LocalisableString TooltipText { get; set; } = "";
+
         private string title { get; }
         private Func<float, string> format { get; }
 
