@@ -93,7 +93,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
             return;
         }
 
-        actions.Add(new NoteHitsoundChangeAction(map, hits.ToArray(), sampleFormatted));
+        actions.Add(new NoteHitsoundChangeAction(hits.ToArray(), sampleFormatted));
         UpdateSelectionState();
     }
 

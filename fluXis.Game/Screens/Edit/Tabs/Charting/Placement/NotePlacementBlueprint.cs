@@ -29,6 +29,6 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
             return;
 
         Hit.HitSound = chartingContainer.CurrentHitSound.Value;
-        Actions.Add(new NotePlaceAction(Hit, Map));
+        Actions.Add(new NotePlaceAction(Hit));
     }
 }

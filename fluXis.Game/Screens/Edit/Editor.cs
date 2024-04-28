@@ -361,7 +361,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         panels.Content = new EditorOffsetPanel
         {
-            OnApplyOffset = offset => actionStack.Add(new ApplyOffsetAction(editorMap, offset))
+            OnApplyOffset = offset => actionStack.Add(new ApplyOffsetAction(offset))
         };
     }
 
