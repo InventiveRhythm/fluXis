@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Overlay.Settings.Sections;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -18,6 +19,7 @@ public partial class SettingsCategorySelector : Container
     private List<SettingsSection> sections { get; }
     private Bindable<SettingsSection> currentSection { get; }
 
+    public SettingsCategoryTab ExperimentsTab { get; private set; }
     public Action CloseAction { get; init; }
 
     public SettingsCategorySelector(List<SettingsSection> list, Bindable<SettingsSection> bind)
@@ -47,7 +49,7 @@ public partial class SettingsCategorySelector : Container
                 Margin = new MarginPadding(10),
                 Direction = FillDirection.Horizontal,
                 Spacing = new Vector2(10),
-                ChildrenEnumerable = sections.Select(s => new SettingsCategoryTab(s, currentSection))
+                ChildrenEnumerable = sections.Select(createTab)
             },
             new IconButton
             {
@@ -59,5 +61,18 @@ public partial class SettingsCategorySelector : Container
                 Margin = new MarginPadding(10)
             }
         };
+    }
+
+    private SettingsCategoryTab createTab(SettingsSection s)
+    {
+        var tab = new SettingsCategoryTab(s, currentSection);
+
+        if (s is ExperimentsSection)
+        {
+            tab.Alpha = 0;
+            ExperimentsTab = tab;
+        }
+
+        return tab;
     }
 }

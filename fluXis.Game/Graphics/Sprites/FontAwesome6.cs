@@ -50,6 +50,7 @@ public class FontAwesome6
         public static IconUsage Eye => getSolid(0xf06e);
         public static IconUsage File => getSolid(0xf15b);
         public static IconUsage Film => getSolid(0xf008);
+        public static IconUsage Flask => getSolid(0xf0c3);
         public static IconUsage FloppyDisk => getSolid(0xf0c7);
         public static IconUsage Folder => getSolid(0xf07b);
         public static IconUsage FolderOpen => getSolid(0xf07c);

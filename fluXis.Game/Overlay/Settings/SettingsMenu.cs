@@ -18,6 +18,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Settings;
 
@@ -38,10 +39,12 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
         new GraphicsSection(),
         new PluginsSection(),
         new MaintenanceSection(),
-        new DebugSection()
+        new DebugSection(),
+        new ExperimentsSection()
     };
 
     private ClickableContainer content;
+    private SettingsCategorySelector categorySelector;
     private FluXisScrollContainer scrollContainer;
 
     private Container gearContainer;
@@ -128,7 +131,7 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                                 {
                                     new Drawable[]
                                     {
-                                        new SettingsCategorySelector(sections, currentSection) { CloseAction = Hide }
+                                        categorySelector = new SettingsCategorySelector(sections, currentSection) { CloseAction = Hide }
                                     },
                                     new Drawable[]
                                     {
@@ -177,7 +180,8 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                         }
                     }
                 }
-            }
+            },
+            new CheatCodeHandler(showExperiments, Key.W, Key.S, Key.D, Key.A, Key.W)
         };
     }
 
@@ -191,6 +195,18 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
             currentSection.Value = sections[0];
 
         initial = false;
+    }
+
+    private void showExperiments()
+    {
+        var tab = categorySelector.ExperimentsTab;
+        var section = sections.OfType<ExperimentsSection>().FirstOrDefault();
+
+        if (tab != null && section != null)
+        {
+            tab.FadeInFromZero(200);
+            currentSection.Value = section;
+        }
     }
 
     private void sectionChanged(ValueChangedEvent<SettingsSection> e)

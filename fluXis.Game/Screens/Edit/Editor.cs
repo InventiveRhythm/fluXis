@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
+using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -34,7 +35,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -131,7 +131,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     }
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager audioManager, Storage storage, FluXisConfig config)
+    private void load(AudioManager audioManager, Storage storage, FluXisConfig config, ExperimentConfigManager experiments)
     {
         backgroundDim = config.GetBindable<float>(FluXisSetting.EditorDim);
         backgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
@@ -192,9 +192,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                             Children = new EditorTab[]
                             {
                                 new SetupTab(),
-                                // new OldSetupTab(),
                                 new ChartingTab(),
-                                DebugUtils.IsDebugBuild ? new DesignTab() : new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
+                                experiments.Get<bool>(ExperimentConfig.DesignTab) ? new DesignTab() : new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
                                 new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
                                 new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
                             }

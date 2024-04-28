@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Audio.Preview;
 using fluXis.Game.Configuration;
+using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
@@ -161,6 +162,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent(realm);
 
         cacheComponent(Config = new FluXisConfig(storage));
+        cacheComponent(new ExperimentConfigManager(storage));
         uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
 
         cacheComponent(NotificationManager = new NotificationManager());
