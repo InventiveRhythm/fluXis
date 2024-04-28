@@ -7,21 +7,19 @@ public class NotePasteAction : EditorAction
     public override string Description => $"Paste {infos.Length} note(s)";
 
     private HitObject[] infos { get; }
-    private EditorMap map { get; }
 
-    public NotePasteAction(HitObject[] infos, EditorMap map)
+    public NotePasteAction(HitObject[] infos)
     {
         this.infos = infos;
-        this.map = map;
     }
 
-    public override void Run()
+    public override void Run(EditorMap map)
     {
         foreach (var info in infos)
             map.Add(info);
     }
 
-    public override void Undo()
+    public override void Undo(EditorMap map)
     {
         foreach (var info in infos)
             map.Remove(info);

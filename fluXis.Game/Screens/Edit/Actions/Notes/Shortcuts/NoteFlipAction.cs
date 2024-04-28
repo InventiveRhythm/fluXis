@@ -16,15 +16,21 @@ public class NoteFlipAction : EditorAction
         this.keyCount = keyCount;
     }
 
-    public override void Run()
+    public override void Run(EditorMap map)
     {
         foreach (var note in notes)
+        {
             note.Lane = keyCount - note.Lane + 1;
+            map.Update(note);
+        }
     }
 
-    public override void Undo()
+    public override void Undo(EditorMap map)
     {
         foreach (var note in notes)
+        {
             note.Lane = keyCount - note.Lane + 1;
+            map.Update(note);
+        }
     }
 }
