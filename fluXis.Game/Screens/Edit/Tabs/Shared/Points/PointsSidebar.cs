@@ -141,6 +141,7 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
         if (!showingSettings)
         {
             Expanded.Value = false;
+            Locked.Value = false;
             return;
         }
 
