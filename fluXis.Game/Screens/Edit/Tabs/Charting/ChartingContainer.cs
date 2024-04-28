@@ -227,7 +227,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             Lane = lane
         };
 
-        actions.Add(new NotePlaceAction(note, Map));
+        actions.Add(new NotePlaceAction(note));
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -344,7 +344,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             hitObject.Time += (float)EditorClock.CurrentTime;
         }
 
-        actions.Add(new NotePasteAction(content.HitObjects.ToArray(), Map));
+        actions.Add(new NotePasteAction(content.HitObjects.ToArray()));
 
         notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
     }

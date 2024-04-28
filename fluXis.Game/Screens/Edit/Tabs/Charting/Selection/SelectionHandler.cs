@@ -134,9 +134,10 @@ public partial class SelectionHandler : Container, IHasContextMenu
             var hits = objs.OfType<HitObject>().ToArray();
 
             if (hits.Length > 0)
-                actions.Add(new NoteRemoveAction(hits, map));
+                actions.Add(new NoteRemoveAction(hits));
         }
 
+        // todo: maybe should move this one into the NoteRemoveAction?
         foreach (ITimedObject obj in objs)
         {
             switch (obj)
