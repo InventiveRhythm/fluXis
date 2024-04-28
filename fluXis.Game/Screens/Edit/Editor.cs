@@ -159,7 +159,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs(this);
         dependencies.CacheAs(editorMap);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
-        dependencies.CacheAs(actionStack = new EditorActionStack { NotificationManager = notifications });
+        dependencies.CacheAs(actionStack = new EditorActionStack(editorMap) { NotificationManager = notifications });
         dependencies.CacheAs(settings = new EditorSettings
         {
             ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)

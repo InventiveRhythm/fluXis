@@ -16,6 +16,13 @@ public class EditorActionStack
     [CanBeNull]
     public NotificationManager NotificationManager { get; init; }
 
+    private readonly EditorMap editorMap;
+
+    public EditorActionStack(EditorMap editorMap)
+    {
+        this.editorMap = editorMap;
+    }
+
     public void Add(EditorAction action)
     {
         if (index < 0)
@@ -23,7 +30,7 @@ public class EditorActionStack
         else if (index < stack.Count - 1)
             stack.RemoveRange(index, stack.Count - index);
 
-        action.Run();
+        action.Run(editorMap);
         stack.Add(action);
         index = stack.Count - 1;
     }
@@ -37,7 +44,7 @@ public class EditorActionStack
         }
 
         var action = stack[index];
-        action.Undo();
+        action.Undo(editorMap);
 
         var desc = action.Description;
 
@@ -58,7 +65,7 @@ public class EditorActionStack
         index++;
 
         var action = stack[index];
-        action.Run();
+        action.Run(editorMap);
 
         var desc = action.Description;
 
