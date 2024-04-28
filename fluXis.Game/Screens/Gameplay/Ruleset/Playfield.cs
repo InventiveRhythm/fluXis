@@ -62,7 +62,7 @@ public partial class Playfield : Container
         bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
 
-        dependencies.CacheAs(Manager = new HitObjectManager());
+        dependencies.CacheAs(Manager = new HitObjectManager { Masking = true });
 
         InternalChildren = new[]
         {
@@ -88,6 +88,7 @@ public partial class Playfield : Container
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+                Masking = true,
                 Children = new[]
                 {
                     topCover = skinManager.GetLaneCover(false),
