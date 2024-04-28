@@ -180,22 +180,26 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 new FluXisContextMenuContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Child = new PopoverContainer
+                    Child = new Container
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Child = tabs = new Container<EditorTab>
+                        Padding = new MarginPadding { Top = 45, Bottom = 60 },
+                        Child = new PopoverContainer
                         {
-                            Padding = new MarginPadding { Top = 45, Bottom = 60 },
                             RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Children = new EditorTab[]
+                            Child = tabs = new Container<EditorTab>
                             {
-                                new SetupTab(),
-                                new ChartingTab(),
-                                experiments.Get<bool>(ExperimentConfig.DesignTab) ? new DesignTab() : new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
-                                new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
-                                new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
+                                RelativeSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Children = new EditorTab[]
+                                {
+                                    new SetupTab(),
+                                    new ChartingTab(),
+                                    experiments.Get<bool>(ExperimentConfig.DesignTab) ? new DesignTab() : new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
+                                    new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
+                                    new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
+                                }
                             }
                         }
                     }
