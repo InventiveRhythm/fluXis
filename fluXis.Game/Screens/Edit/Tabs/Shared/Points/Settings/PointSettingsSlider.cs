@@ -81,7 +81,11 @@ public partial class PointSettingsSlider<T> : Container
 
     private void valueChanged(ValueChangedEvent<T> e)
     {
-        valText.Text = $"{CurrentValue}".Replace(',', '.');
+        // round to step
+        var val = Convert.ToDouble(e.NewValue);
+        val = Math.Round(val / Convert.ToDouble(Step)) * Convert.ToDouble(Step);
+
+        valText.Text = $"{val:0.00}".Replace(',', '.');
         OnValueChanged?.Invoke(e.NewValue);
     }
 }
