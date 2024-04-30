@@ -48,6 +48,7 @@ public partial class LaneSwitchEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Key Count",
+                TooltipText = "The number of keys to switch to.",
                 ExtraText = "K",
                 TextBoxWidth = 50,
                 DefaultText = laneSwitch.Count.ToString(),

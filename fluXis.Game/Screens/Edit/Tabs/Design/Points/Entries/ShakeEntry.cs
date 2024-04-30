@@ -50,6 +50,7 @@ public partial class ShakeEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Magnitude",
+                TooltipText = "The magnitude (strength) of the shake effect.",
                 DefaultText = shake.Magnitude.ToStringInvariant(),
                 OnTextChanged = box =>
                 {

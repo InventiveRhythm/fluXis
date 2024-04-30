@@ -9,6 +9,7 @@ public partial class PointSettingsLength<T> : PointSettingsTextBox
     public PointSettingsLength(EditorMap map, T obj, float beatLength)
     {
         Text = "Animation Length";
+        TooltipText = "The duration of the animation in beats.";
         ExtraText = "beat(s)";
         TextBoxWidth = 100;
         DefaultText = (obj.Duration / beatLength).ToStringInvariant();

@@ -10,12 +10,14 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsColor : Container, IHasPopover
+public partial class PointSettingsColor : Container, IHasPopover, IHasTooltip
 {
     public string Text { get; set; } = "Color";
+    public LocalisableString TooltipText { get; init; } = string.Empty;
     public Colour4 Color { get; set; } = Colour4.White;
     public Action<Colour4> OnColorChanged { get; set; } = _ => { };
     public Bindable<Colour4> Bindable { get; set; }

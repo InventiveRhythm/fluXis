@@ -5,12 +5,15 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsToggle : Container
+public partial class PointSettingsToggle : Container, IHasTooltip
 {
     public string Text { get; init; }
+    public LocalisableString TooltipText { get; init; } = string.Empty;
     public bool CurrentValue { get; init; }
     public Action<bool> OnStateChanged { get; init; }
     public Bindable<bool> Bindable { get; set; }

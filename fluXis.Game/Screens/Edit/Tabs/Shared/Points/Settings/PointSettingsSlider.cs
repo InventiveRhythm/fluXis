@@ -5,13 +5,16 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsSlider<T> : Container
+public partial class PointSettingsSlider<T> : Container, IHasTooltip
     where T : struct, IComparable<T>, IConvertible, IEquatable<T>
 {
     public string Text { get; init; }
+    public LocalisableString TooltipText { get; init; } = string.Empty;
     public T CurrentValue { get; init; }
     public Action<T> OnValueChanged { get; init; }
 

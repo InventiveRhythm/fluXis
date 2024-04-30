@@ -47,6 +47,7 @@ public partial class ScrollVelocityEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Multiplier",
+                TooltipText = "The speed to multiply the scroll velocity by.",
                 ExtraText = "x",
                 TextBoxWidth = 195,
                 DefaultText = sv.Multiplier.ToStringInvariant("0.00"),

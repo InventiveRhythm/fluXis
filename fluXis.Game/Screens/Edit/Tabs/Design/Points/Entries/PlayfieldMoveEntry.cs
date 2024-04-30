@@ -52,6 +52,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Offset X",
+                TooltipText = "The horizontal offset of the playfield.",
                 DefaultText = move.OffsetX.ToStringInvariant(),
                 OnTextChanged = box =>
                 {
@@ -66,6 +67,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Offset Y",
+                TooltipText = "The vertical offset of the playfield.",
                 DefaultText = move.OffsetY.ToStringInvariant(),
                 OnTextChanged = box =>
                 {

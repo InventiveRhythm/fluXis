@@ -48,6 +48,7 @@ public partial class BeatPulseEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Strength",
+                TooltipText = "The strength of the pulse effect.",
                 DefaultText = pulse.Strength.ToStringInvariant(),
                 OnTextChanged = box =>
                 {
@@ -62,6 +63,7 @@ public partial class BeatPulseEntry : PointListEntry
             new PointSettingsSlider<float>
             {
                 Text = "Zoom in %",
+                TooltipText = "How much of the animation should be used for zooming in.",
                 CurrentValue = pulse.ZoomIn,
                 Min = 0,
                 Max = 0.5f,

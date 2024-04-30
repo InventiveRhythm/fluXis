@@ -51,6 +51,7 @@ public partial class TimingPointEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "BPM",
+                TooltipText = "The beats per minute of the timing point.",
                 DefaultText = timing.BPM.ToStringInvariant("0.00"),
                 OnTextChanged = box =>
                 {
@@ -65,6 +66,7 @@ public partial class TimingPointEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "Time Signature",
+                TooltipText = "The time signature of the timing point.",
                 ExtraText = "/ 4",
                 TextBoxWidth = 50,
                 DefaultText = timing.Signature.ToString(),

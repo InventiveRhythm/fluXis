@@ -50,6 +50,7 @@ public partial class PlayfieldFadeEntry : PointListEntry
             new PointSettingsSlider<float>
             {
                 Text = "Alpha",
+                TooltipText = "The opacity of the playfield.",
                 CurrentValue = fade.Alpha,
                 Min = 0,
                 Max = 1,

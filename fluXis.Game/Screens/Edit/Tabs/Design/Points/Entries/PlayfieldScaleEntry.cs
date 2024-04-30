@@ -52,6 +52,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "ScaleX",
+                TooltipText = "The horizontal scale of the playfield.",
                 DefaultText = scale.ScaleX.ToStringInvariant(),
                 OnTextChanged = box =>
                 {
@@ -66,6 +67,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
             new PointSettingsTextBox
             {
                 Text = "ScaleY",
+                TooltipText = "The vertical scale of the playfield.",
                 DefaultText = scale.ScaleY.ToStringInvariant(),
                 OnTextChanged = box =>
                 {

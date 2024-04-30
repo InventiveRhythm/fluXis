@@ -5,13 +5,16 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 
-public partial class PointSettingsTextBox : Container
+public partial class PointSettingsTextBox : Container, IHasTooltip
 {
     public string Text { get; init; }
+    public LocalisableString TooltipText { get; init; } = string.Empty;
     public string DefaultText { get; init; }
     public string ExtraText { get; init; }
     public int TextBoxWidth { get; init; } = 210;

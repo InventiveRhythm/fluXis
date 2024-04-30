@@ -68,6 +68,7 @@ public partial class FlashEntry : PointListEntry
             new PointSettingsToggle
             {
                 Text = "In Background",
+                TooltipText = "Whether the flash should be drawn behind the playfield and hud.",
                 CurrentValue = flash.InBackground,
                 OnStateChanged = b =>
                 {
@@ -78,6 +79,7 @@ public partial class FlashEntry : PointListEntry
             new PointSettingsSlider<float>
             {
                 Text = "Start Alpha",
+                TooltipText = "The starting opacity of the flash.",
                 CurrentValue = flash.StartOpacity,
                 Step = .01f,
                 Min = 0,
@@ -91,6 +93,7 @@ public partial class FlashEntry : PointListEntry
             new PointSettingsColor
             {
                 Text = "Start Color",
+                TooltipText = "The starting color of the flash.",
                 Color = flash.StartColor,
                 OnColorChanged = c =>
                 {
@@ -101,6 +104,7 @@ public partial class FlashEntry : PointListEntry
             new PointSettingsSlider<float>
             {
                 Text = "End Alpha",
+                TooltipText = "The ending opacity of the flash.",
                 CurrentValue = flash.EndOpacity,
                 Step = .01f,
                 Min = 0,
@@ -114,6 +118,7 @@ public partial class FlashEntry : PointListEntry
             new PointSettingsColor
             {
                 Text = "End Color",
+                TooltipText = "The ending color of the flash.",
                 Color = flash.EndColor,
                 OnColorChanged = c =>
                 {

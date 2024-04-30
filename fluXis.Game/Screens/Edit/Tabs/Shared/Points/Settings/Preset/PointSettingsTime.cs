@@ -9,6 +9,7 @@ public partial class PointSettingsTime : PointSettingsTextBox
     public PointSettingsTime(EditorMap map, ITimedObject obj)
     {
         Text = "Time";
+        TooltipText = "The time in milliseconds when the event should trigger.";
         DefaultText = obj.Time.ToStringInvariant();
         OnTextChanged = box =>
         {
