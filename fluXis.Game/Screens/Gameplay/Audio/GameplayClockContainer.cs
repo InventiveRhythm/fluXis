@@ -1,5 +1,7 @@
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -8,15 +10,21 @@ namespace fluXis.Game.Screens.Gameplay.Audio;
 public partial class GameplayClockContainer : Container
 {
     public GameplayClock GameplayClock { get; }
+    private Container container { get; }
+
+    private DependencyContainer dependencies;
 
     public GameplayClockContainer(RealmMap realmMap, MapInfo info, Drawable[] drawables, bool useOffset = true)
     {
         RelativeSizeAxes = Axes.Both;
+        Anchor = Origin = Anchor.Centre;
+
+        GameplayClock = new GameplayClock(info, realmMap.GetTrack(), useOffset);
 
         InternalChildren = new Drawable[]
         {
-            GameplayClock = new GameplayClock(info, realmMap.GetTrack(), useOffset),
-            new Container
+            GameplayClock,
+            container = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Clock = GameplayClock,
@@ -24,4 +32,18 @@ public partial class GameplayClockContainer : Container
             }
         };
     }
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        dependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
+    }
+
+    public override void Add(Drawable drawable)
+    {
+        container.Add(drawable);
+    }
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 }

@@ -255,6 +255,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
             {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
                     Input,
@@ -318,6 +320,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             },
             scoreSubmissionOverlay = new ScoreSubmissionOverlay()
         };
+
+        clockContainer.Add(new BeatPulseContainer(MapEvents.BeatPulseEvents, keybindContainer));
 
         backgroundVideo.LoadVideo();
 

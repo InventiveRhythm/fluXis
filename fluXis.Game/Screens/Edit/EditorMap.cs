@@ -72,6 +72,10 @@ public class EditorMap
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventRemoved;
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventUpdated;
 
+    public event Action<BeatPulseEvent> BeatPulseEventAdded;
+    public event Action<BeatPulseEvent> BeatPulseEventRemoved;
+    public event Action<BeatPulseEvent> BeatPulseEventUpdated;
+
     #endregion
 
     public bool SetKeyMode(int mode)
@@ -213,6 +217,11 @@ public class EditorMap
                 PlayfieldScaleEventAdded?.Invoke(scaleEvent);
                 break;
 
+            case BeatPulseEvent pulseEvent:
+                MapEvents.BeatPulseEvents.Add(pulseEvent);
+                BeatPulseEventAdded?.Invoke(pulseEvent);
+                break;
+
             default:
                 throw new NotImplementedException();
         }
@@ -256,6 +265,10 @@ public class EditorMap
 
             case PlayfieldScaleEvent scaleEvent:
                 PlayfieldScaleEventUpdated?.Invoke(scaleEvent);
+                break;
+
+            case BeatPulseEvent pulseEvent:
+                BeatPulseEventUpdated?.Invoke(pulseEvent);
                 break;
 
             default:
@@ -314,6 +327,11 @@ public class EditorMap
                 PlayfieldScaleEventRemoved?.Invoke(scaleEvent);
                 break;
 
+            case BeatPulseEvent pulseEvent:
+                MapEvents.BeatPulseEvents.Remove(pulseEvent);
+                BeatPulseEventRemoved?.Invoke(pulseEvent);
+                break;
+
             default:
                 throw new NotImplementedException();
         }
@@ -355,6 +373,30 @@ public class EditorMap
         {
             shakeEvent.Time += offset;
             Update(shakeEvent);
+        }
+
+        foreach (var fadeEvent in MapEvents.PlayfieldFadeEvents)
+        {
+            fadeEvent.Time += offset;
+            Update(fadeEvent);
+        }
+
+        foreach (var moveEvent in MapEvents.PlayfieldMoveEvents)
+        {
+            moveEvent.Time += offset;
+            Update(moveEvent);
+        }
+
+        foreach (var scaleEvent in MapEvents.PlayfieldScaleEvents)
+        {
+            scaleEvent.Time += offset;
+            Update(scaleEvent);
+        }
+
+        foreach (var pulseEvent in MapEvents.BeatPulseEvents)
+        {
+            pulseEvent.Time += offset;
+            Update(pulseEvent);
         }
     }
 
