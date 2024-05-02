@@ -3,7 +3,6 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Scores;
-using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -14,9 +13,6 @@ namespace fluXis.Game.Screens.Result.UI;
 
 public partial class ResultsRatingInfo : Container
 {
-    [Resolved]
-    private FluxelClient fluxel { get; set; }
-
     private readonly bool showPlayData;
 
     public APIResponse<APIScoreResponse> ScoreResponse

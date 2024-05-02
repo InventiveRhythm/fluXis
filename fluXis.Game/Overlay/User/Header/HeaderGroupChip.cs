@@ -68,7 +68,7 @@ public partial class HeaderGroupChip : Container
         return group.ID switch
         {
             "fa" => FontAwesome6.Solid.Star,
-            "purifier" => FontAwesome6.Solid.Diamond, // we dont have the icon that the website uses
+            "purifier" => FontAwesome6.Solid.Diamond, // we don't have the icon that the website uses
             "moderators" => FontAwesome6.Solid.ShieldHalved,
             "dev" => FontAwesome6.Solid.UserShield,
             "bot" => FontAwesome6.Solid.UserAstronaut,

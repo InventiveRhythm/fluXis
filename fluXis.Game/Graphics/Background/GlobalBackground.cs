@@ -100,7 +100,7 @@ public partial class GlobalBackground : CompositeDrawable
 
     protected override void Update()
     {
-        // this is EXTREMELY laggy, and i do not know why
+        // this is EXTREMELY laggy, and I do not know why
         // Padding = new MarginPadding { Top = toolbar.Height - 10 + toolbar.Y };
 
         if (backgroundPulse.Value)

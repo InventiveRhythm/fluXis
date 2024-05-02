@@ -70,9 +70,9 @@ public partial class MultiModeSelect : MultiSubScreen
                     rankedButton = new MultiModeButton
                     {
                         /*Title = "Ranked",
-                        Desciption = "Compete with other players in 1v1\nmatches to climb the leaderboard.",*/
+                        Description = "Compete with other players in 1v1\nmatches to climb the leaderboard.",*/
                         Title = "???",
-                        Desciption = "???",
+                        Description = "???",
                         Background = "ranked",
                         RightSide = false,
                         Locked = true,
@@ -94,7 +94,7 @@ public partial class MultiModeSelect : MultiSubScreen
                     openLobbyButton = new MultiModeButton
                     {
                         Title = "Open Lobby",
-                        Desciption = "Play freely against your\nfriends with no restrictions.",
+                        Description = "Play freely against your\nfriends with no restrictions.",
                         Background = "lobby",
                         RightSide = true,
                         Action = () => this.Push(new MultiLobbyList()),

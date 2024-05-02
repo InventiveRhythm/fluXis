@@ -21,11 +21,6 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
     private FluXisSpriteText titleText;
     private FluXisSpriteText titleSubText;
 
-    public MultiSubScreen()
-    {
-        // Padding = new MarginPadding(30);
-    }
-
     protected override void LoadComplete()
     {
         AddRangeInternal(new Drawable[]

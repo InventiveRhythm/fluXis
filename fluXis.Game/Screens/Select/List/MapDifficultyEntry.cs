@@ -44,9 +44,6 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     }
 
     [Resolved]
-    private Storage storage { get; set; }
-
-    [Resolved]
     private MapStore maps { get; set; }
 
     [Resolved]

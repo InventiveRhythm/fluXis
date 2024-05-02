@@ -18,7 +18,7 @@ public partial class InfiniteScrollingPattern : Container
         {
             texture = value;
 
-            // the initial pattern genreation hasnt been done yet, so we can skip this
+            // the initial pattern generation hasn't been done yet, so we can skip this
             if (!hasLoaded) return;
 
             foreach (var drawable in Children)
@@ -28,10 +28,10 @@ public partial class InfiniteScrollingPattern : Container
         }
     }
 
-    public Vector2 Speed { get; set; } = Vector2.One;
-    public Vector2 TextureScale { get; set; } = Vector2.One;
-    public Vector2 TextureSpacing { get; set; } = Vector2.Zero;
-    public Vector2 Extent { get; set; } = Vector2.One;
+    public Vector2 Speed { get; init; } = Vector2.One;
+    public Vector2 TextureScale { get; init; } = Vector2.One;
+    public Vector2 TextureSpacing { get; init; } = Vector2.Zero;
+    public Vector2 Extent { get; init; } = Vector2.One;
 
     private bool hasLoaded;
     private int xCount, yCount;

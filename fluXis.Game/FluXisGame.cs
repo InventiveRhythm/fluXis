@@ -122,16 +122,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(panelContainer = new PanelContainer { BlurContainer = buffer }, Add, true);
         loadComponent(new VolumeOverlay(), Add);
 
-        loadComponent(notificationContainer = new FloatingNotificationContainer(), fnc =>
+        loadComponent(notificationContainer = new FloatingNotificationContainer(), drawable =>
         {
-            Add(fnc);
-            NotificationManager.Floating = fnc;
+            Add(drawable);
+            NotificationManager.Floating = drawable;
         });
 
-        loadComponent(new TaskNotificationContainer(), tnc =>
+        loadComponent(new TaskNotificationContainer(), drawable =>
         {
-            Add(tnc);
-            NotificationManager.Tasks = tnc;
+            Add(drawable);
+            NotificationManager.Tasks = drawable;
         });
 
         loadComponent(new FpsOverlay(), Add);

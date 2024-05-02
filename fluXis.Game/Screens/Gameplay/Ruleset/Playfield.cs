@@ -37,9 +37,7 @@ public partial class Playfield : Container
     private DependencyContainer dependencies;
 
     private TimingLineManager timingLineManager;
-    private Drawable hitLine;
 
-    private Container laneCovers;
     private Drawable topCover;
     private Drawable bottomCover;
 
@@ -78,12 +76,12 @@ public partial class Playfield : Container
                 Direction = FillDirection.Horizontal,
                 ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i))
             },
-            hitLine = skinManager.GetHitLine().With(d =>
+            skinManager.GetHitLine().With(d =>
             {
                 d.RelativeSizeAxes = Axes.X;
                 d.Y = -skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).HitPosition;
             }),
-            laneCovers = new Container
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,

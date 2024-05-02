@@ -109,24 +109,24 @@ public partial class DashboardAccountTab : DashboardTab
                                 {
                                     OnFileSelected = file =>
                                     {
-                                        var notif = new TaskNotificationData
+                                        var notification = new TaskNotificationData
                                         {
                                             Text = "Avatar Update",
                                             TextWorking = "Uploading..."
                                         };
 
-                                        notifications.AddTask(notif);
+                                        notifications.AddTask(notification);
 
                                         var req = new AvatarUploadRequest(file);
-                                        req.Progress += (cur, max) => notif.Progress = cur / (float)max;
+                                        req.Progress += (cur, max) => notification.Progress = cur / (float)max;
                                         req.Success += res =>
                                         {
-                                            notif.State = res.Status == 200 ? LoadingState.Complete : LoadingState.Failed;
+                                            notification.State = res.Status == 200 ? LoadingState.Complete : LoadingState.Failed;
                                             UserCache.TriggerAvatarUpdate(user.ID);
                                         };
                                         req.Failure += ex =>
                                         {
-                                            notif.State = LoadingState.Failed;
+                                            notification.State = LoadingState.Failed;
                                             Logger.Error(ex, "Failed to upload avatar!");
                                         };
                                         req.PerformAsync(fluxel);

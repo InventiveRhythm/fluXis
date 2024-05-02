@@ -11,8 +11,8 @@ namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 
 public partial class LobbySlot : Container
 {
-    public MultiLobbyList List { get; set; }
-    public MultiplayerRoom Room { get; set; }
+    public MultiLobbyList List { get; init; }
+    public MultiplayerRoom Room { get; init; }
 
     [BackgroundDependencyLoader]
     private void load()

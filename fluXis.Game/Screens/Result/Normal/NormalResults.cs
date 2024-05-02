@@ -304,7 +304,7 @@ public partial class NormalResults : Container
                                             new Entry
                                             {
                                                 Title = "Performance Rating",
-                                                Value = $"--.--pr"
+                                                Value = "--.--pr"
                                             },
                                             new Entry
                                             {
@@ -585,9 +585,9 @@ public partial class NormalResults : Container
 
     private partial class Entry : Container
     {
-        public string Title { get; set; } = "Title";
-        public string Value { get; set; } = "Value";
-        public bool Right { get; set; }
+        public string Title { get; init; } = "Title";
+        public string Value { get; init; } = "Value";
+        public bool Right { get; init; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -616,7 +616,7 @@ public partial class NormalResults : Container
                     Margin = new MarginPadding { Horizontal = 6 },
                     Padding = new MarginPadding { Horizontal = 10 },
                     Spacing = new Vector2(-3),
-                    Children = new Drawable[]
+                    Children = new[]
                     {
                         new FluXisSpriteText
                         {
@@ -649,8 +649,8 @@ public partial class NormalResults : Container
 
     private partial class MaxComboEntry : Entry
     {
-        public int MaxCombo { get; set; } = 0;
-        public int TotalNotes { get; set; } = 0;
+        public int MaxCombo { get; init; }
+        public int TotalNotes { get; init; }
 
         protected override Drawable CreateBottomRow()
         {
@@ -682,8 +682,8 @@ public partial class NormalResults : Container
 
     private partial class OnlineStatistic : FillFlowContainer
     {
-        public string Title { get; set; } = "Title";
-        public bool DisplayAsRank { get; set; }
+        public string Title { get; init; } = "Title";
+        public bool DisplayAsRank { get; init; }
 
         public double Value
         {

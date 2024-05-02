@@ -20,7 +20,6 @@ public partial class EditorTimeline : Container
     private TimelineIndicator indicator;
     private Container chorusPoints;
     private Container timingPoints;
-    private TimelineDensity densityContainer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -52,7 +51,7 @@ public partial class EditorTimeline : Container
                 Height = 8,
                 Y = -8
             },
-            densityContainer = new TimelineDensity(),
+            new TimelineDensity(),
             indicator = new TimelineIndicator()
         };
 

@@ -123,13 +123,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private GameplayKeybindContainer keybindContainer;
     private GlobalBackground background;
     private BackgroundVideo backgroundVideo;
-    private Box backgroundDimBox;
     private GameplayClockContainer clockContainer;
     public Playfield Playfield { get; private set; }
     private Container hud { get; set; }
     private ScoreSubmissionOverlay scoreSubmissionOverlay;
 
-    private PauseMenu pauseMenu;
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
     private QuickActionOverlay quickActionOverlay;
@@ -285,7 +283,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                     Info = Map
                                 },
                                 new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
-                                backgroundDimBox = new Box
+                                new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Color4.Black,
@@ -315,7 +313,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     fcOverlay = new FullComboOverlay(),
                     quickActionOverlay = new QuickActionOverlay(),
                     new GameplayTouchInput(),
-                    pauseMenu = new PauseMenu()
+                    new PauseMenu()
                 },
             },
             scoreSubmissionOverlay = new ScoreSubmissionOverlay()
@@ -422,7 +420,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected virtual void End()
     {
         // no fail was enabled, but the player never actually failed
-        // so we just remove the mod to make the score count normally
+        // so, we just remove the mod to make the score count normally
         if (Mods.Any(m => m is NoFailMod) && !HealthProcessor.FailedAlready)
         {
             Mods.RemoveAll(m => m is NoFailMod);

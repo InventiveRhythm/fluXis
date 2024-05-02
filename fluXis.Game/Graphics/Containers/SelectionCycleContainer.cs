@@ -60,7 +60,7 @@ public partial class SelectionCycleContainer<T> : FillFlowContainer<T>
     {
         base.Add(drawable);
 
-        drawable.StateChanged += (state) =>
+        drawable.StateChanged += state =>
         {
             if (state == SelectedState.Selected)
                 Select(drawable);

@@ -16,5 +16,4 @@ public class SettingsMaintenanceStrings : LocalizationCategory
     public TranslatableString CleanUpFilesDescription => Get("files-clean-up-description", "Deletes all files that are not used by any maps.");
 
     #endregion
-
 }

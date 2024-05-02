@@ -38,7 +38,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
         dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
 
         RelativeSizeAxes = Axes.Both;
-        Alpha = 0.001f; // making sure the fillflow is centered
+        Alpha = 0.001f; // making sure the flow is centered
 
         InternalChildren = new Drawable[]
         {
@@ -99,7 +99,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = FluXisColors.Background2
                             },
-                            buttons = new SelectionCycleContainer<GameplayMenuButton>()
+                            buttons = new SelectionCycleContainer<GameplayMenuButton>
                             {
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,

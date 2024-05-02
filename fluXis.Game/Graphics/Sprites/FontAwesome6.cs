@@ -6,7 +6,7 @@ public class FontAwesome6
 {
     private static IconUsage get(int icon) => new((char)icon, "FontAwesome6");
 
-    // I really dont want to add all of them
+    // I really don't want to add all of them
     // so these are just the ones being used so far
     public static class Solid
     {

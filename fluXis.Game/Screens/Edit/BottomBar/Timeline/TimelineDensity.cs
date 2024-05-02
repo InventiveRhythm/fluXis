@@ -80,12 +80,12 @@ public partial class TimelineDensity : FillFlowContainer
 
         var highest = counts.Max();
 
-        var pecentages = counts.Select(c => (float)c / highest).ToArray();
+        var percentages = counts.Select(c => (float)c / highest).ToArray();
 
         for (var i = 0; i < sections; i++)
         {
             var box = this[i];
-            box.Alpha = pecentages[i];
+            box.Alpha = percentages[i];
         }
     }
 

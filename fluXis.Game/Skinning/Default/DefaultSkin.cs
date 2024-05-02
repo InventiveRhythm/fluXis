@@ -82,7 +82,7 @@ public class DefaultSkin : ISkin
 
     public VisibilityContainer GetColumnLighting(int lane, int keyCount)
     {
-        var lighting = new DefaultColumnLighing(SkinJson);
+        var lighting = new DefaultColumnLighting(SkinJson);
         lighting.UpdateColor(lane, keyCount);
         return lighting;
     }

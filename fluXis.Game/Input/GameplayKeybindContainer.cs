@@ -133,6 +133,7 @@ public partial class GameplayKeybindContainer : RealmKeyBindingContainer<FluXisG
     };
 }
 
+// ReSharper disable InconsistentNaming
 public enum FluXisGameplayKeybind
 {
     // 1k

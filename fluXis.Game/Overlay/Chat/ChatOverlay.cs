@@ -251,8 +251,8 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
             Schedule(() =>
             {
-                var message = flow.FirstOrDefault(x => x.Messages.Any(m => m.ID == res.Data.MessageID));
-                message?.RemoveMessage(res.Data.MessageID);
+                var message = flow.FirstOrDefault(x => x.Messages.Any(m => m.ID == res.Data!.MessageID));
+                message?.RemoveMessage(res.Data!.MessageID);
                 if (message?.Messages.Count == 0)
                     flow.Remove(message, true);
             });

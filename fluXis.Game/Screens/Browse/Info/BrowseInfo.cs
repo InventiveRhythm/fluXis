@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading;
-using fluXis.Game.Database;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -10,7 +9,6 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -20,7 +18,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Game.Screens.Browse.Info;
@@ -28,22 +25,7 @@ namespace fluXis.Game.Screens.Browse.Info;
 public partial class BrowseInfo : Container
 {
     [Resolved]
-    private TextureStore textures { get; set; }
-
-    [Resolved]
-    private FluxelClient fluxel { get; set; }
-
-    [Resolved]
-    private NotificationManager notifications { get; set; }
-
-    [Resolved]
     private MapStore mapStore { get; set; }
-
-    [Resolved]
-    private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private Storage storage { get; set; }
 
     [Resolved]
     private UserProfileOverlay profile { get; set; }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
-using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
@@ -53,9 +52,6 @@ public partial class MapSetHeader : Container, IHasContextMenu
     private Clipboard clipboard { get; set; }
 
     [Resolved]
-    private FluXisRealm realm { get; set; }
-
-    [Resolved]
     private MapStore maps { get; set; }
 
     private readonly MapListEntry parent;
@@ -70,7 +66,6 @@ public partial class MapSetHeader : Container, IHasContextMenu
     private Box colorBrighten; // what do you call the opposite of dim?
     private Container contentWrapper;
     private DelayedLoadWrapper backgroundWrapper;
-    private MapBackground background;
     private HeaderDim gradientBlack;
     private HeaderDim gradientColor;
     private DelayedLoadWrapper contentLoader;
@@ -117,7 +112,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
                     Masking = true,
                     Children = new Drawable[]
                     {
-                        backgroundWrapper = new DelayedLoadUnloadWrapper(() => background = new MapBackground(mapset.Maps[0], true)
+                        backgroundWrapper = new DelayedLoadUnloadWrapper(() => new MapBackground(mapset.Maps[0], true)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,

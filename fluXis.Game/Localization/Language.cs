@@ -2,6 +2,7 @@ using System.ComponentModel;
 
 namespace fluXis.Game.Localization;
 
+// Resharper disable InconsistentNaming
 public enum Language
 {
     [Description("English")]

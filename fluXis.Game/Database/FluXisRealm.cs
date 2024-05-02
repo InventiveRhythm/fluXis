@@ -72,13 +72,12 @@ public class FluXisRealm : IDisposable
 
                 foreach (var keybind in migration.NewRealm.All<RealmKeybind>())
                 {
-                    if (keys.ContainsKey(keybind.Action))
+                    if (!keys.TryAdd(keybind.Action, keybind))
                     {
                         var existing = keys[keybind.Action];
                         toRemove.Add(existing);
                         keys[keybind.Action] = keybind;
                     }
-                    else keys.Add(keybind.Action, keybind);
                 }
 
                 foreach (var keybind in toRemove) migration.NewRealm.Remove(keybind);
@@ -130,6 +129,7 @@ public class FluXisRealm : IDisposable
                 var oldScores = migration.OldRealm.DynamicApi.All("RealmScore").ToList();
                 var newScores3 = migration.NewRealm.All<RealmScore>().ToList();
 
+                // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
                 foreach (DynamicRealmObject oldScore in oldScores)
                 {
                     var judgement = oldScore.DynamicApi.Get<dynamic>("Judgements");

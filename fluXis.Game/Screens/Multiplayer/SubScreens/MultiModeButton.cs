@@ -25,7 +25,7 @@ public partial class MultiModeButton : VisibilityContainer
     protected override bool StartHidden => true;
 
     public string Title { get; init; }
-    public string Desciption { get; init; }
+    public string Description { get; init; }
     public string Background { get; init; }
     public bool RightSide { get; init; }
     public bool Locked { get; init; }
@@ -134,7 +134,7 @@ public partial class MultiModeButton : VisibilityContainer
                         },
                         new FluXisTextFlow
                         {
-                            Text = Desciption,
+                            Text = Description,
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
                             Alpha = .8f,

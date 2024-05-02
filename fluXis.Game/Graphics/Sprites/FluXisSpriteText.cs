@@ -45,6 +45,7 @@ public partial class FluXisSpriteText : SpriteText
     public static float GetWebFontSize(float i) => i * web_scale;
 }
 
+// ReSharper disable IdentifierTypo
 public enum FluXisFont
 {
     Renogare,

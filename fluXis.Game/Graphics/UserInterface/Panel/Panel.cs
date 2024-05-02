@@ -10,7 +10,7 @@ public partial class Panel : Container
     public new Container Content { get; }
     public bool ShowOnCreate { get; set; } = true;
 
-    private Box flashBox;
+    private Box flashBox { get; }
 
     public Panel()
     {

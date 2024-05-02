@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarSeperator : CircularContainer
+public partial class ToolbarSeparator : CircularContainer
 {
     [BackgroundDependencyLoader]
     private void load()

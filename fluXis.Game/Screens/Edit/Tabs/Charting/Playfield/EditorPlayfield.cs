@@ -31,7 +31,6 @@ public partial class EditorPlayfield : Container
 
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
     public EditorEffectContainer Effects { get; private set; }
-    private EditorTimingLines timingLines;
     private WaveformGraph waveform;
 
     private Sample hitSound;
@@ -64,7 +63,7 @@ public partial class EditorPlayfield : Container
                 Rotation = -90,
             },
             Effects = new EditorEffectContainer(),
-            timingLines = new EditorTimingLines(),
+            new EditorTimingLines(),
             HitObjectContainer = new EditorHitObjectContainer(),
             new TimingTagContainer(),
             new EffectTagContainer()

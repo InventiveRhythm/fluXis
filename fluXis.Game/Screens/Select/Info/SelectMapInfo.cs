@@ -10,9 +10,9 @@ namespace fluXis.Game.Screens.Select.Info;
 
 public partial class SelectMapInfo : GridContainer
 {
-    public ScoreList ScoreList { get; set; }
+    public ScoreList ScoreList { get; private set; }
 
-    public Action HoverAction { get; set; }
+    public Action HoverAction { get; init; }
 
     [BackgroundDependencyLoader]
     private void load()

@@ -12,7 +12,7 @@ namespace fluXis.Game.Screens.Select.Mods;
 
 public partial class ModCategory : Container
 {
-    public ModSelector Selector { get; set; }
+    public ModSelector Selector { get; init; }
 
     public LocalisableString Label { get; init; }
     public string HexColour { get; init; }

@@ -15,7 +15,8 @@ public class HttpOnlineStore : IResourceStore<byte[]>
 {
     public byte[] Get(string url)
     {
-        if (!url.StartsWith(@"http://", StringComparison.Ordinal))
+        // Resharper disable once InsecureHttpUsage
+        if (!url.StartsWith("http://", StringComparison.Ordinal))
             return null;
 
         try

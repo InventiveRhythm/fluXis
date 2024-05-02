@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace fluXis.Game.Online;
 
+// ReSharper disable InconsistentNaming
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public enum CountryCode
 {

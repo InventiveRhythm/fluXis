@@ -321,9 +321,9 @@ public partial class BlueprintContainer : Container, ICursorDrag
 
         Vector2 delta = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
 
-        Vector2 postition = dragBlueprintsPositions.First() + delta;
-        float time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(postition);
-        int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(postition);
+        Vector2 position = dragBlueprintsPositions.First() + delta;
+        float time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
+        int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(position);
         float snappedTime = ChartingContainer.Playfield.HitObjectContainer.SnapTime(time);
 
         float timeDelta = snappedTime - dragBlueprints.First().Object.Time;

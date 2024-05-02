@@ -4,7 +4,6 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
-using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Sidebar;
 using fluXis.Game.Overlay.Network.Tabs;
 using osu.Framework.Allocation;
@@ -19,9 +18,6 @@ namespace fluXis.Game.Overlay.Network;
 public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     private const int rounding = 20;
-
-    [Resolved]
-    private FluxelClient fluxel { get; set; }
 
     private Container content;
     private DashboardSidebar sidebar;

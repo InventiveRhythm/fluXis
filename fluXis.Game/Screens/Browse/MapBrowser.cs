@@ -269,8 +269,8 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             var matches = false;
             matches |= map.MapSet.Title?.ToLower().Contains(query.ToLower()) ?? false;
             matches |= map.MapSet.Artist?.ToLower().Contains(query.ToLower()) ?? false;
-            matches |= map.MapSet.Creator.Username?.ToLower().Contains(query.ToLower()) ?? false;
-            matches |= map.MapSet.Creator.DisplayName?.ToLower().Contains(query.ToLower()) ?? false;
+            matches |= map.MapSet.Creator?.Username.ToLower().Contains(query.ToLower()) ?? false;
+            matches |= map.MapSet.Creator?.DisplayName?.ToLower().Contains(query.ToLower()) ?? false;
             matches |= map.MapSet.Tags?.Any(tag => tag.ToLower().Contains(query.ToLower())) ?? false;
             matches |= map.MapSet.Source?.ToLower().Contains(query.ToLower()) ?? false;
 

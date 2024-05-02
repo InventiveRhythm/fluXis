@@ -8,7 +8,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Skinning.Default.Lighting;
 
-public partial class DefaultColumnLighing : VisibilityContainer
+public partial class DefaultColumnLighting : VisibilityContainer
 {
     private readonly SkinJson skinJson;
 
@@ -16,7 +16,7 @@ public partial class DefaultColumnLighing : VisibilityContainer
     [Resolved(CanBeNull = true)]
     private ICustomColorProvider colorProvider { get; set; }
 
-    public DefaultColumnLighing(SkinJson skinJson)
+    public DefaultColumnLighting(SkinJson skinJson)
     {
         this.skinJson = skinJson;
 

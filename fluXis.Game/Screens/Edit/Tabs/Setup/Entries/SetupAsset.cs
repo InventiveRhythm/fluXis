@@ -47,7 +47,7 @@ public partial class SetupAsset : SetupEntry
 
     private TruncatingText text;
     private string path = string.Empty;
-    private bool empty = false;
+    private bool empty;
 
     public SetupAsset(string title)
         : base(title)

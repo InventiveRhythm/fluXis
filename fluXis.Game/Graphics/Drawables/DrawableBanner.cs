@@ -1,5 +1,4 @@
 using fluXis.Game.Online;
-using fluXis.Game.Online.Fluxel;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,9 +8,6 @@ namespace fluXis.Game.Graphics.Drawables;
 
 public partial class DrawableBanner : Sprite
 {
-    [Resolved]
-    private FluxelClient fluxel { get; set; }
-
     [Resolved]
     private OnlineTextureStore store { get; set; }
 

@@ -17,9 +17,9 @@ public class DiscordActivity
     public void Initialize(FluxelClient fluxel, Bindable<UserActivity> bind)
     {
         client = new DiscordRpcClient("975141679583604767");
-        var sucess = client.Initialize();
+        var success = client.Initialize();
 
-        if (!sucess)
+        if (!success)
         {
             Logger.Log("Discord Rich Presence failed to initialize!", LoggingTarget.Network, LogLevel.Error);
             return;

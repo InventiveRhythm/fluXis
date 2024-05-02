@@ -81,8 +81,8 @@ public partial class VariableControl : FillFlowContainer
 
     private partial class VariableControlContainer : Container
     {
-        public string Title { get; set; }
-        public BindableFloat Bindable { get; set; }
+        public string Title { get; init; }
+        public BindableFloat Bindable { get; init; }
 
         private FluXisSpriteText valueText;
 

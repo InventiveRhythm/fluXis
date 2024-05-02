@@ -47,7 +47,7 @@ public class FluXisImport : MapImporter
             List<RealmMap> maps = new();
 
             var mapSet = new RealmMapSet(maps);
-            MapStore.AssignResouces(mapSet);
+            MapStore.AssignResources(mapSet);
 
             var fullPath = MapFiles.GetFullPath(mapSet.ID.ToString()) + "/";
 

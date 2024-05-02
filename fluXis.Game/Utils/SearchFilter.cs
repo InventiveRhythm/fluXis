@@ -65,9 +65,7 @@ public class SearchFilters
             {
                 case Type.Exact:
                 {
-                    if (map.Filters.BPMMin <= BPM && map.Filters.BPMMax >= BPM)
-                        matches = true;
-                    else
+                    if (!(map.Filters.BPMMin <= BPM) || !(map.Filters.BPMMax >= BPM))
                         return false;
 
                     break;
@@ -75,9 +73,7 @@ public class SearchFilters
 
                 case Type.Over:
                 {
-                    if (map.Filters.BPMMin >= BPM)
-                        matches = true;
-                    else
+                    if (!(map.Filters.BPMMin >= BPM))
                         return false;
 
                     break;

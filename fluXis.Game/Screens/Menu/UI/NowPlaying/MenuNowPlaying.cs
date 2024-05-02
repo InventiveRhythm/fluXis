@@ -21,9 +21,6 @@ public partial class MenuNowPlaying : Container
     [Resolved]
     private MapStore mapStore { get; set; }
 
-    [Resolved]
-    private FluXisGameBase game { get; set; }
-
     private Container coverContainer;
     private MapCover cover;
     private FluXisSpriteText title;

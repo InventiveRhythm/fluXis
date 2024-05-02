@@ -62,7 +62,7 @@ public partial class MenuUpdates : CompositeDrawable
                 }
 
                 cycle(true);
-                Show(); // incase the menu animation is already done
+                Show(); // in case the menu animation is already done
                 finishedLoading = true;
             });
         };

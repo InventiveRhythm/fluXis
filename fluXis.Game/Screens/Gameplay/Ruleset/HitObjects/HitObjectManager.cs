@@ -65,7 +65,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     private JudgementProcessor judgementProcessor => screen.JudgementProcessor;
 
     private List<float> scrollVelocityMarks { get; } = new();
-    private Dictionary<int, int> snapIndicies { get; } = new();
+    private Dictionary<int, int> snapIndices { get; } = new();
 
     public Action OnFinished { get; set; }
     public bool Finished { get; private set; }
@@ -345,7 +345,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     {
         CurrentKeyCount = Map.InitialKeyCount;
         initScrollVelocityMarks();
-        initSnapIndicies();
+        initSnapIndices();
 
         foreach (var hit in Map.HitObjects)
         {
@@ -376,7 +376,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         }
     }
 
-    private void initSnapIndicies()
+    private void initSnapIndices()
     {
         // shouldn't happen but just in case
         if (Map.TimingPoints == null || Map.TimingPoints.Count == 0) return;
@@ -395,7 +395,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
                     var add = increment / 16 * j;
                     var snap = time + add;
 
-                    snapIndicies.TryAdd((int)snap, j);
+                    snapIndices.TryAdd((int)snap, j);
                 }
 
                 time += increment;
@@ -405,11 +405,11 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public int GetSnapIndex(int time)
     {
-        if (snapIndicies.TryGetValue(time, out int i)) return i;
+        if (snapIndices.TryGetValue(time, out int i)) return i;
 
         // allow a 10ms margin of error for snapping
-        var closest = snapIndicies.Keys.MinBy(k => Math.Abs(k - time));
-        if (Math.Abs(closest - time) <= 10 && snapIndicies.TryGetValue(closest, out i)) return i;
+        var closest = snapIndices.Keys.MinBy(k => Math.Abs(k - time));
+        if (Math.Abs(closest - time) <= 10 && snapIndices.TryGetValue(closest, out i)) return i;
 
         // still nothing...
         return -1;

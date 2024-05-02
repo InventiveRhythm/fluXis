@@ -182,10 +182,10 @@ public partial class ImportManager : Component
 
     public void RemoveImportedMaps(MapImporter importer)
     {
-        if (!importedMaps.ContainsKey(importer))
+        if (!importedMaps.TryGetValue(importer, out var maps))
             return;
 
-        foreach (var map in importedMaps[importer])
+        foreach (var map in maps)
             mapStore.Remove(map);
 
         importedMaps.Remove(importer);

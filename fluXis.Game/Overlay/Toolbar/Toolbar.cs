@@ -92,7 +92,7 @@ public partial class Toolbar : Container
                                 Overlay = settings,
                                 Keybind = FluXisGlobalKeybind.ToggleSettings
                             },
-                            new ToolbarSeperator(),
+                            new ToolbarSeparator(),
                             new ToolbarScreenButton
                             {
                                 TooltipTitle = "Home",

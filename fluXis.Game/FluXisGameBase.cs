@@ -323,6 +323,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private void initFonts()
     {
+        // Resharper disable StringLiteralTypo
         AddFont(Resources, "Fonts/Renogare/Renogare");
         AddFont(Resources, "Fonts/RenogareSoft/RenogareSoft");
         AddFont(Resources, "Fonts/YoureGone/YoureGone");
@@ -336,6 +337,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Solid");
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Regular");
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Brands");
+        // Resharper restore StringLiteralTypo
     }
 
     public new virtual void Exit()

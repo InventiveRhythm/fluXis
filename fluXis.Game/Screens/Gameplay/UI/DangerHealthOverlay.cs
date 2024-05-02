@@ -1,7 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Scoring.Enums;
-using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -15,9 +14,6 @@ public partial class DangerHealthOverlay : Container
 {
     [Resolved]
     private GameplayScreen screen { get; set; }
-
-    [Resolved]
-    private GameplayClock gameplayClock { get; set; }
 
     [Resolved]
     private GlobalClock globalClock { get; set; }

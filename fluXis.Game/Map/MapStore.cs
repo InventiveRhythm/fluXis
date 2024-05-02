@@ -217,14 +217,14 @@ public partial class MapStore : Component
         });
     }
 
-    internal void AssignResouces(RealmMapSet mapSet)
+    internal void AssignResources(RealmMapSet mapSet)
     {
         mapSet.Resources ??= resources;
     }
 
     public void AddMapSet(RealmMapSet mapSet, bool notify = true)
     {
-        AssignResouces(mapSet);
+        AssignResources(mapSet);
 
         MapSets.Add(mapSet);
 

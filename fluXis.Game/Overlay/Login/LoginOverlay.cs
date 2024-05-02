@@ -27,8 +27,6 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
     [Resolved]
     private FluxelClient fluxel { get; set; }
 
-    private FillFlowContainer loginContainer;
-
     private FluXisTextBox username;
     private FluXisTextBox password;
 
@@ -71,7 +69,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background1
                     },
-                    loginContainer = new FillFlowContainer
+                    new FillFlowContainer
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,

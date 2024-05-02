@@ -27,5 +27,5 @@ public class IPCImportChannel : IpcChannel<IPCImportRequest>
 
 public class IPCImportRequest
 {
-    public string Path { get; set; }
+    public string Path { get; init; }
 }

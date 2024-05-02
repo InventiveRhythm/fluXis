@@ -111,12 +111,11 @@ public partial class GameplayHUD : Container
         {
             var typeName = key.Split('#')[0];
 
-            if (!componentLookup.ContainsKey(typeName))
+            if (!componentLookup.TryGetValue(typeName, out var type))
                 continue;
 
             try
             {
-                var type = componentLookup[typeName];
                 var component = (GameplayHUDComponent)Activator.CreateInstance(type);
 
                 if (component == null)

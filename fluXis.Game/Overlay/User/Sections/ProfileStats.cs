@@ -83,8 +83,8 @@ public partial class ProfileStats : Container
 
     private partial class ProfileStat : FillFlowContainer
     {
-        public string Title { get; set; }
-        public string Value { get; set; }
+        public string Title { get; init; }
+        public string Value { get; init; }
 
         [BackgroundDependencyLoader]
         private void load()

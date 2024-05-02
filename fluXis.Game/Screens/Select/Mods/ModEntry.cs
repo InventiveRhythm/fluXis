@@ -24,7 +24,7 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
 {
     public ModEntry TooltipContent => this;
 
-    public ModSelector Selector { get; set; }
+    public ModSelector Selector { get; init; }
 
     public IMod Mod { get; init; }
     public string HexColour { get; init; }

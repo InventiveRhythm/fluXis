@@ -60,7 +60,7 @@ public partial class EditorHitObjectContainer : Container
     public float PositionFromLane(int lane) => (lane - 1) * NOTEWIDTH;
 
     public float TimeAtScreenSpacePosition(Vector2 screenSpacePosition) => TimeAtPosition(ToLocalSpace(screenSpacePosition).Y);
-    public int LaneAtScreenSpacePosition(Vector2 postition) => LaneAtPosition(ToLocalSpace(postition).X);
+    public int LaneAtScreenSpacePosition(Vector2 position) => LaneAtPosition(ToLocalSpace(position).X);
     public float TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / settings.Zoom + (float)clock.CurrentTime;
     public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH);
 

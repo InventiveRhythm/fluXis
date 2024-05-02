@@ -96,6 +96,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
+        flash.FadeOutFromOne(1000, Easing.OutQuint);
 
         var req = new UserFollowRequest(user.ID, following);
         req.PerformAsync(fluxel);

@@ -85,10 +85,10 @@ public static class UserCache
     {
         OnAvatarUpdate?.Invoke(id);
 
-        if (!avatar_update_callbacks.ContainsKey(id)) return;
+        if (!avatar_update_callbacks.TryGetValue(id, out var callbacks))
+            return;
 
-        foreach (var callback in avatar_update_callbacks[id])
-            callback.Invoke();
+        callbacks.ForEach(c => c.Invoke());
     }
 
     public static List<Action> GetBannerUpdateCallbacks(long id)
@@ -103,9 +103,9 @@ public static class UserCache
     {
         OnBannerUpdate?.Invoke(id);
 
-        if (!banner_update_callbacks.ContainsKey(id)) return;
+        if (!banner_update_callbacks.TryGetValue(id, out var callbacks))
+            return;
 
-        foreach (var callback in banner_update_callbacks[id])
-            callback.Invoke();
+        callbacks.ForEach(c => c.Invoke());
     }
 }
