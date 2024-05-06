@@ -259,7 +259,11 @@ public partial class MapStore : Component
             if (mapSetToDelete == null) return;
 
             foreach (var map in mapSetToDelete.Maps)
+            {
+                r.Remove(map.Metadata);
+                r.Remove(map.Filters);
                 r.Remove(map);
+            }
 
             r.Remove(mapSetToDelete);
 
