@@ -2,6 +2,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Localization;
 using fluXis.Game.Overlay.Settings.Sections.Maintenance;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 
@@ -15,9 +16,11 @@ public partial class MaintenanceSection : SettingsSection
     [BackgroundDependencyLoader]
     private void load()
     {
-        AddRange(new[]
+        AddRange(new Drawable[]
         {
-            new MaintenanceFilesSection()
+            new MaintenanceFilesSection(),
+            Divider,
+            new MaintenanceMapsSection()
         });
     }
 }

@@ -2,5 +2,8 @@
   "title": "Maintenance",
   "files-title": "Files",
   "files-clean-up": "Clean up files",
-  "files-clean-up-description": "Deletes all files that are not used by any maps."
+  "files-clean-up-description": "Deletes all files that are not used by any maps.",
+  "maps-title": "Maps",
+  "maps-recalculate-filters": "Recalculate Filters",
+  "maps-recalculate-filters-description": "Recalculates all filters for all maps."
 }

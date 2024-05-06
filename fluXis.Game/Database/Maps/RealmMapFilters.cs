@@ -34,4 +34,17 @@ public class RealmMapFilters : RealmObject
     public bool HasScrollVelocity { get; set; }
     public bool HasLaneSwitch { get; set; }
     public bool HasFlash { get; set; }
+
+    public void Reset()
+    {
+        Length = 0;
+        BPMMin = 0;
+        BPMMax = 0;
+        NoteCount = 0;
+        LongNoteCount = 0;
+        NotesPerSecond = 0;
+        HasScrollVelocity = false;
+        HasLaneSwitch = false;
+        HasFlash = false;
+    }
 }

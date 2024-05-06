@@ -26,6 +26,8 @@ public static class MapUtils
 
     public static RealmMapFilters UpdateFilters(this RealmMapFilters filters, MapInfo map, MapEvents events)
     {
+        filters.Reset();
+
         foreach (var hitObject in map.HitObjects)
         {
             filters.Length = Math.Max(filters.Length, hitObject.EndTime);
