@@ -1,11 +1,12 @@
 using System.Linq;
-using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Search.Dropdown;
@@ -15,8 +16,9 @@ public partial class SearchDropdownKeymode : CompositeDrawable
     [Resolved]
     private SearchFilters filters { get; set; }
 
+    private Bindable<int> keymodeBindable { get; } = new();
+
     private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
-    private int currentKeymode;
 
     private FillFlowContainer tictacs;
 
@@ -38,46 +40,88 @@ public partial class SearchDropdownKeymode : CompositeDrawable
             },
             tictacs = new FillFlowContainer
             {
-                AutoSizeAxes = Axes.Both,
+                AutoSizeAxes = Axes.X,
+                RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Direction = FillDirection.Horizontal,
                 Spacing = new Vector2(5),
-                ChildrenEnumerable = keymodes.Select(keymode => new ClickableContainer
-                {
-                    AutoSizeAxes = Axes.Both,
-                    Action = () => setKeymode(keymode),
-                    Child = new TicTac(20)
-                })
+                ChildrenEnumerable = keymodes.Select(i => new KeymodeButton(i, keymodeBindable))
             }
         };
     }
 
-    private void setKeymode(int mode)
+    protected override void LoadComplete()
     {
-        if (currentKeymode == mode)
+        base.LoadComplete();
+
+        keymodeBindable.BindValueChanged(e => filters.KeyMode = e.NewValue, true);
+    }
+
+    private partial class KeymodeButton : ClickableContainer
+    {
+        private Bindable<int> bind { get; }
+        private int keymode { get; }
+
+        private Box background;
+        private FluXisSpriteText text;
+
+        public KeymodeButton(int keymode, Bindable<int> bind)
         {
-            tictacs.Colour = Colour4.White;
-            currentKeymode = 0;
+            this.keymode = keymode;
+            this.bind = bind;
 
-            foreach (var drawable in tictacs)
-                drawable.Alpha = 1;
-        }
-        else
-        {
-            tictacs.Colour = FluXisColors.GetKeyColor(mode);
-            currentKeymode = mode;
-
-            var i = 0;
-
-            foreach (var drawable in tictacs)
+            Action = () =>
             {
-                var m = keymodes[i];
-                drawable.Alpha = m <= mode ? 1 : 0.5f;
-                i++;
-            }
+                if (bind.Value == keymode)
+                {
+                    bind.Value = 0;
+                    return;
+                }
+
+                bind.Value = keymode;
+            };
         }
 
-        filters.KeyMode = currentKeymode;
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            Width = 50;
+            RelativeSizeAxes = Axes.Y;
+            Masking = true;
+            CornerRadius = 5;
+
+            InternalChildren = new Drawable[]
+            {
+                background = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.GetKeyColor(keymode)
+                },
+                text = new FluXisSpriteText
+                {
+                    Text = $"{keymode}K",
+                    FontSize = 16,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Colour = FluXisColors.TextDark
+                }
+            };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            bind.BindValueChanged(updateKeymode, true);
+        }
+
+        private void updateKeymode(ValueChangedEvent<int> e)
+        {
+            var enable = e.NewValue == keymode || e.NewValue == 0;
+
+            background.FadeTo(enable ? 1 : 0, 200);
+            text.FadeColour(enable ? FluXisColors.TextDark : FluXisColors.Text, 200);
+        }
     }
 }
