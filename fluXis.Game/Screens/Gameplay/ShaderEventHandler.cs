@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Shaders.Bloom;
 using fluXis.Game.Graphics.Shaders.Chromatic;
 using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
+using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Events.Shader;
 using osu.Framework.Graphics;
@@ -40,6 +41,10 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
             case "Bloom":
                 bloom(ev);
+                break;
+
+            case "Mosaic":
+                mosaic(ev);
                 break;
         }
     }
@@ -89,5 +94,17 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             throw new System.Exception("Bloom shader not found");
 
         bloom.TransformTo(nameof(bloom.Strength), data.Strength, ev.Duration);
+    }
+
+    private void mosaic(ShaderEvent ev)
+    {
+        Logger.Log($"Mosaic at {Clock.CurrentTime}", LoggingTarget.Runtime, LogLevel.Debug);
+        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var mosaic = stack.GetShader<MosaicContainer>();
+
+        if (mosaic == null)
+            throw new System.Exception("Mosaic shader not found");
+
+        mosaic.TransformTo(nameof(mosaic.Strength), data.Strength, ev.Duration);
     }
 }

@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Shaders;
 using fluXis.Game.Graphics.Shaders.Chromatic;
 using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
+using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Replays;
@@ -22,8 +23,8 @@ public partial class TestShaderStackContainer : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(MapStore maps)
     {
-        const string set_id = "9049dbaf-1598-4547-9d99-bd2ab62b7d61";
-        const string map_id = "3b55b380-e533-4eea-bf16-4b98d9776583";
+        const string set_id = "35a36bea-ac27-4f13-be68-b85120f3a3c6";
+        const string map_id = "e664bdb0-2643-4a0f-a4d4-1d84758af586";
 
         var map = maps.GetFromGuid(set_id)?.Maps.FirstOrDefault(m => m.ID == Guid.Parse(map_id));
 
@@ -51,6 +52,10 @@ public partial class TestShaderStackContainer : FluXisTestScene
         var invert = new InvertContainer { RelativeSizeAxes = Axes.Both, Strength = 0 };
         stack.AddShader(invert);
         AddSliderStep("Invert Strength", 0, 1f, 0f, strength => invert.Strength = strength);
+
+        var mosaic = new MosaicContainer { RelativeSizeAxes = Axes.Both, Strength = 0 };
+        stack.AddShader(mosaic);
+        AddSliderStep("Mosaic Strength", 0, 1f, 0f, strength => mosaic.Strength = strength);
 
         stack.AddContent(new Drawable[]
         {
