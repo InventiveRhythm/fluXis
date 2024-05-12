@@ -77,7 +77,6 @@ public partial class SettingsDropdown<T> : SettingsItem
             Width = 400;
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;
-            Margin = new MarginPadding { Vertical = 5 };
         }
 
         protected override DropdownHeader CreateHeader() => new FluXisDropdownHeader();
@@ -95,23 +94,28 @@ public partial class SettingsDropdown<T> : SettingsItem
 
             public FluXisDropdownHeader()
             {
-                Foreground.Padding = new MarginPadding(5);
-                CornerRadius = 5;
+                AutoSizeAxes = Axes.None;
+                Height = 40;
+                Foreground.Padding = new MarginPadding { Left = 14, Right = 10 };
+                CornerRadius = 10;
                 BackgroundColour = FluXisColors.Background2;
-                BackgroundColourHover = FluXisColors.Background3;
+                BackgroundColourHover = FluXisColors.Background4;
 
                 Children = new Drawable[]
                 {
                     label = new FluXisSpriteText
                     {
-                        AlwaysPresent = true
+                        WebFontSize = 16,
+                        AlwaysPresent = true,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft
                     },
                     new SpriteIcon
                     {
                         Icon = FontAwesome6.Solid.ChevronDown,
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Size = new Vector2(14),
+                        Size = new Vector2(16),
                         Margin = new MarginPadding { Right = 5 }
                     }
                 };
@@ -133,7 +137,9 @@ public partial class SettingsDropdown<T> : SettingsItem
                 return new FluXisTextBox
                 {
                     RelativeSizeAxes = Axes.X,
-                    Height = 30,
+                    Height = 40,
+                    SidePadding = 14,
+                    FontSize = FluXisSpriteText.GetWebFontSize(16),
                     PlaceholderText = "Search"
                 };
             }
@@ -158,25 +164,27 @@ public partial class SettingsDropdown<T> : SettingsItem
 
             private bool justLoaded = true;
 
+            private float marginTop
+            {
+                get => Margin.Top;
+                set => Margin = new MarginPadding { Top = value };
+            }
+
             public FluXisDropdownMenu()
             {
-                MaskingContainer.CornerRadius = 5;
+                MaskingContainer.CornerRadius = 10;
                 BackgroundColour = FluXisColors.Background2;
-                Margin = new MarginPadding { Top = 3 };
+                Margin = new MarginPadding { Top = 8 };
             }
 
             protected override void UpdateSize(Vector2 newSize)
             {
-                if (Direction == Direction.Vertical)
-                {
-                    Width = newSize.X;
-                    this.ResizeHeightTo(newSize.Y, 300, Easing.OutQuint);
-                }
-                else
-                {
-                    Height = newSize.Y;
-                    this.ResizeWidthTo(newSize.X, 300, Easing.OutQuint);
-                }
+                if (Direction != Direction.Vertical)
+                    return;
+
+                Width = newSize.X;
+                this.ResizeHeightTo(newSize.Y, 300, Easing.OutQuint);
+                this.TransformTo(nameof(marginTop), newSize.Y > 0 ? 8f : 0f, 300, Easing.OutQuint);
             }
 
             protected override void AnimateClose()
@@ -200,20 +208,29 @@ public partial class SettingsDropdown<T> : SettingsItem
                 public DrawableFluXisDropdownMenuItem(MenuItem item)
                     : base(item)
                 {
-                    BackgroundColour = Colour4.Transparent;
-                    BackgroundColourHover = Colour4.White.Opacity(.2f);
-                    BackgroundColourSelected = FluXisColors.Background6;
-                    CornerRadius = 5;
-                    Masking = true;
+                    BackgroundColour = FluXisColors.Background2;
+                    BackgroundColourHover = FluXisColors.Background4;
+                    BackgroundColourSelected = FluXisColors.Background3;
+
+                    Foreground.AutoSizeAxes = Axes.X;
+                    Foreground.Height = 30;
+                    Foreground.Padding = new MarginPadding { Horizontal = 14 };
+                }
+
+                public override void SetFlowDirection(Direction direction)
+                {
+                    RelativeSizeAxes = Axes.X;
+                    AutoSizeAxes = Axes.None;
+                    Height = 30;
                 }
 
                 protected override Drawable CreateContent()
                 {
                     return new FluXisSpriteText
                     {
-                        FontSize = 16,
-                        Margin = new MarginPadding { Vertical = 2, Horizontal = 5 },
-                        Shadow = true
+                        WebFontSize = 12,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
                     };
                 }
             }
