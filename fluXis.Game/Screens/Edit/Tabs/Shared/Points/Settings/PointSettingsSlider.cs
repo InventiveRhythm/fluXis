@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
@@ -11,7 +12,7 @@ using osu.Framework.Localisation;
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 
 public partial class PointSettingsSlider<T> : Container, IHasTooltip
-    where T : struct, IComparable<T>, IConvertible, IEquatable<T>
+    where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public string Text { get; init; }
     public LocalisableString TooltipText { get; init; } = string.Empty;

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Localization;
@@ -30,7 +29,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
             {
                 Label = strings.Renderer,
                 Description = strings.RendererDescription,
-                Items = host.GetPreferredRenderersForCurrentPlatform().OrderBy(t => t).Where(t => t != RendererType.Vulkan),
+                Items = host.GetPreferredRenderersForCurrentPlatform(),
                 Bindable = frameworkConfig.GetBindable<RendererType>(FrameworkSetting.Renderer)
             },
             new SettingsDropdown<FrameSync>

@@ -1,4 +1,4 @@
-using System;
+using System.Numerics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -8,11 +8,11 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
-using osuTK;
+using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Game.Graphics.UserInterface;
 
-public partial class FluXisSlider<T> : Container where T : struct, IComparable<T>, IConvertible, IEquatable<T>
+public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public Bindable<T> Bindable { get; init; }
     public float Step { get; init; }
@@ -98,7 +98,7 @@ public partial class FluXisSlider<T> : Container where T : struct, IComparable<T
 
     private void updateValue(ValueChangedEvent<T> e)
     {
-        float percent = (float)(bindableNumber.Value.ToDouble(null) - bindableNumber.MinValue.ToDouble(null)) / (float)(bindableNumber.MaxValue.ToDouble(null) - bindableNumber.MinValue.ToDouble(null));
+        var percent = bindableNumber.NormalizedValue;
         Colour4 colour = FluXisColors.AccentGradient.Interpolate(new Vector2(percent, 1));
         sliderBar.SelectionColour = colour;
         sliderBar.BackgroundColour = colour.Opacity(.2f);

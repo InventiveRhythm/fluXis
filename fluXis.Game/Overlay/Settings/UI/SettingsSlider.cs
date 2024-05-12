@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Utils;
@@ -9,7 +10,7 @@ using osu.Framework.Graphics;
 namespace fluXis.Game.Overlay.Settings.UI;
 
 public partial class SettingsSlider<T> : SettingsItem
-    where T : struct, IComparable<T>, IConvertible, IEquatable<T>
+    where T : struct, INumber<T>, IMinMaxValue<T>
 {
     public Bindable<T> Bindable { get; init; }
     public string ValueLabel { get; init; } = "{value}";
@@ -17,6 +18,8 @@ public partial class SettingsSlider<T> : SettingsItem
     public float Step { get; init; } = .01f;
 
     protected override bool IsDefault => Bindable.IsDefault;
+
+    private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
 
     private FluXisSpriteText valueLabel;
 
@@ -54,8 +57,10 @@ public partial class SettingsSlider<T> : SettingsItem
 
     private void onValueChanged(ValueChangedEvent<T> value)
     {
+        var percent = float.CreateTruncating(value.NewValue);
+
         valueLabel.Text = DisplayAsPercentage
-            ? $"{Math.Round(Bindable.Value.ToDouble(null) * 100)}%"
-            : ValueLabel.Replace("{value}", Math.Round(Bindable.Value.ToDouble(null), 2).ToStringInvariant());
+            ? $"{Math.Round(percent * 100)}%"
+            : ValueLabel.Replace("{value}", Math.Round(percent, 2).ToStringInvariant());
     }
 }

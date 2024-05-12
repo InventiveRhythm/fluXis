@@ -58,15 +58,15 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
 
     protected override DrawNode CreateDrawNode() => CreateShaderDrawNode();
 
-    public override bool UpdateSubTreeMasking(Drawable source, RectangleF maskingBounds)
+    public override bool UpdateSubTreeMasking()
     {
-        bool result = base.UpdateSubTreeMasking(source, maskingBounds);
+        bool result = base.UpdateSubTreeMasking();
 
         childrenUpdateVersion = updateVersion;
         return result;
     }
 
-    protected override RectangleF ComputeChildMaskingBounds(RectangleF maskingBounds) => ScreenSpaceDrawQuad.AABBFloat;
+    protected override RectangleF ComputeChildMaskingBounds() => ScreenSpaceDrawQuad.AABBFloat;
 
     protected override bool OnInvalidate(Invalidation invalidation, InvalidationSource source)
     {
