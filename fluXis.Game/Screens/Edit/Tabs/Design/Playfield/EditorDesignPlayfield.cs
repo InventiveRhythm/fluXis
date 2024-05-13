@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -32,6 +33,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
             skinManager.GetStageBackground(),
             skinManager.GetStageBorder(false),
             skinManager.GetStageBorder(true),
+            new EditorTimingLines(),
             Receptors = new FillFlowContainer<EditorDesignReceptor>
             {
                 AutoSizeAxes = Axes.X,

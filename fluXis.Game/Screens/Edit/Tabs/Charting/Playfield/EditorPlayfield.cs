@@ -1,8 +1,8 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Lines;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
+using fluXis.Game.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Game.Skinning.Default.Stage;
 using osu.Framework.Allocation;
