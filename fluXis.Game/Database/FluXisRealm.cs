@@ -32,8 +32,9 @@ public class FluXisRealm : IDisposable
     /// 13 - Added RealmMapSet.DateAdded, RealmMapSet.DateSubmitted, RealmMapSet.DateRanked,
     ///    - RealmMap.LastLocalUpdate, RealmMap.LastOnlineUpdate, RealmMap.LastPlayed,
     ///    - RealmMap.OnlineHash, RealmMap.AccuracyDifficulty and RealmMap.HealthDifficulty
+    /// 14 - Replaced RealmMapFilters effects with a bitfield
     /// </summary>
-    private const int schema_version = 13;
+    private const int schema_version = 14;
 
     private Realm updateRealm;
 
@@ -222,6 +223,25 @@ public class FluXisRealm : IDisposable
                         var info = map.GetMapInfo();
                         map.AccuracyDifficulty = info?.AccuracyDifficulty ?? 8;
                     }
+                }
+
+                break;
+            }
+
+            case 14:
+            {
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+
+                foreach (var filter in migration.NewRealm.All<RealmMapFilters>().ToList())
+                    migration.NewRealm.Remove(filter);
+
+                foreach (var map in maps)
+                {
+                    var info = map.GetMapInfo();
+                    var events = info?.GetMapEvents();
+
+                    var filters = MapUtils.GetMapFilters(info, events);
+                    map.Filters = filters;
                 }
 
                 break;

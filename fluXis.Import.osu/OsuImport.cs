@@ -223,10 +223,7 @@ public class OsuImport : MapImporter
                             BPMMax = 0,
                             NoteCount = map.CountHitCircles,
                             LongNoteCount = map.CountSliders,
-                            NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (map.TotalTime / 1000f),
-                            HasScrollVelocity = false,
-                            HasLaneSwitch = false,
-                            HasFlash = false
+                            NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (map.TotalTime / 1000f)
                         },
                         KeyCount = (int)map.CircleSize,
                         Rating = 0

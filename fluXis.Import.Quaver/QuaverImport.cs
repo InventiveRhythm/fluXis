@@ -162,10 +162,7 @@ public class QuaverImport : MapImporter
                         BPMMax = bpm,
                         NoteCount = noteCount,
                         LongNoteCount = longNoteCount,
-                        NotesPerSecond = (noteCount + longNoteCount) / (songLength / 1000),
-                        HasScrollVelocity = false,
-                        HasLaneSwitch = false,
-                        HasFlash = false
+                        NotesPerSecond = (noteCount + longNoteCount) / (songLength / 1000)
                     },
                     KeyCount = mode == 1 ? 4 : 7,
                     Rating = 0

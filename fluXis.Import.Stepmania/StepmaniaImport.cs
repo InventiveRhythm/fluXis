@@ -118,10 +118,7 @@ public class StepmaniaImport : MapImporter
                         BPMMax = info.TimingPoints.Max(x => x.BPM),
                         NoteCount = hits,
                         LongNoteCount = lns,
-                        NotesPerSecond = (hits + lns) / (length / 1000f),
-                        HasScrollVelocity = false,
-                        HasLaneSwitch = false,
-                        HasFlash = false
+                        NotesPerSecond = (hits + lns) / (length / 1000f)
                     }
                 };
 

@@ -20,7 +20,7 @@ public partial class FluXisIcon : Sprite
             type = value;
 
             if (IsLoaded)
-                Texture = textures.Get($"Map/Icons/{Type}.png");
+                Texture = textures.Get($"Map/Icons/{Type}.png") ?? textures.Get("Map/Icons/Unknown.png");
         }
     }
 
@@ -40,5 +40,9 @@ public enum FluXisIconType
     Pulse,
     PlayfieldMove,
     PlayfieldScale,
-    Shake
+    PlayfieldRotate,
+    PlayfieldFade,
+    Shake,
+    Shader,
+    BeatPulse
 }

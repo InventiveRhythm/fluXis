@@ -53,18 +53,49 @@ public static class MapUtils
         {
             if (scrollVelocity.Multiplier != 1)
             {
-                filters.HasScrollVelocity = true;
+                filters.Effects |= EffectType.ScrollVelocity;
                 break;
             }
         }
 
         if (events != null)
-        {
-            filters.HasLaneSwitch = events.LaneSwitchEvents.Count > 0;
-            filters.HasFlash = events.FlashEvents.Count > 0;
-        }
+            filters.Effects = getEffects(events);
 
         return filters;
+    }
+
+    private static EffectType getEffects(MapEvents events)
+    {
+        EffectType effects = 0;
+
+        if (events.LaneSwitchEvents.Count > 0)
+            effects |= EffectType.LaneSwitch;
+
+        if (events.FlashEvents.Count > 0)
+            effects |= EffectType.Flash;
+
+        if (events.PulseEvents.Count > 0)
+            effects |= EffectType.Pulse;
+
+        if (events.PlayfieldMoveEvents.Count > 0)
+            effects |= EffectType.PlayfieldMove;
+
+        if (events.PlayfieldScaleEvents.Count > 0)
+            effects |= EffectType.PlayfieldScale;
+
+        if (events.PlayfieldFadeEvents.Count > 0)
+            effects |= EffectType.PlayfieldFade;
+
+        if (events.ShakeEvents.Count > 0)
+            effects |= EffectType.Shake;
+
+        if (events.ShaderEvents.Count > 0)
+            effects |= EffectType.Shader;
+
+        if (events.BeatPulseEvents.Count > 0)
+            effects |= EffectType.BeatPulse;
+
+        return effects;
     }
 
     public static RealmMapFilters GetMapFilters(MapInfo map, MapEvents events)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -7,6 +8,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -160,10 +162,8 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                                     FontSize = 14,
                                                     Rating = map.Filters.NotesPerSecond,
                                                     Margin = new MarginPadding { Right = 5 }
-                                                },
-                                                new GimmickIcon(FluXisIconType.LaneSwitch, "Contains lane switches", map.Filters.HasLaneSwitch),
-                                                new GimmickIcon(FluXisIconType.Flash, "Contains flashes", map.Filters.HasFlash)
-                                            }
+                                                }
+                                            }.Concat(getIcons()).ToArray()
                                         }
                                     }
                                 }
@@ -236,16 +236,51 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             outline.FadeOut(200);
     }
 
+    private GimmickIcon[] getIcons()
+    {
+        var icons = new List<GimmickIcon>();
+
+        var effects = map.Filters.Effects;
+
+        if (effects.HasFlagFast(EffectType.LaneSwitch))
+            icons.Add(new GimmickIcon(FluXisIconType.LaneSwitch, "Contains lane switches"));
+
+        if (effects.HasFlagFast(EffectType.Flash))
+            icons.Add(new GimmickIcon(FluXisIconType.Flash, "Contains flashes"));
+
+        if (effects.HasFlagFast(EffectType.Pulse))
+            icons.Add(new GimmickIcon(FluXisIconType.Pulse, "Contains pulses"));
+
+        if (effects.HasFlagFast(EffectType.PlayfieldMove))
+            icons.Add(new GimmickIcon(FluXisIconType.PlayfieldMove, "Contains playfield moves"));
+
+        if (effects.HasFlagFast(EffectType.PlayfieldScale))
+            icons.Add(new GimmickIcon(FluXisIconType.PlayfieldScale, "Contains playfield scales"));
+
+        if (effects.HasFlagFast(EffectType.PlayfieldFade))
+            icons.Add(new GimmickIcon(FluXisIconType.PlayfieldFade, "Contains playfield fades"));
+
+        if (effects.HasFlagFast(EffectType.Shake))
+            icons.Add(new GimmickIcon(FluXisIconType.Shake, "Contains shakes"));
+
+        if (effects.HasFlagFast(EffectType.Shader))
+            icons.Add(new GimmickIcon(FluXisIconType.Shader, "Contains shaders"));
+
+        if (effects.HasFlagFast(EffectType.BeatPulse))
+            icons.Add(new GimmickIcon(FluXisIconType.BeatPulse, "Contains beat pulses"));
+
+        return icons.ToArray();
+    }
+
     private partial class GimmickIcon : FluXisIcon, IHasTooltip
     {
         public LocalisableString TooltipText { get; }
 
-        public GimmickIcon(FluXisIconType type, string tooltip, bool show)
+        public GimmickIcon(FluXisIconType type, string tooltip)
         {
             Size = new Vector2(14);
             Type = type;
             TooltipText = tooltip;
-            Alpha = show ? 1 : 0;
         }
 
         protected override bool OnHover(HoverEvent e) => true;
