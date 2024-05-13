@@ -1,10 +1,15 @@
 using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -20,6 +25,15 @@ public partial class GraphicsRenderingSection : SettingsSubSection
 
     private SettingsGraphicsStrings strings => LocalizationStrings.Settings.Graphics;
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PanelContainer panels { get; set; }
+
+    [Resolved]
+    private FluXisGameBase game { get; set; }
+
+    private Bindable<RendererType> rendererBindable;
+
     [BackgroundDependencyLoader]
     private void load(GameHost host, FrameworkConfigManager frameworkConfig)
     {
@@ -30,7 +44,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
                 Label = strings.Renderer,
                 Description = strings.RendererDescription,
                 Items = host.GetPreferredRenderersForCurrentPlatform(),
-                Bindable = frameworkConfig.GetBindable<RendererType>(FrameworkSetting.Renderer)
+                Bindable = rendererBindable = frameworkConfig.GetBindable<RendererType>(FrameworkSetting.Renderer)
             },
             new SettingsDropdown<FrameSync>
             {
@@ -51,5 +65,32 @@ public partial class GraphicsRenderingSection : SettingsSubSection
                 Bindable = Config.GetBindable<bool>(FluXisSetting.ShowFps)
             }
         });
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        rendererBindable.BindValueChanged(rendererChanged);
+    }
+
+    private void rendererChanged(ValueChangedEvent<RendererType> renderer)
+    {
+        if (panels == null)
+            return;
+
+        var panel = new ButtonPanel
+        {
+            Text = "Restart Required",
+            SubText = "Changing the renderer requires a restart to take effect.",
+            Icon = FontAwesome6.Solid.ArrowsRotate,
+            Buttons = new ButtonData[]
+            {
+                new PrimaryButtonData("Restart now.", game.Exit),
+                new CancelButtonData("I'll do it later.")
+            }
+        };
+
+        panels.Content = panel;
     }
 }
