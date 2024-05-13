@@ -22,6 +22,7 @@ public partial class BackgroundVideo : CompositeDrawable
     public MapInfo Info { get; set; }
 
     public bool IsPlaying { get; private set; }
+    private bool waitingForLoad;
 
     private Container videoContainer;
     private Video video;
@@ -90,6 +91,8 @@ public partial class BackgroundVideo : CompositeDrawable
 
         if (file == null) return;
 
+        waitingForLoad = true;
+
         try
         {
             var path = MapFiles.GetFullPath(file);
@@ -108,12 +111,14 @@ public partial class BackgroundVideo : CompositeDrawable
                 {
                     Logger.Log("Video loaded, adding to scene tree.", LoggingTarget.Runtime, LogLevel.Debug);
                     videoContainer.Child = loadedVideo;
+                    waitingForLoad = false;
                 });
             });
         }
         catch (Exception e)
         {
             Logger.Error(e, $"Failed to load video: {file}");
+            waitingForLoad = false;
         }
     }
 
@@ -122,6 +127,9 @@ public partial class BackgroundVideo : CompositeDrawable
         base.Update();
 
         if (video is not { IsLoaded: true }) return;
+
+        if (Clock.CurrentTime > 2000 && Alpha == 0 && IsPlaying)
+            this.FadeIn(500); // workaround for editor playtesting
 
         if (Clock.CurrentTime > video.Duration)
         {
@@ -151,7 +159,13 @@ public partial class BackgroundVideo : CompositeDrawable
 
     public void Start()
     {
-        if (video == null) return;
+        if (video == null)
+        {
+            if (waitingForLoad)
+                Schedule(Start);
+
+            return;
+        }
 
         if (!video.IsLoaded)
         {
