@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Online.API.Requests.Leaderboards;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Screens.Ranking.UI;
@@ -157,7 +158,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                 backButton = new CornerButton
                                 {
                                     Corner = Corner.BottomLeft,
-                                    ButtonText = "Back",
+                                    ButtonText = LocalizationStrings.General.Back,
                                     Icon = FontAwesome6.Solid.ChevronLeft,
                                     Action = this.Exit
                                 }

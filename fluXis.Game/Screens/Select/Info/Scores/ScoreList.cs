@@ -14,6 +14,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.IO;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Maps;
@@ -100,27 +101,47 @@ public partial class ScoreList : GridContainer
                             RelativeSizeAxes = Axes.Both,
                             Colour = FluXisColors.Background2
                         },
-                        new FluXisSpriteText
+                        new GridContainer
                         {
-                            Text = "Scores",
-                            FontSize = 32,
-                            Shear = new Vector2(.1f, 0),
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            X = 20
-                        },
-                        typeSwitcher = new FillFlowContainer<LeaderboardTypeButton>
-                        {
-                            AutoSizeAxes = Axes.Both,
-                            Direction = FillDirection.Horizontal,
-                            Anchor = Anchor.CentreRight,
-                            Origin = Anchor.CentreRight,
-                            X = -40,
-                            Children = Enum.GetValues<ScoreListType>().Select(t => new LeaderboardTypeButton
+                            RelativeSizeAxes = Axes.Both,
+                            ColumnDimensions = new[]
                             {
-                                Type = t,
-                                ScoreList = this
-                            }).ToList()
+                                new Dimension(),
+                                new Dimension(GridSizeMode.AutoSize)
+                            },
+                            Content = new[]
+                            {
+                                new Drawable[]
+                                {
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Padding = new MarginPadding { Horizontal = 20 },
+                                        Child = new TruncatingText()
+                                        {
+                                            Text = LocalizationStrings.SongSelect.LeaderboardTitle,
+                                            RelativeSizeAxes = Axes.X,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft,
+                                            Shear = new Vector2(.1f, 0),
+                                            FontSize = 32
+                                        }
+                                    },
+                                    typeSwitcher = new FillFlowContainer<LeaderboardTypeButton>
+                                    {
+                                        AutoSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Horizontal,
+                                        Anchor = Anchor.CentreRight,
+                                        Origin = Anchor.CentreRight,
+                                        Padding = new MarginPadding { Right = 40 },
+                                        Children = Enum.GetValues<ScoreListType>().Select(t => new LeaderboardTypeButton
+                                        {
+                                            Type = t,
+                                            ScoreList = this
+                                        }).ToList()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -135,7 +156,7 @@ public partial class ScoreList : GridContainer
                     {
                         noScoresText = new FluXisSpriteText
                         {
-                            Text = "No scores yet!",
+                            Text = LocalizationStrings.SongSelect.LeaderboardNoScores,
                             FontSize = 32,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -174,7 +195,7 @@ public partial class ScoreList : GridContainer
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = "Your local version of this map is out of date!",
+                                    Text = LocalizationStrings.SongSelect.LeaderboardOutOfDate,
                                     FontSize = 24,
                                     Shadow = true,
                                     Anchor = Anchor.CentreLeft,
@@ -310,7 +331,7 @@ public partial class ScoreList : GridContainer
             scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
 
             if (scrollContainer.ScrollContent.Children.Count == 0)
-                noScoresText.Text = map.MapSet.Managed ? "Scores are not available for this map!" : "No scores yet!";
+                noScoresText.Text = map.MapSet.Managed ? LocalizationStrings.SongSelect.LeaderboardScoresUnavailable : LocalizationStrings.SongSelect.LeaderboardNoScores;
 
             noScoresText.FadeTo(scrollContainer.ScrollContent.Children.Count == 0 ? 1 : 0, 200);
             loadingIcon.FadeOut(200);
@@ -319,7 +340,7 @@ public partial class ScoreList : GridContainer
 
     private void showNotSubmittedError()
     {
-        noScoresText.Text = "This map is not submitted online!";
+        noScoresText.Text = LocalizationStrings.SongSelect.LeaderboardNotUploaded;
         Schedule(() =>
         {
             noScoresText.FadeIn(200);
@@ -492,9 +513,18 @@ public partial class ScoreList : GridContainer
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0
                     },
-                    new FluXisSpriteText
+                    new TruncatingText
                     {
-                        Text = Type.ToString(),
+                        MaxWidth = 80,
+                        Text = Type switch
+                        {
+                            ScoreListType.Local => LocalizationStrings.SongSelect.LeaderboardLocal,
+                            ScoreListType.Global => LocalizationStrings.SongSelect.LeaderboardGlobal,
+                            ScoreListType.Country => LocalizationStrings.SongSelect.LeaderboardCountry,
+                            ScoreListType.Friends => LocalizationStrings.SongSelect.LeaderboardFriends,
+                            ScoreListType.Club => LocalizationStrings.SongSelect.LeaderboardClub,
+                            _ => "???"
+                        },
                         FontSize = 18,
                         Shear = new Vector2(-.1f, 0),
                         Anchor = Anchor.Centre,

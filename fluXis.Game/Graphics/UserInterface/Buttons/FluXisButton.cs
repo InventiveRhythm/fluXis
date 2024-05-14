@@ -20,7 +20,7 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
     public LocalisableString TooltipText { get; init; }
 
     public float FontSize { get; init; } = 24;
-    public string Text { get; set; } = "Default Text";
+    public LocalisableString Text { get; set; } = "Default Text";
     public Colour4 Color { get; set; } = FluXisColors.Background4;
     public Colour4 TextColor { get; set; } = FluXisColors.Text;
     public bool HoldToConfirm { get; set; }
@@ -183,7 +183,7 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
 
 public class ButtonData
 {
-    public string Text { get; init; } = "Default Text";
+    public LocalisableString Text { get; init; } = "Default Text";
     public Colour4 TextColor { get; init; } = FluXisColors.Text;
     public Colour4 Color { get; init; } = FluXisColors.Background4;
     public Action Action { get; init; } = () => { };

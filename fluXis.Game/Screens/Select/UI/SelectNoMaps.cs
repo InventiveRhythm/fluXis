@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -46,7 +47,7 @@ public partial class SelectNoMaps : CompositeDrawable
                     },
                     new FluXisSpriteText
                     {
-                        Text = "No maps found!",
+                        Text = LocalizationStrings.SongSelect.NoMapsFound,
                         FontSize = 32,
                         Shadow = true,
                         Anchor = Anchor.TopCentre,
@@ -54,7 +55,7 @@ public partial class SelectNoMaps : CompositeDrawable
                     },
                     new FluXisSpriteText
                     {
-                        Text = "Try changing your search filters.",
+                        Text = LocalizationStrings.SongSelect.NoMapsFoundDescription,
                         FontSize = 26,
                         Colour = FluXisColors.Text2,
                         Shadow = true,

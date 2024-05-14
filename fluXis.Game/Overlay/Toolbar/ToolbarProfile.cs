@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Localization;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.User;
@@ -188,8 +189,8 @@ public partial class ToolbarProfile : Container, IHasTooltip
             Text = "Are you sure you want to log out?",
             Buttons = new ButtonData[]
             {
-                new DangerButtonData(ButtonPanel.COMMON_CONFIRM, () => fluxel.Logout()),
-                new CancelButtonData(ButtonPanel.COMMON_CANCEL)
+                new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => fluxel.Logout()),
+                new CancelButtonData()
             }
         };
 

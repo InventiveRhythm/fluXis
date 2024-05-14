@@ -7,6 +7,6 @@ public class ModStrings : LocalizationCategory
 {
     protected override string File => "mods";
 
-    public LocalisableString GetName(IMod mod) => new TranslatableString(GetKey(mod.Acronym + "-name"), mod.Name);
-    public LocalisableString GetDescription(IMod mod) => new TranslatableString(GetKey(mod.Acronym + "-description"), mod.Description);
+    public TranslatableString GetName(IMod mod) => new(GetKey(mod.Acronym + "-name"), mod.Name);
+    public TranslatableString GetDescription(IMod mod) => new(GetKey(mod.Acronym + "-description"), mod.Description);
 }

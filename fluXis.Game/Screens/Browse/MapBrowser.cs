@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Maps;
@@ -148,7 +149,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             backButton = new CornerButton
             {
                 Icon = FontAwesome6.Solid.ChevronLeft,
-                ButtonText = "Back",
+                ButtonText = LocalizationStrings.General.Back,
                 Action = this.Exit
             },
             text = new FluXisSpriteText

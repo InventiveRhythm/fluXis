@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
+using fluXis.Game.Localization;
 
 namespace fluXis.Game.Graphics.UserInterface.Panel;
 
@@ -14,8 +15,8 @@ public partial class ConfirmDeletionPanel : ButtonPanel
         SubText = "This action cannot be undone.";
         Buttons = new ButtonData[]
         {
-            new DangerButtonData(COMMON_CONFIRM, confirm, true),
-            new CancelButtonData(COMMON_CANCEL, cancel)
+            new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, confirm, true),
+            new CancelButtonData(cancel)
         };
     }
 }

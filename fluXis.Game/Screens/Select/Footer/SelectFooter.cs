@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Screens.Select.Footer.Options;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
@@ -78,7 +79,7 @@ public partial class SelectFooter : Container
                 {
                     backButton = new CornerButton
                     {
-                        ButtonText = "Back",
+                        ButtonText = LocalizationStrings.General.Back,
                         Icon = FontAwesome6.Solid.ChevronLeft,
                         Action = BackAction
                     },
@@ -94,14 +95,14 @@ public partial class SelectFooter : Container
                         {
                             new SelectFooterButton
                             {
-                                Text = "Mods",
+                                Text = LocalizationStrings.SongSelect.FooterMods,
                                 Icon = FontAwesome6.Solid.LayerGroup,
                                 AccentColor = Colour4.FromHex("#edbb98"),
                                 Action = ModsAction,
                             },
                             randomButton = new SelectFooterButton
                             {
-                                Text = "Random",
+                                Text = LocalizationStrings.SongSelect.FooterRandom,
                                 Icon = FontAwesome6.Solid.Shuffle,
                                 AccentColor = Colour4.FromHex("#ed98a7"),
                                 Action = randomMap,
@@ -110,7 +111,7 @@ public partial class SelectFooter : Container
                             },
                             options.Button = new SelectFooterButton
                             {
-                                Text = "Options",
+                                Text = LocalizationStrings.SongSelect.FooterOptions,
                                 Icon = FontAwesome6.Solid.Gear,
                                 AccentColor = Colour4.FromHex("#98cbed"),
                                 Action = OpenSettings,
@@ -121,7 +122,7 @@ public partial class SelectFooter : Container
                     },
                     playButton = new CornerButton
                     {
-                        ButtonText = "Play!",
+                        ButtonText = LocalizationStrings.General.Play,
                         Icon = FontAwesome6.Solid.Play,
                         ButtonColor = FluXisColors.Accent2,
                         Corner = Corner.BottomRight,
@@ -137,22 +138,22 @@ public partial class SelectFooter : Container
                 {
                     new()
                     {
-                        Text = "Back",
+                        Text = LocalizationStrings.General.Back,
                         Icon = "B"
                     },
                     new()
                     {
-                        Text = "Mods",
+                        Text = LocalizationStrings.SongSelect.FooterMods,
                         Icon = "X"
                     },
                     new()
                     {
-                        Text = "Random",
+                        Text = LocalizationStrings.SongSelect.FooterRandom,
                         Icon = "Y"
                     },
                     new()
                     {
-                        Text = "Options",
+                        Text = LocalizationStrings.SongSelect.FooterOptions,
                         Icon = "Menu"
                     }
                 },
@@ -170,7 +171,7 @@ public partial class SelectFooter : Container
                     },
                     new()
                     {
-                        Text = "Play",
+                        Text = LocalizationStrings.General.Play,
                         Icon = "A"
                     }
                 }
@@ -190,7 +191,9 @@ public partial class SelectFooter : Container
     {
         base.Update();
 
-        randomButton.Text = inputManager.CurrentState.Keyboard.ShiftPressed ? "Rewind" : "Random";
+        randomButton.Text = inputManager.CurrentState.Keyboard.ShiftPressed
+            ? LocalizationStrings.SongSelect.FooterRewind
+            : LocalizationStrings.SongSelect.FooterRandom;
     }
 
     private void updateGamepadStatus(bool status)

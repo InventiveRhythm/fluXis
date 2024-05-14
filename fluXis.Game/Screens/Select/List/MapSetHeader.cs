@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
@@ -33,10 +34,10 @@ public partial class MapSetHeader : Container, IHasContextMenu
             List<MenuItem> items = new();
 
             if (!Equals(maps.CurrentMapSet, mapset))
-                items.Add(new FluXisMenuItem("Select", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
+                items.Add(new FluXisMenuItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
 
-            items.Add(new FluXisMenuItem("Export", FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset)) { Enabled = () => !mapset.Managed });
-            items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
+            items.Add(new FluXisMenuItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset)) { Enabled = () => !mapset.Managed });
+            items.Add(new FluXisMenuItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
 
             if (FluXisGameBase.IsDebug)
                 items.Add(new FluXisMenuItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(mapset.ID.ToString())));

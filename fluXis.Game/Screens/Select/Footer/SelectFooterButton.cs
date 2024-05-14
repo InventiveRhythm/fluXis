@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 using osuTK.Graphics;
 
@@ -16,7 +17,7 @@ namespace fluXis.Game.Screens.Select.Footer;
 
 public partial class SelectFooterButton : Container
 {
-    public string Text
+    public LocalisableString Text
     {
         get => text;
         set
@@ -39,7 +40,7 @@ public partial class SelectFooterButton : Container
     private Box hover;
     private Box flash;
     private FluXisSpriteText spriteText;
-    private string text = string.Empty;
+    private LocalisableString text = string.Empty;
 
     [BackgroundDependencyLoader]
     private void load()

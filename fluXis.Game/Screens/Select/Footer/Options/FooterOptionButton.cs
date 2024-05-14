@@ -8,13 +8,14 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Footer.Options;
 
 public partial class FooterOptionButton : Container
 {
-    public string Text { get; set; }
+    public LocalisableString Text { get; set; }
     public IconUsage Icon { get; set; }
     public Action Action { get; set; }
     public Colour4 Color { get; set; } = Colour4.White;
@@ -59,22 +60,41 @@ public partial class FooterOptionButton : Container
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0
                     },
-                    new SpriteIcon
+                    new GridContainer
                     {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Icon = Icon,
-                        Colour = Color,
-                        Size = new Vector2(20),
-                        Margin = new MarginPadding { Left = 10 }
-                    },
-                    new FluXisSpriteText
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Text = Text,
-                        Colour = Color,
-                        Margin = new MarginPadding { Left = 40 }
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new[]
+                        {
+                            new Dimension(GridSizeMode.Absolute, 50),
+                            new Dimension()
+                        },
+                        Content = new[]
+                        {
+                            new Drawable[]
+                            {
+                                new SpriteIcon
+                                {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Icon = Icon,
+                                    Colour = Color,
+                                    Size = new Vector2(20)
+                                },
+                                new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Padding = new MarginPadding { Right = 15 },
+                                    Child = new TruncatingText
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Text = Text,
+                                        Colour = Color
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

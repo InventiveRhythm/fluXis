@@ -5,6 +5,7 @@ using System.Linq;
 using fluXis.Game;
 using fluXis.Game.IPC;
 using fluXis.Game.Localization;
+using fluXis.Game.Localization.Categories;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Shared.Utils;
 using osu.Framework.Platform;
@@ -101,7 +102,12 @@ public static class Program
             new SettingsInputStrings(),
             new SettingsMaintenanceStrings(),
             new SettingsPluginsStrings(),
-            new SettingsUIStrings()
+            new SettingsUIStrings(),
+            new GeneralStrings(),
+            new MainMenuStrings(),
+            new ModSelectStrings(),
+            new ModStrings(),
+            new SongSelectStrings()
         };
 
         Directory.CreateDirectory("langfiles");

@@ -458,7 +458,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
             if (Maps.Count == 0)
                 noMapsContainer.Show();
-        }, itemName: "MapSet");
+        }, itemName: "mapset");
     }
 
     public void ExportMapSet(RealmMapSet set)

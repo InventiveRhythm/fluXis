@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Screens.Result.Extended;
 using fluXis.Game.Screens.Result.Normal;
@@ -89,7 +90,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                     },
                     backButton = new CornerButton
                     {
-                        ButtonText = "Back",
+                        ButtonText = LocalizationStrings.General.Back,
                         Icon = FontAwesome6.Solid.ChevronLeft,
                         Action = this.Exit
                     },

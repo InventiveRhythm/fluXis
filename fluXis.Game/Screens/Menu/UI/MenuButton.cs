@@ -2,6 +2,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -16,7 +17,7 @@ namespace fluXis.Game.Screens.Menu.UI;
 
 public partial class MenuButton : ClickableContainer, IHasTooltip
 {
-    public LocalisableString TooltipText => Enabled.Value ? "" : "Log in to use this feature.";
+    public LocalisableString TooltipText => Enabled.Value ? "" : LocalizationStrings.General.LoginToUse;
 
     public LocalisableString Text { get; init; }
     public LocalisableString Description { get; init; }

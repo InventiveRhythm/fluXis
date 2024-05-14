@@ -21,7 +21,7 @@ public partial class ExternalLinkPanel : ButtonPanel
         SubText = $"You're about to open the following link in your browser:\n{link}";
         Buttons = new ButtonData[]
         {
-            new PrimaryButtonData(COMMON_CONFIRM, () => host.OpenUrlExternally(link)),
+            new PrimaryButtonData(() => host.OpenUrlExternally(link)),
             new SecondaryButtonData("Copy it instead.", () => clipboard.SetText(link)),
             new CancelButtonData()
         };

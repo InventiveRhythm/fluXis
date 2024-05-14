@@ -1,0 +1,14 @@
+{
+  "general": "General",
+  "back": "Back",
+  "play": "Play",
+  "edit": "Edit",
+  "select": "Select",
+  "delete": "Delete",
+  "export": "Export",
+  "panel-generic-confirm": "Yes, do it.",
+  "panel-generic-cancel": "Wait, no nevermind.",
+  "panel-confirm-exit": "Are you sure you want to exit?",
+  "can-not-be-undone": "This action cannot be undone.",
+  "login-to-use": "Log in to use this feature."
+}

@@ -9,6 +9,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings;
 using osu.Framework.Allocation;
@@ -101,11 +102,11 @@ public partial class FooterOptions : FocusedOverlayContainer
                         {
                             setSection = new FooterOptionSection
                             {
-                                Title = "General"
+                                Title = LocalizationStrings.General.General
                             },
                             new FooterOptionButton
                             {
-                                Text = "Game Settings",
+                                Text = LocalizationStrings.SongSelect.OptionsSettings,
                                 Icon = FontAwesome6.Solid.Gear,
                                 Action = () =>
                                 {
@@ -115,11 +116,11 @@ public partial class FooterOptions : FocusedOverlayContainer
                             },
                             setSection = new FooterOptionSection
                             {
-                                Title = "For all difficulties"
+                                Title = LocalizationStrings.SongSelect.OptionsForAll
                             },
                             new FooterOptionButton
                             {
-                                Text = "Delete MapSet",
+                                Text = LocalizationStrings.SongSelect.OptionsDeleteSet,
                                 Icon = FontAwesome6.Solid.Trash,
                                 Color = FluXisColors.Red,
                                 Action = () =>
@@ -130,11 +131,11 @@ public partial class FooterOptions : FocusedOverlayContainer
                             },
                             mapSection = new FooterOptionSection
                             {
-                                Title = "For this difficulty"
+                                Title = LocalizationStrings.SongSelect.OptionsForCurrent
                             },
                             new FooterOptionButton
                             {
-                                Text = "Edit Map",
+                                Text = LocalizationStrings.General.Edit,
                                 Icon = FontAwesome6.Solid.Pen,
                                 Action = () =>
                                 {
@@ -144,7 +145,7 @@ public partial class FooterOptions : FocusedOverlayContainer
                             },
                             new FooterOptionButton
                             {
-                                Text = "Wipe local scores",
+                                Text = LocalizationStrings.SongSelect.OptionsWipeScores,
                                 Icon = FontAwesome6.Solid.Eraser,
                                 Color = FluXisColors.Red,
                                 Action = () =>
@@ -154,11 +155,11 @@ public partial class FooterOptions : FocusedOverlayContainer
                                     panels.Content = new ButtonPanel
                                     {
                                         Icon = FontAwesome6.Solid.Eraser,
-                                        Text = "Are you sure you want to wipe all local scores for this difficulty?",
-                                        SubText = "This action cannot be undone.",
+                                        Text = LocalizationStrings.SongSelect.WipeScoresConfirmation,
+                                        SubText = LocalizationStrings.General.CanNotBeUndone,
                                         Buttons = new ButtonData[]
                                         {
-                                            new DangerButtonData(ButtonPanel.COMMON_CONFIRM, () =>
+                                            new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                                             {
                                                 realm.RunWrite(r =>
                                                 {
@@ -168,7 +169,7 @@ public partial class FooterOptions : FocusedOverlayContainer
 
                                                 ScoresWiped?.Invoke();
                                             }, true),
-                                            new CancelButtonData(ButtonPanel.COMMON_CANCEL)
+                                            new CancelButtonData()
                                         }
                                     };
                                 }

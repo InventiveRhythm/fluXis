@@ -4,13 +4,14 @@ using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Graphics.Gamepad;
 
 public partial class GamepadTooltip : FillFlowContainer
 {
-    public string Text { get; init; } = string.Empty;
+    public LocalisableString Text { get; init; } = string.Empty;
     public string[] Icons { get; init; } = Array.Empty<string>();
     public string Icon { init => Icons = new[] { value }; }
 

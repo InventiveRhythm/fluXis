@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Buttons;
@@ -18,9 +19,9 @@ public partial class CornerButton : Container
 {
     private const int corner_radius = 20;
 
-    private string buttonText;
+    private LocalisableString buttonText;
 
-    public virtual string ButtonText
+    public virtual LocalisableString ButtonText
     {
         get => buttonText;
         set

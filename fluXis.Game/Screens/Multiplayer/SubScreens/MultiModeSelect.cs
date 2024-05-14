@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Ranked;
 using fluXis.Game.UI;
@@ -106,7 +107,7 @@ public partial class MultiModeSelect : MultiSubScreen
             backButton = new CornerButton
             {
                 Corner = Corner.BottomLeft,
-                ButtonText = "Back",
+                ButtonText = LocalizationStrings.General.Back,
                 Icon = FontAwesome6.Solid.ChevronLeft,
                 Action = this.Exit
             },

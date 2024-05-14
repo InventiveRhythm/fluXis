@@ -179,7 +179,7 @@ public partial class MenuScreen : FluXisScreen
                     },
                     pressAnyKeyText = new FluXisSpriteText
                     {
-                        Text = "Press any key.",
+                        Text = LocalizationStrings.MainMenu.PressAnyKey,
                         FontSize = 32,
                         Shadow = true,
                         Anchor = Anchor.BottomCentre,

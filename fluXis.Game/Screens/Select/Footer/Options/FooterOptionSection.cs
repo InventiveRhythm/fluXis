@@ -2,14 +2,15 @@ using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Screens.Select.Footer.Options;
 
 public partial class FooterOptionSection : FillFlowContainer
 {
-    public string Title { get; init; }
+    public LocalisableString Title { get; init; }
 
-    public string SubTitle
+    public LocalisableString SubTitle
     {
         get => subTitle;
         set
@@ -21,7 +22,7 @@ public partial class FooterOptionSection : FillFlowContainer
         }
     }
 
-    private string subTitle;
+    private LocalisableString subTitle;
 
     private TruncatingText subTitleText;
 

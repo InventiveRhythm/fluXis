@@ -4,6 +4,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
@@ -30,12 +31,12 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
         {
             List<MenuItem> items = new()
             {
-                new FluXisMenuItem("Play", FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
+                new FluXisMenuItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
                 {
                     maps.Select(map, true);
                     mapListEntry.SelectAction?.Invoke();
                 }),
-                new FluXisMenuItem("Edit", FontAwesome6.Solid.Pen, MenuItemType.Normal, () => mapListEntry.EditAction?.Invoke(map))
+                new FluXisMenuItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => mapListEntry.EditAction?.Invoke(map))
             };
 
             if (FluXisGameBase.IsDebug)

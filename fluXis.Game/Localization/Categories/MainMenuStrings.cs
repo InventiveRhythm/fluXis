@@ -6,18 +6,20 @@ public class MainMenuStrings : LocalizationCategory
 {
     protected override string File => "mainmenu";
 
-    public LocalisableString PlayText => new TranslatableString(GetKey("play-text"), "Play");
-    public LocalisableString PlayDescription(int mapcount) => new TranslatableString(GetKey("play-description"), "{0:0} maps loaded", mapcount);
+    public TranslatableString PressAnyKey => new TranslatableString(GetKey("press-any-key"), "Press any key.");
 
-    public LocalisableString MultiplayerText => new TranslatableString(GetKey("multiplayer-text"), "Multiplayer");
-    public LocalisableString MultiplayerDescription => new TranslatableString(GetKey("multiplayer-description"), "Play against other players");
+    public TranslatableString PlayText => new TranslatableString(GetKey("play-text"), "Play");
+    public TranslatableString PlayDescription(int mapcount) => new TranslatableString(GetKey("play-description"), "{0:0} maps loaded", mapcount);
 
-    public LocalisableString RankingText => new TranslatableString(GetKey("ranking-text"), "Ranking");
-    public LocalisableString RankingDescription => new TranslatableString(GetKey("ranking-description"), "Check online leaderboards");
+    public TranslatableString MultiplayerText => new TranslatableString(GetKey("multiplayer-text"), "Multiplayer");
+    public TranslatableString MultiplayerDescription => new TranslatableString(GetKey("multiplayer-description"), "Play against other players");
 
-    public LocalisableString BrowseText => new TranslatableString(GetKey("browse-text"), "Browse");
-    public LocalisableString BrowseDescription => new TranslatableString(GetKey("browse-description"), "Download community-made maps");
+    public TranslatableString RankingText => new TranslatableString(GetKey("ranking-text"), "Ranking");
+    public TranslatableString RankingDescription => new TranslatableString(GetKey("ranking-description"), "Check online leaderboards");
 
-    public LocalisableString EditText => new TranslatableString(GetKey("edit-text"), "Edit");
-    public LocalisableString EditDescription => new TranslatableString(GetKey("edit-description"), "Create your own maps");
+    public TranslatableString BrowseText => new TranslatableString(GetKey("browse-text"), "Browse");
+    public TranslatableString BrowseDescription => new TranslatableString(GetKey("browse-description"), "Download community-made maps");
+
+    public TranslatableString EditText => new TranslatableString(GetKey("edit-text"), "Edit");
+    public TranslatableString EditDescription => new TranslatableString(GetKey("edit-description"), "Create your own maps");
 }

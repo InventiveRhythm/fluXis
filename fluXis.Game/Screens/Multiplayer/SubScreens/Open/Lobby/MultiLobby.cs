@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.API.Models.Multi;
@@ -250,12 +251,12 @@ public partial class MultiLobby : MultiSubScreen
             Text = "Are you sure you want to exit the lobby?",
             Buttons = new ButtonData[]
             {
-                new DangerButtonData(ButtonPanel.COMMON_CONFIRM, () =>
+                new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                 {
                     confirmExit = true;
                     this.Exit();
                 }),
-                new CancelButtonData(ButtonPanel.COMMON_CANCEL)
+                new CancelButtonData()
             }
         };
 

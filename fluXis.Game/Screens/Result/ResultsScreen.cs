@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
@@ -159,7 +160,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
                         {
                             backButton = new CornerButton
                             {
-                                ButtonText = "Back",
+                                ButtonText = LocalizationStrings.General.Back,
                                 Icon = FontAwesome6.Solid.ChevronLeft,
                                 Action = this.Exit
                             }
@@ -172,7 +173,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
                         {
                             new()
                             {
-                                Text = "Back",
+                                Text = LocalizationStrings.General.Back,
                                 Icon = "B"
                             }
                         }

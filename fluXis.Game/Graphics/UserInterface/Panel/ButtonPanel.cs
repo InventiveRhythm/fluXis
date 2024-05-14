@@ -15,11 +15,8 @@ namespace fluXis.Game.Graphics.UserInterface.Panel;
 
 public partial class ButtonPanel : Panel, ICloseable
 {
-    public const string COMMON_CONFIRM = "Yes, do it.";
-    public const string COMMON_CANCEL = "Wait, no nevermind.";
-
     public IconUsage Icon { get; init; } = FontAwesome.Solid.QuestionCircle;
-    public LocalisableString Text { get; init; } = "Default Text";
+    public LocalisableString Text { get; init; }
     public LocalisableString SubText { get; init; }
     public ButtonData[] Buttons { get; init; } = Array.Empty<ButtonData>();
 
