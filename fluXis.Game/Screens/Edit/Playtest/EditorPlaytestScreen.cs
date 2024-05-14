@@ -3,6 +3,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Screens.Gameplay;
+using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Edit.Playtest;
@@ -23,6 +24,5 @@ public partial class EditorPlaytestScreen : GameplayScreen
     }
 
     protected override MapInfo LoadMap() => map;
-    public override void OnDeath() => this.Exit();
-    protected override void End() => this.Exit();
+    protected override void End() => this.Delay(GameplayClock.BeatTime * 2).FadeIn().OnComplete(_ => this.Exit());
 }
