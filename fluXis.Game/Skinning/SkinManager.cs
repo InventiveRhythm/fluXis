@@ -8,6 +8,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Bases.Judgements;
+using fluXis.Game.Skinning.Custom;
 using fluXis.Game.Skinning.Default;
 using fluXis.Game.Skinning.Json;
 using fluXis.Game.Utils;

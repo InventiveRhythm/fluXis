@@ -403,13 +403,16 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         }
     }
 
-    public int GetSnapIndex(int time)
+    public int GetSnapIndex(float time)
     {
-        if (snapIndices.TryGetValue(time, out int i)) return i;
+        if (snapIndices.TryGetValue((int)time, out int i))
+            return i;
+
+        var closest = snapIndices.Keys.MinBy(k => Math.Abs(k - time));
 
         // allow a 10ms margin of error for snapping
-        var closest = snapIndices.Keys.MinBy(k => Math.Abs(k - time));
-        if (Math.Abs(closest - time) <= 10 && snapIndices.TryGetValue(closest, out i)) return i;
+        if (Math.Abs(closest - time) <= 10 && snapIndices.TryGetValue(closest, out i))
+            return i;
 
         // still nothing...
         return -1;

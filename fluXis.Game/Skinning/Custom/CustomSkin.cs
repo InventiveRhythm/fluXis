@@ -15,7 +15,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 
-namespace fluXis.Game.Skinning;
+namespace fluXis.Game.Skinning.Custom;
 
 public class CustomSkin : ISkin
 {

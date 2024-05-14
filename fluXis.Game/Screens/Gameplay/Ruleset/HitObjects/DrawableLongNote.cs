@@ -1,6 +1,7 @@
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects.Long;
+using fluXis.Game.Skinning.Bases.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -35,6 +36,18 @@ public partial class DrawableLongNote : DrawableHitObject
             tailPiece = new DrawableLongNoteTail(Data),
             headPiece = new DrawableLongNoteHead(Data)
         };
+
+        if (ObjectManager.UseSnapColors)
+        {
+            var startIdx = ObjectManager.GetSnapIndex(Data.Time);
+            var endIdx = ObjectManager.GetSnapIndex(Data.EndTime);
+
+            if (bodyPiece is ICanHaveSnapColor colorable)
+                colorable.ApplySnapColor(startIdx, endIdx);
+
+            tailPiece.ApplySnapColor(endIdx);
+            headPiece.ApplySnapColor(startIdx);
+        }
     }
 
     protected override void LoadComplete()

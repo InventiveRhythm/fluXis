@@ -1,10 +1,12 @@
+using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Bases.HitObjects;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Skinning.Default.HitObject;
 
-public partial class DefaultHitObjectEnd : DefaultSkinDrawable
+public partial class DefaultHitObjectEnd : DefaultSkinDrawable, ICanHaveSnapColor
 {
     private readonly Box box;
 
@@ -30,4 +32,10 @@ public partial class DefaultHitObjectEnd : DefaultSkinDrawable
     }
 
     protected override void SetColor(Colour4 color) => box.Colour = color.Darken(.4f);
+
+    public void ApplySnapColor(int start, int end)
+    {
+        UseCutomColor = true;
+        SetColor(FluXisColors.GetSnapColor(start));
+    }
 }

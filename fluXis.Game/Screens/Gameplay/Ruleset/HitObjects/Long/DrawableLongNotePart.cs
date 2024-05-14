@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Scoring;
 using fluXis.Game.Skinning;
+using fluXis.Game.Skinning.Bases.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -42,6 +43,12 @@ public partial class DrawableLongNotePart : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
+    }
+
+    public void ApplySnapColor(int idx)
+    {
+        var child = InternalChild as ICanHaveSnapColor;
+        child?.ApplySnapColor(idx, 0);
     }
 
     protected override void Update()

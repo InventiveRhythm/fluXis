@@ -1,5 +1,6 @@
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Skinning.Bases.HitObjects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -22,6 +23,12 @@ public partial class DrawableNote : DrawableHitObject
             d.Anchor = Anchor.BottomCentre;
             d.Origin = Anchor.BottomCentre;
         });
+
+        if (ObjectManager.UseSnapColors)
+        {
+            var child = InternalChild as ICanHaveSnapColor;
+            child?.ApplySnapColor(ObjectManager.GetSnapIndex(Data.Time), 0);
+        }
     }
 
     protected override void CheckJudgement(bool byUser, float offset)
