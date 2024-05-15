@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -429,11 +430,18 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             ScoreProcessor.Recalculate();
         }
 
-        if (ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless)
-            fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
+        var showingOverlay = ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless;
 
-        keybindContainer.Delay(FADE_DURATION).FadeOut(FADE_DURATION);
-        if (SubmitScore) scoreSubmissionOverlay.FadeIn(FADE_DURATION);
+        var stopwatch = Stopwatch.StartNew();
+
+        if (showingOverlay)
+        {
+            fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
+            Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
+        }
+
+        if (SubmitScore)
+            scoreSubmissionOverlay.FadeIn(FADE_DURATION);
 
         Task.Run(() =>
         {
@@ -481,7 +489,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 }
             }
 
-            Schedule(() => this.Delay(600).FadeOut(FADE_DURATION).OnComplete(_ => this.Push(screen)));
+            var minDelay = showingOverlay ? 2400 : 400;
+            var elapsed = stopwatch.Elapsed.TotalMilliseconds;
+
+            var delay = Math.Max(200, minDelay - elapsed);
+            Schedule(() => this.Delay(delay).FadeOut(FADE_DURATION).OnComplete(_ => this.Push(screen)));
         });
     }
 

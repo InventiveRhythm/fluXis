@@ -1,57 +1,101 @@
-using fluXis.Game.Graphics.Patterns;
+using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Overlay;
 
-public partial class FullComboOverlay : Container
+public partial class FullComboOverlay : CompositeDrawable
 {
-    private readonly StripePattern pattern;
-    private readonly FluXisSpriteText text;
+    private Box background;
+    private OutlinedSquare square;
+    private OutlinedSquare diamond;
+    private FluXisSpriteText text;
 
-    public FullComboOverlay()
+    [BackgroundDependencyLoader]
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
-            new Box
+            background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = ColourInfo.GradientHorizontal(FluXisColors.Accent, FluXisColors.Accent4),
-                Alpha = 0.2f
+                Colour = FluXisColors.Background2,
+                Alpha = 0
             },
-            pattern = new StripePattern
+            square = new OutlinedSquare
             {
-                Speed = new Vector2(-300)
+                RelativeSizeAxes = Axes.Both,
+                Size = new Vector2(0, 4),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                BorderThickness = 400
+            },
+            diamond = new OutlinedSquare
+            {
+                Size = new Vector2(800),
+                Scale = new Vector2(0),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                BorderThickness = 400,
+                Rotation = -45
             },
             text = new FluXisSpriteText
             {
-                FontSize = 100,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Origin = Anchor.Centre,
+                Scale = new Vector2(0),
+                FontSize = 100,
+                Shadow = true
             }
         };
     }
 
     public void Show(FullComboType type)
     {
-        this.FadeIn(200);
-        pattern.SpeedTo(new Vector2(-50), 500, Easing.OutQuint);
-        text.ScaleTo(1.1f, 3000, Easing.OutQuint);
+        this.FadeIn();
+
+        square.ResizeWidthTo(1, 1200, Easing.OutQuint)
+              .BorderTo(0, 1200, Easing.OutQuint);
+
+        if (type == FullComboType.AllFlawless)
+        {
+            diamond.ScaleTo(1, 1200, Easing.OutQuint)
+                   .RotateTo(-45).RotateTo(45, 1200, Easing.OutQuint)
+                   .BorderTo(0, 1200, Easing.OutQuint);
+        }
+
+        background.FadeTo(.4f, 400);
+        text.ScaleTo(1.2f, 1000, Easing.OutQuint);
 
         text.Text = type switch
         {
             FullComboType.FullCombo => "FULL COMBO",
             FullComboType.AllFlawless => "ALL FLAWLESS",
-            _ => text.Text
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
+    }
+
+    public override void Hide()
+    {
+        this.Delay(1200).FadeOut();
+
+        square.ResizeWidthTo(0, 1200, Easing.InQuint)
+              .BorderTo(400f, 1200, Easing.InQuint);
+
+        diamond.ScaleTo(0, 1200, Easing.InQuint)
+               .RotateTo(135, 1200, Easing.InQuint)
+               .BorderTo(400f, 1200, Easing.InQuint);
+
+        background.Delay(800).FadeOut(400);
+        text.Delay(200).ScaleTo(0, 1000, Easing.InQuint);
     }
 
     public enum FullComboType
