@@ -82,9 +82,6 @@ public class SettingsGameplayStrings : LocalizationCategory
     public TranslatableString LaneSwitchAlerts => Get("lane-switch-alerts", "Lane Switch Alerts");
     public TranslatableString LaneSwitchAlertsDescription => Get("lane-switch-alerts-description", "Shows arrows next to the playfield before a lane switch.");
 
-    public TranslatableString DisableEpilepsyIntrusingEffects => Get("disable-epilepsy-intrusing-effects", "Disable Epilepsy Intrusing Effects.");
-    public TranslatableString DisableEpilepsyIntrusingEffectsDescription => Get("disable-epilepsy-intrusing-effects-description", "Disables effects like flashes and shakes.");
-
     #endregion
 
     #region HUD

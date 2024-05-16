@@ -38,7 +38,6 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.BackgroundPulse, false);
 
         SetDefault(FluXisSetting.LaneSwitchAlerts, true);
-        SetDefault(FluXisSetting.DisableEpilepsyIntrusingEffects, false);
 
         SetDefault(FluXisSetting.HudVisibility, HudVisibility.Always);
 
@@ -110,7 +109,6 @@ public enum FluXisSetting
     BackgroundPulse,
 
     LaneSwitchAlerts,
-    DisableEpilepsyIntrusingEffects,
 
     HudVisibility,
 

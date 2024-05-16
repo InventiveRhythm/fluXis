@@ -36,8 +36,6 @@
   "effects-title": "Effects",
   "lane-switch-alerts": "Lane Switch Alerts",
   "lane-switch-alerts-description": "Shows arrows next to the playfield before a lane switch.",
-  "disable-epilepsy-intrusing-effects": "Disable Epilepsy Intrusing Effects.",
-  "disable-epilepsy-intrusing-effects-description": "Disables effects like flashes and shakes.",
   "hud-title": "HUD",
   "hud-visibility": "Visibility",
   "hud-visibility-description": "When the HUD should be visible."

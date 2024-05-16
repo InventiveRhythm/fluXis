@@ -27,12 +27,6 @@ public partial class GameplayEffectsSection : SettingsSubSection
                 Label = strings.LaneSwitchAlerts,
                 Description = strings.LaneSwitchAlertsDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.LaneSwitchAlerts)
-            },
-            new SettingsToggle
-            {
-                Label = strings.DisableEpilepsyIntrusingEffects,
-                Description = strings.DisableEpilepsyIntrusingEffectsDescription,
-                Bindable = Config.GetBindable<bool>(FluXisSetting.DisableEpilepsyIntrusingEffects)
             }
         });
     }

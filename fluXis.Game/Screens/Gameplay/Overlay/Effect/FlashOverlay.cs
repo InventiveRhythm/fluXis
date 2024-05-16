@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Game.Configuration;
 using fluXis.Game.Map.Events;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -27,12 +25,6 @@ public partial class FlashOverlay : Container
             Colour = Colour4.White,
             Alpha = 0
         });
-    }
-
-    [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
-    {
-        Alpha = config.Get<bool>(FluXisSetting.DisableEpilepsyIntrusingEffects) ? 0 : 1;
     }
 
     protected override void Update()
