@@ -37,7 +37,6 @@ using fluXis.Shared.API.Packets.Other;
 using fluXis.Shared.API.Packets.User;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
-using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -257,25 +256,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                     });
                     break;
             }
-        });
-
-        if (!Config.Get<bool>(FluXisSetting.NowPlaying)) return;
-
-        MapStore.MapSetBindable.BindValueChanged(_ =>
-        {
-            var song = MapStore.CurrentMapSet;
-            if (song == null) return;
-
-            var data = new
-            {
-                player = "fluXis",
-                title = song.Metadata.Title,
-                artist = song.Metadata.Artist,
-                cover = $"{Fluxel.Endpoint.AssetUrl}/cover/{song.OnlineID}",
-                background = $"{Fluxel.Endpoint.AssetUrl}/background/{song.OnlineID}",
-            };
-
-            File.WriteAllText($"{Host.Storage.GetFullPath("nowplaying.json")}", data.Serialize());
         });
     }
 
