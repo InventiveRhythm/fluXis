@@ -9,6 +9,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Register;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -152,15 +153,14 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
 
         password.OnCommit += (_, _) => login();
 
-        fluxel.OnStatusChanged += updateStatus;
-        updateStatus(fluxel.Status);
+        fluxel.Status.BindValueChanged(updateStatus, true);
     }
 
-    private void updateStatus(ConnectionStatus status)
+    private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
     {
         Schedule(() =>
         {
-            switch (status)
+            switch (e.NewValue)
             {
                 case ConnectionStatus.Online:
                     Hide();
@@ -171,7 +171,7 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
                     break;
 
                 case ConnectionStatus.Failing:
-                    errorText.Text = fluxel.LastError;
+                    errorText.Text = fluxel.LastException.Message;
                     errorText.Alpha = 1;
                     loadingContainer.FadeOut(200);
                     break;
@@ -199,13 +199,13 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
             return;
         }
 
-        if (fluxel.Status != ConnectionStatus.Online)
+        if (fluxel.Status.Value != ConnectionStatus.Online)
             fluxel.Login(username.Text, password.Text);
     }
 
     public override void Show()
     {
-        if (fluxel.Status == ConnectionStatus.Online)
+        if (fluxel.Status.Value == ConnectionStatus.Online)
             return;
 
         this.FadeIn(200);

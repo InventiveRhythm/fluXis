@@ -23,6 +23,8 @@ using fluXis.Game.Screens.Multiplayer;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.UI;
+using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -323,16 +325,18 @@ public partial class MenuScreen : FluXisScreen
             snowContainer.FadeTo(shouldSnow ? 1 : 0, 600, Easing.OutQuint);
         });
 
-        updateButtons();
-        fluxel.OnUserChanged += _ => Schedule(updateButtons);
+        fluxel.User.BindValueChanged(updateButtons, true);
     }
 
-    private void updateButtons()
+    private void updateButtons(ValueChangedEvent<APIUserShort> e)
     {
-        var enabled = fluxel.LoggedInUser != null;
-        multiButton.Enabled.Value = enabled;
-        rankingButton.Enabled.Value = enabled;
-        browseButton.Enabled.Value = enabled;
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            var enabled = e.NewValue != null;
+            multiButton.Enabled.Value = enabled;
+            rankingButton.Enabled.Value = enabled;
+            browseButton.Enabled.Value = enabled;
+        });
     }
 
     private void continueToPlay() => this.Push(new SelectScreen());
@@ -435,12 +439,12 @@ public partial class MenuScreen : FluXisScreen
         {
             maps.CurrentMap = maps.CreateBuiltinMap(MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
 
-            // this doesnt loop perfectly and i hate it and can't do anything about it
+            // this doesn't loop perfectly and I hate it and can't do anything about it
             clock.RestartPoint = maps.CurrentMap?.Metadata.PreviewTime ?? 0;
             clock.AllowLimitedLoop = false;
             clock.Seek(0);
         }
-        else // if diabled, load a random map
+        else // if disabled, load a random map
             maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
 
         clock.Stop();

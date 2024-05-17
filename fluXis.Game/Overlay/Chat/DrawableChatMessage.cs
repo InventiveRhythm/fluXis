@@ -175,7 +175,7 @@ public partial class DrawableChatMessage : Container
             {
                 List<MenuItem> items = new List<MenuItem>
                 {
-                    Fluxel.LoggedInUser?.CanModerate() ?? false
+                    Fluxel.User.Value?.CanModerate() ?? false
                         ? new FluXisMenuItem("Delete", MenuItemType.Dangerous, delete)
                         : new FluXisMenuItem("Report", MenuItemType.Dangerous, report)
                 };

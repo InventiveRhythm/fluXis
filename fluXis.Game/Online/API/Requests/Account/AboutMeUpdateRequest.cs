@@ -1,4 +1,5 @@
 using System.Net.Http;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Account;
 
@@ -14,8 +15,10 @@ public class AboutMeUpdateRequest : APIRequest<dynamic>
         this.about = about;
     }
 
-    protected override void CreatePostData(FluXisJsonWebRequest<dynamic> request)
+    protected override WebRequest CreateWebRequest(string url)
     {
-        request.AddRaw(about);
+        var req = base.CreateWebRequest(url);
+        req.AddRaw(about);
+        return req;
     }
 }

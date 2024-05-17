@@ -2,6 +2,7 @@ using System.Net.Http;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Utils;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Scores;
 
@@ -17,8 +18,10 @@ public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
         this.score = score;
     }
 
-    protected override void CreatePostData(FluXisJsonWebRequest<APIScoreResponse> request)
+    protected override WebRequest CreateWebRequest(string url)
     {
-        request.AddRaw(score.Serialize());
+        var req = base.CreateWebRequest(url);
+        req.AddRaw(score.Serialize());
+        return req;
     }
 }

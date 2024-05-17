@@ -71,24 +71,28 @@ public partial class MultiLobbyList : MultiSubScreen
         loadLobbies();
     }
 
-    private async void loadLobbies()
+    private void loadLobbies()
     {
         loadingIcon.FadeIn(200);
         lobbyList.FadeOut(200).OnComplete(_ => lobbyList.Clear());
 
         var request = new MultiLobbiesRequest();
-        await request.PerformAsync(fluxel);
 
-        var lobbies = request.Response;
+        request.Success += res =>
+        {
+            var lobbies = res.Data;
 
-        foreach (var lobby in lobbies.Data)
-            lobbyList.Add(new LobbySlot { Room = lobby, List = this });
+            foreach (var lobby in lobbies)
+                lobbyList.Add(new LobbySlot { Room = lobby, List = this });
 
-        for (var i = 0; i < 12 - lobbies.Data.Count; i++)
-            lobbyList.Add(new EmptyLobbySlot());
+            for (var i = 0; i < 12 - lobbies.Count; i++)
+                lobbyList.Add(new EmptyLobbySlot());
 
-        loadingIcon.FadeOut(200);
-        lobbyList.FadeIn(200);
+            loadingIcon.FadeOut(200);
+            lobbyList.FadeIn(200);
+        };
+
+        fluxel.PerformRequestAsync(request);
     }
 
     public async void JoinLobby(MultiplayerRoom room, string password = "")

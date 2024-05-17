@@ -113,8 +113,7 @@ public partial class ProfileFollowerList : FillFlowContainer
 
         var req = new UserFollowersRequest(id);
         req.Success += res => SetData(res.Data);
-
-        req.PerformAsync(fluxel);
+        fluxel.PerformRequestAsync(req);
     }
 
     public void SetData(List<APIUserShort> data)

@@ -43,7 +43,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
         try
         {
             var req = new OnlineUsersRequest();
-            req.Perform(fluxel);
+            fluxel.PerformRequest(req);
 
             if (req.Response.Status == 200)
             {

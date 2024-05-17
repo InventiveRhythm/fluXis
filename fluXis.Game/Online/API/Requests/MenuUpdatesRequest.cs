@@ -6,5 +6,5 @@ namespace fluXis.Game.Online.API.Requests;
 public class MenuUpdatesRequest : APIRequest<List<MenuUpdate>>
 {
     protected override string Path => "/updates.json";
-    protected override string RootUrl => Config.AssetUrl;
+    protected override string RootUrl => APIClient.Endpoint.AssetUrl;
 }

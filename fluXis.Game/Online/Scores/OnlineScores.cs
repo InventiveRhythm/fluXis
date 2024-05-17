@@ -12,7 +12,7 @@ public static class OnlineScores
     public static async void UploadScore(FluxelClient fluxel, ScoreInfo score, Action<APIResponse<APIScoreResponse>> callback)
     {
         var req = new ScoreSubmitRequest(score);
-        await req.PerformAsync(fluxel);
+        await fluxel.PerformRequestAsync(req);
         callback(req.Response);
     }
 }

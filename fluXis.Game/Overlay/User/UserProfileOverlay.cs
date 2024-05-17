@@ -128,7 +128,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
         if (user == null) return;
 
         var mapsReq = new UserMapsRequest(id);
-        await mapsReq.PerformAsync(fluxel);
+        await fluxel.PerformRequestAsync(mapsReq);
 
         Schedule(() =>
         {

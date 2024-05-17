@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net.Http;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Account;
 
@@ -14,9 +15,13 @@ public abstract class ImageUpdateRequest : APIRequest<object>
         this.file = file;
     }
 
-    protected override void CreatePostData(FluXisJsonWebRequest<object> request)
+    protected override WebRequest CreateWebRequest(string url)
     {
+        var req = base.CreateWebRequest(url);
+
         var bytes = File.ReadAllBytes(file.FullName);
-        request.AddFile("file", bytes);
+        req.AddFile("file", bytes);
+
+        return req;
     }
 }

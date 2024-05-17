@@ -129,7 +129,7 @@ public partial class DashboardAccountTab : DashboardTab
                                             notification.State = LoadingState.Failed;
                                             Logger.Error(ex, "Failed to upload avatar!");
                                         };
-                                        req.PerformAsync(fluxel);
+                                        fluxel.PerformRequestAsync(req);
                                     },
                                     AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
                                 };
@@ -175,7 +175,7 @@ public partial class DashboardAccountTab : DashboardTab
                                             notif.State = LoadingState.Failed;
                                             Logger.Error(ex, "Failed to upload banner!");
                                         };
-                                        req.PerformAsync(fluxel);
+                                        fluxel.PerformRequestAsync(req);
                                     },
                                     AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
                                 };
@@ -275,46 +275,44 @@ public partial class DashboardAccountTab : DashboardTab
         };
     }
 
-    private async void socialsTrigger()
+    private void socialsTrigger()
     {
         var req = new SocialUpdateRequest(twitterEntry.Value, youtubeEntry.Value, twitchEntry.Value, discordEntry.Value);
-        await req.PerformAsync(fluxel);
 
-        if (req.Response.Status == 200)
+        req.Success += _ =>
         {
             socialsCategory.CompletedIcon.FadeIn(400).Delay(1000).FadeOut(400);
             socialsCategory.LoadingIcon.FadeOut(400);
-        }
-        else
-            notifications.SendError("Failed to update socials!", req.Response.Message);
+        };
+
+        req.Failure += ex => notifications.SendError("Failed to update socials!", ex.Message);
+        fluxel.PerformRequestAsync(req);
     }
 
-    private async void displayNameTrigger()
+    private void displayNameTrigger()
     {
         var req = new DisplayNameUpdateRequest(displayNameEntry.Value);
-        await req.PerformAsync(fluxel);
-
-        if (req.Response.Status == 200)
+        req.Success += _ =>
         {
             displayNameEntry.CompletedIcon.FadeIn(400).Delay(1000).FadeOut(400);
             displayNameEntry.LoadingIcon.FadeOut(400);
-        }
-        else
-            notifications.SendError("Failed to update display name!", req.Response.Message);
+        };
+
+        req.Failure += ex => notifications.SendError("Failed to update display name!", ex.Message);
+        fluxel.PerformRequestAsync(req);
     }
 
-    private async void aboutmeTrigger()
+    private void aboutmeTrigger()
     {
         var req = new AboutMeUpdateRequest(aboutmeEntry.Value);
-        await req.PerformAsync(fluxel);
-
-        if (req.Response.Status == 200)
+        req.Success += _ =>
         {
             aboutmeEntry.CompletedIcon.FadeIn(400).Delay(1000).FadeOut(400);
             aboutmeEntry.LoadingIcon.FadeOut(400);
-        }
-        else
-            notifications.SendError("Failed to update about me!", req.Response.Message);
+        };
+
+        req.Failure += ex => notifications.SendError("Failed to update about me!", ex.Message);
+        fluxel.PerformRequestAsync(req);
     }
 
     public override void Enter()
@@ -327,12 +325,6 @@ public partial class DashboardAccountTab : DashboardTab
         var req = new AccountSelfRequest();
         req.Success += res =>
         {
-            if (res.Status != 200)
-            {
-                notifications.SendError("Failed to get self!", res.Message);
-                return;
-            }
-
             user = res.Data;
             editContent.Child = createContent();
             loadingIcon.FadeOut(400);
@@ -344,6 +336,6 @@ public partial class DashboardAccountTab : DashboardTab
             notifications.SendError("Failed to get self!", ex.Message);
         };
 
-        req.PerformAsync(fluxel);
+        fluxel.PerformRequestAsync(req);
     }
 }

@@ -1,8 +1,6 @@
 ﻿using fluXis.Game.Map.Drawables;
-using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -13,13 +11,10 @@ public partial class TestMapCard : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(FluxelClient fluxel)
     {
-        var req = fluxel.CreateAPIRequest("/mapset/4");
-        req.Perform();
+        var req = new MapSetRequest(4);
+        fluxel.PerformRequest(req);
 
-        var json = req.GetResponseString();
-        var res = json.Deserialize<APIResponse<APIMapSet>>();
-
-        Add(new MapCard(res.Data)
+        Add(new MapCard(req.Response.Data)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre

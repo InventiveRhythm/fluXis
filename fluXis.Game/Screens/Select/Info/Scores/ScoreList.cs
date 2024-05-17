@@ -352,7 +352,7 @@ public partial class ScoreList : GridContainer
     private List<ScoreListEntry> getScores(CancellationToken cancellationToken)
     {
         var req = new MapLeaderboardRequest(type, map.OnlineID);
-        req.Perform(fluxel);
+        fluxel.PerformRequest(req);
 
         if (cancellationToken.IsCancellationRequested)
             return null;

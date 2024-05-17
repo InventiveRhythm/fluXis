@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using fluXis.Shared.Utils;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Account;
 
@@ -22,14 +23,18 @@ public class SocialUpdateRequest : APIRequest<dynamic>
         this.discord = discord;
     }
 
-    protected override void CreatePostData(FluXisJsonWebRequest<dynamic> request)
+    protected override WebRequest CreateWebRequest(string url)
     {
-        request.AddRaw(new Dictionary<string, string>
+        var req = base.CreateWebRequest(url);
+
+        req.AddRaw(new Dictionary<string, string>
         {
             { "twitter", twitter },
             { "youtube", youtube },
             { "twitch", twitch },
             { "discord", discord }
         }.Serialize());
+
+        return req;
     }
 }

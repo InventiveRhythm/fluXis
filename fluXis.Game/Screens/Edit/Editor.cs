@@ -575,8 +575,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         bottomBar.MoveToY(0, 300, Easing.OutQuint);
         tabs.ScaleTo(1, 300, Easing.OutQuint);
 
-        // this check wont work 100% of the time, we need a better way of storing the mappers
-        if (editorMap.RealmMap.Metadata.Mapper == fluxel.LoggedInUser?.Username)
+        // this check won't work 100% of the time, we need a better way of storing the mappers
+        if (editorMap.RealmMap.Metadata.Mapper == fluxel.User.Value?.Username)
             Activity.Value = new UserActivity.Editing();
         else
             Activity.Value = new UserActivity.Modding();
@@ -674,13 +674,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         var request = new MapSetUploadRequest(buffer, editorMap.MapSet);
         request.Progress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
-        await request.PerformAsync(fluxel);
+        await fluxel.PerformRequestAsync(request);
 
         overlay.SubText = "Reading server response...";
 
-        if (request.Response.Status != 200)
+        if (!request.IsSuccessful)
         {
-            notifications.SendError(request.Response.Message);
+            notifications.SendError(request.Response!.Message);
             Schedule(overlay.Hide);
             return;
         }
@@ -690,7 +690,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         realm.RunWrite(r =>
         {
             var set = r.Find<RealmMapSet>(editorMap.MapSet.ID);
-            set.OnlineID = editorMap.MapSet.OnlineID = request.Response.Data.ID;
+            set.OnlineID = editorMap.MapSet.OnlineID = request.Response!.Data.ID;
             set.SetStatus(request.Response.Data.Status);
             editorMap.MapSet.SetStatus(request.Response.Data.Status);
 

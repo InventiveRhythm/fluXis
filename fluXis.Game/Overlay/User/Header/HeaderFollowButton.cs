@@ -99,7 +99,7 @@ public partial class HeaderFollowButton : CompositeDrawable
         flash.FadeOutFromOne(1000, Easing.OutQuint);
 
         var req = new UserFollowRequest(user.ID, following);
-        req.PerformAsync(fluxel);
+        fluxel.PerformRequestAsync(req);
 
         user.Following = !following;
         text.Text = user.Following ? "Unfollow" : "Follow";

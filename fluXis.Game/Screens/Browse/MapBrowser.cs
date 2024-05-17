@@ -118,19 +118,32 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                     new[] { Empty() },
                                     new Drawable[]
                                     {
-                                        new FluXisContextMenuContainer
+                                        new Container
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Child = new FluXisScrollContainer
+                                            Children = new Drawable[]
                                             {
-                                                RelativeSizeAxes = Axes.Both,
-                                                ScrollbarAnchor = Anchor.TopLeft,
-                                                Child = Maps = new FillFlowContainer<MapCard>
+                                                new FluXisContextMenuContainer
                                                 {
-                                                    RelativeSizeAxes = Axes.X,
-                                                    AutoSizeAxes = Axes.Y,
-                                                    Direction = FillDirection.Full,
-                                                    Spacing = new Vector2(20)
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    Child = new FluXisScrollContainer
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        ScrollbarAnchor = Anchor.TopLeft,
+                                                        Child = Maps = new FillFlowContainer<MapCard>
+                                                        {
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
+                                                            Direction = FillDirection.Full,
+                                                            Spacing = new Vector2(20)
+                                                        }
+                                                    }
+                                                },
+                                                loadingIcon = new LoadingIcon
+                                                {
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Size = new Vector2(100)
                                                 }
                                             }
                                         }
@@ -158,12 +171,6 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 Origin = Anchor.Centre,
                 Alpha = 0,
                 FontSize = 30
-            },
-            loadingIcon = new LoadingIcon
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = new Vector2(100)
             }
         };
     }
@@ -172,7 +179,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     {
         base.LoadComplete();
 
-        if (fluxel.Status != ConnectionStatus.Online)
+        if (fluxel.Status.Value != ConnectionStatus.Online)
         {
             text.Text = "You are not connected to the server!";
             text.FadeInFromZero(20);
@@ -186,16 +193,8 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private void loadMapsets()
     {
         var req = new MapSetsRequest();
-        req.PerformAsync(fluxel);
         req.Success += response =>
         {
-            if (response.Status != 200)
-            {
-                Logger.Log($"Failed to load mapsets: {response.Status} {response.Message}", LoggingTarget.Network);
-                loadingIcon.Hide();
-                return;
-            }
-
             foreach (var mapSet in response.Data)
             {
                 Maps.Add(new MapCard(mapSet)
@@ -213,6 +212,14 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
             loadingIcon.Hide();
         };
+
+        req.Failure += e =>
+        {
+            Logger.Log($"Failed to load mapsets: {e.Message}", LoggingTarget.Network);
+            loadingIcon.Hide();
+        };
+
+        fluxel.PerformRequestAsync(req);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

@@ -10,8 +10,10 @@ using fluXis.Game.Localization;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.User;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -56,7 +58,7 @@ public partial class ToolbarProfile : Container, IHasTooltip
     {
         AutoSizeAxes = Axes.Both;
 
-        APIUserShort user = fluxel.LoggedInUser;
+        var user = fluxel.User.Value;
 
         Children = new Drawable[]
         {
@@ -145,38 +147,40 @@ public partial class ToolbarProfile : Container, IHasTooltip
             Origin = Anchor.Centre
         }, avatarContainer.Add);
 
-        fluxel.OnUserChanged += updateUser;
+        fluxel.User.BindValueChanged(updateUser);
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        fluxel.OnStatusChanged += status =>
-        {
-            Schedule(() =>
-            {
-                switch (status)
-                {
-                    case ConnectionStatus.Offline:
-                    case ConnectionStatus.Online:
-                    case ConnectionStatus.Closed:
-                        loadingContainer.FadeOut(200);
-                        break;
-
-                    case ConnectionStatus.Reconnecting:
-                    case ConnectionStatus.Connecting:
-                    case ConnectionStatus.Failing:
-                        loadingContainer.FadeIn(200);
-                        break;
-                }
-            });
-        };
+        fluxel.Status.BindValueChanged(updateStatus, true);
     }
 
-    private void updateUser(APIUserShort user)
+    private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
     {
-        avatar.UpdateUser(user);
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            switch (e.NewValue)
+            {
+                case ConnectionStatus.Offline:
+                case ConnectionStatus.Online:
+                case ConnectionStatus.Closed:
+                    loadingContainer.FadeOut(200);
+                    break;
+
+                case ConnectionStatus.Reconnecting:
+                case ConnectionStatus.Connecting:
+                case ConnectionStatus.Failing:
+                    loadingContainer.FadeIn(200);
+                    break;
+            }
+        });
+    }
+
+    private void updateUser(ValueChangedEvent<APIUserShort> e)
+    {
+        avatar.UpdateUser(e.NewValue);
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
@@ -202,14 +206,14 @@ public partial class ToolbarProfile : Container, IHasTooltip
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         samples.Click();
 
-        if (fluxel.LoggedInUser == null)
+        if (fluxel.User.Value == null)
             loginOverlay.Show();
         else
         {
             if (profile.State.Value == Visibility.Visible)
                 profile.Hide();
             else
-                profile.ShowUser(fluxel.LoggedInUser.ID);
+                profile.ShowUser(fluxel.User.Value.ID);
         }
 
         return true;

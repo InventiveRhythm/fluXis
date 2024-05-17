@@ -10,6 +10,7 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Shared.API;
 using fluXis.Shared.API.Packets.Account;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -216,14 +217,14 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         };
 
         fluxel.RegisterListener<RegisterPacket>(EventType.Register, onRegister);
-        fluxel.OnStatusChanged += onStatusChanged;
+        fluxel.Status.BindValueChanged(onStatusChanged);
     }
 
-    private void onStatusChanged(ConnectionStatus status)
+    private void onStatusChanged(ValueChangedEvent<ConnectionStatus> e)
     {
         Schedule(() =>
         {
-            switch (status)
+            switch (e.NewValue)
             {
                 case ConnectionStatus.Online:
                     loadingOverlay.FadeOut(200);
@@ -244,7 +245,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
 
     private void register()
     {
-        if (fluxel.Status == ConnectionStatus.Online)
+        if (fluxel.Status.Value == ConnectionStatus.Online)
         {
             notifications.SendError("Already logged in!");
             return;

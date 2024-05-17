@@ -14,6 +14,7 @@ using fluXis.Game.Overlay.Chat.UI;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Shared.API.Packets.Chat;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -182,27 +183,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             sender.Text = "";
         };
 
-        fluxel.OnStatusChanged += status =>
-        {
-            Schedule(() =>
-            {
-                switch (status)
-                {
-                    case ConnectionStatus.Online:
-                        fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
-                        break;
-
-                    case ConnectionStatus.Offline:
-                    case ConnectionStatus.Connecting:
-                    case ConnectionStatus.Reconnecting:
-                    case ConnectionStatus.Failing:
-                        flow.Clear();
-                        messages.Clear();
-                        loading.FadeIn(200);
-                        break;
-                }
-            });
-        };
+        fluxel.Status.BindValueChanged(updateStatus, true);
 
         fluxel.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, response =>
         {
@@ -258,8 +239,27 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             });
         });
 
-        if (fluxel.Status == ConnectionStatus.Online)
+        if (fluxel.Status.Value == ConnectionStatus.Online)
             fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
+    }
+
+    private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
+    {
+        Schedule(() =>
+        {
+            switch (e.NewValue)
+            {
+                case ConnectionStatus.Online:
+                    fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
+                    break;
+
+                default:
+                    flow.Clear();
+                    messages.Clear();
+                    loading.FadeIn(200);
+                    break;
+            }
+        });
     }
 
     private void addMessage(ChatMessage message)

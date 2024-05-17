@@ -67,7 +67,7 @@ public partial class MenuUpdates : CompositeDrawable
             });
         };
 
-        req.PerformAsync(fluxel);
+        fluxel.PerformRequestAsync(req);
     }
 
     protected override void Update()

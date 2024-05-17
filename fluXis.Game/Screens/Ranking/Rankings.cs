@@ -199,7 +199,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
             });
         };
 
-        req.PerformAsync(fluxel);
+        fluxel.PerformRequestAsync(req);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

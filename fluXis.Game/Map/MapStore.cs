@@ -14,6 +14,7 @@ using fluXis.Game.Map.Builtin.Roundhouse;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps;
+using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
@@ -338,14 +339,14 @@ public partial class MapStore : Component
     public APIMapLookup LookUpHash(string hash)
     {
         var req = new MapLookupRequest(hash);
-        req.Perform(fluxel);
-        return req.Response.Status != 200 ? null : req.Response.Data;
+        fluxel.PerformRequest(req);
+        return req.IsSuccessful ? null : req.Response!.Data;
     }
 
     public RealmMap CreateNew()
     {
         var map = RealmMap.CreateNew();
-        map.Metadata.Mapper = fluxel.LoggedInUser?.Username ?? "Me";
+        map.Metadata.Mapper = fluxel.User.Value?.Username ?? "Me";
         map.MapSet.Resources = resources;
         return realm.RunWrite(r =>
         {
@@ -560,17 +561,19 @@ public partial class MapStore : Component
             TextFinished = "Done! Click to view."
         };
 
-        var req = fluxel.CreateAPIRequest($"/mapset/{set.ID}/download");
-        req.DownloadProgress += (current, total) => notification.Progress = (float)current / total;
-        req.Started += () => Logger.Log($"Downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
-        req.Failed += exception =>
+        Logger.Log($"Downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
+
+        var req = new MapSetDownloadRequest(set.ID);
+        // var req = fluxel.CreateAPIRequest($"/mapset/{set.ID}/download");
+        req.Progress += (current, total) => notification.Progress = (float)current / total;
+        req.Failure += exception =>
         {
             Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
             notification.State = LoadingState.Failed;
 
             FinishDownload(set);
         };
-        req.Finished += () =>
+        req.Success += () =>
         {
             notification.Progress = 1;
             FinishDownload(set);
@@ -578,7 +581,7 @@ public partial class MapStore : Component
             try
             {
                 Logger.Log($"Finished downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
-                var data = req.GetResponseData();
+                var data = req.ResponseStream;
 
                 if (data == null)
                 {
@@ -596,7 +599,7 @@ public partial class MapStore : Component
                 if (File.Exists(path))
                     File.Delete(path);
 
-                File.WriteAllBytes(path, data);
+                File.WriteAllBytes(path, data.ToArray());
 
                 // import
                 new FluXisImport
@@ -616,7 +619,7 @@ public partial class MapStore : Component
         };
 
         StartDownload(set);
-        req.PerformAsync();
+        fluxel.PerformRequestAsync(req);
 
         notifications.AddTask(notification);
     }

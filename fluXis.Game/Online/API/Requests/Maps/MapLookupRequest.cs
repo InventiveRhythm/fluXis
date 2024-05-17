@@ -1,4 +1,5 @@
 using fluXis.Shared.Components.Maps;
+using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Maps;
 
@@ -13,8 +14,10 @@ public class MapLookupRequest : APIRequest<APIMapLookup>
         this.hash = hash;
     }
 
-    protected override void CreatePostData(FluXisJsonWebRequest<APIMapLookup> request)
+    protected override WebRequest CreateWebRequest(string url)
     {
-        request.AddParameter("hash", hash);
+        var req = base.CreateWebRequest(url);
+        req.AddParameter("hash", hash);
+        return req;
     }
 }

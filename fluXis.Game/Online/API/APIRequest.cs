@@ -1,91 +1,125 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.API;
 
-public class APIRequest<T> where T : class
+public abstract class APIRequest<T> : APIRequest
+    where T : class
 {
-    protected virtual string Path => string.Empty;
-    protected virtual HttpMethod Method => HttpMethod.Get;
-    protected virtual string RootUrl => Config.APIUrl;
-
-    protected APIEndpointConfig Config => fluxel.Endpoint;
-    private FluxelClient fluxel;
-
-    public event Action<APIResponse<T>> Success;
-    public event Action<Exception> Failure;
-    public event Action<long, long> Progress;
+    public new event Action<APIResponse<T>> Success;
 
     public APIResponse<T> Response { get; protected set; }
 
-    public bool IsSuccessful => Response?.Success ?? false;
+    public override bool IsSuccessful => Response?.Success ?? false;
 
-    public virtual void Perform(FluxelClient fluxel)
+    protected APIRequest()
     {
-        this.fluxel = fluxel;
+        base.Success += () => Success?.Invoke(Response);
+    }
 
-        Logger.Log($"Performing API request {GetType().Name.Split('.').Last()}...", LoggingTarget.Network);
+    protected override void PostProcess()
+    {
+        if (Request is not APIWebRequest<T> req)
+            throw new InvalidOperationException("Request was not of expected type.");
 
-        var request = new FluXisJsonWebRequest<T>($"{RootUrl}{Path}");
-        request.Method = Method;
-        request.AllowInsecureRequests = true;
-        request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
+        Response = req.ResponseObject;
 
-        if (!string.IsNullOrEmpty(fluxel.Token))
-            request.AddHeader("Authorization", fluxel.Token);
+        if (!Response.Success)
+            Fail(new APIException(Response.Message));
+    }
+
+    // used for testing
+    public void TriggerSuccess(APIResponse<T> res)
+    {
+        Response = res;
+        TriggerSuccess();
+    }
+
+    protected override WebRequest CreateWebRequest(string url) => new APIWebRequest<T>(url);
+}
+
+public abstract class APIRequest
+{
+    protected abstract string Path { get; }
+    protected virtual HttpMethod Method => HttpMethod.Get;
+    protected virtual string RootUrl => APIClient.Endpoint.APIUrl;
+
+    protected FluxelClient APIClient { get; private set; }
+    protected WebRequest Request { get; private set; }
+
+    public event Action Success;
+    public event Action<Exception> Failure;
+    public event Action<long, long> Progress;
+
+    public virtual bool IsSuccessful => Request.Completed;
+
+    private bool failed;
+
+    public void Perform(IAPIClient client)
+    {
+        if (client is not FluxelClient fluxel)
+            throw new InvalidOperationException($"APIRequest must be performed with a {nameof(FluxelClient)}.");
+
+        APIClient = fluxel;
+
+        Request = CreateWebRequest($"{RootUrl}{Path}");
+        Request.Method = Method;
+        Request.AllowRetryOnTimeout = false;
+        Request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
+        Request.Failed += Fail;
+
+        if (!string.IsNullOrEmpty(APIClient.AccessToken))
+            Request.AddHeader("Authorization", APIClient.AccessToken);
 
         try
         {
-            CreatePostData(request);
-            request.Perform();
-            TriggerSuccess(request.ResponseObject);
+            Logger.Log($"Performing API request {GetType().Name.Split('.').Last()}...", LoggingTarget.Network);
+            Request.Perform();
         }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"API request {GetType().Name.Split('.').Last()} failed!");
-            Response = new APIResponse<T>(400, e.Message, null);
+        catch { }
+
+        if (failed) return;
+
+        PostProcess();
+        TriggerSuccess();
+    }
+
+    protected virtual void PostProcess()
+    {
+    }
+
+    public void TriggerSuccess()
+    {
+        // failure might have been triggered during post-process.
+        if (failed)
+            return;
+
+        if (APIClient == null)
+            Success?.Invoke();
+        else
+            APIClient.Schedule(() => Success?.Invoke());
+    }
+
+    public void TriggerFailure(Exception e)
+    {
+        failed = true;
+
+        if (APIClient == null)
             Failure?.Invoke(e);
-        }
+        else
+            APIClient.Schedule(() => Failure?.Invoke(e));
     }
 
-    protected void TriggerSuccess(APIResponse<T> res)
+    public void Fail(Exception e)
     {
-        Response = res;
-
-        if (res != null)
-            fluxel.Schedule(() => Success?.Invoke(Response));
+        Request?.Abort();
+        Logger.Error(e, $"API request {GetType().Name.Split('.').Last()} failed!");
+        TriggerFailure(e);
     }
 
-    public Task PerformAsync(FluxelClient fluxel)
-    {
-        var task = new Task(() => Perform(fluxel));
-        task.Start();
-        return task;
-    }
-
-    protected virtual void CreatePostData(FluXisJsonWebRequest<T> request) { }
-}
-
-public class FluXisJsonWebRequest<T2> : JsonWebRequest<APIResponse<T2>>
-{
-    public new APIResponse<T2> ResponseObject { get; private set; }
-
-    public FluXisJsonWebRequest(string url = null, params object[] args)
-        : base(url, args)
-    {
-    }
-
-    protected override void ProcessResponse()
-    {
-        var response = GetResponseString();
-
-        if (response != null)
-            ResponseObject = response.Deserialize<APIResponse<T2>>();
-    }
+    protected virtual WebRequest CreateWebRequest(string url) => new APIWebRequest(url);
 }

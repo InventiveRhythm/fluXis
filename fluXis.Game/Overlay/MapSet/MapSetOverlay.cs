@@ -100,13 +100,13 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private async void fetch(long id)
     {
         var request = new MapSetRequest(id);
-        await request.PerformAsync(fluxel);
+        await fluxel.PerformRequestAsync(request);
 
-        // we might wanna show a message if the request fails
+        // we might want to show a message if the request fails
         if (!request.IsSuccessful)
             return;
 
-        set = request.Response.Data;
+        set = request.Response!.Data;
         Schedule(() => displayData(set));
     }
 

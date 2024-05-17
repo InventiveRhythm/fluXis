@@ -36,9 +36,9 @@ public static class UserCache
         {
             return new APIUser
             {
-                ID = fluxel.LoggedInUser?.ID ?? -1,
-                Username = fluxel.LoggedInUser?.Username ?? "Guest",
-                CountryCode = fluxel.LoggedInUser?.CountryCode ?? "XX"
+                ID = fluxel.User.Value?.ID ?? -1,
+                Username = fluxel.User.Value?.Username ?? "Guest",
+                CountryCode = fluxel.User.Value?.CountryCode ?? "XX"
             };
         }
 
@@ -57,13 +57,14 @@ public static class UserCache
         try
         {
             var req = new UserRequest(id);
-            req.Perform(fluxel);
+            fluxel.PerformRequest(req);
+
+            if (req.IsSuccessful)
+                return req.Response!.Data;
+
             var res = req.Response;
 
-            if (res.Status == 200)
-                return res.Data;
-
-            Logger.Log($"Failed to load user from API: {res.Message}", LoggingTarget.Network, LogLevel.Error);
+            Logger.Log($"Failed to load user from API: {res?.Message}", LoggingTarget.Network, LogLevel.Error);
             return null;
         }
         catch (Exception e)

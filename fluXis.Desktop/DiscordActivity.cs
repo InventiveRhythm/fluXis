@@ -46,7 +46,7 @@ public class DiscordActivity
             LargeImageText = $"fluXis {FluXisGameBase.VersionString}"
         };
 
-        APIUserShort user = fluxel?.LoggedInUser;
+        APIUserShort user = fluxel?.User.Value;
 
         if (user != null)
         {
