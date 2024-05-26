@@ -126,6 +126,15 @@ public partial class FlashEntry : PointListEntry
                     Map.Update(flash);
                 }
             },
+            new PointSettingsEasing
+            {
+                CurrentValue = flash.Easing,
+                OnValueChanged = easing =>
+                {
+                    flash.Easing = easing;
+                    Map.Update(flash);
+                }
+            }
         });
     }
 }

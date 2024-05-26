@@ -100,8 +100,10 @@ public partial class Receptor : CompositeDrawable
         }
         else
         {
-            float duration = playfield.Manager.CurrentLaneSwitchEvent?.Duration ?? 200;
-            this.ResizeWidthTo(width, duration, Easing.OutQuint);
+            var current = playfield.Manager.CurrentLaneSwitchEvent;
+            var duration = current?.Duration ?? 200;
+            var ease = current?.Easing ?? Easing.OutQuint;
+            this.ResizeWidthTo(width, duration, ease);
         }
     }
 }

@@ -67,7 +67,16 @@ public partial class LaneSwitchEntry : PointListEntry
                     Map.Update(laneSwitch);
                 }
             },
-            new PointSettingsLength<LaneSwitchEvent>(Map, laneSwitch, BeatLength)
+            new PointSettingsLength<LaneSwitchEvent>(Map, laneSwitch, BeatLength),
+            new PointSettingsEasing
+            {
+                CurrentValue = laneSwitch.Easing,
+                OnValueChanged = easing =>
+                {
+                    laneSwitch.Easing = easing;
+                    Map.Update(laneSwitch);
+                }
+            }
         });
     }
 }

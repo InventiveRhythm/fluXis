@@ -78,6 +78,15 @@ public partial class PlayfieldScaleEntry : PointListEntry
 
                     Map.Update(scale);
                 }
+            },
+            new PointSettingsEasing
+            {
+                CurrentValue = scale.Easing,
+                OnValueChanged = easing =>
+                {
+                    scale.Easing = easing;
+                    Map.Update(scale);
+                }
             }
         });
     }

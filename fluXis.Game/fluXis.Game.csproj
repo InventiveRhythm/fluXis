@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Stores\" />
+    <Folder Include="Graphics\UserInterface\Menus\Dropdown\" />
     <Folder Include="Plugins\Config\" />
     <Folder Include="Screens\Edit\Tabs\Charting\UI\" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 using fluXis.Game.Map.Structures;
 using Newtonsoft.Json;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Events;
 
@@ -13,6 +14,9 @@ public class LaneSwitchEvent : ITimedObject, IHasDuration
 
     [JsonProperty("speed")]
     public float Duration { get; set; }
+
+    [JsonProperty("easing")]
+    public Easing Easing { get; set; } = Easing.OutQuint;
 
     public static readonly bool[][][] SWITCH_VISIBILITY =
     {

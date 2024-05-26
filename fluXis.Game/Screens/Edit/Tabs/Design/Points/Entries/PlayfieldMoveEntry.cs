@@ -78,6 +78,15 @@ public partial class PlayfieldMoveEntry : PointListEntry
 
                     Map.Update(move);
                 }
+            },
+            new PointSettingsEasing
+            {
+                CurrentValue = move.Easing,
+                OnValueChanged = easing =>
+                {
+                    move.Easing = easing;
+                    Map.Update(move);
+                }
             }
         });
     }
