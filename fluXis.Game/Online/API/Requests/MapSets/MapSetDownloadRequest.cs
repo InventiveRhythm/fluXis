@@ -4,7 +4,7 @@ namespace fluXis.Game.Online.API.Requests.MapSets;
 
 public class MapSetDownloadRequest : APIRequest
 {
-    protected override string Path => $"/mapsets/{id}/download";
+    protected override string Path => $"/mapset/{id}/download";
 
     public MemoryStream ResponseStream { get; private set; }
 
