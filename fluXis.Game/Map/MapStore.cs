@@ -340,7 +340,7 @@ public partial class MapStore : Component
     {
         var req = new MapLookupRequest(hash);
         fluxel.PerformRequest(req);
-        return req.IsSuccessful ? null : req.Response!.Data;
+        return req.IsSuccessful ? req.Response!.Data : null;
     }
 
     public RealmMap CreateNew()
