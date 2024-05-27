@@ -12,6 +12,7 @@ public class APIWebRequest<T> : JsonWebRequest<APIResponse<T>>
     public APIWebRequest(string url)
         : base(url)
     {
+        AllowInsecureRequests = true;
     }
 
     protected override void ProcessResponse()
@@ -30,5 +31,6 @@ public class APIWebRequest : WebRequest
     public APIWebRequest(string url = null)
         : base(url)
     {
+        AllowInsecureRequests = true;
     }
 }

@@ -7,8 +7,6 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Shared.API;
-using fluXis.Shared.API.Packets.Account;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -216,7 +214,6 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
             }
         };
 
-        fluxel.RegisterListener<RegisterPacket>(EventType.Register, onRegister);
         fluxel.Status.BindValueChanged(onStatusChanged);
     }
 
@@ -235,8 +232,12 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                     loadingOverlay.FadeIn(200);
                     break;
 
-                case ConnectionStatus.Offline:
                 case ConnectionStatus.Failing:
+                    loadingOverlay.FadeOut(200);
+                    notifications.SendError("Failed to register!", fluxel.LastException.Message);
+                    break;
+
+                case ConnectionStatus.Offline:
                     loadingOverlay.FadeOut(200);
                     break;
             }
@@ -270,12 +271,6 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         }
 
         fluxel.Register(username.Text, password.Text, email.Text);
-    }
-
-    private void onRegister(FluxelReply<RegisterPacket> reply)
-    {
-        if (!reply.Success)
-            notifications.SendError("Failed to Register!", reply.Message);
     }
 
     public override void Show()
