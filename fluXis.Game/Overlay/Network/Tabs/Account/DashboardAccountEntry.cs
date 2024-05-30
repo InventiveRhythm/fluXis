@@ -6,24 +6,25 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Network.Tabs.Account;
 
 public partial class DashboardAccountEntry : Container
 {
-    public string Title { get; set; }
-    public string Default { get; set; }
-    public string Placeholder { get; set; }
-    public Action OnChange { get; set; }
-    public bool ReadOnly { get; set; }
+    public string Title { get; init; }
+    public string Default { get; init; }
+    public string Placeholder { get; init; }
+    public Action OnChange { get; init; }
+    public bool ReadOnly { get; init; }
 
-    public string Value => textBox.Text;
+    public string Value
+    {
+        get => textBox.Text;
+        set => textBox.Text = value;
+    }
+
     private TextBox textBox;
-
-    public Drawable LoadingIcon { get; set; }
-    public Drawable CompletedIcon { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -61,30 +62,6 @@ public partial class DashboardAccountEntry : Container
                                 Text = Title,
                                 FontSize = 18,
                                 Alpha = .8f
-                            },
-                            new Container
-                            {
-                                Size = new Vector2(12),
-                                Margin = new MarginPadding(3),
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight,
-                                Children = new[]
-                                {
-                                    LoadingIcon = new SpriteIcon
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Icon = FontAwesome6.Solid.Rotate,
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        Alpha = 0
-                                    },
-                                    CompletedIcon = new SpriteIcon
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Icon = FontAwesome6.Solid.Check,
-                                        Alpha = 0
-                                    }
-                                }
                             }
                         }
                     },
@@ -101,12 +78,6 @@ public partial class DashboardAccountEntry : Container
                 }
             }
         };
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        LoadingIcon.Spin(1000, RotationDirection.Clockwise);
     }
 
     private partial class TextBox : FluXisTextBox
