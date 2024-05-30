@@ -219,6 +219,9 @@ public partial class LoginOverlay : CompositeDrawable
 
     public override void Show()
     {
+        if (fluxel.Status.Value == ConnectionStatus.Online)
+            return;
+
         this.FadeInFromZero(400, Easing.OutQuint);
         content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);
 
