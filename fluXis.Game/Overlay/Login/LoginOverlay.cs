@@ -1,39 +1,43 @@
 using fluXis.Game.Configuration;
-using fluXis.Game.Graphics.Containers;
+using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
-using fluXis.Game.Input;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Register;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Overlay.Login;
 
-public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class LoginOverlay : CompositeDrawable
 {
-    [Resolved]
-    private RegisterOverlay register { get; set; }
-
     [Resolved]
     private FluxelClient fluxel { get; set; }
 
-    private FluXisTextBox username;
-    private FluXisTextBox password;
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGame game { get; set; }
 
-    private ClickableContainer content;
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private RegisterOverlay registerOverlay { get; set; }
+
+    private Container content;
     private FluXisSpriteText errorText;
-    private Container loadingContainer;
+    private TextBox username;
+    private TextBox password;
+    private Container loadingLayer;
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
@@ -56,78 +60,67 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
             },
             content = new ClickableContainer
             {
-                Width = 340,
-                AutoSizeAxes = Axes.Y,
-                Anchor = Anchor.TopRight,
-                Origin = Anchor.TopRight,
-                Margin = new MarginPadding { Top = -20, Right = -20 },
+                AutoSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
                 CornerRadius = 20,
                 Masking = true,
+                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background1
+                        Colour = FluXisColors.Background2
                     },
                     new FillFlowContainer
                     {
-                        RelativeSizeAxes = Axes.X,
+                        Width = 380,
                         AutoSizeAxes = Axes.Y,
                         Direction = FillDirection.Vertical,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Padding = new MarginPadding(40),
                         Spacing = new Vector2(10),
-                        Padding = new MarginPadding { Top = 80, Bottom = 10, Left = 10, Right = 30 },
-                        Children = new Drawable[]
+                        Children = new[]
                         {
-                            errorText = new FluXisSpriteText
+                            new FluXisSpriteText
                             {
-                                Text = "error",
+                                Text = "Login",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                WebFontSize = 32
+                            },
+                            errorText = new TruncatingText
+                            {
+                                Text = "error message",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                MaxWidth = 300,
                                 Colour = FluXisColors.Red,
+                                WebFontSize = 14,
                                 Alpha = 0
                             },
-                            username = new FluXisTextBox
+                            Empty().With(d => d.Anchor = d.Origin = Anchor.Centre),
+                            username = new TextBox
                             {
                                 TabbableContentContainer = this,
-                                PlaceholderText = "Username",
                                 Text = config.Get<string>(FluXisSetting.Username),
-                                RelativeSizeAxes = Axes.X,
-                                Height = 30
+                                PlaceholderText = "Username"
                             },
-                            password = new FluXisTextBox
+                            password = new TextBox
                             {
                                 TabbableContentContainer = this,
                                 PlaceholderText = "Password",
-                                IsPassword = true,
-                                RelativeSizeAxes = Axes.X,
-                                Height = 30
+                                IsPassword = true
                             },
-                            new FluXisButton
-                            {
-                                Text = "Login!",
-                                Color = FluXisColors.Accent,
-                                FontSize = 16,
-                                RelativeSizeAxes = Axes.X,
-                                Height = 30,
-                                Action = login
-                            },
-                            new FluXisButton
-                            {
-                                Text = "Create new...",
-                                RelativeSizeAxes = Axes.X,
-                                Height = 30,
-                                Color = FluXisColors.Accent2,
-                                FontSize = 16,
-                                Action = () =>
-                                {
-                                    Hide();
-                                    register.Show();
-                                }
-                            }
+                            Empty().With(d => d.Anchor = d.Origin = Anchor.Centre),
+                            new Button("Continue") { Action = login },
+                            new Button("Forgot password?") { Action = openPasswordReset },
+                            new Button("Create new account") { Action = openRegister }
                         }
                     },
-                    loadingContainer = new FullInputBlockingContainer
+                    loadingLayer = new Container
                     {
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0,
@@ -136,23 +129,27 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.Black,
+                                Colour = Colour4.Black,
                                 Alpha = .5f
                             },
                             new LoadingIcon
                             {
+                                Size = new Vector2(50),
                                 Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Size = new Vector2(25)
+                                Origin = Anchor.Centre
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
 
         password.OnCommit += (_, _) => login();
-
         fluxel.Status.BindValueChanged(updateStatus, true);
     }
 
@@ -160,24 +157,22 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
     {
         Schedule(() =>
         {
+            if (e.NewValue == ConnectionStatus.Failing)
+                setError(fluxel.LastException.Message);
+
             switch (e.NewValue)
             {
                 case ConnectionStatus.Online:
                     Hide();
                     break;
 
-                case ConnectionStatus.Connecting:
-                    loadingContainer.FadeIn(200);
-                    break;
-
-                case ConnectionStatus.Failing:
-                    errorText.Text = fluxel.LastException.Message;
-                    errorText.Alpha = 1;
-                    loadingContainer.FadeOut(200);
-                    break;
-
                 case ConnectionStatus.Offline:
-                    loadingContainer.FadeOut(200);
+                case ConnectionStatus.Failing:
+                    loadingLayer.FadeOut(200);
+                    break;
+
+                default:
+                    loadingLayer.FadeIn(200);
                     break;
             }
         });
@@ -185,56 +180,97 @@ public partial class LoginOverlay : Container, IKeyBindingHandler<FluXisGlobalKe
 
     private void login()
     {
-        errorText.Alpha = 0;
+        setError("");
 
         if (string.IsNullOrEmpty(username.Text))
         {
-            username.NotifyError();
+            setError("Username cannot be empty.");
             return;
         }
 
         if (string.IsNullOrEmpty(password.Text))
         {
-            password.NotifyError();
+            setError("Password cannot be empty.");
             return;
         }
 
-        if (fluxel.Status.Value != ConnectionStatus.Online)
-            fluxel.Login(username.Text, password.Text);
+        fluxel.Login(username.Text, password.Text);
+    }
+
+    private void openPasswordReset() => game?.OpenLink("https://auth.flux.moe/request-reset");
+
+    private void openRegister()
+    {
+        Hide();
+        registerOverlay?.Show();
+    }
+
+    private void setError(string msg)
+    {
+        if (string.IsNullOrEmpty(msg))
+        {
+            errorText.Alpha = 0;
+            return;
+        }
+
+        errorText.Text = msg;
+        errorText.Alpha = 1;
     }
 
     public override void Show()
     {
-        if (fluxel.Status.Value == ConnectionStatus.Online)
-            return;
+        this.FadeInFromZero(400, Easing.OutQuint);
+        content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);
 
-        this.FadeIn(200);
-        content.MoveToY(0, 400, Easing.OutQuint);
         Schedule(() => GetContainingInputManager().ChangeFocus(string.IsNullOrEmpty(username.Text) ? username : password));
     }
 
     public override void Hide()
     {
-        this.FadeOut(200);
-        content.MoveToY(-20, 400, Easing.OutQuint);
+        this.FadeOut(400, Easing.OutQuint);
+        content.ScaleTo(.9f, 400, Easing.OutQuint);
     }
 
-    protected override bool OnHover(HoverEvent e) => true;
-    protected override bool OnDragStart(DragStartEvent e) => true;
-    protected override bool OnKeyDown(KeyDownEvent e) => true;
-    protected override bool OnScroll(ScrollEvent e) => true;
-
-    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    private partial class Button : FluXisButton
     {
-        switch (e.Action)
+        public Button(string text)
         {
-            case FluXisGlobalKeybind.Back:
-                Hide();
-                break;
+            Text = text;
+            RelativeSizeAxes = Axes.X;
+            Height = 40;
+            Color = FluXisColors.Highlight;
+            TextColor = FluXisColors.Background2;
+            FontSize = FluXisSpriteText.GetWebFontSize(14);
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+        }
+    }
+
+    private partial class TextBox : FluXisTextBox
+    {
+        public TextBox()
+        {
+            RelativeSizeAxes = Axes.X;
+            Height = 50;
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            CornerRadius = 25;
+            FontSize = FluXisSpriteText.GetWebFontSize(14);
+            SidePadding = 20;
+            BorderThickness = 2;
+            BorderColour = FluXisColors.Background4;
         }
 
-        return true;
-    }
+        protected override void OnFocus(FocusEvent e)
+        {
+            base.OnFocus(e);
+            this.TransformTo(nameof(BorderColour), (ColourInfo)FluXisColors.Highlight, 200);
+        }
 
-    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+        protected override void OnFocusLost(FocusLostEvent e)
+        {
+            base.OnFocusLost(e);
+            this.TransformTo(nameof(BorderColour), (ColourInfo)FluXisColors.Background4, 200);
+        }
+    }
 }

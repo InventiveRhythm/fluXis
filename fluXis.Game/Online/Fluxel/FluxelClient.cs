@@ -319,6 +319,7 @@ public partial class FluxelClient : Component, IAPIClient
 
     public void Login(string username, string password)
     {
+        Logger.Log("Logging in...", LoggingTarget.Network);
         this.username.Value = username;
         this.password = password;
     }

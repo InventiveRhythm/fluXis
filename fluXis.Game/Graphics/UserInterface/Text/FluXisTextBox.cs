@@ -55,7 +55,7 @@ public partial class FluXisTextBox : BasicTextBox
     [BackgroundDependencyLoader]
     private void load()
     {
-        BackgroundCommit = BorderColour = FluXisColors.Highlight;
+        BackgroundCommit = FluXisColors.Highlight;
         Placeholder.Font = FluXisSpriteText.GetFont();
         Placeholder.Colour = FluXisColors.Foreground;
         TextContainer.Height = TextContainerHeight;
