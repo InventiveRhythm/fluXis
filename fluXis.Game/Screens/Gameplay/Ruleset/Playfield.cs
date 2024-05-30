@@ -110,7 +110,8 @@ public partial class Playfield : Container
                 screen.Shake(shake.Duration, shake.Magnitude);
                 backgrounds.Shake(shake.Duration, shake.Magnitude);
             }),
-            new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents, fade => this.FadeTo(fade.Alpha, fade.Duration))
+            new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents, fade => this.FadeTo(fade.Alpha, fade.Duration)),
+            new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents, rotate => this.RotateTo(rotate.Roll, rotate.Duration, rotate.Easing))
         };
     }
 

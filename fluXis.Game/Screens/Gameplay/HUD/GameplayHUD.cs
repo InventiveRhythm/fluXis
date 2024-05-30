@@ -80,6 +80,7 @@ public partial class GameplayHUD : Container
 
         playfieldComponents.Position = screen.Playfield.Position;
         playfieldComponents.Width = screen.Playfield.DrawWidth;
+        playfieldComponents.Rotation = screen.Playfield.Rotation;
 
         var scale = screen.Playfield.Scale;
 

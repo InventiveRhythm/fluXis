@@ -62,8 +62,40 @@ public partial class EditorDesignPlayfield : CompositeDrawable
     {
         base.Update();
 
+        updateRotation();
         updateScale();
         updatePosition();
+    }
+
+    private void updateRotation()
+    {
+        var current = map.MapEvents.PlayfieldRotateEvents.LastOrDefault(e => e.Time <= clock.CurrentTime);
+
+        if (current == null)
+        {
+            Rotation = 0;
+            return;
+        }
+
+        var progress = (clock.CurrentTime - current.Time) / current.Duration;
+        var end = current.Roll;
+
+        if (progress >= 1)
+        {
+            Rotation = end;
+            return;
+        }
+
+        var previous = map.MapEvents.PlayfieldRotateEvents.LastOrDefault(e => e.Time < current.Time);
+        var start = previous?.Roll ?? 0;
+
+        if (progress < 0)
+        {
+            Rotation = start;
+            return;
+        }
+
+        Rotation = Interpolation.ValueAt(clock.CurrentTime, start, end, current.Time, current.Time + current.Duration, current.Easing);
     }
 
     private void updateScale()

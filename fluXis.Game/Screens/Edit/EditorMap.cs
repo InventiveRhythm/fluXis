@@ -76,6 +76,10 @@ public class EditorMap
     public event Action<BeatPulseEvent> BeatPulseEventRemoved;
     public event Action<BeatPulseEvent> BeatPulseEventUpdated;
 
+    public event Action<PlayfieldRotateEvent> PlayfieldRotateEventAdded;
+    public event Action<PlayfieldRotateEvent> PlayfieldRotateEventRemoved;
+    public event Action<PlayfieldRotateEvent> PlayfieldRotateEventUpdated;
+
     #endregion
 
     public bool SetKeyMode(int mode)
@@ -222,6 +226,11 @@ public class EditorMap
                 BeatPulseEventAdded?.Invoke(pulseEvent);
                 break;
 
+            case PlayfieldRotateEvent rotateEvent:
+                MapEvents.PlayfieldRotateEvents.Add(rotateEvent);
+                PlayfieldRotateEventAdded?.Invoke(rotateEvent);
+                break;
+
             default:
                 throw new NotImplementedException();
         }
@@ -269,6 +278,10 @@ public class EditorMap
 
             case BeatPulseEvent pulseEvent:
                 BeatPulseEventUpdated?.Invoke(pulseEvent);
+                break;
+
+            case PlayfieldRotateEvent rotateEvent:
+                PlayfieldRotateEventUpdated?.Invoke(rotateEvent);
                 break;
 
             default:
@@ -330,6 +343,11 @@ public class EditorMap
             case BeatPulseEvent pulseEvent:
                 MapEvents.BeatPulseEvents.Remove(pulseEvent);
                 BeatPulseEventRemoved?.Invoke(pulseEvent);
+                break;
+
+            case PlayfieldRotateEvent rotateEvent:
+                MapEvents.PlayfieldRotateEvents.Remove(rotateEvent);
+                PlayfieldRotateEventRemoved?.Invoke(rotateEvent);
                 break;
 
             default:
@@ -397,6 +415,12 @@ public class EditorMap
         {
             pulseEvent.Time += offset;
             Update(pulseEvent);
+        }
+
+        foreach (var rotateEvent in MapEvents.PlayfieldRotateEvents)
+        {
+            rotateEvent.Time += offset;
+            Update(rotateEvent);
         }
     }
 

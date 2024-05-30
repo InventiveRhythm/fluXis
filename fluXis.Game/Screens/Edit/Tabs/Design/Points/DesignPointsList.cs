@@ -39,6 +39,11 @@ public partial class DesignPointsList : PointsList
         Map.BeatPulseEventUpdated += UpdatePoint;
         Map.BeatPulseEventRemoved += RemovePoint;
         Map.MapEvents.BeatPulseEvents.ForEach(AddPoint);
+
+        Map.PlayfieldRotateEventAdded += AddPoint;
+        Map.PlayfieldRotateEventUpdated += UpdatePoint;
+        Map.PlayfieldRotateEventRemoved += RemovePoint;
+        Map.MapEvents.PlayfieldRotateEvents.ForEach(AddPoint);
     }
 
     protected override PointListEntry CreateEntryFor(ITimedObject obj)
@@ -51,6 +56,7 @@ public partial class DesignPointsList : PointsList
             PlayfieldFadeEvent fade => new PlayfieldFadeEntry(fade),
             PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
             BeatPulseEvent pulse => new BeatPulseEntry(pulse),
+            PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
             _ => null
         };
     }
@@ -64,6 +70,7 @@ public partial class DesignPointsList : PointsList
         new("Playfield Fade", () => Create(new PlayfieldFadeEvent())),
         new("Playfield Move", () => Create(new PlayfieldMoveEvent())),
         new("Playfield Scale", () => Create(new PlayfieldScaleEvent())),
-        new("Beat Pulse", () => Create(new BeatPulseEvent()))
+        new("Beat Pulse", () => Create(new BeatPulseEvent())),
+        new("Playfield Rotate", () => Create(new PlayfieldRotateEvent()))
     };
 }
