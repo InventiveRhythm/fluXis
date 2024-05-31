@@ -12,5 +12,5 @@ public partial class FluXisTooltipText : FluXisSpriteText, IHasTooltip
 {
     public LocalisableString TooltipText { get; init; }
 
-    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnHover(HoverEvent e) => !string.IsNullOrEmpty(TooltipText.ToString());
 }

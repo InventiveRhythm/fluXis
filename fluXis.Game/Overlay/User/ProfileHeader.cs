@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.API.Models.Groups;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
@@ -22,6 +23,10 @@ namespace fluXis.Game.Overlay.User;
 public partial class ProfileHeader : Container
 {
     private APIUser user { get; }
+
+    private bool showUsername => user.Username != user.PreferredName;
+    private bool showPronouns => !string.IsNullOrEmpty(user.Pronouns);
+    private bool showBottomRow => showUsername || showPronouns;
 
     public ProfileHeader(APIUser user)
     {
@@ -142,20 +147,44 @@ public partial class ProfileHeader : Container
                                             Spacing = new Vector2(10),
                                             Children = new Drawable[]
                                             {
-                                                new FluXisSpriteText
+                                                new FluXisTooltipText()
                                                 {
                                                     Text = user.PreferredName,
+                                                    TooltipText = showUsername ? "Display Name" : "",
                                                     WebFontSize = 48,
                                                     Shadow = true,
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
-                                                },
-                                                new FluXisSpriteText
+                                                }
+                                            }
+                                        },
+                                        new FillFlowContainer
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Horizontal,
+                                            Spacing = new Vector2(10),
+                                            Alpha = showBottomRow ? 1 : 0,
+                                            Margin = new MarginPadding { Top = -8 },
+                                            Children = new Drawable[]
+                                            {
+                                                new FluXisTooltipText()
                                                 {
                                                     Text = user.Username,
+                                                    TooltipText = "Username",
                                                     WebFontSize = 24,
                                                     Shadow = true,
-                                                    Alpha = string.IsNullOrEmpty(user.DisplayName) ? 0 : .8f,
+                                                    Alpha = showUsername ? .8f : 0,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft
+                                                },
+                                                new FluXisTooltipText()
+                                                {
+                                                    Text = user.Pronouns,
+                                                    TooltipText = "Pronouns",
+                                                    WebFontSize = 20,
+                                                    Shadow = true,
+                                                    Alpha = showPronouns ? .6f : 0,
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
                                                 }

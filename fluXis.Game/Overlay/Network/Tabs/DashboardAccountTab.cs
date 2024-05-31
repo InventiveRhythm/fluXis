@@ -56,6 +56,7 @@ public partial class DashboardAccountTab : DashboardTab
 
     private DashboardAccountEntry displayNameEntry = null!;
     private DashboardAccountEntry aboutmeEntry = null!;
+    private DashboardAccountEntry pronounsEntry = null!;
 
     private bool hasUnsavedChanges;
     private bool saving;
@@ -331,6 +332,13 @@ public partial class DashboardAccountTab : DashboardTab
                             Placeholder = "...",
                             Default = user.AboutMe,
                             OnChange = updateUnsavedStatus
+                        },
+                        pronounsEntry = new DashboardAccountEntry
+                        {
+                            Title = "Pronouns",
+                            Placeholder = "../..",
+                            Default = user.Pronouns,
+                            OnChange = updateUnsavedStatus
                         }
                     }
                 }
@@ -349,6 +357,7 @@ public partial class DashboardAccountTab : DashboardTab
 
         hasUnsavedChanges |= displayNameEntry.Value != user.DisplayName;
         hasUnsavedChanges |= aboutmeEntry.Value != user.AboutMe;
+        hasUnsavedChanges |= pronounsEntry.Value != user.Pronouns;
 
         if (hasUnsavedChanges)
             unsavedContent.FadeIn(400).MoveToY(0, 600, Easing.OutQuint);
@@ -370,7 +379,8 @@ public partial class DashboardAccountTab : DashboardTab
             Twitch = getValue(user.Socials.Twitch, twitchEntry.Value),
             Discord = getValue(user.Socials.Discord, discordEntry.Value),
             DisplayName = getValue(user.DisplayName, displayNameEntry.Value),
-            AboutMe = getValue(user.AboutMe, aboutmeEntry.Value)
+            AboutMe = getValue(user.AboutMe, aboutmeEntry.Value),
+            Pronouns = getValue(user.Pronouns, pronounsEntry.Value)
         });
 
         req.Success += res =>
@@ -401,6 +411,7 @@ public partial class DashboardAccountTab : DashboardTab
 
         displayNameEntry.Value = user.DisplayName;
         aboutmeEntry.Value = user.AboutMe;
+        pronounsEntry.Value = user.Pronouns;
 
         updateUnsavedStatus();
     }

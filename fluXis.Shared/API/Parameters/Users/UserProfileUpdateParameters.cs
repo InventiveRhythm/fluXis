@@ -21,4 +21,7 @@ public class UserProfileUpdateParameters
 
     [JsonProperty("youtube")]
     public string? YouTube { get; set; }
+
+    [JsonProperty("pronouns")]
+    public string? Pronouns { get; set; }
 }

@@ -10,6 +10,9 @@ public class APIEditingUser : APIUserShort
     [JsonProperty("about")]
     public string? AboutMe { get; set; }
 
+    [JsonProperty("pronouns")]
+    public string? Pronouns { get; set; }
+
     [JsonProperty("social")]
     public IAPIUserSocials Socials { get; set; } = null!;
 }

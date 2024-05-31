@@ -7,6 +7,7 @@ namespace fluXis.Game.Online.API.Models.Users;
 public class APIUser : APIUserShort, IAPIUser
 {
     public string AboutMe { get; set; } = string.Empty;
+    public string Pronouns { get; set; } = string.Empty;
 
     [CanBeNull]
     public APIClubShort Club { get; set; } = new();

@@ -8,6 +8,9 @@ public interface IAPIUser : IAPIUserShort
     [JsonProperty("aboutme")]
     public string AboutMe { get; set; }
 
+    [JsonProperty("pronouns")]
+    public string Pronouns { get; set; }
+
     [JsonProperty("social")]
     public IAPIUserSocials Socials { get; init; }
 
