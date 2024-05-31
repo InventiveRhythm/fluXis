@@ -119,8 +119,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                         Child = new FluXisButton
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Text = "Add Channel",
-                                            Action = () => notifications.SendText("Not implemented yet!"),
+                                            Text = "Add Channel"
                                         }
                                     }
                                 }
