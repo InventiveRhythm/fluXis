@@ -168,6 +168,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent(NotificationManager = new NotificationManager());
 
         cacheComponent(Fluxel = new FluxelClient(endpoint), true, true);
+        cacheComponent<IAPIClient>(Fluxel);
         cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
 
         UserCache.Init(Fluxel);
