@@ -6,15 +6,20 @@ using osu.Framework.Bindables;
 
 namespace fluXis.Game.Online.Fluxel;
 
+#nullable enable
+
 public interface IAPIClient
 {
-    Bindable<APIUserShort> User { get; }
+    Bindable<APIUserShort?> User { get; }
     Bindable<ConnectionStatus> Status { get; }
 
     string AccessToken { get; }
     APIEndpointConfig Endpoint { get; }
-    Exception LastException { get; }
+    Exception? LastException { get; }
 
     void PerformRequest(APIRequest request);
     Task PerformRequestAsync(APIRequest request);
+
+    void Login(string username, string password);
+    void Logout();
 }

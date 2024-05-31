@@ -15,6 +15,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osuTK;
 using osuTK.Graphics;
 
@@ -23,7 +24,7 @@ namespace fluXis.Game.Overlay.Login;
 public partial class LoginOverlay : CompositeDrawable
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -150,7 +151,7 @@ public partial class LoginOverlay : CompositeDrawable
         base.LoadComplete();
 
         password.OnCommit += (_, _) => login();
-        fluxel.Status.BindValueChanged(updateStatus, true);
+        api.Status.BindValueChanged(updateStatus, true);
     }
 
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
@@ -158,7 +159,7 @@ public partial class LoginOverlay : CompositeDrawable
         Schedule(() =>
         {
             if (e.NewValue == ConnectionStatus.Failing)
-                setError(fluxel.LastException.Message);
+                setError(api.LastException?.Message ?? "Failed to connect to the server.");
 
             switch (e.NewValue)
             {
@@ -194,7 +195,7 @@ public partial class LoginOverlay : CompositeDrawable
             return;
         }
 
-        fluxel.Login(username.Text, password.Text);
+        api.Login(username.Text, password.Text);
     }
 
     private void openPasswordReset() => game?.OpenLink("https://auth.flux.moe/request-reset");
@@ -219,8 +220,12 @@ public partial class LoginOverlay : CompositeDrawable
 
     public override void Show()
     {
-        if (fluxel.Status.Value == ConnectionStatus.Online)
+        if (api.Status.Value == ConnectionStatus.Online)
+        {
+            Logger.Log(api.GetType().FullName);
+            Logger.Log("Already connected, skipping login overlay.", LoggingTarget.Network, LogLevel.Debug);
             return;
+        }
 
         this.FadeInFromZero(400, Easing.OutQuint);
         content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);

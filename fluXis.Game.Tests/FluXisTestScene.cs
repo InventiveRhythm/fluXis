@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Testing;
 
@@ -9,6 +10,9 @@ public partial class FluXisTestScene : TestScene
 {
     protected DependencyContainer TestDependencies { get; private set; }
     protected GlobalClock GlobalClock => TestDependencies.Get<GlobalClock>();
+
+    protected TestAPIClient TestAPI => TestDependencies.Get<IAPIClient>() as TestAPIClient;
+    protected virtual bool UseTestAPI => false;
 
     protected void CreateClock()
     {
@@ -24,7 +28,14 @@ public partial class FluXisTestScene : TestScene
     protected override ITestSceneTestRunner CreateRunner() => new FluXisTestSceneTestRunner();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        => TestDependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+    {
+        TestDependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+        if (UseTestAPI)
+            TestDependencies.CacheAs<IAPIClient>(new TestAPIClient());
+
+        return TestDependencies;
+    }
 
     private partial class FluXisTestSceneTestRunner : FluXisGameBase, ITestSceneTestRunner
     {
