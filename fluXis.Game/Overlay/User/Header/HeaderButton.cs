@@ -13,7 +13,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User.Header;
 
-public partial class HeaderButton : Container
+public partial class HeaderButton : CircularContainer
 {
     public IconUsage Icon { get; set; }
     public string Text { get; set; }
@@ -29,8 +29,7 @@ public partial class HeaderButton : Container
     private void load()
     {
         AutoSizeAxes = Axes.X;
-        Height = 50;
-        CornerRadius = 25;
+        Height = 48;
         Masking = true;
         EdgeEffect = FluXisStyles.ShadowSmall;
 
@@ -60,7 +59,7 @@ public partial class HeaderButton : Container
                 Alpha = Action != null ? 1 : .5f,
                 Padding = new MarginPadding
                 {
-                    Horizontal = Text != null ? 20 : 15
+                    Horizontal = Text != null ? 20 : 14
                 },
                 Spacing = new Vector2(10),
                 Children = new Drawable[]

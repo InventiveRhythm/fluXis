@@ -14,7 +14,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User.Header;
 
-public partial class HeaderEditButton : CompositeDrawable
+public partial class HeaderEditButton : CircularContainer
 {
     [Resolved]
     private UISamples samples { get; set; }
@@ -30,8 +30,7 @@ public partial class HeaderEditButton : CompositeDrawable
     private void load()
     {
         AutoSizeAxes = Axes.X;
-        Height = 50;
-        CornerRadius = 25;
+        Height = 48;
         Masking = true;
         EdgeEffect = FluXisStyles.ShadowSmall;
 

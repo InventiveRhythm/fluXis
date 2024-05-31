@@ -37,8 +37,8 @@ public partial class ProfileHeader : Container
     private void load(FluxelClient fluxel)
     {
         RelativeSizeAxes = Axes.X;
-        Height = 440;
-        CornerRadius = 20;
+        Height = 420; // this is changed in Update()
+        CornerRadius = 24;
         Masking = true;
 
         InternalChildren = new Drawable[]
@@ -68,16 +68,17 @@ public partial class ProfileHeader : Container
                 Origin = Anchor.Centre,
                 Direction = FillDirection.Vertical,
                 Spacing = new Vector2(20),
+                Padding = new MarginPadding { Horizontal = 40 },
                 Children = new Drawable[]
                 {
                     new GridContainer
                     {
                         RelativeSizeAxes = Axes.X,
-                        Height = 120,
+                        Height = 128,
                         ColumnDimensions = new[]
                         {
-                            new Dimension(GridSizeMode.Absolute, 120),
-                            new Dimension(GridSizeMode.Absolute, 10),
+                            new Dimension(GridSizeMode.Absolute, 128),
+                            new Dimension(GridSizeMode.Absolute, 12),
                             new Dimension()
                         },
                         Content = new[]
@@ -86,8 +87,8 @@ public partial class ProfileHeader : Container
                             {
                                 new LoadWrapper<DrawableAvatar>
                                 {
-                                    Size = new Vector2(120),
-                                    CornerRadius = 20,
+                                    Size = new Vector2(128),
+                                    CornerRadius = 24,
                                     Masking = true,
                                     EdgeEffect = FluXisStyles.ShadowMedium,
                                     LoadContent = () => new DrawableAvatar(user)
@@ -119,7 +120,7 @@ public partial class ProfileHeader : Container
                                                 {
                                                     AutoSizeAxes = Axes.Both,
                                                     Direction = FillDirection.Horizontal,
-                                                    Spacing = new Vector2(10),
+                                                    Spacing = new Vector2(12),
                                                     ChildrenEnumerable = user.Groups.Any()
                                                         ? user.Groups.Select(g => new HeaderGroupChip(g))
                                                         : new Drawable[]
@@ -144,7 +145,7 @@ public partial class ProfileHeader : Container
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Horizontal,
-                                            Spacing = new Vector2(10),
+                                            Spacing = new Vector2(12),
                                             Children = new Drawable[]
                                             {
                                                 new FluXisTooltipText()
@@ -163,7 +164,7 @@ public partial class ProfileHeader : Container
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Horizontal,
-                                            Spacing = new Vector2(10),
+                                            Spacing = new Vector2(12),
                                             Alpha = showBottomRow ? 1 : 0,
                                             Margin = new MarginPadding { Top = -8 },
                                             Children = new Drawable[]
@@ -254,6 +255,11 @@ public partial class ProfileHeader : Container
                 }
             }
         };
+    }
+
+    protected override void Update()
+    {
+        Height = DrawWidth / 3f; // 3:1 aspect ratio
     }
 
     private Drawable getOnlineStatus()

@@ -23,8 +23,8 @@ public partial class ProfileStats : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 100;
-        CornerRadius = 20;
+        Height = 96;
+        CornerRadius = 16;
         Masking = true;
 
         Children = new Drawable[]
@@ -109,7 +109,7 @@ public partial class ProfileStats : Container
                 new FluXisSpriteText
                 {
                     Text = Value,
-                    WebFontSize = 32,
+                    WebFontSize = 24,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre
                 }

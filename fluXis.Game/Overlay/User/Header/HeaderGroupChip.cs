@@ -10,7 +10,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User.Header;
 
-public partial class HeaderGroupChip : Container
+public partial class HeaderGroupChip : CircularContainer
 {
     private IAPIGroup group { get; }
 
@@ -23,8 +23,7 @@ public partial class HeaderGroupChip : Container
     private void load()
     {
         AutoSizeAxes = Axes.X;
-        Height = 30;
-        CornerRadius = 15;
+        Height = 32;
         Masking = true;
 
         var color = Colour4.FromHex(group.Color);
@@ -40,8 +39,8 @@ public partial class HeaderGroupChip : Container
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(5),
-                Padding = new MarginPadding(10),
+                Spacing = new Vector2(8),
+                Padding = new MarginPadding(12),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = new Drawable[]

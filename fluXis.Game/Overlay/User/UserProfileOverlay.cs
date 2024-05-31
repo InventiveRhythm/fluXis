@@ -57,7 +57,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
             },
             new Container
             {
-                Width = 1360,
+                Width = 1320,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

@@ -10,7 +10,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User.Header;
 
-public partial class HeaderPlacementChip : Container
+public partial class HeaderPlacementChip : CircularContainer
 {
     public Func<Drawable> CreateIcon { get; set; } = () => new Container();
     public int Placement { get; set; }
@@ -19,8 +19,7 @@ public partial class HeaderPlacementChip : Container
     private void load()
     {
         AutoSizeAxes = Axes.X;
-        Height = 50;
-        CornerRadius = 25;
+        Height = 48;
         Masking = true;
         EdgeEffect = FluXisStyles.ShadowSmall;
 
