@@ -148,6 +148,14 @@ public partial class ProfileHeader : Container
                                             Spacing = new Vector2(12),
                                             Children = new Drawable[]
                                             {
+                                                new ClubTag(user.Club)
+                                                {
+                                                    Alpha = user.Club?.ID > 0 ? 1 : 0,
+                                                    Shadow = true,
+                                                    WebFontSize = 30,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft
+                                                },
                                                 new FluXisTooltipText()
                                                 {
                                                     Text = user.PreferredName,

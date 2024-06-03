@@ -1,8 +1,10 @@
+using System;
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Text;
 
@@ -29,6 +31,8 @@ public partial class GradientText : FillFlowContainer
     }
 
     public float FontSize { get; set; } = 20;
+
+    public bool Shadow { get; init; }
 
     public string Text
     {
@@ -57,6 +61,12 @@ public partial class GradientText : FillFlowContainer
         makeText();
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        ScheduleAfterChildren(updateColors);
+    }
+
     private void makeText()
     {
         Clear();
@@ -66,26 +76,40 @@ public partial class GradientText : FillFlowContainer
             var sprite = new FluXisSpriteText()
             {
                 Text = character.ToString(),
-                FontSize = FontSize
+                FontSize = FontSize,
+                Shadow = Shadow
             };
 
             Add(sprite);
         }
 
-        Schedule(updateColors);
+        ScheduleAfterChildren(updateColors);
     }
 
     private void updateColors()
     {
+        // this is needed because DrawSize isn't right in the first frames
+        var width = 0f;
+        var height = 0f;
+        var x = 0f;
+
+        foreach (var drawable in this)
+        {
+            width += drawable.DrawRectangle.Width;
+            height = Math.Max(height, drawable.DrawRectangle.Height);
+        }
+
         foreach (var drawable in this)
         {
             var rect = drawable.DrawRectangle with
             {
-                X = drawable.X,
+                X = x,
                 Y = drawable.Y
             };
 
-            var col = Colour.Interpolate(rect / DrawSize);
+            x += rect.Width;
+
+            var col = Colour.Interpolate(rect / new Vector2(width, height));
             drawable.Colour = col;
         }
     }

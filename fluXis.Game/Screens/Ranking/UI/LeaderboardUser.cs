@@ -134,7 +134,7 @@ public partial class LeaderboardUser : Container
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
                                         Shadow = true,
-                                        FontSize = 24
+                                        WebFontSize = 20
                                     }
                                 }
                             }
@@ -223,19 +223,32 @@ public partial class LeaderboardUser : Container
             color = Colour4.TryParseHex(group.Color, out var c) ? c : color;
         }
 
+        if (user.Club is { ID: > 0 })
+        {
+            flow.Add(new ClubTag(user.Club)
+            {
+                WebFontSize = 24,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Shadow = true
+            });
+        }
+
         if (string.IsNullOrEmpty(user.DisplayName) || user.DisplayName == user.Username)
         {
-            flow.Child = new FluXisSpriteText
+            flow.Add(new FluXisSpriteText
             {
                 Text = user.Username,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
                 Colour = color,
-                FontSize = 36,
+                WebFontSize = 32,
                 Shadow = true
-            };
+            });
         }
         else
         {
-            flow.Children = new Drawable[]
+            flow.AddRange(new Drawable[]
             {
                 new FluXisSpriteText
                 {
@@ -243,7 +256,7 @@ public partial class LeaderboardUser : Container
                     Colour = color,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    FontSize = 36,
+                    WebFontSize = 32,
                     Shadow = true
                 },
                 new FluXisSpriteText
@@ -251,11 +264,11 @@ public partial class LeaderboardUser : Container
                     Text = user.Username,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    FontSize = 24,
+                    WebFontSize = 20,
                     Alpha = .8f,
                     Shadow = true
                 }
-            };
+            });
         }
 
         return flow;
