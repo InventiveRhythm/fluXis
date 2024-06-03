@@ -72,7 +72,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
         InternalChildren = new Drawable[]
         {
-            new Container
+            new ClickableContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 CornerRadius = 20,
