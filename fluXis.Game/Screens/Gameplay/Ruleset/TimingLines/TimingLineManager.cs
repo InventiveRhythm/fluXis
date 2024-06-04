@@ -24,6 +24,7 @@ public partial class TimingLineManager : CompositeDrawable
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        Masking = true;
     }
 
     [BackgroundDependencyLoader]
