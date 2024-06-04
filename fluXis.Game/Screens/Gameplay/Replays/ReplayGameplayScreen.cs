@@ -34,6 +34,14 @@ public partial class ReplayGameplayScreen : GameplayScreen
     protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
     protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(RealmMap, replay.GetPlayer());
 
+    protected override void UpdatePausedState()
+    {
+        base.UpdatePausedState();
+
+        // set this back to true
+        AllowOverlays.Value = true;
+    }
+
     protected override void Update()
     {
         base.Update();

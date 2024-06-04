@@ -359,7 +359,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }, true);
     }
 
-    private void updateRpc() => Activity.Value = !IsPaused.Value ? GetPlayingActivity() : new UserActivity.Paused(RealmMap);
+    protected virtual void UpdatePausedState()
+    {
+        Activity.Value = !IsPaused.Value ? GetPlayingActivity() : new UserActivity.Paused(RealmMap);
+        AllowOverlays.Value = IsPaused.Value;
+    }
 
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo();
     protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount);
@@ -574,7 +578,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
         }
 
-        IsPaused.BindValueChanged(_ => updateRpc(), true);
+        IsPaused.BindValueChanged(_ => UpdatePausedState(), true);
 
         this.ScaleTo(1.2f).FadeOut();
 

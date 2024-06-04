@@ -43,6 +43,9 @@ public partial class Toolbar : Container
     private FluXisScreenStack screens { get; set; }
 
     public BindableBool ShowToolbar { get; } = new();
+    public BindableBool AllowOverlays { get; } = new();
+
+    public override bool PropagateNonPositionalInputSubTree => AllowOverlays.Value;
 
     private string centerTextString;
     private FluXisSpriteText centerText;

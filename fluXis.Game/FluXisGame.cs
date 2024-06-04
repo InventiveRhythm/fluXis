@@ -80,6 +80,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     private readonly BindableDouble inactiveVolume = new(1f);
 
+    private Bindable<bool> allowOverlays { get; } = new(true);
+
     [UsedImplicitly]
     public bool Sex { get; private set; }
 
@@ -105,7 +107,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
-        loadComponent(screenStack = new FluXisScreenStack(Activity), screenContainer.Add, true);
+        loadComponent(screenStack = new FluXisScreenStack(Activity, allowOverlays), screenContainer.Add, true);
 
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
@@ -209,6 +211,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         WaitForReady(() => PerformUpdateCheck(true));
 
         loadLocales();
+
+        toolbar.AllowOverlays.BindTo(allowOverlays);
+
+        allowOverlays.ValueChanged += e =>
+        {
+            Logger.Log($"Overlays {(e.NewValue ? "enabled" : "disabled")}", LoggingTarget.Runtime, LogLevel.Debug);
+
+            if (!e.NewValue)
+                CloseOverlays();
+        };
 
         ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(loadInfo)));
 
