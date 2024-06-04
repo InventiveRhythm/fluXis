@@ -430,6 +430,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             ScoreProcessor.Recalculate();
         }
 
+        replayRecorder.IsRecording.Value = false;
+
         var showingOverlay = ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless;
 
         var stopwatch = Stopwatch.StartNew();
