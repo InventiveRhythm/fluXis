@@ -78,6 +78,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     public bool CursorInPlacementArea => Playfield.ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
 
     public bool CanFlipSelection => BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject);
+    public bool CanShuffleSelection => BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject);
 
     protected override void BeforeLoad()
     {
@@ -243,6 +244,10 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
                 FlipSelection();
                 return true;
 
+            case EditorKeybinding.ShuffleSelection:
+                ShuffleSelection();
+                return true;
+
             case EditorKeybinding.Undo:
                 actions.Undo();
                 return true;
@@ -298,6 +303,19 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         }
 
         actions.Add(new NoteFlipAction(objects, Map.RealmMap.KeyCount));
+    }
+
+    public void ShuffleSelection()
+    {
+        var objects = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().ToList();
+
+        if (!objects.Any())
+        {
+            notifications.SendSmallText("Nothing selected.", FontAwesome6.Solid.XMark);
+            return;
+        }
+
+        actions.Add(new NoteShuffleAction(objects, Map.RealmMap.KeyCount));
     }
 
     public void Copy(bool deleteAfter = false)
