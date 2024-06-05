@@ -351,6 +351,17 @@ public partial class ScoreList : GridContainer
     [CanBeNull]
     private List<ScoreListEntry> getScores(CancellationToken cancellationToken)
     {
+        if (!fluxel.IsLoggedIn)
+        {
+            noScoresText.Text = LocalizationStrings.General.LoginToUse;
+            Schedule(() =>
+            {
+                noScoresText.FadeIn(200);
+                loadingIcon.FadeOut(200);
+            });
+            return null;
+        }
+
         var req = new MapLeaderboardRequest(type, map.OnlineID);
         fluxel.PerformRequest(req);
 

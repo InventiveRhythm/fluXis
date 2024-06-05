@@ -13,6 +13,8 @@ public interface IAPIClient
     Bindable<APIUserShort?> User { get; }
     Bindable<ConnectionStatus> Status { get; }
 
+    bool IsLoggedIn { get; }
+
     string AccessToken { get; }
     APIEndpointConfig Endpoint { get; }
     Exception? LastException { get; }

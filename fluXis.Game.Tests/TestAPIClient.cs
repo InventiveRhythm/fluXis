@@ -23,6 +23,7 @@ public class TestAPIClient : IAPIClient
     public string AccessToken => "token";
     public APIEndpointConfig Endpoint => new();
     public Exception? LastException { get; private set; }
+    public bool IsLoggedIn => Status.Value == ConnectionStatus.Online;
 
     public Action<APIRequest>? HandleRequest;
 
