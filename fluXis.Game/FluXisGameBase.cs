@@ -53,6 +53,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
@@ -363,7 +364,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected override IDictionary<FrameworkSetting, object> GetFrameworkConfigDefaults() => new Dictionary<FrameworkSetting, object>
     {
-        { FrameworkSetting.VolumeUniversal, .15d }
+        { FrameworkSetting.VolumeUniversal, .15d },
+        { FrameworkSetting.ConfineMouseMode, ConfineMouseMode.Never }
     };
 
     protected override bool OnExiting()
