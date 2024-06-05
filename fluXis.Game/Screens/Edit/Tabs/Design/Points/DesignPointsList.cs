@@ -35,6 +35,11 @@ public partial class DesignPointsList : PointsList
         Map.PlayfieldScaleEventRemoved += RemovePoint;
         Map.MapEvents.PlayfieldScaleEvents.ForEach(AddPoint);
 
+        Map.ShaderEventAdded += AddPoint;
+        Map.ShaderEventUpdated += UpdatePoint;
+        Map.ShaderEventRemoved += RemovePoint;
+        Map.MapEvents.ShaderEvents.ForEach(AddPoint);
+
         Map.BeatPulseEventAdded += AddPoint;
         Map.BeatPulseEventUpdated += UpdatePoint;
         Map.BeatPulseEventRemoved += RemovePoint;
@@ -57,6 +62,7 @@ public partial class DesignPointsList : PointsList
             PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
             BeatPulseEvent pulse => new BeatPulseEntry(pulse),
             PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
+            ShaderEvent shader => new ShaderEntry(shader),
             _ => null
         };
     }

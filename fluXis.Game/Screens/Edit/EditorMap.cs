@@ -72,6 +72,10 @@ public class EditorMap
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventRemoved;
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventUpdated;
 
+    public event Action<ShaderEvent> ShaderEventAdded;
+    public event Action<ShaderEvent> ShaderEventRemoved;
+    public event Action<ShaderEvent> ShaderEventUpdated;
+
     public event Action<BeatPulseEvent> BeatPulseEventAdded;
     public event Action<BeatPulseEvent> BeatPulseEventRemoved;
     public event Action<BeatPulseEvent> BeatPulseEventUpdated;
@@ -221,6 +225,11 @@ public class EditorMap
                 PlayfieldScaleEventAdded?.Invoke(scaleEvent);
                 break;
 
+            case ShaderEvent shaderEvent:
+                MapEvents.ShaderEvents.Add(shaderEvent);
+                ShaderEventAdded?.Invoke(shaderEvent);
+                break;
+
             case BeatPulseEvent pulseEvent:
                 MapEvents.BeatPulseEvents.Add(pulseEvent);
                 BeatPulseEventAdded?.Invoke(pulseEvent);
@@ -274,6 +283,10 @@ public class EditorMap
 
             case PlayfieldScaleEvent scaleEvent:
                 PlayfieldScaleEventUpdated?.Invoke(scaleEvent);
+                break;
+
+            case ShaderEvent shaderEvent:
+                ShaderEventUpdated?.Invoke(shaderEvent);
                 break;
 
             case BeatPulseEvent pulseEvent:
@@ -338,6 +351,11 @@ public class EditorMap
             case PlayfieldScaleEvent scaleEvent:
                 MapEvents.PlayfieldScaleEvents.Remove(scaleEvent);
                 PlayfieldScaleEventRemoved?.Invoke(scaleEvent);
+                break;
+
+            case ShaderEvent shaderEvent:
+                MapEvents.ShaderEvents.Remove(shaderEvent);
+                ShaderEventRemoved?.Invoke(shaderEvent);
                 break;
 
             case BeatPulseEvent pulseEvent:
@@ -409,6 +427,12 @@ public class EditorMap
         {
             scaleEvent.Time += offset;
             Update(scaleEvent);
+        }
+
+        foreach (var shaderEvent in MapEvents.ShaderEvents)
+        {
+            shaderEvent.Time += offset;
+            Update(shaderEvent);
         }
 
         foreach (var pulseEvent in MapEvents.BeatPulseEvents)

@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace fluXis.Shared.Utils;
 
 public static class JsonUtils
 {
     private static Dictionary<Type, Type> typeMap { get; } = new();
+
+    public static JObject Copy(this JObject obj) => JObject.Parse(obj.ToString());
 
     public static T? Deserialize<T>(this string json) => JsonConvert.DeserializeObject<T>(json, globalSettings());
     public static string Serialize<T>(this T obj, bool indent = false) => JsonConvert.SerializeObject(obj, globalSettings(indent));
