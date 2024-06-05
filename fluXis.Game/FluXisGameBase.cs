@@ -361,6 +361,11 @@ public partial class FluXisGameBase : osu.Framework.Game
         };
     }
 
+    protected override IDictionary<FrameworkSetting, object> GetFrameworkConfigDefaults() => new Dictionary<FrameworkSetting, object>
+    {
+        { FrameworkSetting.VolumeUniversal, .15d }
+    };
+
     protected override bool OnExiting()
     {
         Fluxel.Close();
