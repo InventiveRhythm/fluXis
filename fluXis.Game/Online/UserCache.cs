@@ -4,60 +4,59 @@ using System.Threading.Tasks;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Online;
 
-public static class UserCache
+public partial class UserCache : Component
 {
-    private static readonly Dictionary<long, APIUser> users = new();
-    private static FluxelClient fluxel;
+    [Resolved]
+    private IAPIClient api { get; set; }
 
-    public static Action<long> OnAvatarUpdate { get; set; }
-    public static Action<long> OnBannerUpdate { get; set; }
+    private Dictionary<long, APIUser> users { get; } = new();
 
-    private static readonly Dictionary<long, List<Action>> avatar_update_callbacks = new();
-    private static readonly Dictionary<long, List<Action>> banner_update_callbacks = new();
+    public event Action<long> OnAvatarUpdate;
+    public event Action<long> OnBannerUpdate;
 
-    public static void Init(FluxelClient api)
+    private Dictionary<long, List<Action>> avatarUpdateCallbacks { get; } = new();
+    private Dictionary<long, List<Action>> bannerUpdateCallbacks { get; } = new();
+
+    public async Task<APIUser> UserAsync(long id, bool forceReload = false)
     {
-        fluxel = api;
-    }
-
-    public static async Task<APIUser> GetUserAsync(long id, bool forceReload = false)
-    {
-        var user = await Task.Run(() => GetUser(id, forceReload));
+        var user = await Task.Run(() => Get(id, forceReload));
         return user;
     }
 
-    public static APIUser GetUser(long id, bool forceReload = false)
+    public APIUser Get(long id, bool forceReload = false)
     {
         if (id == -1)
         {
             return new APIUser
             {
-                ID = fluxel.User.Value?.ID ?? -1,
-                Username = fluxel.User.Value?.Username ?? "Guest",
-                CountryCode = fluxel.User.Value?.CountryCode ?? "XX"
+                ID = api.User.Value?.ID ?? -1,
+                Username = api.User.Value?.Username ?? "Guest",
+                CountryCode = api.User.Value?.CountryCode ?? "XX"
             };
         }
 
         if (users.TryGetValue(id, out var u) && !forceReload)
             return u;
 
-        APIUser user = fetchUser(id);
+        APIUser user = fetch(id);
         if (user == null) return null;
 
         users[id] = user;
         return user;
     }
 
-    private static APIUser fetchUser(long id)
+    private APIUser fetch(long id)
     {
         try
         {
             var req = new UserRequest(id);
-            fluxel.PerformRequest(req);
+            api.PerformRequest(req);
 
             if (req.IsSuccessful)
                 return req.Response!.Data;
@@ -74,39 +73,55 @@ public static class UserCache
         }
     }
 
-    public static List<Action> GetAvatarUpdateCallbacks(long id)
-    {
-        if (!avatar_update_callbacks.ContainsKey(id))
-            avatar_update_callbacks[id] = new List<Action>();
-
-        return avatar_update_callbacks[id];
-    }
-
-    public static void TriggerAvatarUpdate(long id)
+    public void TriggerAvatarUpdate(long id)
     {
         OnAvatarUpdate?.Invoke(id);
 
-        if (!avatar_update_callbacks.TryGetValue(id, out var callbacks))
+        if (!avatarUpdateCallbacks.TryGetValue(id, out var callbacks))
             return;
 
         callbacks.ForEach(c => c.Invoke());
     }
 
-    public static List<Action> GetBannerUpdateCallbacks(long id)
-    {
-        if (!banner_update_callbacks.ContainsKey(id))
-            banner_update_callbacks[id] = new List<Action>();
-
-        return banner_update_callbacks[id];
-    }
-
-    public static void TriggerBannerUpdate(long id)
+    public void TriggerBannerUpdate(long id)
     {
         OnBannerUpdate?.Invoke(id);
 
-        if (!banner_update_callbacks.TryGetValue(id, out var callbacks))
+        if (!bannerUpdateCallbacks.TryGetValue(id, out var callbacks))
             return;
 
         callbacks.ForEach(c => c.Invoke());
+    }
+
+    public void RegisterAvatarCallback(long id, Action callback)
+    {
+        if (!avatarUpdateCallbacks.ContainsKey(id))
+            avatarUpdateCallbacks[id] = new List<Action>();
+
+        avatarUpdateCallbacks[id].Add(callback);
+    }
+
+    public void RegisterBannerCallback(long id, Action callback)
+    {
+        if (!bannerUpdateCallbacks.ContainsKey(id))
+            bannerUpdateCallbacks[id] = new List<Action>();
+
+        bannerUpdateCallbacks[id].Add(callback);
+    }
+
+    public void UnregisterAvatarCallback(long id, Action callback)
+    {
+        if (!avatarUpdateCallbacks.TryGetValue(id, out var callbacks))
+            return;
+
+        callbacks.Remove(callback);
+    }
+
+    public void UnregisterBannerCallback(long id, Action callback)
+    {
+        if (!bannerUpdateCallbacks.TryGetValue(id, out var callbacks))
+            return;
+
+        callbacks.Remove(callback);
     }
 }

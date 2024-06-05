@@ -4,10 +4,12 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Mods;
+using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Replays;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 
@@ -18,6 +20,9 @@ public partial class ReplayGameplayScreen : GameplayScreen
     protected override bool InstantlyExitOnPause => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
+
+    [Resolved]
+    private UserCache users { get; set; }
 
     private Replay replay { get; }
     private List<ReplayFrame> frames { get; }
@@ -32,7 +37,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
 
     protected override GameplayInput GetInput() => new ReplayInput(this, RealmMap.KeyCount);
     protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
-    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(RealmMap, replay.GetPlayer());
+    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(RealmMap, replay.GetPlayer(users));
 
     protected override void UpdatePausedState()
     {

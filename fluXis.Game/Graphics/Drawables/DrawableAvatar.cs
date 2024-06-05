@@ -13,6 +13,9 @@ public partial class DrawableAvatar : Sprite
     [Resolved]
     private OnlineTextureStore store { get; set; }
 
+    [Resolved]
+    private UserCache users { get; set; }
+
     public bool ShowTooltip { get; set; }
 
     private APIUserShort user;
@@ -34,7 +37,7 @@ public partial class DrawableAvatar : Sprite
     {
         this.FadeInFromZero(400);
 
-        UserCache.GetAvatarUpdateCallbacks(user.ID).Add(reload);
+        users.RegisterAvatarCallback(user.ID, reload);
     }
 
     private void reload()
@@ -52,20 +55,20 @@ public partial class DrawableAvatar : Sprite
 
     public void UpdateUser(APIUserShort newUser)
     {
-        UserCache.GetAvatarUpdateCallbacks(user.ID).Remove(reload);
+        users.UnregisterAvatarCallback(user.ID, reload);
 
         user = newUser ?? APIUserShort.Dummy;
         Texture = store.GetAvatar(user.ID);
         Schedule(() => this.FadeInFromZero(400));
 
-        UserCache.GetAvatarUpdateCallbacks(user.ID).Add(reload);
+        users.RegisterAvatarCallback(user.ID, reload);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        UserCache.GetAvatarUpdateCallbacks(user.ID).Remove(reload);
+        users.UnregisterAvatarCallback(user.ID, reload);
     }
 
     protected override bool OnHover(HoverEvent e) => user.ID >= 0 && ShowTooltip;

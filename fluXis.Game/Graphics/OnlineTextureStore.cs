@@ -10,15 +10,15 @@ public class OnlineTextureStore : TextureStore
 {
     private APIEndpointConfig endpointConfig { get; }
 
-    public OnlineTextureStore(GameHost host, APIEndpointConfig endpointConfig)
+    public OnlineTextureStore(GameHost host, APIEndpointConfig endpointConfig, UserCache users)
         : base(host.Renderer)
     {
         this.endpointConfig = endpointConfig;
         AddTextureSource(host.CreateTextureLoaderStore(new OnlineStore()));
         AddTextureSource(host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
-        UserCache.OnAvatarUpdate = id => purge(AssetType.Avatar, id);
-        UserCache.OnBannerUpdate = id => purge(AssetType.Banner, id);
+        users.OnAvatarUpdate += id => purge(AssetType.Avatar, id);
+        users.OnBannerUpdate += id => purge(AssetType.Banner, id);
     }
 
     public Texture GetAchievement(string id) => get(AssetType.Achievement, id, true);

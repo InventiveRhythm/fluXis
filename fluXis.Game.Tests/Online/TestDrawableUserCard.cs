@@ -10,7 +10,7 @@ namespace fluXis.Game.Tests.Online;
 public partial class TestDrawableUserCard : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(UserCache users)
     {
         var flow = new FillFlowContainer
         {
@@ -21,13 +21,13 @@ public partial class TestDrawableUserCard : FluXisTestScene
 
         Add(flow);
 
-        AddStep("Add uid 1", () => flow.Add(new DrawableUserCard(UserCache.GetUser(1))
+        AddStep("Add uid 1", () => flow.Add(new DrawableUserCard(users.Get(1))
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre
         }));
 
-        AddStep("Add uid 2", () => flow.Add(new DrawableUserCard(UserCache.GetUser(2))
+        AddStep("Add uid 2", () => flow.Add(new DrawableUserCard(users.Get(2))
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre

@@ -16,6 +16,7 @@ using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.IO;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
+using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
@@ -46,6 +47,9 @@ public partial class ScoreList : GridContainer
 
     [Resolved]
     private FluxelClient fluxel { get; set; }
+
+    [Resolved]
+    private UserCache users { get; set; }
 
     [Resolved]
     private MapStore maps { get; set; }
@@ -278,7 +282,7 @@ public partial class ScoreList : GridContainer
                         {
                             ScoreInfo = info,
                             Map = map,
-                            Player = s.Player,
+                            Player = users.Get(info.PlayerID),
                             DeleteAction = () =>
                             {
                                 realm.RunWrite(r2 =>

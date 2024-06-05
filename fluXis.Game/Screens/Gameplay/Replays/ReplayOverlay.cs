@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Online;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
@@ -17,7 +18,7 @@ public partial class ReplayOverlay : FillFlowContainer
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(UserCache users)
     {
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.TopCentre;
@@ -40,7 +41,7 @@ public partial class ReplayOverlay : FillFlowContainer
                 FontSize = 24,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Text = $"Watching {replay.GetPlayer()?.NameWithApostrophe} replay",
+                Text = $"Watching {replay.GetPlayer(users)?.NameWithApostrophe} replay",
                 Alpha = .8f
             }
         };

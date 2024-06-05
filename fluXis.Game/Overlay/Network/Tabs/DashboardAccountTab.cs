@@ -38,6 +38,9 @@ public partial class DashboardAccountTab : DashboardTab
     private FluxelClient fluxel { get; set; } = null!;
 
     [Resolved]
+    private UserCache users { get; set; } = null!;
+
+    [Resolved]
     private NotificationManager notifications { get; set; } = null!;
 
     [Resolved]
@@ -186,7 +189,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         req.Success += res =>
                                         {
                                             notification.State = res.Status == 200 ? LoadingState.Complete : LoadingState.Failed;
-                                            UserCache.TriggerAvatarUpdate(user.ID);
+                                            users.TriggerAvatarUpdate(user.ID);
                                         };
                                         req.Failure += ex =>
                                         {
@@ -232,7 +235,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         req.Success += res =>
                                         {
                                             notif.State = res.Status == 200 ? LoadingState.Complete : LoadingState.Failed;
-                                            UserCache.TriggerBannerUpdate(user.ID);
+                                            users.TriggerBannerUpdate(user.ID);
                                         };
                                         req.Failure += ex =>
                                         {

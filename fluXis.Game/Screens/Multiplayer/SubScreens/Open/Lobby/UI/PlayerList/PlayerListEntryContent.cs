@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
@@ -23,9 +24,9 @@ public partial class PlayerListEntryContent : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(UserCache users)
     {
-        participant.Resolve();
+        participant.User = users.Get(participant.ID);
 
         RelativeSizeAxes = Axes.Both;
 

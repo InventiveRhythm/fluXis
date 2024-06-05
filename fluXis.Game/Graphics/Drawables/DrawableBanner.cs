@@ -11,6 +11,9 @@ public partial class DrawableBanner : Sprite
     [Resolved]
     private OnlineTextureStore store { get; set; }
 
+    [Resolved]
+    private UserCache users { get; set; }
+
     private APIUserShort user;
 
     public DrawableBanner(APIUserShort user)
@@ -30,7 +33,7 @@ public partial class DrawableBanner : Sprite
     {
         this.FadeInFromZero(400);
 
-        UserCache.GetBannerUpdateCallbacks(user.ID).Add(reload);
+        users.UnregisterBannerCallback(user.ID, reload);
     }
 
     private void reload()
@@ -50,19 +53,19 @@ public partial class DrawableBanner : Sprite
     {
         if (user.ID == newUser?.ID) return;
 
-        UserCache.GetBannerUpdateCallbacks(user.ID).Remove(reload);
+        users.UnregisterBannerCallback(user.ID, reload);
 
         user = newUser ?? APIUserShort.Dummy;
         Texture = store.GetBanner(user.ID);
         Schedule(() => this.FadeInFromZero(400));
 
-        UserCache.GetBannerUpdateCallbacks(user.ID).Add(reload);
+        users.RegisterBannerCallback(user.ID, reload);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        UserCache.GetBannerUpdateCallbacks(user.ID).Remove(reload);
+        users.UnregisterBannerCallback(user.ID, reload);
     }
 }

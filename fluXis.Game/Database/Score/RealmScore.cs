@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Utils;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -38,9 +36,6 @@ public class RealmScore : RealmObject
         get => Enum.Parse<ScoreRank>(Grade);
         set => Grade = value.ToString();
     }
-
-    [Ignored]
-    public APIUser Player => UserCache.GetUser(PlayerID);
 
     public RealmScore(RealmMap map)
     {
@@ -93,6 +88,7 @@ public class RealmScore : RealmObject
             Okay = Okay,
             Miss = Miss,
             HitResults = null,
+            PlayerID = PlayerID,
             MapID = -1,
             MapHash = null,
             Timestamp = Date.ToUnixTimeSeconds(),

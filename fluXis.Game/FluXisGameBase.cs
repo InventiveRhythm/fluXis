@@ -172,11 +172,12 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent<IAPIClient>(Fluxel);
         cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
 
-        UserCache.Init(Fluxel);
+        var users = new UserCache();
+        cacheComponent(users, true, true);
 
         cacheComponent(new BackgroundTextureStore(Host, mapStorage));
         cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
-        cacheComponent(new OnlineTextureStore(Host, endpoint));
+        cacheComponent(new OnlineTextureStore(Host, endpoint, users));
 
         cacheComponent(MapStore = new MapStore(), true);
         cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));

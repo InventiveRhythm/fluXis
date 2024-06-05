@@ -25,6 +25,9 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
     [Resolved]
     private FluxelClient fluxel { get; set; }
 
+    [Resolved]
+    private UserCache users { get; set; }
+
     private APIUser user;
     private Container content;
     private FluXisScrollContainer scroll;
@@ -124,7 +127,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
             loading.Show();
         });
 
-        user = await UserCache.GetUserAsync(id);
+        user = await users.UserAsync(id);
         if (user == null) return;
 
         var mapsReq = new UserMapsRequest(id);
