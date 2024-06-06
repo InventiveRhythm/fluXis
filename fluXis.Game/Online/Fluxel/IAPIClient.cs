@@ -23,5 +23,6 @@ public interface IAPIClient
     Task PerformRequestAsync(APIRequest request);
 
     void Login(string username, string password);
+    void Register(string username, string password, string email);
     void Logout();
 }

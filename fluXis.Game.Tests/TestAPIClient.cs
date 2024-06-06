@@ -58,6 +58,17 @@ public class TestAPIClient : IAPIClient
         }
     }
 
+    public void Register(string username, string password, string email)
+    {
+        Status.Value = ConnectionStatus.Online;
+        User.Value = new APIUserShort
+        {
+            ID = 1,
+            Username = username,
+            CountryCode = "TD"
+        };
+    }
+
     public void Logout()
     {
         Logger.Log("Logging out");

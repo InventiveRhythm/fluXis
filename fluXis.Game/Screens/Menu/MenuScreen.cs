@@ -9,7 +9,7 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Login;
+using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.Settings;
 using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Screens.Browse;

@@ -1,4 +1,4 @@
-using fluXis.Game.Overlay.Login;
+using fluXis.Game.Overlay.Auth;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 

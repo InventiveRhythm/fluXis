@@ -21,6 +21,7 @@ public static class FluXisColors
     public static Colour4 Background6 => GetThemeColor(.1f, .35f);
     public static Colour4 Foreground => GetThemeColor(.1f, .6f);
     public static Colour4 Highlight => GetThemeColor(1f, .7f);
+    public static Colour4 Link => GetThemeColor(1f, .8f);
 
     public static Colour4 GetThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
 

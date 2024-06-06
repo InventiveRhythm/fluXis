@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.Chat;
-using fluXis.Game.Overlay.Login;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Settings;

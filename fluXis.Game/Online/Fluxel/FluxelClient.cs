@@ -57,7 +57,7 @@ public partial class FluxelClient : Component, IAPIClient
 
     public Bindable<APIUserShort?> User { get; } = new();
     public Bindable<ConnectionStatus> Status { get; } = new();
-    public Exception LastException { get; private set; } = null!;
+    public Exception? LastException { get; private set; } = null!;
 
     public bool IsLoggedIn => User.Value != null;
 

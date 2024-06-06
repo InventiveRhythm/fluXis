@@ -7,8 +7,9 @@ namespace fluXis.Game.Graphics.UserInterface.Text;
 
 public partial class FluXisTextFlow : TextFlowContainer
 {
+    public float WebFontSize { set => FontSize = FluXisSpriteText.GetWebFontSize(value); }
     public float FontSize { get; set; } = 20;
-    public bool Shadow { get; set; } = true;
+    public bool Shadow { get; init; } = true;
 
     public FluXisTextFlow(Action<SpriteText> defaultCreationParameters = null)
         : base(defaultCreationParameters)

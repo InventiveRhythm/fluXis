@@ -8,7 +8,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Localization;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Login;
+using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
