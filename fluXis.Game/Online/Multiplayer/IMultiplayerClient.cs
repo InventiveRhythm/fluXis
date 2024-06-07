@@ -13,7 +13,7 @@ public interface IMultiplayerClient
     Task UserLeft(long id);
     Task UserStateChanged(long id, MultiplayerUserState state);
     Task SettingsChanged(MultiplayerRoom room);
-    Task MapChanged(bool success, IAPIMapShort map, string error);
+    Task MapChanged(bool success, APIMap map, string error);
     Task Starting();
     Task ResultsReady(List<ScoreInfo> scores);
 }

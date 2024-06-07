@@ -20,5 +20,5 @@ public interface IMultiplayerRoom
     List<IMultiplayerParticipant> Participants { get; init; }
 
     [JsonProperty("map")]
-    IAPIMapShort Map { get; set; }
+    APIMap Map { get; set; }
 }

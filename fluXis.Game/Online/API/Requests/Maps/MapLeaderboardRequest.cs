@@ -16,9 +16,9 @@ public class MapLeaderboardRequest : APIRequest<APIScores>
     };
 
     private ScoreListType type { get; }
-    private int id { get; }
+    private long id { get; }
 
-    public MapLeaderboardRequest(ScoreListType type, int id)
+    public MapLeaderboardRequest(ScoreListType type, long id)
     {
         this.type = type;
         this.id = id;

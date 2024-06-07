@@ -16,6 +16,7 @@ using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
+using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.MapSets;
@@ -635,9 +636,33 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
 
-    private void startUpload() => Task.Run(uploadSet);
+    private void startUpload()
+    {
+        var isUpdate = editorMap.MapSet.OnlineID > 0;
 
-    private async void uploadSet()
+        if (isUpdate)
+        {
+            panels.Content = new ButtonPanel
+            {
+                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Text = "You are about to update a mapset!",
+                SubText = "Are you sure you want to continue?\nThis will wipe scores of updated maps.",
+                Buttons = new ButtonData[]
+                {
+                    new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => this.Delay(200).Schedule(run)),
+                    new CancelButtonData()
+                }
+            };
+
+            return;
+        }
+
+        run();
+
+        void run() => Task.Run(() => uploadSet(isUpdate));
+    }
+
+    private async void uploadSet(bool isUpdate)
     {
         if (!canSave)
         {
@@ -645,69 +670,82 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return;
         }
 
-        var overlay = new LoadingPanel
+        var overlay = new EditorUploadOverlay
         {
-            Text = "Uploading mapset...",
-            SubText = "Checking for duplicate diffs..."
+            Text = isUpdate ? "Updating mapset..." : "Uploading mapset...",
+            SubText = "Checking for duplicate difficulties..."
         };
 
         Schedule(() => panels.Content = overlay);
 
-        // check for duplicate diffs
-        var diffs = editorMap.MapSet.Maps.Select(m => m.Difficulty).ToList();
-        var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
-
-        if (duplicate.Count > 0)
+        try
         {
-            notifications.SendError("Cannot upload mapset!", $"Duplicate difficulty names found: {string.Join(", ", duplicate)}");
-            return;
-        }
+            // check for duplicate diffs
+            var diffs = editorMap.MapSet.Maps.Select(m => m.Difficulty).ToList();
+            var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
-        overlay.SubText = "Saving mapset...";
-
-        if (!save(false)) return;
-
-        overlay.SubText = "Uploading mapset...";
-
-        var realmMapSet = mapStore.GetFromGuid(editorMap.MapSet.ID);
-        var path = mapStore.Export(realmMapSet.Detach(), new TaskNotificationData(), false);
-        var buffer = await File.ReadAllBytesAsync(path);
-
-        var request = new MapSetUploadRequest(buffer, editorMap.MapSet);
-        request.Progress += (l1, l2) => overlay.SubText = $"Uploading mapset... {(int)((float)l1 / l2 * 100)}%";
-        await fluxel.PerformRequestAsync(request);
-
-        overlay.SubText = "Reading server response...";
-
-        if (!request.IsSuccessful)
-        {
-            notifications.SendError(request.Response!.Message);
-            Schedule(overlay.Hide);
-            return;
-        }
-
-        overlay.SubText = "Updating mapset...";
-
-        realm.RunWrite(r =>
-        {
-            var set = r.Find<RealmMapSet>(editorMap.MapSet.ID);
-            set.OnlineID = editorMap.MapSet.OnlineID = request.Response!.Data.ID;
-            set.SetStatus(request.Response.Data.Status);
-            editorMap.MapSet.SetStatus(request.Response.Data.Status);
-
-            for (var index = 0; index < set.Maps.Count; index++)
+            if (duplicate.Count > 0)
             {
-                var onlineMap = request.Response.Data.Maps[index];
-                var map = set.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
-                var loadedMap = editorMap.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
-
-                map.OnlineID = loadedMap.OnlineID = onlineMap.Id;
+                notifications.SendError("Cannot upload mapset!", $"Duplicate difficulty names found: {string.Join(", ", duplicate)}");
+                return;
             }
 
-            var detatch = set.Detach();
-            Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), detatch));
-        });
+            overlay.SubText = "Saving...";
 
-        Schedule(overlay.Hide);
+            if (!save(false))
+                return;
+
+            overlay.SubText = "Exporting...";
+
+            var realmMapSet = mapStore.GetFromGuid(editorMap.MapSet.ID);
+            var path = mapStore.Export(realmMapSet.Detach(), new TaskNotificationData(), false);
+            var buffer = await File.ReadAllBytesAsync(path);
+
+            overlay.SubText = "0%";
+
+            var request = new MapSetUploadRequest(buffer, editorMap.MapSet);
+            request.Progress += (l1, l2) => overlay.SubText = $"{Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
+            await fluxel.PerformRequestAsync(request);
+
+            overlay.SubText = "Reading response...";
+
+            if (!request.IsSuccessful)
+            {
+                notifications.SendError(request.Response!.Message);
+                return;
+            }
+
+            overlay.SubText = "Assigning IDs...";
+
+            realm.RunWrite(r =>
+            {
+                var set = r.Find<RealmMapSet>(editorMap.MapSet.ID);
+                set.OnlineID = editorMap.MapSet.OnlineID = request.Response!.Data.ID;
+                set.SetStatus(request.Response.Data.Status);
+                editorMap.MapSet.SetStatus(request.Response.Data.Status);
+
+                for (var index = 0; index < set.Maps.Count; index++)
+                {
+                    var onlineMap = request.Response.Data.Maps[index];
+                    var map = set.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
+                    var loadedMap = editorMap.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
+
+                    map.OnlineID = loadedMap.OnlineID = onlineMap.ID;
+                }
+
+                var detatch = set.Detach();
+                Schedule(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), detatch));
+            });
+
+            overlay.SubText = "Success!";
+        }
+        catch (Exception e)
+        {
+            notifications.SendError("An error occurred while uploading the mapset!", e.Message);
+        }
+        finally
+        {
+            Schedule(overlay.Hide);
+        }
     }
 }

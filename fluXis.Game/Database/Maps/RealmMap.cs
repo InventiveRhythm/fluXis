@@ -37,7 +37,7 @@ public class RealmMap : RealmObject
     public MapStatus Status { set => StatusInt = (int)value; }
 
     public string FileName { get; set; } = string.Empty;
-    public int OnlineID { get; set; } = -1;
+    public long OnlineID { get; set; } = -1;
     public RealmMapFilters Filters { get; set; } = null!;
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -17,7 +17,7 @@ public class APIScore
     public APIUser User { get; set; }
 
     [JsonProperty("map")]
-    public APIMapShort Map { get; set; }
+    public APIMap Map { get; set; }
 
     [JsonProperty("time")]
     public long Time { get; set; }

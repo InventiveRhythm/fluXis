@@ -180,7 +180,7 @@ public partial class MultiLobby : MultiSubScreen
         playerList.RemovePlayer(user.ID);
     }
 
-    private void mapChanged(IAPIMapShort map)
+    private void mapChanged(APIMap map)
     {
         var mapSet = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == map.ID));
 

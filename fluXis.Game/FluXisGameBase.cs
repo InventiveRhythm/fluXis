@@ -24,7 +24,6 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.API.Models.Groups;
-using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
@@ -42,7 +41,6 @@ using fluXis.Game.Utils;
 using fluXis.Resources;
 using fluXis.Shared.Components.Chat;
 using fluXis.Shared.Components.Groups;
-using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Multi;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
@@ -126,7 +124,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         JsonUtils.RegisterTypeConversion<IMultiplayerParticipant, MultiplayerParticipant>();
         JsonUtils.RegisterTypeConversion<IAPIGroup, APIGroup>();
-        JsonUtils.RegisterTypeConversion<IAPIMapShort, APIMapShort>();
         JsonUtils.RegisterTypeConversion<IMultiplayerRoom, MultiplayerRoom>();
         JsonUtils.RegisterTypeConversion<IMultiplayerRoomSettings, MultiplayerRoomSettings>();
         JsonUtils.RegisterTypeConversion<IChatMessage, ChatMessage>();

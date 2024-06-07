@@ -14,7 +14,7 @@ public class RealmMapSet : RealmObject
     [PrimaryKey]
     public Guid ID { get; set; }
 
-    public int OnlineID { get; set; } = -1;
+    public long OnlineID { get; set; } = -1;
     public string Cover { get; set; } = "cover.png";
     public IList<RealmMap> Maps { get; } = null!;
 

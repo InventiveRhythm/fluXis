@@ -1,7 +1,7 @@
 ﻿using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Drawables;
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Shared.Components.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -45,7 +45,7 @@ public partial class BrowseInfoMap : Container, IHasTooltip
             },
             new KeyModeIcon
             {
-                KeyMode = map.KeyMode,
+                KeyMode = map.Mode,
                 Size = new Vector2(50)
             },
             new FillFlowContainer

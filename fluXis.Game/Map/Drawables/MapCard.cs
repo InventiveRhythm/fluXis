@@ -7,7 +7,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Drawables.Online;
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Shared.Components.Maps;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -318,16 +318,16 @@ public partial class MapCard : Container, IHasContextMenu
 
     private string getKeymodeString()
     {
-        var lowest = MapSet.Maps.Min(x => x.KeyMode);
-        var highest = MapSet.Maps.Max(x => x.KeyMode);
+        var lowest = MapSet.Maps.Min(x => x.Mode);
+        var highest = MapSet.Maps.Max(x => x.Mode);
 
         return lowest == highest ? $"{lowest}K" : $"{lowest}-{highest}K";
     }
 
     private ColourInfo getKeymodeColor()
     {
-        var lowest = MapSet.Maps.Min(x => x.KeyMode);
-        var highest = MapSet.Maps.Max(x => x.KeyMode);
+        var lowest = MapSet.Maps.Min(x => x.Mode);
+        var highest = MapSet.Maps.Max(x => x.Mode);
 
         return ColourInfo.GradientHorizontal(FluXisColors.GetKeyColor(lowest), FluXisColors.GetKeyColor(highest));
     }

@@ -14,11 +14,11 @@ public class MultiMapPacket : IPacket
     public string Hash { get; set; } = string.Empty;
 
     [JsonProperty("map")]
-    public IAPIMapShort Map { get; set; } = null!;
+    public APIMap Map { get; set; } = null!;
 
     public static MultiMapPacket CreateC2S(long map, string hash)
         => new() { MapID = map, Hash = hash };
 
-    public static MultiMapPacket CreateS2C(IAPIMapShort map)
+    public static MultiMapPacket CreateS2C(APIMap map)
         => new() { Map = map };
 }

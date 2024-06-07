@@ -7,10 +7,10 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
-using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -243,17 +243,17 @@ public partial class BrowseInfo : Container
             creatorChip.Text = e.NewValue.Creator.Username;
             creatorChip.OnClickAction = () => profile.ShowUser(e.NewValue.Creator.ID);
 
-            var minBPM = e.NewValue.Maps.Min(x => x.Bpm);
-            var maxBPM = e.NewValue.Maps.Max(x => x.Bpm);
+            var minBPM = e.NewValue.Maps.Min(x => x.BPM);
+            var maxBPM = e.NewValue.Maps.Max(x => x.BPM);
             bpmChip.Text = minBPM == maxBPM ? $"{minBPM} BPM" : $"{minBPM}-{maxBPM} BPM";
 
             lengthChip.Text = $"{TimeUtils.Format(e.NewValue.Maps.Max(x => x.Length), false)}";
 
-            var minKey = e.NewValue.Maps.Min(x => x.KeyMode);
-            var maxKey = e.NewValue.Maps.Max(x => x.KeyMode);
+            var minKey = e.NewValue.Maps.Min(x => x.Mode);
+            var maxKey = e.NewValue.Maps.Max(x => x.Mode);
             keysChip.Text = minKey == maxKey ? $"{minKey}K" : $"{minKey}-{maxKey}K";
 
-            uploadedChip.Text = DateTimeOffset.FromUnixTimeSeconds(e.NewValue.Submitted).ToString("MMMM dd yyyy");
+            uploadedChip.Text = DateTimeOffset.FromUnixTimeSeconds(e.NewValue.DateSubmitted).ToString("MMMM dd yyyy");
             updatedChip.Text = DateTimeOffset.FromUnixTimeSeconds(e.NewValue.LastUpdated).ToString("MMMM dd yyyy");
             rankedChip.Text = "";
             sourceChip.Text = e.NewValue.Source;

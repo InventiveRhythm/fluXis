@@ -21,7 +21,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     // public event Action RoomUpdated;
 
     public event Action<string> MapChangedFailed;
-    public event Action<IAPIMapShort> MapChanged;
+    public event Action<APIMap> MapChanged;
 
     public event Action Starting;
     public event Action<List<ScoreInfo>> ResultsReady;
@@ -95,7 +95,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     Task IMultiplayerClient.SettingsChanged(MultiplayerRoom room) => Task.CompletedTask;
 
-    Task IMultiplayerClient.MapChanged(bool success, IAPIMapShort map, string error)
+    Task IMultiplayerClient.MapChanged(bool success, APIMap map, string error)
     {
         Schedule(() =>
         {

@@ -1,4 +1,4 @@
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Shared.Components.Maps;
 
 namespace fluXis.Game.Online.API.Requests.MapSets;
 

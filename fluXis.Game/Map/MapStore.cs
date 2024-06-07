@@ -12,7 +12,6 @@ using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using fluXis.Game.Map.Builtin.Roundhouse;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;

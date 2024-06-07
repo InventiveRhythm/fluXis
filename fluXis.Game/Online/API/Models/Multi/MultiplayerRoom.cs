@@ -11,5 +11,5 @@ public class MultiplayerRoom : IMultiplayerRoom
     public IMultiplayerRoomSettings Settings { get; init; } = new MultiplayerRoomSettings();
     public APIUser Host { get; set; } = null!;
     public List<IMultiplayerParticipant> Participants { get; init; } = new();
-    public IAPIMapShort Map { get; set; } = null!;
+    public APIMap Map { get; set; } = null!;
 }

@@ -1,6 +1,6 @@
 using System.Net.Http;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Shared.Components.Maps;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.MapSets;

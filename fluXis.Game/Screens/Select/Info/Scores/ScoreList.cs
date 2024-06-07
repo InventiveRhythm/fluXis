@@ -392,7 +392,7 @@ public partial class ScoreList : GridContainer
             if (m == null)
                 return;
 
-            m.OnlineHash = map.OnlineHash = onlineMap.Hash;
+            m.OnlineHash = map.OnlineHash = onlineMap.SHA256Hash;
 
             // I would like to know why I didn't put "last update" on the map but on the mapset
             // m.LastOnlineUpdate = map.LastOnlineUpdate = onlineMap.LastUpdate;
