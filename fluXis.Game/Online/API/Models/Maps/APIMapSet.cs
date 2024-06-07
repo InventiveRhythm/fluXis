@@ -10,7 +10,7 @@ public class APIMapSet
     public int ID { get; init; }
 
     [JsonProperty("creator")]
-    public APIUserShort Creator { get; init; }
+    public APIUser Creator { get; init; }
 
     [JsonProperty("artist")]
     public string Artist { get; init; } = "";

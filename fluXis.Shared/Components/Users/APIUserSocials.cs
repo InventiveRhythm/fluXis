@@ -2,17 +2,17 @@ using Newtonsoft.Json;
 
 namespace fluXis.Shared.Components.Users;
 
-public interface IAPIUserSocials
+public class APIUserSocials
 {
     [JsonProperty("twitter")]
-    string Twitter { get; set; }
+    public string? Twitter { get; set; }
 
     [JsonProperty("twitch")]
-    string Twitch { get; set; }
+    public string? Twitch { get; set; }
 
     [JsonProperty("youtube")]
-    string YouTube { get; set; }
+    public string? YouTube { get; set; }
 
     [JsonProperty("discord")]
-    string Discord { get; set; }
+    public string? Discord { get; set; }
 }

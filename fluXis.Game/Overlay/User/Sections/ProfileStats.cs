@@ -1,7 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,11 +12,11 @@ namespace fluXis.Game.Overlay.User.Sections;
 
 public partial class ProfileStats : Container
 {
-    private APIUser user { get; }
+    private APIUserStatistics stats { get; }
 
-    public ProfileStats(APIUser user)
+    public ProfileStats(APIUserStatistics stats)
     {
-        this.user = user;
+        this.stats = stats;
     }
 
     [BackgroundDependencyLoader]
@@ -53,17 +53,17 @@ public partial class ProfileStats : Container
                         new ProfileStat
                         {
                             Title = "Overall Rating",
-                            Value = user.OverallRating.ToStringInvariant("0.00")
+                            Value = stats.OverallRating.ToStringInvariant("0.00")
                         },
                         new ProfileStat
                         {
                             Title = "Potential Rating",
-                            Value = user.PotentialRating.ToStringInvariant("0.00")
+                            Value = stats.PotentialRating.ToStringInvariant("0.00")
                         },
                         new ProfileStat
                         {
                             Title = "Overall Accuracy",
-                            Value = user.OverallAccuracy.ToStringInvariant("00.00") + "%"
+                            Value = stats.OverallAccuracy.ToStringInvariant("00.00") + "%"
                         },
                         new ProfileStat
                         {
@@ -73,7 +73,7 @@ public partial class ProfileStats : Container
                         new ProfileStat
                         {
                             Title = "Max Combo",
-                            Value = $"{user.MaxCombo}x"
+                            Value = $"{stats.MaxCombo}x"
                         }
                     }
                 }

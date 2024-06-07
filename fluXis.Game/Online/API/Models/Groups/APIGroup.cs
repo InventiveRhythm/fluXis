@@ -10,5 +10,5 @@ public class APIGroup : IAPIGroup
     public string Name { get; set; } = "";
     public string Tag { get; set; } = "";
     public string Color { get; set; } = "#ffffff";
-    public IEnumerable<APIUserShort> Members { get; } = null!;
+    public IEnumerable<APIUser> Members { get; } = null!;
 }

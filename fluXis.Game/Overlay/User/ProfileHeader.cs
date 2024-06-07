@@ -6,11 +6,11 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.API.Models.Groups;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User.Header;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -221,7 +221,7 @@ public partial class ProfileHeader : Container
                                 {
                                     new HeaderPlacementChip
                                     {
-                                        Placement = user.GlobalRank,
+                                        Placement = user.Statistics!.GlobalRank,
                                         CreateIcon = () => new SpriteIcon
                                         {
                                             Icon = FontAwesome6.Solid.EarthAmericas,
@@ -230,7 +230,7 @@ public partial class ProfileHeader : Container
                                     },
                                     new HeaderPlacementChip
                                     {
-                                        Placement = user.CountryRank,
+                                        Placement = user.Statistics!.CountryRank,
                                         CreateIcon = () => new DrawableCountry(user.GetCountry())
                                         {
                                             Size = new Vector2(20)
@@ -298,7 +298,7 @@ public partial class ProfileHeader : Container
                 },
                 new FluXisSpriteText
                 {
-                    Text = TimeUtils.Ago(TimeUtils.GetFromSeconds(user.LastLogin)),
+                    Text = TimeUtils.Ago(TimeUtils.GetFromSeconds(user.LastLogin ?? 0)),
                     Shadow = true,
                     WebFontSize = 16
                 }

@@ -30,7 +30,7 @@ public partial class NormalResults : Container
     private RealmMap map { get; set; }
 
     [Resolved]
-    private APIUserShort player { get; set; }
+    private APIUser player { get; set; }
 
     [Resolved]
     private SoloResults results { get; set; }

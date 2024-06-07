@@ -56,7 +56,7 @@ public partial class TestNewResults : FluXisTestScene
         var set = maps.GetFromGuid("9896365c-5541-4612-9f39-5a44aa1012ed");
         var map = set?.Maps[0] ?? maps.MapSets[0].Maps[0];
 
-        var screen = new SoloResults(map, score, APIUserShort.Dummy);
+        var screen = new SoloResults(map, score, APIUser.Dummy);
         screen.SubmitRequest = new SimulatedScoreRequest(score);
         stack.Push(screen);
     }

@@ -14,7 +14,7 @@ public class APIScore
     public int Id { get; set; }
 
     [JsonProperty("user")]
-    public APIUserShort User { get; set; }
+    public APIUser User { get; set; }
 
     [JsonProperty("map")]
     public APIMapShort Map { get; set; }

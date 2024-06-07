@@ -3,7 +3,7 @@ using fluXis.Shared.Components.Users;
 
 namespace fluXis.Game.Online.API.Requests.Users;
 
-public class UserFollowersRequest : APIRequest<List<APIUserShort>>
+public class UserFollowersRequest : APIRequest<List<APIUser>>
 {
     protected override string Path => $"/user/{id}/followers";
 

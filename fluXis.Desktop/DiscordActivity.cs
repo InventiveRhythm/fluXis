@@ -3,7 +3,6 @@ using DiscordRPC;
 using fluXis.Game;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Components.Users;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 
@@ -46,7 +45,7 @@ public class DiscordActivity
             LargeImageText = $"fluXis {FluXisGameBase.VersionString}"
         };
 
-        APIUserShort user = fluxel?.User.Value;
+        var user = fluxel?.User.Value;
 
         if (user != null)
         {

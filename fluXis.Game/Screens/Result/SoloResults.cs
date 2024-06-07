@@ -34,7 +34,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
 
     public ScoreInfo Score { get; }
     public RealmMap Map { get; }
-    public APIUserShort Player { get; }
+    public APIUser Player { get; }
 
     public ScoreInfo ComparisonScore { get; set; }
     public ScoreSubmitRequest SubmitRequest { get; set; }
@@ -50,7 +50,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     private CornerButton backButton;
     private CornerButton retryButton;
 
-    public SoloResults(RealmMap map, ScoreInfo score, APIUserShort player)
+    public SoloResults(RealmMap map, ScoreInfo score, APIUser player)
     {
         Map = map;
         Score = score;
@@ -63,7 +63,7 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
         dependencies.CacheAs(this);
         dependencies.CacheAs(Score);
         dependencies.CacheAs(Map);
-        dependencies.CacheAs(Player ?? APIUserShort.Default);
+        dependencies.CacheAs(Player ?? APIUser.Default);
 
         InternalChildren = new Drawable[]
         {

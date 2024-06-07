@@ -4,12 +4,13 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Clubs;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User.Sections;
 using fluXis.Game.Overlay.User.Sidebar;
+using fluXis.Shared.Components.Clubs;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -155,7 +156,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                 Spacing = new Vector2(20),
                 Children = new Drawable[]
                 {
-                    new ProfileStats(user),
+                    new ProfileStats(user.Statistics!),
                     new GridContainer
                     {
                         RelativeSizeAxes = Axes.X,
@@ -182,7 +183,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-                                        new ProfileSidebarClub(user.Club ?? new APIClubShort())
+                                        new ProfileSidebarClub(user.Club ?? new APIClub())
                                         {
                                             Alpha = user.Club?.ID == 0 ? 0 : 1
                                         },

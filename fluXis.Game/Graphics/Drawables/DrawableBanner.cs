@@ -14,11 +14,11 @@ public partial class DrawableBanner : Sprite
     [Resolved]
     private UserCache users { get; set; }
 
-    private APIUserShort user;
+    private APIUser user;
 
-    public DrawableBanner(APIUserShort user)
+    public DrawableBanner(APIUser user)
     {
-        this.user = user ?? APIUserShort.Dummy;
+        this.user = user ?? APIUser.Dummy;
         Alpha = 0;
         FillMode = FillMode.Fill;
     }
@@ -49,13 +49,13 @@ public partial class DrawableBanner : Sprite
         }));
     }
 
-    public void UpdateUser(APIUserShort newUser)
+    public void UpdateUser(APIUser newUser)
     {
         if (user.ID == newUser?.ID) return;
 
         users.UnregisterBannerCallback(user.ID, reload);
 
-        user = newUser ?? APIUserShort.Dummy;
+        user = newUser ?? APIUser.Dummy;
         Texture = store.GetBanner(user.ID);
         Schedule(() => this.FadeInFromZero(400));
 

@@ -1,5 +1,5 @@
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Shared.Components.Multi;
+using fluXis.Shared.Components.Users;
 
 namespace fluXis.Game.Online.API.Models.Multi;
 

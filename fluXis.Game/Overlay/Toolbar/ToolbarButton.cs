@@ -144,7 +144,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
 
     protected void SetLineState(bool state) => line.ResizeWidthTo(state ? 1 : 0, 400, Easing.OutQuint);
 
-    private void updateState(ValueChangedEvent<APIUserShort> valueChangedEvent)
+    private void updateState(ValueChangedEvent<APIUser> valueChangedEvent)
         => Schedule(() => Enabled.Value = fluxel.User.Value != null);
 
     public ITooltip<ToolbarButton> GetCustomTooltip() => new ToolbarButtonTooltip();

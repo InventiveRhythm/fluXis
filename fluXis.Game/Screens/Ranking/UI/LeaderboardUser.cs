@@ -3,10 +3,10 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
@@ -38,6 +38,9 @@ public partial class LeaderboardUser : Container
         CornerRadius = 20;
         Masking = true;
         EdgeEffect = FluXisStyles.ShadowSmall;
+
+        if (user.Statistics == null)
+            return;
 
         InternalChildren = new Drawable[]
         {
@@ -78,17 +81,11 @@ public partial class LeaderboardUser : Container
                         Origin = Anchor.CentreLeft,
                         Child = new FluXisSpriteText
                         {
-                            Text = $"#{user.GlobalRank}",
+                            Text = $"#{user.Statistics.GlobalRank}",
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Shadow = true,
-                            FontSize = user.GlobalRank switch
-                            {
-                                < 100 => 36,
-                                < 1000 => 30,
-                                < 10000 => 24,
-                                _ => 20
-                            }
+                            FontSize = 36
                         }
                     },
                     new Container
@@ -153,7 +150,7 @@ public partial class LeaderboardUser : Container
                 {
                     new FluXisSpriteText
                     {
-                        Text = $"{user.OverallRating.ToStringInvariant("0.00")} OVR",
+                        Text = $"{user.Statistics.OverallRating.ToStringInvariant("0.00")} OVR",
                         FontSize = 36,
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight,
@@ -171,12 +168,12 @@ public partial class LeaderboardUser : Container
                         {
                             new FluXisSpriteText
                             {
-                                Text = $"{user.PotentialRating.ToStringInvariant("0.00")} PR",
+                                Text = $"{user.Statistics.PotentialRating.ToStringInvariant("0.00")} PR",
                                 Shadow = true
                             },
                             new FluXisSpriteText
                             {
-                                Text = $"{user.OverallAccuracy.ToStringInvariant("00.00")}%",
+                                Text = $"{user.Statistics.OverallAccuracy.ToStringInvariant("00.00")}%",
                                 Shadow = true
                             }
                         }

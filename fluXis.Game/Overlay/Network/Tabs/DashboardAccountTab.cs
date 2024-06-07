@@ -46,7 +46,7 @@ public partial class DashboardAccountTab : DashboardTab
     [Resolved]
     private PanelContainer panels { get; set; } = null!;
 
-    private APIEditingUser user = null!;
+    private APIUser user = null!;
     private Container editContent = null!;
     private Container unsavedContent = null!;
     private LoadingIcon loadingIcon = null!;
@@ -141,6 +141,9 @@ public partial class DashboardAccountTab : DashboardTab
 
     private FillFlowContainer createContent()
     {
+        if (user.Socials is null)
+            return new FillFlowContainer();
+
         return new FillFlowContainer
         {
             Width = 1200,
@@ -353,10 +356,10 @@ public partial class DashboardAccountTab : DashboardTab
     {
         hasUnsavedChanges = false;
 
-        hasUnsavedChanges |= twitterEntry.Value != user.Socials.Twitter;
-        hasUnsavedChanges |= youtubeEntry.Value != user.Socials.YouTube;
-        hasUnsavedChanges |= twitchEntry.Value != user.Socials.Twitch;
-        hasUnsavedChanges |= discordEntry.Value != user.Socials.Discord;
+        hasUnsavedChanges |= twitterEntry.Value != user.Socials?.Twitter;
+        hasUnsavedChanges |= youtubeEntry.Value != user.Socials?.YouTube;
+        hasUnsavedChanges |= twitchEntry.Value != user.Socials?.Twitch;
+        hasUnsavedChanges |= discordEntry.Value != user.Socials?.Discord;
 
         hasUnsavedChanges |= displayNameEntry.Value != user.DisplayName;
         hasUnsavedChanges |= aboutmeEntry.Value != user.AboutMe;
@@ -377,10 +380,10 @@ public partial class DashboardAccountTab : DashboardTab
 
         var req = new UserProfileUpdateRequest(user.ID, new UserProfileUpdateParameters
         {
-            Twitter = getValue(user.Socials.Twitter, twitterEntry.Value),
-            YouTube = getValue(user.Socials.YouTube, youtubeEntry.Value),
-            Twitch = getValue(user.Socials.Twitch, twitchEntry.Value),
-            Discord = getValue(user.Socials.Discord, discordEntry.Value),
+            Twitter = getValue(user.Socials?.Twitter, twitterEntry.Value),
+            YouTube = getValue(user.Socials?.YouTube, youtubeEntry.Value),
+            Twitch = getValue(user.Socials?.Twitch, twitchEntry.Value),
+            Discord = getValue(user.Socials?.Discord, discordEntry.Value),
             DisplayName = getValue(user.DisplayName, displayNameEntry.Value),
             AboutMe = getValue(user.AboutMe, aboutmeEntry.Value),
             Pronouns = getValue(user.Pronouns, pronounsEntry.Value)
@@ -407,10 +410,10 @@ public partial class DashboardAccountTab : DashboardTab
 
     private void reset()
     {
-        twitterEntry.Value = user.Socials.Twitter;
-        youtubeEntry.Value = user.Socials.YouTube;
-        twitchEntry.Value = user.Socials.Twitch;
-        discordEntry.Value = user.Socials.Discord;
+        twitterEntry.Value = user.Socials?.Twitter;
+        youtubeEntry.Value = user.Socials?.YouTube;
+        twitchEntry.Value = user.Socials?.Twitch;
+        discordEntry.Value = user.Socials?.Discord;
 
         displayNameEntry.Value = user.DisplayName;
         aboutmeEntry.Value = user.AboutMe;
@@ -426,7 +429,13 @@ public partial class DashboardAccountTab : DashboardTab
         editContent.Clear();
         loadingIcon.FadeIn(400);
 
-        var req = new AccountSelfRequest();
+        if (fluxel.User.Value is null)
+        {
+            loadingIcon.FadeOut(400);
+            return;
+        }
+
+        var req = new UserRequest(fluxel.User.Value.ID);
         req.Success += res =>
         {
             user = res.Data;

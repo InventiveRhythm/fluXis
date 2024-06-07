@@ -55,7 +55,7 @@ public partial class FluxelClient : Component, IAPIClient
     private readonly Dictionary<Guid, Action<object>> waitingForResponse = new();
     private ClientWebSocket connection = null!;
 
-    public Bindable<APIUserShort?> User { get; } = new();
+    public Bindable<APIUser?> User { get; } = new();
     public Bindable<ConnectionStatus> Status { get; } = new();
     public Exception? LastException { get; private set; } = null!;
 

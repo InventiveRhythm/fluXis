@@ -143,7 +143,7 @@ public partial class UserTooltip : Container
         banner.UpdateUser(user);
         username.Text = user.Username;
         onlineStatus.Text = user.IsOnline ? "Online" : "Offline";
-        lastOnline.Text = user.IsOnline ? "Right Now" : $"Last seen {TimeUtils.Ago(DateTimeOffset.FromUnixTimeSeconds(user.LastLogin))}";
+        lastOnline.Text = user.IsOnline ? "Right Now" : $"Last seen {TimeUtils.Ago(DateTimeOffset.FromUnixTimeSeconds(user.LastLogin ?? 0))}";
 
         Schedule(() => loadingContainer.FadeOut(200));
     }

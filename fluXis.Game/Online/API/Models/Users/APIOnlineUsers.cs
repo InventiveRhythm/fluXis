@@ -10,5 +10,5 @@ public class APIOnlineUsers
     public int Count { get; init; }
 
     [JsonProperty("users")]
-    public List<APIUserShort> Users { get; init; }
+    public List<APIUser> Users { get; init; }
 }

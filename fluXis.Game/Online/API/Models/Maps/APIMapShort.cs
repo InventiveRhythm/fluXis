@@ -34,5 +34,5 @@ public class APIMapShort : IAPIMapShort
     public int Status { get; set; }
 
     [JsonProperty("mapper")]
-    public APIUserShort Mapper { get; set; }
+    public APIUser Mapper { get; set; }
 }

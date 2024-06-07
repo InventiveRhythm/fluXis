@@ -17,10 +17,10 @@ public class LoginPacket : IPacket
     #region Server2Client
 
     [JsonProperty("user")]
-    public APIUserShort? User { get; set; }
+    public APIUser? User { get; set; }
 
     #endregion
 
     public static LoginPacket CreateC2S(string token) => new() { Token = token };
-    public static LoginPacket CreateS2C(APIUserShort user) => new() { User = user };
+    public static LoginPacket CreateS2C(APIUser user) => new() { User = user };
 }

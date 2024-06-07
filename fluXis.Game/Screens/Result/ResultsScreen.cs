@@ -44,7 +44,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
     private readonly ScoreInfo score;
-    private readonly APIUserShort player;
+    private readonly APIUser player;
     private readonly RealmScore realmScore;
 
     private Container content;
@@ -55,7 +55,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
 
     private readonly bool showPlayData;
 
-    public ResultsScreen(RealmMap map, MapInfo mapInfo, ScoreInfo score, APIUserShort player, bool showPlayData = true, bool saveScore = true)
+    public ResultsScreen(RealmMap map, MapInfo mapInfo, ScoreInfo score, APIUser player, bool showPlayData = true, bool saveScore = true)
     {
         this.map = map;
         this.mapInfo = mapInfo;

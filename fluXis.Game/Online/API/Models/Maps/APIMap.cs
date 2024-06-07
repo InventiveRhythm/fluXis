@@ -15,7 +15,7 @@ public class APIMap
     public string Hash { get; init; } = "";
 
     [JsonProperty("mapper")]
-    public APIUserShort Mapper { get; init; }
+    public APIUser Mapper { get; init; }
 
     [JsonProperty("difficulty")]
     public string Difficulty { get; init; } = "";

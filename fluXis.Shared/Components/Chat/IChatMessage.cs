@@ -18,5 +18,5 @@ public interface IChatMessage
     public string Channel { get; }
 
     [JsonProperty("sender")]
-    public APIUserShort Sender { get; }
+    public APIUser Sender { get; }
 }

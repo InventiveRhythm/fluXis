@@ -17,5 +17,5 @@ public static class CountryUtils
         return CountryCode.Unknown;
     }
 
-    public static CountryCode GetCountry(this APIUserShort user) => GetCountryCode(user.CountryCode);
+    public static CountryCode GetCountry(this APIUser user) => GetCountryCode(user.CountryCode);
 }

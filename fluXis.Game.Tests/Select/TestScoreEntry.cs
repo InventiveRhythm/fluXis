@@ -28,7 +28,7 @@ public partial class TestScoreEntry : FluXisTestScene
                 Child = new ScoreListEntry
                 {
                     Place = 1,
-                    Player = APIUserShort.Dummy,
+                    Player = APIUser.Dummy,
                     ReplayAction = () => Logger.Log("Replay requested"),
                     DeleteAction = () => Logger.Log("Delete requested"),
                     ScoreInfo = new ScoreInfo

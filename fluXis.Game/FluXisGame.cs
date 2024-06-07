@@ -311,7 +311,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public override void CloseOverlays() => overlayContainer.Children.ForEach(c => c.Hide());
 
-    public override void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player)
+    public override void PresentScore(RealmMap map, ScoreInfo score, APIUser player)
     {
         if (map == null || score == null)
             throw new ArgumentNullException();

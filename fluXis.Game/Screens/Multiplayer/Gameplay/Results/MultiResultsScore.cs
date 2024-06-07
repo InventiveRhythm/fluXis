@@ -15,10 +15,10 @@ namespace fluXis.Game.Screens.Multiplayer.Gameplay.Results;
 public partial class MultiResultsScore : CompositeDrawable
 {
     private ScoreInfo score { get; }
-    private APIUserShort user { get; }
+    private APIUser user { get; }
     private int rank { get; }
 
-    public MultiResultsScore(ScoreInfo score, APIUserShort user, int rank)
+    public MultiResultsScore(ScoreInfo score, APIUser user, int rank)
     {
         this.score = score;
         this.user = user;

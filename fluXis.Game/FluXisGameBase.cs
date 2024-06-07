@@ -26,7 +26,6 @@ using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.API.Models.Groups;
 using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Models.Multi;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Mouse;
@@ -125,8 +124,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
-        JsonUtils.RegisterTypeConversion<IAPIUser, APIUser>();
-        JsonUtils.RegisterTypeConversion<IAPIUserSocials, APIUser.APIUserSocials>();
         JsonUtils.RegisterTypeConversion<IMultiplayerParticipant, MultiplayerParticipant>();
         JsonUtils.RegisterTypeConversion<IAPIGroup, APIGroup>();
         JsonUtils.RegisterTypeConversion<IAPIMapShort, APIMapShort>();
@@ -404,7 +401,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     public virtual void CloseOverlays() { }
-    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUserShort player) { }
+    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUser player) { }
     public virtual void ShowMap(RealmMapSet map) { }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => GameDependencies = new DependencyContainer(base.CreateChildDependencies(parent));

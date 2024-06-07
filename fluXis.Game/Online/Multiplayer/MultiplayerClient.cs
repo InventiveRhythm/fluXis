@@ -26,7 +26,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action Starting;
     public event Action<List<ScoreInfo>> ResultsReady;
 
-    public virtual APIUserShort Player => APIUserShort.Dummy;
+    public virtual APIUser Player => APIUser.Dummy;
     public MultiplayerRoom Room { get; set; }
 
     public async Task Create(string name, long mapid, string hash)

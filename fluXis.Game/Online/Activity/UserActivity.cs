@@ -78,9 +78,9 @@ public abstract class UserActivity
         public override string Status => user != null ? $"Watching {user.Username}'s replay" : "Watching a replay";
 
         [CanBeNull]
-        private APIUserShort user { get; init; }
+        private APIUser user { get; init; }
 
-        public WatchingReplay(RealmMap map, APIUserShort user = null)
+        public WatchingReplay(RealmMap map, APIUser user = null)
             : base(map)
         {
             this.user = user;

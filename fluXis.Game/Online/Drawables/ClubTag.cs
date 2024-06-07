@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Text;
-using fluXis.Game.Online.API.Models.Clubs;
+using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Components.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,9 +16,9 @@ public partial class ClubTag : FillFlowContainer
 
     private float fontSize { get; init; } = FluXisSpriteText.GetWebFontSize(24);
 
-    private APIClubShort club { get; }
+    private APIClub club { get; }
 
-    public ClubTag(APIClubShort club)
+    public ClubTag(APIClub club)
     {
         this.club = club;
     }

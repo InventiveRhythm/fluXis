@@ -178,7 +178,7 @@ public partial class ToolbarProfile : Container, IHasTooltip
         });
     }
 
-    private void updateUser(ValueChangedEvent<APIUserShort> e)
+    private void updateUser(ValueChangedEvent<APIUser> e)
     {
         avatar.UpdateUser(e.NewValue);
     }

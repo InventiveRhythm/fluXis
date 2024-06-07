@@ -10,7 +10,7 @@ namespace fluXis.Game.Online.Fluxel;
 
 public interface IAPIClient
 {
-    Bindable<APIUserShort?> User { get; }
+    Bindable<APIUser?> User { get; }
     Bindable<ConnectionStatus> Status { get; }
 
     bool IsLoggedIn { get; }

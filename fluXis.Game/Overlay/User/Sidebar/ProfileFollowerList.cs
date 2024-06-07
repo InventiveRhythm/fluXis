@@ -116,7 +116,7 @@ public partial class ProfileFollowerList : FillFlowContainer
         fluxel.PerformRequestAsync(req);
     }
 
-    public void SetData(List<APIUserShort> data)
+    public void SetData(List<APIUser> data)
     {
         if (data.Count == 0)
         {
@@ -141,9 +141,9 @@ public partial class ProfileFollowerList : FillFlowContainer
         [Resolved(CanBeNull = true)]
         private FluXisGame game { get; set; }
 
-        private APIUserShort user { get; }
+        private APIUser user { get; }
 
-        public FollowerEntry(APIUserShort user)
+        public FollowerEntry(APIUser user)
         {
             this.user = user;
         }
@@ -191,9 +191,9 @@ public partial class ProfileFollowerList : FillFlowContainer
 
     private partial class FollowerOverflow : FillFlowContainer
     {
-        private List<APIUserShort> users { get; }
+        private List<APIUser> users { get; }
 
-        public FollowerOverflow(List<APIUserShort> users)
+        public FollowerOverflow(List<APIUser> users)
         {
             this.users = users;
         }
@@ -233,11 +233,11 @@ public partial class ProfileFollowerList : FillFlowContainer
         [Resolved(CanBeNull = true)]
         private FluXisGame game { get; set; }
 
-        private APIUserShort user { get; }
+        private APIUser user { get; }
 
         private const int outline_width = 2;
 
-        public OverflowEntry(APIUserShort user)
+        public OverflowEntry(APIUser user)
         {
             this.user = user;
         }

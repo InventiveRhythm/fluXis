@@ -21,9 +21,9 @@ public partial class DrawableUserCard : CompositeDrawable
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profile { get; set; }
 
-    private APIUserShort user { get; }
+    private APIUser user { get; }
 
-    public DrawableUserCard(APIUserShort user)
+    public DrawableUserCard(APIUser user)
     {
         this.user = user;
     }

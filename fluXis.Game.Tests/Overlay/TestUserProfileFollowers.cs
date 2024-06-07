@@ -25,13 +25,13 @@ public partial class TestUserProfileFollowers : FluXisTestScene
         };
     });
 
-    private List<APIUserShort> users(int num)
-        => Enumerable.Range(1, num).Select(x => new APIUserShort { ID = 1, Username = $"User{x}" }).ToList();
+    private List<APIUser> users(int num)
+        => Enumerable.Range(1, num).Select(x => new APIUser { ID = 1, Username = $"User{x}" }).ToList();
 
     [Test]
     public void TestNoFollowers()
     {
-        AddStep("set no followers", () => list.SetData(new List<APIUserShort>()));
+        AddStep("set no followers", () => list.SetData(new List<APIUser>()));
     }
 
     [Test]

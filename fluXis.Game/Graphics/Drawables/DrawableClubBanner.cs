@@ -1,4 +1,4 @@
-using fluXis.Game.Online.API.Models.Clubs;
+using fluXis.Shared.Components.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -10,9 +10,9 @@ public partial class DrawableClubBanner : Sprite
     [Resolved]
     private OnlineTextureStore store { get; set; }
 
-    private APIClubShort club { get; }
+    private APIClub club { get; }
 
-    public DrawableClubBanner(APIClubShort club)
+    public DrawableClubBanner(APIClub club)
     {
         this.club = club;
         FillMode = FillMode.Fill;

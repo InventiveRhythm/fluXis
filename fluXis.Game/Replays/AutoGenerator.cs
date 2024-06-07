@@ -34,7 +34,7 @@ public class AutoGenerator
 
         var replay = new Replay
         {
-            PlayerID = APIUserShort.AutoPlay.ID,
+            PlayerID = APIUser.AutoPlay.ID,
             Frames = frames
         };
 

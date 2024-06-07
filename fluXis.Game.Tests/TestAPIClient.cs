@@ -12,7 +12,7 @@ namespace fluXis.Game.Tests;
 
 public class TestAPIClient : IAPIClient
 {
-    public Bindable<APIUserShort?> User => new(new APIUserShort
+    public Bindable<APIUser?> User => new(new APIUser
     {
         ID = 1,
         Username = "testing",
@@ -43,7 +43,7 @@ public class TestAPIClient : IAPIClient
         if (username == "testing" && password == "passwd")
         {
             Status.Value = ConnectionStatus.Online;
-            User.Value = new APIUserShort
+            User.Value = new APIUser
             {
                 ID = 1,
                 Username = "Local User",
@@ -61,7 +61,7 @@ public class TestAPIClient : IAPIClient
     public void Register(string username, string password, string email)
     {
         Status.Value = ConnectionStatus.Online;
-        User.Value = new APIUserShort
+        User.Value = new APIUser
         {
             ID = 1,
             Username = username,

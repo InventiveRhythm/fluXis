@@ -14,7 +14,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     [Resolved]
     private FluxelClient fluxel { get; set; }
 
-    public override APIUserShort Player => fluxel.User.Value;
+    public override APIUser Player => fluxel.User.Value;
     private IMultiplayerClient impl => this;
 
     [BackgroundDependencyLoader]

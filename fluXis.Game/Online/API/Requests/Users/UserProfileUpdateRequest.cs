@@ -7,7 +7,7 @@ using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.API.Requests.Users;
 
-public class UserProfileUpdateRequest : APIRequest<APIEditingUser>
+public class UserProfileUpdateRequest : APIRequest<APIUser>
 {
     protected override string Path => $"/user/{uid}/profile";
     protected override HttpMethod Method => HttpMethod.Patch;

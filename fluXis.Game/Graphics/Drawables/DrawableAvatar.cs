@@ -18,11 +18,11 @@ public partial class DrawableAvatar : Sprite
 
     public bool ShowTooltip { get; set; }
 
-    private APIUserShort user;
+    private APIUser user;
 
-    public DrawableAvatar(APIUserShort user)
+    public DrawableAvatar(APIUser user)
     {
-        this.user = user ?? APIUserShort.Dummy;
+        this.user = user ?? APIUser.Dummy;
         Alpha = 0;
         FillMode = FillMode.Fill;
     }
@@ -53,11 +53,11 @@ public partial class DrawableAvatar : Sprite
         }));
     }
 
-    public void UpdateUser(APIUserShort newUser)
+    public void UpdateUser(APIUser newUser)
     {
         users.UnregisterAvatarCallback(user.ID, reload);
 
-        user = newUser ?? APIUserShort.Dummy;
+        user = newUser ?? APIUser.Dummy;
         Texture = store.GetAvatar(user.ID);
         Schedule(() => this.FadeInFromZero(400));
 

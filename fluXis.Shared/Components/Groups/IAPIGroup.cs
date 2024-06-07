@@ -18,5 +18,5 @@ public interface IAPIGroup
     string Color { get; set; }
 
     [JsonProperty("members")]
-    IEnumerable<APIUserShort> Members { get; }
+    IEnumerable<APIUser> Members { get; }
 }

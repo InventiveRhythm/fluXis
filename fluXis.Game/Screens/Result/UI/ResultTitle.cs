@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Result.UI;
 public partial class ResultTitle : Container
 {
     private readonly RealmMap map;
-    public APIUserShort User { get; init; }
+    public APIUser User { get; init; }
 
     public ResultTitle(RealmMap map)
     {

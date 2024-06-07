@@ -328,7 +328,7 @@ public partial class MenuScreen : FluXisScreen
         fluxel.User.BindValueChanged(updateButtons, true);
     }
 
-    private void updateButtons(ValueChangedEvent<APIUserShort> e)
+    private void updateButtons(ValueChangedEvent<APIUser> e)
     {
         Scheduler.ScheduleIfNeeded(() =>
         {

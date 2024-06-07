@@ -78,7 +78,7 @@ public class ScoreProcessor : JudgementDependant
         return accBased + comboBased;
     }
 
-    public ScoreInfo ToScoreInfo(APIUserShort player = null)
+    public ScoreInfo ToScoreInfo(APIUser player = null)
     {
         return new ScoreInfo
         {

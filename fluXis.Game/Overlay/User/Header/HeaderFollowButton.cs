@@ -2,10 +2,10 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,7 +25,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     private UISamples samples { get; set; }
 
     private APIUser user { get; }
-    private bool following => user.Following;
+    private bool following => user.Following!.Value;
 
     private Box background;
     private Box flash;
@@ -85,7 +85,7 @@ public partial class HeaderFollowButton : CompositeDrawable
                     },
                     text = new FluXisSpriteText
                     {
-                        Text = user.Following ? "Following" : "Follow",
+                        Text = user.Following!.Value ? "Following" : "Follow",
                         WebFontSize = 16
                     }
                 }
@@ -102,9 +102,9 @@ public partial class HeaderFollowButton : CompositeDrawable
         fluxel.PerformRequestAsync(req);
 
         user.Following = !following;
-        text.Text = user.Following ? "Unfollow" : "Follow";
-        background.FadeColour(user.Following ? FluXisColors.Red : FluXisColors.Accent2, 200);
-        icon.Icon = user.Following ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
+        text.Text = user.Following!.Value ? "Unfollow" : "Follow";
+        background.FadeColour(user.Following!.Value ? FluXisColors.Red : FluXisColors.Accent2, 200);
+        icon.Icon = user.Following!.Value ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
 
         return base.OnClick(e);
     }
@@ -131,7 +131,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     protected override void OnHoverLost(HoverLostEvent e)
     {
         icon.Icon = FontAwesome6.Solid.Heart;
-        text.Text = user.Following ? "Following" : "Follow";
+        text.Text = user.Following!.Value ? "Following" : "Follow";
 
         if (following)
             background.FadeColour(FluXisColors.Accent2, 200);

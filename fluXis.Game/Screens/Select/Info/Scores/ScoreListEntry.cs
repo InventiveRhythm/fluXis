@@ -61,7 +61,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     public ScoreInfo ScoreInfo { get; init; }
     public RealmMap Map { get; init; }
-    public APIUserShort Player { get; init; }
+    public APIUser Player { get; init; }
     public int Place { get; set; }
 
     public Action ReplayAction { get; init; }

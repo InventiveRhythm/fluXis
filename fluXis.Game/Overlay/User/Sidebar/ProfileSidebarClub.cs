@@ -2,7 +2,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Online.API.Models.Clubs;
+using fluXis.Shared.Components.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,9 +13,9 @@ namespace fluXis.Game.Overlay.User.Sidebar;
 
 public partial class ProfileSidebarClub : FillFlowContainer
 {
-    private APIClubShort club { get; }
+    private APIClub club { get; }
 
-    public ProfileSidebarClub(APIClubShort club)
+    public ProfileSidebarClub(APIClub club)
     {
         this.club = club;
     }
