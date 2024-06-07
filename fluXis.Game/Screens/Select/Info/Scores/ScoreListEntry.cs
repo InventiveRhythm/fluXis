@@ -5,6 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Menus;
+using fluXis.Game.Online.Drawables;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
@@ -141,14 +142,31 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                     CornerRadius = 5,
                                     Masking = true
                                 },
-                                new FluXisSpriteText
+                                new FillFlowContainer
                                 {
-                                    Text = Player?.Username ?? "Player",
-                                    FontSize = 28,
+                                    AutoSizeAxes = Axes.Both,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.BottomLeft,
                                     Padding = new MarginPadding { Left = 60 },
-                                    Y = 5
+                                    Spacing = new Vector2(5),
+                                    Y = 5,
+                                    Children = new Drawable[]
+                                    {
+                                        new ClubTag(Player?.Club)
+                                        {
+                                            Alpha = Player?.Club != null ? 1 : 0,
+                                            FontSize = 22,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft
+                                        },
+                                        new FluXisSpriteText
+                                        {
+                                            Text = Player?.Username ?? "Player",
+                                            FontSize = 28,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft
+                                        }
+                                    }
                                 },
                                 timeText = new FluXisSpriteText
                                 {
