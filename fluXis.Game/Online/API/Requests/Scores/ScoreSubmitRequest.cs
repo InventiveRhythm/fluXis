@@ -8,7 +8,7 @@ namespace fluXis.Game.Online.API.Requests.Scores;
 
 public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
 {
-    protected override string Path => "/scores/upload";
+    protected override string Path => "/scores";
     protected override HttpMethod Method => HttpMethod.Post;
 
     private ScoreInfo score { get; }
