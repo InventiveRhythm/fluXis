@@ -1,8 +1,8 @@
 using System;
 using fluXis.Game.Audio;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,9 +13,9 @@ using osu.Framework.Localisation;
 using osuTK;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Screens.Select.Footer;
+namespace fluXis.Game.Graphics.UserInterface.Footer;
 
-public partial class SelectFooterButton : Container
+public partial class FooterButton : CompositeDrawable
 {
     public LocalisableString Text
     {

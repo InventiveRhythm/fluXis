@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Footer;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
@@ -25,7 +26,7 @@ namespace fluXis.Game.Screens.Select.Footer.Options;
 public partial class FooterOptions : FocusedOverlayContainer
 {
     protected override bool StartHidden => true;
-    public SelectFooterButton Button { get; set; }
+    public FooterButton Button { get; set; }
 
     public Action<RealmMapSet> DeleteAction { get; init; }
     public Action<RealmMap> EditAction { get; init; }

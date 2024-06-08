@@ -1,28 +1,22 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Gamepad;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Footer;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Screens.Select.Footer.Options;
 using fluXis.Game.UI;
-using osu.Framework.Allocation;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
-using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
-public partial class SelectFooter : Container
+public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
 {
-    public Container<SelectFooterButton> ButtonContainer { get; private set; }
-
     public Action BackAction { get; init; }
     public Action ModsAction { get; init; }
     public Action RandomAction { get; init; }
@@ -33,153 +27,10 @@ public partial class SelectFooter : Container
     public Action<RealmMap> EditAction { get; init; }
     public Action ScoresWiped { get; init; }
 
-    private Container backgroundContainer;
-    private Container keyboardContainer;
-    private GamepadTooltipBar gamepadContainer;
-    private CornerButton backButton;
-    private CornerButton playButton;
-    private SelectFooterButton randomButton;
+    private FooterButton randomButton;
     private FooterOptions options;
 
     private InputManager inputManager;
-
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        RelativeSizeAxes = Axes.X;
-        Height = 60;
-        Anchor = Origin = Anchor.BottomLeft;
-
-        Children = new Drawable[]
-        {
-            backgroundContainer = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Masking = true,
-                Y = 80,
-                EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
-                }
-            },
-            options = new FooterOptions
-            {
-                DeleteAction = DeleteAction,
-                EditAction = EditAction,
-                ScoresWiped = ScoresWiped
-            },
-            keyboardContainer = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 10 },
-                Alpha = GamepadHandler.GamepadConnected ? 0 : 1,
-                Children = new Drawable[]
-                {
-                    backButton = new CornerButton
-                    {
-                        ButtonText = LocalizationStrings.General.Back,
-                        Icon = FontAwesome6.Solid.ChevronLeft,
-                        Action = BackAction
-                    },
-                    ButtonContainer = new Container<SelectFooterButton>
-                    {
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
-                        Y = 100,
-                        Anchor = Anchor.BottomLeft,
-                        Origin = Anchor.BottomLeft,
-                        Padding = new MarginPadding { Left = 300 },
-                        Children = new[]
-                        {
-                            new SelectFooterButton
-                            {
-                                Text = LocalizationStrings.SongSelect.FooterMods,
-                                Icon = FontAwesome6.Solid.LayerGroup,
-                                AccentColor = Colour4.FromHex("#edbb98"),
-                                Action = ModsAction,
-                            },
-                            randomButton = new SelectFooterButton
-                            {
-                                Text = LocalizationStrings.SongSelect.FooterRandom,
-                                Icon = FontAwesome6.Solid.Shuffle,
-                                AccentColor = Colour4.FromHex("#ed98a7"),
-                                Action = randomMap,
-                                Index = 1,
-                                Margin = new MarginPadding { Left = 160 }
-                            },
-                            options.Button = new SelectFooterButton
-                            {
-                                Text = LocalizationStrings.SongSelect.FooterOptions,
-                                Icon = FontAwesome6.Solid.Gear,
-                                AccentColor = Colour4.FromHex("#98cbed"),
-                                Action = OpenSettings,
-                                Index = 2,
-                                Margin = new MarginPadding { Left = 320 }
-                            }
-                        }
-                    },
-                    playButton = new CornerButton
-                    {
-                        ButtonText = LocalizationStrings.General.Play,
-                        Icon = FontAwesome6.Solid.Play,
-                        ButtonColor = FluXisColors.Accent2,
-                        Corner = Corner.BottomRight,
-                        Action = PlayAction
-                    }
-                }
-            },
-            gamepadContainer = new GamepadTooltipBar
-            {
-                Alpha = GamepadHandler.GamepadConnected ? 1 : 0,
-                ShowBackground = false,
-                TooltipsLeft = new GamepadTooltip[]
-                {
-                    new()
-                    {
-                        Text = LocalizationStrings.General.Back,
-                        Icon = "B"
-                    },
-                    new()
-                    {
-                        Text = LocalizationStrings.SongSelect.FooterMods,
-                        Icon = "X"
-                    },
-                    new()
-                    {
-                        Text = LocalizationStrings.SongSelect.FooterRandom,
-                        Icon = "Y"
-                    },
-                    new()
-                    {
-                        Text = LocalizationStrings.SongSelect.FooterOptions,
-                        Icon = "Menu"
-                    }
-                },
-                TooltipsRight = new GamepadTooltip[]
-                {
-                    new()
-                    {
-                        Text = "Change Map",
-                        Icons = new[] { "DpadLeft", "DpadRight" }
-                    },
-                    new()
-                    {
-                        Text = "Change Difficulty",
-                        Icons = new[] { "DpadUp", "DpadDown" }
-                    },
-                    new()
-                    {
-                        Text = LocalizationStrings.General.Play,
-                        Icon = "A"
-                    }
-                }
-            }
-        };
-
-        GamepadHandler.OnGamepadStatusChanged += updateGamepadStatus;
-    }
 
     protected override void LoadComplete()
     {
@@ -196,38 +47,115 @@ public partial class SelectFooter : Container
             : LocalizationStrings.SongSelect.FooterRandom;
     }
 
-    private void updateGamepadStatus(bool status)
+    #region Overrides
+
+    protected override CornerButton CreateLeftButton() => new()
     {
-        keyboardContainer.FadeTo(status ? 0 : 1);
-        gamepadContainer.FadeTo(status ? 1 : 0);
+        ButtonText = LocalizationStrings.General.Back,
+        Icon = FontAwesome6.Solid.ChevronLeft,
+        Action = BackAction
+    };
+
+    protected override CornerButton CreateRightButton() => new()
+    {
+        ButtonText = LocalizationStrings.General.Play,
+        Icon = FontAwesome6.Solid.Play,
+        ButtonColor = FluXisColors.Accent2,
+        Corner = Corner.BottomRight,
+        Action = PlayAction
+    };
+
+    protected override Drawable CreateBackgroundContent() => options = new FooterOptions
+    {
+        DeleteAction = DeleteAction,
+        EditAction = EditAction,
+        ScoresWiped = ScoresWiped
+    };
+
+    protected override IEnumerable<FooterButton> CreateButtons()
+    {
+        return new[]
+        {
+            new()
+            {
+                Text = LocalizationStrings.SongSelect.FooterMods,
+                Icon = FontAwesome6.Solid.LayerGroup,
+                AccentColor = Colour4.FromHex("#edbb98"),
+                Action = ModsAction,
+            },
+            randomButton = new FooterButton
+            {
+                Text = LocalizationStrings.SongSelect.FooterRandom,
+                Icon = FontAwesome6.Solid.Shuffle,
+                AccentColor = Colour4.FromHex("#ed98a7"),
+                Action = randomMap,
+                Index = 1,
+                Margin = new MarginPadding { Left = 160 }
+            },
+            options.Button = new FooterButton
+            {
+                Text = LocalizationStrings.SongSelect.FooterOptions,
+                Icon = FontAwesome6.Solid.Gear,
+                AccentColor = Colour4.FromHex("#98cbed"),
+                Action = OpenSettings,
+                Index = 2,
+                Margin = new MarginPadding { Left = 320 }
+            }
+        };
     }
 
-    protected override void Dispose(bool isDisposing)
+    protected override GamepadTooltipBar CreateGamepadTooltips() => new()
     {
-        base.Dispose(isDisposing);
-        GamepadHandler.OnGamepadStatusChanged -= updateGamepadStatus;
-    }
+        Alpha = GamepadHandler.GamepadConnected ? 1 : 0,
+        ShowBackground = false,
+        TooltipsLeft = new GamepadTooltip[]
+        {
+            new()
+            {
+                Text = LocalizationStrings.General.Back,
+                Icon = "B"
+            },
+            new()
+            {
+                Text = LocalizationStrings.SongSelect.FooterMods,
+                Icon = "X"
+            },
+            new()
+            {
+                Text = LocalizationStrings.SongSelect.FooterRandom,
+                Icon = "Y"
+            },
+            new()
+            {
+                Text = LocalizationStrings.SongSelect.FooterOptions,
+                Icon = "Menu"
+            }
+        },
+        TooltipsRight = new GamepadTooltip[]
+        {
+            new()
+            {
+                Text = "Change Map",
+                Icons = new[] { "DpadLeft", "DpadRight" }
+            },
+            new()
+            {
+                Text = "Change Difficulty",
+                Icons = new[] { "DpadUp", "DpadDown" }
+            },
+            new()
+            {
+                Text = LocalizationStrings.General.Play,
+                Icon = "A"
+            }
+        }
+    };
 
-    protected override bool OnHover(HoverEvent e)
-    {
-        return true;
-    }
+    #endregion
 
-    public override void Show()
+    public void OpenSettings()
     {
-        backButton.Show();
-        playButton.Show();
-        backgroundContainer.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        ButtonContainer.MoveToY(0);
-        ButtonContainer.ForEach(b => b.Show());
-    }
-
-    public override void Hide()
-    {
-        backButton.Hide();
-        playButton.Hide();
-        backgroundContainer.MoveToY(80, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        ButtonContainer.MoveToY(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        options.ToggleVisibility();
     }
 
     private void randomMap()
@@ -237,11 +165,4 @@ public partial class SelectFooter : Container
         else
             RandomAction?.Invoke();
     }
-
-    public void OpenSettings()
-    {
-        options.ToggleVisibility();
-    }
-
-    protected override bool OnClick(ClickEvent e) => true; // Prevents the click from going through to the map list
 }
