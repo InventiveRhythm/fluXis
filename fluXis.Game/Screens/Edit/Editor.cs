@@ -15,10 +15,12 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
+using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
@@ -246,7 +248,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                 },
                                 new FluXisMenuSpacer(),
                                 new("Export", FontAwesome6.Solid.BoxOpen, export),
-                                new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave },
+                                new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave && fluxel.IsLoggedIn },
                                 new FluXisMenuSpacer(),
                                 new("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
                                 new FluXisMenuSpacer(),
@@ -638,6 +640,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void startUpload()
     {
+        if (!fluxel.IsLoggedIn)
+        {
+            notifications.SendError("You need to be logged in to upload maps!");
+            return;
+        }
+
         var isUpdate = editorMap.MapSet.OnlineID > 0;
 
         if (isUpdate)
@@ -649,37 +657,93 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 SubText = "Are you sure you want to continue?\nThis will wipe scores of updated maps.",
                 Buttons = new ButtonData[]
                 {
-                    new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => this.Delay(200).Schedule(run)),
+                    new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => this.Delay(200).Schedule(() => run())),
                     new CancelButtonData()
                 }
             };
+        }
+        else
+        {
+            Schedule(() =>
+            {
+                // temporary container to fade in
+                var container = new Container();
+                container.OnLoadComplete += c => c.FadeInFromZero(400);
+                panels.Content = container;
+            });
 
-            return;
+            // check for already uploaded maps
+            // and ask if the user wants to replace that one instead
+            var req = new MapLookupRequest
+            {
+                MapperID = fluxel.User.Value.ID,
+                Title = editorMap.MapInfo.Metadata.Title,
+                Artist = editorMap.MapInfo.Metadata.Artist
+            };
+            req.Failure += _ => run(); // just run the upload if the request fails
+
+            req.Success += res =>
+            {
+                // nothing found
+                if (!res.Success)
+                {
+                    run();
+                    return;
+                }
+
+                panels.Content = new ButtonPanel
+                {
+                    Icon = FontAwesome6.Solid.ExclamationTriangle,
+                    Text = "You already have a mapset with the same title and artist uploaded!",
+                    CreateSubText = flow =>
+                    {
+                        flow.AddText("Do you want to update that one mapset instead?");
+                        flow.NewParagraph();
+                        flow.NewParagraph();
+                        flow.AddText<ClickableFluXisSpriteText>("Click here to view the mapset.", t =>
+                        {
+                            t.Colour = FluXisColors.Link;
+                            t.Action = () => Game.OpenLink($"{fluxel.Endpoint.WebsiteRootUrl}/set/{res.Data.SetID}", true);
+                        });
+                    },
+                    Buttons = new ButtonData[]
+                    {
+                        new PrimaryButtonData("Yes, update that mapset.", () =>
+                        {
+                            isUpdate = true;
+                            this.Delay(200).Schedule(() => run(res.Data.ID));
+                        }),
+                        new SecondaryButtonData("No, upload as new.", () => this.Delay(200).Schedule(() => run())),
+                        new CancelButtonData("Wait, go back to editing.")
+                    }
+                };
+            };
+
+            fluxel.PerformRequest(req);
         }
 
-        run();
-
-        void run() => Task.Run(() => uploadSet(isUpdate));
+        void run(long id = -1) => Task.Run(() => uploadSet(isUpdate, id));
     }
 
-    private async void uploadSet(bool isUpdate)
+    private async void uploadSet(bool isUpdate, long setID = -1)
     {
-        if (!canSave)
-        {
-            notifications.SendError("Map is from another game!");
-            return;
-        }
-
-        var overlay = new EditorUploadOverlay
-        {
-            Text = isUpdate ? "Updating mapset..." : "Uploading mapset...",
-            SubText = "Checking for duplicate difficulties..."
-        };
-
-        Schedule(() => panels.Content = overlay);
-
         try
         {
+            if (!canSave)
+            {
+                notifications.SendError("Map is from another game!");
+                Schedule(() => panels.Content?.Hide());
+                return;
+            }
+
+            var overlay = new EditorUploadOverlay
+            {
+                Text = isUpdate ? "Updating mapset..." : "Uploading mapset...",
+                SubText = "Checking for duplicate difficulties..."
+            };
+
+            Schedule(() => panels.Content = overlay);
+
             // check for duplicate diffs
             var diffs = editorMap.MapSet.Maps.Select(m => m.Difficulty).ToList();
             var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
@@ -687,13 +751,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (duplicate.Count > 0)
             {
                 notifications.SendError("Cannot upload mapset!", $"Duplicate difficulty names found: {string.Join(", ", duplicate)}");
+                Schedule(() => panels.Content?.Hide());
                 return;
             }
 
             overlay.SubText = "Saving...";
 
             if (!save(false))
+            {
+                Schedule(() => panels.Content?.Hide());
                 return;
+            }
 
             overlay.SubText = "Exporting...";
 
@@ -703,7 +771,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             overlay.SubText = "0%";
 
-            var request = new MapSetUploadRequest(buffer, editorMap.MapSet);
+            if (setID == -1 && isUpdate)
+                setID = editorMap.MapSet.OnlineID;
+
+            var request = new MapSetUploadRequest(buffer, setID);
             request.Progress += (l1, l2) => overlay.SubText = $"{Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
             await fluxel.PerformRequestAsync(request);
 
@@ -712,6 +783,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!request.IsSuccessful)
             {
                 notifications.SendError(request.Response!.Message);
+                Schedule(() => panels.Content?.Hide());
                 return;
             }
 
@@ -738,14 +810,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             });
 
             overlay.SubText = "Success!";
+            Schedule(() => panels.Content?.Hide());
         }
         catch (Exception e)
         {
             notifications.SendError("An error occurred while uploading the mapset!", e.Message);
-        }
-        finally
-        {
-            Schedule(overlay.Hide);
+            Schedule(() => panels.Content?.Hide());
         }
     }
 }

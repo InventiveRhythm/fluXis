@@ -276,8 +276,14 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         globalBackground.AddBackgroundFromMap(set.Maps.First());
     }
 
-    public void OpenLink(string link)
+    public void OpenLink(string link, bool skipWarning = false)
     {
+        if (skipWarning)
+        {
+            Host.OpenUrlExternally(link);
+            return;
+        }
+
         if (panelContainer.Content != null)
         {
             Logger.Log("Blocking link open due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);

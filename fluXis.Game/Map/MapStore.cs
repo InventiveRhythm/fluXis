@@ -337,7 +337,11 @@ public partial class MapStore : Component
     [CanBeNull]
     public APIMapLookup LookUpHash(string hash)
     {
-        var req = new MapLookupRequest(hash);
+        var req = new MapLookupRequest
+        {
+            Hash = hash
+        };
+
         fluxel.PerformRequest(req);
         return req.IsSuccessful ? req.Response!.Data : null;
     }

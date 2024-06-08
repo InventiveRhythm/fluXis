@@ -7,17 +7,24 @@ public class MapLookupRequest : APIRequest<APIMapLookup>
 {
     protected override string Path => "/maps/lookup";
 
-    private string hash { get; }
-
-    public MapLookupRequest(string hash)
-    {
-        this.hash = hash;
-    }
+    public string Hash { get; init; }
+    public long MapperID { get; init; }
+    public string Title { get; init; }
+    public string Artist { get; init; }
 
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        req.AddParameter("hash", hash);
+
+        if (!string.IsNullOrEmpty(Hash))
+            req.AddParameter("hash", Hash);
+        if (MapperID != 0)
+            req.AddParameter("mapper", $"{MapperID}");
+        if (!string.IsNullOrEmpty(Title))
+            req.AddParameter("title", Title);
+        if (!string.IsNullOrEmpty(Artist))
+            req.AddParameter("artist", Artist);
+
         return req;
     }
 }

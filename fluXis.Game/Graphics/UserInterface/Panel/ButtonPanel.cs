@@ -20,11 +20,15 @@ public partial class ButtonPanel : Panel, ICloseable
     public LocalisableString SubText { get; init; }
     public ButtonData[] Buttons { get; init; } = Array.Empty<ButtonData>();
 
+    public Action<FluXisTextFlow> CreateSubText { get; set; }
+
     [BackgroundDependencyLoader]
     private void load()
     {
         Width = 490;
         AutoSizeAxes = Axes.Y;
+
+        FluXisTextFlow subTextFlow;
 
         Content.RelativeSizeAxes = Axes.X;
         Content.AutoSizeAxes = Axes.Y;
@@ -58,16 +62,15 @@ public partial class ButtonPanel : Panel, ICloseable
                         FontSize = FluXisSpriteText.GetWebFontSize(20),
                         Shadow = false
                     },
-                    new FluXisTextFlow
+                    subTextFlow = new FluXisTextFlow
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         TextAnchor = Anchor.TopCentre,
-                        Text = SubText,
                         FontSize = FluXisSpriteText.GetWebFontSize(14),
-                        Alpha = string.IsNullOrEmpty(SubText.ToString()) ? 0 : .8f,
+                        Alpha = string.IsNullOrEmpty(SubText.ToString()) && CreateSubText == null ? 0 : .8f,
                         Shadow = false
                     },
                     new FillFlowContainer
@@ -93,6 +96,9 @@ public partial class ButtonPanel : Panel, ICloseable
                 }
             }
         };
+
+        CreateSubText ??= f => f.Text = SubText;
+        CreateSubText.Invoke(subTextFlow);
     }
 
     protected override bool OnClick(ClickEvent e) => true;
