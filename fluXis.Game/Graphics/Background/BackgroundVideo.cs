@@ -11,11 +11,13 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Video;
 using osu.Framework.Logging;
+using osu.Framework.Timing;
 
 namespace fluXis.Game.Graphics.Background;
 
 public partial class BackgroundVideo : CompositeDrawable
 {
+    public IFrameBasedClock VideoClock { get; set; }
     public bool ShowDim { get; init; } = true;
 
     public RealmMap Map { get; set; }
@@ -97,7 +99,7 @@ public partial class BackgroundVideo : CompositeDrawable
         {
             var path = MapFiles.GetFullPath(file);
             Logger.Log($"Loading video: {path}", LoggingTarget.Runtime, LogLevel.Debug);
-            Stream stream = File.OpenRead(path);
+            var stream = File.OpenRead(path);
 
             Schedule(() =>
             {
@@ -128,17 +130,19 @@ public partial class BackgroundVideo : CompositeDrawable
 
         if (video is not { IsLoaded: true }) return;
 
-        if (Clock.CurrentTime > 2000 && Alpha == 0 && IsPlaying)
+        var clock = VideoClock ?? Clock;
+
+        if (clock.CurrentTime > 2000 && Alpha == 0 && IsPlaying)
             this.FadeIn(500); // workaround for editor playtesting
 
-        if (Clock.CurrentTime > video.Duration)
+        if (clock.CurrentTime > video.Duration)
         {
             this.FadeOut(500);
             return;
         }
 
         if (IsPlaying)
-            video.PlaybackPosition = Clock.CurrentTime;
+            video.PlaybackPosition = clock.CurrentTime;
     }
 
     public void Stop()

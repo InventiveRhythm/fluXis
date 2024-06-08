@@ -86,6 +86,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     protected MapList MapList { get; private set; }
     protected SearchFilters Filters { get; private set; }
 
+    private BackgroundVideo video;
     private SelectMapInfo selectMapInfo;
     private SearchBar searchBar;
     private SelectFooter footer;
@@ -104,6 +105,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private readonly Dictionary<RealmMapSet, MapListEntry> lookup = new();
 
     private Bindable<bool> songSelectBlur;
+    private Bindable<bool> backgroundVideo;
 
     private InputManager inputManager;
 
@@ -115,6 +117,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         rewindClick = samples.Get("UI/Select/Rewind.wav");
 
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
+        backgroundVideo = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(Filters = new SearchFilters());
@@ -128,10 +131,28 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Top = -10 },
-                Child = new Box
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
+                    new BufferedContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        BlurSigma = new Vector2(12),
+                        RedrawOnScale = false,
+                        Child = video = new BackgroundVideo()
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            FillMode = FillMode.Fill,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            VideoClock = clock,
+                            ShowDim = false
+                        }
+                    },
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
+                    }
                 }
             },
             new Container
@@ -316,10 +337,25 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (set == null || !lookup.ContainsKey(set))
             return;
 
+        video.Stop();
+
         var previous = MapStore.CurrentMapSet;
 
         if (!Equals(previous, set) || !clock.IsRunning)
             clock.Seek(set.Metadata.PreviewTime);
+
+        if (!backgroundVideo.Value)
+            return;
+
+        Task.Run(() =>
+        {
+            var map = set.LowestDifficulty!;
+            video.Map = map;
+            video.Info = map.GetMapInfo();
+
+            video.LoadVideo();
+            ScheduleAfterChildren(video.Start);
+        });
     }
 
     private void selectMap(RealmMap map)
