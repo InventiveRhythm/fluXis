@@ -12,7 +12,7 @@ public class APIClub
     [JsonProperty("name")]
     public string Name { get; set; } = "";
 
-    [JsonProperty("tab")]
+    [JsonProperty("tag")]
     public string Tag { get; set; } = "";
 
     [JsonProperty("colors")]
