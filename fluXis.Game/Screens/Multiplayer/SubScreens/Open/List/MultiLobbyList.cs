@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
@@ -12,10 +13,8 @@ using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 
@@ -26,6 +25,9 @@ public partial class MultiLobbyList : MultiSubScreen
 
     [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }
+
+    [Resolved]
+    private GlobalClock clock { get; set; }
 
     [Resolved]
     private FluxelClient fluxel { get; set; }
@@ -41,6 +43,7 @@ public partial class MultiLobbyList : MultiSubScreen
 
     private FillFlowContainer lobbyList;
     private LoadingIcon loadingIcon;
+    private MultiLobbyListFooter footer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -60,6 +63,12 @@ public partial class MultiLobbyList : MultiSubScreen
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
+            },
+            footer = new MultiLobbyListFooter
+            {
+                BackAction = this.Exit,
+                RefreshAction = loadLobbies,
+                CreateAction = startCreate
             }
         };
     }
@@ -74,25 +83,28 @@ public partial class MultiLobbyList : MultiSubScreen
     private void loadLobbies()
     {
         loadingIcon.FadeIn(200);
-        lobbyList.FadeOut(200).OnComplete(_ => lobbyList.Clear());
-
-        var request = new MultiLobbiesRequest();
-
-        request.Success += res =>
+        lobbyList.FadeOut(200).OnComplete(_ =>
         {
-            var lobbies = res.Data;
+            lobbyList.Clear();
 
-            foreach (var lobby in lobbies)
-                lobbyList.Add(new LobbySlot { Room = lobby, List = this });
+            var request = new MultiLobbiesRequest();
 
-            for (var i = 0; i < 12 - lobbies.Count; i++)
-                lobbyList.Add(new EmptyLobbySlot());
+            request.Success += res =>
+            {
+                var lobbies = res.Data;
 
-            loadingIcon.FadeOut(200);
-            lobbyList.FadeIn(200);
-        };
+                foreach (var lobby in lobbies)
+                    lobbyList.Add(new LobbySlot { Room = lobby, List = this });
 
-        fluxel.PerformRequestAsync(request);
+                for (var i = 0; i < 12 - lobbies.Count; i++)
+                    lobbyList.Add(new EmptyLobbySlot());
+
+                loadingIcon.FadeOut(200);
+                lobbyList.FadeIn(200);
+            };
+
+            fluxel.PerformRequestAsync(request);
+        });
     }
 
     public async void JoinLobby(MultiplayerRoom room, string password = "")
@@ -118,33 +130,34 @@ public partial class MultiLobbyList : MultiSubScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         menuMusic.GoToLayer(0, 1);
-        this.MoveToY(-100).MoveToY(0, 400, Easing.OutQuint);
+        lobbyList.MoveToY(-100).MoveToY(0, 400, Easing.OutQuint);
+        footer.Show();
         base.OnEntering(e);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.MoveToY(-100, 400, Easing.OutQuint);
+        lobbyList.MoveToY(-100, 400, Easing.OutQuint);
+        footer.Hide();
         return base.OnExiting(e);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
         menuMusic.GoToLayer(0, 1);
+        clock.FadeOut(600).OnComplete(_ => clock.Stop());
+        footer.Show();
         base.OnResuming(e);
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e)
+    public override void OnSuspending(ScreenTransitionEvent e)
     {
-        switch (e.Key)
-        {
-            case Key.C:
-                this.Push(new MultiSongSelect(create));
-                return true;
-        }
-
-        return base.OnKeyDown(e);
+        footer.Hide();
+        menuMusic.StopAll();
+        base.OnSuspending(e);
     }
+
+    private void startCreate() => this.Push(new MultiSongSelect(create));
 
     private async void create(RealmMap map)
     {
