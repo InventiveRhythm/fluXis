@@ -5,7 +5,6 @@ using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
@@ -26,26 +25,18 @@ public partial class PlayerListEntry : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 50;
-        Masking = true;
-        CornerRadius = 10;
+        Height = 80;
 
         Children = new Drawable[]
         {
-            new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black,
-                Alpha = 0.5f
-            },
             new LoadWrapper<PlayerListEntryContent>
             {
                 RelativeSizeAxes = Axes.Both,
                 LoadContent = () => content = new PlayerListEntryContent(Participant),
                 OnComplete = d =>
                 {
-                    d.FadeInFromZero(200);
-                    loadingIcon.FadeOut(200);
+                    d.FadeInFromZero(400);
+                    loadingIcon.FadeOut(400);
                 }
             },
             loadingIcon = new LoadingIcon

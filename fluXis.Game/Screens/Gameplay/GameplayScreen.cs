@@ -71,6 +71,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual double GameplayStartTime => 0;
     protected virtual bool InstantlyExitOnPause => false;
+    protected virtual bool AllowRestart => true;
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
@@ -530,6 +531,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public virtual void RestartMap()
     {
+        if (restarting || !AllowRestart) return;
+
         restarting = true;
         Samples.Restart();
         OnRestart?.Invoke();
@@ -594,7 +597,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         switch (e.Action)
         {
-            case FluXisGlobalKeybind.QuickRestart when !starting && !restarting:
+            case FluXisGlobalKeybind.QuickRestart when !starting && !restarting && AllowRestart:
                 quickActionOverlay.OnConfirm = RestartMap;
                 quickActionOverlay.IsHolding = true;
                 return true;

@@ -1,6 +1,5 @@
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
 using JetBrains.Annotations;
@@ -22,30 +21,16 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
     {
         Content.Children = new Drawable[]
         {
-            new FluXisSpriteText
-            {
-                Text = "Players",
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                FontSize = 30
-            },
-            new Container
+            new FluXisScrollContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = 30 },
-                Child = new FluXisScrollContainer
+                Child = playerList = new FillFlowContainer<PlayerListEntry>
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    Child = playerList = new FillFlowContainer<PlayerListEntry>
-                    {
-                        Anchor = Anchor.TopLeft,
-                        Origin = Anchor.TopLeft,
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Direction = FillDirection.Vertical,
-                        Spacing = new Vector2(0, 10)
-                    }
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Vertical,
+                    Padding = new MarginPadding(20),
+                    Spacing = new Vector2(20)
                 }
             }
         };

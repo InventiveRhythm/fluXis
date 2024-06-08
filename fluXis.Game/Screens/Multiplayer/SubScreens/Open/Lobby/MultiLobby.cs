@@ -68,6 +68,7 @@ public partial class MultiLobby : MultiSubScreen
     private bool confirmExit;
 
     private MultiLobbyPlayerList playerList;
+    private CornerButton leaveButton;
     private CornerButton readyButton;
 
     [BackgroundDependencyLoader]
@@ -100,35 +101,36 @@ public partial class MultiLobby : MultiSubScreen
                     }
                 }
             },
-            new GridContainer
+            new Container
             {
-                Width = 1600,
-                Height = 800,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                ColumnDimensions = new[]
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Vertical = 100, Horizontal = 80 },
+                Child = new GridContainer
                 {
-                    new Dimension(),
-                    new Dimension(GridSizeMode.Absolute, 20),
-                    new Dimension(),
-                    new Dimension(GridSizeMode.Absolute, 20),
-                    new Dimension()
-                },
-                RowDimensions = new[]
-                {
-                    new Dimension()
-                },
-                Content = new[]
-                {
-                    new[]
+                    RelativeSizeAxes = Axes.Both,
+                    ColumnDimensions = new[]
                     {
-                        playerList = new MultiLobbyPlayerList { Room = Room },
-                        Empty(),
-                        new MultiLobbyContainer(),
-                        Empty(),
-                        new MultiLobbyContainer(),
+                        new Dimension(GridSizeMode.Absolute, 600),
+                        new Dimension(GridSizeMode.Absolute, 20),
+                        new Dimension()
+                    },
+                    Content = new[]
+                    {
+                        new[]
+                        {
+                            playerList = new MultiLobbyPlayerList { Room = Room },
+                            Empty(),
+                            new MultiLobbyContainer()
+                        }
                     }
                 }
+            },
+            leaveButton = new CornerButton
+            {
+                Corner = Corner.BottomLeft,
+                Icon = FontAwesome6.Solid.DoorOpen,
+                ButtonText = "Leave",
+                Action = this.Exit
             },
             readyButton = new CornerButton
             {
@@ -240,7 +242,7 @@ public partial class MultiLobby : MultiSubScreen
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
             client.LeaveRoom();
-            fluxel.SendPacketAsync(new MultiLeavePacket());
+            leaveButton.Hide();
             readyButton.Hide();
             return false;
         }
@@ -271,6 +273,13 @@ public partial class MultiLobby : MultiSubScreen
         clock.FadeIn(600);
     }
 
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        base.OnResuming(e);
+        mapChanged(Room.Map);
+        fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+    }
+
     public override void OnEntering(ScreenTransitionEvent e)
     {
         menuMusic.StopAll();
@@ -291,6 +300,7 @@ public partial class MultiLobby : MultiSubScreen
             startClockMusic();
         }
 
+        leaveButton.Show();
         readyButton.Show();
         base.OnEntering(e);
     }

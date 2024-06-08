@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,14 +21,9 @@ public partial class MultiLobbyContainer : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black,
-                Alpha = 0.5f
+                Colour = FluXisColors.Background2
             },
-            Content = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding(20)
-            }
+            Content = new Container { RelativeSizeAxes = Axes.Both }
         };
     }
 }

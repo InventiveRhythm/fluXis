@@ -86,4 +86,10 @@ public partial class MultiplayerScreen : FluXisScreen
         backgrounds.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
         return false;
     }
+
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        var screen = screenStack.CurrentScreen as MultiSubScreen;
+        screen?.OnResuming(null);
+    }
 }

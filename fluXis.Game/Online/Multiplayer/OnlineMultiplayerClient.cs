@@ -62,6 +62,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     public override Task LeaveRoom()
     {
         fluxel.SendPacketAsync(new MultiLeavePacket());
+        Room = null;
         return Task.CompletedTask;
     }
 

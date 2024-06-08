@@ -1,5 +1,6 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Shared.Components.Multi;
@@ -7,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
@@ -16,7 +16,8 @@ public partial class PlayerListEntryContent : CompositeDrawable
 {
     private MultiplayerParticipant participant { get; }
 
-    private SpriteIcon readyIcon;
+    private Box stateBackground;
+    private FluXisSpriteText stateText;
 
     public PlayerListEntryContent(MultiplayerParticipant participant)
     {
@@ -32,59 +33,54 @@ public partial class PlayerListEntryContent : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new DrawableAvatar(participant.User)
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                Size = new Vector2(50)
-            },
             new Container
             {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Left = 50 },
+                Size = new Vector2(80),
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                CornerRadius = 10,
+                Masking = true,
+                Child = new DrawableAvatar(participant.User)
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
+                }
+            },
+            new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Left = 90 },
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
                 Children = new Drawable[]
                 {
-                    new DrawableBanner(participant.User)
+                    new FluXisSpriteText
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft
+                        Text = participant.User.Username,
+                        WebFontSize = 20
                     },
-                    new Box
+                    new CircularContainer
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = 0.3f
-                    },
-                    new FillFlowContainer
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Vertical,
-                        Spacing = new Vector2(0, 5),
-                        Padding = new MarginPadding { Left = 10 },
+                        Size = new Vector2(100, 20),
+                        Masking = true,
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            stateBackground = new Box
                             {
-                                Text = participant.User.Username,
-                                Anchor = Anchor.TopLeft,
-                                Origin = Anchor.TopLeft,
-                                FontSize = 30
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background1
+                            },
+                            stateText = new FluXisSpriteText
+                            {
+                                Text = "Not Ready",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                WebFontSize = 12,
+                                Alpha = .75f
                             }
                         }
-                    },
-                    readyIcon = new SpriteIcon
-                    {
-                        Anchor = Anchor.CentreRight,
-                        Origin = Anchor.CentreRight,
-                        Icon = FontAwesome6.Solid.Check,
-                        Size = new Vector2(20),
-                        Shadow = true,
-                        Margin = new MarginPadding { Right = 10 },
-                        Alpha = 0,
-                        Colour = Colour4.FromHex("#7BE87B")
                     }
                 }
             }
@@ -93,6 +89,24 @@ public partial class PlayerListEntryContent : CompositeDrawable
 
     public void SetState(MultiplayerUserState state)
     {
-        readyIcon.FadeTo(state == MultiplayerUserState.Ready ? 1 : 0, 200);
+        stateBackground.Colour = state switch
+        {
+            MultiplayerUserState.Ready => Colour4.FromHex("#57FF57"),
+            MultiplayerUserState.Playing => Colour4.FromHex("#FFC657"),
+            MultiplayerUserState.Finished => Colour4.FromHex("#FFC657"),
+            MultiplayerUserState.Results => Colour4.FromHex("#57C7FF"),
+            _ => FluXisColors.Background1
+        };
+
+        stateText.Text = state switch
+        {
+            MultiplayerUserState.Ready => "Ready",
+            MultiplayerUserState.Playing => "Playing",
+            MultiplayerUserState.Finished => "Playing", // they are just waiting for the results
+            MultiplayerUserState.Results => "Results",
+            _ => "Not Ready"
+        };
+
+        stateText.Colour = FluXisColors.IsBright(stateBackground.Colour) ? Colour4.Black : Colour4.White;
     }
 }
