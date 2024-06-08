@@ -29,5 +29,8 @@ public class APIClub
     [JsonProperty("members")]
     public List<APIUser>? Members { get; set; }
 
+    [JsonProperty("stats")]
+    public APIClubStatistics? Statistics { get; set; }
+
     #endregion
 }
