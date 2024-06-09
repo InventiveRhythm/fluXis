@@ -147,6 +147,7 @@ public partial class MultiLobbyList : MultiSubScreen
         menuMusic.GoToLayer(0, 1);
         clock.FadeOut(600).OnComplete(_ => clock.Stop());
         footer.Show();
+        loadLobbies();
         base.OnResuming(e);
     }
 
