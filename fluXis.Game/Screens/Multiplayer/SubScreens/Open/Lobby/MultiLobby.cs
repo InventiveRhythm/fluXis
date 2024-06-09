@@ -16,16 +16,13 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Multiplayer.Gameplay;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
-using fluXis.Game.UI;
 using fluXis.Shared.API.Packets.Multiplayer;
 using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Events;
 using osu.Framework.Screens;
-using osuTK.Input;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 
@@ -64,12 +61,10 @@ public partial class MultiLobby : MultiSubScreen
     public MultiplayerRoom Room => client.Room;
 
     private bool ready;
-
     private bool confirmExit;
 
     private MultiLobbyPlayerList playerList;
-    private CornerButton leaveButton;
-    private CornerButton readyButton;
+    private MultiLobbyFooter footer;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -125,32 +120,22 @@ public partial class MultiLobby : MultiSubScreen
                     }
                 }
             },
-            leaveButton = new CornerButton
+            footer = new MultiLobbyFooter
             {
-                Corner = Corner.BottomLeft,
-                Icon = FontAwesome6.Solid.DoorOpen,
-                ButtonText = "Leave",
-                Action = this.Exit
-            },
-            readyButton = new CornerButton
-            {
-                Corner = Corner.BottomRight,
-                ButtonText = "Ready",
-                Action = toggleReadyState
+                LeaveAction = this.Exit,
+                ReadyAction = toggleReadyState,
+                ChangeMapAction = changeMap
             }
         };
     }
 
-    private void toggleReadyState()
-    {
-        ready = !ready;
-        fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(ready));
-        readyButton.ButtonText = ready ? "Unready" : "Ready";
-    }
+    private void toggleReadyState() => fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(!ready));
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
 
         client.UserJoined += onUserJoined;
         client.UserLeft += onUserLeft;
@@ -172,15 +157,11 @@ public partial class MultiLobby : MultiSubScreen
         client.Starting -= startLoading;
     }
 
-    private void onUserJoined(MultiplayerParticipant user)
-    {
-        playerList.AddPlayer(user);
-    }
+    private void onUserJoined(MultiplayerParticipant user) => playerList.AddPlayer(user);
+    private void onUserLeft(MultiplayerParticipant user) => playerList.RemovePlayer(user.ID);
 
-    private void onUserLeft(MultiplayerParticipant user)
-    {
-        playerList.RemovePlayer(user.ID);
-    }
+    private void changeMap() => multiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
+    private void mapChangeFailed(string error) => notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
 
     private void mapChanged(APIMap map)
     {
@@ -203,15 +184,16 @@ public partial class MultiLobby : MultiSubScreen
         startClockMusic();
     }
 
-    private void mapChangeFailed(string error)
-    {
-        notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
-    }
-
     private void updateUserState(long id, MultiplayerUserState state)
     {
         var player = playerList.GetPlayer(id);
         player?.SetState(state);
+
+        if (id != client.Player.ID)
+            return;
+
+        ready = state == MultiplayerUserState.Ready;
+        footer.ReadyButton.ButtonText = ready ? "Unready" : "Ready";
     }
 
     private void startLoading()
@@ -222,18 +204,6 @@ public partial class MultiLobby : MultiSubScreen
         multiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e)
-    {
-        switch (e.Key)
-        {
-            case Key.C:
-                multiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
-                return true;
-        }
-
-        return false;
-    }
-
     public override bool OnExiting(ScreenExitEvent e)
     {
         if (confirmExit)
@@ -242,8 +212,7 @@ public partial class MultiLobby : MultiSubScreen
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
             client.LeaveRoom();
-            leaveButton.Hide();
-            readyButton.Hide();
+            footer.Hide();
             return false;
         }
 
@@ -300,8 +269,7 @@ public partial class MultiLobby : MultiSubScreen
             startClockMusic();
         }
 
-        leaveButton.Show();
-        readyButton.Show();
+        footer.Show();
         base.OnEntering(e);
     }
 }

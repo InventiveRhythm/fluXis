@@ -16,6 +16,7 @@ public class FontAwesome6
         public static IconUsage ArrowDown => getSolid(0xf063);
         public static IconUsage ArrowPointer => getSolid(0xf245);
         public static IconUsage ArrowRight => getSolid(0xf061);
+        public static IconUsage ArrowRightArrowLeft => getSolid(0xf0ec);
         public static IconUsage ArrowsRotate => getSolid(0xf021);
         public static IconUsage BackwardStep => getSolid(0xf048);
         public static IconUsage Bars => getSolid(0xf0c9);
@@ -102,6 +103,7 @@ public class FontAwesome6
         public static IconUsage ShieldHalved => getSolid(0xf3ed);
         public static IconUsage Shuffle => getSolid(0xf074);
         public static IconUsage Skull => getSolid(0xf54c);
+        public static IconUsage SquareCheck => getSolid(0xf14a);
         public static IconUsage Star => getSolid(0xf005);
         public static IconUsage Stopwatch => getSolid(0xf2f2);
         public static IconUsage ThumbsUp => getSolid(0xf164);

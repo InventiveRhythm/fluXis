@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -34,11 +35,14 @@ public partial class FooterButton : CompositeDrawable
     public Colour4 AccentColor { get; init; } = Color4.White;
     public int Index { get; init; }
 
+    public BindableBool Enabled { get; init; } = new(true);
+
     [Resolved]
     private UISamples samples { get; set; }
 
     private Box hover;
     private Box flash;
+    private Container content;
     private FluXisSpriteText spriteText;
     private LocalisableString text = string.Empty;
 
@@ -65,7 +69,7 @@ public partial class FooterButton : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
             },
-            new Container
+            content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Bottom = 10 },
@@ -106,6 +110,16 @@ public partial class FooterButton : CompositeDrawable
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Enabled.BindValueChanged(enabled =>
+        {
+            content.FadeTo(enabled.NewValue ? 1 : .5f, 200, Easing.OutQuint);
+        }, true);
+    }
+
     public override void Show()
     {
         this.MoveToY(100).Delay(100 * Index)
@@ -114,6 +128,9 @@ public partial class FooterButton : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
+        if (!Enabled.Value)
+            return false;
+
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
         samples.Click();
@@ -122,6 +139,9 @@ public partial class FooterButton : CompositeDrawable
 
     protected override bool OnHover(HoverEvent e)
     {
+        if (!Enabled.Value)
+            return false;
+
         hover.FadeTo(.2f, 50);
         this.MoveToY(10, 200, Easing.OutQuint);
         samples.Hover();
