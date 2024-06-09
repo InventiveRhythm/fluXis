@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using fluXis.Desktop.Integration;
 using fluXis.Game;
 using fluXis.Game.Integration;
@@ -22,7 +23,7 @@ public partial class FluXisGameDesktop : FluXisGame
         window.Title = "fluXis " + VersionString;
         // window.ConfineMouseMode.Value = ConfineMouseMode.Never;
         window.CursorState = CursorState.Hidden;
-        window.DragDrop += f => HandleDragDrop(new[] { f });
+        window.DragDrop += f => Task.Run(() => HandleDragDrop(f));
     }
 
     [BackgroundDependencyLoader]
