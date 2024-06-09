@@ -128,7 +128,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
             loading.Show();
         });
 
-        user = await users.UserAsync(id);
+        user = await users.UserAsync(id, true);
         if (user == null) return;
 
         var mapsReq = new UserMapsRequest(id);
