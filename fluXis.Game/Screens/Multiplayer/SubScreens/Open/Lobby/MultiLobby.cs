@@ -213,7 +213,7 @@ public partial class MultiLobby : MultiSubScreen
             backgrounds.AddBackgroundFromMap(null);
             client.LeaveRoom();
             footer.Hide();
-            return false;
+            return base.OnExiting(e);
         }
 
         panels.Content ??= new ButtonPanel
