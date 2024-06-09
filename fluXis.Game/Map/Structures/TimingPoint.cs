@@ -5,7 +5,7 @@ namespace fluXis.Game.Map.Structures;
 public class TimingPoint : ITimedObject
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("bpm")]
     public float BPM { get; set; }

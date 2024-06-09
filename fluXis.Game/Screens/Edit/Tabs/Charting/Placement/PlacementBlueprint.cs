@@ -30,7 +30,7 @@ public partial class PlacementBlueprint : Container
         Object = obj;
     }
 
-    public virtual void UpdatePlacement(float time, int lane)
+    public virtual void UpdatePlacement(double time, int lane)
     {
         if (State == PlacementState.Waiting)
         {

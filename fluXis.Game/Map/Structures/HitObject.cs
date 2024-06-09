@@ -6,13 +6,13 @@ namespace fluXis.Game.Map.Structures;
 public class HitObject : ITimedObject
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("lane")]
     public int Lane { get; set; }
 
     [JsonProperty("holdtime")]
-    public float HoldTime { get; set; }
+    public double HoldTime { get; set; }
 
     [JsonProperty("hitsound")]
     public string HitSound { get; set; }
@@ -28,7 +28,7 @@ public class HitObject : ITimedObject
     public bool LongNote => HoldTime > 0;
 
     [JsonIgnore]
-    public float EndTime
+    public double EndTime
     {
         get
         {

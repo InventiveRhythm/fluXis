@@ -31,6 +31,6 @@ public partial class PreviewPointTag : EditorTag
     // placeholder class for the preview point
     private class PreviewPointObject : ITimedObject
     {
-        public float Time { get; set; }
+        public double Time { get; set; }
     }
 }

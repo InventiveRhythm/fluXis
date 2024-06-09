@@ -30,6 +30,6 @@ public partial class ReplayRecorder : Component
     {
         if (!IsRecording.Value) return;
 
-        Replay.Frames.Add(new ReplayFrame((float)Time.Current, currentPressed.Cast<int>().ToArray()));
+        Replay.Frames.Add(new ReplayFrame(Time.Current, currentPressed.Cast<int>().ToArray()));
     }
 }

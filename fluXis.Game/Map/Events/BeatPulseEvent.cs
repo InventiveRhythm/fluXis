@@ -6,7 +6,7 @@ namespace fluXis.Game.Map.Events;
 public class BeatPulseEvent : ITimedObject
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("strength")]
     public float Strength { get; set; } = 1.05f;

@@ -21,7 +21,7 @@ public partial class SingleNotePlacementBlueprint : NotePlacementBlueprint
         };
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
 

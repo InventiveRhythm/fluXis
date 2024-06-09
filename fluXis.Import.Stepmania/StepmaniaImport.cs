@@ -113,12 +113,12 @@ public class StepmaniaImport : MapImporter
                     },
                     Filters = new RealmMapFilters
                     {
-                        Length = length,
+                        Length = (float)length,
                         BPMMin = info.TimingPoints.Min(x => x.BPM),
                         BPMMax = info.TimingPoints.Max(x => x.BPM),
                         NoteCount = hits,
                         LongNoteCount = lns,
-                        NotesPerSecond = (hits + lns) / (length / 1000f)
+                        NotesPerSecond = (float)((hits + lns) / (length / 1000f))
                     }
                 };
 

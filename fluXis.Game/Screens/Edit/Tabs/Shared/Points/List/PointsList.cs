@@ -104,7 +104,7 @@ public abstract partial class PointsList : Container
 
     protected void Create(ITimedObject obj)
     {
-        obj.Time = (float)clock.CurrentTime;
+        obj.Time = clock.CurrentTime;
         Map.Add(obj);
 
         var entry = flow.FirstOrDefault(e => e.Object == obj);
@@ -113,7 +113,7 @@ public abstract partial class PointsList : Container
 
     private void sortPoints()
     {
-        flow.OrderBy(e => e.Object.Time).ForEach(e => flow.SetLayoutPosition(e, e.Object.Time));
+        flow.OrderBy(e => e.Object.Time).ForEach(e => flow.SetLayoutPosition(e, (float)e.Object.Time));
     }
 
     protected void AddPoint(ITimedObject obj)

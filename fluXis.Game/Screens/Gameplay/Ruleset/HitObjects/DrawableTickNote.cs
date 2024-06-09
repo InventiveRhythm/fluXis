@@ -29,7 +29,7 @@ public partial class DrawableTickNote : DrawableHitObject
             UpdateJudgement(true);
     }
 
-    protected override void CheckJudgement(bool byUser, float offset)
+    protected override void CheckJudgement(bool byUser, double offset)
     {
         if (!byUser)
         {

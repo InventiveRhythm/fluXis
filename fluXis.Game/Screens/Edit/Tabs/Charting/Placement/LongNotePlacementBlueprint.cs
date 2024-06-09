@@ -16,7 +16,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
     private readonly BlueprintNotePiece head;
     private readonly BlueprintNotePiece end;
 
-    private float originalStartTime;
+    private double originalStartTime;
 
     public LongNotePlacementBlueprint()
     {
@@ -68,7 +68,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
         EndPlacement(true);
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
         if (Object is not HitObject hit) return;

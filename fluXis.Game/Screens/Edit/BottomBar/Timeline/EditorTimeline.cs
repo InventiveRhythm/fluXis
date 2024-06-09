@@ -67,7 +67,7 @@ public partial class EditorTimeline : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.Centre,
                 Rotation = 180,
-                X = x
+                X = (float)x
             });
         }
     }

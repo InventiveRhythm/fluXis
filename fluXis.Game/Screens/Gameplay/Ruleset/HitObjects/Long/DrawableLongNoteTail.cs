@@ -10,7 +10,7 @@ public partial class DrawableLongNoteTail : DrawableLongNotePart
     [Resolved]
     private GameplayScreen screen { get; set; }
 
-    protected override float HitTime => Data.EndTime;
+    protected override double HitTime => Data.EndTime;
     protected override HitWindows HitWindows => screen.ReleaseWindows;
 
     public DrawableLongNoteTail(HitObject data)

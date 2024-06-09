@@ -6,10 +6,10 @@ namespace fluXis.Game.Map.Events;
 public class PlayfieldFadeEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("duration")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("alpha")]
     public float Alpha { get; set; } = 1;

@@ -114,11 +114,11 @@ public partial class HitErrorBar : GameplayHUDComponent
 
     private void addHit(HitResult result)
     {
-        float time = -result.Difference;
+        var time = -result.Difference;
         var judgement = Screen.HitWindows.JudgementFor(time);
         time /= Screen.Rate;
 
-        icon.MoveToX(time, 300, Easing.OutQuint);
+        icon.MoveToX((float)time, 300, Easing.OutQuint);
 
         CircularContainer hit = new CircularContainer
         {
@@ -126,7 +126,7 @@ public partial class HitErrorBar : GameplayHUDComponent
             Origin = Anchor.Centre,
             Size = new Vector2(5, 10),
             Masking = true,
-            X = time,
+            X = (float)time,
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
@@ -146,11 +146,11 @@ public partial class HitErrorBar : GameplayHUDComponent
 
     private void updateAverage()
     {
-        float avg = Screen.JudgementProcessor.Results.Average(h => h.Difference);
+        var avg = Screen.JudgementProcessor.Results.Average(h => h.Difference);
         var judgement = Screen.HitWindows.JudgementFor(avg);
         avg /= Screen.Rate;
 
-        average.MoveToX(-avg, 100, Easing.OutQuint);
+        average.MoveToX((float)-avg, 100, Easing.OutQuint);
         average.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
     }
 }

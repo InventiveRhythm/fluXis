@@ -27,7 +27,7 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
 
     public LaneSwitchEvent Event { get; }
 
-    private float length;
+    private double length;
 
     public EditorLaneSwitchEvent(LaneSwitchEvent laneSwitch)
     {
@@ -113,10 +113,8 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
 
         var factor = Event.Duration / length;
 
-        if (float.IsNaN(factor))
-        {
+        if (double.IsNaN(factor))
             factor = 0;
-        }
 
         for (int i = 0; i < map.RealmMap.KeyCount; i++)
         {
@@ -139,7 +137,7 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
             else
             {
                 column.Show();
-                column.SetDuration(factor, state == StateChange.NowShowing);
+                column.SetDuration((float)factor, state == StateChange.NowShowing);
             }
         }
     }
@@ -154,8 +152,8 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
 
     protected override void Update()
     {
-        Height = .5f * (length * settings.Zoom);
-        Y = -.5f * ((Event.Time - (float)clock.CurrentTime) * settings.Zoom);
+        Height = (float)(.5f * (length * settings.Zoom));
+        Y = (float)(-.5f * ((Event.Time - clock.CurrentTime) * settings.Zoom));
     }
 
     protected override bool OnClick(ClickEvent e)

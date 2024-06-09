@@ -49,9 +49,9 @@ public partial class TimingLineManager : CompositeDrawable
             if (point.HideLines || point.Signature == 0)
                 continue;
 
-            float target = i + 1 < map.TimingPoints.Count ? map.TimingPoints[i + 1].Time : map.EndTime;
-            float increase = point.Signature * point.MsPerBeat;
-            float position = point.Time;
+            var target = i + 1 < map.TimingPoints.Count ? map.TimingPoints[i + 1].Time : map.EndTime;
+            var increase = point.Signature * point.MsPerBeat;
+            var position = point.Time;
 
             while (position < target)
             {

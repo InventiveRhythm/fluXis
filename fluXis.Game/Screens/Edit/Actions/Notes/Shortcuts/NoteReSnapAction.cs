@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Map.Structures;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
 
@@ -9,12 +10,12 @@ public class NoteReSnapAction : EditorAction
     public override string Description => "Re-snap all notes";
 
     private IEnumerable<HitObject> notes { get; }
-    private Func<float, float> snapTime { get; }
+    private Func<double, double> snapTime { get; }
     private int snapDivisor { get; }
 
-    private Dictionary<HitObject, float> oldTimes { get; } = new();
+    private Dictionary<HitObject, double> oldTimes { get; } = new();
 
-    public NoteReSnapAction(List<HitObject> notes, Func<float, float> snapTime, int snapDivisor)
+    public NoteReSnapAction(List<HitObject> notes, Func<double, double> snapTime, int snapDivisor)
     {
         this.notes = notes;
         this.snapTime = snapTime;
@@ -34,7 +35,11 @@ public class NoteReSnapAction : EditorAction
             var lower = snapTime(note.Time);
             var upper = snapTime(note.Time + increase);
 
-            note.Time = Math.Abs(note.Time - lower) < Math.Abs(note.Time - upper) ? lower : upper;
+            var lowerDiff = Math.Abs(note.Time - lower);
+            var upperDiff = Math.Abs(note.Time - upper);
+
+            Logger.Log($"Time: {note.Time}, Lower: {lower}, Upper: {upper}, LowerDiff: {lowerDiff}, UpperDiff: {upperDiff}");
+            note.Time = lowerDiff < upperDiff ? lower : upper;
         }
     }
 

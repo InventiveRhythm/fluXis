@@ -31,7 +31,7 @@ public partial class DrawableNote : DrawableHitObject
         }
     }
 
-    protected override void CheckJudgement(bool byUser, float offset)
+    protected override void CheckJudgement(bool byUser, double offset)
     {
         if (!byUser)
         {

@@ -23,7 +23,7 @@ public partial class TickNotePlacementBlueprint : NotePlacementBlueprint
         Hit.Type = 1;
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
 

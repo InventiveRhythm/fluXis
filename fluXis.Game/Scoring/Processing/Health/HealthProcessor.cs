@@ -10,7 +10,7 @@ namespace fluXis.Game.Scoring.Processing.Health;
 
 public class HealthProcessor : JudgementDependant
 {
-    protected virtual float DefaultHealth => 100f;
+    protected virtual double DefaultHealth => 100f;
     protected virtual bool DefaultFailCondition => Health.Value <= Health.MinValue;
     protected virtual bool ClearHealthOnFail => true;
 
@@ -26,7 +26,7 @@ public class HealthProcessor : JudgementDependant
     /// </summary>
     public bool FailedAlready { get; private set; }
 
-    public BindableFloat Health { get; }
+    public BindableDouble Health { get; }
     public float SmoothHealth { get; private set; }
 
     public bool Failed { get; private set; }
@@ -35,7 +35,7 @@ public class HealthProcessor : JudgementDependant
 
     public HealthProcessor()
     {
-        Health = new BindableFloat(DefaultHealth) { MinValue = 0, MaxValue = 100 };
+        Health = new BindableDouble(DefaultHealth) { MinValue = 0, MaxValue = 100 };
     }
 
     protected void TriggerFailure()

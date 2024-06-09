@@ -7,13 +7,13 @@ namespace fluXis.Game.Map.Events;
 public class LaneSwitchEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("count")]
     public int Count { get; set; } = 1;
 
     [JsonProperty("speed")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("easing")]
     public Easing Easing { get; set; } = Easing.OutQuint;

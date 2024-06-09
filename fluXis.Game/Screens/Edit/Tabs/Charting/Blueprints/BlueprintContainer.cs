@@ -319,14 +319,14 @@ public partial class BlueprintContainer : Container, ICursorDrag
     {
         if (dragBlueprints == null) return;
 
-        Vector2 delta = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
+        var delta = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
 
-        Vector2 position = dragBlueprintsPositions.First() + delta;
-        float time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
+        var position = dragBlueprintsPositions.First() + delta;
+        var time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
         int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(position);
-        float snappedTime = ChartingContainer.Playfield.HitObjectContainer.SnapTime(time);
+        var snappedTime = ChartingContainer.Playfield.HitObjectContainer.SnapTime(time);
 
-        float timeDelta = snappedTime - dragBlueprints.First().Object.Time;
+        var timeDelta = snappedTime - dragBlueprints.First().Object.Time;
         int laneDelta = 0;
 
         if (dragBlueprints.Any(x => x is NoteSelectionBlueprint))

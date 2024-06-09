@@ -6,10 +6,10 @@ namespace fluXis.Game.Map.Events;
 public class ShakeEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("duration")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("magnitude")]
     public float Magnitude { get; set; } = 10;

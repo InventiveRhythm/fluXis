@@ -191,12 +191,12 @@ public partial class FailResults : Container
         title.Text = $"{map.Metadata.Title} - {map.Metadata.Artist}";
         subtitle.Text = $"[{map.Metadata.Difficulty}] mapped by {map.Metadata.Mapper}";
 
-        float start = map.StartTime;
-        float end = map.EndTime - start;
-        float current = (float)FailOverlay.Screen.HealthProcessor.FailTime - start;
+        var start = map.StartTime;
+        var end = map.EndTime - start;
+        var current = FailOverlay.Screen.HealthProcessor.FailTime - start;
 
-        float p = current / end;
-        this.TransformTo(nameof(progress), p, 2000, Easing.OutQuint);
+        var p = current / end;
+        this.TransformTo(nameof(progress), (float)p, 2000, Easing.OutQuint);
         this.TransformTo(nameof(totalScore), score.Score, 2000, Easing.OutQuint);
         this.TransformTo(nameof(accuracy), score.Accuracy, 2000, Easing.OutQuint);
 

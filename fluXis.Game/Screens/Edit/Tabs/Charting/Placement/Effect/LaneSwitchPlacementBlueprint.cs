@@ -14,7 +14,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
     private readonly BlueprintNotePiece head;
     private readonly BlueprintNotePiece end;
 
-    private float originalStartTime;
+    private double originalStartTime;
 
     public LaneSwitchPlacementBlueprint()
         : base(new LaneSwitchEvent())
@@ -73,7 +73,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
         EndPlacement(true);
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
         if (Object is not LaneSwitchEvent ls) return;

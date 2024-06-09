@@ -96,7 +96,7 @@ public class AutoGenerator
         return null;
     }
 
-    private float calculateReleaseTime(HitObject currentObject, HitObject nextObject)
+    private double calculateReleaseTime(HitObject currentObject, HitObject nextObject)
     {
         var endTime = currentObject.EndTime;
 
@@ -109,19 +109,19 @@ public class AutoGenerator
 
     private interface IAction
     {
-        float Time { get; set; }
+        double Time { get; set; }
         int Lane { get; set; }
     }
 
     private class PressAction : IAction
     {
-        public float Time { get; set; }
+        public double Time { get; set; }
         public int Lane { get; set; }
     }
 
     private class ReleaseAction : IAction
     {
-        public float Time { get; set; }
+        public double Time { get; set; }
         public int Lane { get; set; }
     }
 }

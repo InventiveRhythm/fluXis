@@ -22,7 +22,7 @@ public partial class DangerHealthOverlay : Container
 
     private Box glow;
     private Box darken;
-    private float health = 0;
+    private double health = 0;
 
     private const int threshold = 40;
 
@@ -87,11 +87,9 @@ public partial class DangerHealthOverlay : Container
 
         if (health < threshold && dimOnLowHealth.Value)
         {
-            float multiplier = health / threshold;
+            var multiplier = health / threshold;
 
-            darken.Alpha = 1 - multiplier;
-            glow.Alpha = 1 - multiplier;
-
+            darken.Alpha = glow.Alpha = (float)(1 - multiplier);
             globalClock.LowPassFilter.Cutoff = (int)(LowPassFilter.MAX * multiplier);
         }
         else

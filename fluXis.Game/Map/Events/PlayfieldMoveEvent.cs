@@ -7,7 +7,7 @@ namespace fluXis.Game.Map.Events;
 public class PlayfieldMoveEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("x")]
     public float OffsetX { get; set; }
@@ -16,7 +16,7 @@ public class PlayfieldMoveEvent : ITimedObject, IHasDuration
     public float OffsetY { get; set; }
 
     [JsonProperty("duration")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.OutQuint;

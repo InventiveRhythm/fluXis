@@ -67,8 +67,8 @@ public partial class EditorFlashEvent : Container
             return;
         }
 
-        Y = -((FlashEvent.Time - (float)clock.CurrentTime) * settings.Zoom) * 0.5f;
-        line.Height = .5f * (FlashEvent.Duration * settings.Zoom);
+        Y = (float)(-((FlashEvent.Time - (float)clock.CurrentTime) * settings.Zoom) * 0.5f);
+        line.Height = (float)(.5f * (FlashEvent.Duration * settings.Zoom));
         line.Height = Math.Max(line.Height, 10);
         line.Child.Colour = Colour = ColourInfo.GradientVertical(FlashEvent.EndColor.Opacity(FlashEvent.EndOpacity), FlashEvent.StartColor.Opacity(FlashEvent.StartOpacity));
     }

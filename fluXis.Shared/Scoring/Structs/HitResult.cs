@@ -6,15 +6,15 @@ namespace fluXis.Shared.Scoring.Structs;
 public class HitResult
 {
     [JsonProperty("time")]
-    public float Time { get; }
+    public double Time { get; }
 
     [JsonProperty("difference")]
-    public float Difference { get; }
+    public double Difference { get; }
 
     [JsonProperty("judgement")]
     public Judgement Judgement { get; }
 
-    public HitResult(float time, float diff, Judgement jud)
+    public HitResult(double time, double diff, Judgement jud)
     {
         Time = time;
         Difference = diff;

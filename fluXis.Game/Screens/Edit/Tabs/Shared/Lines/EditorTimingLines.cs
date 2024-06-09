@@ -103,9 +103,9 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
             if (point.HideLines || point.Signature == 0)
                 continue;
 
-            float target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
-            float increase = point.Signature * point.MsPerBeat / (4 * settings.SnapDivisor);
-            float position = point.Time;
+            double target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
+            double increase = point.Signature * point.MsPerBeat / (4 * settings.SnapDivisor);
+            double position = point.Time;
 
             int j = 0;
 
@@ -140,7 +140,7 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
         [Resolved]
         private EditorSettings settings { get; set; }
 
-        public new float Time { get; set; }
+        public new double Time { get; set; }
 
         public bool BelowScreen => clock.CurrentTime >= Time + 1000;
         public bool AboveScreen => clock.CurrentTime <= Time - 3000 / settings.Zoom;
@@ -157,7 +157,7 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
 
         protected override void Update()
         {
-            Y = -EditorHitObjectContainer.HITPOSITION - .5f * ((Time - (float)clock.CurrentTime) * settings.Zoom);
+            Y = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * ((Time - clock.CurrentTime) * settings.Zoom));
         }
 
         public int CompareTo(Line other) => Time.CompareTo(other.Time);

@@ -34,7 +34,7 @@ public partial class DrawableHitObject : CompositeDrawable
     public virtual HitWindows HitWindows => Screen.HitWindows;
 
     public bool Judged { get; private set; }
-    public Action<DrawableHitObject, float> OnHit { get; set; }
+    public Action<DrawableHitObject, double> OnHit { get; set; }
 
     protected DrawableHitObject(HitObject data)
     {
@@ -82,12 +82,12 @@ public partial class DrawableHitObject : CompositeDrawable
             return;
 
         var offset = Data.Time - Time.Current;
-        CheckJudgement(byUser, (float)offset);
+        CheckJudgement(byUser, offset);
     }
 
-    protected virtual void CheckJudgement(bool byUser, float offset) { }
+    protected virtual void CheckJudgement(bool byUser, double offset) { }
 
-    protected void ApplyResult(float diff)
+    protected void ApplyResult(double diff)
     {
         if (Judged)
             throw new InvalidOperationException("Can not apply judgement to already judged hitobject.");

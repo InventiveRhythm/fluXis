@@ -8,10 +8,10 @@ namespace fluXis.Game.Map.Events;
 public class FlashEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("duration")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("background")]
     public bool InBackground { get; set; }

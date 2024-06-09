@@ -7,7 +7,7 @@ namespace fluXis.Game.Map.Events;
 public class PlayfieldRotateEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("roll")]
     public float Roll { get; set; }
@@ -22,7 +22,7 @@ public class PlayfieldRotateEvent : ITimedObject, IHasDuration
     public float Yaw { get; set; }*/
 
     [JsonProperty("duration")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.OutQuint;

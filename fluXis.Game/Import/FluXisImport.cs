@@ -84,9 +84,9 @@ public class FluXisImport : MapImporter
 
                     foreach (var hitObject in mapInfo.HitObjects)
                     {
-                        float time = hitObject.Time;
+                        var time = hitObject.Time;
                         if (hitObject.LongNote) time += hitObject.HoldTime;
-                        length = Math.Max(length, time);
+                        length = (float)Math.Max(length, time);
 
                         keys = Math.Max(keys, hitObject.Lane);
                     }

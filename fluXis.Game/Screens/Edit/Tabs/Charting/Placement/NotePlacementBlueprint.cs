@@ -17,7 +17,7 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
     {
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
         ((HitObject)Object).Lane = Math.Clamp(lane, 1, Map.RealmMap.KeyCount);

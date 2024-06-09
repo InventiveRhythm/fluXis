@@ -24,8 +24,8 @@ public partial class WaveformDisplay : Container
 
     private TimingPoint point { get; }
 
-    private float currentTime;
-    private float endTime;
+    private double currentTime;
+    private double endTime;
 
     public WaveformDisplay(TimingPoint point)
     {
@@ -79,7 +79,7 @@ public partial class WaveformDisplay : Container
 
     private void goToBeat(int beat) => goToTime(point.Time + beat * point.MsPerBeat);
 
-    private void goToTime(float time)
+    private void goToTime(double time)
     {
         if (currentTime == time) return;
 
@@ -164,7 +164,7 @@ public partial class WaveformDisplay : Container
             };
         }
 
-        public void WaveformOffsetTo(float value) =>
-            this.TransformTo(nameof(graphPosition), value);
+        public void WaveformOffsetTo(double value) =>
+            this.TransformTo(nameof(graphPosition), (float)value);
     }
 }

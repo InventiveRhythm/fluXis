@@ -9,7 +9,7 @@ public class HitSoundFade : ITimedObject
     /// The time at which the volume change should start.
     /// </summary>
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     /// <summary>
     /// The sound to change the volume of.

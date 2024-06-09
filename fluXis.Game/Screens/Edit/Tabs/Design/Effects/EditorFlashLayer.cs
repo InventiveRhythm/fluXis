@@ -57,7 +57,7 @@ public partial class EditorFlashLayer : CompositeDrawable
             }
 
             var gradient = ColourInfo.GradientHorizontal(currentFlash.StartColor, currentFlash.EndColor);
-            box.Colour = gradient.Interpolate(new Vector2(progress, 0));
+            box.Colour = gradient.Interpolate(new Vector2((float)progress, 0));
             box.Alpha = Interpolation.ValueAt(progress, currentFlash.StartOpacity, currentFlash.EndOpacity, 0, 1);
         }
         else

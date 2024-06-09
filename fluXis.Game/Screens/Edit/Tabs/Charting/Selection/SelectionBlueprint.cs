@@ -23,8 +23,8 @@ public partial class SelectionBlueprint : Container
     public event Action<SelectionBlueprint> Selected;
     public event Action<SelectionBlueprint> Deselected;
 
-    public virtual float FirstComparer => Object.Time;
-    public virtual float SecondComparer => Object.Time;
+    public virtual double FirstComparer => Object.Time;
+    public virtual double SecondComparer => Object.Time;
 
     private SelectedState state;
     public event Action<SelectedState> StateChanged;

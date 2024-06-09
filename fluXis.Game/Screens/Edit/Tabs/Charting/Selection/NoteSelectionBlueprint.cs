@@ -9,7 +9,7 @@ public partial class NoteSelectionBlueprint : SelectionBlueprint
 
     public new EditorHitObject Drawable => (EditorHitObject)base.Drawable;
 
-    public override float SecondComparer => Object.EndTime;
+    public override double SecondComparer => Object.EndTime;
 
     public NoteSelectionBlueprint(ITimedObject info)
         : base(info)

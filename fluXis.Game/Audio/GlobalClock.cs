@@ -35,7 +35,7 @@ public partial class GlobalClock : TransformableClock, IFrameBasedClock, ISource
     private Storage realmStorage { get; set; }
 
     public IBindable<Track> Track => track;
-    public float TrackLength => (float)(track.Value?.Length ?? 10000);
+    public double TrackLength => track.Value?.Length ?? 10000;
     private string trackHash { get; set; }
 
     [CanBeNull]

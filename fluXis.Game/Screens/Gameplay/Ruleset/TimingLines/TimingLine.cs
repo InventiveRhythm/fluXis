@@ -9,12 +9,12 @@ public partial class TimingLine : Box
     [Resolved]
     private Playfield playfield { get; set; }
 
-    public float OriginalTime { get; }
+    public double OriginalTime { get; }
     private double scrollVelocityTime;
 
     public TimingLine(double time)
     {
-        OriginalTime = (float)time;
+        OriginalTime = time;
     }
 
     [BackgroundDependencyLoader]

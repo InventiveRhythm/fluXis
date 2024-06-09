@@ -27,7 +27,7 @@ public class OsuTimingPoint
         return new ScrollVelocity
         {
             Time = Time,
-            Multiplier = (float)Math.Clamp(-100 / (double)BeatLength, 0.1f, 10)
+            Multiplier = Math.Clamp(-100 / (double)BeatLength, 0.1f, 10)
         };
     }
 }

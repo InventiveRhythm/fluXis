@@ -7,13 +7,13 @@ namespace fluXis.Game.Map.Events;
 public class ShaderEvent : ITimedObject, IHasDuration
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 
     [JsonProperty("shader")]
     public string ShaderName { get; set; } = string.Empty;
 
     [JsonProperty("duration")]
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     [JsonProperty("params")]
     public JObject ShaderParams { get; set; } = new();

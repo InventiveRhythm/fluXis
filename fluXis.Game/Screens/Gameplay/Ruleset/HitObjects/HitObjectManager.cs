@@ -64,7 +64,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     private JudgementProcessor judgementProcessor => screen.JudgementProcessor;
 
-    private List<float> scrollVelocityMarks { get; } = new();
+    private List<double> scrollVelocityMarks { get; } = new();
     private Dictionary<int, int> snapIndices { get; } = new();
 
     public Action OnFinished { get; set; }
@@ -216,9 +216,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public float HitPosition => DrawHeight - skinManager.SkinJson.GetKeymode(CurrentKeyCount).HitPosition;
 
-    public bool ShouldDisplay(float time) => ScrollVelocityPositionFromTime(time) <= ScrollVelocityPositionFromTime(Clock.CurrentTime) + DrawHeight * screen.Rate;
-    public float PositionAtTime(double time) => PositionAtTime((float)time);
-    public float PositionAtTime(float time) => HitPosition - .5f * ((time - (float)CurrentTime) * ScrollSpeed);
+    public bool ShouldDisplay(double time) => ScrollVelocityPositionFromTime(time) <= ScrollVelocityPositionFromTime(Clock.CurrentTime) + DrawHeight * screen.Rate;
+    public float PositionAtTime(double time) => (float)(HitPosition - .5f * ((time - (float)CurrentTime) * ScrollSpeed));
 
     public float PositionAtLane(int lane)
     {
@@ -310,7 +309,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         CurrentTime = ScrollVelocityPositionFromTime(Clock.CurrentTime, svIndex);
     }
 
-    private void hit(DrawableHitObject hitObject, float difference)
+    private void hit(DrawableHitObject hitObject, double difference)
     {
         // since judged is only set after hitting the tail this works
         var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
@@ -363,7 +362,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
         ScrollVelocity first = Map.ScrollVelocities[0];
 
-        float time = first.Time;
+        var time = first.Time;
         scrollVelocityMarks.Add(time);
 
         for (var i = 1; i < Map.ScrollVelocities.Count; i++)
@@ -383,10 +382,10 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
         for (var i = 0; i < Map.TimingPoints.Count; i++)
         {
-            TimingPoint timingPoint = Map.TimingPoints[i];
-            double time = timingPoint.Time;
-            float target = i + 1 < Map.TimingPoints.Count ? Map.TimingPoints[i + 1].Time : Map.EndTime;
-            float increment = timingPoint.MsPerBeat;
+            var timingPoint = Map.TimingPoints[i];
+            var time = timingPoint.Time;
+            var target = i + 1 < Map.TimingPoints.Count ? Map.TimingPoints[i + 1].Time : Map.EndTime;
+            var increment = timingPoint.MsPerBeat;
 
             while (time < target)
             {
@@ -403,7 +402,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         }
     }
 
-    public int GetSnapIndex(float time)
+    public int GetSnapIndex(double time)
     {
         if (snapIndices.TryGetValue((int)time, out int i))
             return i;

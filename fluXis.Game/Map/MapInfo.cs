@@ -33,10 +33,10 @@ public class MapInfo
     public float AccuracyDifficulty { get; set; } = 8;
 
     [JsonIgnore]
-    public float StartTime => HitObjects[0].Time;
+    public double StartTime => HitObjects[0].Time;
 
     [JsonIgnore]
-    public float EndTime => HitObjects[^1].EndTime;
+    public double EndTime => HitObjects[^1].EndTime;
 
     [JsonIgnore]
     public int MaxCombo

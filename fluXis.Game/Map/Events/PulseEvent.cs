@@ -6,5 +6,5 @@ namespace fluXis.Game.Map.Events;
 public class PulseEvent : ITimedObject
 {
     [JsonProperty("time")]
-    public float Time { get; set; }
+    public double Time { get; set; }
 }

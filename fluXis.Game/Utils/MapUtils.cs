@@ -30,7 +30,7 @@ public static class MapUtils
 
         foreach (var hitObject in map.HitObjects)
         {
-            filters.Length = Math.Max(filters.Length, hitObject.EndTime);
+            filters.Length = (float)Math.Max(filters.Length, hitObject.EndTime);
 
             if (hitObject.LongNote)
                 filters.LongNoteCount++;

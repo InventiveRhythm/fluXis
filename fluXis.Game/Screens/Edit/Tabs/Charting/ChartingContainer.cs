@@ -211,11 +211,11 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (lane > Map.RealmMap.KeyCount)
             return;
 
-        var time = (float)EditorClock.CurrentTime;
+        var time = EditorClock.CurrentTime;
         var snapped = Playfield.HitObjectContainer.SnapTime(time);
 
         var tp = Map.MapInfo.GetTimingPoint(time);
-        float increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
+        var increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
         var next = Playfield.HitObjectContainer.SnapTime(time + increase);
 
         // take the closest snap
@@ -369,7 +369,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         foreach (var hitObject in content.HitObjects)
         {
-            hitObject.Time += (float)EditorClock.CurrentTime;
+            hitObject.Time += EditorClock.CurrentTime;
         }
 
         actions.Add(new NotePasteAction(content.HitObjects.ToArray()));

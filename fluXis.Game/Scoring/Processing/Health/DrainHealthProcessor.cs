@@ -6,8 +6,8 @@ namespace fluXis.Game.Scoring.Processing.Health;
 
 public class DrainHealthProcessor : HealthProcessor
 {
-    public float HealthDrainRate { get; private set; }
-    private float lastTime;
+    public double HealthDrainRate { get; private set; }
+    private double lastTime;
 
     public override void AddResult(HitResult result)
     {
@@ -34,24 +34,24 @@ public class DrainHealthProcessor : HealthProcessor
 
         if (lastTime == 0)
         {
-            lastTime = (float)GameplayClock.CurrentTime;
+            lastTime = GameplayClock.CurrentTime;
             return;
         }
 
         if (Screen.Playfield.Manager.Break)
         {
             // assign the time so that it doesn't jump when the break ends
-            lastTime = (float)GameplayClock.CurrentTime;
+            lastTime = GameplayClock.CurrentTime;
             return;
         }
 
-        var delta = (float)GameplayClock.CurrentTime - lastTime;
+        var delta = GameplayClock.CurrentTime - lastTime;
 
         HealthDrainRate = Math.Max(HealthDrainRate, -1f);
         Health.Value -= HealthDrainRate * (delta / 1000f);
         HealthDrainRate += 0.001f * delta;
 
-        lastTime = (float)GameplayClock.CurrentTime;
+        lastTime = GameplayClock.CurrentTime;
 
         if (Health.Value == 0)
             TriggerFailure();

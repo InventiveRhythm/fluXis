@@ -10,7 +10,7 @@ namespace fluXis.Game.Map.Drawables;
 
 public partial class DifficultyChip : CircularContainer
 {
-    public float Rating
+    public double Rating
     {
         get => rating;
         set
@@ -19,7 +19,7 @@ public partial class DifficultyChip : CircularContainer
 
             if (IsLoaded)
             {
-                box.Colour = FluXisColors.GetDifficultyColor(Rating);
+                box.Colour = FluXisColors.GetDifficultyColor((float)Rating);
                 text.Text = Rating.ToStringInvariant("00.00");
             }
         }
@@ -27,7 +27,7 @@ public partial class DifficultyChip : CircularContainer
 
     public float FontSize { get; set; } = 18;
 
-    private float rating;
+    private double rating;
 
     private Box box;
     private FluXisSpriteText text;
@@ -42,7 +42,7 @@ public partial class DifficultyChip : CircularContainer
             box = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.GetDifficultyColor(Rating)
+                Colour = FluXisColors.GetDifficultyColor((float)Rating)
             },
             text = new FluXisSpriteText
             {

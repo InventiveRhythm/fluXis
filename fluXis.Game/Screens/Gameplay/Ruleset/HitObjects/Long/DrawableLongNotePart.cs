@@ -13,11 +13,11 @@ public partial class DrawableLongNotePart : CompositeDrawable
 {
     protected HitObject Data { get; }
 
-    public Action<float> OnJudgement { get; set; }
+    public Action<double> OnJudgement { get; set; }
     public Action OnMiss { get; set; }
 
     protected bool Missed => Time.Current > HitTime + HitWindows.TimingFor(HitWindows.Lowest);
-    protected virtual float HitTime => Data.Time;
+    protected virtual double HitTime => Data.Time;
     protected virtual HitWindows HitWindows => Screen.HitWindows;
 
     public bool Judged { get; private set; }
@@ -65,10 +65,10 @@ public partial class DrawableLongNotePart : CompositeDrawable
             return;
 
         var offset = HitTime - Time.Current;
-        CheckJudgement(byUser, (float)offset);
+        CheckJudgement(byUser, offset);
     }
 
-    protected void CheckJudgement(bool byUser, float offset)
+    protected void CheckJudgement(bool byUser, double offset)
     {
         if (!byUser)
         {
@@ -87,7 +87,7 @@ public partial class DrawableLongNotePart : CompositeDrawable
         ApplyResult(offset);
     }
 
-    protected void ApplyResult(float offset)
+    protected void ApplyResult(double offset)
     {
         if (Judged)
             return;

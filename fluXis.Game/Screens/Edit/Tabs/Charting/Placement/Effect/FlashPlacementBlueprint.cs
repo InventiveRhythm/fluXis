@@ -14,7 +14,7 @@ public partial class FlashPlacementBlueprint : PlacementBlueprint
     private readonly BlueprintNotePiece head;
     private readonly BlueprintNotePiece end;
 
-    private float originalStartTime;
+    private double originalStartTime;
 
     public FlashPlacementBlueprint()
         : base(new FlashEvent())
@@ -67,7 +67,7 @@ public partial class FlashPlacementBlueprint : PlacementBlueprint
         EndPlacement(true);
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
         if (Object is not FlashEvent flash) return;

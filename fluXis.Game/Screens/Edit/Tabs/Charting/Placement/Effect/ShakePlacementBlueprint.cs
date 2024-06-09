@@ -14,7 +14,7 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
     private readonly BlueprintNotePiece head;
     private readonly BlueprintNotePiece end;
 
-    private float originalStartTime;
+    private double originalStartTime;
 
     public ShakePlacementBlueprint()
         : base(new ShakeEvent())
@@ -67,7 +67,7 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
         EndPlacement(true);
     }
 
-    public override void UpdatePlacement(float time, int lane)
+    public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
         if (Object is not ShakeEvent shake) return;

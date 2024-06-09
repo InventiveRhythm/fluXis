@@ -20,7 +20,7 @@ public partial class SelectionBox : Container
     public Container Box { get; set; }
     private Box box;
 
-    private float? startTime;
+    private double? startTime;
 
     [BackgroundDependencyLoader]
     private void load()
