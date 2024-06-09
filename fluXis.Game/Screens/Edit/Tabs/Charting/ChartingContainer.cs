@@ -318,6 +318,16 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         actions.Add(new NoteShuffleAction(objects, Map.RealmMap.KeyCount));
     }
 
+    public void ReSnapAll()
+    {
+        var objects = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().ToList();
+
+        if (!objects.Any())
+            objects = HitObjects.Select(h => h.Data).ToList();
+
+        actions.Add(new NoteReSnapAction(objects, Playfield.HitObjectContainer.SnapTime, settings.SnapDivisor));
+    }
+
     public void Copy(bool deleteAfter = false)
     {
         var hits = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().Select(h => h.Copy()).ToList();
