@@ -23,7 +23,7 @@ public partial class TimingPointEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new TimingPoint
+    public override ITimedObject CreateClone() => new TimingPoint
     {
         Time = Object.Time,
         BPM = timing.BPM,

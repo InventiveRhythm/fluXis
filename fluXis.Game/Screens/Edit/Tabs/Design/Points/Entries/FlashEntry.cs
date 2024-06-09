@@ -24,7 +24,7 @@ public partial class FlashEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new FlashEvent
+    public override ITimedObject CreateClone() => new FlashEvent
     {
         Time = Object.Time,
         Duration = flash.Duration,

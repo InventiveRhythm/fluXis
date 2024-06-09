@@ -23,7 +23,7 @@ public partial class ShakeEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new ShakeEvent
+    public override ITimedObject CreateClone() => new ShakeEvent
     {
         Time = Object.Time,
         Magnitude = shake.Magnitude,

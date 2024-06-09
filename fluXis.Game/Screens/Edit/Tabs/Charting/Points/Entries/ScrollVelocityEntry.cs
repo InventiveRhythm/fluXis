@@ -22,7 +22,7 @@ public partial class ScrollVelocityEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new ScrollVelocity
+    public override ITimedObject CreateClone() => new ScrollVelocity
     {
         Time = Object.Time,
         Multiplier = sv.Multiplier

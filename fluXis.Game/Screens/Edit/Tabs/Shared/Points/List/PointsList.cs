@@ -6,7 +6,9 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.UI;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -27,6 +29,8 @@ public abstract partial class PointsList : Container
 
     [Resolved]
     private EditorClock clock { get; set; }
+
+    private BindableList<PointListEntry> selectedEntries { get; } = new();
 
     public Action<IEnumerable<Drawable>> ShowSettings { get; set; }
     public Action RequestClose { get; set; }
@@ -96,16 +100,54 @@ public abstract partial class PointsList : Container
         sortPoints();
     }
 
+    private void openSettings(IEnumerable<Drawable> list)
+    {
+        var temp = selectedEntries.ToList();
+        temp.ForEach(e => e.State = SelectedState.Deselected);
+
+        ShowSettings?.Invoke(list);
+    }
+
+    private void deleteSelected()
+    {
+        var temp = selectedEntries.ToList();
+        temp.ForEach(e =>
+        {
+            e.State = SelectedState.Deselected;
+            Map.Remove(e.Object);
+        });
+    }
+
+    private void duplicateSelected()
+    {
+        var temp = selectedEntries.ToList();
+        var objects = temp.Select(e => e.CreateClone()).ToList();
+
+        temp.ForEach(e => e.State = SelectedState.Deselected);
+
+        var lowestTime = objects.Min(o => o.Time);
+        objects.ForEach(o =>
+        {
+            o.Time -= lowestTime;
+            o.Time += clock.CurrentTime;
+        });
+
+        objects.ForEach(o => Create(o, false, false));
+    }
+
     protected abstract void RegisterEvents();
-
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
-
     protected abstract IEnumerable<AddButtonEntry> CreateAddEntries();
 
-    protected void Create(ITimedObject obj)
+    protected void Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
     {
-        obj.Time = clock.CurrentTime;
+        if (overrideTime)
+            obj.Time = clock.CurrentTime;
+
         Map.Add(obj);
+
+        if (!openSettings)
+            return;
 
         var entry = flow.FirstOrDefault(e => e.Object == obj);
         entry?.OpenSettings();
@@ -122,9 +164,22 @@ public abstract partial class PointsList : Container
 
         if (entry != null)
         {
-            entry.ShowSettings = ShowSettings;
+            entry.ShowSettings = openSettings;
             entry.RequestClose = RequestClose;
-            entry.OnClone = Create;
+            entry.CloneSelected = duplicateSelected;
+            entry.DeleteSelected = deleteSelected;
+            entry.OnClone = o => Create(o);
+
+            entry.Selected += e =>
+            {
+                if (selectedEntries.Contains(e))
+                    return;
+
+                selectedEntries.Add(e);
+            };
+
+            entry.Deselected += e => selectedEntries.Remove(e);
+
             flow.Add(entry);
         }
 

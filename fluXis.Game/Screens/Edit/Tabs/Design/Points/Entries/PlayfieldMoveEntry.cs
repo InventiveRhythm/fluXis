@@ -23,7 +23,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new PlayfieldMoveEvent
+    public override ITimedObject CreateClone() => new PlayfieldMoveEvent
     {
         Time = Object.Time,
         OffsetX = move.OffsetX,

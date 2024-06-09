@@ -22,7 +22,7 @@ public partial class BeatPulseEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new BeatPulseEvent
+    public override ITimedObject CreateClone() => new BeatPulseEvent
     {
         Time = Object.Time,
         Strength = pulse.Strength,

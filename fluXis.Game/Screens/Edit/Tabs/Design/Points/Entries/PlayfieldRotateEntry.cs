@@ -23,7 +23,7 @@ public partial class PlayfieldRotateEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new PlayfieldRotateEvent
+    public override ITimedObject CreateClone() => new PlayfieldRotateEvent
     {
         Time = Object.Time,
         Roll = rotate.Roll,

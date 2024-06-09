@@ -23,7 +23,7 @@ public partial class PlayfieldFadeEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new PlayfieldFadeEvent
+    public override ITimedObject CreateClone() => new PlayfieldFadeEvent
     {
         Time = Object.Time,
         Duration = fade.Duration,

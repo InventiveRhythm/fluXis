@@ -23,7 +23,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new PlayfieldScaleEvent
+    public override ITimedObject CreateClone() => new PlayfieldScaleEvent
     {
         Time = Object.Time,
         ScaleX = scale.ScaleX,

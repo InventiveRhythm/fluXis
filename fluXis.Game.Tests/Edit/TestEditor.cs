@@ -34,7 +34,7 @@ public partial class TestEditor : FluXisTestScene
 
         AddStep("Push existing map", () =>
         {
-            var map = maps.GetFromGuid("179ea7a6-57c1-454b-a13e-1832ae514301")?
+            var map = maps.GetFromGuid("dfa31add-7172-4232-be59-5e8e02ac6cfb")?
                 .Maps.FirstOrDefault();
 
             var editor = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();

@@ -22,7 +22,7 @@ public partial class LaneSwitchEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone() => new LaneSwitchEvent
+    public override ITimedObject CreateClone() => new LaneSwitchEvent
     {
         Time = Object.Time,
         Count = laneSwitch.Count,

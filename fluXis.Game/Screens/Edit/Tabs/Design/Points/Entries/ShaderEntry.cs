@@ -19,7 +19,7 @@ public partial class ShaderEntry : PointListEntry
     {
     }
 
-    protected override ITimedObject CreateClone()
+    public override ITimedObject CreateClone()
     {
         return new ShaderEvent
         {
