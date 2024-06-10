@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -13,6 +14,7 @@ using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using fluXis.Shared.API.Packets.Chat;
 using fluXis.Shared.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -160,13 +162,34 @@ public partial class DrawableChatMessage : Container
         [Resolved]
         private NotificationManager notifications { get; set; }
 
-        [BackgroundDependencyLoader]
-        private void load()
+        private const string link_regex = @"(http|https)://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";
+
+        [BackgroundDependencyLoader(true)]
+        private void load([CanBeNull] FluXisGame game)
         {
             FontSize = 18;
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
-            AddText(Message.Content);
+
+            var words = Message.Content.Split(' ');
+
+            foreach (var word in words)
+            {
+                if (word.StartsWith('@')) // mention
+                    AddText(word, t => t.Colour = FluXisColors.Highlight);
+                else if (Regex.IsMatch(word, link_regex)) // link
+                {
+                    AddText<ClickableFluXisSpriteText>(word, t =>
+                    {
+                        t.Colour = FluXisColors.Link;
+                        t.Action = () => game?.OpenLink(word);
+                    });
+                }
+                else
+                    AddText(word);
+
+                AddText(" ");
+            }
         }
 
         public MenuItem[] ContextMenuItems
