@@ -33,4 +33,19 @@ public class APIClub
     public APIClubStatistics? Statistics { get; set; }
 
     #endregion
+
+    public static APIClub CreateUnknown(long id)
+    {
+        return new APIClub
+        {
+            ID = id,
+            Name = "Unknown Club",
+            Tag = "UNK",
+            Colors = new List<GradientColor>
+            {
+                new() { Color = "#ffffff", Position = 0 },
+                new() { Color = "#ffffff", Position = 0 }
+            }
+        };
+    }
 }
