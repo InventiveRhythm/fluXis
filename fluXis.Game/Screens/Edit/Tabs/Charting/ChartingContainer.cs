@@ -357,9 +357,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public void Paste()
     {
-        var content = clipboard.GetText()?.Deserialize<EditorClipboardContent>();
+        EditorClipboardContent content = null;
 
-        if (content == null)
+        if ((!clipboard.GetText()?.TryDeserialize(out content) ?? true) || !content.HitObjects.Any())
         {
             notifications.SendSmallText("Clipboard is empty.", FontAwesome6.Solid.XMark);
             return;
