@@ -43,6 +43,9 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("playfieldrotate")]
     public List<PlayfieldRotateEvent> PlayfieldRotateEvents { get; private set; } = new();
 
+    [JsonProperty("notes")]
+    public List<NoteEvent> NoteEvents { get; private set; } = new();
+
     [JsonIgnore]
     public bool Empty => LaneSwitchEvents.Count == 0
                          && FlashEvents.Count == 0
@@ -53,7 +56,8 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && PlayfieldFadeEvents.Count == 0
                          && ShaderEvents.Count == 0
                          && BeatPulseEvents.Count == 0
-                         && PlayfieldRotateEvents.Count == 0;
+                         && PlayfieldRotateEvents.Count == 0
+                         && NoteEvents.Count == 0;
 
     public static T Load<T>(string content)
         where T : MapEvents, new()
@@ -219,6 +223,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         ShaderEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         BeatPulseEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
         PlayfieldRotateEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        NoteEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
 
         return this;
     }
@@ -242,6 +247,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);
         clone.BeatPulseEvents = new List<BeatPulseEvent>(BeatPulseEvents);
         clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
+        clone.NoteEvents = new List<NoteEvent>(NoteEvents);
         return clone;
     }
 }

@@ -84,6 +84,10 @@ public class EditorMap
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventRemoved;
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventUpdated;
 
+    public event Action<NoteEvent> NoteEventAdded;
+    public event Action<NoteEvent> NoteEventRemoved;
+    public event Action<NoteEvent> NoteEventUpdated;
+
     #endregion
 
     public bool SetKeyMode(int mode)
@@ -240,6 +244,11 @@ public class EditorMap
                 PlayfieldRotateEventAdded?.Invoke(rotateEvent);
                 break;
 
+            case NoteEvent noteEvent:
+                MapEvents.NoteEvents.Add(noteEvent);
+                NoteEventAdded?.Invoke(noteEvent);
+                break;
+
             default:
                 throw new NotImplementedException();
         }
@@ -295,6 +304,10 @@ public class EditorMap
 
             case PlayfieldRotateEvent rotateEvent:
                 PlayfieldRotateEventUpdated?.Invoke(rotateEvent);
+                break;
+
+            case NoteEvent noteEvent:
+                NoteEventUpdated?.Invoke(noteEvent);
                 break;
 
             default:
@@ -366,6 +379,11 @@ public class EditorMap
             case PlayfieldRotateEvent rotateEvent:
                 MapEvents.PlayfieldRotateEvents.Remove(rotateEvent);
                 PlayfieldRotateEventRemoved?.Invoke(rotateEvent);
+                break;
+
+            case NoteEvent noteEvent:
+                MapEvents.NoteEvents.Remove(noteEvent);
+                NoteEventRemoved?.Invoke(noteEvent);
                 break;
 
             default:
@@ -445,6 +463,12 @@ public class EditorMap
         {
             rotateEvent.Time += offset;
             Update(rotateEvent);
+        }
+
+        foreach (var noteEvent in MapEvents.NoteEvents)
+        {
+            noteEvent.Time += offset;
+            Update(noteEvent);
         }
     }
 
