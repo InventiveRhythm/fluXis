@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Models.Other;
+namespace fluXis.Shared.Components.Other;
 
 public class MenuUpdate
 {

@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Map;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Result;
+using fluXis.Shared.API.Responses.Scores;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -66,15 +66,7 @@ public partial class TestNewResults : FluXisTestScene
         public SimulatedScoreRequest(ScoreInfo score)
             : base(score)
         {
-            Response = new APIResponse<APIScoreResponse>(200, "", new APIScoreResponse
-            {
-                OverallRating = 10,
-                PotentialRating = 10,
-                Rank = 1,
-                OverallRatingChange = 2,
-                PotentialRatingChange = 2,
-                RankChange = 1
-            });
+            Response = new APIResponse<ScoreSubmissionStats>(200, "", new ScoreSubmissionStats(0, 10, 10, 1, 2, 2, 1));
         }
     }
 }

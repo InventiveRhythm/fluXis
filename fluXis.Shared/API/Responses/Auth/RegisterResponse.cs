@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using fluXis.Shared.Utils;
+using Newtonsoft.Json;
 
 namespace fluXis.Shared.API.Responses.Auth;
 
@@ -13,7 +14,7 @@ public class RegisterResponse
     }
 
     [JsonConstructor]
-    [Obsolete("This constructor is for json parsing only.")]
+    [Obsolete(JsonUtils.JSON_CONSTRUCTOR_ERROR, true)]
     public RegisterResponse()
     {
     }

@@ -1,10 +1,10 @@
-using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Screens.Select.Info.Scores;
+using fluXis.Shared.API.Responses.Maps;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Maps;
 
-public class MapLeaderboardRequest : APIRequest<APIScores>
+public class MapLeaderboardRequest : APIRequest<MapLeaderboard>
 {
     protected override string Path => $"/map/{id}/scores";
 

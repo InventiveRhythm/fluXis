@@ -6,6 +6,8 @@ namespace fluXis.Shared.Utils;
 
 public static class JsonUtils
 {
+    public const string JSON_CONSTRUCTOR_ERROR = "This constructor is for json parsing only.";
+
     private static Dictionary<Type, Type> typeMap { get; } = new();
 
     public static JObject Copy(this JObject obj) => JObject.Parse(obj.ToString());

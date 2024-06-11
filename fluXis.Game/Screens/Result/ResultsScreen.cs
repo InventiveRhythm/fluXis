@@ -12,10 +12,10 @@ using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Scores;
 using fluXis.Game.Screens.Result.UI;
+using fluXis.Shared.API.Responses.Scores;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
@@ -191,7 +191,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
             OnlineScores.UploadScore(fluxel, score, res => ratingInfo.ScoreResponse = res);
         }
         else
-            ratingInfo.ScoreResponse = new APIResponse<APIScoreResponse>(400, "Score not submittable.", null);
+            ratingInfo.ScoreResponse = new APIResponse<ScoreSubmissionStats>(400, "Score not submittable.", null);
     }
 
     private void onGamepadStatusChanged(bool status)

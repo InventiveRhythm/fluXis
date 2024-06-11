@@ -1,12 +1,12 @@
 using System.Net.Http;
-using fluXis.Game.Online.API.Models.Scores;
+using fluXis.Shared.API.Responses.Scores;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Scores;
 
-public class ScoreSubmitRequest : APIRequest<APIScoreResponse>
+public class ScoreSubmitRequest : APIRequest<ScoreSubmissionStats>
 {
     protected override string Path => "/scores";
     protected override HttpMethod Method => HttpMethod.Post;

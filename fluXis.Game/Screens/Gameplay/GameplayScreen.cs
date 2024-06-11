@@ -488,7 +488,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         realm.RunWrite(r =>
                         {
                             var rScore = r.Find<RealmScore>(scoreId);
-                            rScore.OnlineID = request.Response.Data.ID;
+                            rScore.OnlineID = (int)request.Response.Data.ID;
                         });
                     }
 

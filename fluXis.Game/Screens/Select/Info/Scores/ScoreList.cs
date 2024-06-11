@@ -17,11 +17,12 @@ using fluXis.Game.IO;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Models.Scores;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
+using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Components.Scores;
 using fluXis.Shared.Replays;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
@@ -418,13 +419,13 @@ public partial class ScoreList : GridContainer
 
     private void downloadScore(RealmMap map, APIScore score)
     {
-        if (realm.Run(r => r.All<RealmScore>().Any(s => s.OnlineID == score.Id)))
+        if (realm.Run(r => r.All<RealmScore>().Any(s => s.OnlineID == score.ID)))
         {
             notifications.SendSmallText("You already have this score!");
             return;
         }
 
-        var realmScore = realm.RunWrite(r => r.Add(RealmScore.FromScoreInfo(map, score.ToScoreInfo(), score.Id))).Detach();
+        var realmScore = realm.RunWrite(r => r.Add(RealmScore.FromScoreInfo(map, score.ToScoreInfo(), (int)score.ID))).Detach();
 
         var notification = new TaskNotificationData
         {
@@ -441,7 +442,7 @@ public partial class ScoreList : GridContainer
         {
             try
             {
-                var req = new WebRequest($"{fluxel.Endpoint.AssetUrl}/replay/{score.Id}.frp");
+                var req = new WebRequest($"{fluxel.Endpoint.AssetUrl}/replay/{score.ID}.frp");
                 req.AllowInsecureRequests = true;
                 req.Perform();
 
@@ -456,7 +457,7 @@ public partial class ScoreList : GridContainer
             }
             catch (Exception e)
             {
-                Logger.Log($"Failed to download replay for score {score.Id}: {e.Message}", LoggingTarget.Network, LogLevel.Error);
+                Logger.Log($"Failed to download replay for score {score.ID}: {e.Message}", LoggingTarget.Network, LogLevel.Error);
                 notification.State = LoadingState.Failed;
             }
         });

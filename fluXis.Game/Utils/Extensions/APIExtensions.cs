@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using fluXis.Shared.Components.Clubs;
+using fluXis.Shared.Components.Scores;
+using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Logging;
@@ -26,4 +29,24 @@ public static class APIExtensions
             return Colour4.White;
         }
     }
+
+    public static ScoreInfo ToScoreInfo(this APIScore score) => new()
+    {
+        Accuracy = score.Accuracy,
+        Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), score.Rank),
+        Score = score.TotalScore,
+        MaxCombo = score.MaxCombo,
+        Flawless = score.FlawlessCount,
+        Perfect = score.PerfectCount,
+        Great = score.GreatCount,
+        Alright = score.AlrightCount,
+        Okay = score.OkayCount,
+        Miss = score.MissCount,
+        MapID = score.Map.ID,
+        MapHash = score.Map.SHA256Hash,
+        ScrollSpeed = score.ScrollSpeed,
+        Timestamp = score.Time,
+        Mods = score.Mods.Split(",").ToList(),
+        PlayerID = score.User.ID
+    };
 }

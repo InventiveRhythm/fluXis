@@ -1,23 +1,16 @@
-using System;
-using System.Linq;
 using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Online.API.Models.Scores;
+namespace fluXis.Shared.Components.Scores;
 
 public class APIScore
 {
     [JsonProperty("id")]
-    public int Id { get; set; }
+    public long ID { get; set; }
 
     [JsonProperty("user")]
-    public APIUser User { get; set; }
-
-    [JsonProperty("map")]
-    public APIMap Map { get; set; }
+    public APIUser User { get; set; } = null!;
 
     [JsonProperty("time")]
     public long Time { get; set; }
@@ -25,6 +18,9 @@ public class APIScore
     [JsonProperty("mode")]
     public int Mode { get; set; }
 
+    /// <summary>
+    /// List of mods seperated by commas.
+    /// </summary>
     [JsonProperty("mods")]
     public string Mods { get; set; } = "";
 
@@ -38,7 +34,7 @@ public class APIScore
     public float Accuracy { get; set; }
 
     [JsonProperty("grade")]
-    public string Rank { get; set; }
+    public string Rank { get; set; } = "";
 
     [JsonProperty("maxcombo")]
     public int MaxCombo { get; set; }
@@ -64,28 +60,10 @@ public class APIScore
     [JsonProperty("scrollspeed")]
     public float ScrollSpeed { get; set; }
 
-    public ScoreInfo ToScoreInfo()
-    {
-        return new ScoreInfo
-        {
-            Accuracy = Accuracy,
-            Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), Rank),
-            Score = TotalScore,
-            Combo = 0,
-            MaxCombo = MaxCombo,
-            Flawless = FlawlessCount,
-            Perfect = PerfectCount,
-            Great = GreatCount,
-            Alright = AlrightCount,
-            Okay = OkayCount,
-            Miss = MissCount,
-            HitResults = null,
-            MapID = Map.ID,
-            MapHash = null,
-            ScrollSpeed = ScrollSpeed,
-            Timestamp = Time,
-            Mods = Mods.Split(",").ToList(),
-            PlayerID = User.ID
-        };
-    }
+    #region Optional
+
+    [JsonProperty("map")]
+    public APIMap? Map { get; set; }
+
+    #endregion
 }

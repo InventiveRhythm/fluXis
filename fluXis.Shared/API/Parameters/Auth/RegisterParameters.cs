@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using fluXis.Shared.Utils;
+using Newtonsoft.Json;
 
 namespace fluXis.Shared.API.Parameters.Auth;
 
@@ -21,7 +22,7 @@ public class RegisterParameters
     }
 
     [JsonConstructor]
-    [Obsolete("This constructor is for json parsing only.")]
+    [Obsolete(JsonUtils.JSON_CONSTRUCTOR_ERROR, true)]
     public RegisterParameters()
     {
     }

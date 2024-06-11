@@ -1,7 +1,7 @@
 using fluXis.Game.Graphics;
-using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Online.API.Requests;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Shared.Components.Other;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
