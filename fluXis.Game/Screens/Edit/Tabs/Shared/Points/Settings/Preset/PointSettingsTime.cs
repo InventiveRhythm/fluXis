@@ -10,7 +10,7 @@ public partial class PointSettingsTime : PointSettingsTextBox
     {
         Text = "Time";
         TooltipText = "The time in milliseconds when the event should trigger.";
-        DefaultText = obj.Time.ToStringInvariant();
+        DefaultText = obj.Time.ToStringInvariant("0");
         OnTextChanged = box =>
         {
             if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var time))

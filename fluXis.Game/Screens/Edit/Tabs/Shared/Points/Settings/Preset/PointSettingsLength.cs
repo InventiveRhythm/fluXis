@@ -12,7 +12,7 @@ public partial class PointSettingsLength<T> : PointSettingsTextBox
         TooltipText = "The duration of the animation in beats.";
         ExtraText = "beat(s)";
         TextBoxWidth = 100;
-        DefaultText = (obj.Duration / beatLength).ToStringInvariant();
+        DefaultText = (obj.Duration / beatLength).ToStringInvariant("0.##");
         OnTextChanged = box =>
         {
             if (box.Text.TryParseFloatInvariant(out var result))
