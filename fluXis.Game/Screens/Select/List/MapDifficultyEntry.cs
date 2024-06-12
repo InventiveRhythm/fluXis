@@ -40,7 +40,12 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
             };
 
             if (FluXisGameBase.IsDebug)
+            {
+                if (map.OnlineID > 0)
+                    items.Add(new FluXisMenuItem("Copy Online ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.OnlineID.ToString())));
+
                 items.Add(new FluXisMenuItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard?.SetText(map.ID.ToString())));
+            }
 
             return items.ToArray();
         }
