@@ -13,9 +13,9 @@ namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
 public partial class MultiLobbyFooter : Footer
 {
     public Action LeaveAction { get; init; }
-    public Action ReadyAction { get; init; }
+    public Action RightButtonAction { get; init; }
     public Action ChangeMapAction { get; init; }
-    public CornerButton ReadyButton { get; private set; }
+    public CornerButton RightButton { get; private set; }
 
     public BindableBool CanChangeMap { get; } = new(true);
 
@@ -26,13 +26,13 @@ public partial class MultiLobbyFooter : Footer
         Action = LeaveAction
     };
 
-    protected override CornerButton CreateRightButton() => ReadyButton = new CornerButton
+    protected override CornerButton CreateRightButton() => RightButton = new CornerButton
     {
         ButtonText = "Ready",
         Icon = FontAwesome6.Solid.SquareCheck,
         ButtonColor = FluXisColors.Accent2,
         Corner = Corner.BottomRight,
-        Action = ReadyAction
+        Action = RightButtonAction
     };
 
     protected override IEnumerable<FooterButton> CreateButtons()

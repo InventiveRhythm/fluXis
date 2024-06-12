@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
@@ -59,6 +60,8 @@ public partial class MultiLobby : MultiSubScreen
     private PanelContainer panels { get; set; }
 
     public MultiplayerRoom Room => client.Room;
+
+    private bool hasMapDownloaded => mapStore.MapSets.Any(s => s.Maps.Any(m => m.OnlineID == Room.Map.ID));
 
     private bool ready;
     private bool confirmExit;
@@ -123,13 +126,43 @@ public partial class MultiLobby : MultiSubScreen
             footer = new MultiLobbyFooter
             {
                 LeaveAction = this.Exit,
-                ReadyAction = toggleReadyState,
+                RightButtonAction = rightButtonPress,
                 ChangeMapAction = changeMap
             }
         };
     }
 
-    private void toggleReadyState() => fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(!ready));
+    private void rightButtonPress()
+    {
+        if (hasMapDownloaded)
+        {
+            fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(!ready));
+            return;
+        }
+
+        mapStore.DownloadMapSet(Room.Map.MapSetID);
+    }
+
+    private void updateRightButton()
+    {
+        if (!hasMapDownloaded)
+        {
+            footer.RightButton.ButtonText = "Download Map";
+            footer.RightButton.Icon = FontAwesome6.Solid.Download;
+            return;
+        }
+
+        footer.RightButton.ButtonText = ready ? "Unready" : "Ready";
+        footer.RightButton.Icon = FontAwesome6.Solid.SquareCheck;
+    }
+
+    private void mapAdded(RealmMapSet set)
+    {
+        if (set.OnlineID != Room.Map.MapSetID)
+            return;
+
+        mapChanged(Room.Map);
+    }
 
     protected override void LoadComplete()
     {
@@ -143,6 +176,10 @@ public partial class MultiLobby : MultiSubScreen
         client.MapChanged += mapChanged;
         client.MapChangedFailed += mapChangeFailed;
         client.Starting += startLoading;
+
+        mapStore.MapSetAdded += mapAdded;
+
+        updateRightButton();
     }
 
     protected override void Dispose(bool isDisposing)
@@ -155,6 +192,8 @@ public partial class MultiLobby : MultiSubScreen
         client.MapChanged -= mapChanged;
         client.MapChangedFailed -= mapChangeFailed;
         client.Starting -= startLoading;
+
+        mapStore.MapSetAdded -= mapAdded;
     }
 
     private void onUserJoined(MultiplayerParticipant user) => playerList.AddPlayer(user);
@@ -165,6 +204,8 @@ public partial class MultiLobby : MultiSubScreen
 
     private void mapChanged(APIMap map)
     {
+        updateRightButton();
+
         var mapSet = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == map.ID));
 
         if (mapSet == null)
@@ -193,7 +234,7 @@ public partial class MultiLobby : MultiSubScreen
             return;
 
         ready = state == MultiplayerUserState.Ready;
-        footer.ReadyButton.ButtonText = ready ? "Unready" : "Ready";
+        updateRightButton();
     }
 
     private void startLoading()

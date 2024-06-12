@@ -531,16 +531,33 @@ public partial class MapStore : Component
         });
     }
 
-    public void StartDownload(APIMapSet mapSet)
+    protected void StartDownload(APIMapSet mapSet)
     {
         DownloadQueue.Add(mapSet);
         DownloadStarted?.Invoke(mapSet);
     }
 
-    public void FinishDownload(APIMapSet mapSet)
+    protected void FinishDownload(APIMapSet mapSet)
     {
         DownloadQueue.Remove(mapSet);
         DownloadFinished?.Invoke(mapSet);
+    }
+
+    public void DownloadMapSet(long id)
+    {
+        var set = DownloadQueue.FirstOrDefault(x => x.ID == id);
+
+        if (set != null)
+            return;
+
+        var req = new MapSetRequest(id);
+        req.Failure += ex => notifications.SendError("Failed to download mapset", ex.Message);
+        fluxel.PerformRequest(req);
+
+        if (!req.IsSuccessful)
+            return;
+
+        DownloadMapSet(req.Response!.Data);
     }
 
     public void DownloadMapSet(APIMapSet set)
@@ -567,7 +584,6 @@ public partial class MapStore : Component
         Logger.Log($"Downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
 
         var req = new MapSetDownloadRequest(set.ID);
-        // var req = fluxel.CreateAPIRequest($"/mapset/{set.ID}/download");
         req.Progress += (current, total) => notification.Progress = (float)current / total;
         req.Failure += exception =>
         {
