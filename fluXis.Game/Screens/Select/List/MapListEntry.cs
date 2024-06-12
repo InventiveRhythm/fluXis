@@ -24,7 +24,7 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
     public Action<RealmMapSet> ExportAction;
     public Action<RealmMapSet> DeleteAction;
 
-    public readonly RealmMapSet MapSet;
+    public RealmMapSet MapSet { get; private set; }
 
     private SelectedState selectedState = SelectedState.Deselected;
 
@@ -93,9 +93,16 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
 
     protected override void Dispose(bool isDisposing)
     {
-        base.Dispose(isDisposing);
-
         maps.MapSetBindable.ValueChanged -= updateSelected;
+
+        SelectAction = null;
+        EditAction = null;
+        ExportAction = null;
+        DeleteAction = null;
+
+        MapSet = null;
+
+        base.Dispose(isDisposing);
     }
 
     public int CompareTo(MapListEntry other) => MapUtils.CompareSets(MapSet, other.MapSet);

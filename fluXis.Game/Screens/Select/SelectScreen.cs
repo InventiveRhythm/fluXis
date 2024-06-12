@@ -248,14 +248,23 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     protected override void Dispose(bool isDisposing)
     {
-        base.Dispose(isDisposing);
-
         MapStore.MapSetAdded -= addMapSet;
         MapStore.MapSetUpdated -= replaceMapSet;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
         MapStore.MapSetBindable.ValueChanged -= mapSetBindableChanged;
         MapStore.MapBindable.ValueChanged -= mapBindableChanged;
+
+        Filters.OnChange -= UpdateSearch;
+
+        menuScroll?.Dispose();
+        randomClick?.Dispose();
+        rewindClick?.Dispose();
+
+        Maps.Clear();
+        lookup.Clear();
+
+        base.Dispose(isDisposing);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

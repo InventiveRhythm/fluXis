@@ -219,9 +219,9 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
 
     protected override void Dispose(bool isDisposing)
     {
-        base.Dispose(isDisposing);
-
         maps.MapBindable.ValueChanged -= updateSelected;
+
+        base.Dispose(isDisposing);
     }
 
     protected override bool OnClick(ClickEvent e)
