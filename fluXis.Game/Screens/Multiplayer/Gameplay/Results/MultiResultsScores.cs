@@ -16,7 +16,7 @@ public partial class MultiResultsScores : FluXisScrollContainer
 
     public MultiResultsScores(List<ScoreInfo> scores)
     {
-        this.scores = scores;
+        this.scores = scores.OrderByDescending(score => score.Score).ToList();
     }
 
     [BackgroundDependencyLoader]
