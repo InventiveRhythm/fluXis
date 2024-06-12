@@ -277,6 +277,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         foreach (RealmMapSet set in sets)
         {
+            if (!ShouldAdd(set))
+                continue;
+
             var entry = new MapListEntry(set)
             {
                 SelectAction = Accept,
@@ -756,6 +759,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     }
 
     protected virtual void OnMapsLoaded() { }
+    protected virtual bool ShouldAdd(RealmMapSet set) => true;
 
     protected virtual void UpdateSearch()
     {
