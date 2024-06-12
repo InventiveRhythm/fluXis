@@ -39,7 +39,7 @@ public partial class MultiSongSelect : SelectScreen
         {
             bool matches = child.MapSet.Maps.Aggregate(false, (current, map) => current | Filters.Matches(map));
 
-            if (matches && child.MapSet.OnlineID != -1)
+            if (matches && child.MapSet.OnlineID > 0)
             {
                 Maps.Add(child.MapSet);
                 child.Show();
