@@ -48,7 +48,7 @@ public partial class ToolbarClock : Container
 
         var secondsTotal = Time.Current / 1000;
         int hours = (int)secondsTotal / 3600;
-        int minutes = (int)secondsTotal / 60;
+        int minutes = (int)secondsTotal / 60 % 60;
         int seconds = (int)secondsTotal % 60;
 
         gameTime.Text = $"{hours:00}:{minutes:00}:{seconds:00}";
