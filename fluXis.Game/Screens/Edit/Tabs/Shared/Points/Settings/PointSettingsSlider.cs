@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,10 +17,11 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
 {
     public string Text { get; init; }
     public LocalisableString TooltipText { get; init; } = string.Empty;
+    public string Formatting { get; init; } = "0.##";
     public T CurrentValue { get; init; }
     public Action<T> OnValueChanged { get; init; }
 
-    public float Step { get; init; } = .1f;
+    public T Step { get; init; } = (T)Convert.ChangeType(0.1f, typeof(T));
     public T Min { get; init; }
     public T Max { get; init; }
 
@@ -38,7 +40,8 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
             Default = CurrentValue,
             Value = CurrentValue,
             MinValue = Min,
-            MaxValue = Max
+            MaxValue = Max,
+            Precision = Step
         };
 
         InternalChildren = new Drawable[]
@@ -64,7 +67,7 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Bindable = Bindable,
-                Step = Step
+                Step = (float)Convert.ToDouble(Step)
             }
         };
     }
@@ -89,7 +92,7 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
         var val = Convert.ToDouble(e.NewValue);
         val = Math.Round(val / Convert.ToDouble(Step)) * Convert.ToDouble(Step);
 
-        valText.Text = $"{val:0.00}".Replace(',', '.');
+        valText.Text = val.ToStringInvariant(Formatting);
         OnValueChanged?.Invoke(e.NewValue);
     }
 }
