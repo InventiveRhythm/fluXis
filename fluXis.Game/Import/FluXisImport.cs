@@ -31,7 +31,8 @@ public class FluXisImport : MapImporter
         {
             Notification = new TaskNotificationData
             {
-                TextWorking = "Importing...",
+                Text = "Importing Mapset...",
+                TextWorking = "Processing...",
                 TextFinished = "Done! Click to view."
             };
 
@@ -60,6 +61,9 @@ public class FluXisImport : MapImporter
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 entry.ExtractToFile(filePath, true);
             }
+
+            var fileCount = archive.Entries.Count;
+            var idx = 0;
 
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
@@ -163,6 +167,9 @@ public class FluXisImport : MapImporter
                         Logger.Error(e, "Failed to look up map online.");
                     }
                 }
+
+                idx++;
+                Notification.Progress = (float)idx / fileCount;
             }
 
             archive.Dispose();
