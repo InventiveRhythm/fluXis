@@ -547,10 +547,13 @@ public partial class MenuScreen : FluXisScreen
         {
             mapChangeTime = 5000;
 
-            var map = maps.GetRandom()?.Maps.FirstOrDefault();
-            var background = new BlurableBackground(map, .2f);
-            playButton.Stack.AutoFill = false;
-            playButton.Stack.Add(background);
+            var map = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
+
+            LoadComponentAsync(new BlurableBackground(map, .2f), b =>
+            {
+                playButton.Stack.AutoFill = false;
+                playButton.Stack.Add(b);
+            });
         }
     }
 }
