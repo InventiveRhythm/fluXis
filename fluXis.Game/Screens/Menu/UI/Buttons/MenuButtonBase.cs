@@ -36,7 +36,16 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
 
     public bool IsVisible => content.Alpha > 0;
 
-    private float animationDelay => Row * (Column - 1) + (Row - 1) * FluXisScreen.ENTER_DELAY;
+    private float animationDelay
+    {
+        get
+        {
+            var count = 0;
+            count += Column - 1;
+            count += Row - 1;
+            return count * FluXisScreen.ENTER_DELAY;
+        }
+    }
 
     private Container content;
     private Box dim;
