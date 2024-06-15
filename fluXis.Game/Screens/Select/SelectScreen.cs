@@ -496,13 +496,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         panels.Content ??= new ConfirmDeletionPanel(() =>
         {
+            if (Equals(set, MapStore.CurrentMapSet))
+                changeSelection(1);
+
             MapStore.DeleteMapSet(set);
             MapList.Remove(lookup[set], false);
             Maps.Remove(set);
             lookup.Remove(set);
-
-            if (Equals(set, MapStore.CurrentMapSet))
-                changeSelection(1);
 
             if (Maps.Count == 0)
                 noMapsContainer.Show();
