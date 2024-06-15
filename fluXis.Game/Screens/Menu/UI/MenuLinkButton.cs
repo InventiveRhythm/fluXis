@@ -11,7 +11,7 @@ using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI;
 
-public partial class MenuIconButton : Container, IHasTooltip
+public partial class MenuLinkButton : Container, IHasTooltip
 {
     public LocalisableString TooltipText => Text;
 
@@ -24,7 +24,7 @@ public partial class MenuIconButton : Container, IHasTooltip
 
     private readonly SpriteIcon icon;
 
-    public MenuIconButton()
+    public MenuLinkButton()
     {
         Size = new Vector2(40);
         Alpha = .6f;
