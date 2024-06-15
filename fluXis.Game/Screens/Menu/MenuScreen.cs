@@ -274,7 +274,7 @@ public partial class MenuScreen : FluXisScreen
                                 Origin = Anchor.Centre,
                                 Masking = true,
                                 BorderColour = Color4.White,
-                                BorderThickness = 20,
+                                BorderThickness = 60,
                                 Children = new Drawable[]
                                 {
                                     new Box
@@ -396,7 +396,7 @@ public partial class MenuScreen : FluXisScreen
         backgrounds.Zoom = 1f;
 
         logoText.ScaleTo(1.1f, 1000, Easing.OutQuint).FadeOut(600);
-        animationCircle.TransformTo(nameof(animationCircle.BorderThickness), 20f).ResizeTo(0)
+        animationCircle.TransformTo(nameof(animationCircle.BorderThickness), 60f).ResizeTo(0)
                        .TransformTo(nameof(animationCircle.BorderThickness), 0f, 1200, Easing.OutQuint).ResizeTo(400, 1000, Easing.OutQuint);
 
         this.Delay(800).FadeIn().OnComplete(_ =>
