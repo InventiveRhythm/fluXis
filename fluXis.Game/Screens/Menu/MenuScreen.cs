@@ -8,7 +8,6 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
-using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.Network;
@@ -549,8 +548,8 @@ public partial class MenuScreen : FluXisScreen
             mapChangeTime = 5000;
 
             var map = maps.GetRandom()?.Maps.FirstOrDefault();
-            var background = new MapBackground(map);
-            background.OnLoadComplete += b => b.FadeInFromZero(300);
+            var background = new BlurableBackground(map, .2f);
+            playButton.Stack.AutoFill = false;
             playButton.Stack.Add(background);
         }
     }
