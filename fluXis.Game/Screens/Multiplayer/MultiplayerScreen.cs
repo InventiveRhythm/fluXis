@@ -38,7 +38,11 @@ public partial class MultiplayerScreen : FluXisScreen
         InternalChildren = new Drawable[]
         {
             menuMusic,
-            screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both }
+            screenStack = new ScreenStack
+            {
+                RelativeSizeAxes = Axes.Both,
+                Alpha = 0
+            }
         };
     }
 
@@ -70,6 +74,9 @@ public partial class MultiplayerScreen : FluXisScreen
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
+        using (BeginDelayedSequence(ENTER_DELAY))
+            screenStack.FadeIn(FADE_DURATION);
+
         globalClock.FadeOut(400).OnComplete(c => c.Stop());
         backgrounds.AddBackgroundFromMap(null);
     }
