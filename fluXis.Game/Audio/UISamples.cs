@@ -30,6 +30,10 @@ public partial class UISamples : Component
     private Sample dropdownClose;
     private Sample overlayOpen;
     private Sample overlayClose;
+    private Sample panelOpen;
+    private Sample panelDangerOpen;
+    private Sample panelClose;
+    private Sample panelDangerClose;
 
     private const float pitch_variation = 0.02f;
     private const float pan_strength = 0.75f;
@@ -49,6 +53,10 @@ public partial class UISamples : Component
         dropdownClose = samples.Get("UI/dropdown-close");
         overlayOpen = samples.Get("UI/Overlay/open");
         overlayClose = samples.Get("UI/Overlay/close");
+        panelOpen = samples.Get("UI/panel-open");
+        panelDangerOpen = samples.Get("UI/panel-open-danger");
+        panelClose = samples.Get("UI/panel-close");
+        panelDangerClose = samples.Get("UI/panel-close-danger");
     }
 
     protected override void LoadComplete()
@@ -75,6 +83,10 @@ public partial class UISamples : Component
         dropdownClose?.Dispose();
         overlayOpen?.Dispose();
         overlayClose?.Dispose();
+        panelOpen?.Dispose();
+        panelDangerOpen?.Dispose();
+        panelClose?.Dispose();
+        panelDangerClose?.Dispose();
     }
 
     private void onSkinChanged()
@@ -127,6 +139,9 @@ public partial class UISamples : Component
         else
             overlayOpen?.Play();
     }
+
+    public void PanelOpen(bool danger = false) => (danger ? panelDangerOpen : panelOpen)?.Play();
+    public void PanelClose(bool danger = false) => (danger ? panelDangerClose : panelClose)?.Play();
 
     public static void PlayPanned(Sample sample, float pan, bool randomizePitch = false)
     {

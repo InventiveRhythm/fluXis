@@ -13,6 +13,7 @@ public partial class ConfirmDeletionPanel : ButtonPanel
         Icon = FontAwesome6.Solid.Trash;
         Text = $"Are you sure you want to delete this{(string.IsNullOrEmpty(itemName) ? "" : $" {itemName}")}?";
         SubText = "This action cannot be undone.";
+        IsDangerous = true;
         Buttons = new ButtonData[]
         {
             new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, confirm, true),
