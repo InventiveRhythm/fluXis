@@ -28,6 +28,7 @@ public partial class TaskNotification : CompositeDrawable
 
     private Sample appear;
     private Sample disappear;
+    private Sample finish;
     private Sample error;
 
     private readonly Color4 colorWorking = Colour4.FromHex("#66AACC");
@@ -44,6 +45,7 @@ public partial class TaskNotification : CompositeDrawable
     {
         appear = samples.Get("UI/Notifications/in");
         disappear = samples.Get("UI/Notifications/out");
+        finish = samples.Get("UI/Notifications/finish");
         error = samples.Get("UI/Notifications/error");
 
         Size = new Vector2(400, 80);
@@ -228,6 +230,7 @@ public partial class TaskNotification : CompositeDrawable
                 resize(1);
                 icon.Icon = FontAwesome6.Solid.Check;
                 statusText.Text = data.TextFinished;
+                finish?.Play();
                 Hide(data.ClickAction != null ? 5000 : 1000);
                 break;
         }
