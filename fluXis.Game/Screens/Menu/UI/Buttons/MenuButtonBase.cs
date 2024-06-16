@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -48,6 +49,9 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
             return count * FluXisScreen.ENTER_DELAY;
         }
     }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     private Container content;
     private Box dim;
@@ -101,7 +105,12 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (!Enabled.Value || !IsVisible)
+        if (!IsVisible)
+            return false;
+
+        samples.Click(!Enabled.Value);
+
+        if (!Enabled.Value)
             return false;
 
         Action?.Invoke();
