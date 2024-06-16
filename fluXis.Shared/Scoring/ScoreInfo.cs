@@ -16,6 +16,9 @@ public class ScoreInfo
     [JsonProperty("score")]
     public int Score { get; set; }
 
+    [JsonProperty("pr")]
+    public double PerformanceRating { get; set; }
+
     [JsonProperty("combo")]
     public int Combo { get; set; }
 

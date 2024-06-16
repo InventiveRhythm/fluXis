@@ -35,6 +35,7 @@ public static class APIExtensions
         Accuracy = score.Accuracy,
         Rank = (ScoreRank)Enum.Parse(typeof(ScoreRank), score.Rank),
         Score = score.TotalScore,
+        PerformanceRating = score.PerformanceRating,
         MaxCombo = score.MaxCombo,
         Flawless = score.FlawlessCount,
         Perfect = score.PerfectCount,

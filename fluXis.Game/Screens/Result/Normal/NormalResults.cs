@@ -304,7 +304,7 @@ public partial class NormalResults : Container
                                             new Entry
                                             {
                                                 Title = "Performance Rating",
-                                                Value = "--.--pr"
+                                                Value = score.PerformanceRating > 0 ? $"{score.PerformanceRating.ToStringInvariant("00.00")}pr" : "--.--pr"
                                             },
                                             new Entry
                                             {
