@@ -527,7 +527,7 @@ public partial class NormalResults : Container
             var res = results.SubmitRequest.Response;
             if (res is null) return;
 
-            if (res.Status == 200)
+            if (res.Success)
             {
                 ptrStat.Value = res.Data.PotentialRating;
                 ptrStat.Difference = res.Data.PotentialRatingChange;

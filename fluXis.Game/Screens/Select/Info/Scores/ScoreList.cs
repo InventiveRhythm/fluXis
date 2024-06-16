@@ -373,7 +373,7 @@ public partial class ScoreList : GridContainer
         if (cancellationToken.IsCancellationRequested)
             return null;
 
-        if (req.Response.Status != 200)
+        if (!req.IsSuccessful)
         {
             noScoresText.Text = req.Response.Message;
             Schedule(() =>

@@ -45,7 +45,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
             var req = new OnlineUsersRequest();
             fluxel.PerformRequest(req);
 
-            if (req.Response.Status == 200)
+            if (req.IsSuccessful)
             {
                 foreach (var user in req.Response.Data.Users)
                 {

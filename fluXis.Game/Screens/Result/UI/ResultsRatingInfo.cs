@@ -26,7 +26,7 @@ public partial class ResultsRatingInfo : Container
             ratingContainer.FadeOut();
             text.FadeOut();
 
-            if (value.Status != 200)
+            if (!value.Success)
             {
                 text.Text = value.Message;
                 text.FadeIn(200);

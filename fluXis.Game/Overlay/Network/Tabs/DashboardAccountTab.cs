@@ -191,7 +191,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         req.Progress += (cur, max) => notification.Progress = cur / (float)max;
                                         req.Success += res =>
                                         {
-                                            notification.State = res.Status == 200 ? LoadingState.Complete : LoadingState.Failed;
+                                            notification.State = res.Success ? LoadingState.Complete : LoadingState.Failed;
                                             users.TriggerAvatarUpdate(user.ID);
                                         };
                                         req.Failure += ex =>
@@ -237,7 +237,7 @@ public partial class DashboardAccountTab : DashboardTab
                                         req.Progress += (cur, max) => notif.Progress = cur / (float)max;
                                         req.Success += res =>
                                         {
-                                            notif.State = res.Status == 200 ? LoadingState.Complete : LoadingState.Failed;
+                                            notif.State = res.Success ? LoadingState.Complete : LoadingState.Failed;
                                             users.TriggerBannerUpdate(user.ID);
                                         };
                                         req.Failure += ex =>
