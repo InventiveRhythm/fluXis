@@ -44,6 +44,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Stores;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK.Input;
@@ -100,6 +101,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private DependencyContainer dependencies;
     private bool exitConfirmed;
     private bool isNewMap;
+    private bool isUploading;
 
     private string lastMapHash;
     private string lastEffectHash;
@@ -642,6 +644,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void startUpload()
     {
+        if (isUploading)
+            return;
+
         if (!fluxel.IsLoggedIn)
         {
             notifications.SendError("You need to be logged in to upload maps!");
@@ -724,7 +729,15 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             fluxel.PerformRequest(req);
         }
 
-        void run(long id = -1) => Task.Run(() => uploadSet(isUpdate, id));
+        void run(long id = -1) => Task.Run(() =>
+        {
+            if (isUploading)
+                return;
+
+            isUploading = true;
+            uploadSet(isUpdate, id);
+            isUploading = false;
+        });
     }
 
     private async void uploadSet(bool isUpdate, long setID = -1)
@@ -817,6 +830,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         catch (Exception e)
         {
             notifications.SendError("An error occurred while uploading the mapset!", e.Message);
+            Logger.Error(e, "An error occurred while uploading the mapset!");
             Schedule(() => panels.Content?.Hide());
         }
     }
