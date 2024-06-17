@@ -59,6 +59,8 @@ public partial class FluxelClient : Component, IAPIClient
     public Bindable<ConnectionStatus> Status { get; } = new();
     public Exception? LastException { get; private set; } = null!;
 
+    public long MaintenanceTime { get; set; }
+
     public bool IsLoggedIn => User.Value != null;
 
     public FluxelClient(APIEndpointConfig endpoint)
@@ -77,6 +79,7 @@ public partial class FluxelClient : Component, IAPIClient
 
         RegisterListener<LoginPacket>(EventType.Login, onLoginResponse);
         RegisterListener<LogoutPacket>(EventType.Logout, onLogout);
+        RegisterListener<MaintenancePacket>(EventType.Maintenance, onMaintenance);
     }
 
     private async void loop()
@@ -295,6 +298,7 @@ public partial class FluxelClient : Component, IAPIClient
 
             EventType.Achievement => handleListener<AchievementPacket>,
             EventType.ServerMessage => handleListener<ServerMessagePacket>,
+            EventType.Maintenance => handleListener<MaintenancePacket>,
 
             EventType.FriendOnline => handleListener<FriendOnlinePacket>,
             EventType.FriendOffline => handleListener<FriendOnlinePacket>,
@@ -476,6 +480,14 @@ public partial class FluxelClient : Component, IAPIClient
         notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome6.Solid.TriangleExclamation);
     }
 
+    private void onMaintenance(FluxelReply<MaintenancePacket> e)
+    {
+        if (e.Data!.Time <= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            return;
+
+        MaintenanceTime = e.Data.Time;
+    }
+
     private static EventType getType(string id)
     {
         return id switch
@@ -485,6 +497,7 @@ public partial class FluxelClient : Component, IAPIClient
 
             PacketIDs.ACHIEVEMENT => EventType.Achievement,
             PacketIDs.SERVER_MESSAGE => EventType.ServerMessage,
+            PacketIDs.MAINTENANCE => EventType.Maintenance,
 
             PacketIDs.FRIEND_ONLINE => EventType.FriendOnline,
             PacketIDs.FRIEND_OFFLINE => EventType.FriendOffline,
@@ -528,6 +541,7 @@ public enum EventType
 
     Achievement,
     ServerMessage,
+    Maintenance,
 
     ChatMessage,
     ChatHistory,

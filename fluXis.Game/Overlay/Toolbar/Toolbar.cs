@@ -1,7 +1,9 @@
+using System;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
@@ -13,6 +15,8 @@ using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Ranking;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Wiki;
+using fluXis.Game.Utils;
+using Humanizer;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -37,6 +41,9 @@ public partial class Toolbar : Container
     private ChatOverlay chat { get; set; }
 
     [Resolved]
+    private FluxelClient fluxel { get; set; }
+
+    [Resolved]
     private FluXisGameBase game { get; set; }
 
     [Resolved]
@@ -49,6 +56,8 @@ public partial class Toolbar : Container
 
     private string centerTextString;
     private FluXisSpriteText centerText;
+
+    private double lastTime;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -227,6 +236,29 @@ public partial class Toolbar : Container
         {
             centerText.Text = text;
             centerText.FadeIn(400, Easing.OutQuint);
+        }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Time.Current - lastTime < 1000)
+            return;
+
+        lastTime = Time.Current;
+
+        if (fluxel.MaintenanceTime > 0)
+        {
+            var time = TimeUtils.GetFromSeconds(fluxel.MaintenanceTime);
+            var timeLeft = time - DateTimeOffset.UtcNow;
+            SetCenterText($"Server maintenance in {timeLeft.Humanize()}.");
+
+            if (time <= DateTimeOffset.UtcNow)
+            {
+                fluxel.MaintenanceTime = 0;
+                SetCenterText(string.Empty);
+            }
         }
     }
 }
