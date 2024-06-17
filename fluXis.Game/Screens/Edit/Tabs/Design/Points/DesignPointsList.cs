@@ -75,15 +75,23 @@ public partial class DesignPointsList : PointsList
 
     // flash is covered by the menu bar
     // TODO: Redesign the "add" menu
-    protected override IEnumerable<AddButtonEntry> CreateAddEntries() => new AddButtonEntry[]
+    protected override IEnumerable<AddButtonEntry> CreateAddEntries()
     {
-        new("Flash", () => Create(new FlashEvent())),
-        new("Shake", () => Create(new ShakeEvent())),
-        new("Playfield Fade", () => Create(new PlayfieldFadeEvent())),
-        new("Playfield Move", () => Create(new PlayfieldMoveEvent())),
-        new("Playfield Scale", () => Create(new PlayfieldScaleEvent())),
-        new("Beat Pulse", () => Create(new BeatPulseEvent())),
-        new("Playfield Rotate", () => Create(new PlayfieldRotateEvent())),
-        new("Note", () => Create(new NoteEvent()))
-    };
+        var entries = new List<AddButtonEntry>
+        {
+            new("Flash", () => Create(new FlashEvent())),
+            new("Shake", () => Create(new ShakeEvent())),
+            new("Playfield Fade", () => Create(new PlayfieldFadeEvent())),
+            new("Playfield Move", () => Create(new PlayfieldMoveEvent())),
+            new("Playfield Scale", () => Create(new PlayfieldScaleEvent())),
+            new("Beat Pulse", () => Create(new BeatPulseEvent())),
+            new("Playfield Rotate", () => Create(new PlayfieldRotateEvent())),
+            new("Note", () => Create(new NoteEvent()))
+        };
+
+        if (FluXisGameBase.IsDebug)
+            entries.Add(new AddButtonEntry("Shader", () => Create(new ShaderEvent { ShaderName = "Bloom" })));
+
+        return entries;
+    }
 }

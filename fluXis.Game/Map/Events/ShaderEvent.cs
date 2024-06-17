@@ -1,6 +1,5 @@
 using fluXis.Game.Map.Structures;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace fluXis.Game.Map.Events;
 
@@ -16,7 +15,11 @@ public class ShaderEvent : ITimedObject, IHasDuration
     public double Duration { get; set; }
 
     [JsonProperty("params")]
-    public JObject ShaderParams { get; set; } = new();
+    public ShaderParameters Parameters { get; set; } = new();
 
-    public T ParamsAs<T>() => ShaderParams.ToObject<T>();
+    public class ShaderParameters
+    {
+        [JsonProperty("strength")]
+        public float Strength { get; set; }
+    }
 }

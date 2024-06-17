@@ -4,7 +4,6 @@ using System.Globalization;
 using fluXis.Game.Map.Events;
 using fluXis.Shared.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using SixLabors.ImageSharp;
@@ -196,13 +195,13 @@ public class MapEvents : IDeepCloneable<MapEvents>
 
                     var dataJson = line[startIdx..(endIdx + 1)];
                     Logger.Log(dataJson);
-                    var data = dataJson.Deserialize<JObject>();
+                    var data = dataJson.Deserialize<ShaderEvent.ShaderParameters>();
 
                     ShaderEvents.Add(new ShaderEvent
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture),
                         ShaderName = args[1],
-                        ShaderParams = data
+                        Parameters = data
                     });
                     break;
             }

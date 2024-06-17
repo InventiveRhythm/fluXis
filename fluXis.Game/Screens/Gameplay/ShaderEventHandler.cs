@@ -6,9 +6,7 @@ using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Map.Events;
-using fluXis.Game.Map.Events.Shader;
 using osu.Framework.Graphics;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Screens.Gameplay;
 
@@ -51,7 +49,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
     private void invert(ShaderEvent ev)
     {
-        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var data = ev.Parameters;
         var invert = stack.GetShader<InvertContainer>();
 
         if (invert == null)
@@ -62,8 +60,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
     private void greyscale(ShaderEvent ev)
     {
-        Logger.Log($"Greyscale at {Clock.CurrentTime}", LoggingTarget.Runtime, LogLevel.Debug);
-        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var data = ev.Parameters;
         var greyscale = stack.GetShader<GreyscaleContainer>();
 
         if (greyscale == null)
@@ -74,8 +71,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
     private void chromatic(ShaderEvent ev)
     {
-        Logger.Log($"Greyscale at {Clock.CurrentTime}", LoggingTarget.Runtime, LogLevel.Debug);
-        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var data = ev.Parameters;
         var chromatic = stack.GetShader<ChromaticContainer>();
 
         if (chromatic == null)
@@ -86,8 +82,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
     private void bloom(ShaderEvent ev)
     {
-        Logger.Log($"Bloom at {Clock.CurrentTime}", LoggingTarget.Runtime, LogLevel.Debug);
-        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var data = ev.Parameters;
         var bloom = stack.GetShader<BloomContainer>();
 
         if (bloom == null)
@@ -98,8 +93,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
     private void mosaic(ShaderEvent ev)
     {
-        Logger.Log($"Mosaic at {Clock.CurrentTime}", LoggingTarget.Runtime, LogLevel.Debug);
-        var data = ev.ParamsAs<ShaderStrengthParams>();
+        var data = ev.Parameters;
         var mosaic = stack.GetShader<MosaicContainer>();
 
         if (mosaic == null)
