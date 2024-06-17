@@ -84,6 +84,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         }
     }
 
+    private const float minimum_loaded_hit_objects = 10;
+
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
@@ -184,7 +186,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             OnFinished?.Invoke();
         }
 
-        while (FutureHitObjects is { Count: > 0 } && ShouldDisplay(FutureHitObjects[0].Time))
+        while (FutureHitObjects is { Count: > 0 } && (ShouldDisplay(FutureHitObjects[0].Time) || HitObjects.Count < minimum_loaded_hit_objects))
         {
             var hit = createHitObject(FutureHitObjects[0]);
             HitObjects.Add(hit);
@@ -193,7 +195,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
             FutureHitObjects.RemoveAt(0);
         }
 
-        while (HitObjects.Count > 0 && !ShouldDisplay(HitObjects.Last().Data.Time))
+        while (HitObjects.Count > 0 && !ShouldDisplay(HitObjects.Last().Data.Time) && HitObjects.Count > minimum_loaded_hit_objects)
         {
             var hit = HitObjects.Last();
             removeHitObject(hit, true);
