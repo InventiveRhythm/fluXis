@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures;
 using fluXis.Shared.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -212,19 +213,25 @@ public class MapEvents : IDeepCloneable<MapEvents>
 
     public MapEvents Sort()
     {
-        LaneSwitchEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        FlashEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        PulseEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        PlayfieldMoveEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        PlayfieldScaleEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        ShakeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        PlayfieldFadeEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        ShaderEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        BeatPulseEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        PlayfieldRotateEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
-        NoteEvents.Sort((a, b) => a.Time.CompareTo(b.Time));
+        LaneSwitchEvents.Sort(compare);
+        FlashEvents.Sort(compare);
+        PulseEvents.Sort(compare);
+        PlayfieldMoveEvents.Sort(compare);
+        PlayfieldScaleEvents.Sort(compare);
+        ShakeEvents.Sort(compare);
+        PlayfieldFadeEvents.Sort(compare);
+        ShaderEvents.Sort(compare);
+        BeatPulseEvents.Sort(compare);
+        PlayfieldRotateEvents.Sort(compare);
+        NoteEvents.Sort(compare);
 
         return this;
+    }
+
+    private static int compare(ITimedObject a, ITimedObject b)
+    {
+        var val = a.Time.CompareTo(b.Time);
+        return val == 0 ? a.GetHashCode().CompareTo(b.GetHashCode()) : val;
     }
 
     public string Save() => Sort().Serialize();
