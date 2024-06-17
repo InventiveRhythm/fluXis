@@ -26,6 +26,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     [Resolved]
     private MapStore maps { get; set; }
 
+    [Resolved]
+    private GlobalClock clock { get; set; }
+
     private SpriteStack<MapBackground> backgrounds;
     private SectionedGradient gradient;
     private SpriteStack<MapCover> covers;
@@ -194,6 +197,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
+        clock.RateBindable.BindValueChanged(rateChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -201,6 +205,15 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.Dispose(isDisposing);
 
         maps.MapBindable.ValueChanged -= mapChanged;
+        clock.RateBindable.ValueChanged -= rateChanged;
+    }
+
+    private void rateChanged(ValueChangedEvent<double> e)
+    {
+        if (maps.MapBindable.Value == null)
+            return;
+
+        updateValues(maps.MapBindable.Value, (float)e.NewValue);
     }
 
     private void mapChanged(ValueChangedEvent<RealmMap> e)
@@ -221,11 +234,11 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         difficultyText.Text = map.Difficulty;
         mapper.Text = $"mapped by {map.Metadata.Mapper}";
 
-        bpm.SetValue(map.Filters.BPMMin, map.Filters.BPMMax);
-        length.SetValue(map.Filters.Length);
-        notesPerSecond.SetValue(map.Filters.NotesPerSecond);
+        updateValues(map, (float)clock.Rate);
+
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
         longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
+
         /*accuracy.SetValue(map.Accuracy);
         health.SetValue(map.Health);*/
 
@@ -236,6 +249,13 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         var cover = new MapCover(map.MapSet);
         covers.Add(cover, 400);
         cover.FadeInFromZero(400, Easing.OutQuint);
+    }
+
+    private void updateValues(RealmMap map, float rate)
+    {
+        bpm.SetValue(map.Filters.BPMMin * rate, map.Filters.BPMMax * rate);
+        length.SetValue(map.Filters.Length / rate);
+        notesPerSecond.SetValue(map.Filters.NotesPerSecond * rate);
     }
 
     private partial class StatsRow : GridContainer
