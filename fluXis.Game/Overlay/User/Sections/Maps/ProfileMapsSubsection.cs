@@ -59,7 +59,7 @@ public partial class ProfileMapsSubsection : FillFlowContainer
                 Direction = FillDirection.Full,
                 Spacing = new Vector2(20),
                 Alpha = maps.Any() ? 1 : 0,
-                ChildrenEnumerable = maps.Select(map => new MapCard(map) { CardWidth = 475 })
+                ChildrenEnumerable = maps.Select(map => new MapCard(map) { CardWidth = 448 })
             }
         };
     }

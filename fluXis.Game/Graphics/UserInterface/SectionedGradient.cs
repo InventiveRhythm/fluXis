@@ -9,6 +9,7 @@ namespace fluXis.Game.Graphics.UserInterface;
 public partial class SectionedGradient : CompositeDrawable
 {
     public float SplitPoint { get; init; } = .2f;
+    public float EndAlpha { get; init; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -22,7 +23,7 @@ public partial class SectionedGradient : CompositeDrawable
             },
             new Box
             {
-                Colour = ColourInfo.GradientHorizontal(Colour4.White, Colour4.White.Opacity(0)),
+                Colour = ColourInfo.GradientHorizontal(Colour4.White, Colour4.White.Opacity(EndAlpha)),
                 RelativeSizeAxes = Axes.Both,
                 RelativePositionAxes = Axes.X,
                 Width = 1 - SplitPoint,

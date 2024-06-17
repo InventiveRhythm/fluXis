@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Drawables.Online;
@@ -25,6 +27,9 @@ public partial class MapCard : Container, IHasContextMenu
 {
     [Resolved]
     private MapStore maps { get; set; }
+
+    [Resolved]
+    private UISamples samples { get; set; }
 
     [Resolved]
     private FluXisGameBase game { get; set; }
@@ -54,6 +59,7 @@ public partial class MapCard : Container, IHasContextMenu
 
     private Box background;
     private Container content;
+    private SectionedGradient gradient;
 
     private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.ID);
     private bool downloading => maps.DownloadQueue.Any(x => x.ID == MapSet.ID);
@@ -70,10 +76,9 @@ public partial class MapCard : Container, IHasContextMenu
     private void load()
     {
         Width = CardWidth;
-        Height = 100;
-        CornerRadius = 20;
+        Height = 112;
+        CornerRadius = 16;
         Masking = true;
-        BorderThickness = 2;
 
         if (MapSet == null)
         {
@@ -106,7 +111,7 @@ public partial class MapCard : Container, IHasContextMenu
                 Width = CardWidth,
                 RelativeSizeAxes = Axes.Y,
                 Masking = true,
-                CornerRadius = 20,
+                CornerRadius = 16,
                 Children = new Drawable[]
                 {
                     new Box
@@ -118,33 +123,20 @@ public partial class MapCard : Container, IHasContextMenu
                     {
                         RelativeSizeAxes = Axes.Both
                     },
-                    new Container
+                    gradient = new SectionedGradient
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Children = new Drawable[]
-                        {
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Width = .2f,
-                                Colour = Colour4.Black.Opacity(.7f)
-                            },
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                RelativePositionAxes = Axes.X,
-                                Colour = ColourInfo.GradientHorizontal(Colour4.Black.Opacity(.7f), Colour4.Black.Opacity(.4f)),
-                                Width = .8f,
-                                X = .2f
-                            }
-                        }
+                        Colour = FluXisColors.Background2,
+                        SplitPoint = .3f,
+                        EndAlpha = .5f,
+                        Alpha = .6f
                     },
                     new GridContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         ColumnDimensions = new[]
                         {
-                            new Dimension(GridSizeMode.Absolute, 100),
+                            new Dimension(GridSizeMode.Absolute, 112),
                             new Dimension()
                         },
                         Content = new[]
@@ -153,51 +145,59 @@ public partial class MapCard : Container, IHasContextMenu
                             {
                                 new Container
                                 {
-                                    Size = new Vector2(100),
-                                    CornerRadius = 20,
+                                    Size = new Vector2(112),
+                                    CornerRadius = 16,
                                     Masking = true,
                                     Child = new DelayedLoadUnloadWrapper(() => new DrawableOnlineCover(MapSet))
                                     {
                                         RelativeSizeAxes = Axes.Both
                                     }
                                 },
-                                new FillFlowContainer
+                                new Container
                                 {
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Direction = FillDirection.Vertical,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Spacing = new Vector2(-3),
-                                    Padding = new MarginPadding { Horizontal = 10 },
+                                    RelativeSizeAxes = Axes.Both,
+                                    Padding = new MarginPadding(12),
                                     Children = new Drawable[]
                                     {
-                                        new TruncatingText
+                                        new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.X,
-                                            Text = MapSet.Title,
-                                            FontSize = 24,
-                                            Shadow = true
-                                        },
-                                        new TruncatingText
-                                        {
-                                            RelativeSizeAxes = Axes.X,
-                                            Text = $"by {MapSet.Artist}",
-                                            FontSize = 16,
-                                            Shadow = true
-                                        },
-                                        new TruncatingText
-                                        {
-                                            RelativeSizeAxes = Axes.X,
-                                            Text = $"mapped by {MapSet.Creator?.PreferredName}",
-                                            FontSize = 16,
-                                            Shadow = true
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(-3),
+                                            Children = new Drawable[]
+                                            {
+                                                new TruncatingText
+                                                {
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Text = MapSet.Title,
+                                                    WebFontSize = 18,
+                                                    Shadow = true
+                                                },
+                                                new TruncatingText
+                                                {
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Text = $"by {MapSet.Artist}",
+                                                    WebFontSize = 14,
+                                                    Shadow = true
+                                                },
+                                                new TruncatingText
+                                                {
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Text = $"mapped by {MapSet.Creator?.PreferredName}",
+                                                    WebFontSize = 12,
+                                                    Shadow = true,
+                                                    Alpha = .8f
+                                                }
+                                            }
                                         },
                                         new Container
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             Height = 20,
                                             Margin = new MarginPadding { Top = 5 },
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
                                             Children = new Drawable[]
                                             {
                                                 new CircularContainer
@@ -219,14 +219,15 @@ public partial class MapCard : Container, IHasContextMenu
                                                             Origin = Anchor.Centre,
                                                             Text = MapSet.Status switch
                                                             {
-                                                                0 => "Unsubmitted",
-                                                                1 => "Pending",
-                                                                2 => "Impure",
-                                                                3 => "Pure",
-                                                                _ => "Unknown"
+                                                                0 => "UNSUBMITTED",
+                                                                1 => "PENDING",
+                                                                2 => "IMPURE",
+                                                                3 => "PURE",
+                                                                _ => "UNKNOWN"
                                                             },
-                                                            Colour = FluXisColors.TextDark,
-                                                            FontSize = 16,
+                                                            Colour = Colour4.Black,
+                                                            WebFontSize = 12,
+                                                            Alpha = .75f,
                                                             Margin = new MarginPadding { Horizontal = 8 }
                                                         }
                                                     }
@@ -250,7 +251,9 @@ public partial class MapCard : Container, IHasContextMenu
                                                         {
                                                             Anchor = Anchor.Centre,
                                                             Origin = Anchor.Centre,
-                                                            FontSize = 16,
+                                                            WebFontSize = 12,
+                                                            Alpha = .75f,
+                                                            Colour = Colour4.Black,
                                                             Text = getKeymodeString(),
                                                             Margin = new MarginPadding { Horizontal = 8 }
                                                         }
@@ -290,8 +293,21 @@ public partial class MapCard : Container, IHasContextMenu
         maps.DownloadFinished -= downloadStateChanged;
     }
 
+    protected override bool OnHover(HoverEvent e)
+    {
+        samples.Hover();
+        gradient.FadeTo(.5f, 50);
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        gradient.FadeTo(.6f, 200);
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
+        samples.Click();
         OnClickAction?.Invoke(MapSet);
         return true;
     }
