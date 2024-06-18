@@ -196,8 +196,27 @@ public partial class MultiLobby : MultiSubScreen
         mapStore.MapSetAdded -= mapAdded;
     }
 
-    private void onUserJoined(MultiplayerParticipant user) => playerList.AddPlayer(user);
-    private void onUserLeft(MultiplayerParticipant user) => playerList.RemovePlayer(user.ID);
+    private void onUserJoined(MultiplayerParticipant user)
+    {
+        if (!this.IsCurrentScreen())
+        {
+            Scheduler.AddOnce(() => onUserJoined(user));
+            return;
+        }
+
+        playerList.AddPlayer(user);
+    }
+
+    private void onUserLeft(MultiplayerParticipant user)
+    {
+        if (!this.IsCurrentScreen())
+        {
+            Scheduler.AddOnce(() => onUserLeft(user));
+            return;
+        }
+
+        playerList.RemovePlayer(user.ID);
+    }
 
     private void changeMap() => multiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
     private void mapChangeFailed(string error) => notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
@@ -227,6 +246,12 @@ public partial class MultiLobby : MultiSubScreen
 
     private void updateUserState(long id, MultiplayerUserState state)
     {
+        if (!this.IsCurrentScreen())
+        {
+            Scheduler.AddOnce(() => updateUserState(id, state));
+            return;
+        }
+
         var player = playerList.GetPlayer(id);
         player?.SetState(state);
 
@@ -239,7 +264,15 @@ public partial class MultiLobby : MultiSubScreen
 
     private void startLoading()
     {
-        var map = mapStore.CurrentMapSet.Maps.First();
+        var map = mapStore.CurrentMapSet.Maps.FirstOrDefault(x => x.OnlineID == Room.Map.ID);
+
+        if (map == null)
+        {
+            notifications.SendError("Failed to find map locally.");
+            fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+            return;
+        }
+
         var mods = new List<IMod>();
 
         multiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
