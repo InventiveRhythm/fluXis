@@ -33,6 +33,10 @@ public class SettingsGeneralStrings : LocalizationCategory
     public TranslatableString Folders => Get("folders-title", "Folders");
 
     public TranslatableString FoldersOpen => Get("open-folder", "Open fluXis folder");
+
+    public TranslatableString ExportLogs => Get("export-logs", "Export logs");
+    public TranslatableString ExportLogsDescription => Get("export-logs-description", "Compresses all log files into a single zip archive for better sharing.");
+
     public TranslatableString FoldersChange => Get("change-folder", "Change folder location");
 
     #endregion
