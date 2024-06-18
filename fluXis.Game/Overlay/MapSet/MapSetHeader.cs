@@ -27,7 +27,7 @@ public partial class MapSetHeader : CompositeDrawable
     {
         RelativeSizeAxes = Axes.X;
         Height = 280;
-        CornerRadius = 20;
+        CornerRadius = 24;
         Masking = true;
 
         InternalChildren = new Drawable[]
@@ -35,7 +35,7 @@ public partial class MapSetHeader : CompositeDrawable
             new LoadWrapper<DrawableOnlineBackground>
             {
                 RelativeSizeAxes = Axes.Both,
-                LoadContent = () => new DrawableOnlineBackground(set)
+                LoadContent = () => new DrawableOnlineBackground(set, OnlineTextureStore.AssetSize.Large)
                 {
                     RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fill,
@@ -71,7 +71,7 @@ public partial class MapSetHeader : CompositeDrawable
                             CornerRadius = 20,
                             Masking = true,
                             EdgeEffect = FluXisStyles.ShadowMedium,
-                            LoadContent = () => new DrawableOnlineCover(set)
+                            LoadContent = () => new DrawableOnlineCover(set, OnlineTextureStore.AssetSize.Large)
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 FillMode = FillMode.Fill,

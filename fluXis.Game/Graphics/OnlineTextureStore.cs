@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using fluXis.Game.Online;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
@@ -21,18 +22,18 @@ public class OnlineTextureStore : TextureStore
         users.OnBannerUpdate += id => purge(AssetType.Banner, id);
     }
 
-    public Texture GetAchievement(string id) => get(AssetType.Achievement, id, true);
+    public Texture GetAchievement(string id) => get(AssetType.Achievement, id, AssetSize.Small, true);
     public Texture GetAvatar(long id) => get(AssetType.Avatar, id);
     public Texture GetBanner(long id) => get(AssetType.Banner, id);
-    public Texture GetBackground(long id) => get(AssetType.Background, id);
-    public Texture GetCover(long id) => get(AssetType.Cover, id);
+    public Texture GetBackground(long id, AssetSize size = AssetSize.Small) => get(AssetType.Background, id, size);
+    public Texture GetCover(long id, AssetSize size = AssetSize.Small) => get(AssetType.Cover, id, size);
     public Texture GetClubIcon(long id) => get(AssetType.ClubIcon, id);
     public Texture GetClubBanner(long id) => get(AssetType.ClubBanner, id);
 
-    private Texture get(AssetType type, long id, bool addExtension = false) => get(type, id.ToString(), addExtension);
-    private Texture get(AssetType type, string id, bool addExtension = false) => Get(getUrl(type, id, addExtension));
+    private Texture get(AssetType type, long id, AssetSize size = AssetSize.Small, bool addExtension = false) => get(type, id.ToString(), size, addExtension);
+    private Texture get(AssetType type, string id, AssetSize size = AssetSize.Small, bool addExtension = false) => Get(getUrl(type, id, size, addExtension));
 
-    private string getUrl(AssetType type, string id, bool addExtension)
+    private string getUrl(AssetType type, string id, AssetSize size, bool addExtension)
     {
         var typeStr = type switch
         {
@@ -45,17 +46,30 @@ public class OnlineTextureStore : TextureStore
             AssetType.ClubBanner => "club-banner",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
-        return $"{endpointConfig.AssetUrl}/{typeStr}/{id}" + (addExtension ? ".png" : "");
+
+        var builder = new StringBuilder();
+        builder.Append($"{endpointConfig.AssetUrl}/{typeStr}/{id}");
+
+        if (size == AssetSize.Large)
+            builder.Append("-lg");
+        if (addExtension)
+            builder.Append(".png");
+
+        return builder.ToString();
     }
 
     private static string getLookup(string name, WrapMode wrapModeS = default, WrapMode wrapModeT = default)
         => $"{name}:wrap-{(int)wrapModeS}-{(int)wrapModeT}";
 
-    private void purge(AssetType type, long id) => purge(type, id.ToString());
-
-    private void purge(AssetType type, string id, bool addExtension = false)
+    private void purge(AssetType type, long id)
     {
-        var url = getUrl(type, id, addExtension);
+        purge(type, id.ToString(), AssetSize.Small);
+        purge(type, id.ToString(), AssetSize.Large);
+    }
+
+    private void purge(AssetType type, string id, AssetSize size, bool addExtension = false)
+    {
+        var url = getUrl(type, id, size, addExtension);
         if (TryGetCached(getLookup(url), out var tex))
             Purge(tex);
     }
@@ -69,5 +83,11 @@ public class OnlineTextureStore : TextureStore
         Cover,
         ClubIcon,
         ClubBanner
+    }
+
+    public enum AssetSize
+    {
+        Small,
+        Large
     }
 }
