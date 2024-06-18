@@ -48,9 +48,6 @@ public partial class MultiLobby : MultiSubScreen
     private MultiplayerMenuMusic menuMusic { get; set; }
 
     [Resolved]
-    private MultiplayerScreen multiScreen { get; set; }
-
-    [Resolved]
     private FluxelClient fluxel { get; set; }
 
     [Resolved]
@@ -198,7 +195,7 @@ public partial class MultiLobby : MultiSubScreen
 
     private void onUserJoined(MultiplayerParticipant user)
     {
-        if (!this.IsCurrentScreen())
+        if (!IsCurrentScreen)
         {
             Scheduler.AddOnce(() => onUserJoined(user));
             return;
@@ -209,7 +206,7 @@ public partial class MultiLobby : MultiSubScreen
 
     private void onUserLeft(MultiplayerParticipant user)
     {
-        if (!this.IsCurrentScreen())
+        if (!IsCurrentScreen)
         {
             Scheduler.AddOnce(() => onUserLeft(user));
             return;
@@ -218,7 +215,7 @@ public partial class MultiLobby : MultiSubScreen
         playerList.RemovePlayer(user.ID);
     }
 
-    private void changeMap() => multiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
+    private void changeMap() => MultiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
     private void mapChangeFailed(string error) => notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
 
     private void mapChanged(APIMap map)
@@ -246,7 +243,7 @@ public partial class MultiLobby : MultiSubScreen
 
     private void updateUserState(long id, MultiplayerUserState state)
     {
-        if (!this.IsCurrentScreen())
+        if (!IsCurrentScreen)
         {
             Scheduler.AddOnce(() => updateUserState(id, state));
             return;
@@ -275,7 +272,7 @@ public partial class MultiLobby : MultiSubScreen
 
         var mods = new List<IMod>();
 
-        multiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
+        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
     }
 
     public override bool OnExiting(ScreenExitEvent e)

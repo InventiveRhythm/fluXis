@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -15,6 +16,11 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 {
     public virtual string Title => "Screen";
     public virtual string SubTitle => "Screen";
+
+    protected bool IsCurrentScreen => this.IsCurrentScreen() && MultiScreen.IsCurrentScreen();
+
+    [Resolved]
+    protected MultiplayerScreen MultiScreen { get; private set; }
 
     private Container titleContainer;
     private Box titleLine;
