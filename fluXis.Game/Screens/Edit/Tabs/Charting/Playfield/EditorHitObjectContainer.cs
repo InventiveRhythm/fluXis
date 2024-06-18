@@ -37,7 +37,7 @@ public partial class EditorHitObjectContainer : Container
         Add(new Box
         {
             RelativeSizeAxes = Axes.X,
-            Height = 3,
+            Height = 5,
             Anchor = Anchor.BottomCentre,
             Origin = Anchor.BottomCentre,
             Y = -HITPOSITION
