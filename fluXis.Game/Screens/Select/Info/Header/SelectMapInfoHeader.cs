@@ -9,6 +9,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -27,7 +28,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private MapStore maps { get; set; }
 
     [Resolved]
-    private GlobalClock clock { get; set; }
+    private ModSelector mods { get; set; }
 
     private SpriteStack<MapBackground> backgrounds;
     private SectionedGradient gradient;
@@ -197,7 +198,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
-        clock.RateBindable.BindValueChanged(rateChanged, true);
+        mods.RateMod.RateBindable.BindValueChanged(rateChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -205,15 +206,15 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.Dispose(isDisposing);
 
         maps.MapBindable.ValueChanged -= mapChanged;
-        clock.RateBindable.ValueChanged -= rateChanged;
+        mods.RateMod.RateBindable.ValueChanged -= rateChanged;
     }
 
-    private void rateChanged(ValueChangedEvent<double> e)
+    private void rateChanged(ValueChangedEvent<float> e)
     {
         if (maps.MapBindable.Value == null)
             return;
 
-        updateValues(maps.MapBindable.Value, (float)e.NewValue);
+        updateValues(maps.MapBindable.Value, e.NewValue);
     }
 
     private void mapChanged(ValueChangedEvent<RealmMap> e)
@@ -234,7 +235,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         difficultyText.Text = map.Difficulty;
         mapper.Text = $"mapped by {map.Metadata.Mapper}";
 
-        updateValues(map, (float)clock.Rate);
+        updateValues(map, mods.RateMod.RateBindable.Value);
 
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
         longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
