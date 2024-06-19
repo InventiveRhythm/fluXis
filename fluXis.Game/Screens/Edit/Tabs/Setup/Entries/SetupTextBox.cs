@@ -50,6 +50,6 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
     protected override void OnFocus(FocusEvent e)
     {
         // redirect focus to the textbox
-        GetContainingInputManager().ChangeFocus(textBox);
+        GetContainingFocusManager()?.ChangeFocus(textBox);
     }
 }

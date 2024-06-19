@@ -267,7 +267,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
         });
     }
 
-    private void switchFocus(AuthOverlayTextBox to) => Schedule(() => GetContainingInputManager().ChangeFocus(to));
+    private void switchFocus(AuthOverlayTextBox to) => Schedule(() => GetContainingFocusManager()?.ChangeFocus(to));
 
     private void setError(string msg)
     {

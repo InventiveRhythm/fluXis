@@ -232,7 +232,7 @@ public partial class LoginOverlay : CompositeDrawable
         content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);
         samples.Overlay(false);
 
-        Schedule(() => GetContainingInputManager().ChangeFocus(string.IsNullOrEmpty(username.Text) ? username : password));
+        Schedule(() => GetContainingFocusManager()?.ChangeFocus(string.IsNullOrEmpty(username.Text) ? username : password));
     }
 
     public override void Hide()
