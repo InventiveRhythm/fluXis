@@ -56,7 +56,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     private ISkin currentSkin { get; set; }
 
     private const string default_skin_name = "Default";
-    private const string default_bright_skin_name = "Default Bright";
 
     public Action SkinChanged { get; set; }
     public Action SkinListChanged { get; set; }
@@ -74,8 +73,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     {
         string[] defaultSkins =
         {
-            default_skin_name,
-            default_bright_skin_name
+            default_skin_name
         };
 
         var custom = skinStorage.GetDirectories("").ToArray();
@@ -224,9 +222,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         {
             case default_skin_name:
                 return defaultSkin;
-
-            case default_bright_skin_name:
-                return new DefaultBrightSkin(textures, samples);
         }
 
         var skinJson = new SkinJson();
@@ -250,7 +245,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         return createCustomSkin(skinJson, folder);
     }
 
-    private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase) || string.Equals(skinName, default_bright_skin_name, StringComparison.CurrentCultureIgnoreCase);
+    private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase);
 
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
 
