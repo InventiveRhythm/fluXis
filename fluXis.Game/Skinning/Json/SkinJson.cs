@@ -42,6 +42,9 @@ public class SkinJson
     [JsonProperty("judgements")]
     public SkinJudgements Judgements { get; set; } = new();
 
+    [JsonProperty("snap-colors")]
+    public SkinSnapColors SnapColors { get; set; } = new();
+
     [JsonProperty("overrides")]
     public Dictionary<string, string> Overrides { get; set; } = new();
 

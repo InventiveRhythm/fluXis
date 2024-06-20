@@ -1,4 +1,3 @@
-using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Skinning.Bases;
 using fluXis.Game.Skinning.Bases.HitObjects;
 using fluXis.Game.Skinning.Json;
@@ -37,6 +36,6 @@ public partial class DefaultHitObjectPiece : ColorableSkinDrawable, ICanHaveSnap
     public void ApplySnapColor(int start, int end)
     {
         UseCustomColor = true;
-        SetColor(FluXisColors.GetSnapColor(start));
+        SetColor(SkinJson.SnapColors.GetColor(start));
     }
 }

@@ -65,6 +65,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     private JudgementProcessor judgementProcessor => screen.JudgementProcessor;
 
     private List<double> scrollVelocityMarks { get; } = new();
+
+    private static int[] snaps { get; } = { 48, 24, 16, 12, 8, 6, 4, 3 };
     private Dictionary<int, int> snapIndices { get; } = new();
 
     public Action OnFinished { get; set; }
@@ -382,25 +384,30 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         // shouldn't happen but just in case
         if (Map.TimingPoints == null || Map.TimingPoints.Count == 0) return;
 
-        for (var i = 0; i < Map.TimingPoints.Count; i++)
+        foreach (var hitObject in Map.HitObjects)
         {
-            var timingPoint = Map.TimingPoints[i];
-            var time = timingPoint.Time;
-            var target = i + 1 < Map.TimingPoints.Count ? Map.TimingPoints[i + 1].Time : Map.EndTime;
-            var increment = timingPoint.MsPerBeat;
+            var time = (int)hitObject.Time;
+            var endTime = (int)hitObject.EndTime;
 
-            while (time < target)
+            if (!snapIndices.ContainsKey(time))
+                snapIndices.Add(time, getIndex(time));
+            if (!snapIndices.ContainsKey(endTime))
+                snapIndices.Add(endTime, getIndex(endTime));
+        }
+
+        int getIndex(int time)
+        {
+            var tp = Map.GetTimingPoint(time);
+            var diff = time - tp.Time;
+            var idx = Math.Round(snaps[0] * diff / tp.MsPerBeat, MidpointRounding.AwayFromZero);
+
+            for (var i = 0; i < snaps.Length; i++)
             {
-                for (int j = 0; j < 16; j++)
-                {
-                    var add = increment / 16 * j;
-                    var snap = time + add;
-
-                    snapIndices.TryAdd((int)snap, j);
-                }
-
-                time += increment;
+                if (idx % snaps[i] == 0)
+                    return i;
             }
+
+            return snaps.Length - 1;
         }
     }
 

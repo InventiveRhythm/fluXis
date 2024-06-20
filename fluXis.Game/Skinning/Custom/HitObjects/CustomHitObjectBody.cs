@@ -1,13 +1,15 @@
 using fluXis.Game.Skinning.Bases;
+using fluXis.Game.Skinning.Bases.HitObjects;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osuTK;
 
 namespace fluXis.Game.Skinning.Custom.HitObjects;
 
-public partial class CustomHitObjectBody : ColorableSkinDrawable
+public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapColor
 {
     private int mode { get; }
     private Drawable sprite { get; }
@@ -34,5 +36,13 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable
             return;
 
         sprite.Colour = color;
+    }
+
+    public void ApplySnapColor(int start, int end)
+    {
+        UseCustomColor = true;
+        var startColor = SkinJson.SnapColors.GetColor(start);
+        var endColor = SkinJson.SnapColors.GetColor(end);
+        sprite.Colour = ColourInfo.GradientVertical(endColor, startColor);
     }
 }

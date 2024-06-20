@@ -246,28 +246,4 @@ public static class FluXisColors
                 return val != 0 ? Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7") : Colour4.White;
         }
     }
-
-    public static Colour4 GetSnapColor(int snap)
-    {
-        switch (snap)
-        {
-            case 0: // 1/1
-                return Colour4.FromHex("#FF5555");
-
-            case 8: // 1/2
-                return Colour4.FromHex("#5555FF");
-
-            case 4 or 12: // 1/4
-                return Colour4.FromHex("#FFFF55");
-
-            case 2 or 6 or 10 or 14: // 1/8
-                return Colour4.FromHex("#55FF55");
-
-            case 1 or 3 or 5 or 7 or 9 or 11 or 13 or 15: // 1/16
-                return Colour4.FromHex("#FF55FF");
-
-            default:
-                return Colour4.White;
-        }
-    }
 }
