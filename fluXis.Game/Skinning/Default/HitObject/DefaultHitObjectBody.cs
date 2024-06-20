@@ -29,7 +29,7 @@ public partial class DefaultHitObjectBody : DefaultSkinDrawable, ICanHaveSnapCol
 
     public void ApplySnapColor(int start, int end)
     {
-        UseCutomColor = true;
+        UseCustomColor = true;
         var startColor = FluXisColors.GetSnapColor(start);
         var endColor = FluXisColors.GetSnapColor(end).Darken(.4f);
         box.Colour = ColourInfo.GradientVertical(endColor, startColor);

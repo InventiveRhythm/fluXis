@@ -14,7 +14,7 @@ public partial class DefaultSkinDrawable : CompositeDrawable
 
     protected SkinJson SkinJson { get; }
 
-    protected bool UseCutomColor { get; set; }
+    protected bool UseCustomColor { get; set; }
 
     public DefaultSkinDrawable(SkinJson skinJson)
     {
@@ -23,7 +23,7 @@ public partial class DefaultSkinDrawable : CompositeDrawable
 
     public void UpdateColor(int lane, int keyCount) => Schedule(() =>
     {
-        if (UseCutomColor)
+        if (UseCustomColor)
             return;
 
         if (ColorProvider != null && ColorProvider.HasColorFor(lane, keyCount, out var color))

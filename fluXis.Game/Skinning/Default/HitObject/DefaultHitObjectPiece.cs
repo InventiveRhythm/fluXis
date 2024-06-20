@@ -35,7 +35,7 @@ public partial class DefaultHitObjectPiece : DefaultSkinDrawable, ICanHaveSnapCo
 
     public void ApplySnapColor(int start, int end)
     {
-        UseCutomColor = true;
+        UseCustomColor = true;
         SetColor(FluXisColors.GetSnapColor(start));
     }
 }
