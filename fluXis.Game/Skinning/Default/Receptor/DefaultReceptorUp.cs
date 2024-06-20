@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Bases;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -7,7 +8,7 @@ using osuTK;
 
 namespace fluXis.Game.Skinning.Default.Receptor;
 
-public partial class DefaultReceptorUp : DefaultSkinDrawable
+public partial class DefaultReceptorUp : ColorableSkinDrawable
 {
     protected Container Diamond { get; }
 

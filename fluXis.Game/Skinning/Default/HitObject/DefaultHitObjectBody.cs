@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Bases;
 using fluXis.Game.Skinning.Bases.HitObjects;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Graphics;
@@ -7,7 +8,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Skinning.Default.HitObject;
 
-public partial class DefaultHitObjectBody : DefaultSkinDrawable, ICanHaveSnapColor
+public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapColor
 {
     private readonly Box box;
 

@@ -1,12 +1,13 @@
+using fluXis.Game.Skinning.Default;
 using fluXis.Game.Skinning.Json;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Skinning.Default;
+namespace fluXis.Game.Skinning.Bases;
 
-public partial class DefaultSkinDrawable : CompositeDrawable
+public partial class ColorableSkinDrawable : CompositeDrawable
 {
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -16,7 +17,7 @@ public partial class DefaultSkinDrawable : CompositeDrawable
 
     protected bool UseCustomColor { get; set; }
 
-    public DefaultSkinDrawable(SkinJson skinJson)
+    public ColorableSkinDrawable(SkinJson skinJson)
     {
         SkinJson = skinJson;
     }

@@ -4,6 +4,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Custom.Health;
+using fluXis.Game.Skinning.Custom.HitObjects;
 using fluXis.Game.Skinning.Custom.Judgements;
 using fluXis.Game.Skinning.Custom.Lighting;
 using fluXis.Game.Skinning.Json;
@@ -135,14 +136,9 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
+            var drawable = new CustomHitObjectPiece(SkinJson, keyCount, textures.Get(path));
+            drawable.UpdateColor(lane, keyCount);
+            return drawable;
         }
 
         return null;
@@ -173,14 +169,9 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            return new Sprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
+            var drawable = new CustomHitObjectBody(SkinJson, keyCount, textures.Get(path));
+            drawable.UpdateColor(lane, keyCount);
+            return drawable;
         }
 
         return null;
@@ -192,14 +183,9 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
+            var drawable = new CustomHitObjectPiece(SkinJson, keyCount, textures.Get(path));
+            drawable.UpdateColor(lane, keyCount);
+            return drawable;
         }
 
         return null;

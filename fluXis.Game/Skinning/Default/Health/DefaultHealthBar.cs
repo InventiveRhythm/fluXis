@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Skinning.Bases;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,7 +13,7 @@ using osuTK;
 
 namespace fluXis.Game.Skinning.Default.Health;
 
-public partial class DefaultHealthBar : DefaultSkinDrawable
+public partial class DefaultHealthBar : ColorableSkinDrawable
 {
     private HealthProcessor processor { get; }
 

@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning.Bases;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -6,7 +7,7 @@ using osu.Framework.Graphics.Shapes;
 
 namespace fluXis.Game.Skinning.Default.Stage;
 
-public partial class DefaultStageBorderLeft : DefaultSkinDrawable
+public partial class DefaultStageBorderLeft : ColorableSkinDrawable
 {
     public DefaultStageBorderLeft(SkinJson skinJson)
         : base(skinJson)
