@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
@@ -597,44 +598,47 @@ public partial class MapStore : Component
             notification.Progress = 1;
             FinishDownload(set);
 
-            try
+            Task.Run(() =>
             {
-                Logger.Log($"Finished downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
-                var data = req.ResponseStream;
+                try
+                {
+                    Logger.Log($"Finished downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
+                    var data = req.ResponseStream;
 
-                if (data == null)
+                    if (data == null)
+                    {
+                        notification.State = LoadingState.Failed;
+                        return;
+                    }
+
+                    // write data to file
+                    var path = storage.GetFullPath($"download/{set.ID}.zip");
+                    var dir = Path.GetDirectoryName(path);
+
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    if (File.Exists(path))
+                        File.Delete(path);
+
+                    File.WriteAllBytes(path, data.ToArray());
+
+                    // import
+                    new FluXisImport
+                    {
+                        MapStore = this,
+                        Storage = storage,
+                        Notifications = notifications,
+                        Realm = realm,
+                        Notification = notification
+                    }.Import(path);
+                }
+                catch (Exception ex)
                 {
                     notification.State = LoadingState.Failed;
-                    return;
+                    Logger.Log($"Failed to import mapset: {ex.Message}", LoggingTarget.Network);
                 }
-
-                // write data to file
-                var path = storage.GetFullPath($"download/{set.ID}.zip");
-                var dir = Path.GetDirectoryName(path);
-
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                if (File.Exists(path))
-                    File.Delete(path);
-
-                File.WriteAllBytes(path, data.ToArray());
-
-                // import
-                new FluXisImport
-                {
-                    MapStore = this,
-                    Storage = storage,
-                    Notifications = notifications,
-                    Realm = realm,
-                    Notification = notification
-                }.Import(path);
-            }
-            catch (Exception ex)
-            {
-                notification.State = LoadingState.Failed;
-                Logger.Log($"Failed to import mapset: {ex.Message}", LoggingTarget.Network);
-            }
+            });
         };
 
         StartDownload(set);
