@@ -9,12 +9,14 @@ namespace fluXis.Game.Skinning.Custom.HitObjects;
 public partial class CustomHitObjectPiece : ColorableSkinDrawable, ICanHaveSnapColor
 {
     private int mode { get; }
+    private bool isEnd { get; }
     private Drawable sprite { get; }
 
-    public CustomHitObjectPiece(SkinJson skinJson, int mode, Texture texture)
+    public CustomHitObjectPiece(SkinJson skinJson, Texture texture, int mode, bool end)
         : base(skinJson)
     {
         this.mode = mode;
+        isEnd = end;
 
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
@@ -30,7 +32,12 @@ public partial class CustomHitObjectPiece : ColorableSkinDrawable, ICanHaveSnapC
 
     protected override void SetColor(Colour4 color)
     {
-        if (!SkinJson.GetKeymode(mode).TintNotes)
+        var keymode = SkinJson.GetKeymode(mode);
+
+        if (!keymode.TintNotes)
+            return;
+
+        if (isEnd && !keymode.TintLongNotes)
             return;
 
         sprite.Colour = color;

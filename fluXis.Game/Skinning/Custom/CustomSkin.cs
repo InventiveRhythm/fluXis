@@ -136,7 +136,7 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectPiece(SkinJson, keyCount, textures.Get(path));
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, false);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }
@@ -183,7 +183,7 @@ public class CustomSkin : ISkin
 
         if (storage.Exists(path))
         {
-            var drawable = new CustomHitObjectPiece(SkinJson, keyCount, textures.Get(path));
+            var drawable = new CustomHitObjectPiece(SkinJson, textures.Get(path), keyCount, true);
             drawable.UpdateColor(lane, keyCount);
             return drawable;
         }

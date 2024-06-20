@@ -17,6 +17,13 @@ public class SkinKeymode
     [JsonProperty("tint_notes")]
     public bool TintNotes { get; set; }
 
+    /// <summary>
+    /// tints the body and end of a long note.
+    /// only applies when <see cref="TintNotes"/> is true.
+    /// </summary>
+    [JsonProperty("tint_lns")]
+    public bool TintLongNotes { get; set; } = true;
+
     [JsonProperty("colors")]
     public List<string> Colors { get; set; } = new();
 }

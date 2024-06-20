@@ -32,7 +32,9 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
 
     protected override void SetColor(Colour4 color)
     {
-        if (!SkinJson.GetKeymode(mode).TintNotes)
+        var keymode = SkinJson.GetKeymode(mode);
+
+        if (!keymode.TintNotes || !keymode.TintLongNotes)
             return;
 
         sprite.Colour = color;
@@ -40,6 +42,11 @@ public partial class CustomHitObjectBody : ColorableSkinDrawable, ICanHaveSnapCo
 
     public void ApplySnapColor(int start, int end)
     {
+        var keymode = SkinJson.GetKeymode(mode);
+
+        if (!keymode.TintNotes || !keymode.TintLongNotes)
+            return;
+
         UseCustomColor = true;
         var startColor = SkinJson.SnapColors.GetColor(start);
         var endColor = SkinJson.SnapColors.GetColor(end);
