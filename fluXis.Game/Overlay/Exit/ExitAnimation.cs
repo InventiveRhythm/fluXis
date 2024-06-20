@@ -52,9 +52,9 @@ public partial class ExitAnimation : FullInputBlockingContainer
                     Origin = Anchor.CentreLeft,
                     MaskingSmoothness = 0,
                     Width = 1f / bars,
-                    X = i / (float)bars,
-                    Y = 1.2f,
-                    Height = 1.2f,
+                    X = i / (float)bars - .001f * i, // stupid, but works
+                    Y = 1.6f,
+                    Height = 1.6f,
                     Colour = Colour4.Black
                 })
             },
