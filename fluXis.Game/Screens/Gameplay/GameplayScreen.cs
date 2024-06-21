@@ -549,7 +549,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         if (FadeBackToGlobalClock)
         {
-            globalClock.RateTo(GameplayClock.Rate, 0);
+            globalClock.RateTo(GameplayClock.Rate);
             ScheduleAfterChildren(() =>
             {
                 globalClock.Seek(GameplayClock.CurrentTime);

@@ -234,7 +234,7 @@ public partial class MultiLobby : MultiSubScreen
         var localMap = mapSet.Maps.FirstOrDefault(m => m.OnlineID == map.ID);
         mapStore.CurrentMap = localMap;
 
-        clock.FadeOut(); // because it sets itself to 1
+        clock.VolumeOut(); // because it sets itself to 1
         clock.RestartPoint = 0;
         clock.AllowLimitedLoop = false;
         backgrounds.AddBackgroundFromMap(localMap);
@@ -305,12 +305,12 @@ public partial class MultiLobby : MultiSubScreen
         return true;
     }
 
-    private void stopClockMusic() => clock.FadeOut(600).OnComplete(_ => clock.Stop());
+    private void stopClockMusic() => clock.VolumeOut(600).OnComplete(_ => clock.Stop());
 
     private void startClockMusic()
     {
         clock.Start();
-        clock.FadeIn(600);
+        clock.VolumeIn(600);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
@@ -333,7 +333,7 @@ public partial class MultiLobby : MultiSubScreen
             var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Map.ID);
             if (mapInfo == null) return; // what
 
-            clock.FadeOut(); // because it sets itself to 1
+            clock.VolumeOut(); // because it sets itself to 1
             clock.RestartPoint = 0;
             clock.AllowLimitedLoop = false;
             backgrounds.AddBackgroundFromMap(mapInfo);

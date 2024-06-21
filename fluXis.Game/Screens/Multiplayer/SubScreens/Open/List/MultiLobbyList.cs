@@ -145,7 +145,7 @@ public partial class MultiLobbyList : MultiSubScreen
     public override void OnResuming(ScreenTransitionEvent e)
     {
         menuMusic.GoToLayer(0, 1);
-        clock.FadeOut(600).OnComplete(_ => clock.Stop());
+        clock.VolumeOut(600).OnComplete(_ => clock.Stop());
         footer.Show();
         loadLobbies();
         base.OnResuming(e);

@@ -1,6 +1,5 @@
 using System;
 using fluXis.Game.Audio;
-using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -156,7 +155,7 @@ public partial class ModSelectRate : Container
                 Selector.Select(mod);
 
             mod.Rate = rate;
-            clock.RateTo(rate);
+            clock.RateTo(rate, 400, Easing.Out);
             Selector.UpdateTotalMultiplier();
 
             rateText.Text = $"{Math.Round(rate, 2).ToStringInvariant()}x";

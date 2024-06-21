@@ -28,6 +28,7 @@ using fluXis.Game.UI;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -483,15 +484,14 @@ public partial class MenuScreen : FluXisScreen
             maps.CurrentMap = maps.GetRandom()?.Maps.FirstOrDefault() ?? MapStore.CreateDummyMap();
 
         clock.Stop();
-        clock.Volume = 0;
+        clock.VolumeTo(0);
 
         backgrounds.AddBackgroundFromMap(maps.CurrentMapSet?.Maps.First());
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        clock.FadeIn(500);
-
+        clock.VolumeTo(0).VolumeTo(1, 500);
         clock.Start();
 
         if (config.Get<bool>(FluXisSetting.IntroTheme))

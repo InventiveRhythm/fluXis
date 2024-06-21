@@ -231,7 +231,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             this.FadeInFromZero(FADE_DURATION);
             backButton.Show();
 
-            clock.FadeOut(FADE_DURATION);
+            clock.VolumeOut(FADE_DURATION);
             clock.Delay(FADE_DURATION).OnComplete(_ => clock.Stop());
         }
     }
@@ -244,7 +244,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         previews.StopPreview();
 
         clock.Start();
-        clock.FadeIn(FADE_DURATION);
+        clock.VolumeIn(FADE_DURATION);
         return false;
     }
 

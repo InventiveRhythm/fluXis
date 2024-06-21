@@ -257,7 +257,7 @@ public partial class GameplayLoader : FluXisScreen
             {
                 ValidForResume = false;
                 loadingContainer.FadeOut(FADE_DURATION);
-                clock.Delay(MOVE_DURATION).Schedule(() => clock.FadeOut(MOVE_DURATION));
+                clock.Delay(MOVE_DURATION).Schedule(() => clock.VolumeOut(MOVE_DURATION));
                 this.Delay(MOVE_DURATION * 2).Schedule(() =>
                 {
                     clock.Stop();
@@ -279,7 +279,7 @@ public partial class GameplayLoader : FluXisScreen
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        clock.FadeIn();
+        clock.VolumeIn(400, Easing.Out);
 
         if (fadeBackToGlobalClock)
             clock.Start();

@@ -77,7 +77,7 @@ public partial class MultiplayerScreen : FluXisScreen
         using (BeginDelayedSequence(ENTER_DELAY))
             screenStack.FadeIn(FADE_DURATION);
 
-        globalClock.FadeOut(400).OnComplete(c => c.Stop());
+        globalClock.VolumeOut(400).OnComplete(c => c.Stop());
         backgrounds.AddBackgroundFromMap(null);
     }
 
@@ -89,7 +89,7 @@ public partial class MultiplayerScreen : FluXisScreen
         this.Delay(FADE_DURATION).FadeOut();
 
         globalClock.Start();
-        globalClock.FadeIn(FADE_DURATION);
+        globalClock.VolumeIn(FADE_DURATION);
         backgrounds.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
         return false;
     }

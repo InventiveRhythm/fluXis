@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
-using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -563,7 +562,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     public override bool OnExiting(ScreenExitEvent e)
     {
         clock.Looping = false;
-        clock.RateTo(1f);
+        clock.RateTo(1f, 400, Easing.Out);
 
         playExitAnimation();
         return base.OnExiting(e);
