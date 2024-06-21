@@ -1,102 +1,96 @@
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
-using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Multiplayer;
 
-public partial class MultiplayerMenuMusic : Container
+public partial class MultiplayerMenuMusic : Container<DrawableTrack>
 {
-    private MultiplayerTrack baseTrack;
+    private DrawableTrack baseTrack;
 
-    private MultiplayerTrack rankedMain;
-    private MultiplayerTrack rankedPrepare;
+    private DrawableTrack rankedMain;
+    private DrawableTrack rankedPrepare;
 
-    private MultiplayerTrack lobbyList;
-    private MultiplayerTrack lobbyPrepare;
+    private DrawableTrack lobbyList;
+    private DrawableTrack lobbyPrepare;
 
-    private MultiplayerTrack win;
-    private MultiplayerTrack lose;
+    private DrawableTrack win;
+    private DrawableTrack lose;
 
     [BackgroundDependencyLoader]
     private void load(ITrackStore trackStore)
     {
         InternalChildren = new[]
         {
-            baseTrack = trackStore.Get("Menu/Multiplayer/base.mp3"),
-            rankedMain = trackStore.Get("Menu/Multiplayer/ranked-main.mp3"),
-            rankedPrepare = trackStore.Get("Menu/Multiplayer/ranked-prepare.mp3"),
-            lobbyList = trackStore.Get("Menu/Multiplayer/lobby-list.mp3"),
-            lobbyPrepare = trackStore.Get("Menu/Multiplayer/lobby-prepare.mp3"),
-            win = trackStore.Get("Menu/Multiplayer/win.mp3"),
-            lose = trackStore.Get("Menu/Multiplayer/lose.mp3")
+            baseTrack = new DrawableTrack(trackStore.Get("Menu/Multiplayer/base.mp3")),
+            rankedMain = new DrawableTrack(trackStore.Get("Menu/Multiplayer/ranked-main.mp3")),
+            rankedPrepare = new DrawableTrack(trackStore.Get("Menu/Multiplayer/ranked-prepare.mp3")),
+            lobbyList = new DrawableTrack(trackStore.Get("Menu/Multiplayer/lobby-list.mp3")),
+            lobbyPrepare = new DrawableTrack(trackStore.Get("Menu/Multiplayer/lobby-prepare.mp3")),
+            win = new DrawableTrack(trackStore.Get("Menu/Multiplayer/win.mp3")),
+            lose = new DrawableTrack(trackStore.Get("Menu/Multiplayer/lose.mp3"))
         };
     }
 
     protected override void LoadComplete()
     {
-        baseTrack.Start();
-
-        // Ranked
-        rankedMain.Start();
-        rankedPrepare.Start();
-
-        // OpenLobby
-        lobbyList.Start();
-        lobbyPrepare.Start();
-
-        // Win/Lose
-        win.Start();
-        lose.Start();
+        foreach (var track in Children)
+        {
+            track.Looping = true;
+            track.VolumeTo(0);
+            track.Start();
+        }
     }
 
     public void GoToLayer(int layer, int mode, int alt = 0)
     {
-        baseTrack.VolumeTo(1);
+        baseTrack.VolumeTo(1, 200);
 
         switch (mode)
         {
             case -1:
-                rankedMain.VolumeTo(0);
-                rankedPrepare.VolumeTo(0);
+                rankedMain.VolumeTo(0, 200);
+                rankedPrepare.VolumeTo(0, 200);
 
-                lobbyList.VolumeTo(0);
-                lobbyPrepare.VolumeTo(0);
+                lobbyList.VolumeTo(0, 200);
+                lobbyPrepare.VolumeTo(0, 200);
 
-                win.VolumeTo(0);
-                lose.VolumeTo(0);
+                win.VolumeTo(0, 200);
+                lose.VolumeTo(0, 200);
                 break;
 
             case 0: // Ranked
-                rankedMain.VolumeTo(layer >= 0 ? 1 : 0);
-                rankedPrepare.VolumeTo(layer == 1 ? 1 : 0);
+                rankedMain.VolumeTo(layer >= 0 ? 1 : 0, 200);
+                rankedPrepare.VolumeTo(layer == 1 ? 1 : 0, 200);
 
                 if (layer == 2)
                 {
-                    win.VolumeTo(alt == 0 ? 1 : 0);
-                    lose.VolumeTo(alt == 1 ? 1 : 0);
+                    win.VolumeTo(alt == 0 ? 1 : 0, 200);
+                    lose.VolumeTo(alt == 1 ? 1 : 0, 200);
                 }
                 else
                 {
-                    win.VolumeTo(0);
-                    lose.VolumeTo(0);
+                    win.VolumeTo(0, 200);
+                    lose.VolumeTo(0, 200);
                 }
 
                 break;
 
             case 1: // OpenLobby
-                lobbyList.VolumeTo(layer >= 0 ? 1 : 0);
-                lobbyPrepare.VolumeTo(layer == 1 ? 1 : 0);
+                lobbyList.VolumeTo(layer >= 0 ? 1 : 0, 200);
+                lobbyPrepare.VolumeTo(layer == 1 ? 1 : 0, 200);
 
                 if (layer == 2)
                 {
-                    win.VolumeTo(alt == 0 ? 1 : 0);
-                    lose.VolumeTo(alt == 1 ? 1 : 0);
+                    win.VolumeTo(alt == 0 ? 1 : 0, 200);
+                    lose.VolumeTo(alt == 1 ? 1 : 0, 200);
                 }
                 else
                 {
-                    win.VolumeTo(0);
-                    lose.VolumeTo(0);
+                    win.VolumeTo(0, 200);
+                    lose.VolumeTo(0, 200);
                 }
 
                 break;
@@ -105,50 +99,7 @@ public partial class MultiplayerMenuMusic : Container
 
     public void StopAll()
     {
-        baseTrack.VolumeTo(0);
-
-        rankedMain.VolumeTo(0);
-        rankedPrepare.VolumeTo(0);
-
-        lobbyList.VolumeTo(0);
-        lobbyPrepare.VolumeTo(0);
-
-        win.VolumeTo(0);
-        lose.VolumeTo(0);
-    }
-
-    private partial class MultiplayerTrack : Component
-    {
-        private Track track { get; init; }
-
-        private double volume
-        {
-            get => track?.Volume.Value ?? 0;
-            set
-            {
-                if (track == null) return;
-
-                track.Volume.Value = value;
-            }
-        }
-
-        public void Start()
-        {
-            if (track == null) return;
-
-            volume = 0;
-            track.Looping = true;
-            track.Start();
-        }
-
-        protected override void Dispose(bool isDisposing)
-        {
-            base.Dispose(isDisposing);
-            track?.Dispose();
-        }
-
-        public void VolumeTo(double volume, int duration = 400) => this.TransformTo(nameof(volume), volume, duration);
-
-        public static implicit operator MultiplayerTrack(Track track) => new() { track = track };
+        foreach (var track in Children)
+            track.VolumeTo(0, 200);
     }
 }
