@@ -167,10 +167,17 @@ public partial class ScoreList : GridContainer
                             Origin = Anchor.Centre,
                             Alpha = 0
                         },
-                        scrollContainer = new FluXisScrollContainer
+                        new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            ScrollbarAnchor = Anchor.TopRight
+                            Padding = new MarginPadding { Right = 20 },
+                            Masking = true,
+                            Child = scrollContainer = new FluXisScrollContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                ScrollbarAnchor = Anchor.TopRight,
+                                Masking = false
+                            }
                         },
                         loadingIcon = new LoadingIcon
                         {
@@ -466,7 +473,7 @@ public partial class ScoreList : GridContainer
     private void addScore(ScoreListEntry entry, int index = -1)
     {
         entry.Place = index;
-        entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children[^1].Y + scrollContainer.ScrollContent.Children[^1].Height + 5 : 0;
+        entry.Y = scrollContainer.ScrollContent.Children.Count > 0 ? scrollContainer.ScrollContent.Children[^1].Y + scrollContainer.ScrollContent.Children[^1].Height + 6 : 0;
         scrollContainer.ScrollContent.Add(entry);
     }
 

@@ -14,14 +14,14 @@ public partial class TestRanks : FluXisTestScene
             Direction = FillDirection.Horizontal,
             Children = new Drawable[]
             {
-                new DrawableScoreRank { Rank = ScoreRank.X, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.SS, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.S, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.AA, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.A, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.B, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.C, Size = 64 },
-                new DrawableScoreRank { Rank = ScoreRank.D, Size = 64 }
+                new DrawableScoreRank { Rank = ScoreRank.X, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.SS, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.S, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.AA, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.A, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.B, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.C, FontSize = 64 },
+                new DrawableScoreRank { Rank = ScoreRank.D, FontSize = 64 }
             }
         });
     }

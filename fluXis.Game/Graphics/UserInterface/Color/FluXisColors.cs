@@ -1,3 +1,4 @@
+using fluXis.Game.Mods;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osuTK;
@@ -244,6 +245,30 @@ public static class FluXisColors
 
             default:
                 return val != 0 ? Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7") : Colour4.White;
+        }
+    }
+
+    public static Colour4 GetModTypeColor(ModType modType)
+    {
+        switch (modType)
+        {
+            case ModType.Rate:
+                return Colour4.FromHex("#ffdb69");
+
+            case ModType.DifficultyDecrease:
+                return Colour4.FromHex("#b2ff66");
+
+            case ModType.DifficultyIncrease:
+                return Colour4.FromHex("#ff6666");
+
+            case ModType.Automation:
+                return Colour4.FromHex("#66b3ff");
+
+            case ModType.Misc:
+                return Colour4.FromHex("#8866ff");
+
+            default:
+                return Colour4.FromHex("#cccccc");
         }
     }
 }

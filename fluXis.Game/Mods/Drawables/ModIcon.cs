@@ -28,16 +28,7 @@ public partial class ModIcon : Container
         Shear = new Vector2(0.2f, 0);
         EdgeEffect = FluXisStyles.ShadowSmall;
 
-        var color = Mod.Type switch
-        {
-            ModType.Rate => Colour4.FromHex("#ffdb69"),
-            ModType.DifficultyDecrease => Colour4.FromHex("#b2ff66"),
-            ModType.DifficultyIncrease => Colour4.FromHex("#ff6666"),
-            ModType.Automation => Colour4.FromHex("#66b3ff"),
-            ModType.Misc => Colour4.FromHex("#8866ff"),
-            ModType.Special => Colour4.FromHex("#cccccc"),
-            _ => Colour4.White
-        };
+        var color = FluXisColors.GetModTypeColor(Mod.Type);
 
         Children = new Drawable[]
         {

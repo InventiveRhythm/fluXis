@@ -1,121 +1,138 @@
-using System;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Shared.Scoring.Enums;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Graphics.Drawables;
 
-public partial class DrawableScoreRank : Container
+public partial class DrawableScoreRank : CompositeDrawable
 {
     public ScoreRank Rank
     {
         get => rank;
         set
         {
+            if (rank == value)
+                return;
+
             rank = value;
-            ClearInternal();
-            drawLetters();
+
+            if (IsLoaded)
+                redraw();
         }
     }
 
-    public new float Size
-    {
-        get => size;
-        set
-        {
-            size = value;
-            Height = size;
-            Width = size;
-            ClearInternal();
-            drawLetters();
-        }
-    }
+    public float FontSize { get; init; } = 64;
+    public bool Shadow { get; init; } = true;
+    public bool AlternateColor { get; init; }
 
     private ScoreRank rank = ScoreRank.X;
-    private float size = 64;
 
-    private void drawLetters()
+    [BackgroundDependencyLoader]
+    private void load() => redraw();
+
+    private void redraw()
     {
-        switch (rank)
+        ClearInternal();
+        var color = GetColor(Rank);
+        var str = Rank.ToString();
+
+        switch (str.Length)
         {
-            case ScoreRank.X:
-                drawSingleLetter("X", Colour4.FromHex("#a9a9a9"));
+            case 1:
+                drawSingleLetter(str, color);
                 break;
 
-            case ScoreRank.SS:
-                drawDoubleLetter("S", Colour4.FromHex("#ffc14a"));
+            case 2:
+                drawDoubleLetter(str[0].ToString(), color);
                 break;
-
-            case ScoreRank.S:
-                drawSingleLetter("S", Colour4.FromHex("#ffc14a"));
-                break;
-
-            case ScoreRank.AA:
-                drawDoubleLetter("A", Colour4.FromHex("#84ff70"));
-                break;
-
-            case ScoreRank.A:
-                drawSingleLetter("A", Colour4.FromHex("#84ff70"));
-                break;
-
-            case ScoreRank.B:
-                drawSingleLetter("B", Colour4.FromHex("#70d7ff"));
-                break;
-
-            case ScoreRank.C:
-                drawSingleLetter("C", Colour4.FromHex("#ff70ff"));
-                break;
-
-            case ScoreRank.D:
-                drawSingleLetter("D", Colour4.FromHex("#ff686b"));
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException();
         }
     }
 
     private void drawSingleLetter(string letter, Colour4 color)
     {
-        Add(new FluXisSpriteText
+        var text = new FluXisSpriteText
         {
             Text = letter,
             Font = FluXisFont.YoureGone,
-            FontSize = Height,
+            FontSize = FontSize,
+            Colour = AlternateColor ? FluXisColors.Background2 : color,
+            Shadow = Shadow,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Shadow = true,
-            Colour = color
-        });
+        };
+
+        InternalChild = text;
     }
 
     private void drawDoubleLetter(string letter, Colour4 color)
     {
-        AddRange(new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new FluXisSpriteText
             {
                 Text = letter,
                 Font = FluXisFont.YoureGone,
-                FontSize = Height,
+                FontSize = FontSize,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Shadow = true,
                 Margin = new MarginPadding { Left = 10 },
-                Colour = color.Darken(.4f)
+                Colour = AlternateColor ? FluXisColors.Background2 : color.Darken(.4f),
+                Alpha = AlternateColor ? .8f : 1
             },
             new FluXisSpriteText
             {
                 Text = letter,
                 Font = FluXisFont.YoureGone,
-                FontSize = Height,
+                FontSize = FontSize,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Shadow = true,
                 Margin = new MarginPadding { Right = 10 },
-                Colour = color
+                Colour = AlternateColor ? FluXisColors.Background2 : color
             }
-        });
+        };
+    }
+
+    public static Colour4 GetColor(ScoreRank rank, bool darken = false)
+    {
+        var color = Colour4.White;
+
+        switch (rank)
+        {
+            case ScoreRank.X:
+                color = Colour4.FromHex("#a9a9a9");
+                break;
+
+            case ScoreRank.SS:
+            case ScoreRank.S:
+                color = Colour4.FromHex("#ffc14a");
+                break;
+
+            case ScoreRank.AA:
+            case ScoreRank.A:
+                color = Colour4.FromHex("#84ff70");
+                break;
+
+            case ScoreRank.B:
+                color = Colour4.FromHex("#70d7ff");
+                break;
+
+            case ScoreRank.C:
+                color = Colour4.FromHex("#ff70ff");
+                break;
+
+            case ScoreRank.D:
+                color = Colour4.FromHex("#ff686b");
+                break;
+        }
+
+        if (darken && rank is ScoreRank.S or ScoreRank.A)
+            color = color.Darken(.4f);
+
+        return color;
     }
 }

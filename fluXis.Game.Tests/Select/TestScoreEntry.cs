@@ -20,11 +20,10 @@ public partial class TestScoreEntry : FluXisTestScene
             RelativeSizeAxes = Axes.Both,
             Child = new Container
             {
-                RelativeSizeAxes = Axes.X,
+                Width = 920,
                 AutoSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Width = 0.5f,
                 Child = new ScoreListEntry
                 {
                     Place = 1,
@@ -36,7 +35,7 @@ public partial class TestScoreEntry : FluXisTestScene
                         Score = 1000000,
                         MaxCombo = 100,
                         Accuracy = 100,
-                        Mods = new List<string> { "HD", "NF" },
+                        Mods = new List<string> { "1.4x", "HD", "NF" },
                         Rank = ScoreRank.X,
                         Flawless = 100,
                         Perfect = 100,

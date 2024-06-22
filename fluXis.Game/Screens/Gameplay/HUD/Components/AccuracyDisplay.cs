@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Components;
 
@@ -25,7 +26,11 @@ public partial class AccuracyDisplay : GameplayHUDComponent
             Direction = FillDirection.Horizontal,
             Children = new Drawable[]
             {
-                drawableScoreRank = new DrawableScoreRank { Size = 32 },
+                drawableScoreRank = new DrawableScoreRank
+                {
+                    Size = new Vector2(32),
+                    FontSize = 32
+                },
                 accuracyText = new FluXisSpriteText
                 {
                     FontSize = 32,
