@@ -46,7 +46,10 @@ public class RealmMap : RealmObject
     public string OnlineHash { get; set; } = string.Empty;
 
     [Ignored]
-    public bool UpToDate => Hash == OnlineHash;
+    public Action OnlineHashUpdated { get; set; }
+
+    [Ignored]
+    public bool UpToDate => string.IsNullOrEmpty(OnlineHash) || Hash == OnlineHash;
 
     public float AccuracyDifficulty { get; set; } = 8;
     public float HealthDifficulty { get; set; } = 8;

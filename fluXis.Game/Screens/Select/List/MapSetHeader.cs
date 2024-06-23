@@ -11,7 +11,9 @@ using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -20,6 +22,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osuTK;
 
@@ -200,18 +203,26 @@ public partial class MapSetHeader : Container, IHasContextMenu
                     {
                         new[]
                         {
-                            new LoadWrapper<MapCover>
+                            new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 CornerRadius = 10,
                                 Masking = true,
-                                LoadContent = () => new MapCover(mapset)
+                                Children = new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre
-                                },
-                                OnComplete = cover => cover.FadeInFromZero(200)
+                                    new LoadWrapper<MapCover>
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        LoadContent = () => new MapCover(mapset)
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre
+                                        },
+                                        OnComplete = cover => cover.FadeInFromZero(200)
+                                    },
+                                    new UpdateButton(mapset)
+                                }
                             },
                             Empty(),
                             new FillFlowContainer
@@ -417,5 +428,74 @@ public partial class MapSetHeader : Container, IHasContextMenu
 
         public override void Show() => this.FadeTo(hover_multiplier, 50);
         public override void Hide() => this.FadeIn(200);
+    }
+
+    private partial class UpdateButton : CompositeDrawable, IHasTooltip
+    {
+        public LocalisableString TooltipText => !upToDate ? "This mapset has an update." : "";
+
+        private RealmMapSet set { get; }
+
+        private SpriteIcon icon;
+        private bool upToDate;
+
+        public UpdateButton(RealmMapSet set)
+        {
+            this.set = set;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            RelativeSizeAxes = Axes.Both;
+            AlwaysPresent = true;
+
+            InternalChildren = new Drawable[]
+            {
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2,
+                    Alpha = .5f
+                },
+                icon = new SpriteIcon
+                {
+                    Icon = FontAwesome6.Solid.ArrowsRotate,
+                    Size = new Vector2(32),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
+                }
+            };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            icon.Spin(2000, RotationDirection.Clockwise);
+            set.Maps.ForEach(x => x.OnlineHashUpdated += hashUpdated);
+
+            hashUpdated();
+            FinishTransforms();
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            set.Maps.ForEach(x => x.OnlineHashUpdated -= hashUpdated);
+        }
+
+        private void hashUpdated()
+        {
+            Scheduler.ScheduleOnceIfNeeded(() =>
+            {
+                upToDate = set.Maps.All(m => m.UpToDate);
+
+                if (upToDate)
+                    this.FadeOut(400);
+                else
+                    this.FadeIn(400);
+            });
+        }
     }
 }
