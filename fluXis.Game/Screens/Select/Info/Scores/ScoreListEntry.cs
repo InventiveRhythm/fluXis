@@ -10,6 +10,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Drawables;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Skinning;
@@ -21,6 +22,7 @@ using Humanizer;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
@@ -38,6 +40,9 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     [Resolved]
     private FluXisGameBase game { get; set; }
+
+    [Resolved]
+    private IAPIClient api { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -74,6 +79,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     public RealmMap Map { get; init; }
     public APIUser Player { get; init; }
     public int Place { get; set; }
+    public bool ShowSelfOutline { get; init; } = true;
 
     public Action ReplayAction { get; init; }
     public Action DownloadAction { get; init; }
@@ -83,6 +89,21 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     private Box rankBackground;
     private FluXisSpriteText timeText;
+
+    private ColourInfo outlineColor
+    {
+        get
+        {
+            var color = Colour4.Transparent;
+
+            if (Player.ID == api.User.Value?.ID && ShowSelfOutline)
+                color = Colour4.FromHex("#55ff55");
+            else if (Player.Following ?? false)
+                color = Colour4.Plum;
+
+            return ColourInfo.GradientHorizontal(color, color.Opacity(0));
+        }
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -133,6 +154,21 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                             RelativeSizeAxes = Axes.Both,
                             Colour = FluXisColors.Background2,
                             Alpha = .6f
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Width = .3f,
+                            CornerRadius = 10,
+                            Masking = true,
+                            BorderColour = outlineColor,
+                            BorderThickness = 3,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                AlwaysPresent = true,
+                                Alpha = 0
+                            }
                         },
                         new GridContainer
                         {

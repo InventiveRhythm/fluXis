@@ -291,6 +291,7 @@ public partial class ScoreList : GridContainer
                             ScoreInfo = info,
                             Map = map,
                             Player = users.Get(info.PlayerID),
+                            ShowSelfOutline = false,
                             DeleteAction = () =>
                             {
                                 realm.RunWrite(r2 =>
