@@ -181,7 +181,11 @@ public partial class LayoutManager : Component
                         AnchorToPlayfield = true,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Position = new Vector2(0, -32)
+                        Position = new Vector2(0, -32),
+                        Settings = new Dictionary<string, object>
+                        {
+                            { "scale-additive", false }
+                        }
                     }
                 },
                 {
