@@ -340,7 +340,11 @@ public partial class ScoreList : GridContainer
             if (cancellationToken.IsCancellationRequested)
                 return;
 
-            scores.Sort((a, b) => b.ScoreInfo.Score.CompareTo(a.ScoreInfo.Score));
+            scores.Sort((a, b) =>
+            {
+                var res = b.ScoreInfo.PerformanceRating.CompareTo(a.ScoreInfo.PerformanceRating);
+                return res == 0 ? b.ScoreInfo.Score.CompareTo(a.ScoreInfo.Score) : res;
+            });
             scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
 
             if (scrollContainer.ScrollContent.Children.Count == 0)
