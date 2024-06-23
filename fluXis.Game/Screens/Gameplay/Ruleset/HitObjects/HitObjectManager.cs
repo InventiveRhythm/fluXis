@@ -261,6 +261,9 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         {
             for (var i = 0; i < screen.Input.Pressed.Length; i++)
             {
+                if (!screen.Input.Pressed[i])
+                    continue;
+
                 var bind = screen.Input.Keys[i];
                 drawable.OnPressed(bind);
             }
