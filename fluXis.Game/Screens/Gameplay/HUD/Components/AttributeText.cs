@@ -12,15 +12,21 @@ public partial class AttributeText : GameplayHUDComponent
         var type = Settings.GetSetting("type", AttributeType.Title);
         var size = (float)Settings.GetSetting("size", 32d); // the json gets parsed as a double
         var text = Settings.GetSetting("text", "{value}");
+        var maxWidth = Settings.GetSetting("max-width", 0d);
 
         AutoSizeAxes = Axes.Both;
 
-        Add(new FluXisSpriteText
+        var drawable = new TruncatingText
         {
             FontSize = size,
             Shadow = true,
             Text = text.Replace("{value}", getValue(type))
-        });
+        };
+
+        if (maxWidth > 0)
+            drawable.MaxWidth = (float)maxWidth;
+
+        Add(drawable);
     }
 
     private string getValue(AttributeType type)
