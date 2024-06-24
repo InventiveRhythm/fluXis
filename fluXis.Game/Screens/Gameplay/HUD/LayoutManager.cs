@@ -128,7 +128,7 @@ public partial class LayoutManager : Component
                         Settings = new Dictionary<string, object>
                         {
                             { "type", AttributeType.Title },
-                            { "size", 48d },
+                            { "size", 32d },
                             { "max-width", 512d }
                         }
                     }
@@ -144,6 +144,7 @@ public partial class LayoutManager : Component
                         {
                             { "type", AttributeType.Artist },
                             { "text", "by {value}" },
+                            { "size", 24d },
                             { "max-width", 512d }
                         }
                     }
@@ -158,7 +159,7 @@ public partial class LayoutManager : Component
                         Settings = new Dictionary<string, object>
                         {
                             { "type", AttributeType.Difficulty },
-                            { "size", 48d },
+                            { "size", 32d },
                             { "max-width", 512d }
                         }
                     }
@@ -174,6 +175,7 @@ public partial class LayoutManager : Component
                         {
                             { "type", AttributeType.Mapper },
                             { "text", "mapped by {value}" },
+                            { "size", 24d },
                             { "max-width", 512d }
                         }
                     }

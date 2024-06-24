@@ -10,7 +10,7 @@ public partial class AttributeText : GameplayHUDComponent
     private void load()
     {
         var type = Settings.GetSetting("type", AttributeType.Title);
-        var size = (float)Settings.GetSetting("size", 32d); // the json gets parsed as a double
+        var size = (float)Settings.GetSetting("size", 24d); // the json gets parsed as a double
         var text = Settings.GetSetting("text", "{value}");
         var maxWidth = Settings.GetSetting("max-width", 0d);
 
