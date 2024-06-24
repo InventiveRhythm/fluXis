@@ -434,6 +434,9 @@ public partial class MapSetHeader : Container, IHasContextMenu
     {
         public LocalisableString TooltipText => !upToDate ? "This mapset has an update." : "";
 
+        [Resolved]
+        private MapStore maps { get; set; }
+
         private RealmMapSet set { get; }
 
         private SpriteIcon icon;
@@ -483,6 +486,15 @@ public partial class MapSetHeader : Container, IHasContextMenu
         {
             base.Dispose(isDisposing);
             set.Maps.ForEach(x => x.OnlineHashUpdated -= hashUpdated);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            if (upToDate)
+                return false;
+
+            maps.DownloadMapSetUpdate(set);
+            return true;
         }
 
         private void hashUpdated()

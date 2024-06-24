@@ -200,6 +200,8 @@ public class MapInfo
         return timingPoint ?? TimingPoints[0];
     }
 
+    public override string ToString() => $"{Hash}";
+
     public MapInfo Clone()
     {
         return new MapInfo(Metadata)

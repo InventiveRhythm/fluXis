@@ -19,6 +19,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
@@ -90,9 +91,9 @@ public partial class MapStore : Component
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
     public Action CollectionUpdated;
 
-    public List<APIMapSet> DownloadQueue { get; } = new();
-    public Action<APIMapSet> DownloadStarted { get; set; }
-    public Action<APIMapSet> DownloadFinished { get; set; }
+    public List<long> DownloadQueue { get; } = new();
+    public Action<long> DownloadStarted { get; set; }
+    public Action<long> DownloadFinished { get; set; }
 
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
@@ -237,13 +238,16 @@ public partial class MapStore : Component
 
     public void UpdateMapSet(RealmMapSet oldMapSet, RealmMapSet newMapSet)
     {
-        MapSets.Remove(oldMapSet);
-        newMapSet.Resources = oldMapSet.Resources; // keep the resources
-        MapSets.Add(newMapSet);
-        MapSetUpdated?.Invoke(oldMapSet, newMapSet);
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            MapSets.Remove(oldMapSet);
+            newMapSet.Resources = oldMapSet.Resources; // keep the resources
+            MapSets.Add(newMapSet);
+            MapSetUpdated?.Invoke(oldMapSet, newMapSet);
 
-        if (Equals(CurrentMapSet, oldMapSet))
-            CurrentMapSet = newMapSet;
+            if (Equals(CurrentMapSet, oldMapSet))
+                CurrentMapSet = newMapSet;
+        });
     }
 
     public void DeleteMapSet(RealmMapSet mapSet)
@@ -532,23 +536,26 @@ public partial class MapStore : Component
         });
     }
 
-    protected void StartDownload(APIMapSet mapSet)
+    protected void StartDownload(APIMapSet mapSet) => StartDownload(mapSet.ID);
+    protected void FinishDownload(APIMapSet mapSet) => FinishDownload(mapSet.ID);
+
+    protected void StartDownload(long id)
     {
-        DownloadQueue.Add(mapSet);
-        DownloadStarted?.Invoke(mapSet);
+        DownloadQueue.Add(id);
+        DownloadStarted?.Invoke(id);
     }
 
-    protected void FinishDownload(APIMapSet mapSet)
+    protected void FinishDownload(long id)
     {
-        DownloadQueue.Remove(mapSet);
-        DownloadFinished?.Invoke(mapSet);
+        DownloadQueue.Remove(id);
+        DownloadFinished?.Invoke(id);
     }
 
     public void DownloadMapSet(long id)
     {
-        var set = DownloadQueue.FirstOrDefault(x => x.ID == id);
+        var set = DownloadQueue.FirstOrDefault(x => x == id, -1);
 
-        if (set != null)
+        if (set != -1)
             return;
 
         var req = new MapSetRequest(id);
@@ -572,7 +579,7 @@ public partial class MapStore : Component
             return;
         }
 
-        if (DownloadQueue.Any(x => x.ID == set.ID))
+        if (DownloadQueue.Any(x => x == set.ID))
             return;
 
         var notification = new TaskNotificationData
@@ -644,6 +651,85 @@ public partial class MapStore : Component
         StartDownload(set);
         fluxel.PerformRequestAsync(req);
 
+        notifications.AddTask(notification);
+    }
+
+    public void DownloadMapSetUpdate(RealmMapSet set)
+    {
+        if (set is not { OnlineID: > 0 })
+            return;
+
+        if (DownloadQueue.Any(x => x == set.OnlineID))
+            return;
+
+        var notification = new TaskNotificationData
+        {
+            Text = $"{set.Metadata.Title} - {set.Metadata.Artist}",
+            TextWorking = "Updating...",
+            TextFinished = "Done! Click to view."
+        };
+
+        Logger.Log($"Updating mapset: {set.Metadata.Title} - {set.Metadata.Artist}", LoggingTarget.Network);
+
+        var req = new MapSetDownloadRequest(set.OnlineID);
+        req.Progress += (current, total) => notification.Progress = (float)current / total;
+        req.Failure += exception =>
+        {
+            Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
+            notification.State = LoadingState.Failed;
+            FinishDownload(set.OnlineID);
+        };
+        req.Success += () =>
+        {
+            notification.Progress = 1;
+            FinishDownload(set.OnlineID);
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    Logger.Log($"Finished downloading mapset: {set.Metadata.Title} - {set.Metadata.Artist}", LoggingTarget.Network);
+                    var data = req.ResponseStream;
+
+                    if (data == null)
+                    {
+                        notification.State = LoadingState.Failed;
+                        return;
+                    }
+
+                    // write data to file
+                    var path = storage.GetFullPath($"download/{set.ID}.zip");
+                    var dir = Path.GetDirectoryName(path);
+
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    if (File.Exists(path))
+                        File.Delete(path);
+
+                    File.WriteAllBytes(path, data.ToArray());
+
+                    // import
+                    new FluXisImport
+                    {
+                        MapStore = this,
+                        Storage = storage,
+                        Notifications = notifications,
+                        Realm = realm,
+                        Notification = notification
+                    }.ImportAsUpdate(path, set);
+                    notification.State = LoadingState.Complete;
+                }
+                catch (Exception ex)
+                {
+                    notification.State = LoadingState.Failed;
+                    Logger.Log($"Failed to update mapset: {ex.Message}", LoggingTarget.Network);
+                }
+            });
+        };
+
+        StartDownload(set.OnlineID);
+        fluxel.PerformRequestAsync(req);
         notifications.AddTask(notification);
     }
 

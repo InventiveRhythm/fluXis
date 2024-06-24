@@ -53,14 +53,14 @@ public static class RealmObjectUtils
                  }
                  else
                  {
-                     var newBeatmap = new RealmMap()
+                     var newMap = new RealmMap()
                      {
                          ID = map.ID,
                          MapSet = d
                      };
 
-                     d.Maps.Add(newBeatmap);
-                     copyChanges(map, newBeatmap);
+                     d.Maps.Add(newMap);
+                     copyChanges(map, newMap);
                  }
              }
          });

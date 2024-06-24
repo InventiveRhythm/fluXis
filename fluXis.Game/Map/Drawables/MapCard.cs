@@ -62,7 +62,7 @@ public partial class MapCard : Container, IHasContextMenu
     private SectionedGradient gradient;
 
     private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.ID);
-    private bool downloading => maps.DownloadQueue.Any(x => x.ID == MapSet.ID);
+    private bool downloading => maps.DownloadQueue.Any(x => x == MapSet.ID);
 
     [CanBeNull]
     private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet.ID);
@@ -349,7 +349,7 @@ public partial class MapCard : Container, IHasContextMenu
     }
 
     private void mapsetsUpdated(RealmMapSet set) => Schedule(updateState);
-    private void downloadStateChanged(APIMapSet set) => Schedule(updateState);
+    private void downloadStateChanged(long set) => Schedule(updateState);
 
     private void updateState()
     {

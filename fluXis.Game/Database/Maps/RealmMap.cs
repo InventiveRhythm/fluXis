@@ -69,7 +69,7 @@ public class RealmMap : RealmObject
     {
     }
 
-    public override string ToString() => $"{ID} - {Metadata}";
+    public override string ToString() => $"{ID} - {Hash} - {Metadata}";
 
     public void ResetOnlineInfo()
     {
