@@ -52,7 +52,7 @@ public class FluXisImport : MapImporter
                 return sets.FirstOrDefault(x => x.OnlineID == set.OnlineID)?.Detach();
             });
 
-            if (existing != null)
+            if (existing != null && existing.OnlineID > 0)
             {
                 var updatedPath = MapFiles.GetFullPath(set.ID.ToString()) + "/";
                 var originalPath = MapFiles.GetFullPath(existing.ID.ToString()) + "/";
