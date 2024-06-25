@@ -15,6 +15,8 @@ public partial class MenuCursor : CursorContainer
 {
     private DrawableCursor cursor;
 
+    public Vector2 CursorPosition => cursor.Position;
+
     private InputManager inputManager;
     private Vector2? mouseDownPosition;
     private bool rotating;

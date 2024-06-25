@@ -7,7 +7,7 @@ namespace fluXis.Game.Overlay.Mouse;
 
 public partial class GlobalCursorOverlay : Container
 {
-    public Vector2 RelativePosition => new(Cursor.Position.X / DrawWidth, Cursor.Position.Y / DrawHeight);
+    public Vector2 RelativePosition => new(Cursor.CursorPosition.X / DrawWidth, Cursor.CursorPosition.Y / DrawHeight);
 
     protected override Container<Drawable> Content { get; } = new Container { RelativeSizeAxes = Axes.Both };
     public MenuCursor Cursor { get; }
