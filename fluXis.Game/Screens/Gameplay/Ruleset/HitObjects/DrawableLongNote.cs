@@ -2,6 +2,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects.Long;
 using fluXis.Game.Skinning.Bases.HitObjects;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -10,13 +11,26 @@ namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 
 public partial class DrawableLongNote : DrawableHitObject
 {
-    public override bool CanBeRemoved => Judged;
+    public override bool CanBeRemoved
+    {
+        get
+        {
+            if (missed)
+                return Time.Current > Data.EndTime;
+
+            return Judged;
+        }
+    }
 
     public BindableBool IsBeingHeld { get; } = new();
 
     private Drawable bodyPiece;
     private DrawableLongNoteTail tailPiece;
     private DrawableLongNoteHead headPiece;
+
+    private bool missed;
+
+    private readonly Colour4 missTint = new(.4f, .4f, .4f, 1);
 
     public DrawableLongNote(HitObject data)
         : base(data)
@@ -54,7 +68,18 @@ public partial class DrawableLongNote : DrawableHitObject
     {
         headPiece.OnJudgement += offset => OnHit?.Invoke(this, offset);
         headPiece.OnMiss += () => tailPiece.UpdateJudgement(false);
-        tailPiece.OnJudgement += ApplyResult;
+        tailPiece.OnJudgement += diff =>
+        {
+            if (Screen.TintLongNotesOnMiss.Value)
+            {
+                var judgement = Screen.ReleaseWindows.JudgementFor(diff);
+
+                if (judgement == Judgement.Alright)
+                    miss();
+            }
+
+            ApplyResult(diff);
+        };
 
         IsBeingHeld.BindValueChanged(held =>
         {
@@ -65,6 +90,12 @@ public partial class DrawableLongNote : DrawableHitObject
         });
 
         base.LoadComplete();
+    }
+
+    private void miss()
+    {
+        missed = true;
+        this.FadeColour(missTint, 100);
     }
 
     protected override void Update()
@@ -87,7 +118,7 @@ public partial class DrawableLongNote : DrawableHitObject
         if (key != Keybind || !ObjectManager.IsFirstInColumn(this))
             return;
 
-        if (!headPiece.Hittable)
+        if (!headPiece.Hittable || missed)
             return;
 
         IsBeingHeld.Value = true;

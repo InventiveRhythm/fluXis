@@ -8,6 +8,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Configuration;
+using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -140,6 +141,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private Bindable<float> backgroundBlur;
     private Bindable<bool> bgaEnabled;
 
+    public Bindable<bool> TintLongNotesOnMiss { get; private set; }
+
     private bool hudVisible = true;
 
     public float Rate { get; }
@@ -156,7 +159,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ExperimentConfigManager experiments)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -167,6 +170,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         backgroundDim = Config.GetBindable<float>(FluXisSetting.BackgroundDim);
         backgroundBlur = Config.GetBindable<float>(FluXisSetting.BackgroundBlur);
         bgaEnabled = Config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
+        TintLongNotesOnMiss = experiments.GetBindable<bool>(ExperimentConfig.TintLongNotesOnMiss);
 
         Map = LoadMap();
 

@@ -22,6 +22,12 @@ public partial class ExperimentsSection : SettingsSection
             {
                 Label = "Enable Design Tab",
                 Bindable = experiments.GetBindable<bool>(ExperimentConfig.DesignTab)
+            },
+            new SettingsToggle
+            {
+                Label = "Tint Long Notes on miss",
+                Description = "Makes long notes fade dark instead of instantly disappearing.",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.TintLongNotesOnMiss)
             }
         });
     }
