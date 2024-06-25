@@ -78,6 +78,7 @@ public partial class Playfield : Container
             },
             skinManager.GetHitLine().With(d =>
             {
+                d.Width = 1;
                 d.RelativeSizeAxes = Axes.X;
                 d.Y = -skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).HitPosition;
             }),
