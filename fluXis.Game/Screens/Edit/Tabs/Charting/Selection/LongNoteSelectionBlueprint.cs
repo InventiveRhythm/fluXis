@@ -1,5 +1,4 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,8 +11,8 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 {
     public override Vector2 ScreenSpaceSelectionPoint => head.ScreenSpaceDrawQuad.Centre;
 
-    private Container head;
-    private Container end;
+    private DraggableSelectionPiece head;
+    private DraggableSelectionPiece end;
 
     public LongNoteSelectionBlueprint(HitObject info)
         : base(info)
@@ -26,16 +25,16 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         Anchor = Origin = Anchor.BottomLeft;
         InternalChildren = new Drawable[]
         {
-            head = new BlueprintNotePiece
+            head = new DraggableSelectionPiece
             {
-                Y = -Drawable.HitObjectPiece.DrawHeight / 2,
-                RelativeSizeAxes = Axes.X,
-                Width = 0.5f
+                DragAction = dragStart,
+                Anchor = Anchor.BottomLeft,
+                Origin = Anchor.BottomLeft
             },
-            end = new BlueprintNotePiece
+            end = new DraggableSelectionPiece
             {
-                RelativeSizeAxes = Axes.X,
-                Width = 0.5f
+                DragAction = dragEnd,
+                Origin = Anchor.CentreLeft
             },
             new Container
             {
@@ -58,7 +57,31 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         base.Update();
 
         var delta = HitObjectContainer.PositionAtTime(Object.EndTime) - HitObjectContainer.PositionAtTime(Object.Time);
-        end.Y = delta;
         Height = -(delta - Drawable.LongNoteEnd.DrawHeight / 2);
+    }
+
+    private void dragStart(Vector2 vec)
+    {
+        var newTime = HitObjectContainer.TimeAtScreenSpacePosition(vec);
+        newTime = HitObjectContainer.SnapTime(newTime);
+        var newLen = Object.EndTime - newTime;
+
+        if (newLen <= 10)
+            return;
+
+        Object.Time = newTime;
+        Object.HoldTime = newLen;
+    }
+
+    private void dragEnd(Vector2 vec)
+    {
+        var newTime = HitObjectContainer.TimeAtScreenSpacePosition(vec);
+        newTime = HitObjectContainer.SnapTime(newTime);
+        var newLen = newTime - Object.Time;
+
+        if (newLen <= 10)
+            return;
+
+        Object.EndTime = newTime;
     }
 }
