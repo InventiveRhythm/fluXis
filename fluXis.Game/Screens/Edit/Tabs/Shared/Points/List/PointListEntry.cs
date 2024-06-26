@@ -27,6 +27,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     public MenuItem[] ContextMenuItems => new MenuItem[]
     {
         new FluXisMenuItem("Clone to current time", FontAwesome6.Solid.Clone, clone),
+        new FluXisMenuItem("Go to time", FontAwesome6.Solid.ArrowRight, goTo),
         new FluXisMenuItem("Edit", FontAwesome6.Solid.PenRuler, OpenSettings),
         new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => delete(false))
     };
@@ -68,6 +69,9 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     [Resolved]
     private UISamples samples { get; set; }
+
+    [Resolved]
+    private EditorClock clock { get; set; }
 
     private Box hover;
     private FluXisSpriteText timeText;
@@ -171,6 +175,8 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
         var clone = CreateClone();
         OnClone?.Invoke(clone);
     }
+
+    private void goTo() => clock.SeekSmoothly(Object.Time);
 
     private void delete(bool close = true)
     {
