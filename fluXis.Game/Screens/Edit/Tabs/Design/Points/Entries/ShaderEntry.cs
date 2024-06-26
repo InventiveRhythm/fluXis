@@ -13,7 +13,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class ShaderEntry : PointListEntry
 {
     protected override string Text => "Shader";
-    protected override Colour4 Color => Colour4.Purple;
+    protected override Colour4 Color => Colour4.FromHex("#D65C5C");
 
     private ShaderEvent shader => Object as ShaderEvent;
 

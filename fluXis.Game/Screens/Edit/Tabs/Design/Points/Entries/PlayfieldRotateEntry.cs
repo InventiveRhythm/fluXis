@@ -14,7 +14,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PlayfieldRotateEntry : PointListEntry
 {
     protected override string Text => "Playfield Rotate";
-    protected override Colour4 Color => Colour4.FromHex("#01FE55");
+    protected override Colour4 Color => Colour4.FromHex("#8AF7A2");
 
     private PlayfieldRotateEvent rotate => Object as PlayfieldRotateEvent;
 
