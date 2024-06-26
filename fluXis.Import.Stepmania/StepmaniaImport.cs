@@ -129,7 +129,6 @@ public class StepmaniaImport : MapImporter
             {
                 FolderPath = Path.GetDirectoryName(file),
                 ID = Guid.NewGuid(),
-                Managed = true,
                 Resources = resources,
                 OnlineID = -1
             };

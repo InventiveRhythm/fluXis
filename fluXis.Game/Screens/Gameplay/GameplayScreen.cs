@@ -451,7 +451,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
         }
 
-        if (SubmitScore)
+        var canBeUploaded = Mods.All(m => m.Rankable) && RealmMap.StatusInt < 100 && !RealmMap.MapSet.AutoImported;
+
+        if (SubmitScore && canBeUploaded)
             scoreSubmissionOverlay.FadeIn(FADE_DURATION);
 
         Task.Run(() =>
@@ -472,7 +474,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 
-            if (Mods.All(m => m.SaveScore) && SubmitScore && RealmMap.StatusInt < 100)
+            if (Mods.All(m => m.SaveScore) && SubmitScore && !RealmMap.MapSet.AutoImported)
             {
                 var scoreId = realm.RunWrite(r =>
                 {
@@ -481,7 +483,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     return rScore.ID;
                 });
 
-                if (Mods.All(m => m.Rankable))
+                if (canBeUploaded)
                 {
                     var request = new ScoreSubmitRequest(score);
                     screen.SubmitRequest = request;

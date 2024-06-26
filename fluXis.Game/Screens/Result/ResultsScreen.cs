@@ -185,7 +185,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
         GamepadHandler.OnGamepadStatusChanged += onGamepadStatusChanged;
         onGamepadStatusChanged(GamepadHandler.GamepadConnected);
 
-        if (realmScore != null && !map.MapSet.Managed)
+        if (realmScore != null && !map.MapSet.AutoImported)
         {
             realm.RunWrite(r => r.Add(realmScore));
             OnlineScores.UploadScore(fluxel, score, res => ratingInfo.ScoreResponse = res);

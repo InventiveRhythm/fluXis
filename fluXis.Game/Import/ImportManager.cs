@@ -14,6 +14,7 @@ using fluXis.Game.Plugins;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
@@ -162,20 +163,24 @@ public partial class ImportManager : Component
 
             setToolbarText($"Importing {importer.GameName} maps...");
 
-            var maps = importer.GetMaps();
+            var sets = importer.GetMaps();
 
-            foreach (var map in maps)
+            foreach (var set in sets)
             {
-                mapStore.AddMapSet(map, false);
+                set.AutoImported = true;
+                set.OnlineID = -1;
+                set.Maps.ForEach(m => m.OnlineID = -1);
+
+                mapStore.AddMapSet(set, false);
 
                 if (!importedMaps.ContainsKey(importer))
                     importedMaps.Add(importer, new List<RealmMapSet>());
 
-                importedMaps[importer].Add(map);
+                importedMaps[importer].Add(set);
             }
 
             mapStore.CollectionUpdated?.Invoke();
-            Logger.Log($"Imported {maps.Count} {importer.GameName} maps in {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - time}ms");
+            Logger.Log($"Imported {sets.Count} {importer.GameName} maps in {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - time}ms");
             setToolbarText("");
         }));
     }

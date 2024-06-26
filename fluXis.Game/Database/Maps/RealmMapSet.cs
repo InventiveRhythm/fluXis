@@ -26,7 +26,7 @@ public class RealmMapSet : RealmObject
     public RealmMapMetadata Metadata => Maps.FirstOrDefault()?.Metadata ?? new RealmMapMetadata();
 
     [Ignored]
-    public bool Managed { get; set; }
+    internal bool AutoImported { get; set; }
 
     [Ignored]
     [CanBeNull]

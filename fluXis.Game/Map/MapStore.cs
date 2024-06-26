@@ -252,7 +252,7 @@ public partial class MapStore : Component
 
     public void DeleteMapSet(RealmMapSet mapSet)
     {
-        if (mapSet.Managed)
+        if (mapSet.AutoImported)
         {
             // notifications.Post("Cannot delete a managed mapset!");
             return;

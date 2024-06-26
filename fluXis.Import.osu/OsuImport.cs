@@ -185,7 +185,6 @@ public class OsuImport : MapImporter
                 var realmMapSet = new OsuRealmMapSet(mapList)
                 {
                     FolderPath = Path.Combine(songsPath, set.Key),
-                    Managed = true,
                     Resources = resources
                 };
 

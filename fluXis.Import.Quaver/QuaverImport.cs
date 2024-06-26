@@ -183,7 +183,6 @@ public class QuaverImport : MapImporter
                     FolderPath = Path.Combine(songsPath, directoryName),
                     OnlineID = 0,
                     Cover = "",
-                    Managed = true,
                     Resources = resources
                 };
 

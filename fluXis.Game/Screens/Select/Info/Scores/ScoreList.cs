@@ -348,7 +348,7 @@ public partial class ScoreList : GridContainer
             scores.ForEach(s => addScore(s, scores.IndexOf(s) + 1));
 
             if (scrollContainer.ScrollContent.Children.Count == 0)
-                noScoresText.Text = map.MapSet.Managed ? LocalizationStrings.SongSelect.LeaderboardScoresUnavailable : LocalizationStrings.SongSelect.LeaderboardNoScores;
+                noScoresText.Text = map.MapSet.AutoImported ? LocalizationStrings.SongSelect.LeaderboardScoresUnavailable : LocalizationStrings.SongSelect.LeaderboardNoScores;
 
             noScoresText.FadeTo(scrollContainer.ScrollContent.Children.Count == 0 ? 1 : 0, 200);
             loadingIcon.FadeOut(200);
