@@ -81,7 +81,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             }
         };
 
-        valueChange = samples.Get("UI/slider-scroll");
+        valueChange = samples.Get("UI/slider-tick");
         valueChange?.AddAdjustment(AdjustableProperty.Frequency, valueChangePitch = new BindableDouble(1f));
     }
 

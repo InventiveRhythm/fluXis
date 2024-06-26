@@ -62,9 +62,9 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        open = samples.Get(@"UI/Settings/open");
-        close = samples.Get(@"UI/Settings/close");
-        tabSwitch = samples.Get(@"UI/Settings/change-tab");
+        open = samples.Get("UI/Settings/open");
+        close = samples.Get("UI/Settings/close");
+        tabSwitch = samples.Get("UI/Settings/change-tab");
 
         InternalChildren = new Drawable[]
         {

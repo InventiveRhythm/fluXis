@@ -111,9 +111,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples, FluXisConfig config)
     {
-        menuScroll = samples.Get("UI/scroll.mp3");
-        randomClick = samples.Get("UI/Select/Random.wav");
-        rewindClick = samples.Get("UI/Select/Rewind.wav");
+        menuScroll = samples.Get("UI/scroll");
+        randomClick = samples.Get("UI/Select/random");
+        rewindClick = samples.Get("UI/Select/rewind");
 
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
         backgroundVideo = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);

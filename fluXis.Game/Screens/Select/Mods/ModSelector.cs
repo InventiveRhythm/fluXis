@@ -41,10 +41,10 @@ public partial class ModSelector : Container
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        sampleOpen = samples.Get("UI/Select/ModSelect-Open");
-        sampleClose = samples.Get("UI/Select/ModSelect-Close");
-        sampleSelect = samples.Get("UI/Select/ModSelect-Select");
-        sampleDeselect = samples.Get("UI/Select/ModSelect-Deselect");
+        sampleOpen = samples.Get("UI/Select/mods-open");
+        sampleClose = samples.Get("UI/Select/mods-close");
+        sampleSelect = samples.Get("UI/Select/mods-select");
+        sampleDeselect = samples.Get("UI/Select/mods-deselect");
 
         RelativeSizeAxes = Axes.Both;
         Padding = new MarginPadding { Top = -10 };
