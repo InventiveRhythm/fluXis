@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -7,7 +9,6 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Online;
-using fluXis.Game.Online.API.Requests.Account;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Account;
@@ -35,7 +36,7 @@ public partial class DashboardAccountTab : DashboardTab
     public override DashboardTabType Type => DashboardTabType.Account;
 
     [Resolved]
-    private FluxelClient fluxel { get; set; } = null!;
+    private IAPIClient api { get; set; } = null!;
 
     [Resolved]
     private UserCache users { get; set; } = null!;
@@ -51,7 +52,6 @@ public partial class DashboardAccountTab : DashboardTab
     private Container unsavedContent = null!;
     private LoadingIcon loadingIcon = null!;
 
-    private DashboardAccountCategory socialsCategory = null!;
     private DashboardAccountEntry twitterEntry = null!;
     private DashboardAccountEntry youtubeEntry = null!;
     private DashboardAccountEntry twitchEntry = null!;
@@ -118,7 +118,7 @@ public partial class DashboardAccountTab : DashboardTab
                             {
                                 Size = new Vector2(128, 32),
                                 FontSize = FluXisSpriteText.GetWebFontSize(14),
-                                Data = new ButtonData()
+                                Data = new ButtonData
                                 {
                                     Text = "Save",
                                     Action = save,
@@ -177,30 +177,7 @@ public partial class DashboardAccountTab : DashboardTab
                             {
                                 panels.Content = new FileSelect
                                 {
-                                    OnFileSelected = file =>
-                                    {
-                                        var notification = new TaskNotificationData
-                                        {
-                                            Text = "Avatar Update",
-                                            TextWorking = "Uploading..."
-                                        };
-
-                                        notifications.AddTask(notification);
-
-                                        var req = new AvatarUploadRequest(file);
-                                        req.Progress += (cur, max) => notification.Progress = cur / (float)max;
-                                        req.Success += res =>
-                                        {
-                                            notification.State = res.Success ? LoadingState.Complete : LoadingState.Failed;
-                                            users.TriggerAvatarUpdate(user.ID);
-                                        };
-                                        req.Failure += ex =>
-                                        {
-                                            notification.State = LoadingState.Failed;
-                                            Logger.Error(ex, "Failed to upload avatar!");
-                                        };
-                                        fluxel.PerformRequestAsync(req);
-                                    },
+                                    OnFileSelected = file => uploadImage(file, false),
                                     AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
                                 };
                             }
@@ -223,30 +200,7 @@ public partial class DashboardAccountTab : DashboardTab
                             {
                                 panels.Content = new FileSelect
                                 {
-                                    OnFileSelected = file =>
-                                    {
-                                        var notif = new TaskNotificationData
-                                        {
-                                            Text = "Banner Update",
-                                            TextWorking = "Uploading..."
-                                        };
-
-                                        notifications.AddTask(notif);
-
-                                        var req = new BannerUploadRequest(file);
-                                        req.Progress += (cur, max) => notif.Progress = cur / (float)max;
-                                        req.Success += res =>
-                                        {
-                                            notif.State = res.Success ? LoadingState.Complete : LoadingState.Failed;
-                                            users.TriggerBannerUpdate(user.ID);
-                                        };
-                                        req.Failure += ex =>
-                                        {
-                                            notif.State = LoadingState.Failed;
-                                            Logger.Error(ex, "Failed to upload banner!");
-                                        };
-                                        fluxel.PerformRequestAsync(req);
-                                    },
+                                    OnFileSelected = file => uploadImage(file, true),
                                     AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
                                 };
                             }
@@ -291,7 +245,7 @@ public partial class DashboardAccountTab : DashboardTab
                         }
                     }
                 },
-                socialsCategory = new DashboardAccountCategory("Socials")
+                new DashboardAccountCategory("Socials")
                 {
                     Children = new Drawable[]
                     {
@@ -403,9 +357,51 @@ public partial class DashboardAccountTab : DashboardTab
             notifications.SendError("Failed to save changes!", ex.Message);
         };
 
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
 
         string? getValue(string? original, string? val) => val == original ? null : val;
+    }
+
+    private void uploadImage(FileInfo file, bool banner)
+    {
+        var notification = new TaskNotificationData
+        {
+            Text = $"{(banner ? "Banner" : "Avatar")} Update",
+            TextWorking = "Uploading..."
+        };
+
+        notifications.AddTask(notification);
+
+        var bytes = File.ReadAllBytes(file.FullName);
+        var b64 = Convert.ToBase64String(bytes);
+
+        var parameters = new UserProfileUpdateParameters();
+
+        if (banner)
+            parameters.Banner = b64;
+        else
+            parameters.Avatar = b64;
+
+        var req = new UserProfileUpdateRequest(user.ID, parameters);
+        req.Progress += (cur, max) => notification.Progress = cur / (float)max;
+
+        req.Failure += ex =>
+        {
+            notification.TextFailed = ex.Message;
+            notification.State = LoadingState.Failed;
+        };
+
+        req.Success += _ =>
+        {
+            if (banner)
+                users.TriggerBannerUpdate(user.ID);
+            else
+                users.TriggerAvatarUpdate(user.ID);
+
+            notification.State = LoadingState.Complete;
+        };
+
+        api.PerformRequestAsync(req);
     }
 
     private void reset()
@@ -429,13 +425,13 @@ public partial class DashboardAccountTab : DashboardTab
         editContent.Clear();
         loadingIcon.FadeIn(400);
 
-        if (fluxel.User.Value is null)
+        if (api.User.Value is null)
         {
             loadingIcon.FadeOut(400);
             return;
         }
 
-        var req = new UserRequest(fluxel.User.Value.ID);
+        var req = new UserRequest(api.User.Value.ID);
         req.Success += res =>
         {
             user = res.Data;
@@ -449,6 +445,6 @@ public partial class DashboardAccountTab : DashboardTab
             notifications.SendError("Failed to get self!", ex.Message);
         };
 
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
     }
 }

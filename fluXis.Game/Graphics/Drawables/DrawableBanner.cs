@@ -33,7 +33,7 @@ public partial class DrawableBanner : Sprite
     {
         this.FadeInFromZero(400);
 
-        users.UnregisterBannerCallback(user.ID, reload);
+        users.RegisterBannerCallback(user.ID, reload);
     }
 
     private void reload()
