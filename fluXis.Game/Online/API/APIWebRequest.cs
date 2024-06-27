@@ -1,5 +1,6 @@
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.API;
 
@@ -18,6 +19,7 @@ public class APIWebRequest<T> : JsonWebRequest<APIResponse<T>>
     protected override void ProcessResponse()
     {
         var response = GetResponseString();
+        Logger.Log(response, LoggingTarget.Network, LogLevel.Debug);
 
         if (response != null)
             ResponseObject = response.Deserialize<APIResponse<T>>();

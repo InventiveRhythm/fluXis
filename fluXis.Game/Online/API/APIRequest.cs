@@ -59,6 +59,11 @@ public abstract class APIRequest
 
     private bool failed;
 
+    /// <summary>
+    /// error message when multifactor is required
+    /// </summary>
+    public const string MULTIFACTOR_REQUIRED = "mfa-required";
+
     public void Perform(IAPIClient client)
     {
         if (client is not FluxelClient fluxel)
@@ -74,6 +79,9 @@ public abstract class APIRequest
 
         if (!string.IsNullOrEmpty(APIClient.AccessToken))
             Request.AddHeader("Authorization", APIClient.AccessToken);
+
+        if (!string.IsNullOrEmpty(APIClient.MultifactorToken))
+            Request.AddHeader("X-Multifactor-Token", APIClient.MultifactorToken);
 
         try
         {

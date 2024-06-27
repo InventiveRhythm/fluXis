@@ -7,12 +7,16 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Online.Activity;
+using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Overlay.Auth;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Browse.Info;
 using fluXis.Game.Screens.Browse.Search;
 using fluXis.Shared.Components.Maps;
@@ -44,6 +48,15 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     [Resolved]
     private PreviewManager previews { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
+    [Resolved]
+    private MultifactorOverlay mfaOverlay { get; set; }
+
+    [Resolved]
+    private NotificationManager notifications { get; set; }
 
     private readonly Bindable<APIMapSet> selectedSet = new();
 
@@ -202,6 +215,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     EdgeEffect = FluXisStyles.ShadowSmall,
+                    RequestDelete = confirmDeleteMapSet,
                     OnClickAction = set =>
                     {
                         previews.PlayPreview(set.ID);
@@ -286,6 +300,41 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 map.Show();
             else
                 map.Hide();
+        }
+    }
+
+    private void confirmDeleteMapSet(long id)
+    {
+        var panel = new ConfirmDeletionPanel(deleteMapSet, itemName: "MapSet");
+        panels.Content = panel;
+
+        void deleteMapSet()
+        {
+            var pnl = panels.Content as Panel;
+            pnl?.StartLoading();
+
+            var req = new MapSetDeleteRequest(id);
+
+            req.Failure += ex =>
+            {
+                pnl?.StopLoading();
+
+                if (ex.Message == APIRequest.MULTIFACTOR_REQUIRED)
+                {
+                    mfaOverlay.Show(deleteMapSet);
+                    return;
+                }
+
+                notifications.SendError("An error occurred while deleting this mapset.", ex.Message);
+            };
+
+            req.Success += _ =>
+            {
+                Maps.FirstOrDefault(x => x.MapSet.ID == id)?.Expire();
+                pnl?.StopLoading();
+            };
+
+            fluxel.PerformRequest(req);
         }
     }
 }

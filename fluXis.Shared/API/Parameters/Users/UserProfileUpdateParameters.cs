@@ -4,6 +4,18 @@ namespace fluXis.Shared.API.Parameters.Users;
 
 public class UserProfileUpdateParameters
 {
+    /// <summary>
+    /// base64 encoded image
+    /// </summary>
+    [JsonProperty("avatar")]
+    public string? Avatar { get; set; }
+
+    /// <summary>
+    /// base64 encoded image
+    /// </summary>
+    [JsonProperty("banner")]
+    public string? Banner { get; set; }
+
     [JsonProperty("nick")]
     public string? DisplayName { get; set; }
 

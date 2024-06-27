@@ -9,7 +9,9 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Drawables.Online;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Shared.Components.Maps;
+using fluXis.Shared.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -34,6 +36,9 @@ public partial class MapCard : Container, IHasContextMenu
     [Resolved]
     private FluXisGameBase game { get; set; }
 
+    [Resolved]
+    private IAPIClient api { get; set; }
+
     public MenuItem[] ContextMenuItems
     {
         get
@@ -48,6 +53,9 @@ public partial class MapCard : Container, IHasContextMenu
             else if (!downloading)
                 list.Add(new FluXisMenuItem("Download", FontAwesome6.Solid.Download, download));
 
+            if (RequestDelete != null && canDelete)
+                list.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
+
             return list.ToArray();
         }
     }
@@ -57,12 +65,31 @@ public partial class MapCard : Container, IHasContextMenu
     public Action<APIMapSet> OnClickAction { get; set; }
     public bool ShowDownloadedState { get; set; } = true;
 
+    [CanBeNull]
+    public Action<long> RequestDelete { get; set; }
+
     private Box background;
     private Container content;
     private SectionedGradient gradient;
 
     private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.ID);
     private bool downloading => maps.DownloadQueue.Any(x => x == MapSet.ID);
+
+    private bool canDelete
+    {
+        get
+        {
+            var user = api.User.Value;
+
+            if (user == null)
+                return false;
+
+            if (user.IsDeveloper() || user.CanModerate() || MapSet.Creator.ID == user.ID)
+                return true;
+
+            return false;
+        }
+    }
 
     [CanBeNull]
     private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet.ID);

@@ -117,6 +117,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(new LoginOverlay(), buffer.Add, true);
         loadComponent(new RegisterOverlay(), buffer.Add, true);
+        loadComponent(new MultifactorOverlay(), buffer.Add, true);
         loadComponent(toolbar = new Toolbar(), buffer.Add, true);
 
         loadComponent(panelContainer = new PanelContainer { BlurContainer = buffer }, Add, true);

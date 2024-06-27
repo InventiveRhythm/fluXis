@@ -32,7 +32,7 @@ public partial class ButtonPanel : Panel, ICloseable
 
         Content.RelativeSizeAxes = Axes.X;
         Content.AutoSizeAxes = Axes.Y;
-        Content.Padding = new MarginPadding(20) { Top = 30 };
+        Content.Padding = new MarginPadding(0);
         Content.Children = new Drawable[]
         {
             new FillFlowContainer
@@ -41,6 +41,7 @@ public partial class ButtonPanel : Panel, ICloseable
                 AutoSizeAxes = Axes.Y,
                 Spacing = new Vector2(10),
                 Direction = FillDirection.Vertical,
+                Padding = new MarginPadding(20) { Top = 30 },
                 Children = new Drawable[]
                 {
                     new SpriteIcon
@@ -89,7 +90,7 @@ public partial class ButtonPanel : Panel, ICloseable
                             Action = () =>
                             {
                                 b.Action?.Invoke();
-                                Hide();
+                                if (!Loading) Hide();
                             }
                         })
                     }
@@ -105,6 +106,9 @@ public partial class ButtonPanel : Panel, ICloseable
 
     public void Close()
     {
+        if (Loading)
+            return;
+
         var last = Buttons.Last();
         last.Action?.Invoke();
         Hide();

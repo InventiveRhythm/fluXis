@@ -40,6 +40,7 @@ public partial class FluxelClient : Component, IAPIClient
     private NotificationManager notifications { get; set; } = null!;
 
     public string AccessToken => tokenBindable.Value;
+    public string MultifactorToken { get; set; } = "";
     private Bindable<string> tokenBindable = null!;
 
     private Bindable<string> username = null!;

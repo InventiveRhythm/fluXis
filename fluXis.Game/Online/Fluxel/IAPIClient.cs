@@ -16,6 +16,8 @@ public interface IAPIClient
     bool IsLoggedIn { get; }
 
     string AccessToken { get; }
+    string MultifactorToken { get; set; }
+
     APIEndpointConfig Endpoint { get; }
     Exception? LastException { get; }
 

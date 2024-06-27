@@ -21,6 +21,7 @@ public class TestAPIClient : IAPIClient
 
     public Bindable<ConnectionStatus> Status { get; } = new(ConnectionStatus.Online);
     public string AccessToken => "token";
+    public string MultifactorToken { get; set; } = "mfa-token";
     public APIEndpointConfig Endpoint => new();
     public Exception? LastException { get; private set; }
     public bool IsLoggedIn => Status.Value == ConnectionStatus.Online;
