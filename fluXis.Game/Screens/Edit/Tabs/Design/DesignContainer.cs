@@ -8,7 +8,9 @@ using fluXis.Game.Screens.Edit.Tabs.Shared;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osuTK;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Design;
@@ -22,17 +24,25 @@ public partial class DesignContainer : EditorTabContainer
     {
         return new Drawable[]
         {
-            backgroundVideo = new BackgroundVideo
+            new DrawSizePreservingFillContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                VideoClock = EditorClock,
-                ShowDim = false
-            },
-            new EditorFlashLayer { InBackground = true },
-            new EditorDesignPlayfield(),
-            new EditorFlashLayer()
+                TargetDrawSize = new Vector2(1920, 1080),
+                Children = new Drawable[]
+                {
+                    backgroundVideo = new BackgroundVideo
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        VideoClock = EditorClock,
+                        ShowDim = false
+                    },
+                    new EditorFlashLayer { InBackground = true },
+                    new EditorDesignPlayfield(),
+                    new EditorFlashLayer()
+                }
+            }
         };
     }
 
