@@ -87,6 +87,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     private DateTimeOffset date;
 
+    private Container wrapper;
     private Box rankBackground;
     private FluXisSpriteText timeText;
 
@@ -110,219 +111,223 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     {
         RelativeSizeAxes = Axes.X;
         Height = 60;
-        CornerRadius = 10;
-        Masking = true;
 
         date = TimeUtils.GetFromSeconds(ScoreInfo.Timestamp);
 
-        Children = new Drawable[]
+        Child = wrapper = new Container
         {
-            rankBackground = new Box
+            RelativeSizeAxes = Axes.Both,
+            CornerRadius = 10,
+            Masking = true,
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = DrawableScoreRank.GetColor(ScoreInfo.Rank, true)
-            },
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Right = 60 },
-                Child = new Container
+                rankBackground = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    CornerRadius = 10,
-                    Masking = true,
-                    Children = new Drawable[]
+                    Colour = DrawableScoreRank.GetColor(ScoreInfo.Rank, true)
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Right = 60 },
+                    Child = new Container
                     {
-                        new Box
+                        RelativeSizeAxes = Axes.Both,
+                        CornerRadius = 10,
+                        Masking = true,
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
-                        },
-                        new LoadWrapper<DrawableBanner>
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            LoadContent = () => new DrawableBanner(Player)
+                            new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre
+                                Colour = FluXisColors.Background2
                             },
-                            OnComplete = banner => banner.FadeInFromZero(400)
-                        },
-                        new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2,
-                            Alpha = .6f
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Width = .3f,
-                            CornerRadius = 10,
-                            Masking = true,
-                            BorderColour = outlineColor,
-                            BorderThickness = 3,
-                            Child = new Box
+                            new LoadWrapper<DrawableBanner>
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Alpha = 0
-                            }
-                        },
-                        new GridContainer
-                        {
-                            ColumnDimensions = new Dimension[]
-                            {
-                                new(GridSizeMode.Absolute, 60),
-                                new(GridSizeMode.Absolute, 60),
-                                new(),
-                                new(GridSizeMode.AutoSize)
-                            },
-                            RelativeSizeAxes = Axes.Both,
-                            Content = new[]
-                            {
-                                new Drawable[]
+                                LoadContent = () => new DrawableBanner(Player)
                                 {
-                                    new FluXisSpriteText
+                                    RelativeSizeAxes = Axes.Both,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre
+                                },
+                                OnComplete = banner => banner.FadeInFromZero(400)
+                            },
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background2,
+                                Alpha = .6f
+                            },
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Width = .3f,
+                                CornerRadius = 10,
+                                Masking = true,
+                                BorderColour = outlineColor,
+                                BorderThickness = 3,
+                                Child = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    AlwaysPresent = true,
+                                    Alpha = 0
+                                }
+                            },
+                            new GridContainer
+                            {
+                                ColumnDimensions = new Dimension[]
+                                {
+                                    new(GridSizeMode.Absolute, 60),
+                                    new(GridSizeMode.Absolute, 60),
+                                    new(),
+                                    new(GridSizeMode.AutoSize)
+                                },
+                                RelativeSizeAxes = Axes.Both,
+                                Content = new[]
+                                {
+                                    new Drawable[]
                                     {
-                                        Text = Place.ToMetric(decimals: 1).Replace(",", "."),
-                                        FontSize = 26,
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre
-                                    },
-                                    new LoadWrapper<DrawableAvatar>
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        CornerRadius = 10,
-                                        Masking = true,
-                                        LoadContent = () => new DrawableAvatar(Player)
+                                        new FluXisSpriteText
                                         {
-                                            RelativeSizeAxes = Axes.Both,
+                                            Text = Place.ToMetric(decimals: 1).Replace(",", "."),
+                                            FontSize = 26,
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre
                                         },
-                                        OnComplete = avatar => avatar.FadeInFromZero(400)
-                                    },
-                                    new FillFlowContainer
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Padding = new MarginPadding { Horizontal = 10 },
-                                        Direction = FillDirection.Vertical,
-                                        Spacing = new Vector2(8),
-                                        Children = new Drawable[]
+                                        new LoadWrapper<DrawableAvatar>
                                         {
-                                            new FillFlowContainer
+                                            RelativeSizeAxes = Axes.Both,
+                                            CornerRadius = 10,
+                                            Masking = true,
+                                            LoadContent = () => new DrawableAvatar(Player)
                                             {
-                                                RelativeSizeAxes = Axes.X,
-                                                Height = 15,
-                                                Direction = FillDirection.Horizontal,
-                                                Anchor = Anchor.CentreLeft,
-                                                Origin = Anchor.CentreLeft,
-                                                Spacing = new Vector2(6),
-                                                Children = new Drawable[]
+                                                RelativeSizeAxes = Axes.Both,
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre
+                                            },
+                                            OnComplete = avatar => avatar.FadeInFromZero(400)
+                                        },
+                                        new FillFlowContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Padding = new MarginPadding { Horizontal = 10 },
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(8),
+                                            Children = new Drawable[]
+                                            {
+                                                new FillFlowContainer
                                                 {
-                                                    new DrawableCountry(Player.GetCountry())
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Height = 15,
+                                                    Direction = FillDirection.Horizontal,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft,
+                                                    Spacing = new Vector2(6),
+                                                    Children = new Drawable[]
                                                     {
-                                                        Width = 20,
-                                                        CornerRadius = 4,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft
-                                                    },
-                                                    new ClubTag(Player?.Club)
-                                                    {
-                                                        Alpha = Player?.Club != null ? 1 : 0,
-                                                        WebFontSize = 14,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft
-                                                    },
-                                                    new FluXisSpriteText
-                                                    {
-                                                        Text = Player?.PreferredName ?? "Player",
-                                                        WebFontSize = 20,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft
-                                                    },
-                                                    new FillFlowContainer
-                                                    {
-                                                        AutoSizeAxes = Axes.Both,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft,
-                                                        Padding = new MarginPadding { Left = 4 },
-                                                        Spacing = new Vector2(4),
-                                                        Alpha = .8f,
-                                                        Children = new Drawable[]
+                                                        new DrawableCountry(Player.GetCountry())
                                                         {
-                                                            new SpriteIcon
+                                                            Width = 20,
+                                                            CornerRadius = 4,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft
+                                                        },
+                                                        new ClubTag(Player?.Club)
+                                                        {
+                                                            Alpha = Player?.Club != null ? 1 : 0,
+                                                            WebFontSize = 14,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft
+                                                        },
+                                                        new FluXisSpriteText
+                                                        {
+                                                            Text = Player?.PreferredName ?? "Player",
+                                                            WebFontSize = 20,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft
+                                                        },
+                                                        new FillFlowContainer
+                                                        {
+                                                            AutoSizeAxes = Axes.Both,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft,
+                                                            Padding = new MarginPadding { Left = 4 },
+                                                            Spacing = new Vector2(4),
+                                                            Alpha = .8f,
+                                                            Children = new Drawable[]
                                                             {
-                                                                Size = new Vector2(12),
-                                                                Icon = FontAwesome6.Regular.Clock,
-                                                                Anchor = Anchor.CentreLeft,
-                                                                Origin = Anchor.CentreLeft
-                                                            },
-                                                            timeText = new FluXisSpriteText
-                                                            {
-                                                                WebFontSize = 12,
-                                                                Anchor = Anchor.CentreLeft,
-                                                                Origin = Anchor.CentreLeft
+                                                                new SpriteIcon
+                                                                {
+                                                                    Size = new Vector2(12),
+                                                                    Icon = FontAwesome6.Regular.Clock,
+                                                                    Anchor = Anchor.CentreLeft,
+                                                                    Origin = Anchor.CentreLeft
+                                                                },
+                                                                timeText = new FluXisSpriteText
+                                                                {
+                                                                    WebFontSize = 12,
+                                                                    Anchor = Anchor.CentreLeft,
+                                                                    Origin = Anchor.CentreLeft
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                }
-                                            },
-                                            new FillFlowContainer
-                                            {
-                                                RelativeSizeAxes = Axes.X,
-                                                Height = 15,
-                                                Direction = FillDirection.Horizontal,
-                                                Anchor = Anchor.CentreLeft,
-                                                Origin = Anchor.CentreLeft,
-                                                Spacing = new Vector2(6),
-                                                ChildrenEnumerable = getMods().Concat(new[]
+                                                },
+                                                new FillFlowContainer
                                                 {
-                                                    new FluXisSpriteText
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Height = 15,
+                                                    Direction = FillDirection.Horizontal,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft,
+                                                    Spacing = new Vector2(6),
+                                                    ChildrenEnumerable = getMods().Concat(new[]
                                                     {
-                                                        Text = ScoreInfo.Accuracy.ToString("00.00").Replace(",", ".") + "%",
-                                                        WebFontSize = 12,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft
-                                                    },
-                                                    new FluXisSpriteText
-                                                    {
-                                                        Text = $"{ScoreInfo.MaxCombo}x",
-                                                        WebFontSize = 12,
-                                                        Anchor = Anchor.CentreLeft,
-                                                        Origin = Anchor.CentreLeft,
-                                                        Alpha = .8f
-                                                    }
-                                                })
-                                            },
-                                        }
-                                    },
-                                    new FillFlowContainer
-                                    {
-                                        AutoSizeAxes = Axes.Both,
-                                        Anchor = Anchor.CentreRight,
-                                        Origin = Anchor.CentreRight,
-                                        Direction = FillDirection.Vertical,
-                                        Padding = new MarginPadding { Horizontal = 20 },
-                                        Spacing = new Vector2(-4),
-                                        Children = new Drawable[]
+                                                        new FluXisSpriteText
+                                                        {
+                                                            Text = ScoreInfo.Accuracy.ToString("00.00").Replace(",", ".") + "%",
+                                                            WebFontSize = 12,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft
+                                                        },
+                                                        new FluXisSpriteText
+                                                        {
+                                                            Text = $"{ScoreInfo.MaxCombo}x",
+                                                            WebFontSize = 12,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft,
+                                                            Alpha = .8f
+                                                        }
+                                                    })
+                                                },
+                                            }
+                                        },
+                                        new FillFlowContainer
                                         {
-                                            new FluXisSpriteText
+                                            AutoSizeAxes = Axes.Both,
+                                            Anchor = Anchor.CentreRight,
+                                            Origin = Anchor.CentreRight,
+                                            Direction = FillDirection.Vertical,
+                                            Padding = new MarginPadding { Horizontal = 20 },
+                                            Spacing = new Vector2(-4),
+                                            Children = new Drawable[]
                                             {
-                                                Text = $"{ScoreInfo.PerformanceRating.ToStringInvariant("00.00")}pr",
-                                                WebFontSize = 20,
-                                                Anchor = Anchor.CentreRight,
-                                                Origin = Anchor.CentreRight
-                                            },
-                                            new FluXisSpriteText
-                                            {
-                                                Text = ScoreInfo.Score.ToString("0000000"),
-                                                WebFontSize = 14,
-                                                Anchor = Anchor.CentreRight,
-                                                Origin = Anchor.CentreRight,
-                                                Alpha = .8f
+                                                new FluXisSpriteText
+                                                {
+                                                    Text = $"{ScoreInfo.PerformanceRating.ToStringInvariant("00.00")}pr",
+                                                    WebFontSize = 20,
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight
+                                                },
+                                                new FluXisSpriteText
+                                                {
+                                                    Text = ScoreInfo.Score.ToString("0000000"),
+                                                    WebFontSize = 14,
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight,
+                                                    Alpha = .8f
+                                                }
                                             }
                                         }
                                     }
@@ -330,21 +335,21 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                             }
                         }
                     }
-                }
-            },
-            new Container
-            {
-                Size = new Vector2(60),
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight,
-                Child = new DrawableScoreRank
+                },
+                new Container
                 {
-                    Rank = ScoreInfo.Rank,
-                    FontSize = FluXisSpriteText.GetWebFontSize(28),
-                    Shadow = false,
-                    AlternateColor = true,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    Size = new Vector2(60),
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight,
+                    Child = new DrawableScoreRank
+                    {
+                        Rank = ScoreInfo.Rank,
+                        FontSize = FluXisSpriteText.GetWebFontSize(28),
+                        Shadow = false,
+                        AlternateColor = true,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    }
                 }
             }
         };
@@ -352,9 +357,9 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     protected override void LoadComplete()
     {
-        this.MoveToX(100).FadeOut()
-            .Then((Place - 1) * 50)
-            .MoveToX(0, 500, Easing.OutQuint).FadeIn(400);
+        wrapper.MoveToX(100).FadeOut()
+               .Then((Place - 1) * 50)
+               .MoveToX(0, 500, Easing.OutQuint).FadeIn(400);
 
         if (ScoreInfo.Rank == ScoreRank.X)
         {

@@ -172,7 +172,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                             Padding = new MarginPadding(10)
                             {
                                 Top = 80,
-                                Left = 20,
                                 Bottom = 40
                             },
                             Child = MapList = new MapList { Alpha = 0 }

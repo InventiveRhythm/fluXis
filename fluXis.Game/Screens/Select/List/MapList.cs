@@ -19,6 +19,7 @@ public partial class MapList : FluXisScrollContainer
         Masking = false;
         RelativeSizeAxes = Axes.Both;
         ScrollbarAnchor = Anchor.TopLeft;
+        ScrollbarOverlapsContent = false;
 
         Child = Content = new FillFlowContainer<MapListEntry>
         {

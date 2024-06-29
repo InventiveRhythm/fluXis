@@ -170,12 +170,13 @@ public partial class ScoreList : GridContainer
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding { Right = 20 },
+                            Padding = new MarginPadding { Right = 10 },
                             Masking = true,
                             Child = scrollContainer = new FluXisScrollContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 ScrollbarAnchor = Anchor.TopRight,
+                                ScrollbarOverlapsContent = false,
                                 Masking = false
                             }
                         },
