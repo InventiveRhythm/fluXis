@@ -108,9 +108,11 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
         {
             Child = circle = new Circle
             {
-                Width = 8,
-                RelativeSizeAxes = Axes.Y,
-                Colour = FluXisColors.Background4
+                RelativeSizeAxes = direction == Direction.Vertical ? Axes.Y : Axes.X,
+                Width = direction == Direction.Vertical ? 8 : 1,
+                Height = direction == Direction.Vertical ? 1 : 8,
+                Colour = FluXisColors.Background4,
+                Blending = BlendingParameters.Additive
             };
         }
 
