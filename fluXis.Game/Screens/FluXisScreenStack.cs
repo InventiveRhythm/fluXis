@@ -65,8 +65,12 @@ public partial class FluXisScreenStack : ScreenStack
 
         backgrounds.Zoom = screen.Zoom;
         backgrounds.ParallaxStrength = screen.ParallaxStrength;
-        toolbar.ShowToolbar.Value = screen.ShowToolbar;
         backgrounds.SetBlur(screen.BackgroundBlur);
         backgrounds.SetDim(screen.BackgroundDim);
+
+        if (screen.ShowToolbar)
+            toolbar.Show();
+        else
+            toolbar.Hide();
     }
 }

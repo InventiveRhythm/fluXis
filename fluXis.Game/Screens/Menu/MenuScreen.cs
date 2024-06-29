@@ -402,7 +402,7 @@ public partial class MenuScreen : FluXisScreen
 
         this.Delay(800).FadeIn().OnComplete(_ =>
         {
-            toolbar.ShowToolbar.Value = true;
+            toolbar.Show();
             showMenu(true);
             login.Show();
         });
@@ -412,7 +412,7 @@ public partial class MenuScreen : FluXisScreen
 
     private void revertStartAnimation()
     {
-        toolbar.ShowToolbar.Value = false;
+        toolbar.Hide();
         backgrounds.Zoom = 1.2f;
         hideMenu();
 

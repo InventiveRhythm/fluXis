@@ -34,6 +34,6 @@ public partial class TestToolbar : FluXisTestScene
 
         Add(panels);
 
-        AddStep("Toggle Toolbar", toolbar.ShowToolbar.Toggle);
+        AddStep("Toggle Toolbar", toolbar.ToggleVisibility);
     }
 }

@@ -25,7 +25,7 @@ public partial class SearchBar : Container
         Width = .5f;
         Height = 60;
         X = -10;
-        Y = 10;
+        Y = 20;
         Padding = new MarginPadding { Left = -10 };
 
         InternalChildren = new Drawable[]

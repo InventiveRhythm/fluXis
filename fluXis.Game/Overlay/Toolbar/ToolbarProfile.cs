@@ -10,6 +10,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.User;
+using fluXis.Game.Screens;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
@@ -26,7 +27,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class ToolbarProfile : Container, IHasTooltip
+public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
 {
     public LocalisableString TooltipText => loadingContainer.Alpha > 0 ? "Connecting..." : "";
 
@@ -156,6 +157,9 @@ public partial class ToolbarProfile : Container, IHasTooltip
 
         fluxel.Status.BindValueChanged(updateStatus, true);
     }
+
+    protected override void PopIn() => container.MoveToY(-10, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    protected override void PopOut() => container.MoveToY(-20, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
     {

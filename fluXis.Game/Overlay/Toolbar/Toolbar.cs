@@ -22,11 +22,13 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Overlay.Toolbar;
 
-public partial class Toolbar : Container
+public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
     private SettingsMenu settings { get; set; }
@@ -49,10 +51,13 @@ public partial class Toolbar : Container
     [Resolved]
     private FluXisScreenStack screens { get; set; }
 
-    public BindableBool ShowToolbar { get; } = new();
     public BindableBool AllowOverlays { get; } = new();
 
+    private bool userControlled;
+
     public override bool PropagateNonPositionalInputSubTree => AllowOverlays.Value;
+
+    private ToolbarProfile profile;
 
     private string centerTextString;
     private FluXisSpriteText centerText;
@@ -63,9 +68,8 @@ public partial class Toolbar : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 60;
-        Y = -60;
-        Padding = new MarginPadding { Bottom = 10 };
+        Height = 50;
+        Y = -50;
 
         Children = new Drawable[]
         {
@@ -193,15 +197,13 @@ public partial class Toolbar : Container
                                 Keybind = FluXisGlobalKeybind.ToggleMusicPlayer,
                                 Margin = new MarginPadding { Right = 10 }
                             },
-                            new ToolbarProfile(),
+                            profile = new ToolbarProfile(),
                             new ToolbarClock()
                         }
                     }
                 }
             }
         };
-
-        ShowToolbar.BindValueChanged(OnShowToolbarChanged, true);
     }
 
     private void goToScreen(IScreen screen)
@@ -216,12 +218,32 @@ public partial class Toolbar : Container
         screens.Push(screen);
     }
 
-    private void OnShowToolbarChanged(ValueChangedEvent<bool> e)
+    protected override void UpdateState(ValueChangedEvent<Visibility> state)
     {
-        if (e.OldValue == e.NewValue) return;
+        if (state.NewValue == Visibility.Visible && userControlled)
+        {
+            State.Value = Visibility.Hidden;
+            return;
+        }
 
-        this.MoveToY(e.NewValue ? 0 : -Height, 500, Easing.OutQuint);
+        profile.State.Value = state.NewValue;
+        base.UpdateState(state);
     }
+
+    protected override void PopIn() => this.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    protected override void PopOut() => this.MoveToY(-Height, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        if (e.Action != FluXisGlobalKeybind.ToggleToolbar)
+            return false;
+
+        userControlled = State.Value == Visibility.Visible;
+        ToggleVisibility();
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 
     public void SetCenterText(string text)
     {

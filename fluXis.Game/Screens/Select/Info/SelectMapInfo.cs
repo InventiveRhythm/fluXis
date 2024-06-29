@@ -21,7 +21,7 @@ public partial class SelectMapInfo : GridContainer
         Origin = Anchor.CentreRight;
         RelativeSizeAxes = Axes.Both;
         Width = .5f;
-        Padding = new MarginPadding { Vertical = 10 };
+        Padding = new MarginPadding { Top = 20, Bottom = 10 };
         Margin = new MarginPadding { Right = -20 };
         RowDimensions = new Dimension[]
         {

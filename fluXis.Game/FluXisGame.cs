@@ -419,7 +419,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public override void Exit()
     {
-        toolbar.ShowToolbar.Value = false;
+        toolbar.Hide();
         globalClock.VolumeOut(1500);
         exitAnimation.Show(buffer.Hide, base.Exit);
         isExiting = true;
