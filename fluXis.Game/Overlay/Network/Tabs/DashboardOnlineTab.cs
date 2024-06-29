@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Drawables;
@@ -27,11 +28,16 @@ public partial class DashboardOnlineTab : DashboardWipTab
     [BackgroundDependencyLoader]
     private void load()
     {
-        Child = flow = new FillFlowContainer
+        Content.Child = new FluXisScrollContainer
         {
             RelativeSizeAxes = Axes.Both,
-            Direction = FillDirection.Full,
-            Spacing = new Vector2(20)
+            Child = flow = new FillFlowContainer
+            {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Full,
+                Spacing = new Vector2(20)
+            }
         };
     }
 
