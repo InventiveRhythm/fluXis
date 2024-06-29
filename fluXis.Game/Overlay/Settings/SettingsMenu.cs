@@ -154,19 +154,22 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                                                     new Container
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
-                                                        Padding = new MarginPadding { Horizontal = 50, Top = 20, Bottom = 50 },
+                                                        Padding = new MarginPadding(50)
+                                                        {
+                                                            Top = 20,
+                                                            Right = 30
+                                                        },
                                                         Masking = true,
                                                         Child = scrollContainer = new FluXisScrollContainer
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
                                                             ScrollbarAnchor = Anchor.TopRight,
-                                                            ScrollbarOrigin = Anchor.TopLeft,
-                                                            ScrollbarMargin = 5,
                                                             Masking = false,
                                                             Child = new Container<SettingsSection>
                                                             {
                                                                 RelativeSizeAxes = Axes.X,
                                                                 AutoSizeAxes = Axes.Y,
+                                                                Padding = new MarginPadding { Right = 20 },
                                                                 ChildrenEnumerable = sections
                                                             }
                                                         }
