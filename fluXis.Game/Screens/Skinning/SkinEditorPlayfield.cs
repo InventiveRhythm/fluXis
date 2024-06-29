@@ -13,14 +13,16 @@ public partial class SkinEditorPlayfield : Container
     public int KeyMode { get; set; }
 
     private Container stageContainer;
+    private Drawable hitline;
     private FillFlowContainer receptorContainer;
     private Container hitObjectContainer;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.Both;
-        Masking = true;
+        RelativeSizeAxes = Axes.Y;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
 
         addContent();
     }
@@ -37,7 +39,7 @@ public partial class SkinEditorPlayfield : Container
         {
             stageContainer = new Container
             {
-                RelativeSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = new[]
@@ -49,17 +51,22 @@ public partial class SkinEditorPlayfield : Container
             },
             receptorContainer = new FillFlowContainer
             {
-                RelativeSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.Both,
                 Direction = FillDirection.Horizontal,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre
             },
             hitObjectContainer = new Container
             {
-                RelativeSizeAxes = Axes.Y,
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
-            }
+            },
+            hitline = SkinManager.GetHitLine().With(line =>
+            {
+                line.Width = 1;
+                line.RelativeSizeAxes = Axes.X;
+            })
         };
 
         for (int i = 0; i < KeyMode; i++)
@@ -77,10 +84,10 @@ public partial class SkinEditorPlayfield : Container
 
     protected override void Update()
     {
-        var width = SkinJson.GetKeymode(KeyMode).ColumnWidth * KeyMode;
-        stageContainer.Width = width;
-        receptorContainer.Width = width;
-        hitObjectContainer.Width = width;
+        Width = SkinJson.GetKeymode(KeyMode).ColumnWidth * KeyMode;
+
+        var hitpos = SkinJson.GetKeymode(KeyMode).HitPosition;
+        hitline.Y = -hitpos;
 
         foreach (var drawable in hitObjectContainer)
         {
@@ -90,7 +97,7 @@ public partial class SkinEditorPlayfield : Container
             drawable.X = index * SkinJson.GetKeymode(KeyMode).ColumnWidth;
 
             float time = index * 100;
-            drawable.Y = -SkinJson.GetKeymode(KeyMode).HitPosition - .5f * (time * 3);
+            drawable.Y = -hitpos - .5f * (time * 3);
         }
     }
 }
