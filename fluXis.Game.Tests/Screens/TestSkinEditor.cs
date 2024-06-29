@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Screens;
-using fluXis.Game.Screens.Skin;
+using fluXis.Game.Screens.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 

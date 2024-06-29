@@ -1,13 +1,14 @@
 using fluXis.Game.Skinning;
+using fluXis.Game.Skinning.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Skin;
+namespace fluXis.Game.Screens.Skinning;
 
 public partial class SkinEditorPlayfield : Container
 {
-    public Skinning.Json.SkinJson SkinJson { get; set; }
+    public SkinJson SkinJson { get; set; }
     public SkinManager SkinManager { get; set; }
     public int KeyMode { get; set; }
 

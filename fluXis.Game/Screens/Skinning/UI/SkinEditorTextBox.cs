@@ -5,7 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Skin.UI;
+namespace fluXis.Game.Screens.Skinning.UI;
 
 public partial class SkinEditorTextBox : Container
 {

@@ -30,7 +30,7 @@ using fluXis.Game.Screens.Loading;
 using fluXis.Game.Screens.Menu;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Screens.Select;
-using fluXis.Game.Screens.Skin;
+using fluXis.Game.Screens.Skinning;
 using fluXis.Game.Utils;
 using fluXis.Shared.API.Packets.Other;
 using fluXis.Shared.API.Packets.User;

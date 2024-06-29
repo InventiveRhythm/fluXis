@@ -11,7 +11,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 
-namespace fluXis.Game.Screens.Skin.UI;
+namespace fluXis.Game.Screens.Skinning.UI;
 
 public partial class SkinEditorColor : Container, IHasPopover
 {
