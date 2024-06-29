@@ -51,7 +51,8 @@ public partial class GameplayHUD : Container
             {
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Origin = Anchor.Centre,
+                AlwaysPresent = true
             }
         };
 
@@ -81,6 +82,7 @@ public partial class GameplayHUD : Container
         playfieldComponents.Position = screen.Playfield.Position;
         playfieldComponents.Width = screen.Playfield.DrawWidth;
         playfieldComponents.Rotation = screen.Playfield.Rotation;
+        playfieldComponents.Alpha = screen.Playfield.Alpha;
 
         var scale = screen.Playfield.Scale;
 
