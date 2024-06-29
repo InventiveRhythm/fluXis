@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
+using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Skinning.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class SkinSnapColors
+public class SkinSnapColors : IDeepCloneable<SkinSnapColors>
 {
     [JsonProperty("1/3")]
     public string Third { get; set; } = "#FF5555";
@@ -61,4 +62,16 @@ public class SkinSnapColors
         cache.Add(hex, color);
         return color;
     }
+
+    public SkinSnapColors DeepClone() => new()
+    {
+        Third = Third,
+        Fourth = Fourth,
+        Sixth = Sixth,
+        Eighth = Eighth,
+        Twelfth = Twelfth,
+        Sixteenth = Sixteenth,
+        TwentyFourth = TwentyFourth,
+        FortyEighth = FortyEighth
+    };
 }

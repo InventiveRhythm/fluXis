@@ -60,7 +60,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     [BackgroundDependencyLoader]
     private void load()
     {
-        skinJson = skinManager.SkinJson.Copy();
+        skinJson = skinManager.SkinJson.DeepClone();
 
         keyMode.BindValueChanged(e =>
         {
