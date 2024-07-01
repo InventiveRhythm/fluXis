@@ -150,34 +150,40 @@ public class MapInfo
         return MapEvents.Load<T>(content);
     }
 
+    [CanBeNull]
     public virtual Storyboard GetStoryboard()
     {
         var file = Map?.MapSet.GetPathForFile(StoryboardFile);
 
         if (string.IsNullOrEmpty(file))
-            return new Storyboard();
+            return null;
 
         var path = MapFiles.GetFullPath(file);
 
         if (string.IsNullOrEmpty(path) || !File.Exists(path))
-            return new Storyboard();
+            return null;
 
         var json = File.ReadAllText(path);
         return json.Deserialize<Storyboard>();
     }
 
+    [CanBeNull]
     public virtual DrawableStoryboard CreateDrawableStoryboard()
     {
         var sb = GetStoryboard();
+
+        if (sb == null)
+            return null;
+
         var folderName = Map?.MapSet.ID.ToString();
 
         if (string.IsNullOrEmpty(folderName))
-            return new DrawableStoryboard(sb, ".");
+            return null;
 
         var path = MapFiles.GetFullPath(folderName);
 
         if (!Directory.Exists(path))
-            return new DrawableStoryboard(sb, ".");
+            return null;
 
         return new DrawableStoryboard(sb, MapFiles.GetFullPath(Map!.MapSet.ID.ToString()));
     }

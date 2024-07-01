@@ -252,7 +252,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             replayRecorder = new ReplayRecorder()
         }, UseGlobalOffset);
 
-        var storyboard = Map.CreateDrawableStoryboard();
+        var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
         LoadComponent(storyboard);
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);

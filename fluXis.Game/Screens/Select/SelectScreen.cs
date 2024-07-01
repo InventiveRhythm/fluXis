@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
@@ -29,12 +30,15 @@ using fluXis.Game.Screens.Select.List;
 using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Screens.Select.Search;
 using fluXis.Game.Screens.Select.UI;
+using fluXis.Game.Storyboards;
+using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -86,6 +90,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     protected SearchFilters Filters { get; private set; }
 
     private BackgroundVideo video;
+    private Container storyboardContainer;
+
+    private CancellationTokenSource storyboardCancellationToken;
+
     private SelectMapInfo selectMapInfo;
     private SearchBar searchBar;
     private SelectFooter footer;
@@ -137,14 +145,22 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         RelativeSizeAxes = Axes.Both,
                         BlurSigma = new Vector2(12),
                         RedrawOnScale = false,
-                        Child = video = new BackgroundVideo()
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fill,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            VideoClock = clock,
-                            ShowDim = false
+                            video = new BackgroundVideo()
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                FillMode = FillMode.Fill,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                VideoClock = clock,
+                                ShowDim = false
+                            },
+                            storyboardContainer = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                AlwaysPresent = true
+                            }
                         }
                     },
                     new Box
@@ -348,6 +364,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             return;
 
         video.Stop();
+        storyboardCancellationToken?.Cancel();
+
+        if (storyboardContainer.Count > 0)
+            storyboardContainer.ForEach(d => d.FadeOut(FADE_DURATION).Expire());
 
         var previous = MapStore.CurrentMapSet;
 
@@ -357,14 +377,50 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         if (!backgroundVideo.Value)
             return;
 
+        storyboardCancellationToken = new CancellationTokenSource();
+        var token = storyboardCancellationToken.Token;
+
+        // it doesn't work for some reason when it has a token
+        // ReSharper disable once MethodSupportsCancellation
         Task.Run(() =>
         {
+            Logger.Log("creating sb");
             var map = set.LowestDifficulty!;
+            var info = map.GetMapInfo();
+
             video.Map = map;
-            video.Info = map.GetMapInfo();
+            video.Info = info;
 
             video.LoadVideo();
             ScheduleAfterChildren(video.Start);
+
+            try
+            {
+                var sb = info.CreateDrawableStoryboard();
+
+                if (sb == null)
+                    return;
+
+                var layers = Enum.GetValues<StoryboardLayer>();
+
+                foreach (var layer in layers)
+                {
+                    Schedule(() =>
+                    {
+                        LoadComponent(sb); // needed for storage
+                        var wrapper = new DrawableStoryboardWrapper(clock, sb, layer);
+                        LoadComponentAsync(wrapper, s =>
+                        {
+                            storyboardContainer.Add(s);
+                            s.FadeInFromZero(FADE_DURATION);
+                        }, cancellation: token);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to load storyboard!");
+            }
         });
     }
 
