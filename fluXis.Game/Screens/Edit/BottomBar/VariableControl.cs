@@ -36,8 +36,8 @@ public partial class VariableControl : FillFlowContainer
                 Title = "Playback Speed",
                 Bindable = rateBindable = new BindableFloat
                 {
-                    MinValue = .5f,
-                    MaxValue = 3f,
+                    MinValue = .2f,
+                    MaxValue = 2f,
                     Default = 1f,
                     Value = 1f,
                     Precision = .05f
