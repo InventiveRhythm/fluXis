@@ -22,6 +22,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
 
     private Achievement achievement { get; }
 
+    private bool dismissible;
     private Sample sample;
 
     private Square backgroundSquare;
@@ -139,10 +140,18 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
         icon.Delay(initial_delay).ScaleTo(1, square_duration, Easing.OutQuint);
         textContainer.Delay(initial_delay + 600).FadeIn(200);
 
+        Scheduler.AddDelayed(() => dismissible = true, 3000);
+
         sample?.Play();
     }
 
-    public void Close() => this.ScaleTo(.9f, 400, Easing.OutQuint).FadeOut(200);
+    public void Close()
+    {
+        if (!dismissible)
+            return;
+
+        this.ScaleTo(.9f, 400, Easing.OutQuint).FadeOut(200);
+    }
 
     private ColourInfo getColor()
     {
