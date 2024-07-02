@@ -123,10 +123,10 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
 
     private float getRightSize()
     {
-        var num = 12;
+        var num = 14;
 
         if (getRightContent() != null)
-            num += 32;
+            num += 30;
 
         Logger.Log($"{shouldShowChevron} {shouldShowCheck} {num}");
         return num;
@@ -151,7 +151,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
             AutoSizeAxes = Axes.Both,
             Anchor = Anchor.CentreRight,
             Origin = Anchor.CentreRight,
-            Padding = new MarginPadding { Left = 12, Right = 12 },
+            Padding = new MarginPadding { Left = 14, Right = 14 },
             Child = drawable.With(d => d.Anchor = d.Origin = Anchor.CentreRight)
         };
     }
@@ -162,7 +162,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
         {
             return new SpriteIcon
             {
-                Size = new Vector2(20),
+                Size = new Vector2(16),
                 Icon = FontAwesome6.Solid.ChevronRight
             };
         }
@@ -171,7 +171,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
         {
             return new SpriteIcon
             {
-                Size = new Vector2(20),
+                Size = new Vector2(16),
                 Icon = FontAwesome6.Solid.Check
             };
         }
