@@ -65,6 +65,13 @@ public class APIMap
     [JsonProperty("downs")]
     public long DownVotes { get; init; }
 
+    #region Optional
+
+    [JsonProperty("file")]
+    public string? FileName { get; set; }
+
+    #endregion
+
     public static APIMap CreateUnknown(long id, long mapper = 0) => new()
     {
         ID = id,

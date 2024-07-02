@@ -757,23 +757,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             var overlay = new EditorUploadOverlay
             {
                 Text = isUpdate ? "Updating mapset..." : "Uploading mapset...",
-                SubText = "Checking for duplicate difficulties..."
+                SubText = "Saving..."
             };
 
             Schedule(() => panels.Content = overlay);
-
-            // check for duplicate diffs
-            var diffs = editorMap.MapSet.Maps.Select(m => m.Difficulty).ToList();
-            var duplicate = diffs.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
-
-            if (duplicate.Count > 0)
-            {
-                notifications.SendError("Cannot upload mapset!", $"Duplicate difficulty names found: {string.Join(", ", duplicate)}");
-                Schedule(() => panels.Content?.Hide());
-                return;
-            }
-
-            overlay.SubText = "Saving...";
 
             if (!save(false))
             {
@@ -817,8 +804,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 for (var index = 0; index < set.Maps.Count; index++)
                 {
                     var onlineMap = request.Response.Data.Maps[index];
-                    var map = set.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
-                    var loadedMap = editorMap.MapSet.Maps.First(m => m.Difficulty == onlineMap.Difficulty);
+                    var map = set.Maps.First(m => m.FileName == onlineMap.FileName);
+                    var loadedMap = editorMap.MapSet.Maps.First(m => m.FileName == onlineMap.FileName);
 
                     map.OnlineID = loadedMap.OnlineID = onlineMap.ID;
                 }
