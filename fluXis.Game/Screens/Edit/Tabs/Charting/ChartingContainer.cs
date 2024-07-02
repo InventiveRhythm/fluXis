@@ -51,6 +51,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     };
 
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
+    public static readonly Key[] TOP_ROW_KEYS = { Key.Q, Key.W, Key.E, Key.R, Key.T, Key.Y, Key.U, Key.I, Key.O, Key.P };
 
     [Resolved]
     private EditorActionStack actions { get; set; }
@@ -70,6 +71,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private InputManager inputManager;
     private bool recordingInput;
 
+    private ToolboxHitsoundCategory toolboxHitsounds;
     private PointsSidebar sidebar;
 
     public EditorPlayfield Playfield { get; private set; }
@@ -114,7 +116,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
                 Icon = FontAwesome6.Solid.WandMagicSparkles,
                 Tools = EffectTools
             },
-            new ToolboxHitsoundCategory(),
+            toolboxHitsounds = new ToolboxHitsoundCategory(),
             new ToolboxSnapCategory()
         }
     };
@@ -130,6 +132,18 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
+        if (TOP_ROW_KEYS.Contains(e.Key))
+        {
+            var idx = Array.IndexOf(TOP_ROW_KEYS, e.Key);
+            var items = toolboxHitsounds.Items;
+
+            if (idx != -1 && idx < items.Count)
+            {
+                var sound = items[idx];
+                sound.TriggerClick();
+            }
+        }
+
         switch (e.Key)
         {
             case >= Key.Number1 and <= Key.Number9 when recordingInput && !e.ControlPressed:
