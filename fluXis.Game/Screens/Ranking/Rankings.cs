@@ -29,7 +29,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
     public override bool AutoPlayNext => true;
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     private FillFlowContainer flow;
     private CornerButton backButton;
@@ -199,7 +199,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
             });
         };
 
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

@@ -28,7 +28,7 @@ namespace fluXis.Game.Overlay.Chat;
 public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -178,13 +178,13 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         textBox.OnCommit += (sender, _) =>
         {
-            fluxel.SendPacketAsync(ChatMessagePacket.CreateC2S(textBox.Text, Channel));
+            api.SendPacketAsync(ChatMessagePacket.CreateC2S(textBox.Text, Channel));
             sender.Text = "";
         };
 
-        fluxel.Status.BindValueChanged(updateStatus, true);
+        api.Status.BindValueChanged(updateStatus, true);
 
-        fluxel.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, response =>
+        api.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, response =>
         {
             if (response.Data == null)
                 return;
@@ -200,7 +200,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 addMessage(message);
         });
 
-        fluxel.RegisterListener<ChatHistoryPacket>(EventType.ChatHistory, response =>
+        api.RegisterListener<ChatHistoryPacket>(EventType.ChatHistory, response =>
         {
             var data = response.Data!.Messages.OrderBy(x => x.CreatedAtUnix).Cast<ChatMessage>().ToArray();
             var first = data.FirstOrDefault();
@@ -221,7 +221,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             foreach (var message in data) addMessage(message);
         });
 
-        fluxel.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, res =>
+        api.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, res =>
         {
             if (!res.Success)
             {
@@ -238,8 +238,8 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             });
         });
 
-        if (fluxel.Status.Value == ConnectionStatus.Online)
-            fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
+        if (api.Status.Value == ConnectionStatus.Online)
+            api.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
     }
 
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
@@ -249,7 +249,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             switch (e.NewValue)
             {
                 case ConnectionStatus.Online:
-                    fluxel.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
+                    api.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
                     break;
 
                 default:

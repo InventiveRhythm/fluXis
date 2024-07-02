@@ -67,7 +67,7 @@ public partial class MenuScreen : FluXisScreen
     private GlobalClock clock { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private FluXisConfig config { get; set; }
@@ -330,7 +330,7 @@ public partial class MenuScreen : FluXisScreen
                             new MenuLinkButton
                             {
                                 Icon = FontAwesome6.Solid.EarthAmericas,
-                                Action = () => host.OpenUrlExternally(fluxel.Endpoint.WebsiteRootUrl),
+                                Action = () => host.OpenUrlExternally(api.Endpoint.WebsiteRootUrl),
                                 Text = "Website"
                             }
                         }
@@ -360,7 +360,7 @@ public partial class MenuScreen : FluXisScreen
             snowContainer.FadeTo(shouldSnow ? 1 : 0, 600, Easing.OutQuint);
         });
 
-        fluxel.User.BindValueChanged(updateButtons, true);
+        api.User.BindValueChanged(updateButtons, true);
     }
 
     private void updateButtons(ValueChangedEvent<APIUser> e)

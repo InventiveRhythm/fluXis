@@ -20,7 +20,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
     public override DashboardTabType Type => DashboardTabType.Online;
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient fluxel { get; set; }
 
     private bool visible;
     private FillFlowContainer flow;

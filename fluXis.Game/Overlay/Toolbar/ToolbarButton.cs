@@ -38,7 +38,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     private UISamples samples { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -106,7 +106,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
 
         if (!RequireLogin) return;
 
-        fluxel.User.BindValueChanged(updateState, true);
+        api.User.BindValueChanged(updateState, true);
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -145,7 +145,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     protected void SetLineState(bool state) => line.ResizeWidthTo(state ? 1 : 0, 400, Easing.OutQuint);
 
     private void updateState(ValueChangedEvent<APIUser> valueChangedEvent)
-        => Schedule(() => Enabled.Value = fluxel.User.Value != null);
+        => Schedule(() => Enabled.Value = api.User.Value != null);
 
     public ITooltip<ToolbarButton> GetCustomTooltip() => new ToolbarButtonTooltip();
 

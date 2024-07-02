@@ -30,7 +30,7 @@ public partial class MultiLobbyList : MultiSubScreen
     private GlobalClock clock { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -103,7 +103,7 @@ public partial class MultiLobbyList : MultiSubScreen
                 lobbyList.FadeIn(200);
             };
 
-            fluxel.PerformRequestAsync(request);
+            api.PerformRequestAsync(request);
         });
     }
 

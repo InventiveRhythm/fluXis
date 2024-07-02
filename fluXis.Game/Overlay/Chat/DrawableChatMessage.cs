@@ -30,7 +30,7 @@ public partial class DrawableChatMessage : Container
     private UserProfileOverlay profile { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     public ChatMessage InitialMessage { get; set; }
     public List<ChatMessage> Messages { get; } = new();
@@ -125,7 +125,7 @@ public partial class DrawableChatMessage : Container
         flow.Add(new MessageText
         {
             Message = message,
-            Fluxel = fluxel
+            API = api
         });
     }
 
@@ -157,7 +157,7 @@ public partial class DrawableChatMessage : Container
     private partial class MessageText : FluXisTextFlow, IHasContextMenu
     {
         public ChatMessage Message { get; init; }
-        public FluxelClient Fluxel { get; init; }
+        public IAPIClient API { get; init; }
 
         [Resolved]
         private NotificationManager notifications { get; set; }
@@ -198,7 +198,7 @@ public partial class DrawableChatMessage : Container
             {
                 List<MenuItem> items = new List<MenuItem>
                 {
-                    Fluxel.User.Value?.CanModerate() ?? false
+                    API.User.Value?.CanModerate() ?? false
                         ? new FluXisMenuItem("Delete", MenuItemType.Dangerous, delete)
                         : new FluXisMenuItem("Report", MenuItemType.Dangerous, report)
                 };
@@ -209,7 +209,7 @@ public partial class DrawableChatMessage : Container
 
         private async void delete()
         {
-            await Fluxel.SendPacket(ChatDeletePacket.Create(Message.ID));
+            await API.SendPacket(ChatDeletePacket.Create(Message.ID));
         }
 
         private /* async*/ void report()

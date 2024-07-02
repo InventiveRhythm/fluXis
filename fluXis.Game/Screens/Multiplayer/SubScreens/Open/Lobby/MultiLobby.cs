@@ -48,7 +48,7 @@ public partial class MultiLobby : MultiSubScreen
     private MultiplayerMenuMusic menuMusic { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private MultiplayerClient client { get; set; }
@@ -133,7 +133,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         if (hasMapDownloaded)
         {
-            fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(!ready));
+            api.SendPacketAsync(MultiReadyPacket.CreateC2S(!ready));
             return;
         }
 
@@ -266,7 +266,7 @@ public partial class MultiLobby : MultiSubScreen
         if (map == null)
         {
             notifications.SendError("Failed to find map locally.");
-            fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+            api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
             return;
         }
 
@@ -317,7 +317,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         base.OnResuming(e);
         mapChanged(Room.Map);
-        fluxel.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+        api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

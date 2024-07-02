@@ -224,7 +224,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(loadInfo)));
 
-        Fluxel.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
+        APIClient.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
         {
             var achievement = res.Data!.Achievement;
             Schedule(() =>
@@ -233,19 +233,19 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             });
         });
 
-        Fluxel.RegisterListener<FriendOnlinePacket>(EventType.FriendOnline, res =>
+        APIClient.RegisterListener<FriendOnlinePacket>(EventType.FriendOnline, res =>
         {
             var user = res.Data!.User!;
             Schedule(() => NotificationManager.SendSmallText($"{user.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
         });
 
-        Fluxel.RegisterListener<FriendOnlinePacket>(EventType.FriendOffline, res =>
+        APIClient.RegisterListener<FriendOnlinePacket>(EventType.FriendOffline, res =>
         {
             var user = res.Data!.User!;
             Schedule(() => NotificationManager.SendSmallText($"{user.PreferredName} is now offline.", FontAwesome6.Solid.UserMinus));
         });
 
-        Fluxel.RegisterListener<ServerMessagePacket>(EventType.ServerMessage, res =>
+        APIClient.RegisterListener<ServerMessagePacket>(EventType.ServerMessage, res =>
         {
             var data = res.Data!.Message;
 

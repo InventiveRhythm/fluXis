@@ -84,7 +84,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -458,7 +458,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var player = fluxel.User.Value;
+            var player = api.User.Value;
 
             var bestScore = realm.Run(r =>
             {
@@ -487,7 +487,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 {
                     var request = new ScoreSubmitRequest(score);
                     screen.SubmitRequest = request;
-                    fluxel.PerformRequest(request);
+                    api.PerformRequest(request);
 
                     if (request.Response.Success && request.Response.Data.ID != 0)
                     {
@@ -515,7 +515,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         try
         {
             var replay = replayRecorder.Replay;
-            replay.PlayerID = fluxel.User.Value?.ID ?? -1;
+            replay.PlayerID = api.User.Value?.ID ?? -1;
             var folder = storage.GetFullPath("replays");
 
             if (!Directory.Exists(folder))

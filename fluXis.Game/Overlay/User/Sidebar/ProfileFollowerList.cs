@@ -23,7 +23,7 @@ namespace fluXis.Game.Overlay.User.Sidebar;
 public partial class ProfileFollowerList : FillFlowContainer
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     private long id { get; }
 
@@ -113,7 +113,7 @@ public partial class ProfileFollowerList : FillFlowContainer
 
         var req = new UserFollowersRequest(id);
         req.Success += res => SetData(res.Data);
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
     }
 
     public void SetData(List<APIUser> data)

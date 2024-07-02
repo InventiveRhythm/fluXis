@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Shared.API;
+using fluXis.Shared.API.Packets;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
@@ -78,4 +80,11 @@ public class TestAPIClient : IAPIClient
 
         Logger.Log($"status: {Status.Value}");
     }
+
+    public Task SendPacket<T>(T packet) where T : IPacket => Task.CompletedTask;
+    public void SendPacketAsync<T>(T packet) where T : IPacket { }
+    public Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000) where T : IPacket => Task.FromResult(new FluxelReply<T>());
+    public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket { }
+    public void UnregisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket { }
+    public void Disconnect() { }
 }

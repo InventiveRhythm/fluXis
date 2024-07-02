@@ -10,10 +10,10 @@ namespace fluXis.Desktop;
 
 public class DiscordActivity
 {
-    private FluxelClient fluxel;
+    private IAPIClient api;
     private DiscordRpcClient client;
 
-    public void Initialize(FluxelClient fluxel, Bindable<UserActivity> bind)
+    public void Initialize(IAPIClient api, Bindable<UserActivity> bind)
     {
         client = new DiscordRpcClient("975141679583604767");
         var success = client.Initialize();
@@ -24,7 +24,7 @@ public class DiscordActivity
             return;
         }
 
-        this.fluxel = fluxel;
+        this.api = api;
 
         bind.BindValueChanged(e =>
         {
@@ -32,7 +32,7 @@ public class DiscordActivity
 
             if (activity == null) return;
 
-            activity.Fluxel = fluxel;
+            activity.API = api;
             update(activity.Details, activity.Status, activity.Icon);
         }, true);
     }
@@ -45,11 +45,11 @@ public class DiscordActivity
             LargeImageText = $"fluXis {FluXisGameBase.VersionString}"
         };
 
-        var user = fluxel?.User.Value;
+        var user = api?.User.Value;
 
         if (user != null)
         {
-            assets.SmallImageKey = $"{fluxel.Endpoint.AssetUrl}/avatar/{user.ID}";
+            assets.SmallImageKey = $"{api.Endpoint.AssetUrl}/avatar/{user.ID}";
             assets.SmallImageText = user.Username;
         }
 

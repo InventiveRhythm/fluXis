@@ -301,13 +301,13 @@ public partial class BrowseInfo : Container
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, FluxelClient fluxel)
+        private void load(TextureStore textures, IAPIClient api)
         {
             RelativeSizeAxes = Axes.Both;
             FillMode = FillMode.Fill;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/cover/{mapSet.ID}");
+            Texture = textures.Get($"{api.Endpoint.AssetUrl}/cover/{mapSet.ID}");
         }
     }
 
@@ -321,13 +321,13 @@ public partial class BrowseInfo : Container
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, FluxelClient fluxel)
+        private void load(TextureStore textures, IAPIClient api)
         {
             RelativeSizeAxes = Axes.Both;
             FillMode = FillMode.Fill;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Texture = textures.Get($"{fluxel.Endpoint.AssetUrl}/background/{mapSet.ID}");
+            Texture = textures.Get($"{api.Endpoint.AssetUrl}/background/{mapSet.ID}");
         }
     }
 }

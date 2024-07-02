@@ -43,7 +43,7 @@ public partial class MapStore : Component
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private AudioManager audio { get; set; }
@@ -347,14 +347,14 @@ public partial class MapStore : Component
             Hash = hash
         };
 
-        fluxel.PerformRequest(req);
+        api.PerformRequest(req);
         return req.IsSuccessful ? req.Response!.Data : null;
     }
 
     public RealmMap CreateNew()
     {
         var map = RealmMap.CreateNew();
-        map.Metadata.Mapper = fluxel.User.Value?.Username ?? "Me";
+        map.Metadata.Mapper = api.User.Value?.Username ?? "Me";
         map.MapSet.Resources = resources;
         return realm.RunWrite(r =>
         {
@@ -560,7 +560,7 @@ public partial class MapStore : Component
 
         var req = new MapSetRequest(id);
         req.Failure += ex => notifications.SendError("Failed to download mapset", ex.Message);
-        fluxel.PerformRequest(req);
+        api.PerformRequest(req);
 
         if (!req.IsSuccessful)
             return;
@@ -649,7 +649,7 @@ public partial class MapStore : Component
         };
 
         StartDownload(set);
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
 
         notifications.AddTask(notification);
     }
@@ -729,7 +729,7 @@ public partial class MapStore : Component
         };
 
         StartDownload(set.OnlineID);
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
         notifications.AddTask(notification);
     }
 

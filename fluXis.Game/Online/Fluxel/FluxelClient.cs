@@ -407,7 +407,8 @@ public partial class FluxelClient : Component, IAPIClient
         return await task.Task;
     }
 
-    public async void SendPacketAsync(IPacket packet) => await SendPacket(packet);
+    public async void SendPacketAsync<T>(T packet)
+        where T : IPacket => await SendPacket(packet);
 
     public async Task SendPacket<T>(T packet)
         where T : IPacket
@@ -429,14 +430,7 @@ public partial class FluxelClient : Component, IAPIClient
             listeners.Remove(response => listener((FluxelReply<T>)response));
     }
 
-    public void Reset()
-    {
-        User.Value = null;
-        responseListeners.Clear();
-        packetQueue.Clear();
-    }
-
-    public void Close()
+    public void Disconnect()
     {
         if (connection is { State: WebSocketState.Open })
             connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);

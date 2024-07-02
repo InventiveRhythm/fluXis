@@ -9,10 +9,10 @@ namespace fluXis.Game.Tests.Graphics;
 public partial class TestMapCard : FluXisTestScene
 {
     [BackgroundDependencyLoader]
-    private void load(FluxelClient fluxel)
+    private void load(IAPIClient api)
     {
         var req = new MapSetRequest(4);
-        fluxel.PerformRequest(req);
+        api.PerformRequest(req);
 
         Add(new MapCard(req.Response.Data)
         {

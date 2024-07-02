@@ -80,7 +80,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisConfig Config { get; private set; }
     protected NotificationManager NotificationManager { get; private set; }
-    protected FluxelClient Fluxel { get; private set; }
+    protected IAPIClient APIClient { get; private set; }
     protected MapStore MapStore { get; private set; }
     protected SkinManager SkinManager { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
@@ -162,8 +162,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         cacheComponent(NotificationManager = new NotificationManager());
 
-        cacheComponent(Fluxel = new FluxelClient(endpoint), true, true);
-        cacheComponent<IAPIClient>(Fluxel);
+        cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
+        cacheComponent(APIClient as FluxelClient);
         cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
 
         var users = new UserCache();
@@ -339,7 +339,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public new virtual void Exit()
     {
-        Fluxel.Close();
+        APIClient.Disconnect();
         base.Exit();
     }
 
@@ -365,7 +365,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected override bool OnExiting()
     {
-        Fluxel.Close();
+        APIClient.Disconnect();
         return base.OnExiting();
     }
 

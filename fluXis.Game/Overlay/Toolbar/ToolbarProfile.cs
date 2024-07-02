@@ -38,7 +38,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
     private LoginOverlay loginOverlay { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -59,7 +59,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
     {
         AutoSizeAxes = Axes.Both;
 
-        var user = fluxel.User.Value;
+        var user = api.User.Value;
 
         Children = new Drawable[]
         {
@@ -148,14 +148,14 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
             Origin = Anchor.Centre
         }, avatarContainer.Add);
 
-        fluxel.User.BindValueChanged(updateUser);
+        api.User.BindValueChanged(updateUser);
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        fluxel.Status.BindValueChanged(updateStatus, true);
+        api.Status.BindValueChanged(updateStatus, true);
     }
 
     protected override void PopIn() => container.MoveToY(-10, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
@@ -197,7 +197,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
             Text = "Are you sure you want to log out?",
             Buttons = new ButtonData[]
             {
-                new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => fluxel.Logout()),
+                new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () => api.Logout()),
                 new CancelButtonData()
             }
         };
@@ -210,14 +210,14 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         samples.Click();
 
-        if (fluxel.User.Value == null)
+        if (api.User.Value == null)
             loginOverlay.Show();
         else
         {
             if (profile.State.Value == Visibility.Visible)
                 profile.Hide();
             else
-                profile.ShowUser(fluxel.User.Value.ID);
+                profile.ShowUser(api.User.Value.ID);
         }
 
         return true;

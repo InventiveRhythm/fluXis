@@ -12,32 +12,32 @@ namespace fluXis.Game.Online.Multiplayer;
 public partial class OnlineMultiplayerClient : MultiplayerClient
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
-    public override APIUser Player => fluxel.User.Value;
+    public override APIUser Player => api.User.Value;
     private IMultiplayerClient impl => this;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        fluxel.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
-        fluxel.RegisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
-        fluxel.RegisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
-        fluxel.RegisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
-        fluxel.RegisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
-        fluxel.RegisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
+        api.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
+        api.RegisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
+        api.RegisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
+        api.RegisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
+        api.RegisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
+        api.RegisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        fluxel.UnregisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
-        fluxel.UnregisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
-        fluxel.UnregisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
-        fluxel.UnregisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
-        fluxel.UnregisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
-        fluxel.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
+        api.UnregisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
+        api.UnregisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
+        api.UnregisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
+        api.UnregisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
+        api.UnregisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
+        api.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
     private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined(reply.Data.Participant as MultiplayerParticipant);
@@ -49,32 +49,32 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
 
     protected override async Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash)
     {
-        var res = await fluxel.SendAndWait(MultiCreatePacket.CreateC2S(name, "", mapid, hash));
+        var res = await api.SendAndWait(MultiCreatePacket.CreateC2S(name, "", mapid, hash));
         return res.Success ? res.Data.Room as MultiplayerRoom : null;
     }
 
     protected override async Task<MultiplayerRoom> JoinRoom(long id, string password)
     {
-        var res = await fluxel.SendAndWait(MultiJoinPacket.CreateC2SInitialJoin(id, password));
+        var res = await api.SendAndWait(MultiJoinPacket.CreateC2SInitialJoin(id, password));
         return res.Success ? res.Data.Room as MultiplayerRoom : null;
     }
 
     public override Task LeaveRoom()
     {
-        fluxel.SendPacketAsync(new MultiLeavePacket());
+        api.SendPacketAsync(new MultiLeavePacket());
         Room = null;
         return Task.CompletedTask;
     }
 
     public override Task ChangeMap(long map, string hash)
     {
-        fluxel.SendPacketAsync(MultiMapPacket.CreateC2S(map, hash));
+        api.SendPacketAsync(MultiMapPacket.CreateC2S(map, hash));
         return Task.CompletedTask;
     }
 
     public override Task Finish(ScoreInfo score)
     {
-        fluxel.SendPacketAsync(MultiCompletePacket.CreateC2S(score));
+        api.SendPacketAsync(MultiCompletePacket.CreateC2S(score));
         return Task.CompletedTask;
     }
 }

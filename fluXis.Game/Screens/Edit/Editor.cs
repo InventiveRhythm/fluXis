@@ -75,7 +75,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private GlobalClock globalClock { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -251,7 +251,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         },
                                         new FluXisMenuSpacer(),
                                         new("Export", FontAwesome6.Solid.BoxOpen, export),
-                                        new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave && fluxel.IsLoggedIn },
+                                        new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave && api.IsLoggedIn },
                                         new FluXisMenuSpacer(),
                                         new("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
                                         new FluXisMenuSpacer(),
@@ -466,7 +466,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
     }
 
-    private void openHelp() => Game.OpenLink($"{fluxel.Endpoint.WikiRootUrl}/editor");
+    private void openHelp() => Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
     private void openFolder() => PathUtils.OpenFolder(MapFiles.GetFullPath(editorMap.MapSet.GetPathForFile("")));
 
     protected override bool OnKeyDown(KeyDownEvent e)
@@ -587,7 +587,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         tabs.ScaleTo(1, 300, Easing.OutQuint);
 
         // this check won't work 100% of the time, we need a better way of storing the mappers
-        if (editorMap.RealmMap.Metadata.Mapper == fluxel.User.Value?.Username)
+        if (editorMap.RealmMap.Metadata.Mapper == api.User.Value?.Username)
             Activity.Value = new UserActivity.Editing();
         else
             Activity.Value = new UserActivity.Modding();
@@ -650,7 +650,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (isUploading)
             return;
 
-        if (!fluxel.IsLoggedIn)
+        if (!api.IsLoggedIn)
         {
             notifications.SendError("You need to be logged in to upload maps!");
             return;
@@ -686,7 +686,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             // and ask if the user wants to replace that one instead
             var req = new MapLookupRequest
             {
-                MapperID = fluxel.User.Value.ID,
+                MapperID = api.User.Value.ID,
                 Title = editorMap.MapInfo.Metadata.Title,
                 Artist = editorMap.MapInfo.Metadata.Artist
             };
@@ -713,7 +713,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                         flow.AddText<ClickableFluXisSpriteText>("Click here to view the mapset.", t =>
                         {
                             t.Colour = FluXisColors.Link;
-                            t.Action = () => Game.OpenLink($"{fluxel.Endpoint.WebsiteRootUrl}/set/{res.Data.SetID}", true);
+                            t.Action = () => Game.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{res.Data.SetID}", true);
                         });
                     },
                     Buttons = new ButtonData[]
@@ -729,7 +729,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 };
             };
 
-            fluxel.PerformRequest(req);
+            api.PerformRequest(req);
         }
 
         void run(long id = -1) => Task.Run(() =>
@@ -781,7 +781,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             var request = new MapSetUploadRequest(buffer, setID);
             request.Progress += (l1, l2) => overlay.SubText = $"{Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
-            await fluxel.PerformRequestAsync(request);
+            await api.PerformRequestAsync(request);
 
             overlay.SubText = "Reading response...";
 

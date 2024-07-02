@@ -34,7 +34,7 @@ public partial class ProfileHeader : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load(FluxelClient fluxel)
+    private void load(IAPIClient api)
     {
         RelativeSizeAxes = Axes.X;
         Height = 420; // this is changed in Update()
@@ -253,7 +253,7 @@ public partial class ProfileHeader : Container
                                     {
                                         Icon = FontAwesome6.Solid.ShareNodes
                                     },
-                                    fluxel.User.Value?.ID == user.ID
+                                    api.User.Value?.ID == user.ID
                                         ? new HeaderEditButton()
                                         : new HeaderFollowButton(user)
                                 }

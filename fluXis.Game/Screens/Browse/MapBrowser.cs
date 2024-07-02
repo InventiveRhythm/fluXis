@@ -41,7 +41,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     public override UserActivity InitialActivity => new UserActivity.BrowsingMaps();
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private GlobalClock clock { get; set; }
@@ -192,7 +192,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     {
         base.LoadComplete();
 
-        if (fluxel.Status.Value != ConnectionStatus.Online)
+        if (api.Status.Value != ConnectionStatus.Online)
         {
             text.Text = "You are not connected to the server!";
             text.FadeInFromZero(20);
@@ -233,7 +233,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             loadingIcon.Hide();
         };
 
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -334,7 +334,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 pnl?.StopLoading();
             };
 
-            fluxel.PerformRequest(req);
+            api.PerformRequest(req);
         }
     }
 }

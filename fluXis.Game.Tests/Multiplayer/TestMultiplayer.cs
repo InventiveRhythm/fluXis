@@ -11,7 +11,7 @@ namespace fluXis.Game.Tests.Multiplayer;
 public partial class TestMultiplayer : FluXisTestScene
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()

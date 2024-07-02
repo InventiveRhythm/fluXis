@@ -13,7 +13,7 @@ namespace fluXis.Game.Screens.Menu.UI.Updates;
 public partial class MenuUpdates : CompositeDrawable
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     public bool CanShow { get; set; }
 
@@ -67,7 +67,7 @@ public partial class MenuUpdates : CompositeDrawable
             });
         };
 
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
     }
 
     protected override void Update()

@@ -43,7 +43,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
     private ChatOverlay chat { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private FluXisGameBase game { get; set; }
@@ -62,6 +62,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
     private string centerTextString;
     private FluXisSpriteText centerText;
 
+    private FluxelClient fluxel => api as FluxelClient;
     private double lastTime;
 
     [BackgroundDependencyLoader]
@@ -270,7 +271,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
 
         lastTime = Time.Current;
 
-        if (fluxel.MaintenanceTime > 0)
+        if (fluxel is { MaintenanceTime: > 0 })
         {
             var time = TimeUtils.GetFromSeconds(fluxel.MaintenanceTime);
             var timeLeft = time - DateTimeOffset.UtcNow;

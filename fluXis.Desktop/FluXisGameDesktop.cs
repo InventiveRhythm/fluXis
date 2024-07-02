@@ -35,7 +35,7 @@ public partial class FluXisGameDesktop : FluXisGame
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        new DiscordActivity().Initialize(Fluxel, Activity);
+        new DiscordActivity().Initialize(APIClient, Activity);
 
         var args = Program.Args.ToList();
         args.RemoveAll(a => a.StartsWith('-'));

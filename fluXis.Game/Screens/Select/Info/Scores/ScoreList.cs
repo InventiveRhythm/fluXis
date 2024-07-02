@@ -47,7 +47,7 @@ public partial class ScoreList : GridContainer
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private UserCache users { get; set; }
@@ -369,7 +369,7 @@ public partial class ScoreList : GridContainer
     [CanBeNull]
     private List<ScoreListEntry> getScores(CancellationToken cancellationToken)
     {
-        if (!fluxel.IsLoggedIn)
+        if (!api.IsLoggedIn)
         {
             noScoresText.Text = LocalizationStrings.General.LoginToUse;
             Schedule(() =>
@@ -381,7 +381,7 @@ public partial class ScoreList : GridContainer
         }
 
         var req = new MapLeaderboardRequest(type, map.OnlineID);
-        fluxel.PerformRequest(req);
+        api.PerformRequest(req);
 
         if (cancellationToken.IsCancellationRequested)
             return null;
@@ -461,7 +461,7 @@ public partial class ScoreList : GridContainer
         {
             try
             {
-                var req = new WebRequest($"{fluxel.Endpoint.AssetUrl}/replay/{score.ID}.frp");
+                var req = new WebRequest($"{api.Endpoint.AssetUrl}/replay/{score.ID}.frp");
                 req.AllowInsecureRequests = true;
                 req.Perform();
 

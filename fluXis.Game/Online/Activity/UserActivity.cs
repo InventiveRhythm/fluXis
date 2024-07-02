@@ -11,7 +11,7 @@ public abstract class UserActivity
     public virtual string Details => "";
     public virtual string Icon => "icon";
 
-    public FluxelClient Fluxel { get; set; }
+    public IAPIClient API { get; set; }
 
     #region Menus
 
@@ -53,7 +53,7 @@ public abstract class UserActivity
     {
         public override string Status => "Playing";
         public override string Details => $"{Map.Metadata.Title} - {Map.Metadata.Artist} [{Map.Difficulty}]";
-        public override string Icon => Map.MapSet.OnlineID <= 0 ? "playing" : $"{Fluxel?.Endpoint.AssetUrl}/cover/{Map.MapSet.OnlineID}";
+        public override string Icon => Map.MapSet.OnlineID <= 0 ? "playing" : $"{API?.Endpoint.AssetUrl}/cover/{Map.MapSet.OnlineID}";
 
         protected RealmMap Map { get; init; }
 

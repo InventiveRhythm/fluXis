@@ -23,7 +23,7 @@ namespace fluXis.Game.Overlay.User;
 public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private UserCache users { get; set; }
@@ -131,7 +131,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
         if (user == null) return;
 
         var mapsReq = new UserMapsRequest(id);
-        await fluxel.PerformRequestAsync(mapsReq);
+        await api.PerformRequestAsync(mapsReq);
 
         Schedule(() =>
         {

@@ -19,7 +19,7 @@ namespace fluXis.Game.Overlay.User.Header;
 public partial class HeaderFollowButton : CompositeDrawable
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -99,7 +99,7 @@ public partial class HeaderFollowButton : CompositeDrawable
         flash.FadeOutFromOne(1000, Easing.OutQuint);
 
         var req = new UserFollowRequest(user.ID, following);
-        fluxel.PerformRequestAsync(req);
+        api.PerformRequestAsync(req);
 
         user.Following = !following;
         text.Text = user.Following!.Value ? "Unfollow" : "Follow";

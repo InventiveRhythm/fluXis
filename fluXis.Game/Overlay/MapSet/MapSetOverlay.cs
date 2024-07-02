@@ -23,7 +23,7 @@ namespace fluXis.Game.Overlay.MapSet;
 public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     private APIMapSet set;
     private Container content;
@@ -103,7 +103,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private async void fetch(long id)
     {
         var request = new MapSetRequest(id);
-        await fluxel.PerformRequestAsync(request);
+        await api.PerformRequestAsync(request);
 
         // we might want to show a message if the request fails
         if (!request.IsSuccessful)

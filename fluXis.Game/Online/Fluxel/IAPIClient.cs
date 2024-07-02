@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using fluXis.Game.Online.API;
+using fluXis.Shared.API;
+using fluXis.Shared.API.Packets;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Bindables;
 
@@ -27,4 +29,14 @@ public interface IAPIClient
     void Login(string username, string password);
     void Register(string username, string password, string email);
     void Logout();
+
+    // websocket stuff
+    public Task SendPacket<T>(T packet) where T : IPacket;
+    public void SendPacketAsync<T>(T packet) where T : IPacket;
+    public Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000) where T : IPacket;
+
+    public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket;
+    public void UnregisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket;
+
+    public void Disconnect();
 }

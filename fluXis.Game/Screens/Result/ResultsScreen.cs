@@ -12,8 +12,6 @@ using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
-using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Online.Scores;
 using fluXis.Game.Screens.Result.UI;
 using fluXis.Shared.API.Responses.Scores;
 using fluXis.Shared.Components.Users;
@@ -37,9 +35,6 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
 
     [Resolved]
     private FluXisRealm realm { get; set; }
-
-    [Resolved]
-    private FluxelClient fluxel { get; set; }
 
     private readonly RealmMap map;
     private readonly MapInfo mapInfo;
@@ -188,7 +183,7 @@ public partial class ResultsScreen : FluXisScreen, IKeyBindingHandler<FluXisGlob
         if (realmScore != null && !map.MapSet.AutoImported)
         {
             realm.RunWrite(r => r.Add(realmScore));
-            OnlineScores.UploadScore(fluxel, score, res => ratingInfo.ScoreResponse = res);
+            // OnlineScores.UploadScore(fluxel, score, res => ratingInfo.ScoreResponse = res);
         }
         else
             ratingInfo.ScoreResponse = new APIResponse<ScoreSubmissionStats>(400, "Score not submittable.", null);

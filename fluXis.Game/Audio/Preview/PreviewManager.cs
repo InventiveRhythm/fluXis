@@ -12,7 +12,7 @@ namespace fluXis.Game.Audio.Preview;
 public partial class PreviewManager : Component
 {
     [Resolved]
-    private FluxelClient fluxel { get; set; }
+    private IAPIClient api { get; set; }
 
     private ITrackStore trackStore;
     private long currentId = -1;
@@ -37,7 +37,7 @@ public partial class PreviewManager : Component
         if (track != null)
             await track.StopAsync();
 
-        track = await trackStore.GetAsync($"{fluxel.Endpoint.AssetUrl}/preview/{id}");
+        track = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/preview/{id}");
 
         if (track == null)
         {
