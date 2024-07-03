@@ -4,7 +4,6 @@ using AutoMapper.Internal;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
-using fluXis.Shared.Utils;
 using osu.Framework.Logging;
 using Realms;
 
@@ -18,13 +17,7 @@ public static class RealmObjectUtils
         c.ShouldMapProperty = pi => pi.SetMethod?.IsPublic == true;
         Logger.LogPrint("Creating write mapper", LoggingTarget.Database, LogLevel.Debug);
 
-        c.CreateMap<RealmMapMetadata, RealmMapMetadata>().AfterMap((s, d) =>
-        {
-            Logger.LogPrint("Mapped metadata", LoggingTarget.Database, LogLevel.Debug);
-
-            Logger.Log(s.Serialize(), LoggingTarget.Database, LogLevel.Debug);
-            Logger.Log(d.Serialize(), LoggingTarget.Database, LogLevel.Debug);
-        });
+        c.CreateMap<RealmMapMetadata, RealmMapMetadata>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();
         c.CreateMap<RealmMap, RealmMap>()
          .ForMember(s => s.Metadata, cc => cc.Ignore())
@@ -56,6 +49,8 @@ public static class RealmObjectUtils
                      var newMap = new RealmMap()
                      {
                          ID = map.ID,
+                         Metadata = new RealmMapMetadata(),
+                         Filters = new RealmMapFilters(),
                          MapSet = d
                      };
 
