@@ -65,7 +65,18 @@ public class ScoreInfo
     public long Timestamp { get; set; }
 
     [JsonProperty("ratio")]
-    public long Ratio => Flawless * 100 / (Perfect + Great + Alright + Okay + Miss);
+    public long Ratio
+    {
+        get
+        {
+            var nonFlawless = Perfect + Great + Alright + Okay + Miss;
+
+            if (nonFlawless == 0)
+                return 0;
+
+            return Flawless * 100 / nonFlawless;
+        }
+    }
 
     [JsonProperty("replay")]
     public Replay? Replay { get; set; }
