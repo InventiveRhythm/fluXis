@@ -53,7 +53,8 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     {
         ButtonText = LocalizationStrings.General.Back,
         Icon = FontAwesome6.Solid.ChevronLeft,
-        Action = BackAction
+        Action = BackAction,
+        PlayClickSound = false
     };
 
     protected override CornerButton CreateRightButton() => new()
@@ -62,7 +63,8 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         Icon = FontAwesome6.Solid.Play,
         ButtonColor = FluXisColors.Accent2,
         Corner = Corner.BottomRight,
-        Action = PlayAction
+        Action = PlayAction,
+        PlayClickSound = false
     };
 
     protected override Drawable CreateBackgroundContent() => options = new FooterOptions

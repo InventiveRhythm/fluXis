@@ -20,8 +20,8 @@ public abstract partial class Footer : CompositeDrawable
     public Container<FooterButton> ButtonContainer { get; private set; } = null!;
 
     private Container background = null!;
-    private CornerButton? leftButton;
-    private CornerButton? rightButton;
+    public CornerButton? LeftButton { get; private set; }
+    public CornerButton? RightButton { get; private set; }
     private Container content = null!;
     private GamepadTooltipBar? gamepadTooltips;
 
@@ -59,11 +59,11 @@ public abstract partial class Footer : CompositeDrawable
             Padding = new MarginPadding { Horizontal = 10 }
         };
 
-        leftButton = CreateLeftButton();
-        rightButton = CreateRightButton();
+        LeftButton = CreateLeftButton();
+        RightButton = CreateRightButton();
 
-        if (leftButton != null)
-            content.Add(leftButton);
+        if (LeftButton != null)
+            content.Add(LeftButton);
 
         content.Add(ButtonContainer = new Container<FooterButton>
         {
@@ -76,8 +76,8 @@ public abstract partial class Footer : CompositeDrawable
             ChildrenEnumerable = CreateButtons()
         });
 
-        if (rightButton != null)
-            content.Add(rightButton);
+        if (RightButton != null)
+            content.Add(RightButton);
 
         AddInternal(content);
 
@@ -119,8 +119,8 @@ public abstract partial class Footer : CompositeDrawable
 
     public override void Show()
     {
-        leftButton?.Show();
-        rightButton?.Show();
+        LeftButton?.Show();
+        RightButton?.Show();
         background.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         ButtonContainer.MoveToY(0);
         ButtonContainer.ForEach(b => b.Show());
@@ -128,8 +128,8 @@ public abstract partial class Footer : CompositeDrawable
 
     public override void Hide()
     {
-        leftButton?.Hide();
-        rightButton?.Hide();
+        LeftButton?.Hide();
+        RightButton?.Hide();
         background.MoveToY(80, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         ButtonContainer.MoveToY(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }

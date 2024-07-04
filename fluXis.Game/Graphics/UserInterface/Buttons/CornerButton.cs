@@ -50,6 +50,7 @@ public partial class CornerButton : Container
     public Corner Corner { get; set; } = Corner.BottomLeft;
     public Action Action { get; set; }
     public bool ShowImmediately { get; set; }
+    public bool PlayClickSound { get; set; } = true;
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -149,8 +150,11 @@ public partial class CornerButton : Container
     protected override bool OnClick(ClickEvent e)
     {
         flash.FadeOutFromOne(500);
+
+        if (PlayClickSound)
+            samples.Click();
+
         Action?.Invoke();
-        samples.Click();
         return true;
     }
 

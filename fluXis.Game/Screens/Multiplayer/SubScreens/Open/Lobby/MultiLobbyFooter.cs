@@ -15,7 +15,6 @@ public partial class MultiLobbyFooter : Footer
     public Action LeaveAction { get; init; }
     public Action RightButtonAction { get; init; }
     public Action ChangeMapAction { get; init; }
-    public CornerButton RightButton { get; private set; }
 
     public BindableBool CanChangeMap { get; } = new(true);
 
@@ -26,7 +25,7 @@ public partial class MultiLobbyFooter : Footer
         Action = LeaveAction
     };
 
-    protected override CornerButton CreateRightButton() => RightButton = new CornerButton
+    protected override CornerButton CreateRightButton() => new()
     {
         ButtonText = "Ready",
         Icon = FontAwesome6.Solid.SquareCheck,

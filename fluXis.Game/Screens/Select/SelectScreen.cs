@@ -673,7 +673,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 return true;
 
             case FluXisGlobalKeybind.Select:
-                Accept();
+                footer.RightButton?.TriggerClick();
                 return true;
 
             case FluXisGlobalKeybind.Back:
@@ -683,7 +683,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                     return true;
                 }
 
-                this.Exit();
+                footer.LeftButton?.TriggerClick();
                 return true;
 
             case FluXisGlobalKeybind.DecreaseRate:
