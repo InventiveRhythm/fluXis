@@ -266,33 +266,32 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
     #region Amplitude Stuff
 
     public float[] Amplitudes { get; } = new float[256];
+    private float[] emptyAmplitudes { get; } = new float[256];
+
     private double lastAmplitudeUpdate;
-    private const int amplitude_update_fps = 120;
 
     private void updateAmplitudes()
     {
         if (CurrentTrack == null) return;
 
-        if (Time.Current - lastAmplitudeUpdate < 1000f / amplitude_update_fps)
+        // could maybe be a setting someday?
+        const int update_fps = 120;
+
+        if (Time.Current - lastAmplitudeUpdate < 1000f / update_fps)
             return;
 
         var elapsed = Time.Current - lastAmplitudeUpdate;
         lastAmplitudeUpdate = Time.Current;
 
-        ReadOnlySpan<float> span = null;
-
-        if (IsRunning)
-            span = CurrentTrack.CurrentAmplitudes.FrequencyAmplitudes.Span;
-
-        if (span == null) span = new float[256];
+        var span = IsRunning ? CurrentTrack.CurrentAmplitudes.FrequencyAmplitudes.Span : emptyAmplitudes;
 
         for (var i = 0; i < span.Length; i++)
         {
             float newAmplitude = span[i];
             float delta = newAmplitude - Amplitudes[i];
             float interpolation = delta < 0
-                ? (float)elapsed / 30f
-                : (float)Math.Pow(.1f, elapsed / 1000f);
+                ? (float)elapsed / 80f
+                : (float)Math.Pow(.1f, elapsed / 800f);
 
             Amplitudes[i] += delta * interpolation;
         }
