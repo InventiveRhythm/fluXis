@@ -188,7 +188,8 @@ public partial class ModSelector : Container
                                                                         Mods = new IMod[]
                                                                         {
                                                                             new NoSvMod(),
-                                                                            new NoLnMod()
+                                                                            new NoLnMod(),
+                                                                            new MirrorMod()
                                                                         }
                                                                     }
                                                                 }

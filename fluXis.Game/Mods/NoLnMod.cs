@@ -1,10 +1,11 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Map.Structures;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
 
-public class NoLnMod : IMod
+public class NoLnMod : IMod, IApplicableToHitObject
 {
     public string Name => "No LN";
     public string Acronym => "NLN";
@@ -14,4 +15,6 @@ public class NoLnMod : IMod
     public float ScoreMultiplier => .8f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => Array.Empty<Type>();
+
+    public void Apply(HitObject hit) => hit.HoldTime = 0;
 }

@@ -370,7 +370,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         AllowOverlays.Value = IsPaused.Value;
     }
 
-    protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo();
+    protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
     protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount);
     protected virtual Drawable CreateTextOverlay() => Empty();
     protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(RealmMap);

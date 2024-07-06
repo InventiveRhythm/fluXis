@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using fluXis.Game.Map;
+using fluXis.Game.Mods;
 using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
@@ -79,6 +81,24 @@ public class RealmMap : RealmObject
         Status = MapStatus.Local;
     }
 
+    [CanBeNull]
+    public MapInfo GetMapInfo(List<IMod> mods)
+    {
+        var map = GetMapInfo();
+
+        if (map == null)
+            return null;
+
+        foreach (var mod in mods.OfType<IApplicableToHitObject>())
+            map.HitObjects.ForEach(mod.Apply);
+
+        foreach (var mod in mods.OfType<IApplicableToMap>())
+            mod.Apply(map);
+
+        return map;
+    }
+
+    [CanBeNull]
     public virtual MapInfo GetMapInfo() => GetMapInfo<MapInfo>();
 
     [CanBeNull]

@@ -353,18 +353,12 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         initScrollVelocityMarks();
         initSnapIndices();
 
-        foreach (var hit in Map.HitObjects)
-        {
-            if (screen.Mods.Any(m => m is NoLnMod))
-                hit.HoldTime = 0;
-
-            FutureHitObjects.Add(hit);
-        }
+        Map.HitObjects.ForEach(FutureHitObjects.Add);
     }
 
     private void initScrollVelocityMarks()
     {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || screen.Mods.Any(m => m is NoSvMod))
+        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
             return;
 
         ScrollVelocity first = Map.ScrollVelocities[0];
@@ -431,7 +425,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public double ScrollVelocityPositionFromTime(double time, int index = -1)
     {
-        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0 || screen.Mods.Any(m => m is NoSvMod))
+        if (Map.ScrollVelocities == null || Map.ScrollVelocities.Count == 0)
             return time;
 
         if (index == -1)

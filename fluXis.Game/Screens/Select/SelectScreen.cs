@@ -455,7 +455,8 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         {
             viewReplay(MapStore.CurrentMap, mods, () =>
             {
-                var map = MapStore.CurrentMap.GetMapInfo();
+                var map = MapStore.CurrentMap.GetMapInfo(mods);
+
                 var autogen = new AutoGenerator(map, MapStore.CurrentMap.KeyCount);
                 return autogen.Generate();
             });
