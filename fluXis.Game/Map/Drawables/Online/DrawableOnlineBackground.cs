@@ -26,11 +26,5 @@ public partial class DrawableOnlineBackground : Sprite
         FillMode = FillMode.Fill;
         Texture = textures.GetBackground(mapSet.ID, size);
     }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        this.FadeInFromZero(400);
-    }
 }
 

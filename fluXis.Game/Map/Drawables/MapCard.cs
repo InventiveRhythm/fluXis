@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -14,6 +15,7 @@ using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -72,8 +74,8 @@ public partial class MapCard : Container, IHasContextMenu
     private Container content;
     private SectionedGradient gradient;
 
-    private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet.ID);
-    private bool downloading => maps.DownloadQueue.Any(x => x == MapSet.ID);
+    private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet?.ID);
+    private bool downloading => maps.DownloadQueue.Any(x => x == MapSet?.ID);
 
     private bool canDelete
     {
@@ -84,7 +86,7 @@ public partial class MapCard : Container, IHasContextMenu
             if (user == null)
                 return false;
 
-            if (user.IsDeveloper() || user.CanModerate() || MapSet.Creator.ID == user.ID)
+            if (user.IsDeveloper() || user.CanModerate() || MapSet?.Creator.ID == user.ID)
                 return true;
 
             return false;
@@ -92,7 +94,7 @@ public partial class MapCard : Container, IHasContextMenu
     }
 
     [CanBeNull]
-    private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet.ID);
+    private RealmMapSet localSet => maps.MapSets.FirstOrDefault(x => x.OnlineID == MapSet?.ID);
 
     public MapCard(APIMapSet mapSet)
     {
@@ -118,7 +120,7 @@ public partial class MapCard : Container, IHasContextMenu
                 },
                 new FluXisSpriteText
                 {
-                    Text = "Missing mapset data.",
+                    Text = "MapSet was not found.",
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 }
@@ -146,9 +148,11 @@ public partial class MapCard : Container, IHasContextMenu
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background3
                     },
-                    new DelayedLoadUnloadWrapper(() => new DrawableOnlineBackground(MapSet))
+                    new LoadWrapper<DrawableOnlineBackground>
                     {
-                        RelativeSizeAxes = Axes.Both
+                        RelativeSizeAxes = Axes.Both,
+                        LoadContent = () => new DrawableOnlineBackground(MapSet),
+                        OnComplete = d => d.FadeInFromZero(400)
                     },
                     gradient = new SectionedGradient
                     {
@@ -170,15 +174,13 @@ public partial class MapCard : Container, IHasContextMenu
                         {
                             new Drawable[]
                             {
-                                new Container
+                                new LoadWrapper<DrawableOnlineCover>
                                 {
                                     Size = new Vector2(112),
                                     CornerRadius = 16,
                                     Masking = true,
-                                    Child = new DelayedLoadUnloadWrapper(() => new DrawableOnlineCover(MapSet))
-                                    {
-                                        RelativeSizeAxes = Axes.Both
-                                    }
+                                    LoadContent = () => new DrawableOnlineCover(MapSet),
+                                    OnComplete = d => d.FadeInFromZero(400)
                                 },
                                 new Container
                                 {
@@ -194,12 +196,39 @@ public partial class MapCard : Container, IHasContextMenu
                                             Spacing = new Vector2(-3),
                                             Children = new Drawable[]
                                             {
-                                                new TruncatingText
+                                                new GridContainer
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    Text = MapSet.Title,
-                                                    WebFontSize = 18,
-                                                    Shadow = true
+                                                    AutoSizeAxes = Axes.Y,
+                                                    RowDimensions = new Dimension[] { new(GridSizeMode.AutoSize) },
+                                                    ColumnDimensions = new Dimension[]
+                                                    {
+                                                        new(),
+                                                        new(GridSizeMode.AutoSize)
+                                                    },
+                                                    Content = new[]
+                                                    {
+                                                        new Drawable[]
+                                                        {
+                                                            new TruncatingText
+                                                            {
+                                                                RelativeSizeAxes = Axes.X,
+                                                                Text = MapSet.Title,
+                                                                WebFontSize = 18,
+                                                                Shadow = true
+                                                            },
+                                                            new RoundedChip
+                                                            {
+                                                                Alpha = MapSet.Flags.HasFlagFast(MapSetFlag.Explicit) ? 1f : 0f,
+                                                                Text = "EXPLICIT",
+                                                                BackgroundColour = Colour4.Black.Opacity(.5f),
+                                                                TextColour = Colour4.White,
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Margin = new MarginPadding { Left = 8 }
+                                                            }
+                                                        }
+                                                    }
                                                 },
                                                 new TruncatingText
                                                 {
@@ -222,69 +251,32 @@ public partial class MapCard : Container, IHasContextMenu
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             Height = 20,
-                                            Margin = new MarginPadding { Top = 5 },
                                             Anchor = Anchor.BottomLeft,
                                             Origin = Anchor.BottomLeft,
                                             Children = new Drawable[]
                                             {
-                                                new CircularContainer
+                                                new RoundedChip
                                                 {
-                                                    AutoSizeAxes = Axes.X,
-                                                    RelativeSizeAxes = Axes.Y,
-                                                    Masking = true,
-                                                    EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
-                                                    Children = new Drawable[]
+                                                    Text = MapSet.Status switch
                                                     {
-                                                        new Box
-                                                        {
-                                                            RelativeSizeAxes = Axes.Both,
-                                                            Colour = FluXisColors.GetStatusColor(MapSet.Status)
-                                                        },
-                                                        new FluXisSpriteText
-                                                        {
-                                                            Anchor = Anchor.Centre,
-                                                            Origin = Anchor.Centre,
-                                                            Text = MapSet.Status switch
-                                                            {
-                                                                0 => "UNSUBMITTED",
-                                                                1 => "PENDING",
-                                                                2 => "IMPURE",
-                                                                3 => "PURE",
-                                                                _ => "UNKNOWN"
-                                                            },
-                                                            Colour = Colour4.Black,
-                                                            WebFontSize = 12,
-                                                            Alpha = .75f,
-                                                            Margin = new MarginPadding { Horizontal = 8 }
-                                                        }
-                                                    }
+                                                        0 => "UNSUBMITTED",
+                                                        1 => "PENDING",
+                                                        2 => "IMPURE",
+                                                        3 => "PURE",
+                                                        _ => "UNKNOWN"
+                                                    },
+                                                    TextColour = Colour4.Black.Opacity(.75f),
+                                                    BackgroundColour = FluXisColors.GetStatusColor(MapSet.Status),
+                                                    EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
                                                 },
-                                                new CircularContainer
+                                                new RoundedChip
                                                 {
-                                                    AutoSizeAxes = Axes.X,
-                                                    RelativeSizeAxes = Axes.Y,
-                                                    Masking = true,
+                                                    Text = getKeymodeString(),
+                                                    TextColour = Colour4.Black.Opacity(.75f),
+                                                    BackgroundColour = getKeymodeColor(),
                                                     EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
                                                     Anchor = Anchor.CentreRight,
-                                                    Origin = Anchor.CentreRight,
-                                                    Children = new Drawable[]
-                                                    {
-                                                        new Box
-                                                        {
-                                                            RelativeSizeAxes = Axes.Both,
-                                                            Colour = getKeymodeColor()
-                                                        },
-                                                        new FluXisSpriteText
-                                                        {
-                                                            Anchor = Anchor.Centre,
-                                                            Origin = Anchor.Centre,
-                                                            WebFontSize = 12,
-                                                            Alpha = .75f,
-                                                            Colour = Colour4.Black,
-                                                            Text = getKeymodeString(),
-                                                            Margin = new MarginPadding { Horizontal = 8 }
-                                                        }
-                                                    }
+                                                    Origin = Anchor.CentreRight
                                                 }
                                             }
                                         }
@@ -380,6 +372,9 @@ public partial class MapCard : Container, IHasContextMenu
 
     private void updateState()
     {
+        if (content == null || background == null)
+            return;
+
         bool shouldShow = downloading || downloaded;
 
         content.ResizeWidthTo(shouldShow ? CardWidth - 10 : CardWidth, 400, Easing.OutQuint);

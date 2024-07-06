@@ -26,6 +26,9 @@ public class APIMapSet
     [JsonProperty("tags")]
     public string[] Tags { get; set; } = Array.Empty<string>();
 
+    [JsonProperty("flags")]
+    public MapSetFlag Flags { get; set; }
+
     [JsonProperty("status")]
     public int Status { get; set; }
 
