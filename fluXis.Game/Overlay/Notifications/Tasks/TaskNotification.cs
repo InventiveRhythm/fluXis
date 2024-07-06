@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -9,6 +10,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -34,6 +36,8 @@ public partial class TaskNotification : CompositeDrawable
     private readonly Color4 colorWorking = Colour4.FromHex("#66AACC");
     private readonly Color4 colorFailed = Colour4.FromHex("#CC6666");
     private readonly Color4 colorFinished = Colour4.FromHex("#66CC66");
+
+    public float TargetY = 0;
 
     public TaskNotification(TaskNotificationData data)
     {
@@ -178,6 +182,16 @@ public partial class TaskNotification : CompositeDrawable
         data.StateBindable.BindValueChanged(e => Scheduler.ScheduleIfNeeded(() => updateState(e.NewValue)));
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Precision.AlmostEquals(TargetY, Y))
+            Y = TargetY;
+        else
+            Y = (float)Interpolation.Lerp(TargetY, Y, Math.Exp(-0.01 * Time.Elapsed));
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
         if (data.ClickAction == null || data.State != LoadingState.Complete)
@@ -195,7 +209,7 @@ public partial class TaskNotification : CompositeDrawable
 
     public void Hide(float delay = 0)
     {
-        this.Delay(delay).Expire().OnComplete(_ => disappear?.Play());
+        this.Delay(delay).FadeOut(300).Expire().OnComplete(_ => disappear?.Play());
         content.Delay(delay).MoveToX(-500, 500, Easing.OutQuint);
     }
 
