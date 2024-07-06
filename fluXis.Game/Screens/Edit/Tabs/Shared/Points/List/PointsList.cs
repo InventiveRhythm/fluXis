@@ -132,25 +132,30 @@ public abstract partial class PointsList : Container
             o.Time += clock.CurrentTime;
         });
 
-        objects.ForEach(o => Create(o, false, false));
+        objects.ForEach(o =>
+        {
+            var entry = Create(o, false, false);
+            ScheduleAfterChildren(() => entry.State = SelectedState.Selected);
+        });
     }
 
     protected abstract void RegisterEvents();
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
     protected abstract IEnumerable<AddButtonEntry> CreateAddEntries();
 
-    protected void Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
+    protected PointListEntry Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
     {
         if (overrideTime)
             obj.Time = clock.CurrentTime;
 
         Map.Add(obj);
 
-        if (!openSettings)
-            return;
-
         var entry = flow.FirstOrDefault(e => e.Object == obj);
-        entry?.OpenSettings();
+
+        if (openSettings)
+            entry?.OpenSettings();
+
+        return entry;
     }
 
     private void sortPoints()
