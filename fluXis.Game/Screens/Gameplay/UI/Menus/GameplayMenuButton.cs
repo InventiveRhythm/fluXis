@@ -139,13 +139,13 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
 
     protected override bool OnHover(HoverEvent e)
     {
-        state = SelectedState.Selected;
+        State = SelectedState.Selected;
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        state = SelectedState.Deselected;
+        State = SelectedState.Deselected;
     }
 
     private void updateState()
