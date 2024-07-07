@@ -1,3 +1,4 @@
+using fluXis.Game.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Online;
@@ -21,11 +22,11 @@ public class APIEndpointConfig
 
     public APIEndpointConfig AddDefaults()
     {
-        if (string.IsNullOrWhiteSpace(APIUrl))
+        if (string.IsNullOrWhiteSpace(APIUrl) || APIUrl.EqualsLower("https://api.fluxis.flux.moe"))
             APIUrl = "https://fluxis.flux.moe/api";
         if (string.IsNullOrWhiteSpace(AssetUrl))
             AssetUrl = "https://assets.flux.moe";
-        if (string.IsNullOrWhiteSpace(WebsocketUrl))
+        if (string.IsNullOrWhiteSpace(WebsocketUrl) || APIUrl.EqualsLower("wss://fluxel.flux.moe"))
             WebsocketUrl = "wss://fluxis.flux.moe/socket";
         if (string.IsNullOrWhiteSpace(WebsiteRootUrl))
             WebsiteRootUrl = "https://fluxis.flux.moe";
