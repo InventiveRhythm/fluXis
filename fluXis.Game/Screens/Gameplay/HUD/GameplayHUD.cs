@@ -87,7 +87,7 @@ public partial class GameplayHUD : Container
         var scale = screen.Playfield.Scale;
 
         if (screen.Playfield.IsUpScroll)
-            scale *= new Vector2(0, -1);
+            scale *= new Vector2(1, -1);
 
         playfieldComponents.Scale = scale;
     }
