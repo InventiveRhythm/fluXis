@@ -44,24 +44,25 @@ public abstract partial class PointsList : Container
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        Padding = new MarginPadding(20);
 
-        InternalChild = new FluXisScrollContainer
+        InternalChild = new GridContainer
         {
             RelativeSizeAxes = Axes.Both,
-            ScrollbarVisible = false,
-            Child = new FillFlowContainer
+            RowDimensions = new Dimension[]
             {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Direction = FillDirection.Vertical,
-                Spacing = new Vector2(10),
-                Padding = new MarginPadding(20),
-                Children = new Drawable[]
+                new(GridSizeMode.AutoSize),
+                new(GridSizeMode.Absolute, 10),
+                new()
+            },
+            Content = new[]
+            {
+                new Drawable[]
                 {
                     new Container
                     {
                         RelativeSizeAxes = Axes.X,
-                        Height = 30,
+                        Height = 32,
                         Children = new Drawable[]
                         {
                             new FluXisSpriteText
@@ -77,13 +78,22 @@ public abstract partial class PointsList : Container
                                 Origin = Anchor.CentreRight
                             }
                         }
-                    },
-                    flow = new FillFlowContainer<PointListEntry>
+                    }
+                },
+                new[] { Empty() },
+                new Drawable[]
+                {
+                    new FluXisScrollContainer
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Direction = FillDirection.Vertical,
-                        Spacing = new Vector2(10)
+                        RelativeSizeAxes = Axes.Both,
+                        ScrollbarVisible = false,
+                        Child = flow = new FillFlowContainer<PointListEntry>
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Direction = FillDirection.Vertical,
+                            Spacing = new Vector2(8)
+                        }
                     }
                 }
             }
@@ -344,7 +354,7 @@ public abstract partial class PointsList : Container
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(30);
+            Size = new Vector2(32);
             Masking = true;
 
             InternalChildren = new Drawable[]
