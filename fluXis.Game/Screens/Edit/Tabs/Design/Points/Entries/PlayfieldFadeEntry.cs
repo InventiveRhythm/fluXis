@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
@@ -14,7 +15,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PlayfieldFadeEntry : PointListEntry
 {
     protected override string Text => "Playfield Fade";
-    protected override Colour4 Color => Colour4.FromHex("#0180FE");
+    protected override Colour4 Color => FluXisColors.PlayfieldFade;
 
     private PlayfieldFadeEvent fade => Object as PlayfieldFadeEvent;
 

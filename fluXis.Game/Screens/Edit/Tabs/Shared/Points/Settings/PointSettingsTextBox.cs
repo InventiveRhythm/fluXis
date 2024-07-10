@@ -69,9 +69,16 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
                         Origin = Anchor.CentreLeft,
                         WebFontSize = 16,
                         Alpha = string.IsNullOrEmpty(ExtraText) ? 0 : 1
-                    }
+                    },
+                    CreateExtraButton().With(d =>
+                    {
+                        d.Anchor = Anchor.CentreLeft;
+                        d.Origin = Anchor.CentreLeft;
+                    })
                 }
             }
         };
     }
+
+    protected virtual Drawable CreateExtraButton() => Empty().With(d => d.Alpha = 0);
 }

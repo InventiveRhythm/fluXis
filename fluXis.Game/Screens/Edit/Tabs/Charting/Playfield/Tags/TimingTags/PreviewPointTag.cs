@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +10,7 @@ public partial class PreviewPointTag : EditorTag
     [Resolved]
     private EditorMap map { get; set; }
 
-    public override Colour4 TagColour => Colour4.FromHex("FDD27F");
+    public override Colour4 TagColour => FluXisColors.PreviewPoint;
 
     public PreviewPointTag(EditorTagContainer parent)
         : base(parent, new PreviewPointObject())

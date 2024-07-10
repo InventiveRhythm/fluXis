@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
@@ -14,7 +15,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PlayfieldRotateEntry : PointListEntry
 {
     protected override string Text => "Playfield Rotate";
-    protected override Colour4 Color => Colour4.FromHex("#8AF7A2");
+    protected override Colour4 Color => FluXisColors.PlayfieldRotate;
 
     private PlayfieldRotateEvent rotate => Object as PlayfieldRotateEvent;
 

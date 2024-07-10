@@ -23,6 +23,8 @@ public partial class EditorTag : Container
     protected FluXisSpriteText Text { get; private set; }
     public bool RightSide { get; set; }
 
+    protected Container Container { get; private set; }
+
     public EditorTag(EditorTagContainer parent, ITimedObject timedObject)
     {
         this.parent = parent;
@@ -32,14 +34,37 @@ public partial class EditorTag : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = TagWidth + 6;
+        AutoSizeAxes = Axes.X;
         Height = 20;
-        Anchor = Anchor.TopRight;
-        Origin = Anchor.CentreRight;
+        Anchor = RightSide ? Anchor.TopLeft : Anchor.TopRight;
+        Origin = RightSide ? Anchor.CentreLeft : Anchor.CentreRight;
+        Padding = new MarginPadding
+        {
+            Left = RightSide ? 6 : 0,
+            Right = !RightSide ? 6 : 0
+        };
 
         InternalChildren = new Drawable[]
         {
             new Container
+            {
+                Size = new Vector2(12),
+                Anchor = RightSide ? Anchor.CentreLeft : Anchor.CentreRight,
+                Origin = RightSide ? Anchor.BottomLeft : Anchor.TopRight,
+                X = RightSide ? -6f : 6f,
+                Rotation = 45,
+                CornerRadius = 2,
+                Masking = true,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = TagColour
+                    }
+                }
+            },
+            Container = new Container
             {
                 Width = TagWidth,
                 RelativeSizeAxes = Axes.Y,
@@ -60,24 +85,7 @@ public partial class EditorTag : Container
                         Origin = Anchor.Centre,
                         Colour = FluXisColors.IsBright(TagColour) ? Colour4.Black : Colour4.White,
                         Alpha = .75f,
-                        FontSize = 14
-                    }
-                }
-            },
-            new Container
-            {
-                Size = new Vector2(12),
-                Anchor = RightSide ? Anchor.CentreLeft : Anchor.CentreRight,
-                Origin = RightSide ? Anchor.BottomLeft : Anchor.TopRight,
-                Rotation = 45,
-                CornerRadius = 2,
-                Masking = true,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = TagColour
+                        WebFontSize = 12
                     }
                 }
             }

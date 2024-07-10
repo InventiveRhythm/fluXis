@@ -26,8 +26,8 @@ public partial class FluXisPopover : Popover
 
     protected override Drawable CreateArrow() => Empty();
 
-    protected override void PopIn() => this.ScaleTo(1, 800, Easing.OutElastic).FadeIn(200);
-    protected override void PopOut() => this.ScaleTo(0.7f, 300, Easing.OutQuint).FadeOut(200);
+    protected override void PopIn() => this.ScaleTo(.75f).ScaleTo(1, 800, Easing.OutElasticHalf).FadeInFromZero(400, Easing.OutQuint);
+    protected override void PopOut() => this.ScaleTo(.9f, 400, Easing.OutQuint).FadeOut(400, Easing.OutQuint);
 
     protected override bool OnHover(HoverEvent e) => HandleHover && base.OnHover(e);
 }

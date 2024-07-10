@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
 using osu.Framework.Graphics;
 
@@ -5,7 +6,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 public partial class TimingPointTag : EditorTag
 {
-    public override Colour4 TagColour => Colour4.FromHex("#00FF80");
+    public override Colour4 TagColour => FluXisColors.TimingPoint;
 
     public TimingPoint TimingPoint => (TimingPoint)TimedObject;
 

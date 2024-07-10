@@ -36,6 +36,20 @@ public static class FluXisColors
     public static Colour4 ButtonGreen => Colour4.FromHSL(120 / 360f, .5f, .3f);
     public static Colour4 Green => Colour4.FromHSL(120 / 360f, 1f, .67f);
 
+    public static Colour4 TimingPoint => Colour4.FromHex("#00FF80");
+    public static Colour4 ScrollVelocity => Colour4.FromHex("#00D4FF");
+    public static Colour4 PreviewPoint => Colour4.FromHex("FDD27F");
+    public static Colour4 LaneSwitch => Colour4.FromHex("#FF6666");
+    public static Colour4 Flash => Colour4.FromHex("#FFCC66");
+    public static Colour4 Shake => Colour4.FromHex("#01FEFE");
+    public static Colour4 PlayfieldMove => Colour4.FromHex("#01FE55");
+    public static Colour4 PlayfieldScale => Colour4.FromHex("#D279C4");
+    public static Colour4 PlayfieldRotate => Colour4.FromHex("#8AF7A2");
+    public static Colour4 PlayfieldFade => Colour4.FromHex("#0180FE");
+    public static Colour4 BeatPulse => Colour4.FromHex("#FF6666");
+    public static Colour4 Note => Colour4.FromHex("#FFFFFF");
+    public static Colour4 Shader => Colour4.FromHex("#D65C5C");
+
     public static Colour4 Selection => Highlight;
 
     public static Colour4 DownloadFinished => Colour4.FromHex("#7BE87B");

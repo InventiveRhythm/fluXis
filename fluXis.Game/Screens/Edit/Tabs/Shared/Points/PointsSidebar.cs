@@ -22,7 +22,8 @@ public abstract partial class PointsSidebar : ExpandingContainer, IKeyBindingHan
     private const int size_closed = 190;
     private const int size_open = 420;
 
-    protected override double HoverDelay => 500;
+    protected override double HoverDelay => 250;
+    protected override bool CloseOnHoverLost => false;
 
     public Action OnWrapperClick { get; set; }
 

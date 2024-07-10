@@ -68,7 +68,7 @@ public partial class EditorTagContainer : Container<EditorTag>
             Add(tag);
         }
 
-        Dictionary<int, int> tagsAtTime = new Dictionary<int, int>();
+        var tagsAtTime = new Dictionary<int, int>();
 
         foreach (var tag in Children)
         {

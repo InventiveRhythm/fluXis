@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
@@ -79,18 +80,16 @@ public partial class DesignPointsList : PointsList
     {
         var entries = new List<AddButtonEntry>
         {
-            new("Flash", () => Create(new FlashEvent())),
-            new("Shake", () => Create(new ShakeEvent())),
-            new("Playfield Fade", () => Create(new PlayfieldFadeEvent())),
-            new("Playfield Move", () => Create(new PlayfieldMoveEvent())),
-            new("Playfield Scale", () => Create(new PlayfieldScaleEvent())),
-            new("Beat Pulse", () => Create(new BeatPulseEvent())),
-            new("Playfield Rotate", () => Create(new PlayfieldRotateEvent())),
-            new("Note", () => Create(new NoteEvent()))
+            new("Flash", FluXisColors.Flash, () => Create(new FlashEvent())),
+            new("Shake", FluXisColors.Shake, () => Create(new ShakeEvent())),
+            new("Playfield Move", FluXisColors.PlayfieldMove, () => Create(new PlayfieldMoveEvent())),
+            new("Playfield Scale", FluXisColors.PlayfieldScale, () => Create(new PlayfieldScaleEvent())),
+            new("Playfield Rotate", FluXisColors.PlayfieldRotate, () => Create(new PlayfieldRotateEvent())),
+            new("Playfield Fade", FluXisColors.PlayfieldFade, () => Create(new PlayfieldFadeEvent())),
+            new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
+            new("Note", FluXisColors.Note, () => Create(new NoteEvent())),
+            new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }))
         };
-
-        if (FluXisGameBase.IsDebug)
-            entries.Add(new AddButtonEntry("Shader", () => Create(new ShaderEvent { ShaderName = "Bloom" })));
 
         return entries;
     }

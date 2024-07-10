@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
@@ -15,7 +16,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class FlashEntry : PointListEntry
 {
     protected override string Text => "Flash";
-    protected override Colour4 Color => Colour4.FromHex("#FFCC66");
+    protected override Colour4 Color => FluXisColors.Flash;
 
     private FlashEvent flash => Object as FlashEvent;
 

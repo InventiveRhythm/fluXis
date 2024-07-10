@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
 using osu.Framework.Graphics;
 
@@ -5,7 +6,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.TimingTags;
 
 public partial class ScrollVelocityTag : EditorTag
 {
-    public override Colour4 TagColour => Colour4.FromHex("#00D4FF");
+    public override Colour4 TagColour => FluXisColors.ScrollVelocity;
 
     public ScrollVelocity ScrollVelocity => (ScrollVelocity)TimedObject;
 

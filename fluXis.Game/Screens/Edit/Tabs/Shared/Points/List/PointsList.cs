@@ -240,11 +240,15 @@ public abstract partial class PointsList : Container
                 HandleHover = false,
                 ContentPadding = 0,
                 BodyRadius = 5,
+                // makes sense that BOTTOM LEFT is the
+                // right one to display it from the TOP RIGHT
+                AllowableAnchors = new[] { Anchor.BottomLeft },
+                Padding = new MarginPadding(20),
                 Child = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.Both,
                     Direction = FillDirection.Vertical,
-                    ChildrenEnumerable = entries.Select(x => new Entry(x.Text, () => createAndHide(x.CreateAction)))
+                    ChildrenEnumerable = entries.Select(x => new Entry(x.Text, x.Color, () => createAndHide(x.CreateAction)))
                 }
             };
         }
@@ -254,33 +258,48 @@ public abstract partial class PointsList : Container
             private string text { get; }
             private Action create { get; }
 
-            public Entry(string text, Action create)
+            private Box hover;
+
+            public Entry(string text, Colour4 color, Action create)
             {
                 this.text = text;
                 this.create = create;
+
+                Colour = color;
             }
 
             [BackgroundDependencyLoader]
             private void load()
             {
-                Size = new Vector2(200, 30);
+                Size = new Vector2(240, 44);
 
                 InternalChildren = new Drawable[]
                 {
-                    new Box
+                    hover = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0
                     },
                     new FluXisSpriteText
                     {
+                        Margin = new MarginPadding(12),
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         WebFontSize = 16,
-                        Text = text,
-                        Margin = new MarginPadding(10)
+                        Text = text
                     }
                 };
+            }
+
+            protected override bool OnHover(HoverEvent e)
+            {
+                hover.FadeTo(.2f, 50);
+                return true;
+            }
+
+            protected override void OnHoverLost(HoverLostEvent e)
+            {
+                hover.FadeOut(200);
             }
 
             protected override bool OnClick(ClickEvent e)
@@ -294,11 +313,13 @@ public abstract partial class PointsList : Container
     protected class AddButtonEntry
     {
         public string Text { get; }
+        public Colour4 Color { get; }
         public Action CreateAction { get; }
 
-        public AddButtonEntry(string text, Action create)
+        public AddButtonEntry(string text, Colour4 color, Action create)
         {
             Text = text;
+            Color = color;
             CreateAction = create;
         }
     }

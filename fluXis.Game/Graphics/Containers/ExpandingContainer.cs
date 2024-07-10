@@ -11,6 +11,8 @@ public partial class ExpandingContainer : Container
     public BindableBool Locked { get; } = new();
 
     protected virtual double HoverDelay => 0;
+    protected virtual bool CloseOnHoverLost => true;
+
     private ScheduledDelegate hoverDelayEvent;
 
     protected ExpandingContainer()
@@ -30,6 +32,8 @@ public partial class ExpandingContainer : Container
         if (Locked.Value) return;
 
         hoverDelayEvent?.Cancel();
-        if (Expanded.Value) Expanded.Value = false;
+
+        if (Expanded.Value && CloseOnHoverLost)
+            Expanded.Value = false;
     }
 }

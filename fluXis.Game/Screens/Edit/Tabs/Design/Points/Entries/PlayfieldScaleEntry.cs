@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
@@ -14,7 +15,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PlayfieldScaleEntry : PointListEntry
 {
     protected override string Text => "Playfield Scale";
-    protected override Colour4 Color => Colour4.FromHex("#D279C4");
+    protected override Colour4 Color => FluXisColors.PlayfieldScale;
 
     private PlayfieldScaleEvent scale => Object as PlayfieldScaleEvent;
 
