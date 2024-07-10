@@ -36,7 +36,13 @@ public abstract partial class PointsList : Container
     public Action RequestClose { get; set; }
 
     private bool initialLoad = true;
+    private FluXisScrollContainer scroll;
     private FillFlowContainer<PointListEntry> flow;
+
+    private SpriteIcon iconUp;
+    private bool iconUpShown;
+    private SpriteIcon iconDown;
+    private bool iconDownShown;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -83,16 +89,40 @@ public abstract partial class PointsList : Container
                 new[] { Empty() },
                 new Drawable[]
                 {
-                    new FluXisScrollContainer
+                    new Container
                     {
                         RelativeSizeAxes = Axes.Both,
-                        ScrollbarVisible = false,
-                        Child = flow = new FillFlowContainer<PointListEntry>
+                        Padding = new MarginPadding { Bottom = 10 },
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Vertical,
-                            Spacing = new Vector2(8)
+                            scroll = new FluXisScrollContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                ScrollbarVisible = false,
+                                Child = flow = new FillFlowContainer<PointListEntry>
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Direction = FillDirection.Vertical,
+                                    Spacing = new Vector2(8)
+                                }
+                            },
+                            iconUp = new SpriteIcon
+                            {
+                                Icon = FontAwesome6.Solid.ChevronUp,
+                                Size = new Vector2(16),
+                                Anchor = Anchor.TopCentre,
+                                Origin = Anchor.TopCentre,
+                                Alpha = 0
+                            },
+                            iconDown = new SpriteIcon
+                            {
+                                Icon = FontAwesome6.Solid.ChevronDown,
+                                Size = new Vector2(16),
+                                Anchor = Anchor.BottomCentre,
+                                Origin = Anchor.BottomCentre,
+                                Alpha = 0
+                            }
                         }
                     }
                 }
@@ -222,6 +252,33 @@ public abstract partial class PointsList : Container
 
         if (entry != null)
             flow.Remove(entry, true);
+    }
+
+    protected override void UpdateAfterChildren()
+    {
+        base.UpdateAfterChildren();
+
+        if (!scroll.IsScrolledToStart() && !iconUpShown)
+        {
+            iconUpShown = true;
+            iconUp.FadeIn(300);
+        }
+        else if (scroll.IsScrolledToStart() && iconUpShown)
+        {
+            iconUpShown = false;
+            iconUp.FadeOut(300);
+        }
+
+        if (!scroll.IsScrolledToEnd() && !iconDownShown)
+        {
+            iconDownShown = true;
+            iconDown.FadeIn(300);
+        }
+        else if (scroll.IsScrolledToEnd() && iconDownShown)
+        {
+            iconDownShown = false;
+            iconDown.FadeOut(300);
+        }
     }
 
     protected override bool OnClick(ClickEvent e) => true;
