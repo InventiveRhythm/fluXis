@@ -32,6 +32,7 @@ using fluXis.Game.Screens.Result;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Skinning;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Sentry;
 using fluXis.Shared.API.Packets.Other;
 using fluXis.Shared.API.Packets.User;
 using fluXis.Shared.Components.Users;
@@ -75,6 +76,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     private LoadInfo loadInfo { get; } = new();
 
+    private SentryClient sentry { get; }
+
     private bool isExiting;
 
     private readonly BindableDouble inactiveVolume = new(1f);
@@ -83,6 +86,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     [UsedImplicitly]
     public bool Sex { get; private set; }
+
+    public FluXisGame()
+    {
+        // created here so that we can catch events before the game even starts
+        sentry = new SentryClient(this);
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -209,6 +218,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         base.LoadComplete();
         WaitForReady(() => PerformUpdateCheck(true));
+
+        sentry.BindUser(APIClient.User);
 
         loadLocales();
 
