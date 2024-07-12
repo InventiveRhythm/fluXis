@@ -11,7 +11,8 @@ namespace fluXis.Game.Screens;
 
 public partial class FluXisScreenStack : ScreenStack
 {
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private GlobalBackground backgrounds { get; set; }
 
     [CanBeNull]
@@ -51,6 +52,9 @@ public partial class FluXisScreenStack : ScreenStack
         }
         else
         {
+            if (backgrounds == null)
+                return;
+
             backgrounds.Zoom = 1f;
             backgrounds.ParallaxStrength = .05f;
             backgrounds.SetBlur(0f);
