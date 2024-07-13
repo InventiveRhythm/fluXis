@@ -15,12 +15,10 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
     protected override void InitialiseDefaults()
     {
         SetDefault(ExperimentConfig.DesignTab, false);
-        SetDefault(ExperimentConfig.TintLongNotesOnMiss, false);
     }
 }
 
 public enum ExperimentConfig
 {
-    DesignTab,
-    TintLongNotesOnMiss
+    DesignTab
 }
