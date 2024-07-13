@@ -1,11 +1,16 @@
 ﻿using System;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Buttons;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
+using fluXis.Game.Map;
+using fluXis.Game.Overlay.Auth.UI;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit;
@@ -13,14 +18,15 @@ namespace fluXis.Game.Screens.Edit;
 public partial class EditorDifficultyCreationPanel : Panel
 {
     private FluXisTextBox textBox;
+    private Toggle keepNotes;
+    private Toggle linkEffects;
 
-    public Action<string> OnCreateNewDifficulty { get; set; }
-    public Action<string> OnCopyDifficulty { get; set; }
+    public Action<CreateNewMapParameters> OnCreate { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = 600;
+        Width = 420;
         AutoSizeAxes = Axes.Y;
         Content.RelativeSizeAxes = Axes.X;
         Content.AutoSizeAxes = Axes.Y;
@@ -29,85 +35,68 @@ public partial class EditorDifficultyCreationPanel : Panel
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
-            Spacing = new Vector2(5),
+            Padding = new MarginPadding(20),
+            Spacing = new Vector2(10),
             Children = new Drawable[]
             {
                 new FluXisSpriteText
                 {
-                    Text = "Create New Difficulty",
-                    FontSize = 30,
+                    Text = "Create new...",
+                    WebFontSize = 32,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre
                 },
-                textBox = new FluXisTextBox
+                textBox = new AuthOverlayTextBox()
                 {
                     RelativeSizeAxes = Axes.X,
-                    Height = 40,
-                    PlaceholderText = "New difficulty name...",
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre
+                    PlaceholderText = "New difficulty name..."
                 },
-                new FillFlowContainer
-                {
-                    AutoSizeAxes = Axes.X,
-                    Height = 40,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(10),
-                    Margin = new MarginPadding { Top = 10 },
-                    Children = new Drawable[]
-                    {
-                        new FluXisButton
-                        {
-                            Text = "New",
-                            TooltipText = "Create a new difficulty from scratch with only metadata and timing points.",
-                            Action = () =>
-                            {
-                                if (string.IsNullOrEmpty(textBox.Text))
-                                {
-                                    textBox.NotifyError();
-                                    return;
-                                }
-
-                                OnCreateNewDifficulty?.Invoke(textBox.Text);
-                            },
-                            Width = 100,
-                            RelativeSizeAxes = Axes.Y,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre
-                        },
-                        new FluXisButton
-                        {
-                            Text = "Copy",
-                            TooltipText = "Create a new difficulty by copying the map data from an existing difficulty.",
-                            Action = () =>
-                            {
-                                if (string.IsNullOrEmpty(textBox.Text))
-                                {
-                                    textBox.NotifyError();
-                                    return;
-                                }
-
-                                OnCopyDifficulty?.Invoke(textBox.Text);
-                            },
-                            Width = 100,
-                            RelativeSizeAxes = Axes.Y,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre
-                        },
-                        new FluXisButton
-                        {
-                            Text = "Cancel",
-                            Action = Hide,
-                            Width = 100,
-                            RelativeSizeAxes = Axes.Y,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre
-                        }
-                    }
-                }
+                keepNotes = new Toggle("Copy Notes", ""),
+                linkEffects = new Toggle("Link Effects", "Uses the same file for effects, meaning changing the effects updates them in the other map."),
+                new AuthOverlayButton("Create") { Action = create },
+                new AuthOverlayButton("Cancel") { Action = Hide }
             }
         };
+    }
+
+    private void create() => OnCreate?.Invoke(new CreateNewMapParameters
+    {
+        DifficultyName = textBox.Text,
+        CopyNotes = keepNotes.State.Value,
+        LinkEffects = linkEffects.State.Value
+    });
+
+    private partial class Toggle : CompositeDrawable, IHasTooltip
+    {
+        public LocalisableString TooltipText { get; }
+
+        public Bindable<bool> State { get; } = new();
+
+        public Toggle(string text, string tooltip)
+        {
+            TooltipText = tooltip;
+
+            RelativeSizeAxes = Axes.X;
+            Height = 40;
+            Anchor = Anchor.TopCentre;
+            Origin = Anchor.TopCentre;
+
+            InternalChildren = new Drawable[]
+            {
+                new FluXisSpriteText
+                {
+                    Text = text,
+                    WebFontSize = 14,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft
+                },
+                new FluXisToggleSwitch
+                {
+                    State = State,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight
+                }
+            };
+        }
     }
 }

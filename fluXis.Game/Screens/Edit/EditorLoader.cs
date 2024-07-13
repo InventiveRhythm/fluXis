@@ -36,13 +36,13 @@ public partial class EditorLoader : FluXisScreen
         };
     }
 
-    public void CreateNewDifficulty(RealmMap realmMap, MapInfo refInfo, string diffName = "new diff", bool copy = false)
+    public void CreateNewDifficulty(RealmMap realmMap, MapInfo refInfo, CreateNewMapParameters param)
     {
         ValidForResume = true;
         this.MakeCurrent();
 
         var set = maps.GetFromGuid(realmMap.MapSet.ID);
-        map = copy ? maps.CopyToNewDifficulty(set, realmMap, refInfo, diffName) : maps.CreateNewDifficulty(set, realmMap, diffName, refInfo);
+        map = maps.CreateNewDifficulty(set, realmMap, refInfo, param);
         mapInfo = map.GetMapInfo();
 
         pushEditor();

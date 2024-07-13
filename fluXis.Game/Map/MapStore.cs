@@ -370,104 +370,32 @@ public partial class MapStore : Component
         });
     }
 
-    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, string name, MapInfo refInfo = null)
+    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, MapInfo refInfo, CreateNewMapParameters param)
     {
         var id = Guid.NewGuid();
         var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
-
-        var info = new MapInfo(new MapMetadata
-        {
-            Title = map.Metadata.Title,
-            Artist = map.Metadata.Artist,
-            Mapper = map.Metadata.Mapper,
-            Difficulty = name,
-            Source = map.Metadata.Source,
-            Tags = map.Metadata.Tags,
-            PreviewTime = map.Metadata.PreviewTime
-        })
-        {
-            AudioFile = map.Metadata.Audio,
-            BackgroundFile = map.Metadata.Background,
-            CoverFile = map.MapSet.Cover,
-            VideoFile = refInfo?.VideoFile ?? "",
-            TimingPoints = refInfo?.TimingPoints.Select(x => new TimingPoint
-            {
-                BPM = x.BPM,
-                Time = x.Time,
-                Signature = x.Signature,
-                HideLines = x.HideLines
-            }).ToList() ?? new List<TimingPoint> { new() { BPM = 120, Time = 0, Signature = 4 } }, // Add default timing point to avoid issues
-        };
-
-        var realmMap = new RealmMap
-        {
-            ID = id,
-            Difficulty = name,
-            Metadata = new RealmMapMetadata
-            {
-                Title = map.Metadata.Title,
-                Artist = map.Metadata.Artist,
-                Mapper = map.Metadata.Mapper,
-                Source = map.Metadata.Source,
-                Tags = map.Metadata.Tags,
-                Background = map.Metadata.Background,
-                Audio = map.Metadata.Audio,
-                PreviewTime = map.Metadata.PreviewTime,
-                ColorHex = map.Metadata.ColorHex
-            },
-            FileName = fileName,
-            OnlineID = 0,
-            Hash = MapUtils.GetHash(info.Serialize()),
-            Filters = MapUtils.GetMapFilters(info, new MapEvents()),
-            KeyCount = map.KeyCount,
-            MapSet = set
-        };
-
-        save(realmMap, info);
-        return addDifficultyToSet(set, realmMap);
-    }
-
-    public RealmMap CopyToNewDifficulty(RealmMapSet set, RealmMap map, MapInfo refInfo, string name)
-    {
-        var id = Guid.NewGuid();
-        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
-        string effectName = "";
-
+        var effectName = "";
         var refEffect = refInfo.GetMapEvents();
-        var refEffectString = refEffect.Save();
 
-        if (!string.IsNullOrEmpty(refEffectString))
+        if (param.LinkEffects)
+            effectName = refInfo.EffectFile;
+        else if (!refEffect.Empty)
         {
             effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx";
             string effectPath = MapFiles.GetFullPath(set.GetPathForFile(effectName));
-            File.WriteAllText(effectPath, refEffectString);
+            File.WriteAllText(effectPath, refEffect.Save());
         }
 
-        var info = new MapInfo(new MapMetadata
-        {
-            Title = map.Metadata.Title,
-            Artist = map.Metadata.Artist,
-            Mapper = map.Metadata.Mapper,
-            Difficulty = name,
-            Source = map.Metadata.Source,
-            Tags = map.Metadata.Tags,
-            PreviewTime = map.Metadata.PreviewTime
-        })
-        {
-            AudioFile = map.Metadata.Audio,
-            BackgroundFile = map.Metadata.Background,
-            CoverFile = map.MapSet.Cover,
-            VideoFile = refInfo.VideoFile,
-            EffectFile = effectName,
-            HitObjects = refInfo.HitObjects.Select(x => x.Copy()).ToList(),
-            TimingPoints = refInfo.TimingPoints.Select(x => x.Copy()).ToList(),
-            ScrollVelocities = refInfo.ScrollVelocities.Select(x => x.Copy()).ToList()
-        };
+        var info = refInfo.JsonCopy();
+        info.EffectFile = effectName;
+
+        if (!param.CopyNotes)
+            info.HitObjects = new List<HitObject>();
 
         var realmMap = new RealmMap
         {
             ID = id,
-            Difficulty = name,
+            Difficulty = param.DifficultyName,
             Metadata = new RealmMapMetadata
             {
                 Title = map.Metadata.Title,
@@ -484,7 +412,9 @@ public partial class MapStore : Component
             Hash = MapUtils.GetHash(info.Serialize()),
             Filters = MapUtils.GetMapFilters(info, refEffect),
             KeyCount = map.KeyCount,
-            MapSet = set
+            MapSet = set,
+            AccuracyDifficulty = map.AccuracyDifficulty,
+            HealthDifficulty = map.HealthDifficulty
         };
 
         save(realmMap, info);

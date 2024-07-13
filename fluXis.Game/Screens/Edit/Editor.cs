@@ -222,8 +222,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         new FluXisMenuSpacer(),
                                         new("Create new difficulty", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                                         {
-                                            OnCreateNewDifficulty = diffname => createNewDiff(diffname, false),
-                                            OnCopyDifficulty = diffname => createNewDiff(diffname, true)
+                                            OnCreate = param => createNewDiff(param)
                                         }) { Enabled = () => canSave },
                                         new("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
                                         {
@@ -375,13 +374,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         };
     }
 
-    private void createNewDiff(string diffname, bool copy)
+    private void createNewDiff(CreateNewMapParameters param)
     {
-        if (diffExists(diffname))
+        if (diffExists(param.DifficultyName))
             return;
 
         panels.Content.Hide();
-        loader.CreateNewDifficulty(editorMap.RealmMap, editorMap.MapInfo, diffname, copy);
+        loader.CreateNewDifficulty(editorMap.RealmMap, editorMap.MapInfo, param);
 
         bool diffExists(string name)
         {
