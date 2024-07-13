@@ -11,6 +11,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using fluXis.Shared.Components.Maps;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -27,7 +28,8 @@ public partial class BrowseInfo : Container
     [Resolved]
     private MapStore mapStore { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private UserProfileOverlay profile { get; set; }
 
     public Bindable<APIMapSet> BindableSet { get; set; } = new();
@@ -241,7 +243,7 @@ public partial class BrowseInfo : Container
             downloadButton.Enabled = true;
 
             creatorChip.Text = e.NewValue.Creator.Username;
-            creatorChip.OnClickAction = () => profile.ShowUser(e.NewValue.Creator.ID);
+            creatorChip.OnClickAction = () => profile?.ShowUser(e.NewValue.Creator.ID);
 
             var minBPM = e.NewValue.Maps.Min(x => x.BPM);
             var maxBPM = e.NewValue.Maps.Max(x => x.BPM);

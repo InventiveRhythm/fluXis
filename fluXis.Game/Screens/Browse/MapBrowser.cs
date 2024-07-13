@@ -20,6 +20,7 @@ using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Browse.Info;
 using fluXis.Game.Screens.Browse.Search;
 using fluXis.Shared.Components.Maps;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -49,10 +50,12 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     [Resolved]
     private PreviewManager previews { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private PanelContainer panels { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private MultifactorOverlay mfaOverlay { get; set; }
 
     [Resolved]
@@ -60,7 +63,11 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     private readonly Bindable<APIMapSet> selectedSet = new();
 
-    public FillFlowContainer<MapCard> Maps { get; private set; }
+    private bool fetchingMore = true;
+    private bool loadedAll;
+
+    private FluXisScrollContainer scroll;
+    private FillFlowContainer<MapCard> maps { get; set; }
     private CornerButton backButton;
     private LoadingIcon loadingIcon;
     private FluXisSpriteText text;
@@ -139,11 +146,11 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                 new FluXisContextMenuContainer
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
-                                                    Child = new FluXisScrollContainer
+                                                    Child = scroll = new FluXisScrollContainer
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
                                                         ScrollbarAnchor = Anchor.TopLeft,
-                                                        Child = Maps = new FillFlowContainer<MapCard>
+                                                        Child = maps = new FillFlowContainer<MapCard>
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
@@ -203,14 +210,31 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         loadMapsets();
     }
 
-    private void loadMapsets()
+    protected override void Update()
     {
-        var req = new MapSetsRequest();
+        base.Update();
+
+        if (scroll.IsScrolledToEnd() && !fetchingMore && !loadedAll)
+        {
+            var count = maps.Count;
+            loadingIcon.Show();
+            loadMapsets(count);
+        }
+    }
+
+    private void loadMapsets(long offset = 0)
+    {
+        fetchingMore = true;
+
+        var req = new MapSetsRequest(offset);
         req.Success += response =>
         {
+            if (response.Data.Count == 0)
+                loadedAll = true;
+
             foreach (var mapSet in response.Data)
             {
-                Maps.Add(new MapCard(mapSet)
+                maps.Add(new MapCard(mapSet)
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
@@ -224,12 +248,16 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 });
             }
 
+            // needed, else it does 2 request when entering
+            ScheduleAfterChildren(() => fetchingMore = false);
             loadingIcon.Hide();
         };
 
         req.Failure += e =>
         {
             Logger.Log($"Failed to load mapsets: {e.Message}", LoggingTarget.Network);
+            fetchingMore = false;
+            loadedAll = true;
             loadingIcon.Hide();
         };
 
@@ -280,13 +308,13 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            foreach (var map in Maps)
+            foreach (var map in maps)
                 map.Show();
 
             return;
         }
 
-        foreach (var map in Maps)
+        foreach (var map in maps)
         {
             var matches = false;
             matches |= map.MapSet.Title?.ToLower().Contains(query.ToLower()) ?? false;
@@ -305,12 +333,15 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     private void confirmDeleteMapSet(long id)
     {
+        if (panels == null || mfaOverlay == null)
+            return;
+
         var panel = new ConfirmDeletionPanel(deleteMapSet, itemName: "MapSet");
         panels.Content = panel;
 
         void deleteMapSet()
         {
-            var pnl = panels.Content as Panel;
+            var pnl = panels?.Content as Panel;
             pnl?.StartLoading();
 
             var req = new MapSetDeleteRequest(id);
@@ -321,7 +352,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
                 if (ex.Message == APIRequest.MULTIFACTOR_REQUIRED)
                 {
-                    mfaOverlay.Show(deleteMapSet);
+                    mfaOverlay?.Show(deleteMapSet);
                     return;
                 }
 
@@ -330,7 +361,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
             req.Success += _ =>
             {
-                Maps.FirstOrDefault(x => x.MapSet.ID == id)?.Expire();
+                maps.FirstOrDefault(x => x.MapSet.ID == id)?.Expire();
                 pnl?.StopLoading();
             };
 

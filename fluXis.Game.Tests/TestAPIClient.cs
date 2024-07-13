@@ -28,16 +28,17 @@ public class TestAPIClient : IAPIClient
     public Exception? LastException { get; private set; }
     public bool IsLoggedIn => Status.Value == ConnectionStatus.Online;
 
-    public Action<APIRequest>? HandleRequest;
+    public Action<APIRequest>? HandleRequest { get; set; }
 
     public void PerformRequest(APIRequest request)
     {
+        Logger.Log($"Handling request {request.GetType()}.");
         HandleRequest?.Invoke(request);
     }
 
     public async Task PerformRequestAsync(APIRequest request)
     {
-        HandleRequest?.Invoke(request);
+        PerformRequest(request);
         await Task.CompletedTask;
     }
 
