@@ -6,6 +6,8 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Actions;
+using fluXis.Game.Screens.Edit.Actions.Events;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -26,6 +28,9 @@ public abstract partial class PointsList : Container
 {
     [Resolved]
     protected EditorMap Map { get; private set; }
+
+    [Resolved]
+    protected EditorActionStack ActionStack { get; private set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -151,11 +156,21 @@ public abstract partial class PointsList : Container
     private void deleteSelected()
     {
         var temp = selectedEntries.ToList();
-        temp.ForEach(e =>
+        temp.ForEach(e => e.State = SelectedState.Deselected);
+
+        switch (temp.Count)
         {
-            e.State = SelectedState.Deselected;
-            Map.Remove(e.Object);
-        });
+            case 0:
+                return;
+
+            case 1:
+                ActionStack.Add(new EventRemoveAction(temp.FirstOrDefault()!.Object));
+                break;
+
+            default:
+                ActionStack.Add(new EventBulkRemoveAction(temp.Select(x => x.Object)));
+                break;
+        }
     }
 
     private void duplicateSelected()
@@ -172,10 +187,22 @@ public abstract partial class PointsList : Container
             o.Time += clock.CurrentTime;
         });
 
-        objects.ForEach(o =>
+        if (temp.Count == 1)
+            ActionStack.Add(new EventPlaceAction(objects.FirstOrDefault()));
+        else
+            ActionStack.Add(new EventBulkCloneAction(objects));
+
+        ScheduleAfterChildren(() =>
         {
-            var entry = Create(o, false, false);
-            ScheduleAfterChildren(() => entry.State = SelectedState.Selected);
+            objects.ForEach(o =>
+            {
+                var entry = flow.FirstOrDefault(e => e.Object == o);
+
+                if (entry is null)
+                    return;
+
+                entry.State = SelectedState.Selected;
+            });
         });
     }
 
@@ -183,19 +210,15 @@ public abstract partial class PointsList : Container
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
     protected abstract IEnumerable<AddButtonEntry> CreateAddEntries();
 
-    protected PointListEntry Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
+    protected void Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
     {
         if (overrideTime)
             obj.Time = clock.CurrentTime;
 
-        Map.Add(obj);
-
-        var entry = flow.FirstOrDefault(e => e.Object == obj);
+        ActionStack.Add(new EventPlaceAction(obj));
 
         if (openSettings)
-            entry?.OpenSettings();
-
-        return entry;
+            flow.FirstOrDefault(e => e.Object == obj)?.OpenSettings();
     }
 
     private void sortPoints()

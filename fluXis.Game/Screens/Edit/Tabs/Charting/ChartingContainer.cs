@@ -4,7 +4,6 @@ using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 using fluXis.Game.Screens.Edit.Actions.Notes.Shortcuts;
 using fluXis.Game.Screens.Edit.Input;
@@ -31,7 +30,7 @@ using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting;
 
-public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<EditorKeybinding>
+public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<PlatformAction>
 {
     public const float WAVEFORM_OFFSET = 20;
 
@@ -52,9 +51,6 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public static readonly int[] SNAP_DIVISORS = { 1, 2, 3, 4, 6, 8, 12, 16 };
     public static readonly Key[] TOP_ROW_KEYS = { Key.Q, Key.W, Key.E, Key.R, Key.T, Key.Y, Key.U, Key.I, Key.O, Key.P };
-
-    [Resolved]
-    private EditorActionStack actions { get; set; }
 
     [Resolved]
     private EditorSettings settings { get; set; }
@@ -242,7 +238,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             Lane = lane
         };
 
-        actions.Add(new NotePlaceAction(note));
+        ActionStack.Add(new NotePlaceAction(note));
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -250,7 +246,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
     }
 
-    public bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
+    public override bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
     {
         switch (e.Action)
         {
@@ -261,20 +257,10 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             case EditorKeybinding.ShuffleSelection:
                 ShuffleSelection();
                 return true;
-
-            case EditorKeybinding.Undo:
-                actions.Undo();
-                return true;
-
-            case EditorKeybinding.Redo:
-                actions.Redo();
-                return true;
         }
 
-        return false;
+        return base.OnPressed(e);
     }
-
-    public void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e) { }
 
     public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
     {
@@ -316,7 +302,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             return;
         }
 
-        actions.Add(new NoteFlipAction(objects, Map.RealmMap.KeyCount));
+        ActionStack.Add(new NoteFlipAction(objects, Map.RealmMap.KeyCount));
     }
 
     public void ShuffleSelection()
@@ -329,7 +315,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             return;
         }
 
-        actions.Add(new NoteShuffleAction(objects, Map.RealmMap.KeyCount));
+        ActionStack.Add(new NoteShuffleAction(objects, Map.RealmMap.KeyCount));
     }
 
     public void ReSnapAll()
@@ -339,7 +325,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (!objects.Any())
             objects = HitObjects.Select(h => h.Data).ToList();
 
-        actions.Add(new NoteReSnapAction(objects, Playfield.HitObjectContainer.SnapTime, settings.SnapDivisor));
+        ActionStack.Add(new NoteReSnapAction(objects, Playfield.HitObjectContainer.SnapTime, settings.SnapDivisor));
     }
 
     public void Copy(bool deleteAfter = false)
@@ -371,6 +357,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public void Paste()
     {
+        // ReSharper disable once RedundantAssignment
         EditorClipboardContent content = null;
 
         if ((!clipboard.GetText()?.TryDeserialize(out content) ?? true) || !content.HitObjects.Any())
@@ -386,7 +373,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             hitObject.Time += EditorClock.CurrentTime;
         }
 
-        actions.Add(new NotePasteAction(content.HitObjects.ToArray()));
+        ActionStack.Add(new NotePasteAction(content.HitObjects.ToArray()));
 
         notifications.SendSmallText($"Pasted {content.HitObjects.Count} hit objects.", FontAwesome6.Solid.Check);
     }

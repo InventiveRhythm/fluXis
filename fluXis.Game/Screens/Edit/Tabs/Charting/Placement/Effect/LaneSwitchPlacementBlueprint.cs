@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Map.Events;
+using fluXis.Game.Screens.Edit.Actions.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -91,6 +92,6 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
     public override void OnPlacementFinished(bool commit)
     {
         if (commit)
-            Map.Add(Object);
+            Actions.Add(new EventPlaceAction(Object));
     }
 }

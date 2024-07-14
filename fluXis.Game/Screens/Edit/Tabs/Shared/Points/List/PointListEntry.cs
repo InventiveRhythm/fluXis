@@ -4,6 +4,8 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Actions;
+using fluXis.Game.Screens.Edit.Actions.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Game.UI;
@@ -66,6 +68,9 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     [Resolved]
     protected EditorMap Map { get; private set; }
+
+    [Resolved]
+    protected EditorActionStack ActionStack { get; private set; }
 
     [Resolved]
     private UISamples samples { get; set; }
@@ -187,7 +192,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
             return;
         }
 
-        Map.Remove(Object);
+        ActionStack.Add(new EventRemoveAction(Object));
 
         if (close)
             RequestClose?.Invoke();

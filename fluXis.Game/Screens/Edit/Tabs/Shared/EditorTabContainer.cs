@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Game.Screens.Edit.Actions;
+using fluXis.Game.Screens.Edit.Input;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared;
 
-public abstract partial class EditorTabContainer : CompositeDrawable
+public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindingHandler<EditorKeybinding>
 {
     [Resolved]
     protected Editor Editor { get; private set; }
@@ -21,6 +24,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable
 
     [Resolved]
     protected EditorMap Map { get; private set; }
+
+    [Resolved]
+    public EditorActionStack ActionStack { get; private set; }
 
     private Container content;
     private Box dim;
@@ -146,4 +152,22 @@ public abstract partial class EditorTabContainer : CompositeDrawable
         else
             EditorClock.SeekForward(amount);
     }
+
+    public virtual bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
+    {
+        switch (e.Action)
+        {
+            case EditorKeybinding.Undo:
+                ActionStack.Undo();
+                return true;
+
+            case EditorKeybinding.Redo:
+                ActionStack.Redo();
+                return true;
+        }
+
+        return false;
+    }
+
+    public virtual void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e) { }
 }
