@@ -17,6 +17,17 @@ public class ShaderEvent : ITimedObject, IHasDuration
     [JsonProperty("params")]
     public ShaderParameters Parameters { get; set; } = new();
 
+    public static string[] ShaderNames =
+    {
+        "Bloom",
+        "Greyscale",
+        "Invert",
+        "Chromatic",
+        "Mosaic",
+        "Noise",
+        "Vignette"
+    };
+
     public class ShaderParameters
     {
         [JsonProperty("strength")]

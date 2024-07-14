@@ -81,15 +81,7 @@ public partial class ShaderEntry : PointListEntry
                 Text = "Shader",
                 TooltipText = "The shader to apply to the playfield.",
                 CurrentValue = shader.ShaderName,
-                Items = new List<string>
-                {
-                    "Bloom",
-                    "Greyscale",
-                    "Invert",
-                    "Chromatic",
-                    "Mosaic",
-                    "Noise"
-                },
+                Items = ShaderEvent.ShaderNames.ToList(),
                 OnValueChanged = value =>
                 {
                     shader.ShaderName = value;

@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Graphics.Shaders.Noise;
+using fluXis.Game.Graphics.Shaders.Vignette;
 using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
 
@@ -48,6 +49,10 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
             case "Noise":
                 noise(ev);
+                break;
+
+            case "Vignette":
+                vignette(ev);
                 break;
         }
     }
@@ -116,5 +121,16 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             throw new System.Exception("Noise shader not found");
 
         noise.TransformTo(nameof(noise.Strength), data.Strength, ev.Duration);
+    }
+
+    private void vignette(ShaderEvent ev)
+    {
+        var data = ev.Parameters;
+        var vignette = stack.GetShader<VignetteContainer>();
+
+        if (vignette == null)
+            throw new System.Exception("Vignette shader not found");
+
+        vignette.TransformTo(nameof(vignette.Strength), data.Strength, ev.Duration);
     }
 }

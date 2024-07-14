@@ -19,6 +19,7 @@ using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Graphics.Shaders.Noise;
+using fluXis.Game.Graphics.Shaders.Vignette;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -227,6 +228,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 "Bloom" => new BloomContainer(),
                 "Mosaic" => new MosaicContainer(),
                 "Noise" => new NoiseContainer(),
+                "Vignette" => new VignetteContainer(),
                 _ => null
             };
 
