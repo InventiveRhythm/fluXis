@@ -25,7 +25,8 @@ public class ShaderEvent : ITimedObject, IHasDuration
         "Chromatic",
         "Mosaic",
         "Noise",
-        "Vignette"
+        "Vignette",
+        "Retro"
     };
 
     public class ShaderParameters

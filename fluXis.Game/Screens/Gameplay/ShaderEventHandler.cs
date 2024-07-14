@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Graphics.Shaders.Noise;
+using fluXis.Game.Graphics.Shaders.Retro;
 using fluXis.Game.Graphics.Shaders.Vignette;
 using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
@@ -53,6 +54,10 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
             case "Vignette":
                 vignette(ev);
+                break;
+
+            case "Retro":
+                retro(ev);
                 break;
         }
     }
@@ -132,5 +137,16 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             throw new System.Exception("Vignette shader not found");
 
         vignette.TransformTo(nameof(vignette.Strength), data.Strength, ev.Duration);
+    }
+
+    private void retro(ShaderEvent ev)
+    {
+        var data = ev.Parameters;
+        var retro = stack.GetShader<RetroContainer>();
+
+        if (retro == null)
+            throw new System.Exception("Retro shader not found");
+
+        retro.TransformTo(nameof(retro.Strength), data.Strength, ev.Duration);
     }
 }

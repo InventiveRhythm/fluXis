@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Graphics.Shaders.Noise;
+using fluXis.Game.Graphics.Shaders.Retro;
 using fluXis.Game.Graphics.Shaders.Vignette;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
@@ -66,6 +67,10 @@ public partial class TestShaderStackContainer : FluXisTestScene
         var vignette = new VignetteContainer { RelativeSizeAxes = Axes.Both };
         stack.AddShader(vignette);
         AddSliderStep("Vignette Strength", 0, 1f, 0f, strength => vignette.Strength = strength);
+
+        var retro = new RetroContainer { RelativeSizeAxes = Axes.Both };
+        stack.AddShader(retro);
+        AddSliderStep("Retro Strength", 0, 1f, 0f, strength => retro.Strength = strength);
 
         stack.AddContent(new Drawable[]
         {
