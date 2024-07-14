@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Shaders.Chromatic;
 using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
+using fluXis.Game.Graphics.Shaders.Noise;
 using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
 
@@ -43,6 +44,10 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
             case "Mosaic":
                 mosaic(ev);
+                break;
+
+            case "Noise":
+                noise(ev);
                 break;
         }
     }
@@ -100,5 +105,16 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             throw new System.Exception("Mosaic shader not found");
 
         mosaic.TransformTo(nameof(mosaic.Strength), data.Strength, ev.Duration);
+    }
+
+    private void noise(ShaderEvent ev)
+    {
+        var data = ev.Parameters;
+        var noise = stack.GetShader<NoiseContainer>();
+
+        if (noise == null)
+            throw new System.Exception("Noise shader not found");
+
+        noise.TransformTo(nameof(noise.Strength), data.Strength, ev.Duration);
     }
 }

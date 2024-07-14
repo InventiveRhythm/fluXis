@@ -87,7 +87,8 @@ public partial class ShaderEntry : PointListEntry
                     "Greyscale",
                     "Invert",
                     "Chromatic",
-                    "Mosaic"
+                    "Mosaic",
+                    "Noise"
                 },
                 OnValueChanged = value =>
                 {
