@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
@@ -40,4 +41,7 @@ public partial class ShaderStackContainer : CompositeDrawable
 
     public T GetShader<T>() where T : ShaderContainer
         => shaders.FirstOrDefault(s => s.GetType() == typeof(T)) as T;
+
+    public ShaderContainer GetShader(ShaderType type)
+        => shaders.FirstOrDefault(s => s.Type == type);
 }

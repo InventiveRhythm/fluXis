@@ -1,3 +1,4 @@
+using fluXis.Game.Map.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -6,8 +7,7 @@ namespace fluXis.Game.Graphics.Shaders.Bloom;
 public partial class BloomContainer : ShaderContainer
 {
     protected override string FragmentShader => "Blur";
-
-    public float Strength { get; set; } = 0;
+    public override ShaderType Type => ShaderType.Bloom;
 
     public BloomContainer()
     {

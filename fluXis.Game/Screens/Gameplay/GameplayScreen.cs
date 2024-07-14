@@ -23,6 +23,7 @@ using fluXis.Game.Graphics.Shaders.Retro;
 using fluXis.Game.Graphics.Shaders.Vignette;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Events;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Scores;
@@ -217,20 +218,20 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         dependencies.Cache(Playfield = new Playfield());
 
         var shaders = new ShaderStackContainer();
-        var shaderTypes = MapEvents.ShaderEvents.Select(e => e.ShaderName).Distinct().ToList();
+        var shaderTypes = MapEvents.ShaderEvents.Select(e => e.Type).Distinct().ToList();
 
         foreach (var shaderType in shaderTypes)
         {
             ShaderContainer shader = shaderType switch
             {
-                "Chromatic" => new ChromaticContainer(),
-                "Greyscale" => new GreyscaleContainer(),
-                "Invert" => new InvertContainer(),
-                "Bloom" => new BloomContainer(),
-                "Mosaic" => new MosaicContainer(),
-                "Noise" => new NoiseContainer(),
-                "Vignette" => new VignetteContainer(),
-                "Retro" => new RetroContainer(),
+                ShaderType.Chromatic => new ChromaticContainer(),
+                ShaderType.Greyscale => new GreyscaleContainer(),
+                ShaderType.Invert => new InvertContainer(),
+                ShaderType.Bloom => new BloomContainer(),
+                ShaderType.Mosaic => new MosaicContainer(),
+                ShaderType.Noise => new NoiseContainer(),
+                ShaderType.Vignette => new VignetteContainer(),
+                ShaderType.Retro => new RetroContainer(),
                 _ => null
             };
 

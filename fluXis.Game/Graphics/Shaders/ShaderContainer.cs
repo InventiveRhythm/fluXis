@@ -1,3 +1,4 @@
+using fluXis.Game.Map.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -14,7 +15,28 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
 {
     protected virtual string VertexShader => VertexShaderDescriptor.TEXTURE_2;
     protected abstract string FragmentShader { get; }
+    public abstract ShaderType Type { get; }
     protected abstract DrawNode CreateShaderDrawNode();
+
+    private float strength;
+
+    /// <summary>
+    /// The strength of the mosaic effect. From 0 to 1.
+    /// <br/>
+    /// 0 means its full resolution, 1 means its 1x1 pixel.
+    /// </summary>
+    public float Strength
+    {
+        get => strength;
+        set
+        {
+            if (value == strength)
+                return;
+
+            strength = value;
+            Invalidate(Invalidation.DrawNode);
+        }
+    }
 
     public bool DrawOriginal { get; set; }
     public ColourInfo EffectColour { get; set; } = Color4.White;

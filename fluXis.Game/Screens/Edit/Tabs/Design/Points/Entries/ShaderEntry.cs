@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
@@ -22,7 +23,7 @@ public partial class ShaderEntry : PointListEntry
     {
         get
         {
-            if (shader.ShaderName == "Chromatic")
+            if (shader.Type == ShaderType.Chromatic)
                 return 20f;
 
             return 1f;
@@ -33,7 +34,7 @@ public partial class ShaderEntry : PointListEntry
     {
         get
         {
-            if (shader.ShaderName == "Chromatic")
+            if (shader.Type == ShaderType.Chromatic)
                 return 1f;
 
             return .01f;
@@ -51,7 +52,7 @@ public partial class ShaderEntry : PointListEntry
         {
             Time = Object.Time,
             Duration = shader.Duration,
-            ShaderName = shader.ShaderName,
+            Type = shader.Type,
             Parameters = new ShaderEvent.ShaderParameters
             {
                 Strength = shader.Parameters.Strength
@@ -76,15 +77,15 @@ public partial class ShaderEntry : PointListEntry
         return base.CreateSettings().Concat(new Drawable[]
         {
             new PointSettingsLength<ShaderEvent>(Map, shader, BeatLength),
-            new PointSettingsDropdown<string>
+            new PointSettingsDropdown<ShaderType>
             {
                 Text = "Shader",
                 TooltipText = "The shader to apply to the playfield.",
-                CurrentValue = shader.ShaderName,
-                Items = ShaderEvent.ShaderNames.ToList(),
+                CurrentValue = shader.Type,
+                Items = Enum.GetValues<ShaderType>().ToList(),
                 OnValueChanged = value =>
                 {
-                    shader.ShaderName = value;
+                    shader.Type = value;
                     Map.Update(shader);
                 }
             },
