@@ -6,6 +6,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Mods.Drawables;
+using fluXis.Game.Online.API;
 using fluXis.Game.Screens.Result.UI;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
@@ -542,7 +543,7 @@ public partial class NormalResults : Container
             }
             else
             {
-                errorText.Text = res.Message;
+                errorText.Text = results.SubmitRequest.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR;
                 errorText.FadeIn(200);
             }
         }

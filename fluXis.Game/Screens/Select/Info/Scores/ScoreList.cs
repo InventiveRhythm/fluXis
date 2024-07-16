@@ -17,6 +17,7 @@ using fluXis.Game.IO;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
+using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
@@ -388,7 +389,7 @@ public partial class ScoreList : GridContainer
 
         if (!req.IsSuccessful)
         {
-            noScoresText.Text = req.Response.Message;
+            noScoresText.Text = req.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR;
             Schedule(() =>
             {
                 noScoresText.FadeTo(1, 200);

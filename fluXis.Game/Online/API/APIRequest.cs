@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using fluXis.Game.Online.Fluxel;
+using JetBrains.Annotations;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
@@ -56,6 +57,11 @@ public abstract class APIRequest
     public event Action<long, long> Progress;
 
     public virtual bool IsSuccessful => Request.Completed;
+
+    [CanBeNull]
+    public Exception FailReason { get; private set; }
+
+    public const string UNKNOWN_ERROR = "An unknown error occured.";
 
     private bool failed;
 
@@ -124,6 +130,7 @@ public abstract class APIRequest
 
     public void Fail(Exception e)
     {
+        FailReason = e;
         Request?.Abort();
         Logger.Error(e, $"API request {GetType().Name.Split('.').Last()} failed!");
         TriggerFailure(e);

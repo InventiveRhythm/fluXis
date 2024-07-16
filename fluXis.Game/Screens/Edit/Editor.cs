@@ -20,6 +20,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
+using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
@@ -786,7 +787,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
             if (!request.IsSuccessful)
             {
-                notifications.SendError(request.Response!.Message);
+                notifications.SendError(request.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR);
                 Schedule(() => panels.Content?.Hide());
                 return;
             }

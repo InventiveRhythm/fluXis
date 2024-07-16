@@ -63,7 +63,7 @@ public partial class UserCache : Component
 
             var res = req.Response;
 
-            Logger.Log($"Failed to load user from API: {res?.Message}", LoggingTarget.Network, LogLevel.Error);
+            Logger.Log($"Failed to load user from API: {req.FailReason?.Message}", LoggingTarget.Network, LogLevel.Error);
             return null;
         }
         catch (Exception e)

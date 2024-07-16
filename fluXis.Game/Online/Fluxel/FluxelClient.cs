@@ -131,8 +131,8 @@ public partial class FluxelClient : Component, IAPIClient
 
             if (!req.IsSuccessful)
             {
-                Logger.Log($"Failed to register account! ({req.Response.Message})", LoggingTarget.Network, LogLevel.Error);
-                LastException = new APIException(req.Response.Message);
+                Logger.Log($"Failed to register account! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+                LastException = req.FailReason;
                 Status.Value = ConnectionStatus.Failing;
                 registering = false;
                 password = "";
@@ -152,8 +152,8 @@ public partial class FluxelClient : Component, IAPIClient
 
             if (!req.IsSuccessful)
             {
-                Logger.Log($"Failed to get access token! ({req.Response.Message})", LoggingTarget.Network, LogLevel.Error);
-                LastException = new APIException(req.Response.Message);
+                Logger.Log($"Failed to get access token! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+                LastException = req.FailReason;
                 Status.Value = ConnectionStatus.Failing;
                 password = ""; // clear password to prevent further attempts
                 return;
