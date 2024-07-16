@@ -800,9 +800,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 set.SetStatus(request.Response.Data.Status);
                 editorMap.MapSet.SetStatus(request.Response.Data.Status);
 
-                for (var index = 0; index < set.Maps.Count; index++)
+                foreach (var onlineMap in request.Response.Data.Maps)
                 {
-                    var onlineMap = request.Response.Data.Maps[index];
                     var map = set.Maps.First(m => m.FileName == onlineMap.FileName);
                     var loadedMap = editorMap.MapSet.Maps.First(m => m.FileName == onlineMap.FileName);
 
