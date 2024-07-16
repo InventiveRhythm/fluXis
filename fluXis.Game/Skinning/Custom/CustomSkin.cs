@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Screens.Course;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Custom.Health;
 using fluXis.Game.Skinning.Custom.HitObjects;
@@ -48,6 +49,17 @@ public class CustomSkin : ISkin
             UISamples.SampleType.Hover => samples.Get("Samples/UI/hover"),
             UISamples.SampleType.Click => samples.Get("Samples/UI/click"),
             UISamples.SampleType.ClickDisabled => samples.Get("Samples/UI/click-disabled"),
+            _ => null
+        };
+    }
+
+    public Sample GetCourseSample(CourseScreen.SampleType type)
+    {
+        return type switch
+        {
+            CourseScreen.SampleType.Confirm => samples.Get("Samples/Course/confirm"),
+            CourseScreen.SampleType.Complete => samples.Get("Samples/Course/complete"),
+            CourseScreen.SampleType.Failed => samples.Get("Samples/Course/failed"),
             _ => null
         };
     }

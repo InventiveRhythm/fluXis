@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Screens.Course;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Json;
 using fluXis.Shared.Scoring.Enums;
@@ -18,6 +19,7 @@ public interface ISkin : IDisposable
     public Texture GetDefaultBackground();
 
     public Sample GetUISample(UISamples.SampleType type);
+    public Sample GetCourseSample(CourseScreen.SampleType type);
 
     public Drawable GetStageBackground();
     public Drawable GetStageBorder(bool right);

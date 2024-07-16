@@ -8,6 +8,7 @@
   &lt;Assembly Path="C:\Users\Flux\.nuget\packages\ppy.osu.framework\2023.531.0\lib\net6.0\osu.Framework.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/SolBuilderDuo/CustomGlobalProperties/=NullabilityInfoContextSupport/@EntryIndexedValue">true</s:String>
+	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">OnDebug</s:String>
 	
 	
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>

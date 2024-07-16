@@ -7,6 +7,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Screens.Course;
 using fluXis.Game.Skinning.Bases.Judgements;
 using fluXis.Game.Skinning.Custom;
 using fluXis.Game.Skinning.Default;
@@ -250,6 +251,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
 
     public Sample GetUISample(UISamples.SampleType type) => currentSkin.GetUISample(type) ?? defaultSkin.GetUISample(type);
+    public Sample GetCourseSample(CourseScreen.SampleType type) => currentSkin.GetCourseSample(type) ?? defaultSkin.GetCourseSample(type);
 
     public Drawable GetStageBackground() => currentSkin.GetStageBackground() ?? defaultSkin.GetStageBackground();
     public Drawable GetStageBorder(bool right) => currentSkin.GetStageBorder(right) ?? defaultSkin.GetStageBorder(right);

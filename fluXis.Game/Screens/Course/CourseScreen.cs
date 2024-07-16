@@ -3,8 +3,10 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Mods;
 using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Skinning;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -12,12 +14,18 @@ using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Course;
 
+#nullable enable
+
 public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public List<RealmMap> MapQueue { get; }
     public List<ScoreInfo> Scores { get; } = new();
 
-    private CourseScreenFooter footer;
+    private CourseScreenFooter footer = null!;
+
+    private Sample? sampleConfirm;
+    private Sample? sampleComplete;
+    private Sample? sampleFailed;
 
     public CourseScreen(List<RealmMap> maps)
     {
@@ -25,8 +33,12 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(SkinManager skinManager)
     {
+        sampleConfirm = skinManager.GetCourseSample(SampleType.Confirm);
+        sampleComplete = skinManager.GetCourseSample(SampleType.Complete);
+        sampleFailed = skinManager.GetCourseSample(SampleType.Failed);
+
         InternalChildren = new Drawable[]
         {
             footer = new CourseScreenFooter
@@ -43,6 +55,8 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         var map = MapQueue[idx];
         var mods = new List<IMod>();
 
+        sampleConfirm?.Play();
+
         this.Push(new GameplayLoader(map, mods, () =>
         {
             var screen = new CourseGameplayScreen(map, mods);
@@ -57,6 +71,8 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         var map = MapQueue[idx];
 
         Scores.Add(score);
+
+        sampleComplete?.Play();
 
         var anyLeft = idx + 1 != MapQueue.Count;
 
@@ -107,4 +123,11 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
+
+    public enum SampleType
+    {
+        Confirm,
+        Complete,
+        Failed,
+    }
 }
