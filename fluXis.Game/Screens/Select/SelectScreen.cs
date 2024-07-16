@@ -8,6 +8,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
@@ -886,6 +887,15 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         MapStore.Select(map, true);
         if (MapStore.CurrentMap == null) return;
+
+        if (map.MapSet.AutoImported)
+        {
+            panels.Content = new SingleButtonPanel(
+                FontAwesome6.Solid.ExclamationTriangle,
+                "This map cannot be edited.",
+                "This map is auto-imported from a different game and cannot be opened in the editor.");
+            return;
+        }
 
         var loadedMap = map.GetMapInfo();
         if (loadedMap == null) return;

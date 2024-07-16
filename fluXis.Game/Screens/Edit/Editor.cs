@@ -415,16 +415,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (!canSave)
         {
-            panels.Content = new ButtonPanel
-            {
-                Icon = FontAwesome6.Solid.ExclamationTriangle,
-                Text = "This map is from another game!",
-                SubText = "You can edit and playtest, but not save or upload.",
-                Buttons = new ButtonData[]
-                {
-                    new CancelButtonData("Okay")
-                }
-            };
+            panels.Content = new SingleButtonPanel(
+                FontAwesome6.Solid.ExclamationTriangle,
+                "This map is from another game!",
+                "You can edit and playtest, but not save or upload.");
         }
 
         backgroundDim.BindValueChanged(updateDim, true);
