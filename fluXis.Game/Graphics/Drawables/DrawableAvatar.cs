@@ -68,7 +68,7 @@ public partial class DrawableAvatar : Sprite
     {
         base.Dispose(isDisposing);
 
-        users.UnregisterAvatarCallback(user.ID, reload);
+        users?.UnregisterAvatarCallback(user.ID, reload);
     }
 
     protected override bool OnHover(HoverEvent e) => user.ID >= 0 && ShowTooltip;

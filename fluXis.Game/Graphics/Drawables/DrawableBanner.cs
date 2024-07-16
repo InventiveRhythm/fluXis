@@ -66,6 +66,6 @@ public partial class DrawableBanner : Sprite
     {
         base.Dispose(isDisposing);
 
-        users.UnregisterBannerCallback(user.ID, reload);
+        users?.UnregisterBannerCallback(user.ID, reload);
     }
 }
