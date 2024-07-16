@@ -10,6 +10,8 @@ public class OsuRealmMap : RealmMap
     {
         var path = MapSet.GetPathForFile(FileName);
         string osu = File.ReadAllText(path);
-        return OsuImport.ParseOsuMap(osu).ToMapInfo();
+        var info = OsuImport.ParseOsuMap(osu).ToMapInfo();
+        info.Map = this;
+        return info;
     }
 }

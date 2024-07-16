@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Import.osu.Map.Components;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
+using fluXis.Import.osu.AutoImport;
 
 namespace fluXis.Import.osu.Map;
 
@@ -57,12 +58,12 @@ public class OsuMap
         return "";
     }
 
-    public MapInfo ToMapInfo()
+    public OsuMapInfo ToMapInfo()
     {
         if (Mode != 3)
             throw new Exception("Only osu!mania maps are supported.");
 
-        var mapInfo = new MapInfo
+        var mapInfo = new OsuMapInfo()
         {
             Metadata = new MapMetadata
             {

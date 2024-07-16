@@ -1,7 +1,5 @@
 using System;
-using System.IO;
 using fluXis.Game.Configuration;
-using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using osu.Framework.Allocation;
@@ -89,17 +87,14 @@ public partial class BackgroundVideo : CompositeDrawable
             return;
         }
 
-        var file = Map.MapSet.GetPathForFile(Info.VideoFile);
-
-        if (file == null) return;
-
-        waitingForLoad = true;
-
         try
         {
-            var path = MapFiles.GetFullPath(file);
-            Logger.Log($"Loading video: {path}", LoggingTarget.Runtime, LogLevel.Debug);
-            var stream = File.OpenRead(path);
+            var stream = Info?.GetVideoStream();
+
+            if (stream == null)
+                return;
+
+            waitingForLoad = true;
 
             Schedule(() =>
             {
@@ -119,7 +114,7 @@ public partial class BackgroundVideo : CompositeDrawable
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"Failed to load video: {file}");
+            Logger.Error(e, "Failed to load video!");
             waitingForLoad = false;
         }
     }

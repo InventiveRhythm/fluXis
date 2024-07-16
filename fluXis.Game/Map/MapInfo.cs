@@ -188,6 +188,21 @@ public class MapInfo
         return new DrawableStoryboard(sb, MapFiles.GetFullPath(Map!.MapSet.ID.ToString()));
     }
 
+    public virtual Stream GetVideoStream()
+    {
+        var file = Map?.MapSet.GetPathForFile(VideoFile);
+
+        if (string.IsNullOrEmpty(file))
+            return null;
+
+        var path = MapFiles.GetFullPath(file);
+
+        if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            return null;
+
+        return File.OpenRead(path);
+    }
+
     public TimingPoint GetTimingPoint(double time)
     {
         if (TimingPoints.Count == 0)
