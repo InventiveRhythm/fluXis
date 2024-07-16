@@ -492,7 +492,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     screen.SubmitRequest = request;
                     api.PerformRequest(request);
 
-                    if (request.Response.Success && request.Response.Data.ID != 0)
+                    if (request.IsSuccessful && request.Response?.Data?.ID > 0)
                     {
                         realm.RunWrite(r =>
                         {
