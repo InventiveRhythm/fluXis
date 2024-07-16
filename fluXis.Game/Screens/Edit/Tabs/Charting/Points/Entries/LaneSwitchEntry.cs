@@ -57,7 +57,7 @@ public partial class LaneSwitchEntry : PointListEntry
                 {
                     if (int.TryParse(box.Text, out var result))
                     {
-                        if (result > Map.MapInfo.Map!.KeyCount || result < 1)
+                        if (result > Map.RealmMap.KeyCount || result < 1)
                             box.NotifyError();
                         else
                             laneSwitch.Count = result;
