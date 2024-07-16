@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using fluXis.Game.Database.Maps;
 
 namespace fluXis.Import.Stepmania.AutoImport;
@@ -12,5 +13,6 @@ public class StepmaniaRealmMapSet : RealmMapSet
     {
     }
 
-    public override string GetPathForFile(string filename) => $"{FolderPath}/{filename}";
+    public override string GetPathForFile(string filename)
+        => string.IsNullOrEmpty(filename) ? FolderPath : Path.Combine(FolderPath, filename);
 }

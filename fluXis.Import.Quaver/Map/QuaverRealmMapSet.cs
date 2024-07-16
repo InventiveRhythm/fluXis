@@ -13,5 +13,6 @@ public class QuaverRealmMapSet : RealmMapSet
     {
     }
 
-    public override string GetPathForFile(string filename) => Path.Combine(FolderPath, filename);
+    public override string GetPathForFile(string filename)
+        => string.IsNullOrEmpty(filename) ? FolderPath : Path.Combine(FolderPath, filename);
 }
