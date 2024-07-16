@@ -1,5 +1,7 @@
 using System;
+using System.Net;
 using fluXis.Game.Configuration;
+using fluXis.Game.Online.API;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -62,7 +64,7 @@ public partial class SentryClient : Component
 
         var ex = entry.Exception;
 
-        if (ex == null)
+        if (ex == null || shouldIgnore(ex))
             return;
 
         SentrySdk.CaptureEvent(new SentryEvent(ex)
@@ -84,6 +86,20 @@ public partial class SentryClient : Component
                 Framework = game.Dependencies.Get<FrameworkConfigManager>()?.GetCurrentConfigurationForLogging(),
             };
         });
+    }
+
+    private bool shouldIgnore(Exception ex)
+    {
+        switch (ex)
+        {
+            case APIException:
+                return true;
+
+            case WebException web:
+                return web.Status == WebExceptionStatus.Timeout;
+        }
+
+        return false;
     }
 
     protected override void Dispose(bool isDisposing)
