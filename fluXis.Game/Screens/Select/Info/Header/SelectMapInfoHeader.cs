@@ -309,6 +309,11 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
         public void SetValue(float mi, float ma)
         {
+            if (!float.IsFinite(mi))
+                mi = 0;
+            if (!float.IsFinite(ma))
+                ma = 0;
+
             this.TransformTo(nameof(min), mi, 400, Easing.OutQuint);
             this.TransformTo(nameof(max), ma, 400, Easing.OutQuint);
         }
@@ -381,6 +386,9 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
         public void SetValue(float v)
         {
+            if (!float.IsFinite(v))
+                v = 0;
+
             this.TransformTo(nameof(value), v, 400, Easing.OutQuint);
         }
 
