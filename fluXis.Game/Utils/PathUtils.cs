@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using System.IO;
 using fluXis.Game.Graphics.Sprites;
-using osu.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
@@ -32,42 +30,6 @@ public static class PathUtils
     {
         path = string.Concat(path.Split(Path.GetInvalidPathChars()));
         return string.Concat(path.Split(Path.GetInvalidFileNameChars()));
-    }
-
-    public static void OpenFolder(string path)
-    {
-        switch (RuntimeInfo.OS)
-        {
-            case RuntimeInfo.Platform.Windows:
-                Process.Start("explorer.exe", path);
-                break;
-
-            case RuntimeInfo.Platform.macOS:
-                Process.Start("open", path);
-                break;
-
-            case RuntimeInfo.Platform.Linux:
-                Process.Start("xdg-open", path);
-                break;
-        }
-    }
-
-    public static void ShowFile(string path)
-    {
-        switch (RuntimeInfo.OS)
-        {
-            case RuntimeInfo.Platform.Windows:
-                Process.Start("explorer.exe", "/select, " + path);
-                break;
-
-            case RuntimeInfo.Platform.macOS:
-                Process.Start("open", "-R " + path);
-                break;
-
-            case RuntimeInfo.Platform.Linux:
-                Process.Start("xdg-open", path);
-                break;
-        }
     }
 
     public static IconUsage GetIconForType(FileType type)

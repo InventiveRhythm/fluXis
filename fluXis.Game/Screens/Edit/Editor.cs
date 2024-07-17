@@ -461,7 +461,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     }
 
     private void openHelp() => Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
-    private void openFolder() => PathUtils.OpenFolder(MapFiles.GetFullPath(editorMap.MapSet.GetPathForFile("")));
+    private void openFolder() => MapFiles.PresentExternally(editorMap.RealmMap);
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {

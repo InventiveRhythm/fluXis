@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
-using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -25,14 +24,13 @@ public partial class LayoutManager : Component
     [Resolved]
     private FluXisConfig config { get; set; }
 
-    [Resolved]
-    private Storage storage { get; set; }
-
+    private Storage storage;
     private Bindable<string> layoutName;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(Storage baseStorage)
     {
+        storage = baseStorage.GetStorageForDirectory("layouts");
         layoutName = config.GetBindable<string>(FluXisSetting.LayoutName);
         Reload();
 
@@ -65,24 +63,33 @@ public partial class LayoutManager : Component
             ID = id
         };
 
-        var path = Path.Combine(storage.GetFullPath("layouts"), $"{id}.json");
+        var path = storage.GetFullPath($"{id}.json");
         File.WriteAllText(path, layout.Serialize(true));
 
         Layouts.Add(layout);
         Layout.Value = layout;
         Reloaded?.Invoke();
 
-        PathUtils.ShowFile(path);
+        storage.PresentFileExternally(path);
+    }
+
+    public void PresentExternally()
+    {
+        var current = Layout.Value;
+
+        if (current is DefaultLayout)
+        {
+            storage.PresentExternally();
+            return;
+        }
+
+        var path = storage.GetFullPath($"{Layout.Value.ID}.json");
+        storage.PresentFileExternally(path);
     }
 
     private void loadLayouts()
     {
-        var dirPath = storage.GetFullPath("layouts");
-
-        if (!Directory.Exists(dirPath))
-            Directory.CreateDirectory(dirPath);
-
-        var files = Directory.GetFiles(dirPath, "*.json");
+        var files = storage.GetFiles("", "*.json");
 
         foreach (var file in files)
         {

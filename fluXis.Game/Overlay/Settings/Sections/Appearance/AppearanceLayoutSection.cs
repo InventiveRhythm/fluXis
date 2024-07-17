@@ -3,12 +3,10 @@ using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
 using fluXis.Game.Screens.Gameplay.HUD;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
-using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.Settings.Sections.Appearance;
 
@@ -20,7 +18,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
     private SettingsAppearanceStrings strings => LocalizationStrings.Settings.Appearance;
 
     [BackgroundDependencyLoader]
-    private void load(LayoutManager layouts, Storage storage)
+    private void load(LayoutManager layouts)
     {
         SettingsDropdown<HUDLayout> layoutDropdown;
 
@@ -55,13 +53,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
                 Description = strings.LayoutShowInExplorerDescription,
                 Enabled = true,
                 ButtonText = "Show",
-                Action = () =>
-                {
-                    if (layouts.Layout.Value is LayoutManager.DefaultLayout)
-                        PathUtils.OpenFolder(storage.GetFullPath("layouts"));
-                    else
-                        PathUtils.ShowFile(storage.GetFullPath($"layouts/{layouts.Layout.Value.ID}.json"));
-                }
+                Action = layouts.PresentExternally
             },
             new SettingsButton
             {

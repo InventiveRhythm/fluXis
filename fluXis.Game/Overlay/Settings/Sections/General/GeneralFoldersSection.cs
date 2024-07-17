@@ -19,7 +19,7 @@ public partial class GeneralFoldersSection : SettingsSubSection
     public override IconUsage Icon => FontAwesome6.Solid.Folder;
 
     [Resolved]
-    private Storage storage { get; set; }
+    private FluXisGameBase game { get; set; }
 
     private SettingsGeneralStrings strings => LocalizationStrings.Settings.General;
 
@@ -52,8 +52,7 @@ public partial class GeneralFoldersSection : SettingsSubSection
 
     private void exportLogs()
     {
-        const string file_name = "exported-logs.zip";
-        var path = storage.GetFullPath($"export/{file_name}");
+        var path = game.ExportStorage.GetFullPath("exported-logs.zip");
         var logs = Logger.Storage;
 
         Logger.Flush();
@@ -67,6 +66,6 @@ public partial class GeneralFoldersSection : SettingsSubSection
         foreach (var file in logs.GetFiles("", "*.log"))
             zip.CreateEntryFromFile(logs.GetFullPath(file), file);
 
-        storage.PresentFileExternally(path);
+        game.ExportStorage.PresentFileExternally(path);
     }
 }

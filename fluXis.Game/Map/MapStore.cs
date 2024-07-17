@@ -302,13 +302,10 @@ public partial class MapStore : Component
     {
         try
         {
-            string exportFolder = storage.GetFullPath("export");
-            if (!Directory.Exists(exportFolder)) Directory.CreateDirectory(exportFolder);
-
             var fileName = $"{set.Metadata.Title} - {set.Metadata.Artist} [{set.Metadata.Mapper}].fms";
             fileName = PathUtils.RemoveAllInvalidPathCharacters(fileName);
 
-            string path = Path.Combine(exportFolder, fileName);
+            string path = game.ExportStorage.GetFullPath(fileName);
             if (File.Exists(path)) File.Delete(path);
             ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
 
@@ -333,7 +330,7 @@ public partial class MapStore : Component
 
             archive.Dispose();
             notification.State = LoadingState.Complete;
-            if (openFolder) PathUtils.OpenFolder(exportFolder);
+            if (openFolder) game.ExportStorage.PresentFileExternally(fileName);
             return path;
         }
         catch (Exception e)

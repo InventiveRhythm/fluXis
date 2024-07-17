@@ -90,6 +90,10 @@ public partial class FluXisGameBase : osu.Framework.Game
     private KeybindStore keybindStore;
     private ImportManager importManager;
 
+    private Storage exportStorage;
+
+    public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
+
     protected Bindable<UserActivity> Activity { get; } = new();
     public Season CurrentSeason { get; private set; }
 

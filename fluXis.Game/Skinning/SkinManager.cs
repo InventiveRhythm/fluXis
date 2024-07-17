@@ -165,14 +165,19 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         return true;
     }
 
-    public void OpenFolder() => PathUtils.OpenFolder(isDefault(SkinFolder) ? skinStorage.GetFullPath(".") : skinStorage.GetFullPath(SkinFolder));
+    public void OpenFolder()
+    {
+        if (isDefault(SkinFolder))
+            skinStorage.PresentExternally();
+        else
+            skinStorage.PresentFileExternally($"{SkinFolder}/.");
+    }
 
     public void ExportCurrent()
     {
         if (isDefault(SkinFolder)) return;
 
-        var exportPath = host.Storage.GetFullPath("export", true);
-        var zipPath = Path.Combine(exportPath, $"{SkinFolder}.fsk");
+        var zipPath = game.ExportStorage.GetFullPath($"{SkinFolder}.fsk");
 
         if (File.Exists(zipPath))
             File.Delete(zipPath);
@@ -187,7 +192,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         }
 
         Logger.Log($"Exported skin '{SkinFolder}' to '{zipPath}'", LoggingTarget.Information);
-        PathUtils.ShowFile(zipPath);
+        game.ExportStorage.PresentFileExternally(zipPath);
     }
 
     public void Delete(string folder)
