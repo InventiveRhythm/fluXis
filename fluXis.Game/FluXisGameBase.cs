@@ -356,7 +356,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             exceptionCount++;
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
-            NotificationManager.SendError("An unhandled error occurred!", e.Message, FontAwesome6.Solid.Bomb);
+            NotificationManager.SendError("An unhandled error occurred!", IsDebug ? e.Message : "This has been automatically reported to the developers.", FontAwesome6.Solid.Bomb);
             return exceptionCount <= MaxExceptions;
         };
     }
