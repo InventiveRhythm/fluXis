@@ -113,11 +113,11 @@ public partial class MultiModeSelect : MultiSubScreen
             },
             new FluXisSpriteText
             {
-                Text = "Multiplayer is very much a work in progress. Nothing here really works.",
+                Text = "Multiplayer is very much a work in progress. Expect issues.",
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 Shadow = true,
-                FontSize = 40,
+                WebFontSize = 24,
                 Y = -100
             }
         };
