@@ -10,6 +10,7 @@ using fluXis.Game.Online.API;
 using fluXis.Game.Screens.Result.UI;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
+using fluXis.Shared.API.Responses.Scores;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -305,7 +306,7 @@ public partial class NormalResults : Container
                                             new Entry
                                             {
                                                 Title = "Performance Rating",
-                                                Value = score.PerformanceRating > 0 ? $"{score.PerformanceRating.ToStringInvariant("00.00")}pr" : "--.--pr"
+                                                Value = getPerfRatingStr()
                                             },
                                             new Entry
                                             {
@@ -530,14 +531,9 @@ public partial class NormalResults : Container
 
             if (res.Success)
             {
-                ptrStat.Value = res.Data.PotentialRating;
-                ptrStat.Difference = res.Data.PotentialRatingChange;
-
-                ovrStat.Value = res.Data.OverallRating;
-                ovrStat.Difference = res.Data.OverallRatingChange;
-
-                rankStat.Value = res.Data.Rank;
-                rankStat.Difference = res.Data.RankChange;
+                ovrStat.StatChange = res.Data.OverallRating;
+                ptrStat.StatChange = res.Data.PotentialRating;
+                rankStat.StatChange = res.Data.Rank;
 
                 onlineStats.FadeIn(200);
             }
@@ -552,6 +548,19 @@ public partial class NormalResults : Container
             errorText.Text = "No ranking data available!";
             errorText.FadeIn(200);
         }
+    }
+
+    private string getPerfRatingStr()
+    {
+        var sc = results.SubmitRequest?.Response?.Data?.Score;
+        var value = 0d;
+
+        if (sc is { PerformanceRating: > 0 })
+            value = sc.PerformanceRating;
+        else if (score.PerformanceRating > 0)
+            value = score.PerformanceRating;
+
+        return value > 0 ? $"{value.ToStringInvariant("00.00")}pr" : "--.--pr";
     }
 
     private Drawable getGradient(Colour4 color, bool right)
@@ -686,27 +695,25 @@ public partial class NormalResults : Container
         public string Title { get; init; } = "Title";
         public bool DisplayAsRank { get; init; }
 
-        public double Value
-        {
-            set => valueText.Text = DisplayAsRank ? $"#{value}" : value.ToStringInvariant("00.00");
-        }
-
-        public double Difference
+        public ScoreSubmissionStats.StatisticChange StatChange
         {
             set
             {
+                var diff = value.Current - value.Previous;
+                valueText.Text = DisplayAsRank ? $"#{(int)value.Current}" : value.Current.ToStringInvariant("00.00");
+
                 var negativeColor = Colour4.FromHex("#FF5555");
                 var positiveColor = Colour4.FromHex("#55FF55");
 
-                switch (value)
+                switch (diff)
                 {
                     case > 0:
-                        differenceText.Text = DisplayAsRank ? $"+{value}" : $"+{value.ToStringInvariant("00.00")}";
+                        differenceText.Text = DisplayAsRank ? $"+{diff}" : $"+{diff.ToStringInvariant("00.00")}";
                         differenceText.Colour = DisplayAsRank ? negativeColor : positiveColor;
                         break;
 
                     case < 0:
-                        differenceText.Text = DisplayAsRank ? $"{value}" : $"{value.ToStringInvariant("00.00")}";
+                        differenceText.Text = DisplayAsRank ? $"{diff}" : $"{diff.ToStringInvariant("00.00")}";
                         differenceText.Colour = DisplayAsRank ? positiveColor : negativeColor;
                         break;
 

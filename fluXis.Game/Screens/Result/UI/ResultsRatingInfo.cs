@@ -2,7 +2,6 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API;
-using fluXis.Game.Utils;
 using fluXis.Shared.API.Responses.Scores;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -33,7 +32,7 @@ public partial class ResultsRatingInfo : Container
                 return;
             }
 
-            var ovrc = value.Data.OverallRatingChange;
+            /*var ovrc = value.Data.OverallRatingChange;
             var pvrc = value.Data.PotentialRatingChange;
 
             ovr.Text = value.Data.OverallRating.ToStringInvariant();
@@ -55,9 +54,9 @@ public partial class ResultsRatingInfo : Container
                     ovrChange.Colour = FluXisColors.Text2;
                     ovrChange.Text = "SAME";
                     break;
-            }
+            }*/
 
-            switch (pvrc)
+            /*switch (pvrc)
             {
                 case > 0:
                     pvrChange.Colour = Colour4.FromHex("#55FF55");
@@ -73,7 +72,7 @@ public partial class ResultsRatingInfo : Container
                     pvrChange.Colour = FluXisColors.Text2;
                     pvrChange.Text = "KEEP";
                     break;
-            }
+            }*/
 
             ratingContainer.FadeIn(200);
         });

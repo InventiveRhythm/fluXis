@@ -45,6 +45,7 @@ using fluXis.Game.Screens.Result;
 using fluXis.Game.Skinning.Default;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
+using fluXis.Shared.Replays;
 using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
@@ -492,12 +493,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     screen.SubmitRequest = request;
                     api.PerformRequest(request);
 
-                    if (request.IsSuccessful && request.Response?.Data?.ID > 0)
+                    var resData = request.Response?.Data;
+
+                    if (request.IsSuccessful && resData?.Score != null)
                     {
                         realm.RunWrite(r =>
                         {
                             var rScore = r.Find<RealmScore>(scoreId);
-                            rScore.OnlineID = (int)request.Response.Data.ID;
+                            rScore.OnlineID = (int)resData.Score.ID;
                         });
                     }
 
@@ -513,7 +516,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         });
     }
 
-    protected Shared.Replays.Replay SaveReplay(Guid scoreID)
+    protected Replay SaveReplay(Guid scoreID)
     {
         try
         {

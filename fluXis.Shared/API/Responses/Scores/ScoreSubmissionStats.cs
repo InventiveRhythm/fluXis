@@ -1,3 +1,4 @@
+using fluXis.Shared.Components.Scores;
 using fluXis.Shared.Utils;
 using Newtonsoft.Json;
 
@@ -5,41 +6,50 @@ namespace fluXis.Shared.API.Responses.Scores;
 
 public class ScoreSubmissionStats
 {
-    [JsonProperty("id")]
-    public long ID { get; set; }
+    [JsonProperty("score")]
+    public APIScore Score { get; init; } = null!;
 
     [JsonProperty("ovr")]
-    public double OverallRating { get; init; }
+    public StatisticChange OverallRating { get; init; } = null!;
 
     [JsonProperty("ptr")]
-    public double PotentialRating { get; init; }
+    public StatisticChange PotentialRating { get; init; } = null!;
 
     [JsonProperty("rank")]
-    public int Rank { get; init; }
+    public StatisticChange Rank { get; init; } = null!;
 
-    [JsonProperty("ovrChange")]
-    public double OverallRatingChange { get; init; }
-
-    [JsonProperty("ptrChange")]
-    public double PotentialRatingChange { get; init; }
-
-    [JsonProperty("rankChange")]
-    public int RankChange { get; init; }
-
-    public ScoreSubmissionStats(long id, double overallRating, double potentialRating, int rank, double overallRatingChange, double potentialRatingChange, int rankChange)
+    public ScoreSubmissionStats(APIScore score, double prevOvr, double prevPtr, int prevRank, double curOvr, double curPtr, int curRank)
     {
-        ID = id;
-        OverallRating = overallRating;
-        PotentialRating = potentialRating;
-        Rank = rank;
-        OverallRatingChange = overallRatingChange;
-        PotentialRatingChange = potentialRatingChange;
-        RankChange = rankChange;
+        Score = score;
+        OverallRating = new StatisticChange(prevOvr, curOvr);
+        PotentialRating = new StatisticChange(prevPtr, curPtr);
+        Rank = new StatisticChange(prevRank, curRank);
     }
 
     [JsonConstructor]
     [Obsolete(JsonUtils.JSON_CONSTRUCTOR_ERROR, true)]
     public ScoreSubmissionStats()
     {
+    }
+
+    public class StatisticChange
+    {
+        [JsonProperty("prev")]
+        public double Previous { get; init; }
+
+        [JsonProperty("now")]
+        public double Current { get; init; }
+
+        public StatisticChange(double prev, double cur)
+        {
+            Previous = prev;
+            Current = cur;
+        }
+
+        [JsonConstructor]
+        [Obsolete(JsonUtils.JSON_CONSTRUCTOR_ERROR, true)]
+        public StatisticChange()
+        {
+        }
     }
 }

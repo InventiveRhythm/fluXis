@@ -6,6 +6,7 @@ using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Result;
 using fluXis.Shared.API.Responses.Scores;
+using fluXis.Shared.Components.Scores;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -29,6 +30,7 @@ public partial class TestNewResults : FluXisTestScene
         {
             Accuracy = 98.661736f,
             Rank = ScoreRank.S,
+            PerformanceRating = 8,
             Score = 1139289,
             MaxCombo = 1218,
             Flawless = 898,
@@ -66,7 +68,7 @@ public partial class TestNewResults : FluXisTestScene
         public SimulatedScoreRequest(ScoreInfo score)
             : base(score)
         {
-            Response = new APIResponse<ScoreSubmissionStats>(200, "", new ScoreSubmissionStats(0, 10, 10, 1, 2, 2, 1));
+            Response = new APIResponse<ScoreSubmissionStats>(200, "", new ScoreSubmissionStats(new APIScore { PerformanceRating = 7 }, 10, 10, 1, 12, 10, 2));
         }
     }
 }
