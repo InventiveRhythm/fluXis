@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
@@ -67,26 +68,33 @@ public partial class TimelineDensity : FillFlowContainer
 
     private void updateDensity()
     {
-        var counts = new int[sections];
+        var counts = new float[sections];
 
         for (int i = 0; i < sections; i++)
         {
             var start = sectionLength * i;
             var end = start + sectionLength;
 
-            var density = map.MapInfo.HitObjects.Count(h => h.Time >= start && h.EndTime <= end);
-            counts[i] = density;
+            var objects = map.MapInfo.HitObjects.Where(h => h.Time >= start && h.EndTime <= end);
+            counts[i] = objects.Sum(getValue);
         }
 
         var highest = counts.Max();
-
-        var percentages = counts.Select(c => (float)c / highest).ToArray();
+        var percentages = counts.Select(c => c / highest).ToArray();
 
         for (var i = 0; i < sections; i++)
         {
             var box = this[i];
             box.Alpha = percentages[i];
         }
+    }
+
+    private float getValue(HitObject hit)
+    {
+        if (hit.Type == 1)
+            return .1f;
+
+        return 1f;
     }
 
     protected override bool OnHover(HoverEvent e)
