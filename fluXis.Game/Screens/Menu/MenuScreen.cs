@@ -158,7 +158,7 @@ public partial class MenuScreen : FluXisScreen
                                     Y = -50,
                                     Children = new Drawable[]
                                     {
-                                        new FluXisSpriteText
+                                        /*new FluXisSpriteText
                                         {
                                             Text = "fluXis",
                                             Anchor = Anchor.TopCentre,
@@ -166,6 +166,13 @@ public partial class MenuScreen : FluXisScreen
                                             WebFontSize = 72,
                                             Shadow = true,
                                             ShadowOffset = new Vector2(0, 0.04f)
+                                        },*/
+                                        logoText = new Sprite
+                                        {
+                                            Texture = textures.Get("Logos/logo-text-shadow"),
+                                            Scale = new Vector2(.5f),
+                                            Anchor = Anchor.TopCentre,
+                                            Origin = Anchor.TopCentre
                                         },
                                         splashText = new FluXisTextFlow
                                         {
@@ -175,7 +182,7 @@ public partial class MenuScreen : FluXisScreen
                                             Origin = Anchor.TopCentre,
                                             FontSize = FluXisSpriteText.GetWebFontSize(24),
                                             TextAnchor = Anchor.TopCentre,
-                                            Margin = new MarginPadding { Top = 80 },
+                                            Margin = new MarginPadding { Top = 88 },
                                             Shadow = true
                                         }
                                     }
