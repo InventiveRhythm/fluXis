@@ -9,8 +9,8 @@ namespace fluXis.Game.Overlay.Notifications.Floating;
 
 public partial class SmallFloatingTextNotification : FloatingNotification
 {
-    public string Text { get; set; }
-    public IconUsage Icon { get; set; } = FontAwesome6.Solid.Info;
+    public string Text { get; init; }
+    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Info;
 
     private FillFlowContainer content;
 
@@ -48,7 +48,7 @@ public partial class SmallFloatingTextNotification : FloatingNotification
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        content.MoveToY(-70).MoveToY(0, 400, Easing.OutQuint);
-        this.ResizeHeightTo(20, 400, Easing.OutQuint).Delay(5000).FadeOut(400).Expire();
+        content.MoveToY(-70).MoveToY(0, 600, Easing.OutQuint);
+        this.ResizeHeightTo(20, 600, Easing.OutQuint).Delay(5000).FadeOut(300).Expire();
     }
 }

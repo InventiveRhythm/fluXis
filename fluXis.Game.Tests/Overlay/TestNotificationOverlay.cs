@@ -16,6 +16,7 @@ public partial class TestNotificationOverlay : FluXisTestScene
         int count = 0;
 
         AddStep("Send notification", () => notifications.SendText("This is a test notification"));
+        AddStep("Send small notification", () => notifications.SendSmallText("This is a small notification", FontAwesome6.Solid.Bars));
         AddStep("Send counting notification", () => notifications.SendText("This is a test notification", $"Count: {++count}", FontAwesome6.Solid.Circle));
         AddStep("Send error notification", () => notifications.SendError("This is a test error notification"));
     }

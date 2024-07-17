@@ -18,12 +18,12 @@ public partial class FloatingTextNotification : FloatingNotification
 {
     private const int border_thickness = 2;
 
-    public string Text { get; set; }
-    public string SubText { get; set; }
-    public IconUsage Icon { get; set; } = FontAwesome6.Solid.Info;
-    public Color4 AccentColor { get; set; } = FluXisColors.Highlight;
-    public float Lifetime { get; set; } = 5000;
-    public Action Action { get; set; }
+    public string Text { get; init; }
+    public string SubText { get; init; }
+    public IconUsage Icon { get; init; } = FontAwesome6.Solid.Info;
+    public Color4 AccentColor { get; init; } = FluXisColors.Highlight;
+    public float Lifetime { get; init; } = 5000;
+    public Action Action { get; init; }
 
     public string SampleAppearing { get; set; } = "UI/Notifications/in.mp3";
     public string SampleDisappearing { get; set; } = "UI/Notifications/out.mp3";
@@ -44,7 +44,9 @@ public partial class FloatingTextNotification : FloatingNotification
         Child = animationContainer = new Container
         {
             AutoSizeAxes = Axes.X,
-            Height = 50,
+            Height = 48,
+            Anchor = Anchor.BottomCentre,
+            Origin = Anchor.BottomCentre,
             Children = new Drawable[]
             {
                 new CircularContainer
@@ -58,15 +60,14 @@ public partial class FloatingTextNotification : FloatingNotification
                         Colour = FluXisColors.Background2
                     }
                 },
-                new FillFlowContainer
+                new Container()
                 {
-                    Width = 50,
+                    Width = 48,
                     AutoSizeAxes = Axes.X,
-                    AutoSizeDuration = 400,
-                    AutoSizeEasing = Easing.OutQuint,
+                    AutoSizeDuration = 600,
+                    AutoSizeEasing = Easing.InOutCubic,
                     RelativeSizeAxes = Axes.Y,
-                    Padding = new MarginPadding(5),
-                    Direction = FillDirection.Horizontal,
+                    Padding = new MarginPadding(4),
                     Masking = true,
                     Children = new Drawable[]
                     {
@@ -99,18 +100,20 @@ public partial class FloatingTextNotification : FloatingNotification
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             Direction = FillDirection.Vertical,
-                            Padding = new MarginPadding { Horizontal = 10 },
+                            Padding = new MarginPadding { Left = 48, Right = 12 },
+                            Spacing = new Vector2(-2),
                             Alpha = 0,
                             Children = new Drawable[]
                             {
                                 new FluXisSpriteText
                                 {
-                                    Text = Text
+                                    Text = Text,
+                                    WebFontSize = 14
                                 },
                                 new FluXisSpriteText
                                 {
                                     Text = SubText,
-                                    FontSize = 14
+                                    WebFontSize = 10
                                 }
                             }
                         }
@@ -148,10 +151,10 @@ public partial class FloatingTextNotification : FloatingNotification
 
         appear?.Play();
 
-        animationContainer.MoveToY(-70).MoveToY(0, 400, Easing.OutQuint);
-        textContainer.Delay(900).FadeIn();
+        animationContainer.MoveToY(-70).MoveToY(0, 600, Easing.OutQuint);
+        textContainer.Delay(600).FadeIn();
 
-        this.ResizeHeightTo(50, 400, Easing.OutQuint).FadeInFromZero(400)
+        this.ResizeHeightTo(48, 600, Easing.OutQuint).FadeInFromZero(300)
             .Then(Lifetime).FadeIn().OnComplete(_ => remove());
     }
 
@@ -172,7 +175,7 @@ public partial class FloatingTextNotification : FloatingNotification
 
     private void remove()
     {
-        this.FadeOut(400).OnComplete(_ =>
+        this.FadeOut(300).OnComplete(_ =>
         {
             disappear?.Play();
             this.Delay(disappear?.Length ?? 0).Expire();
