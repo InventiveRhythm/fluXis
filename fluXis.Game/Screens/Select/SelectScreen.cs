@@ -385,7 +385,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         // ReSharper disable once MethodSupportsCancellation
         Task.Run(() =>
         {
-            Logger.Log("creating sb");
             var map = set.LowestDifficulty!;
             var info = map.GetMapInfo();
 
@@ -397,7 +396,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
             try
             {
-                var sb = info.CreateDrawableStoryboard();
+                var sb = info?.CreateDrawableStoryboard();
 
                 if (sb == null)
                     return;
