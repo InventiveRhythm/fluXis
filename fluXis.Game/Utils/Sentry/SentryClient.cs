@@ -3,6 +3,7 @@ using System.Net;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
 using fluXis.Shared.Components.Users;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Configuration;
@@ -24,7 +25,7 @@ public partial class SentryClient : Component
 
         Logger.Log("Initializing sentry client...");
 
-        if (FluXisGameBase.IsDebug)
+        if (FluXisGameBase.IsDebug || !RuntimeInfo.IsDesktop)
             return;
 
         session = SentrySdk.Init(opt =>
