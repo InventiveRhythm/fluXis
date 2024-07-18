@@ -85,9 +85,10 @@ public abstract class APIRequest
 
         if (!string.IsNullOrEmpty(APIClient.AccessToken))
             Request.AddHeader("Authorization", APIClient.AccessToken);
-
         if (!string.IsNullOrEmpty(APIClient.MultifactorToken))
             Request.AddHeader("X-Multifactor-Token", APIClient.MultifactorToken);
+
+        Request.AddHeader("X-Version", FluXisGameBase.VersionString);
 
         try
         {
