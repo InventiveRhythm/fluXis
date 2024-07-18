@@ -16,7 +16,6 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;
 using fluXis.Game.Screens.Edit.Tabs.Shared;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
-using fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox.Snap;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
@@ -113,8 +112,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
                 Icon = FontAwesome6.Solid.WandMagicSparkles,
                 Tools = EffectTools
             },
-            toolboxHitsounds = new ToolboxHitsoundCategory(),
-            new ToolboxSnapCategory()
+            toolboxHitsounds = new ToolboxHitsoundCategory()
         }
     };
 

@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Humanizer;
 
 namespace fluXis.Game.Utils;
 
@@ -18,6 +19,10 @@ public static class StringUtils
     public static bool TryParseDoubleInvariant(this string value, out double result) => double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
 
     public static bool EqualsLower(this string first, string second) => first.Equals(second, StringComparison.InvariantCultureIgnoreCase);
+
+    // humanizer doesn't have a function to only
+    // show the shorter version for some reason
+    public static string ToOrdinalShort(this int input, bool withNumber = false) => $"{(withNumber ? input : "")}{input.ToOrdinalWords()[^2..]}";
 
     public static string CensorEmail(string mail)
     {

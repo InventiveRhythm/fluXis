@@ -62,6 +62,7 @@ public partial class EditorBottomBar : Container
                     {
                         new(GridSizeMode.Absolute, 200),
                         new(),
+                        new(GridSizeMode.Absolute, 96),
                         new(GridSizeMode.Absolute, 300),
                         new(GridSizeMode.Absolute, 270)
                     },
@@ -88,6 +89,7 @@ public partial class EditorBottomBar : Container
                                     }
                                 }
                             },
+                            new SnapControl(),
                             new VariableControl(),
                             new Container
                             {

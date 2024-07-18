@@ -1,5 +1,5 @@
 using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Localisation;
@@ -19,7 +19,8 @@ public partial class GlobalTooltipContainer : TooltipContainer
 
     public partial class TextTooltip : CustomTooltipContainer<LocalisableString>
     {
-        private FluXisSpriteText text { get; }
+        private FluXisTextFlow text { get; }
+        private LocalisableString currentText;
 
         public TextTooltip()
         {
@@ -28,8 +29,9 @@ public partial class GlobalTooltipContainer : TooltipContainer
             AutoSizeEasing = Easing.OutQuint;
             EdgeEffect = FluXisStyles.ShadowSmall;
 
-            Child = text = new FluXisSpriteText
+            Child = text = new FluXisTextFlow()
             {
+                AutoSizeAxes = Axes.Both,
                 WebFontSize = 16,
                 Padding = new MarginPadding { Horizontal = 10, Vertical = 6 }
             };
@@ -37,10 +39,10 @@ public partial class GlobalTooltipContainer : TooltipContainer
 
         public override void SetContent(LocalisableString content)
         {
-            if (content == text.Text)
+            if (content == currentText)
                 return;
 
-            text.Text = content;
+            text.Text = currentText = content;
             AutoSizeDuration = IsPresent ? 250 : 0;
         }
     }

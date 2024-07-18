@@ -225,6 +225,36 @@ public static class FluXisColors
         };
     }
 
+    public static Colour4 GetSnapColor(int divisor)
+    {
+        switch (divisor)
+        {
+            case 1:
+                return Colour4.FromHex("#FF5555");
+
+            case 2:
+                return Colour4.FromHex("#558EFF");
+
+            case 3:
+                return Colour4.FromHex("#8EFF55");
+
+            case 4:
+                return Colour4.FromHex("#FFE355");
+
+            case 6:
+                return Colour4.FromHex("#C655FF");
+
+            case 8:
+                return Colour4.FromHex("#55FFAA");
+
+            case 12:
+                return Colour4.FromHex("#FF55AA");
+
+            default:
+                return Colour4.FromHex("#BFBFBF");
+        }
+    }
+
     public static Colour4 GetEditorSnapColor(int divisor, int val, int i)
     {
         switch (divisor)
