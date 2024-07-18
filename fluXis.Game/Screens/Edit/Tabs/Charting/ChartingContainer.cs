@@ -103,6 +103,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             new()
             {
                 Title = "Tools",
+                ExtraTitle = "(1-4)",
                 Icon = FontAwesome6.Solid.Pen,
                 Tools = Tools
             },

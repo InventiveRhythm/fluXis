@@ -15,6 +15,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 public partial class ToolboxCategory : Container
 {
     public string Title { get; init; }
+    public string ExtraTitle { get; init; }
     public IconUsage Icon { get; init; }
     public IReadOnlyList<ChartingTool> Tools { get; init; }
 
@@ -56,8 +57,8 @@ public partial class ToolboxCategory : Container
                             RelativeSizeAxes = Axes.X,
                             Height = 30,
                             Direction = FillDirection.Horizontal,
-                            Padding = new MarginPadding(5),
-                            Spacing = new Vector2(10),
+                            Padding = new MarginPadding(6),
+                            Spacing = new Vector2(6),
                             Children = new Drawable[]
                             {
                                 new SpriteIcon
@@ -65,14 +66,22 @@ public partial class ToolboxCategory : Container
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     Icon = Icon,
-                                    Size = new Vector2(20)
+                                    Size = new Vector2(16)
                                 },
                                 new FluXisSpriteText
                                 {
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     Text = Title,
-                                    FontSize = 24
+                                    WebFontSize = 14
+                                },
+                                new FluXisSpriteText
+                                {
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Text = ExtraTitle,
+                                    Alpha = .6f,
+                                    WebFontSize = 12
                                 }
                             }
                         }

@@ -43,7 +43,7 @@ public partial class ToolboxButton : Container, IHasTooltip
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 64;
+        Height = 48;
 
         Children = new Drawable[]
         {
@@ -75,15 +75,15 @@ public partial class ToolboxButton : Container, IHasTooltip
                     {
                         RelativeSizeAxes = Axes.Both,
                         Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(16, 0),
-                        Padding = new MarginPadding(16),
+                        Spacing = new Vector2(12, 0),
+                        Padding = new MarginPadding(12),
                         Children = new Drawable[]
                         {
                             new Container
                             {
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
-                                Size = new Vector2(32),
+                                Size = new Vector2(24),
                                 Child = icon = CreateIcon() ?? new SpriteIcon
                                 {
                                     RelativeSizeAxes = Axes.Both,
@@ -97,7 +97,7 @@ public partial class ToolboxButton : Container, IHasTooltip
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Text = Text,
-                                FontSize = 28
+                                WebFontSize = 14
                             }
                         }
                     }

@@ -14,8 +14,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 public partial class EditorToolbox : ExpandingContainer
 {
     private const int padding = 5;
-    private const int size_closed = 64 + padding * 4;
-    private const int size_open = 300 + padding * 4;
+    private const int size_closed = 48 + padding * 4;
+    private const int size_open = 240 + padding * 4;
 
     protected override double HoverDelay => 500;
 

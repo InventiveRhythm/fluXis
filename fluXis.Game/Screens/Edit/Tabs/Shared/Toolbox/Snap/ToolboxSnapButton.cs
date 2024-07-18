@@ -44,13 +44,13 @@ public partial class ToolboxSnapButton : ToolboxButton
                     Position = new Vector2(-.25f),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    FontSize = 24,
+                    WebFontSize = 14,
                     Text = "1"
                 },
                 new CircularContainer
                 {
                     Width = 3,
-                    Height = 32,
+                    Height = 24,
                     Rotation = 45,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -69,7 +69,7 @@ public partial class ToolboxSnapButton : ToolboxButton
                     Position = new Vector2(.25f),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    FontSize = 24,
+                    WebFontSize = 14,
                     Text = $"{snap}"
                 }
             }

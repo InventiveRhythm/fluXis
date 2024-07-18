@@ -14,6 +14,7 @@ public partial class ToolboxHitsoundCategory : ToolboxCategory
     public ToolboxHitsoundCategory()
     {
         Title = "Hitsound";
+        ExtraTitle = "(Q-R)";
         Icon = FontAwesome6.Solid.Drum;
 
         Items = Hitsounding.Defaults.Select(s => new ToolboxHitsoundButton(s.Humanize(LetterCasing.Title), s)).Cast<ToolboxButton>().ToList();
