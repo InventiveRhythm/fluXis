@@ -39,6 +39,7 @@ using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -90,6 +91,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     protected MapList MapList { get; private set; }
     protected SearchFilters Filters { get; private set; }
 
+    public MapUtils.SortingMode SortMode { get; private set; } = MapUtils.SortingMode.Title;
+    public bool SortInverse { get; private set; } = false;
+
     private BackgroundVideo video;
     private Container storyboardContainer;
 
@@ -105,8 +109,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private Sample rewindClick;
 
     private SelectNoMaps noMapsContainer;
-    private LoadingIcon loadingIcon;
     private SelectLetter letterContainer;
+    private LoadingIcon loadingIcon;
+
+    private CircularContainer sortModeContainer;
+    private FluXisSpriteText sortModeText;
 
     private readonly List<RealmMapSet> randomHistory = new();
 
@@ -209,6 +216,29 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         {
                             noMapsContainer = new SelectNoMaps(),
                             letterContainer = new SelectLetter(),
+                            sortModeContainer = new CircularContainer
+                            {
+                                AutoSizeAxes = Axes.Both,
+                                AutoSizeEasing = Easing.OutQuint,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Masking = true,
+                                Alpha = 0,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Colour4.Black,
+                                        Alpha = .5f
+                                    },
+                                    sortModeText = new FluXisSpriteText
+                                    {
+                                        Margin = new MarginPadding { Horizontal = 16, Vertical = 8 },
+                                        WebFontSize = 20
+                                    }
+                                }
+                            },
                             loadingIcon = new LoadingIcon
                             {
                                 Anchor = Anchor.Centre,
@@ -284,6 +314,27 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
+    private void setSortingMode(MapUtils.SortingMode mode)
+    {
+        if (mode == SortMode)
+            SortInverse = !SortInverse;
+        else // reset when changing modes
+            SortInverse = false;
+
+        SortMode = mode;
+        Maps.Sort(SortMode, SortInverse);
+        MapList.Sort();
+
+        var str = $"Sorting by {mode.GetDescription()}";
+
+        if (SortInverse)
+            str += " (Inverse)";
+
+        sortModeText.Text = str;
+        sortModeContainer.AutoSizeDuration = sortModeContainer.IsPresent ? 200 : 0;
+        sortModeContainer.FadeIn().Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
+    }
+
     private void loadMapSets()
     {
         var sets = MapStore.MapSets;
@@ -309,7 +360,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             Maps.Add(set);
         }
 
-        Maps.Sort(MapUtils.CompareSets);
+        Maps.Sort(SortMode, SortInverse);
 
         ScheduleAfterChildren(() => MapList.EndBulkInsert());
 
@@ -333,7 +384,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             {
                 MapList.Insert(entry);
                 Maps.Add(set);
-                Maps.Sort(MapUtils.CompareSets);
+                Maps.Sort(SortMode, SortInverse);
                 lookup[set] = entry;
                 noMapsContainer.Hide();
             });
@@ -708,12 +759,26 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         switch (e.Key)
         {
             case >= Key.F1 and <= Key.F12:
+            {
                 var index = (int)e.Key - (int)Key.F1;
 
                 if (index < footer.ButtonContainer.Count)
                     footer.ButtonContainer[index].TriggerClick();
 
                 return true;
+            }
+
+            case >= Key.Number1 and <= Key.Number9:
+            {
+                var index = (int)e.Key - (int)Key.Number1;
+                var values = Enum.GetValues<MapUtils.SortingMode>();
+
+                if (index >= values.Length)
+                    break;
+
+                setSortingMode(values[index]);
+                return true;
+            }
 
             case Key.PageUp:
                 changeLetter(-1);
@@ -833,7 +898,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 child.Hide();
         }
 
-        Maps.Sort(MapUtils.CompareSets);
+        Maps.Sort(SortMode, SortInverse);
 
         if (!Maps.Any())
             noMapsContainer.Show();

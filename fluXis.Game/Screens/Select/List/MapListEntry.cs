@@ -19,6 +19,9 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
     [Resolved]
     private MapStore maps { get; set; }
 
+    [Resolved]
+    private SelectScreen screen { get; set; }
+
     public Action SelectAction;
     public Action<RealmMap> EditAction;
     public Action<RealmMapSet> ExportAction;
@@ -105,7 +108,7 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
         base.Dispose(isDisposing);
     }
 
-    public int CompareTo(MapListEntry other) => MapUtils.CompareSets(MapSet, other.MapSet);
+    public int CompareTo(MapListEntry other) => MapUtils.CompareSets(MapSet, other.MapSet, screen.SortMode, screen.SortInverse);
 
     private void updateSelected(ValueChangedEvent<RealmMapSet> set)
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -12,16 +13,46 @@ namespace fluXis.Game.Utils;
 
 public static class MapUtils
 {
-    public static int CompareSets(RealmMapSet first, RealmMapSet second)
+    public static void Sort(this List<RealmMapSet> list, SortingMode mode, bool inverse = false)
+        => list.Sort((a, b) => CompareSets(a, b, mode, inverse));
+
+    public static int CompareSets(RealmMapSet first, RealmMapSet second, SortingMode mode, bool inverse = false)
     {
-        // compare title
-        var compare = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.OrdinalIgnoreCase);
+        var result = mode switch
+        {
+            SortingMode.Title => compareTitle(first, second),
+            SortingMode.Artist => compareArtist(first, second),
+            SortingMode.Length => compareLength(first, second),
+            SortingMode.DateAdded => second.DateAdded.CompareTo(first.DateAdded),
+            _ => 0
+        };
 
-        if (compare != 0)
-            return compare;
+        if (inverse)
+            result = -result;
 
-        compare = second.DateAdded.CompareTo(first.DateAdded);
-        return compare;
+        return result;
+    }
+
+    private static int compareTitle(RealmMapSet first, RealmMapSet second)
+    {
+        var result = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.OrdinalIgnoreCase);
+
+        // fall back to date added if the title is the same
+        return result != 0 ? result : CompareSets(first, second, SortingMode.DateAdded);
+    }
+
+    private static int compareArtist(RealmMapSet first, RealmMapSet second)
+    {
+        var result = string.Compare(first.Metadata.Artist, second.Metadata.Artist, StringComparison.OrdinalIgnoreCase);
+        return result != 0 ? result : CompareSets(first, second, SortingMode.Title);
+    }
+
+    private static int compareLength(RealmMapSet first, RealmMapSet second)
+    {
+        var firstHighest = first.Maps.MaxBy(x => x.Filters.Length).Filters.Length;
+        var secondHighest = second.Maps.MaxBy(x => x.Filters.Length).Filters.Length;
+        var result = firstHighest.CompareTo(secondHighest);
+        return result != 0 ? result : CompareSets(first, second, SortingMode.Title);
     }
 
     public static RealmMapFilters UpdateFilters(this RealmMapFilters filters, MapInfo map, MapEvents events)
@@ -141,4 +172,19 @@ public static class MapUtils
     }
 
     private static float getDifficulty(float difficulty) => (difficulty - 5) / 5;
+
+    public enum SortingMode
+    {
+        [Description("Title")]
+        Title,
+
+        [Description("Artist")]
+        Artist,
+
+        [Description("Length")]
+        Length,
+
+        [Description("Date Added")]
+        DateAdded
+    }
 }

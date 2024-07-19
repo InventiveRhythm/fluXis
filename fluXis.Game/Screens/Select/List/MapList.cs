@@ -50,16 +50,16 @@ public partial class MapList : FluXisScrollContainer
         if (bulkInserting)
             return;
 
-        sort();
+        Sort();
     }
 
     public void EndBulkInsert()
     {
         bulkInserting = false;
-        sort();
+        Sort();
     }
 
-    private void sort()
+    public void Sort()
     {
         var sorted = Content.Children.ToList();
         sorted.Sort((a, b) => a.CompareTo(b));
