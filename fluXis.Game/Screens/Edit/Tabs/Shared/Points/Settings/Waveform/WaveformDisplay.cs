@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
@@ -27,14 +28,22 @@ public partial class WaveformDisplay : Container
     private double currentTime;
     private double endTime;
 
+    private int lastIndex = -1;
+
+    private Sample metronomeSample;
+    private Sample metronomeEndSample;
+
     public WaveformDisplay(TimingPoint point)
     {
         this.point = point;
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        metronomeSample = samples.Get("UI/metronome");
+        metronomeEndSample = samples.Get("UI/metronome-end");
+
         RelativeSizeAxes = Axes.X;
         Height = 280;
         CornerRadius = 20;
@@ -89,7 +98,18 @@ public partial class WaveformDisplay : Container
 
     private void regenerate()
     {
-        var index = (currentTime - point.Time) / point.MsPerBeat;
+        var index = (int)Math.Round((currentTime - point.Time) / point.MsPerBeat);
+
+        // 10ms leniency
+        if (clock.IsRunning && lastIndex != index && clock.CurrentTime > point.Time - 10 && clock.CurrentTime < endTime + 10)
+        {
+            if (index % point.Signature == 0)
+                metronomeEndSample?.Play();
+            else
+                metronomeSample?.Play();
+        }
+
+        lastIndex = index;
 
         var trackLength = clock.TrackLength;
         var scale = trackLength / DrawWidth;
