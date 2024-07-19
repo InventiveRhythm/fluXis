@@ -76,7 +76,7 @@ public class OsuMap
                 Tags = Tags?.Trim() ?? "",
                 PreviewTime = PreviewTime
             },
-            AudioFile = AudioFilename.Trim(),
+            AudioFile = AudioFilename?.Trim(),
             BackgroundFile = "",
             HitObjects = new List<HitObject>(),
             TimingPoints = new List<TimingPoint>(),
