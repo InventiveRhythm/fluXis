@@ -12,6 +12,7 @@ using fluXis.Game.Map.Drawables;
 using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -282,9 +283,19 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         private float min = 0;
         private float max = 0;
 
+        private Sample metronomeSample;
+        private Sample metronomeEndSample;
+
         public BpmDisplay()
             : base("BPM", _ => "")
         {
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
+        {
+            metronomeSample = samples.Get("UI/metronome");
+            metronomeEndSample = samples.Get("UI/metronome-end");
         }
 
         protected override void LoadComplete()
@@ -305,6 +316,14 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         private void onBeat(int beat)
         {
             ValueText.FadeIn().FadeTo(min_alpha, beatSync.BeatTime);
+
+            if (!IsHovered)
+                return;
+
+            if (beat % 4 == 0)
+                metronomeEndSample?.Play();
+            else
+                metronomeSample?.Play();
         }
 
         public void SetValue(float mi, float ma)
