@@ -154,7 +154,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         IsActive.BindValueChanged(active =>
         {
             var volume = Config.Get<double>(FluXisSetting.InactiveVolume);
-            this.TransformBindableTo(inactiveVolume, active.NewValue ? 1 : volume, 1000, Easing.OutQuint);
+            this.TransformBindableTo(inactiveVolume, active.NewValue ? 1 : volume, active.NewValue ? 500 : 4000, Easing.OutQuint);
         }, true);
     }
 
