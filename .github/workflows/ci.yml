@@ -90,4 +90,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: fluXis-ci-build-android
-          path: bin/flustix.fluXis-signed.apk
+          path: bin/moe.flux.fluXis-signed.apk
