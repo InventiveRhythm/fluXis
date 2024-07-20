@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Utils;
 using osu.Framework.Configuration;
 using osu.Framework.Platform;
 
@@ -56,6 +57,8 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // UI // Song Select
         SetDefault(FluXisSetting.SongSelectBlur, true);
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
+        SetDefault(FluXisSetting.SortingMode, MapUtils.SortingMode.Title);
+        SetDefault(FluXisSetting.SortingInverse, false);
 
         // UI // Editor
         SetDefault(FluXisSetting.EditorDim, 0.4f, 0f, .8f, 0.2f);
@@ -127,6 +130,8 @@ public enum FluXisSetting
     // UI // Song Select
     SongSelectBlur,
     LoopMode,
+    SortingMode,
+    SortingInverse,
 
     // UI // Editor
     EditorDim,

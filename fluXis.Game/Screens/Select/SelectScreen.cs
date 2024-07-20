@@ -91,8 +91,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     protected MapList MapList { get; private set; }
     protected SearchFilters Filters { get; private set; }
 
-    public MapUtils.SortingMode SortMode { get; private set; } = MapUtils.SortingMode.Title;
-    public bool SortInverse { get; private set; } = false;
+    public MapUtils.SortingMode SortMode => sortMode.Value;
+    public bool SortInverse => sortInverse.Value;
+
+    private Bindable<MapUtils.SortingMode> sortMode;
+    private Bindable<bool> sortInverse;
 
     private BackgroundVideo video;
     private Container storyboardContainer;
@@ -134,6 +137,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         songSelectBlur = config.GetBindable<bool>(FluXisSetting.SongSelectBlur);
         backgroundVideo = config.GetBindable<bool>(FluXisSetting.BackgroundVideo);
 
+        sortMode = config.GetBindable<MapUtils.SortingMode>(FluXisSetting.SortingMode);
+        sortInverse = config.GetBindable<bool>(FluXisSetting.SortingInverse);
+
         dependencies.CacheAs(this);
         dependencies.CacheAs(Filters = new SearchFilters());
         dependencies.CacheAs(modSelector = new ModSelector());
@@ -155,7 +161,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         RedrawOnScale = false,
                         Children = new Drawable[]
                         {
-                            video = new BackgroundVideo()
+                            video = new BackgroundVideo
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 FillMode = FillMode.Fill,
@@ -317,11 +323,11 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private void setSortingMode(MapUtils.SortingMode mode)
     {
         if (mode == SortMode)
-            SortInverse = !SortInverse;
+            sortInverse.Value = !sortInverse.Value;
         else // reset when changing modes
-            SortInverse = false;
+            sortInverse.Value = false;
 
-        SortMode = mode;
+        sortMode.Value = mode;
         Maps.Sort(SortMode, SortInverse);
         MapList.Sort();
 
