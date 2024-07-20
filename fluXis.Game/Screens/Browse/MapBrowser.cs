@@ -65,6 +65,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     private bool fetchingMore = true;
     private bool loadedAll;
+    private string currentQuery = string.Empty;
 
     private FluXisScrollContainer scroll;
     private FillFlowContainer<MapCard> maps { get; set; }
@@ -222,15 +223,18 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         }
     }
 
-    private void loadMapsets(long offset = 0)
+    private void loadMapsets(long offset = 0, bool reload = false)
     {
         fetchingMore = true;
 
-        var req = new MapSetsRequest(offset);
+        var req = new MapSetsRequest(offset, currentQuery);
         req.Success += response =>
         {
             if (response.Data.Count == 0)
                 loadedAll = true;
+
+            if (reload)
+                maps.Clear();
 
             foreach (var mapSet in response.Data)
             {
@@ -306,29 +310,8 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     public void Search(string query)
     {
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            foreach (var map in maps)
-                map.Show();
-
-            return;
-        }
-
-        foreach (var map in maps)
-        {
-            var matches = false;
-            matches |= map.MapSet.Title?.ToLower().Contains(query.ToLower()) ?? false;
-            matches |= map.MapSet.Artist?.ToLower().Contains(query.ToLower()) ?? false;
-            matches |= map.MapSet.Creator?.Username.ToLower().Contains(query.ToLower()) ?? false;
-            matches |= map.MapSet.Creator?.DisplayName?.ToLower().Contains(query.ToLower()) ?? false;
-            matches |= map.MapSet.Tags?.Any(tag => tag.ToLower().Contains(query.ToLower())) ?? false;
-            matches |= map.MapSet.Source?.ToLower().Contains(query.ToLower()) ?? false;
-
-            if (matches)
-                map.Show();
-            else
-                map.Hide();
-        }
+        currentQuery = query;
+        loadMapsets(reload: true);
     }
 
     private void confirmDeleteMapSet(long id)
