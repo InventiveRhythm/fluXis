@@ -198,6 +198,12 @@ public partial class ImportManager : Component
 
     public void Import(string path)
     {
+        if (!IsLoaded)
+        {
+            taskQueue.Add(new Task(() => Import(path)));
+            return;
+        }
+
         var extension = Path.GetExtension(path);
 
         if (extension == ".fms")
