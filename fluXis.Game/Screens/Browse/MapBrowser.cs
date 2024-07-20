@@ -216,16 +216,13 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         base.Update();
 
         if (scroll.IsScrolledToEnd() && !fetchingMore && !loadedAll)
-        {
-            var count = maps.Count;
-            loadingIcon.Show();
-            loadMapsets(count);
-        }
+            loadMapsets(maps.Count);
     }
 
     private void loadMapsets(long offset = 0, bool reload = false)
     {
         fetchingMore = true;
+        loadingIcon.Show();
 
         var req = new MapSetsRequest(offset, currentQuery);
         req.Success += response =>
