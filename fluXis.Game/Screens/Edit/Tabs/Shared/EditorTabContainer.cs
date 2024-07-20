@@ -26,6 +26,9 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
     protected EditorMap Map { get; private set; }
 
     [Resolved]
+    protected EditorSettings Settings { get; private set; }
+
+    [Resolved]
     public EditorActionStack ActionStack { get; private set; }
 
     private Container content;

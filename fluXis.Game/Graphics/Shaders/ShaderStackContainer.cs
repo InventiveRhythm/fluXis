@@ -11,6 +11,8 @@ public partial class ShaderStackContainer : CompositeDrawable
 {
     private readonly List<ShaderContainer> shaders = new();
 
+    public IReadOnlyList<ShaderType> ShaderTypes => shaders.DistinctBy(x => x.Type).Select(x => x.Type).ToList();
+
     public ShaderStackContainer()
     {
         RelativeSizeAxes = Axes.Both;
@@ -37,6 +39,25 @@ public partial class ShaderStackContainer : CompositeDrawable
             shaders.Last().AddRange(content);
 
         return this;
+    }
+
+    public IEnumerable<Drawable> RemoveContent()
+    {
+        IEnumerable<Drawable> children;
+
+        if (shaders.Count == 0)
+        {
+            children = InternalChildren;
+            ClearInternal(false);
+        }
+        else
+        {
+            var last = shaders.Last();
+            children = last.Children.ToArray();
+            last.Clear(false);
+        }
+
+        return children;
     }
 
     public T GetShader<T>() where T : ShaderContainer
