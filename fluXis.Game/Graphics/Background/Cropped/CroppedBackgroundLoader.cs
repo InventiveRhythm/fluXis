@@ -60,13 +60,13 @@ public class CroppedBackgroundLoader : IResourceStore<TextureUpload>
         {
             var newWidth = (int)(image.Height * ratio);
             var cropX = (image.Width - newWidth) / 2;
-            image.Mutate(x => x.Crop(new Rectangle(cropX, 0, newWidth, image.Height)));
+            image.Mutate(x => x.Crop(new Rectangle(Math.Max(1, cropX), 0, Math.Max(1, newWidth), image.Height)));
         }
         else
         {
             var newHeight = (int)(image.Width / ratio);
             var cropY = (image.Height - newHeight) / 2;
-            image.Mutate(x => x.Crop(new Rectangle(0, cropY, image.Width, newHeight)));
+            image.Mutate(x => x.Crop(new Rectangle(0, Math.Max(1, cropY), image.Width, Math.Max(1, newHeight))));
         }
 
         return new TextureUpload(image);
