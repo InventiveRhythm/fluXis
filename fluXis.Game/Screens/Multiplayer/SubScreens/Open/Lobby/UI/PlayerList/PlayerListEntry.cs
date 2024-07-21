@@ -48,5 +48,20 @@ public partial class PlayerListEntry : Container
         };
     }
 
-    public void SetState(MultiplayerUserState state) => content.SetState(state);
+    public void SetState(MultiplayerUserState state)
+    {
+        if (content is null)
+        {
+            Schedule(() => SetState(state));
+            return;
+        }
+
+        if (!content.IsLoaded)
+        {
+            content.OnLoadComplete += _ => content.SetState(state);
+            return;
+        }
+
+        content.SetState(state);
+    }
 }
