@@ -89,22 +89,23 @@ public partial class LayoutManager : Component
 
     private void loadLayouts()
     {
-        var files = storage.GetFiles("", "*.json");
+        var files = storage.GetFiles(".", "*.json");
 
         foreach (var file in files)
         {
             try
             {
-                var layout = File.ReadAllText(file).Deserialize<HUDLayout>();
+                var path = storage.GetFullPath(file);
+                var layout = File.ReadAllText(path).Deserialize<HUDLayout>();
 
-                layout.ID = Path.GetFileNameWithoutExtension(file);
+                layout.ID = Path.GetFileNameWithoutExtension(path);
                 Layouts.Add(layout);
 
                 Logger.Log($"Loaded layout {layout.ID}", LoggingTarget.Runtime, LogLevel.Debug);
             }
-            catch
+            catch (Exception ex)
             {
-                Logger.Log($"Failed to load layout {Path.GetFileName(file)}", LoggingTarget.Runtime, LogLevel.Error);
+                Logger.Error(ex, $"Failed to load layout {Path.GetFileName(file)}");
             }
         }
     }
