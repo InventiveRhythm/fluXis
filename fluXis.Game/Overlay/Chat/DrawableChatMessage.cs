@@ -108,8 +108,7 @@ public partial class DrawableChatMessage : Container
 
         LoadComponentAsync(new DrawableAvatar(InitialMessage.Sender)
         {
-            RelativeSizeAxes = Axes.Both,
-            ShowTooltip = true
+            RelativeSizeAxes = Axes.Both
         }, avatar =>
         {
             avatarContainer.Add(avatar);

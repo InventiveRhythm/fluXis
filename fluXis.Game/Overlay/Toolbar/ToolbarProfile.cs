@@ -1,4 +1,5 @@
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
@@ -98,11 +99,21 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
                                 Size = new Vector2(40),
                                 Children = new Drawable[]
                                 {
-                                    avatarContainer = new Container
+                                    new LoadWrapper<DrawableAvatar>
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         CornerRadius = 5,
-                                        Masking = true
+                                        Masking = true,
+                                        LoadContent = () => avatar = new DrawableAvatar(user)
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre
+                                        }
+                                    },
+                                    avatarContainer = new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both
                                     },
                                     loadingContainer = new Container
                                     {
@@ -140,13 +151,6 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
                 }
             }
         };
-
-        LoadComponentAsync(avatar = new DrawableAvatar(user)
-        {
-            RelativeSizeAxes = Axes.Both,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre
-        }, avatarContainer.Add);
 
         api.User.BindValueChanged(updateUser);
     }

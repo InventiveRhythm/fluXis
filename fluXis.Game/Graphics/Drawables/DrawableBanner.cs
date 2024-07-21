@@ -3,37 +3,57 @@ using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Graphics.Drawables;
+
+#nullable enable
 
 public partial class DrawableBanner : Sprite
 {
     [Resolved]
-    private OnlineTextureStore store { get; set; }
+    private OnlineTextureStore store { get; set; } = null!;
 
     [Resolved]
-    private UserCache users { get; set; }
+    private TextureStore textures { get; set; } = null!;
 
-    private APIUser user;
+    [Resolved]
+    private UserCache? users { get; set; }
+
+    private APIUser? user;
 
     public DrawableBanner(APIUser user)
     {
-        this.user = user ?? APIUser.Dummy;
-        Alpha = 0;
+        this.user = user;
         FillMode = FillMode.Fill;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Texture = store.GetBanner(user.ID);
+        setTexture();
     }
 
-    protected override void LoadComplete()
+    private void setTexture()
     {
-        this.FadeInFromZero(400);
+        if (user != null) // the texture from the online store could still be null
+            Texture = store.GetBanner(user.ID) ?? textures.Get("Online/default-banner");
+        else
+            Texture = textures.Get("Online/default-banner");
 
-        users.RegisterBannerCallback(user.ID, reload);
+        Schedule(() => this.FadeInFromZero(400));
+    }
+
+    private void registerCallback()
+    {
+        if (user != null)
+            users?.RegisterBannerCallback(user.ID, reload);
+    }
+
+    private void unregisterCallback()
+    {
+        if (user != null)
+            users?.RegisterBannerCallback(user.ID, reload);
     }
 
     private void reload()
@@ -42,30 +62,22 @@ public partial class DrawableBanner : Sprite
         Texture = null;
 
         // wait 2 frames to allow texture store to clear
-        Schedule(() => Schedule(() =>
-        {
-            Texture = store.GetBanner(user.ID);
-            this.FadeInFromZero(400);
-        }));
+        Schedule(() => Schedule(setTexture));
     }
 
-    public void UpdateUser(APIUser newUser)
+    public void UpdateUser(APIUser? newUser)
     {
-        if (user.ID == newUser?.ID) return;
+        unregisterCallback();
 
-        users.UnregisterBannerCallback(user.ID, reload);
+        user = newUser;
+        setTexture();
 
-        user = newUser ?? APIUser.Dummy;
-        Texture = store.GetBanner(user.ID);
-        Schedule(() => this.FadeInFromZero(400));
-
-        users.RegisterBannerCallback(user.ID, reload);
+        registerCallback();
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
-
-        users?.UnregisterBannerCallback(user.ID, reload);
+        unregisterCallback();
     }
 }
