@@ -224,14 +224,14 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         fetchingMore = true;
         loadingIcon.Show();
 
+        if (reload)
+            maps.Clear();
+
         var req = new MapSetsRequest(offset, currentQuery);
         req.Success += response =>
         {
             if (response.Data.Count == 0)
                 loadedAll = true;
-
-            if (reload)
-                maps.Clear();
 
             foreach (var mapSet in response.Data)
             {
