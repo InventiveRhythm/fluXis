@@ -11,12 +11,14 @@ using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Game.UI;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
@@ -36,6 +38,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
     public event Action<PointListEntry> Selected;
     public event Action<PointListEntry> Deselected;
+    public Bindable<PointListEntry> CurrentEvent { get; set; }
 
     private SelectedState state;
 
@@ -79,6 +82,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     private EditorClock clock { get; set; }
 
     private Box hover;
+    private Circle indicator;
     private FluXisSpriteText timeText;
     private FillFlowContainer valueFlow;
 
@@ -111,6 +115,14 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
                 Colour = Color,
                 Alpha = 0
             },
+            indicator = new Circle
+            {
+                Size = new Vector2(4, 0),
+                Position = new Vector2(3, 0),
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Colour = Color
+            },
             timeText = new FluXisSpriteText
             {
                 Anchor = Anchor.CentreLeft,
@@ -133,7 +145,19 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     {
         base.LoadComplete();
         UpdateValues();
+
+        CurrentEvent.BindValueChanged(currentEventChange, true);
     }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        CurrentEvent.ValueChanged -= currentEventChange;
+    }
+
+    private void currentEventChange(ValueChangedEvent<PointListEntry> e)
+        => indicator.ResizeHeightTo(e.NewValue == this ? 16 : 0, 600, Easing.OutQuint);
 
     private void updateState()
     {

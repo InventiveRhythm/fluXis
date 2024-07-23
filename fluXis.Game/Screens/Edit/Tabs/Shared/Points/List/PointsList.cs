@@ -44,6 +44,8 @@ public abstract partial class PointsList : Container
     private FluXisScrollContainer scroll;
     private FillFlowContainer<PointListEntry> flow;
 
+    private Bindable<PointListEntry> currentEvent = new();
+
     private SpriteIcon iconUp;
     private bool iconUpShown;
     private SpriteIcon iconDown;
@@ -232,6 +234,7 @@ public abstract partial class PointsList : Container
 
         if (entry != null)
         {
+            entry.CurrentEvent = currentEvent;
             entry.ShowSettings = openSettings;
             entry.RequestClose = RequestClose;
             entry.CloneSelected = duplicateSelected;
@@ -280,6 +283,10 @@ public abstract partial class PointsList : Container
     protected override void UpdateAfterChildren()
     {
         base.UpdateAfterChildren();
+
+        var belowTime = flow.Where(e => e.Object.Time <= clock.CurrentTime);
+        var min = belowTime.MaxBy(x => x.Object.Time);
+        currentEvent.Value = min;
 
         if (!scroll.IsScrolledToStart() && !iconUpShown)
         {
