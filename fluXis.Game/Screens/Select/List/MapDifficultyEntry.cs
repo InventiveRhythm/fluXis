@@ -1,12 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Database.Score;
+using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Scoring;
+using fluXis.Shared.Scoring.Enums;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.EnumExtensions;
@@ -55,11 +61,15 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     private MapStore maps { get; set; }
 
     [Resolved]
+    private ScoreManager scores { get; set; }
+
+    [Resolved]
     private Clipboard clipboard { get; set; }
 
     private readonly MapListEntry mapListEntry;
     private readonly RealmMap map;
     private Container outline;
+    private DrawableScoreRank rank;
 
     public MapDifficultyEntry(MapListEntry parentEntry, RealmMap map)
     {
@@ -124,52 +134,69 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                                 },
                                 new FillFlowContainer
                                 {
-                                    AutoSizeAxes = Axes.Both,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Direction = FillDirection.Vertical,
-                                    Padding = new MarginPadding { Left = 10 },
+                                    RelativeSizeAxes = Axes.Both,
+                                    Direction = FillDirection.Horizontal,
+                                    Padding = new MarginPadding { Left = 12 },
+                                    Spacing = new Vector2(8),
                                     Children = new Drawable[]
                                     {
-                                        new FillFlowContainer
+                                        rank = new DrawableScoreRank
                                         {
-                                            AutoSizeAxes = Axes.Both,
-                                            Direction = FillDirection.Horizontal,
-                                            Spacing = new Vector2(10),
-                                            Children = new Drawable[]
-                                            {
-                                                new FluXisSpriteText
-                                                {
-                                                    Text = map.Difficulty,
-                                                    FontSize = 20,
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft
-                                                },
-                                                new FluXisSpriteText
-                                                {
-                                                    Text = $"mapped by {map.Metadata.Mapper}",
-                                                    FontSize = 16,
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft,
-                                                    Alpha = .8f
-                                                }
-                                            }
+                                            Size = new Vector2(24),
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft,
+                                            FontSize = FluXisSpriteText.GetWebFontSize(20),
+                                            Shadow = false
                                         },
                                         new FillFlowContainer
                                         {
                                             AutoSizeAxes = Axes.Both,
-                                            Direction = FillDirection.Horizontal,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft,
+                                            Direction = FillDirection.Vertical,
                                             Children = new Drawable[]
                                             {
-                                                new DifficultyChip
+                                                new FillFlowContainer
                                                 {
-                                                    Width = 50,
-                                                    Height = 14,
-                                                    FontSize = 14,
-                                                    Rating = map.Filters.NotesPerSecond,
-                                                    Margin = new MarginPadding { Right = 5 }
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Direction = FillDirection.Horizontal,
+                                                    Spacing = new Vector2(10),
+                                                    Children = new Drawable[]
+                                                    {
+                                                        new FluXisSpriteText
+                                                        {
+                                                            Text = map.Difficulty,
+                                                            FontSize = 20,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft
+                                                        },
+                                                        new FluXisSpriteText
+                                                        {
+                                                            Text = $"mapped by {map.Metadata.Mapper}",
+                                                            FontSize = 16,
+                                                            Anchor = Anchor.CentreLeft,
+                                                            Origin = Anchor.CentreLeft,
+                                                            Alpha = .8f
+                                                        }
+                                                    }
+                                                },
+                                                new FillFlowContainer
+                                                {
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Direction = FillDirection.Horizontal,
+                                                    Children = new Drawable[]
+                                                    {
+                                                        new DifficultyChip
+                                                        {
+                                                            Width = 50,
+                                                            Height = 14,
+                                                            FontSize = 14,
+                                                            Rating = map.Filters.NotesPerSecond,
+                                                            Margin = new MarginPadding { Right = 5 }
+                                                        }
+                                                    }.Concat(getIcons()).ToArray()
                                                 }
-                                            }.Concat(getIcons()).ToArray()
+                                            }
                                         }
                                     }
                                 }
@@ -217,9 +244,27 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
         maps.MapBindable.BindValueChanged(updateSelected, true);
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        scores.TopScoreUpdated += updateTopScore;
+        updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
+    }
+
+    private void updateTopScore(Guid id, [CanBeNull] RealmScore score)
+    {
+        if (id != map.ID)
+            return;
+
+        rank.Alpha = score is null ? 0 : 1;
+        rank.Rank = score?.Rank ?? ScoreRank.D;
+    }
+
     protected override void Dispose(bool isDisposing)
     {
         maps.MapBindable.ValueChanged -= updateSelected;
+        scores.TopScoreUpdated -= updateTopScore;
 
         base.Dispose(isDisposing);
     }

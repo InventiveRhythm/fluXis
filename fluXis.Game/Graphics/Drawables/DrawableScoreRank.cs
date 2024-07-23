@@ -19,7 +19,7 @@ public partial class DrawableScoreRank : CompositeDrawable
 
             rank = value;
 
-            if (IsLoaded)
+            if (LoadState >= LoadState.Ready)
                 redraw();
         }
     }

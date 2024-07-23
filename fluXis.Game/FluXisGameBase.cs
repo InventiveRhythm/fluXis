@@ -30,6 +30,7 @@ using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Plugins;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Edit.Input;
 using fluXis.Game.Screens.Gameplay.HUD;
 using fluXis.Game.Screens.Menu;
@@ -178,6 +179,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent(new OnlineTextureStore(Host, endpoint, users));
 
         cacheComponent(MapStore = new MapStore(), true, true);
+        cacheComponent(new ScoreManager(), true, true);
         cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));
 
         cacheComponent(new PluginManager(), true);

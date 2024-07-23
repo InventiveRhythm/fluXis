@@ -49,7 +49,7 @@ public class RealmScore : RealmObject
     {
     }
 
-    public static RealmScore FromScoreInfo(RealmMap map, ScoreInfo info, int onlineID = -1)
+    public static RealmScore FromScoreInfo(Guid map, ScoreInfo info, int onlineID = -1)
     {
         return new RealmScore
         {
@@ -66,7 +66,7 @@ public class RealmScore : RealmObject
             Okay = info.Okay,
             Miss = info.Miss,
             Mods = string.Join(' ', info.Mods),
-            MapID = map.ID,
+            MapID = map,
             Date = TimeUtils.GetFromSeconds(info.Timestamp),
             PlayerID = info.PlayerID
         };

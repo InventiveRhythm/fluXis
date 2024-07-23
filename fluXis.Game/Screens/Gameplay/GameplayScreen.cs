@@ -10,7 +10,6 @@ using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Database.Score;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Shaders;
 using fluXis.Game.Graphics.Shaders.Bloom;
@@ -86,6 +85,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private ScoreManager scores { get; set; }
 
     [Resolved]
     private IAPIClient api { get; set; }
@@ -464,12 +466,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             var player = api.User.Value;
 
-            var bestScore = realm.Run(r =>
-            {
-                var onMap = r.All<RealmScore>().Where(s => s.MapID == RealmMap.ID).ToList();
-                var best = onMap.MaxBy(s => s.Score);
-                return best.Detach();
-            });
+            var bestScore = scores.GetCurrentTop(RealmMap.ID);
 
             var score = ScoreProcessor.ToScoreInfo(player);
             score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
@@ -480,12 +477,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
             if (Mods.All(m => m.SaveScore) && SubmitScore && !RealmMap.MapSet.AutoImported)
             {
-                var scoreId = realm.RunWrite(r =>
-                {
-                    var rScore = r.Add(RealmScore.FromScoreInfo(RealmMap, score));
-                    score.Replay = SaveReplay(rScore.ID);
-                    return rScore.ID;
-                });
+                var id = scores.Add(RealmMap.ID, score).ID;
+                score.Replay = SaveReplay(id);
 
                 if (canBeUploaded)
                 {
@@ -496,13 +489,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     var resData = request.Response?.Data;
 
                     if (request.IsSuccessful && resData?.Score != null)
-                    {
-                        realm.RunWrite(r =>
-                        {
-                            var rScore = r.Find<RealmScore>(scoreId);
-                            rScore.OnlineID = (int)resData.Score.ID;
-                        });
-                    }
+                        scores.UpdateOnlineID(id, (int)resData.Score.ID);
 
                     Schedule(() => scoreSubmissionOverlay.FadeOut(FADE_DURATION));
                 }

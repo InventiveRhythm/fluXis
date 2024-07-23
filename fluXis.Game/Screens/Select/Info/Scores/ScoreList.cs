@@ -22,6 +22,7 @@ using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
+using fluXis.Game.Scoring;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Scores;
 using fluXis.Shared.Replays;
@@ -46,6 +47,9 @@ public partial class ScoreList : GridContainer
 {
     [Resolved]
     private FluXisRealm realm { get; set; }
+
+    [Resolved]
+    private ScoreManager scoreManager { get; set; }
 
     [Resolved]
     private IAPIClient api { get; set; }
@@ -281,37 +285,25 @@ public partial class ScoreList : GridContainer
         switch (type)
         {
             case ScoreListType.Local:
-                realm?.Run(r => r.All<RealmScore>().ToList().ForEach(s =>
+                scoreManager.OnMap(map.ID).ForEach(s =>
                 {
-                    if (s.MapID == map.ID)
+                    var info = s.ToScoreInfo();
+                    var detach = s.Detach();
+
+                    scores.Add(new ScoreListEntry
                     {
-                        var info = s.ToScoreInfo();
-                        var detach = s.Detach();
-
-                        scores.Add(new ScoreListEntry
+                        ScoreInfo = info,
+                        Map = map,
+                        Player = users.Get(info.PlayerID),
+                        ShowSelfOutline = false,
+                        DeleteAction = () =>
                         {
-                            ScoreInfo = info,
-                            Map = map,
-                            Player = users.Get(info.PlayerID),
-                            ShowSelfOutline = false,
-                            DeleteAction = () =>
-                            {
-                                realm.RunWrite(r2 =>
-                                {
-                                    var realmScore = r2.Find<RealmScore>(detach.ID);
-
-                                    if (realmScore == null)
-                                        return;
-
-                                    r2.Remove(realmScore);
-                                });
-
-                                Refresh();
-                            },
-                            ReplayAction = replays.Exists(s.ID) ? () => screen?.ViewReplay(map, detach) : null
-                        });
-                    }
-                }));
+                            scoreManager.Delete(detach.ID);
+                            Refresh();
+                        },
+                        ReplayAction = replays.Exists(s.ID) ? () => screen?.ViewReplay(map, detach) : null
+                    });
+                });
                 break;
 
             case ScoreListType.Global or ScoreListType.Country or ScoreListType.Club:
@@ -445,7 +437,7 @@ public partial class ScoreList : GridContainer
             return;
         }
 
-        var realmScore = realm.RunWrite(r => r.Add(RealmScore.FromScoreInfo(map, score.ToScoreInfo(), (int)score.ID))).Detach();
+        var realmScore = scoreManager.Add(map.ID, score.ToScoreInfo(), (int)score.ID);
 
         var notification = new TaskNotificationData
         {
