@@ -2,7 +2,9 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Overlay.Club;
 using fluXis.Shared.Components.Clubs;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,8 +22,8 @@ public partial class ProfileSidebarClub : FillFlowContainer
         this.club = club;
     }
 
-    [BackgroundDependencyLoader]
-    private void load()
+    [BackgroundDependencyLoader(true)]
+    private void load([CanBeNull] ClubOverlay clubOverlay)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
@@ -41,12 +43,13 @@ public partial class ProfileSidebarClub : FillFlowContainer
                     WebFontSize = 24
                 }
             },
-            new Container
+            new ClickableContainer
             {
                 RelativeSizeAxes = Axes.X,
                 Height = 80,
                 CornerRadius = 10,
                 Masking = true,
+                Action = () => clubOverlay?.ShowClub(club.ID),
                 Children = new Drawable[]
                 {
                     new LoadWrapper<DrawableClubBanner>

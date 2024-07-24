@@ -14,6 +14,7 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Achievements;
 using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.Chat;
+using fluXis.Game.Overlay.Club;
 using fluXis.Game.Overlay.Exit;
 using fluXis.Game.Overlay.FPS;
 using fluXis.Game.Overlay.Music;
@@ -121,6 +122,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
         loadComponent(new ChatOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
+        loadComponent(new ClubOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);
 
