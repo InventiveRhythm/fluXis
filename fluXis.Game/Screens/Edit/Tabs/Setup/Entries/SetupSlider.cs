@@ -48,6 +48,7 @@ public partial class SetupSlider : SetupEntry
         bindable = new BindableFloat(Default)
         {
             MinValue = 1,
+            Precision = 0.1f,
             MaxValue = 10
         };
 
