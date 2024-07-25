@@ -129,6 +129,9 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     public bool OnDragDrop(string file)
     {
+        if (!File.Exists(file))
+            return false;
+
         var zip = new ZipArchive(File.OpenRead(file), ZipArchiveMode.Read);
 
         var folder = Path.GetFileNameWithoutExtension(file);

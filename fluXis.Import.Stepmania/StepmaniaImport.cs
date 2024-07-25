@@ -31,6 +31,9 @@ public class StepmaniaImport : MapImporter
 
     public override void Import(string path)
     {
+        if (!File.Exists(path))
+            return;
+
         var notification = CreateNotification();
 
         try
