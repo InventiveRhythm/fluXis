@@ -251,7 +251,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         var timingsStr = "";
 
         foreach (var timing in windows.GetTimings())
-            timingsStr += $"{timing.Judgement}: {timing.Milliseconds.ToStringInvariant("0.0")}ms\n";
+            timingsStr += $"{timing.Judgement}: {timing.Milliseconds.ToStringInvariant()}ms\n";
 
         accuracy.TooltipText = timingsStr.Trim();
 
