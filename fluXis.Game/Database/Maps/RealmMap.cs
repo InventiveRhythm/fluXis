@@ -108,6 +108,10 @@ public class RealmMap : RealmObject
         try
         {
             var path = MapFiles.GetFullPath(MapSet.GetPathForFile(FileName));
+
+            if (!File.Exists(path))
+                return null;
+
             var json = File.ReadAllText(path);
             var hash = MapUtils.GetHash(json);
             var map = json.Deserialize<T>();
