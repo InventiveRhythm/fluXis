@@ -45,8 +45,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private StatDisplay notesPerSecond;
     private StatDisplay longNotePercentage;
 
-    /*private StatDisplay accuracy;
-    private StatDisplay health;*/
+    private StatDisplay accuracy;
+    private StatDisplay health;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -184,11 +184,11 @@ public partial class SelectMapInfoHeader : CompositeDrawable
                         notesPerSecond = new StatDisplay("NPS", v => v.ToStringInvariant("0.00")),
                         longNotePercentage = new StatDisplay("LN%", v => v.ToStringInvariant("0.00") + "%")
                     }),
-                    /*new StatsRow(new[]
+                    new StatsRow(new[]
                     {
                         accuracy = new StatDisplay("Accuracy", v => v.ToStringInvariant("0.0")),
                         health = new StatDisplay("Health", v => v.ToStringInvariant("0.0"))
-                    })*/
+                    })
                 }
             }
         };
@@ -241,8 +241,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
         longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
 
-        /*accuracy.SetValue(map.Accuracy);
-        health.SetValue(map.Health);*/
+        accuracy.SetValue(map.AccuracyDifficulty);
+        health.SetValue(map.HealthDifficulty);
 
         var background = new MapBackground(map);
         backgrounds.Add(background, 400);
