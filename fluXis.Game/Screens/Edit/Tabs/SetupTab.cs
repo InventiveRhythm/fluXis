@@ -197,7 +197,11 @@ public partial class SetupTab : EditorTab
                                                             Default = map.MapInfo.AccuracyDifficulty,
                                                             OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
                                                         },
-                                                        // new SetupSlider("Health") { Default = map.MapInfo.HealthDifficulty },
+                                                        new SetupSlider("Health")
+                                                        {
+                                                            Default = map.MapInfo.HealthDifficulty,
+                                                            OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value
+                                                        },
                                                     }
                                                 }
                                             }

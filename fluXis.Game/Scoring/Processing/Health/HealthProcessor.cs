@@ -33,8 +33,11 @@ public class HealthProcessor : JudgementDependant
     public Action OnFail { get; set; }
     public double FailTime { get; private set; }
 
-    public HealthProcessor()
+    protected float Difficulty { get; }
+
+    public HealthProcessor(float difficulty)
     {
+        Difficulty = difficulty;
         Health = new BindableDouble(DefaultHealth) { MinValue = 0, MaxValue = 100 };
     }
 
@@ -57,7 +60,7 @@ public class HealthProcessor : JudgementDependant
     {
         if (FailedAlready) return;
 
-        Health.Value += GetHealthIncreaseFor(result);
+        Health.Value += GetHealthIncreaseFor(result, Difficulty);
 
         if (meetsFailCondition(result))
             TriggerFailure();
@@ -79,17 +82,14 @@ public class HealthProcessor : JudgementDependant
         SmoothHealth = (float)Interpolation.Lerp(Health.Value, SmoothHealth, Math.Exp(-0.012 * Screen.Clock.ElapsedFrameTime));
     }
 
-    protected virtual float GetHealthIncreaseFor(HitResult result)
+    protected virtual float GetHealthIncreaseFor(HitResult result, float difficulty) => result.Judgement switch
     {
-        return result.Judgement switch
-        {
-            Judgement.Miss => -5f,
-            Judgement.Okay => -3f,
-            Judgement.Alright => 0f,
-            Judgement.Great => 0.025f,
-            Judgement.Perfect => 0.2f,
-            Judgement.Flawless => 0.3f,
-            _ => 0f
-        };
-    }
+        Judgement.Miss => 0.625f * -difficulty,
+        Judgement.Okay => 0.375f * -difficulty,
+        Judgement.Alright => 0f,
+        Judgement.Great => 0.225f - difficulty * 0.025f,
+        Judgement.Perfect => 0.6f - difficulty * 0.05f,
+        Judgement.Flawless => 1.1f - difficulty * 0.1f,
+        _ => 0
+    };
 }

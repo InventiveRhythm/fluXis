@@ -31,6 +31,7 @@ public class MapInfo
     public List<HitSoundFade> HitSoundFades { get; set; }
 
     public float AccuracyDifficulty { get; set; } = 8;
+    public float HealthDifficulty { get; set; } = 8;
 
     [JsonIgnore]
     public double StartTime => HitObjects[0].Time;

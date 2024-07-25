@@ -385,10 +385,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         var processor = null as HealthProcessor;
 
-        if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor();
-        else if (Mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
+        var difficulty = Map.HealthDifficulty == 0 ? 8 : Map.HealthDifficulty;
+        difficulty *= Mods.Any(m => m is HardMod) ? 1.2f : 1f;
 
-        processor ??= new HealthProcessor();
+        if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor(difficulty);
+        else if (Mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor(difficulty) { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
+
+        processor ??= new HealthProcessor(difficulty);
         processor.Screen = this;
         processor.OnFail = OnDeath;
 
