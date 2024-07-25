@@ -9,6 +9,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -242,7 +243,17 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
 
         accuracy.SetValue(map.AccuracyDifficulty);
-        health.SetValue(map.HealthDifficulty);
+
+        // fallback for older maps
+        health.SetValue(map.HealthDifficulty == 0 ? 8 : map.HealthDifficulty);
+
+        var windows = new HitWindows(map.AccuracyDifficulty, 1);
+        var timingsStr = "";
+
+        foreach (var timing in windows.GetTimings())
+            timingsStr += $"{timing.Judgement}: {timing.Milliseconds.ToStringInvariant("0.0")}ms\n";
+
+        accuracy.TooltipText = timingsStr.Trim();
 
         var background = new MapBackground(map);
         backgrounds.Add(background, 400);
