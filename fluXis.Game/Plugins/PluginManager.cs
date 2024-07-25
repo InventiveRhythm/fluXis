@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using fluXis.Game.Utils;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -40,6 +41,10 @@ public partial class PluginManager : Component
 
         try
         {
+            var location = assembly.Location;
+            using var fs = File.OpenRead(location);
+            var hash = MapUtils.GetHash(fs);
+
             var types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Plugin)));
 
             foreach (var type in types)
@@ -48,18 +53,21 @@ public partial class PluginManager : Component
 
                 if (plugin == null)
                 {
-                    Logger.Log($"Failed to load plugin {name}");
+                    Logger.Log($"Failed to load plugin {name}!");
                     continue;
                 }
 
+                plugin.AssemblyName = name;
+                plugin.Hash = hash;
+
                 plugin.CreateConfig(pluginStorage);
                 plugins.Add(plugin);
-                Logger.Log($"Loaded plugin {plugin}");
+                Logger.Log($"Loaded plugin {plugin}! [{name}]");
             }
         }
         catch (Exception e)
         {
-            Logger.Error(e, $"Failed to load plugin {name}");
+            Logger.Error(e, $"Failed to load plugin {name}!");
         }
     }
 

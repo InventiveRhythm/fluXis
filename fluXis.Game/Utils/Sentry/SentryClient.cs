@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
@@ -55,7 +56,7 @@ public partial class SentryClient : Component
                 Username = e.NewValue?.Username ?? "Guest User",
                 Id = $"{e.NewValue?.ID ?? 0}"
             });
-        });
+        }, true);
     }
 
     private void onEntry(LogEntry entry)
@@ -85,6 +86,12 @@ public partial class SentryClient : Component
             {
                 Game = game.Dependencies.Get<FluXisConfig>()?.GetCurrentConfigurationForLogging(),
                 Framework = game.Dependencies.Get<FrameworkConfigManager>()?.GetCurrentConfigurationForLogging(),
+            };
+
+            scope.Contexts["hashes"] = new
+            {
+                Game = game.ClientHash,
+                plugins = game.Plugins?.Plugins.ToDictionary(x => x.Name, x => x.Hash)
             };
         });
     }

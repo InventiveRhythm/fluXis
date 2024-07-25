@@ -86,6 +86,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected SkinManager SkinManager { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
 
+    public PluginManager Plugins { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
 
     private KeybindStore keybindStore;
@@ -122,6 +123,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     public static Version Version => Assembly.GetEntryAssembly()?.GetName().Version;
     public static bool IsDebug => Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug";
 
+    public string ClientHash { get; private set; }
+
     public virtual LightController CreateLightController() => new();
     public virtual IUpdatePerformer CreateUpdatePerformer() => null;
 
@@ -137,6 +140,17 @@ public partial class FluXisGameBase : osu.Framework.Game
     [BackgroundDependencyLoader]
     private void load(Storage storage, FrameworkConfigManager frameworkConfig)
     {
+        try
+        {
+            using var fs = File.OpenRead(typeof(FluXisGameBase).Assembly.Location);
+            ClientHash = MapUtils.GetHash(fs);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Failed to get client hash!");
+            ClientHash = MapUtils.GetHash(VersionString);
+        }
+
         frameworkLocale = frameworkConfig.GetBindable<string>(FrameworkSetting.Locale);
         frameworkLocale.BindValueChanged(_ => updateLanguage());
 
@@ -182,7 +196,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent(new ScoreManager(), true, true);
         cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));
 
-        cacheComponent(new PluginManager(), true);
+        cacheComponent(Plugins = new PluginManager(), true);
         cacheComponent(importManager = new ImportManager(), true, true);
         cacheComponent(SkinManager = new SkinManager(), true, true);
         cacheComponent(new LayoutManager(), true);

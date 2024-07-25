@@ -13,6 +13,9 @@ public abstract class Plugin
     public abstract string Author { get; }
     public abstract Version Version { get; }
 
+    public string AssemblyName { get; internal set; }
+    public string Hash { get; internal set; }
+
     private MapImporter importer;
 
     [CanBeNull]
