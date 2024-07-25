@@ -28,6 +28,9 @@ public class FluXisImport : MapImporter
 
     public override void Import(string path)
     {
+        if (!File.Exists(path))
+            return;
+
         if (Notification == null)
         {
             Notification = new TaskNotificationData
