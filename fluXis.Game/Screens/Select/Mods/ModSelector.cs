@@ -25,10 +25,13 @@ public partial class ModSelector : Container
     private FluXisSpriteText maxScoreText;
     private float scoreMultiplier = 1;
 
+    public float ScoreMultiplier { get; private set; } = 1;
+
     private readonly Dictionary<IMod, ModEntry> mappings = new();
 
     public BindableList<IMod> SelectedMods { get; } = new();
     public ModSelectRate RateMod { get; private set; }
+    public Action<float> RateChanged { get; set; }
 
     private ClickableContainer background;
     private ClickableContainer content;
@@ -248,7 +251,7 @@ public partial class ModSelector : Container
     {
         base.LoadComplete();
 
-        SelectedMods.BindCollectionChanged((_, __) => UpdateTotalMultiplier(), true);
+        SelectedMods.BindCollectionChanged((_, _) => UpdateTotalMultiplier(), true);
     }
 
     public void AddMapping(IMod mod, ModEntry entry)
@@ -284,7 +287,13 @@ public partial class ModSelector : Container
         SelectedMods.Remove(mod);
     }
 
-    public void UpdateTotalMultiplier() => this.TransformTo(nameof(scoreMultiplier), 1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f), 400, Easing.OutQuint);
+    public void UpdateTotalMultiplier()
+    {
+        var multiplier = 1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f);
+
+        ScoreMultiplier = multiplier;
+        this.TransformTo(nameof(scoreMultiplier), multiplier, 400, Easing.OutQuint);
+    }
 
     private void updateVisibility()
     {

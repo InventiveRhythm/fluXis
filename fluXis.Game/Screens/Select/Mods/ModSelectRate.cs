@@ -157,6 +157,7 @@ public partial class ModSelectRate : Container
             mod.Rate = rate;
             clock.RateTo(rate, 400, Easing.Out);
             Selector.UpdateTotalMultiplier();
+            Selector.RateChanged?.Invoke(rate);
 
             rateText.Text = $"{Math.Round(rate, 2).ToStringInvariant()}x";
 

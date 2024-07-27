@@ -99,6 +99,19 @@ public abstract partial class Footer : CompositeDrawable
         updateGamepadStatus(GamepadHandler.GamepadConnected);
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        var x = 0f;
+
+        foreach (var button in ButtonContainer)
+        {
+            button.X = x;
+            x += button.DrawWidth + 10;
+        }
+    }
+
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);

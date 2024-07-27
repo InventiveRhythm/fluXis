@@ -25,8 +25,8 @@ public partial class FooterButton : CompositeDrawable
         {
             text = value;
 
-            if (spriteText != null)
-                spriteText.Text = value;
+            if (SpriteText != null)
+                SpriteText.Text = value;
         }
     }
 
@@ -43,8 +43,9 @@ public partial class FooterButton : CompositeDrawable
     private Box hover;
     private Box flash;
     private Container content;
-    private FluXisSpriteText spriteText;
     private LocalisableString text = string.Empty;
+
+    protected FluXisSpriteText SpriteText { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -53,59 +54,55 @@ public partial class FooterButton : CompositeDrawable
         Height = 90;
         Y = 20;
         Anchor = Origin = Anchor.BottomLeft;
-        CornerRadius = 10;
-        Masking = true;
-        EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
 
-        InternalChildren = new Drawable[]
+        InternalChild = new Container
         {
-            new Box
+            RelativeSizeAxes = Axes.Both,
+            CornerRadius = 10,
+            Masking = true,
+            EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
-            },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            content = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Bottom = 10 },
-                Child = new FillFlowContainer
+                new Box
                 {
-                    AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Vertical,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Spacing = new Vector2(0, 5),
-                    Children = new Drawable[]
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background3
+                },
+                hover = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0
+                },
+                content = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Bottom = 10 },
+                    Child = new FillFlowContainer
                     {
-                        new SpriteIcon
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Vertical,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Spacing = new Vector2(0, 5),
+                        Children = new[]
                         {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Size = new Vector2(24),
-                            Icon = Icon,
-                            Shadow = true,
-                            Colour = AccentColor
-                        },
-                        spriteText = new FluXisSpriteText
-                        {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                            Text = Text,
-                            Shadow = true
+                            CreateIcon(),
+                            SpriteText = new FluXisSpriteText
+                            {
+                                Anchor = Anchor.TopCentre,
+                                Origin = Anchor.TopCentre,
+                                Text = Text,
+                                Shadow = true
+                            }
                         }
                     }
+                },
+                flash = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0,
+                    Colour = AccentColor
                 }
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                Colour = AccentColor
             }
         };
     }
@@ -119,6 +116,16 @@ public partial class FooterButton : CompositeDrawable
             content.FadeTo(enabled.NewValue ? 1 : .5f, 200, Easing.OutQuint);
         }, true);
     }
+
+    protected virtual Drawable CreateIcon() => new SpriteIcon
+    {
+        Anchor = Anchor.TopCentre,
+        Origin = Anchor.TopCentre,
+        Size = new Vector2(24),
+        Icon = Icon,
+        Shadow = true,
+        Colour = AccentColor
+    };
 
     public override void Show()
     {

@@ -78,21 +78,14 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     {
         return new[]
         {
-            new()
-            {
-                Text = LocalizationStrings.SongSelect.FooterMods,
-                Icon = FontAwesome6.Solid.LayerGroup,
-                AccentColor = Colour4.FromHex("#edbb98"),
-                Action = ModsAction,
-            },
+            new SelectModsButton(ModsAction),
             randomButton = new FooterButton
             {
                 Text = LocalizationStrings.SongSelect.FooterRandom,
                 Icon = FontAwesome6.Solid.Shuffle,
                 AccentColor = Colour4.FromHex("#ed98a7"),
                 Action = randomMap,
-                Index = 1,
-                Margin = new MarginPadding { Left = 160 }
+                Index = 1
             },
             options.Button = new FooterButton
             {
@@ -100,8 +93,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
                 Icon = FontAwesome6.Solid.Gear,
                 AccentColor = Colour4.FromHex("#98cbed"),
                 Action = OpenSettings,
-                Index = 2,
-                Margin = new MarginPadding { Left = 320 }
+                Index = 2
             }
         };
     }

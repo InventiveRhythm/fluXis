@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -11,6 +12,8 @@ public partial class ModList : FillFlowContainer<ModIcon>
 {
     private List<IMod> mods = new();
 
+    public bool AlwaysRefresh { get; set; } = false;
+
     public List<IMod> Mods
     {
         get => mods;
@@ -21,10 +24,12 @@ public partial class ModList : FillFlowContainer<ModIcon>
 
             value.RemoveAll(mod => mod is null);
 
+            value.Sort((a, b) => string.Compare(a.Acronym, b.Acronym, StringComparison.Ordinal));
+
             var current = mods.Select(mod => mod.Acronym).ToList();
             var valueList = value.Select(mod => mod.Acronym).ToList();
 
-            if (current.SequenceEqual(valueList))
+            if (current.SequenceEqual(valueList) && !AlwaysRefresh)
                 return;
 
             mods.RemoveAll(mod => mod is null);
@@ -37,9 +42,12 @@ public partial class ModList : FillFlowContainer<ModIcon>
 
     public int ModSpacing { get; set; } = 10;
 
-    public ModList()
+    private Action<ModIcon> createIcon { get; }
+
+    public ModList(Action<ModIcon> createIcon = null)
     {
         AutoSizeAxes = Axes.Both;
+        this.createIcon = createIcon;
     }
 
     [BackgroundDependencyLoader]
@@ -57,9 +65,11 @@ public partial class ModList : FillFlowContainer<ModIcon>
     public void ReloadList()
     {
         Clear();
-        InternalChildren = Mods.Select(mod => new ModIcon
+        InternalChildren = Mods.Select(mod =>
         {
-            Mod = mod
+            var icon = new ModIcon { Mod = mod };
+            createIcon?.Invoke(icon);
+            return icon;
         }).ToArray();
     }
 }
