@@ -12,6 +12,8 @@ using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Select.Footer;
 
@@ -93,5 +95,15 @@ public partial class SelectModsButton : FooterButton
             SpriteText.Text = LocalizationStrings.SongSelect.FooterMods;
             SpriteText.FadeColour(Colour4.White, 200);
         }
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e) => true;
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (e.Button != MouseButton.Right || !IsHovered)
+            return;
+
+        modSelector.DeselectAll();
     }
 }

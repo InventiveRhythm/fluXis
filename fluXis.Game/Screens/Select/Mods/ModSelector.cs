@@ -287,6 +287,13 @@ public partial class ModSelector : Container
         SelectedMods.Remove(mod);
     }
 
+    public void DeselectAll()
+    {
+        sampleDeselect?.Play();
+        SelectedMods.Clear();
+        RateMod.RateBindable.Value = 1f;
+    }
+
     public void UpdateTotalMultiplier()
     {
         var multiplier = 1f + SelectedMods.Sum(mod => mod.ScoreMultiplier - 1f);
