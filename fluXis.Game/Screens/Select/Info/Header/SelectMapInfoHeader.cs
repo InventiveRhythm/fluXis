@@ -9,6 +9,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
+using fluXis.Game.Mods;
 using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Select.Mods;
 using fluXis.Game.Utils;
@@ -200,6 +201,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         base.LoadComplete();
 
         maps.MapBindable.BindValueChanged(mapChanged, true);
+        mods.SelectedMods.BindCollectionChanged((_, _) => updateDifficultyValues(maps.MapBindable.Value, mods.SelectedMods));
         mods.RateMod.RateBindable.BindValueChanged(rateChanged, true);
     }
 
@@ -242,18 +244,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         longNotePercentage.SetValue(map.Filters.LongNotePercentage * 100);
         longNotePercentage.TooltipText = $"{map.Filters.NoteCount} / {map.Filters.LongNoteCount}";
 
-        accuracy.SetValue(map.AccuracyDifficulty);
-
-        // fallback for older maps
-        health.SetValue(map.HealthDifficulty == 0 ? 8 : map.HealthDifficulty);
-
-        var windows = new HitWindows(map.AccuracyDifficulty, 1);
-        var timingsStr = "";
-
-        foreach (var timing in windows.GetTimings())
-            timingsStr += $"{timing.Judgement}: {timing.Milliseconds.ToStringInvariant()}ms\n";
-
-        accuracy.TooltipText = timingsStr.Trim();
+        updateDifficultyValues(map, mods.SelectedMods);
 
         var background = new MapBackground(map);
         backgrounds.Add(background, 400);
@@ -262,6 +253,21 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         var cover = new MapCover(map.MapSet);
         covers.Add(cover, 400);
         cover.FadeInFromZero(400, Easing.OutQuint);
+    }
+
+    private void updateDifficultyValues(RealmMap map, IList<IMod> list)
+    {
+        var multiplier = list.Any(m => m is HardMod) ? 1.5f : 1;
+
+        var acc = map.AccuracyDifficulty * multiplier;
+        var hp = (map.HealthDifficulty == 0 ? 8 : map.HealthDifficulty) * multiplier;
+
+        accuracy.SetValue(acc);
+        health.SetValue(hp);
+
+        var windows = new HitWindows(acc, 1);
+        var timingsStr = windows.GetTimings().Aggregate("", (current, timing) => current + $"{timing.Judgement}: {timing.Milliseconds.ToStringInvariant("0.#")}ms\n");
+        accuracy.TooltipText = timingsStr.Trim();
     }
 
     private void updateValues(RealmMap map, float rate)
