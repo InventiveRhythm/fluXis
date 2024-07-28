@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map.Structures;
-using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay;
 
-public partial class EventHandler<T> : Component where T : ITimedObject
+public partial class EventHandler<T> : CompositeComponent where T : ITimedObject
 {
     private List<T> objects { get; }
     private List<T> previous { get; } = new();
