@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Audio;
+using fluXis.Game.Configuration;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
@@ -70,7 +71,7 @@ public partial class ScoreList : GridContainer
     private SelectScreen screen { get; set; }
 
     private RealmMap map;
-    private ScoreListType type = ScoreListType.Local;
+    private Bindable<ScoreListType> type;
 
     private CancellationTokenSource cancellationTokenSource;
     private CancellationToken cancellationToken;
@@ -82,8 +83,10 @@ public partial class ScoreList : GridContainer
     private LoadingIcon loadingIcon;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisConfig config)
     {
+        type = config.GetBindable<ScoreListType>(FluXisSetting.LeaderboardType);
+
         RelativeSizeAxes = Axes.Both;
         RowDimensions = new[]
         {
@@ -229,7 +232,7 @@ public partial class ScoreList : GridContainer
 
     protected override void LoadComplete()
     {
-        ScheduleAfterChildren(() => setType(ScoreListType.Local));
+        ScheduleAfterChildren(() => setType(type.Value));
 
         maps.MapBindable.BindValueChanged(onMapChanged, true);
     }
@@ -243,7 +246,7 @@ public partial class ScoreList : GridContainer
 
     private void setType(ScoreListType type)
     {
-        this.type = type;
+        this.type.Value = type;
         typeSwitcher.Children.ForEach(c => c.Selected = c.Type == type);
     }
 
@@ -282,7 +285,7 @@ public partial class ScoreList : GridContainer
     {
         List<ScoreListEntry> scores = new();
 
-        switch (type)
+        switch (type.Value)
         {
             case ScoreListType.Local:
                 scoreManager.OnMap(map.ID).ForEach(s =>
@@ -306,7 +309,10 @@ public partial class ScoreList : GridContainer
                 });
                 break;
 
-            case ScoreListType.Global or ScoreListType.Country or ScoreListType.Club:
+            case ScoreListType.Global
+                or ScoreListType.Country
+                or ScoreListType.Friends
+                or ScoreListType.Club:
                 if (map.OnlineID == -1)
                 {
                     showNotSubmittedError();
@@ -373,7 +379,7 @@ public partial class ScoreList : GridContainer
             return null;
         }
 
-        var req = new MapLeaderboardRequest(type, map.OnlineID);
+        var req = new MapLeaderboardRequest(type.Value, map.OnlineID);
         api.PerformRequest(req);
 
         if (cancellationToken.IsCancellationRequested)

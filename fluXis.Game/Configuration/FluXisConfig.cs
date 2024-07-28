@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using fluXis.Game.Screens.Select.Info.Scores;
 using fluXis.Game.Utils;
 using osu.Framework.Configuration;
 using osu.Framework.Platform;
@@ -59,6 +60,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
         SetDefault(FluXisSetting.SortingMode, MapUtils.SortingMode.Title);
         SetDefault(FluXisSetting.SortingInverse, false);
+        SetDefault(FluXisSetting.LeaderboardType, ScoreListType.Local);
 
         // UI // Editor
         SetDefault(FluXisSetting.EditorDim, 0.4f, 0f, .8f, 0.2f);
@@ -132,6 +134,7 @@ public enum FluXisSetting
     LoopMode,
     SortingMode,
     SortingInverse,
+    LeaderboardType,
 
     // UI // Editor
     EditorDim,
