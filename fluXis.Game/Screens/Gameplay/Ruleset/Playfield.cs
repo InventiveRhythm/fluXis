@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
@@ -127,6 +128,10 @@ public partial class Playfield : Container
     {
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
+
+        var screenWidth = screen.DrawWidth;
+        var relativePos = (X + screenWidth / 2) / screenWidth;
+        screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(relativePos * 2 - 1, -1, 1);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

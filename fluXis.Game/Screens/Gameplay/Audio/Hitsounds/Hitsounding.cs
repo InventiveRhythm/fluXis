@@ -7,6 +7,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
@@ -23,6 +24,8 @@ public partial class Hitsounding : CompositeDrawable
     private const string hit_snare = "snare";
 
     public static IEnumerable<string> Defaults { get; } = new[] { hit_normal, hit_kick, hit_clap, hit_snare };
+
+    public Bindable<double> PlayfieldPanning { get; } = new();
 
     private List<HitSoundChannel> channels { get; } = new();
 
@@ -60,6 +63,7 @@ public partial class Hitsounding : CompositeDrawable
                 continue;
 
             s.Frequency.BindTo(rate);
+            s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
             var fade = fades.Where(x => x.HitSound == sample).ToList();
             channels.Add(new HitSoundChannel($"{DEFAULT_PREFIX}{sample}", s, volume, fade));
         }
@@ -77,6 +81,7 @@ public partial class Hitsounding : CompositeDrawable
                     continue;
 
                 s.Frequency.BindTo(rate);
+                s.AddAdjustment(AdjustableProperty.Balance, PlayfieldPanning);
                 var fade = fades.Where(x => x.HitSound == name).ToList();
                 channels.Add(new HitSoundChannel(name, s, volume, fade));
             }
