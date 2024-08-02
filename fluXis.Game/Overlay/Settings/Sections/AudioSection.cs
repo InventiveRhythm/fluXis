@@ -22,7 +22,9 @@ public partial class AudioSection : SettingsSection
             Divider,
             new AudioVolumeSection(),
             Divider,
-            new AudioOffsetSection()
+            new AudioOffsetSection(),
+            Divider,
+            new AudioPanningSection()
         });
     }
 }

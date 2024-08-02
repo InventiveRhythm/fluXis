@@ -41,6 +41,7 @@ public partial class Playfield : Container
     private Bindable<float> topCoverHeight;
     private Bindable<float> bottomCoverHeight;
     private Bindable<ScrollDirection> scrollDirection;
+    private Bindable<double> hitsoundPanStrength;
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
@@ -56,6 +57,7 @@ public partial class Playfield : Container
         topCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverTop);
         bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
+        hitsoundPanStrength = config.GetBindable<double>(FluXisSetting.HitsoundPanning);
 
         dependencies.CacheAs(Manager = new HitObjectManager { Masking = true });
 
@@ -131,7 +133,7 @@ public partial class Playfield : Container
 
         var screenWidth = screen.DrawWidth;
         var relativePos = (X + screenWidth / 2) / screenWidth;
-        screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(relativePos * 2 - 1, -1, 1);
+        screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(relativePos * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

@@ -71,6 +71,10 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
         SetDefault(FluXisSetting.HitSoundVolume, 1d, 0d, 1d, 0.01d);
 
+        // Audio // Panning
+        SetDefault(FluXisSetting.UIPanning, 0.75d, 0d, 1d, 0.01d);
+        SetDefault(FluXisSetting.HitsoundPanning, 1d, 0d, 1d, 0.01d);
+
         // Audio // Offset
         SetDefault(FluXisSetting.GlobalOffset, 0, -1000, 1000, 1);
         SetDefault(FluXisSetting.DisableOffsetInReplay, true);
@@ -144,6 +148,12 @@ public enum FluXisSetting
     // Audio
     InactiveVolume,
     HitSoundVolume,
+
+    // Audio // Panning
+    UIPanning,
+    HitsoundPanning,
+
+    // Audio // Offset
     GlobalOffset,
     DisableOffsetInReplay,
 

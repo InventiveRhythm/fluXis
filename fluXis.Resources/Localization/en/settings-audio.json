@@ -14,5 +14,10 @@
   "audio-offset-description": "Changes the audio offset for all songs. Higher means objects appear later.",
   "disable-offset-in-replay": "Disable Offset in Replays",
   "disable-offset-in-replay-description": "Disables the audio offset when viewing replays. This is useful for recording videos of replays.",
-  "open-offset-wizard": "Open Offset wizard"
+  "open-offset-wizard": "Open Offset wizard",
+  "panning-title": "Panning",
+  "ui-panning": "User Interface",
+  "ui-panning-description": "Changes the panning for click and hover sounds based on the mouse position.",
+  "hitsound-panning": "Hitsounds",
+  "hitsound-panning-description": "Changes the panning for hitsounds based on the playfield position."
 }

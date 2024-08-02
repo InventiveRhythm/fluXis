@@ -42,4 +42,16 @@ public class SettingsAudioStrings : LocalizationCategory
     public TranslatableString OpenOffsetWizard => Get("open-offset-wizard", "Open Offset wizard");
 
     #endregion
+
+    #region Panning
+
+    public TranslatableString Panning => Get("panning-title", "Panning");
+
+    public TranslatableString UIPanning => Get("ui-panning", "User Interface");
+    public TranslatableString UIPanningDescription => Get("ui-panning-description", "Changes the panning for click and hover sounds based on the mouse position.");
+
+    public TranslatableString HitsoundPanning => Get("hitsound-panning", "Hitsounds");
+    public TranslatableString HitsoundPanningDescription => Get("hitsound-panning-description", "Changes the panning for hitsounds based on the playfield position.");
+
+    #endregion
 }
