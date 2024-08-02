@@ -33,6 +33,7 @@ public partial class GameplayHUD : Container
         componentLookup.Add("HitError", typeof(HitErrorBar));
         componentLookup.Add("Judgement", typeof(JudgementDisplay));
         componentLookup.Add("JudgementCounter", typeof(JudgementCounter));
+        componentLookup.Add("PerformanceRating", typeof(PerformanceRatingDisplay));
         componentLookup.Add("Progress", typeof(Progressbar));
     }
 

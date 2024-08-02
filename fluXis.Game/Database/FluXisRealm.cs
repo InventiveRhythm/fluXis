@@ -33,8 +33,9 @@ public class FluXisRealm : IDisposable
     ///    - RealmMap.LastLocalUpdate, RealmMap.LastOnlineUpdate, RealmMap.LastPlayed,
     ///    - RealmMap.OnlineHash, RealmMap.AccuracyDifficulty and RealmMap.HealthDifficulty
     /// 14 - Replaced RealmMapFilters effects with a bitfield
+    /// 15 - Add `PerformanceRating` and `ScrollSpeed` to `RealmScore` and change OnlineID to long
     /// </summary>
-    private const int schema_version = 14;
+    private const int schema_version = 15;
 
     private Realm updateRealm;
 

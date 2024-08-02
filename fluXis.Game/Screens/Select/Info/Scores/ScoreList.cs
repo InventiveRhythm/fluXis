@@ -443,7 +443,7 @@ public partial class ScoreList : GridContainer
             return;
         }
 
-        var realmScore = scoreManager.Add(map.ID, score.ToScoreInfo(), (int)score.ID);
+        var realmScore = scoreManager.Add(map.ID, score.ToScoreInfo(), score.ID);
 
         var notification = new TaskNotificationData
         {

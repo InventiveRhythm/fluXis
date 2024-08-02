@@ -492,7 +492,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     var resData = request.Response?.Data;
 
                     if (request.IsSuccessful && resData?.Score != null)
-                        scores.UpdateOnlineID(id, (int)resData.Score.ID);
+                        scores.UpdateOnlineID(id, resData.Score.ID);
 
                     Schedule(() => scoreSubmissionOverlay.FadeOut(FADE_DURATION));
                 }

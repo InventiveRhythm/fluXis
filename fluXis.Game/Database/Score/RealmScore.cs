@@ -14,8 +14,9 @@ public class RealmScore : RealmObject
     [PrimaryKey]
     public Guid ID { get; set; }
 
-    public int OnlineID { get; set; } = -1;
+    public long OnlineID { get; set; } = -1;
     public float Accuracy { get; set; }
+    public double PerformanceRating { get; set; }
     public string Grade { get; set; }
     public int Score { get; set; }
     public int MaxCombo { get; set; }
@@ -29,6 +30,7 @@ public class RealmScore : RealmObject
     public Guid MapID { get; set; }
     public DateTimeOffset Date { get; set; }
     public long PlayerID { get; set; }
+    public float ScrollSpeed { get; set; }
 
     [Ignored]
     public ScoreRank Rank
@@ -49,50 +51,48 @@ public class RealmScore : RealmObject
     {
     }
 
-    public static RealmScore FromScoreInfo(Guid map, ScoreInfo info, int onlineID = -1)
+    public static RealmScore FromScoreInfo(Guid map, ScoreInfo info, long onlineID = -1) => new()
     {
-        return new RealmScore
-        {
-            ID = Guid.NewGuid(),
-            OnlineID = onlineID,
-            Accuracy = info.Accuracy,
-            Rank = info.Rank,
-            Score = info.Score,
-            MaxCombo = info.MaxCombo,
-            Flawless = info.Flawless,
-            Perfect = info.Perfect,
-            Great = info.Great,
-            Alright = info.Alright,
-            Okay = info.Okay,
-            Miss = info.Miss,
-            Mods = string.Join(' ', info.Mods),
-            MapID = map,
-            Date = TimeUtils.GetFromSeconds(info.Timestamp),
-            PlayerID = info.PlayerID
-        };
-    }
+        ID = Guid.NewGuid(),
+        OnlineID = onlineID,
+        Accuracy = info.Accuracy,
+        PerformanceRating = info.PerformanceRating,
+        Rank = info.Rank,
+        Score = info.Score,
+        MaxCombo = info.MaxCombo,
+        Flawless = info.Flawless,
+        Perfect = info.Perfect,
+        Great = info.Great,
+        Alright = info.Alright,
+        Okay = info.Okay,
+        Miss = info.Miss,
+        Mods = string.Join(' ', info.Mods),
+        MapID = map,
+        Date = TimeUtils.GetFromSeconds(info.Timestamp),
+        PlayerID = info.PlayerID,
+        ScrollSpeed = info.ScrollSpeed
+    };
 
-    public ScoreInfo ToScoreInfo()
+    public ScoreInfo ToScoreInfo() => new()
     {
-        return new ScoreInfo
-        {
-            Accuracy = Accuracy,
-            Rank = Rank,
-            Score = Score,
-            Combo = 0,
-            MaxCombo = MaxCombo,
-            Flawless = Flawless,
-            Perfect = Perfect,
-            Great = Great,
-            Alright = Alright,
-            Okay = Okay,
-            Miss = Miss,
-            HitResults = null,
-            PlayerID = PlayerID,
-            MapID = -1,
-            MapHash = null,
-            Timestamp = Date.ToUnixTimeSeconds(),
-            Mods = Mods.Split(' ').ToList()
-        };
-    }
+        Accuracy = Accuracy,
+        PerformanceRating = PerformanceRating,
+        Rank = Rank,
+        Score = Score,
+        Combo = 0,
+        MaxCombo = MaxCombo,
+        Flawless = Flawless,
+        Perfect = Perfect,
+        Great = Great,
+        Alright = Alright,
+        Okay = Okay,
+        Miss = Miss,
+        HitResults = null,
+        PlayerID = PlayerID,
+        MapID = -1,
+        MapHash = null,
+        Timestamp = Date.ToUnixTimeSeconds(),
+        Mods = Mods.Split(' ').ToList(),
+        ScrollSpeed = ScrollSpeed
+    };
 }

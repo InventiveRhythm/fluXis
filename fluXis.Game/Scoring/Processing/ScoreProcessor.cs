@@ -22,6 +22,7 @@ public class ScoreProcessor : JudgementDependant
     public List<IMod> Mods { get; init; }
 
     public BindableFloat Accuracy { get; } = new(100);
+    public BindableFloat PerformanceRating { get; } = new();
     public Bindable<ScoreRank> Rank { get; } = new();
     public int Score { get; private set; }
     public BindableInt Combo { get; } = new();
@@ -37,6 +38,8 @@ public class ScoreProcessor : JudgementDependant
     public bool FullFlawless => Flawless == totalNotes && Miss == 0;
     public bool FullCombo => Combo.Value == totalNotes;
 
+    private float mapRating => Map.Filters.NotesPerSecond;
+
     private int totalNotes => Flawless + Perfect + Great + Alright + Okay + Miss;
     private float ratedNotes => Flawless + Perfect * 0.98f + Great * 0.65f + Alright * 0.25f + Okay * 0.1f;
 
@@ -46,6 +49,7 @@ public class ScoreProcessor : JudgementDependant
     public void Recalculate()
     {
         Accuracy.Value = totalNotes == 0 ? 100 : ratedNotes / totalNotes * 100;
+        PerformanceRating.Value = (float)getPerformance();
         Rank.Value = Accuracy.Value switch
         {
             100 => ScoreRank.X,
@@ -78,27 +82,58 @@ public class ScoreProcessor : JudgementDependant
         return accBased + comboBased;
     }
 
-    public ScoreInfo ToScoreInfo(APIUser player = null)
+    private double getPerformance()
     {
-        return new ScoreInfo
+        var val = Math.Pow(6 * Math.Max(1, mapRating / .1f), 2) / 2500; // base curve
+        val *= Math.Max(0, 5 * (Accuracy.Value / 100f) - 4); // accuracy
+        val *= 1 + .1f * Math.Min(1, ratedNotes / 2500); // length
+        val *= Math.Pow(.99, Miss); // misses
+
+        if (Mods.Any(x => x is RateMod))
         {
-            Accuracy = Accuracy.Value,
-            Rank = Rank.Value,
-            Score = Score,
-            Combo = Combo.Value,
-            MaxCombo = MaxCombo,
-            Flawless = Flawless,
-            Perfect = Perfect,
-            Great = Great,
-            Alright = Alright,
-            Okay = Okay,
-            Miss = Miss,
-            HitResults = JudgementProcessor.Results,
-            MapID = Map.OnlineID,
-            PlayerID = player?.ID ?? -1,
-            MapHash = MapInfo.Hash,
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            Mods = Mods.Select(m => m.Acronym).ToList()
-        };
+            var rate = Mods.OfType<RateMod>().First().Rate;
+
+            if (rate < 1)
+                rate *= 0.67f;
+            else
+                rate *= 1.1f;
+
+            val *= rate;
+        }
+
+        if (Mods.Any(x => x is EasyMod))
+            val *= 0.8;
+        if (Mods.Any(x => x is HardMod))
+            val *= 1.05;
+        if (Mods.Any(x => x is NoFailMod))
+            val *= 0.4;
+        if (Mods.Any(x => x is NoSvMod))
+            val *= 0.6;
+        if (Mods.Any(x => x is NoLnMod))
+            val *= 0.6;
+
+        return val;
     }
+
+    public ScoreInfo ToScoreInfo(APIUser player = null) => new()
+    {
+        Accuracy = Accuracy.Value,
+        PerformanceRating = PerformanceRating.Value,
+        Rank = Rank.Value,
+        Score = Score,
+        Combo = Combo.Value,
+        MaxCombo = MaxCombo,
+        Flawless = Flawless,
+        Perfect = Perfect,
+        Great = Great,
+        Alright = Alright,
+        Okay = Okay,
+        Miss = Miss,
+        HitResults = JudgementProcessor.Results,
+        MapID = Map.OnlineID,
+        PlayerID = player?.ID ?? -1,
+        MapHash = MapInfo.Hash,
+        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+        Mods = Mods.Select(m => m.Acronym).ToList()
+    };
 }

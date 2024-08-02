@@ -17,6 +17,7 @@ public static class RealmObjectUtils
         c.ShouldMapProperty = pi => pi.SetMethod?.IsPublic == true;
         Logger.LogPrint("Creating write mapper", LoggingTarget.Database, LogLevel.Debug);
 
+        c.CreateMap<RealmScore, RealmScore>();
         c.CreateMap<RealmMapMetadata, RealmMapMetadata>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();
         c.CreateMap<RealmMap, RealmMap>()

@@ -41,7 +41,7 @@ public partial class ScoreManager : CompositeComponent
         initialProcessing = false;
     }
 
-    public RealmScore Add(Guid map, ScoreInfo score, int onlineID = -1) => realm.RunWrite(r =>
+    public RealmScore Add(Guid map, ScoreInfo score, long onlineID = -1) => realm.RunWrite(r =>
     {
         var rScore = r.Add(RealmScore.FromScoreInfo(map, score, onlineID)).Detach();
 
@@ -78,7 +78,7 @@ public partial class ScoreManager : CompositeComponent
         });
     });
 
-    public void UpdateOnlineID(Guid score, int id) => realm.RunWrite(r =>
+    public void UpdateOnlineID(Guid score, long id) => realm.RunWrite(r =>
     {
         var rScore = r.Find<RealmScore>(score);
 
