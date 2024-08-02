@@ -25,6 +25,7 @@ using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.API.Models.Groups;
 using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Overlay.Mouse;
@@ -184,6 +185,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
         cacheComponent(APIClient as FluxelClient);
         cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
+        cacheComponent(new ChatClient(), true, true);
 
         var users = new UserCache();
         cacheComponent(users, true, true);

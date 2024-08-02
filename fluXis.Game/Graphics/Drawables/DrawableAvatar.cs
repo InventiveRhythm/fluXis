@@ -1,9 +1,11 @@
+using System;
 using fluXis.Game.Online;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Graphics.Drawables;
 
@@ -19,6 +21,8 @@ public partial class DrawableAvatar : Sprite
 
     [Resolved]
     private UserCache? users { get; set; }
+
+    public Action? ClickAction { get; init; }
 
     private APIUser? user;
 
@@ -73,6 +77,12 @@ public partial class DrawableAvatar : Sprite
         setTexture();
 
         registerCallback();
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        ClickAction?.Invoke();
+        return true;
     }
 
     protected override void Dispose(bool isDisposing)

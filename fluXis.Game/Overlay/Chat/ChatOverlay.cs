@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -8,13 +7,14 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
-using fluXis.Game.Online.API.Models.Chat;
+using fluXis.Game.Online.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Chat.UI;
-using fluXis.Game.Overlay.Notifications;
 using fluXis.Shared.API.Packets.Chat;
+using fluXis.Shared.Components.Chat;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -31,12 +31,11 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
     private IAPIClient api { get; set; }
 
     [Resolved]
-    private NotificationManager notifications { get; set; }
+    private ChatClient client { get; set; }
 
-    public string Channel { get; set; } = "general";
+    public Bindable<string> Channel { get; } = new("general");
 
-    private readonly Dictionary<string, List<ChatMessage>> messages = new();
-
+    private FillFlowContainer<ChatChannelButton> channels;
     private FluXisTextBox textBox;
     private FillFlowContainer<DrawableChatMessage> flow;
     private FluXisScrollContainer scroll;
@@ -51,10 +50,10 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         InternalChildren = new Drawable[]
         {
-            new ClickableContainer
+            new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Action = Hide,
+                OnClickAction = Hide,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -64,9 +63,9 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             },
             content = new ClickableContainer
             {
-                RelativeSizeAxes = Axes.Both,
+                RelativeSizeAxes = Axes.X,
                 Y = 50,
-                Height = 0.4f,
+                Height = 530,
                 Anchor = Anchor.BottomCentre,
                 Origin = Anchor.BottomCentre,
                 Children = new Drawable[]
@@ -95,17 +94,23 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     new FluXisScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Padding = new MarginPadding(10) { Bottom = 80 },
+                                        Padding = new MarginPadding(20) { Bottom = 80 },
                                         Child = new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(0, 10),
+                                            Spacing = new Vector2(10),
                                             Children = new Drawable[]
                                             {
                                                 new FluXisSpriteText { Text = "Channels" },
-                                                new ChatChannelButton { Channel = "general" }
+                                                channels = new FillFlowContainer<ChatChannelButton>
+                                                {
+                                                    RelativeSizeAxes = Axes.X,
+                                                    AutoSizeAxes = Axes.Y,
+                                                    Direction = FillDirection.Vertical,
+                                                    Spacing = new Vector2(10),
+                                                }
                                             }
                                         }
                                     },
@@ -115,7 +120,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                         Height = 80,
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
-                                        Padding = new MarginPadding(10),
+                                        Padding = new MarginPadding(20),
                                         Child = new FluXisButton
                                         {
                                             RelativeSizeAxes = Axes.Both,
@@ -134,7 +139,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Masking = true,
-                                        Padding = new MarginPadding { Bottom = 40 },
+                                        Padding = new MarginPadding { Bottom = 60 },
                                         Child = scroll = new FluXisScrollContainer
                                         {
                                             ScrollbarAnchor = Anchor.TopRight,
@@ -144,17 +149,20 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                 RelativeSizeAxes = Axes.X,
                                                 AutoSizeAxes = Axes.Y,
                                                 Direction = FillDirection.Vertical,
-                                                Spacing = new Vector2(0, 10)
+                                                Spacing = new Vector2(0, 12)
                                             }
                                         }
                                     },
                                     textBox = new FluXisTextBox
                                     {
-                                        Anchor = Anchor.BottomLeft,
-                                        Origin = Anchor.BottomLeft,
+                                        PlaceholderText = "Type your message here...",
                                         RelativeSizeAxes = Axes.X,
-                                        Height = 30,
-                                        PlaceholderText = "Type your message here..."
+                                        Height = 50,
+                                        SidePadding = 15,
+                                        CornerRadius = 8,
+                                        FontSize = FluXisSpriteText.GetWebFontSize(16),
+                                        Anchor = Anchor.BottomLeft,
+                                        Origin = Anchor.BottomLeft
                                     }
                                 }
                             }
@@ -178,52 +186,26 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         textBox.OnCommit += (sender, _) =>
         {
-            api.SendPacketAsync(ChatMessagePacket.CreateC2S(textBox.Text, Channel));
+            client.GetChannel(Channel.Value)?.SendMessage(sender.Text);
             sender.Text = "";
         };
 
         api.Status.BindValueChanged(updateStatus, true);
 
-        api.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, response =>
+        client.Channels.ForEach(addChannel);
+        client.ChannelJoined += addChannel;
+        client.ChannelParted += removeChannel;
+
+        Channel.BindValueChanged(e =>
         {
-            if (response.Data == null)
-                return;
-
-            var channel = response.Data.ChatMessage.Channel;
-            var list = messages.GetValueOrDefault(channel, new List<ChatMessage>());
-
-            var message = (ChatMessage)response.Data.ChatMessage;
-            list.Add(message);
-            messages[channel] = list;
-
-            if (channel == Channel)
-                addMessage(message);
-        });
-
-        api.RegisterListener<ChatHistoryPacket>(EventType.ChatHistory, response =>
-        {
-            var data = response.Data!.Messages.OrderBy(x => x.CreatedAtUnix).Cast<ChatMessage>().ToArray();
-            var first = data.FirstOrDefault();
-
-            if (first == null)
-                return;
-
-            var channel = first.Channel;
-
-            var list = messages.GetValueOrDefault(channel, new List<ChatMessage>());
-            list.AddRange(data);
-            messages[channel] = list;
-
-            ScheduleAfterChildren(() => loading.FadeOut(200));
-
-            if (channel != Channel) return;
-
-            foreach (var message in data) addMessage(message);
+            flow.Clear();
+            var chan = client.GetChannel(e.NewValue);
+            chan?.Messages.ForEach(addMessage);
         });
 
         api.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, res =>
         {
-            if (!res.Success)
+            /*if (!res.Success)
             {
                 notifications.SendError(res.Message);
                 return;
@@ -235,46 +217,60 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 message?.RemoveMessage(res.Data!.MessageID);
                 if (message?.Messages.Count == 0)
                     flow.Remove(message, true);
-            });
-        });
-
-        if (api.Status.Value == ConnectionStatus.Online)
-            api.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
-    }
-
-    private void updateStatus(ValueChangedEvent<ConnectionStatus> e)
-    {
-        Schedule(() =>
-        {
-            switch (e.NewValue)
-            {
-                case ConnectionStatus.Online:
-                    api.SendPacketAsync(ChatHistoryPacket.CreateC2S(Channel));
-                    break;
-
-                default:
-                    flow.Clear();
-                    messages.Clear();
-                    loading.FadeIn(200);
-                    break;
-            }
+            });*/
         });
     }
 
-    private void addMessage(ChatMessage message)
+    private void updateStatus(ValueChangedEvent<ConnectionStatus> e) => Schedule(() =>
     {
-        Schedule(() =>
+        switch (e.NewValue)
         {
-            var last = flow.Count > 0 ? flow[^1] : null;
+            case ConnectionStatus.Online:
+                loading.Hide();
+                break;
 
-            if (last != null && last.InitialMessage.Sender.ID == message.Sender.ID)
-                last.AddMessage(message);
-            else
-                flow.Add(new DrawableChatMessage { InitialMessage = message });
+            default:
+                flow.Clear();
+                loading.Show();
+                break;
+        }
+    });
 
+    private void addChannel(ChatChannel channel)
+    {
+        channels.Add(new ChatChannelButton(channel, Channel.GetBoundCopy()));
+
+        channel.Messages.ForEach(addMessage);
+        channel.OnMessage += addMessage;
+    }
+
+    private void removeChannel(ChatChannel channel)
+    {
+        var button = channels.FirstOrDefault(x => x.Channel == channel);
+
+        if (button is null)
+            return;
+
+        channel.OnMessage -= addMessage;
+        channels.Remove(button, true);
+    }
+
+    private void addMessage(IChatMessage message) => Schedule(() =>
+    {
+        if (message.Channel != Channel.Value)
+            return;
+
+        var atEnd = scroll.IsScrolledToEnd();
+        var last = flow.Count > 0 ? flow[^1] : null;
+
+        if (last != null && last.InitialMessage.Sender.ID == message.Sender.ID && message.CreatedAtUnix - last.Messages.Last().CreatedAtUnix < 60 * 5)
+            last.AddMessage(message);
+        else
+            flow.Add(new DrawableChatMessage { InitialMessage = message });
+
+        if (atEnd)
             ScheduleAfterChildren(() => scroll.ScrollToEnd());
-        });
-    }
+    });
 
     protected override void PopIn()
     {

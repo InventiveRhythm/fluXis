@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Text;
-using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using fluXis.Shared.API.Packets.Chat;
+using fluXis.Shared.Components.Chat;
 using fluXis.Shared.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -32,8 +32,8 @@ public partial class DrawableChatMessage : Container
     [Resolved]
     private IAPIClient api { get; set; }
 
-    public ChatMessage InitialMessage { get; set; }
-    public List<ChatMessage> Messages { get; } = new();
+    public IChatMessage InitialMessage { get; set; }
+    public List<IChatMessage> Messages { get; } = new();
 
     private FillFlowContainer<MessageText> flow;
 
@@ -42,8 +42,6 @@ public partial class DrawableChatMessage : Container
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
-
-        ClickableContainer avatarContainer;
 
         var nameColor = FluXisColors.Text;
 
@@ -55,19 +53,26 @@ public partial class DrawableChatMessage : Container
 
         InternalChildren = new Drawable[]
         {
-            avatarContainer = new ClickableContainer
+            new LoadWrapper<DrawableAvatar>
             {
-                Size = new Vector2(40),
+                Size = new Vector2(48),
                 Masking = true,
-                CornerRadius = 5,
-                Action = () => profile.ShowUser(InitialMessage.Sender.ID)
+                CornerRadius = 8,
+                LoadContent = () => new DrawableAvatar(InitialMessage.Sender)
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    ClickAction = () => profile.ShowUser(InitialMessage.Sender.ID),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
+                },
+                OnComplete = a => a.FadeInFromZero(400)
             },
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
-                Padding = new MarginPadding { Left = 50 },
+                Padding = new MarginPadding { Left = 48 + 12 },
                 Children = new Drawable[]
                 {
                     new FillFlowContainer
@@ -75,21 +80,23 @@ public partial class DrawableChatMessage : Container
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
                         Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(5),
+                        Spacing = new Vector2(4),
                         Children = new Drawable[]
                         {
                             new FluXisSpriteText
                             {
                                 Text = InitialMessage.Sender.Username,
-                                FontSize = 22,
-                                Colour = nameColor
+                                WebFontSize = 16,
+                                Colour = nameColor,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
                             },
                             new FluXisTooltipText
                             {
                                 Text = getTime(),
                                 TooltipText = getTooltip(),
-                                FontSize = 18,
-                                Colour = FluXisColors.Text2,
+                                WebFontSize = 12,
+                                Alpha = .8f,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
                             }
@@ -99,26 +106,16 @@ public partial class DrawableChatMessage : Container
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
-                        Direction = FillDirection.Vertical,
-                        Spacing = new Vector2(5)
+                        Direction = FillDirection.Vertical
                     }
                 }
             }
         };
 
-        LoadComponentAsync(new DrawableAvatar(InitialMessage.Sender)
-        {
-            RelativeSizeAxes = Axes.Both
-        }, avatar =>
-        {
-            avatarContainer.Add(avatar);
-            avatar.FadeInFromZero(200);
-        });
-
         AddMessage(InitialMessage);
     }
 
-    public void AddMessage(ChatMessage message)
+    public void AddMessage(IChatMessage message)
     {
         Messages.Add(message);
         flow.Add(new MessageText
@@ -155,18 +152,15 @@ public partial class DrawableChatMessage : Container
 
     private partial class MessageText : FluXisTextFlow, IHasContextMenu
     {
-        public ChatMessage Message { get; init; }
+        public IChatMessage Message { get; init; }
         public IAPIClient API { get; init; }
-
-        [Resolved]
-        private NotificationManager notifications { get; set; }
 
         private const string link_regex = @"(http|https)://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";
 
         [BackgroundDependencyLoader(true)]
         private void load([CanBeNull] FluXisGame game)
         {
-            FontSize = 18;
+            WebFontSize = 14;
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
@@ -175,7 +169,9 @@ public partial class DrawableChatMessage : Container
             foreach (var word in words)
             {
                 if (word.StartsWith('@')) // mention
+                {
                     AddText(word, t => t.Colour = FluXisColors.Highlight);
+                }
                 else if (Regex.IsMatch(word, link_regex)) // link
                 {
                     AddText<ClickableFluXisSpriteText>(word, t =>
@@ -195,13 +191,12 @@ public partial class DrawableChatMessage : Container
         {
             get
             {
-                List<MenuItem> items = new List<MenuItem>
-                {
-                    API.User.Value?.CanModerate() ?? false
-                        ? new FluXisMenuItem("Delete", MenuItemType.Dangerous, delete)
-                        : new FluXisMenuItem("Report", MenuItemType.Dangerous, report)
-                };
+                var items = new List<MenuItem>();
 
+                if (API.User.Value?.CanModerate() ?? false)
+                    items.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete));
+
+                items.Add(new FluXisMenuItem("Report", FontAwesome6.Solid.Flag, MenuItemType.Dangerous, report) { Enabled = () => false });
                 return items.ToArray();
             }
         }
@@ -211,10 +206,8 @@ public partial class DrawableChatMessage : Container
             await API.SendPacket(ChatDeletePacket.Create(Message.ID));
         }
 
-        private /* async*/ void report()
+        private void report()
         {
-            notifications.SendText("This feature is not yet implemented.");
-            // await Fluxel.SendPacket(new ChatMessageReportPacket { Id = Message.Id });
         }
     }
 }
