@@ -1,27 +1,39 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Online.Chat;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Overlay.Chat.UI;
 
-public partial class ChatChannelButton : Container
+public partial class ChatChannelButton : Container, IHasContextMenu
 {
     public ChatChannel Channel { get; }
     public IconUsage Icon { get; set; } = FontAwesome6.Solid.Hashtag;
+
+    public MenuItem[] ContextMenuItems => new MenuItem[]
+    {
+        new FluXisMenuItem("Leave Channel", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, leave)
+    };
 
     private Bindable<string> bind { get; }
 
     [Resolved]
     private UISamples samples { get; set; }
+
+    [Resolved]
+    private ChatClient client { get; set; }
 
     private Box hover;
     private Box flash;
@@ -106,6 +118,9 @@ public partial class ChatChannelButton : Container
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (e.Button != MouseButton.Left)
+            return false;
+
         content.ScaleTo(.95f, 1000, Easing.OutQuint);
         return true;
     }
@@ -126,4 +141,6 @@ public partial class ChatChannelButton : Container
     {
         hover.FadeOut(200);
     }
+
+    private void leave() => client.LeaveChannel(Channel.Name);
 }

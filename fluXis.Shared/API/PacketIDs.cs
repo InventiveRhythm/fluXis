@@ -17,6 +17,8 @@ public static class PacketIDs
     public const string CHAT_MESSAGE = "chat/message";
     public const string CHAT_HISTORY = "chat/history";
     public const string CHAT_DELETE = "chat/delete";
+    public const string CHAT_JOIN = "chat/join";
+    public const string CHAT_LEAVE = "chat/leave";
 
     public const string MULTIPLAYER_CREATE = "multi/create";
     public const string MULTIPLAYER_JOIN = "multi/join";

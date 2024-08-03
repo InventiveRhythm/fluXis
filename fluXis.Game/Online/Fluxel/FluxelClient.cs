@@ -307,6 +307,8 @@ public partial class FluxelClient : Component, IAPIClient
             EventType.ChatMessage => handleListener<ChatMessagePacket>,
             EventType.ChatHistory => handleListener<ChatHistoryPacket>,
             EventType.ChatMessageDelete => handleListener<ChatDeletePacket>,
+            EventType.ChatJoin => handleListener<ChatChannelJoinPacket>,
+            EventType.ChatLeave => handleListener<ChatChannelLeavePacket>,
 
             EventType.MultiplayerCreateLobby => handleListener<MultiCreatePacket>,
             EventType.MultiplayerJoin => handleListener<MultiJoinPacket>,
@@ -500,6 +502,8 @@ public partial class FluxelClient : Component, IAPIClient
             PacketIDs.CHAT_MESSAGE => EventType.ChatMessage,
             PacketIDs.CHAT_HISTORY => EventType.ChatHistory,
             PacketIDs.CHAT_DELETE => EventType.ChatMessageDelete,
+            PacketIDs.CHAT_JOIN => EventType.ChatJoin,
+            PacketIDs.CHAT_LEAVE => EventType.ChatLeave,
 
             PacketIDs.MULTIPLAYER_CREATE => EventType.MultiplayerCreateLobby,
             PacketIDs.MULTIPLAYER_JOIN => EventType.MultiplayerJoin,
@@ -541,6 +545,8 @@ public enum EventType
     ChatMessage,
     ChatHistory,
     ChatMessageDelete,
+    ChatJoin,
+    ChatLeave,
 
     MultiplayerCreateLobby,
     MultiplayerJoin,

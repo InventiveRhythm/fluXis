@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using fluXis.Game.Online.API.Requests.Chat;
 using fluXis.Game.Online.Fluxel;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.API;
 using fluXis.Shared.API.Packets.Chat;
 using JetBrains.Annotations;
@@ -28,6 +30,8 @@ public partial class ChatClient : Component
     private void load()
     {
         api.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, onMessage);
+        api.RegisterListener<ChatChannelJoinPacket>(EventType.ChatJoin, pk => addChannel(pk.Data!.Channel));
+        api.RegisterListener<ChatChannelLeavePacket>(EventType.ChatLeave, pk => removeChannel(pk.Data!.Channel));
     }
 
     protected override void LoadComplete()
@@ -37,7 +41,17 @@ public partial class ChatClient : Component
         api.Status.BindValueChanged(statusChanged, true);
     }
 
-    public void JoinChannel(string channel) { }
+    public void JoinChannel(string channel)
+    {
+        var req = new ChatJoinChannelRequest(channel);
+        api.PerformRequestAsync(req);
+    }
+
+    public void LeaveChannel(string channel)
+    {
+        var req = new ChatLeaveChannelRequest(channel);
+        api.PerformRequestAsync(req);
+    }
 
     [CanBeNull]
     public ChatChannel GetChannel(string channel)
@@ -59,25 +73,25 @@ public partial class ChatClient : Component
 
     private void fetchJoinedChannels()
     {
-        addChannel("general");
-        addChannel("mapping");
-        addChannel("off-topic");
+        var req = new ChatJoinedChannelsRequest();
+        req.Success += res => res.Data.ForEach(c => addChannel(c.Name));
+        api.PerformRequestAsync(req);
     }
 
-    private void addChannel(string name)
+    private void addChannel(string name) => Scheduler.ScheduleIfNeeded(() =>
     {
         var chan = new ChatChannel(name, api);
         channels.Add(name, chan);
         ChannelJoined?.Invoke(chan);
-    }
+    });
 
-    private void removeChannel(string name)
+    private void removeChannel(string name) => Scheduler.ScheduleIfNeeded(() =>
     {
         if (!channels.Remove(name, out var channel))
             return;
 
         ChannelParted?.Invoke(channel);
-    }
+    });
 
     private void onMessage(FluxelReply<ChatMessagePacket> packet)
     {

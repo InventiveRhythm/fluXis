@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Online.Chat;
@@ -32,6 +33,9 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
     [Resolved]
     private ChatClient client { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     public Bindable<string> Channel { get; } = new("general");
 
@@ -124,7 +128,8 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                         Child = new FluXisButton
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Text = "Add Channel"
+                                            Text = "Add Channel",
+                                            Action = () => panels.Content = new ChatChannelsPanel { OnJoinAction = chan => Channel.Value = chan }
                                         }
                                     }
                                 }
