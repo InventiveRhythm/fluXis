@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
-using fluXis.Game.Screens.Gameplay.HUD.Components.Judgement;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

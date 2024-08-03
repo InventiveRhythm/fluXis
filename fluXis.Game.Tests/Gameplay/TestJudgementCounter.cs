@@ -1,4 +1,4 @@
-using fluXis.Game.Screens.Gameplay.HUD.Components.Judgement;
+using fluXis.Game.Screens.Gameplay.HUD.Components;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
 

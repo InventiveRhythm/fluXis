@@ -4,6 +4,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Integration;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Bases.Judgements;
+using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -43,7 +44,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
         InternalChildren = new Drawable[]
         {
             splash = new Splash(),
-            missGhost = skinManager.GetJudgement(Shared.Scoring.Enums.Judgement.Miss, false).With(d =>
+            missGhost = skinManager.GetJudgement(Judgement.Miss, false).With(d =>
             {
                 d.Alpha = 0.5f;
                 d.Scale = new Vector2(1.4f);
@@ -77,7 +78,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
     {
         var judgement = result.Judgement;
 
-        if (hideFlawless.Value && judgement == Shared.Scoring.Enums.Judgement.Flawless)
+        if (hideFlawless.Value && judgement == Judgement.Flawless)
             return;
 
         skinnableTextContainer.RemoveAll(_ => true, true);
@@ -86,7 +87,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
         skinnableTextContainer.Add(judgementText);
         judgementText.Animate(showEarlyLate.Value);
 
-        if (judgement == Shared.Scoring.Enums.Judgement.Miss)
+        if (judgement == Judgement.Miss)
             missGhost.Animate(false);
 
         if (judgementSplash.Value)
@@ -96,7 +97,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
                        .FadeColour(Color4.Black, 400);
     }
 
-    private void doSplash(Shared.Scoring.Enums.Judgement judgement)
+    private void doSplash(Judgement judgement)
     {
         splash.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
         splash.Splat(judgement);
@@ -146,7 +147,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
             };
         }
 
-        public void Splat(Shared.Scoring.Enums.Judgement judgement)
+        public void Splat(Judgement judgement)
         {
             const float base_travel = 80;
 
@@ -155,29 +156,29 @@ public partial class JudgementDisplay : GameplayHUDComponent
 
             switch (judgement)
             {
-                case Shared.Scoring.Enums.Judgement.Flawless:
+                case Judgement.Flawless:
                     count = 8;
                     travel *= 1f;
                     break;
 
-                case Shared.Scoring.Enums.Judgement.Perfect:
-                case Shared.Scoring.Enums.Judgement.Great:
+                case Judgement.Perfect:
+                case Judgement.Great:
                     count = 4;
                     travel *= 0.8f;
                     break;
 
-                case Shared.Scoring.Enums.Judgement.Alright:
-                case Shared.Scoring.Enums.Judgement.Okay:
+                case Judgement.Alright:
+                case Judgement.Okay:
                     count = 2;
                     travel *= 0.4f;
                     break;
 
-                case Shared.Scoring.Enums.Judgement.Miss:
+                case Judgement.Miss:
                     count = 0;
                     travel *= 1.2f;
                     break;
 
-                case Shared.Scoring.Enums.Judgement.None:
+                case Judgement.None:
                     break;
 
                 default:
