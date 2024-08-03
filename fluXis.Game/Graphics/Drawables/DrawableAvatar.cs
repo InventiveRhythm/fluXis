@@ -82,7 +82,7 @@ public partial class DrawableAvatar : Sprite
     protected override bool OnClick(ClickEvent e)
     {
         ClickAction?.Invoke();
-        return true;
+        return ClickAction != null;
     }
 
     protected override void Dispose(bool isDisposing)
