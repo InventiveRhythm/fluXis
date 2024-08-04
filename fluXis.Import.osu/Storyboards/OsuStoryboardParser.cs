@@ -7,7 +7,6 @@ using Newtonsoft.Json.Linq;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
-using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Import.osu.Storyboards;
@@ -197,8 +196,8 @@ public class OsuStoryboardParser
                             var start = split[4].ToFloatInvariant();
                             var end = split.Length > 5 ? split[5].ToFloatInvariant() : start;
 
-                            var startDeg = MathUtils.RadiansToDegrees(start);
-                            var endDeg = MathUtils.RadiansToDegrees(end);
+                            var startDeg = float.RadiansToDegrees(start);
+                            var endDeg = float.RadiansToDegrees(end);
 
                             currentElement.Animations.Add(new StoryboardAnimation
                             {
