@@ -56,7 +56,7 @@ public abstract class APIRequest<T> : APIRequest
         TriggerSuccess();
     }
 
-    protected override WebRequest CreateWebRequest(string url) => new APIWebRequest<T>(url);
+    protected override WebRequest CreateWebRequest(string url) => new APIWebRequest<T>(url, APIClient.LogResponses);
 }
 
 public abstract class APIRequest

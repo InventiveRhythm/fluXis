@@ -3,5 +3,7 @@
   "show-log-overlay": "Show Log Overlay",
   "import-file": "Import File",
   "update-from-file": "Install Update From File",
-  "update-from-file-description": "Installs an update from a .zip file. Be careful from where you download the file from though!"
+  "update-from-file-description": "Installs an update from a .zip file. Be careful from where you download the file from though!",
+  "log-api": "Log API Responses.",
+  "log-api-description": "Logs all API request responses to the console and log files. This might contain sensitive info like emails and tokens."
 }

@@ -43,6 +43,9 @@ public partial class FluxelClient : Component, IAPIClient
     public string MultifactorToken { get; set; } = "";
     private Bindable<string> tokenBindable = null!;
 
+    private Bindable<bool> logResponses = null!;
+    public bool LogResponses => logResponses.Value;
+
     private Bindable<string> username = null!;
     private string password = null!;
     private string email = null!;
@@ -74,6 +77,7 @@ public partial class FluxelClient : Component, IAPIClient
     {
         username = config.GetBindable<string>(FluXisSetting.Username);
         tokenBindable = config.GetBindable<string>(FluXisSetting.Token);
+        logResponses = config.GetBindable<bool>(FluXisSetting.LogAPIResponses);
 
         var thread = new Thread(loop) { IsBackground = true };
         thread.Start();
@@ -262,7 +266,9 @@ public partial class FluxelClient : Component, IAPIClient
         void handleListener<T>(string msg)
             where T : IPacket
         {
-            Logger.Log($"Received packet {msg}!", LoggingTarget.Network, LogLevel.Debug);
+            if (LogResponses)
+                Logger.Log($"Received packet {msg}!", LoggingTarget.Network);
+
             var response = msg.Deserialize<FluxelReply<T>>();
 
             if (response == null)

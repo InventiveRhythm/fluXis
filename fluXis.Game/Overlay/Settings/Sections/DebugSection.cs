@@ -1,3 +1,4 @@
+using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Files;
 using fluXis.Game.Graphics.UserInterface.Panel;
@@ -20,7 +21,7 @@ public partial class DebugSection : SettingsSection
     private SettingsDebugStrings strings => LocalizationStrings.Settings.Debug;
 
     [BackgroundDependencyLoader(true)]
-    private void load(FrameworkConfigManager frameworkConfig, FluXisGameBase game, PanelContainer panels)
+    private void load(FrameworkConfigManager frameworkConfig, FluXisConfig config, FluXisGameBase game, PanelContainer panels)
     {
         AddRange(new Drawable[]
         {
@@ -54,6 +55,12 @@ public partial class DebugSection : SettingsSection
                         OnFileSelected = file => game.CreateUpdatePerformer()?.UpdateFromFile(file)
                     };
                 }
+            },
+            new SettingsToggle
+            {
+                Label = strings.LogAPI,
+                Description = strings.LogAPIDescription,
+                Bindable = config.GetBindable<bool>(FluXisSetting.LogAPIResponses)
             }
         });
     }

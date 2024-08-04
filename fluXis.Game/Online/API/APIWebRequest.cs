@@ -10,16 +10,21 @@ public class APIWebRequest<T> : JsonWebRequest<APIResponse<T>>
 
     public new APIResponse<T> ResponseObject { get; private set; }
 
-    public APIWebRequest(string url)
+    private bool logOutput { get; }
+
+    public APIWebRequest(string url, bool logOutput = false)
         : base(url)
     {
         AllowInsecureRequests = true;
+        this.logOutput = logOutput;
     }
 
     protected override void ProcessResponse()
     {
         var response = GetResponseString();
-        Logger.Log(response, LoggingTarget.Network, LogLevel.Debug);
+
+        if (logOutput)
+            Logger.Log(response, LoggingTarget.Network);
 
         if (response != null)
             ResponseObject = response.Deserialize<APIResponse<T>>();

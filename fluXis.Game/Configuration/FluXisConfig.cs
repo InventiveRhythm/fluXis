@@ -86,6 +86,9 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.Username, string.Empty);
         SetDefault(FluXisSetting.Token, string.Empty);
 
+        // Debug
+        SetDefault(FluXisSetting.LogAPIResponses, false);
+
         // Misc
         SetDefault(FluXisSetting.ReleaseChannel, ReleaseChannel.Stable);
     }
@@ -163,6 +166,9 @@ public enum FluXisSetting
     // Account
     Username,
     Token,
+
+    // Debug
+    LogAPIResponses,
 
     // Misc
     ReleaseChannel

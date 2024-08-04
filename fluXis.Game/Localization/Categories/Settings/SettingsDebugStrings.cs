@@ -14,4 +14,7 @@ public class SettingsDebugStrings : LocalizationCategory
 
     public TranslatableString InstallUpdateFromFileDescription =>
         Get("update-from-file-description", "Installs an update from a .zip file. Be careful from where you download the file from though!");
+
+    public TranslatableString LogAPI => Get("log-api", "Log API Responses.");
+    public TranslatableString LogAPIDescription => Get("log-api-description", "Logs all API request responses to the console and log files. This might contain sensitive info like emails and tokens.");
 }
