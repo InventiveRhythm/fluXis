@@ -30,7 +30,23 @@ public abstract class APIRequest<T> : APIRequest
         Response = req.ResponseObject;
 
         if (!Response.Success)
-            Fail(new APIException(Response.Message));
+            base.Fail(new APIException(Response.Message));
+    }
+
+    public override void Fail(Exception e)
+    {
+        if (Request is not APIWebRequest<T> req)
+            throw new InvalidOperationException("Request was not of expected type.");
+
+        Response = req.ResponseObject;
+
+        if (req.ResponseObject is not null)
+        {
+            base.Fail(new APIException(Response.Message));
+            return;
+        }
+
+        base.Fail(e);
     }
 
     // used for testing
@@ -129,7 +145,7 @@ public abstract class APIRequest
             APIClient.Schedule(() => Failure?.Invoke(e));
     }
 
-    public void Fail(Exception e)
+    public virtual void Fail(Exception e)
     {
         FailReason = e;
         Request?.Abort();
