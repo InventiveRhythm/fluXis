@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.WebSockets;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
 using fluXis.Shared.Components.Users;
@@ -115,7 +116,10 @@ public partial class SentryClient : Component
                 return true;
 
             case WebException web:
-                return web.Status == WebExceptionStatus.Timeout;
+                return web.Status is WebExceptionStatus.Timeout or WebExceptionStatus.UnknownError;
+
+            case WebSocketException ws:
+                return ws.WebSocketErrorCode == WebSocketError.NotAWebSocket;
         }
 
         return false;

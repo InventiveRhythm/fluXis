@@ -91,7 +91,7 @@ public partial class FluxelClient : Component, IAPIClient
                 break;
 
             if (Status.Value == ConnectionStatus.Failing)
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
 
             if (!hasValidCredentials)
             {
