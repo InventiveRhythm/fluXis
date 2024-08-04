@@ -18,7 +18,7 @@ public partial class WindowsUpdatePerformer : IUpdatePerformer
     private NotificationManager notifications { get; }
     private readonly Logger logger = Logger.GetLogger("update");
 
-    private string folder => $"{Path.GetDirectoryName(Environment.CommandLine)}";
+    private string folder => $"{AppContext.BaseDirectory}";
     private string patcher => @$"{folder}\patcher.exe";
     private string patches => @$"{folder}\patches";
 
