@@ -26,6 +26,8 @@ public partial class SentryClient : Component
 
         Logger.Log("Initializing sentry client...");
 
+        Logger.NewEntry += onEntry;
+
         if (FluXisGameBase.IsDebug || !RuntimeInfo.IsDesktop)
             return;
 
@@ -39,8 +41,6 @@ public partial class SentryClient : Component
         });
 
         Logger.Log("Initialized sentry client.");
-
-        Logger.NewEntry += onEntry;
     }
 
     public void BindUser(IBindable<APIUser> bind)
@@ -66,7 +66,18 @@ public partial class SentryClient : Component
 
         var ex = entry.Exception;
 
-        if (ex == null || shouldIgnore(ex))
+        if (ex == null)
+            return;
+
+        if (shouldIgnore(ex))
+        {
+            Logger.Log($"Ignored {ex.GetType().Name}!", LoggingTarget.Runtime, LogLevel.Debug);
+            return;
+        }
+
+        Logger.Log($"{ex.GetType().Name} would be reported!", LoggingTarget.Runtime, LogLevel.Debug);
+
+        if (session is null)
             return;
 
         SentrySdk.CaptureEvent(new SentryEvent(ex)

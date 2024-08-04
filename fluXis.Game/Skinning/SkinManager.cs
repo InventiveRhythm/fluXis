@@ -15,6 +15,7 @@ using fluXis.Game.Skinning.Json;
 using fluXis.Game.Utils;
 using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
@@ -246,9 +247,12 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             else
                 Logger.Log($"No skin.json in folder '{folder}' found, using default skin.json", LoggingTarget.Information);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Logger.Error(e, $"Failed to load skin.json '{folder}'");
+            if (ex is JsonReaderException)
+                Logger.Log($"Failed to parse skin.json for '{folder}'! {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
+            else
+                Logger.Error(ex, $"Failed to load skin.json '{folder}'");
         }
 
         return createCustomSkin(skinJson, folder);

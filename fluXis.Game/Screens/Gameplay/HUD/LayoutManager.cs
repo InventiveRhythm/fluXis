@@ -5,6 +5,7 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
 using fluXis.Shared.Utils;
+using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -105,7 +106,10 @@ public partial class LayoutManager : Component
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, $"Failed to load layout {Path.GetFileName(file)}");
+                if (ex is JsonReaderException)
+                    Logger.Log($"Failed to parse layout '{Path.GetFileName(file)}'! {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
+                else
+                    Logger.Error(ex, $"Failed to load layout {Path.GetFileName(file)}!");
             }
         }
     }
