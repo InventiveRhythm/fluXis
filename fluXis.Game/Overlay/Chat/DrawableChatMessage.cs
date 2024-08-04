@@ -11,6 +11,7 @@ using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.API.Packets.Chat;
 using fluXis.Shared.Components.Chat;
 using fluXis.Shared.Utils.Extensions;
@@ -19,6 +20,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
@@ -42,14 +44,6 @@ public partial class DrawableChatMessage : Container
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
-
-        var nameColor = FluXisColors.Text;
-
-        if (InitialMessage.Sender.Groups.Any())
-        {
-            var group = InitialMessage.Sender.Groups.First();
-            nameColor = Colour4.TryParseHex(group.Color, out var c) ? c : FluXisColors.Text;
-        }
 
         InternalChildren = new Drawable[]
         {
@@ -81,16 +75,10 @@ public partial class DrawableChatMessage : Container
                         AutoSizeAxes = Axes.Y,
                         Direction = FillDirection.Horizontal,
                         Spacing = new Vector2(4),
-                        Children = new Drawable[]
+                        Children = new[]
                         {
-                            new FluXisSpriteText
-                            {
-                                Text = InitialMessage.Sender.Username,
-                                WebFontSize = 16,
-                                Colour = nameColor,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft
-                            },
+                            createIcon(),
+                            getName(InitialMessage.Sender.PreferredName).With(d => d.Anchor = d.Origin = Anchor.CentreLeft),
                             new FluXisTooltipText
                             {
                                 Text = getTime(),
@@ -129,6 +117,50 @@ public partial class DrawableChatMessage : Container
     {
         flow.Remove(flow.FirstOrDefault(m => m.Message.ID == id), true);
         Messages.Remove(Messages.FirstOrDefault(m => m.ID == id));
+    }
+
+    private Drawable createIcon()
+    {
+        var groups = InitialMessage.Sender.Groups;
+
+        if (groups.Count == 0)
+            return Empty().With(d => d.Alpha = 0);
+
+        return new SpriteIcon
+        {
+            Size = new Vector2(16),
+            Anchor = Anchor.CentreLeft,
+            Origin = Anchor.CentreLeft,
+            Colour = Colour4.FromHex(groups.First().Color),
+            Icon = groups.First().ID switch
+            {
+                "fa" => FontAwesome6.Solid.Star,
+                "purifier" => FontAwesome6.Solid.Diamond,
+                "moderators" => FontAwesome6.Solid.ShieldHalved,
+                "dev" => FontAwesome6.Solid.UserShield,
+                "bot" => FontAwesome6.Solid.UserAstronaut,
+                _ => FontAwesome6.Solid.User
+            }
+        };
+    }
+
+    private Drawable getName(string text)
+    {
+        if (InitialMessage.Sender.NamePaint is null)
+        {
+            return new FluXisTooltipText
+            {
+                Text = text,
+                WebFontSize = 16
+            };
+        }
+
+        return new GradientText
+        {
+            Text = text,
+            WebFontSize = 16,
+            Colour = InitialMessage.Sender.NamePaint.Colors.CreateColorInfo()
+        };
     }
 
     private string getTime()

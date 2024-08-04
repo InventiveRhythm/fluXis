@@ -10,6 +10,7 @@ using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User.Header;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -156,15 +157,7 @@ public partial class ProfileHeader : Container
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
                                                 },
-                                                new FluXisTooltipText()
-                                                {
-                                                    Text = user.PreferredName,
-                                                    TooltipText = showUsername ? "Display Name" : "",
-                                                    WebFontSize = 48,
-                                                    Shadow = true,
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft
-                                                }
+                                                getName(user.PreferredName).With(d => d.Anchor = d.Origin = Anchor.CentreLeft)
                                             }
                                         },
                                         new FillFlowContainer
@@ -268,6 +261,27 @@ public partial class ProfileHeader : Container
     protected override void Update()
     {
         Height = DrawWidth / 3f; // 3:1 aspect ratio
+    }
+
+    private Drawable getName(string text)
+    {
+        if (user.NamePaint is null)
+        {
+            return new FluXisTooltipText
+            {
+                Text = text,
+                WebFontSize = 48,
+                Shadow = true
+            };
+        }
+
+        return new GradientText
+        {
+            Text = text,
+            WebFontSize = 48,
+            Shadow = true,
+            Colour = user.NamePaint.Colors.CreateColorInfo()
+        };
     }
 
     private Drawable getOnlineStatus()

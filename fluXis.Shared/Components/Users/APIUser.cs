@@ -1,5 +1,6 @@
 ﻿using fluXis.Shared.Components.Clubs;
 using fluXis.Shared.Components.Groups;
+using fluXis.Shared.Components.Users.Equipment;
 using Newtonsoft.Json;
 
 namespace fluXis.Shared.Components.Users;
@@ -20,6 +21,9 @@ public class APIUser
 
     [JsonProperty("pronouns")]
     public string? Pronouns { get; set; }
+
+    [JsonProperty("paint")]
+    public APINamePaint? NamePaint { get; set; }
 
     [JsonProperty("country")]
     public string? CountryCode { get; set; }

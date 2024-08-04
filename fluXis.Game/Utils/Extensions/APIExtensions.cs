@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Shared.Components.Clubs;
+using fluXis.Shared.Components.Other;
 using fluXis.Shared.Components.Scores;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -16,16 +18,19 @@ namespace fluXis.Game.Utils.Extensions;
 public static class APIExtensions
 {
     public static ColourInfo CreateColorInfo(this APIClub club)
+        => CreateColorInfo(club.Colors);
+
+    public static ColourInfo CreateColorInfo(this List<GradientColor> colors)
     {
         try
         {
-            Colour4.TryParseHex(club.Colors.First().Color, out var first);
-            Colour4.TryParseHex(club.Colors.Last().Color, out var last);
+            Colour4.TryParseHex(colors.First().Color, out var first);
+            Colour4.TryParseHex(colors.Last().Color, out var last);
             return ColourInfo.GradientHorizontal(first, last);
         }
         catch (Exception e)
         {
-            Logger.Error(e, "Failed to create colour info for club tag.");
+            Logger.Error(e, "Failed to create colour info.");
             return Colour4.White;
         }
     }
