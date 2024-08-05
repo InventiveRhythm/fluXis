@@ -106,6 +106,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private bool starting = true;
     private bool restarting;
 
+    public event Action OnExit;
+
     public BindableBool IsPaused { get; } = new();
     public GameplaySamples Samples { get; } = new();
     public Hitsounding Hitsounding { get; private set; }
@@ -559,7 +561,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             });
         }
 
-        globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, MOVE_DURATION);
+        OnExit?.Invoke();
         GameplayClock.Stop();
         Samples.CancelFail();
 

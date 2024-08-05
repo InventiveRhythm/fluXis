@@ -2,6 +2,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
 using fluXis.Game.Scoring.Enums;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
@@ -15,10 +16,10 @@ public partial class DangerHealthOverlay : Container
     [Resolved]
     private GameplayScreen screen { get; set; }
 
-    [Resolved]
-    private GlobalClock globalClock { get; set; }
-
     private Bindable<bool> dimOnLowHealth;
+
+    private LowPassFilter lowPass;
+    private bool exited;
 
     private Box glow;
     private Box darken;
@@ -27,7 +28,7 @@ public partial class DangerHealthOverlay : Container
     private const int threshold = 40;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load(FluXisConfig config, AudioManager audio)
     {
         dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
         dimOnLowHealth.BindValueChanged(onDimOnLowHealthChanged, true);
@@ -36,6 +37,7 @@ public partial class DangerHealthOverlay : Container
 
         AddRangeInternal(new Drawable[]
         {
+            lowPass = new LowPassFilter(audio.TrackMixer),
             glow = new Box
             {
                 RelativeSizeAxes = Axes.Both,
@@ -59,6 +61,11 @@ public partial class DangerHealthOverlay : Container
         base.LoadComplete();
 
         screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
+        screen.OnExit += () =>
+        {
+            lowPass.CutoffTo(LowPassFilter.MAX, FluXisScreen.MOVE_DURATION);
+            exited = true;
+        };
     }
 
     private void onDimOnLowHealthChanged(ValueChangedEvent<bool> e)
@@ -82,7 +89,7 @@ public partial class DangerHealthOverlay : Container
         if (screen.Playfield.Manager.HealthMode == HealthMode.Requirement || !screen.HealthProcessor.CanFail)
             return;
 
-        if (screen.HealthProcessor.Failed)
+        if (screen.HealthProcessor.Failed || exited)
             return;
 
         if (health < threshold && dimOnLowHealth.Value)
@@ -90,14 +97,14 @@ public partial class DangerHealthOverlay : Container
             var multiplier = health / threshold;
 
             darken.Alpha = glow.Alpha = (float)(1 - multiplier);
-            globalClock.LowPassFilter.Cutoff = (int)(LowPassFilter.MAX * multiplier);
+            lowPass.Cutoff = (int)(LowPassFilter.MAX * multiplier);
         }
         else
         {
             darken.Alpha = 0;
             glow.Alpha = 0;
 
-            globalClock.LowPassFilter.Cutoff = LowPassFilter.MAX;
+            lowPass.Cutoff = LowPassFilter.MAX;
         }
     }
 }

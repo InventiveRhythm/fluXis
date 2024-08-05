@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Input;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -27,14 +28,13 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         }
     }
 
-    [Resolved]
-    private GlobalClock clock { get; set; }
-
     private Drawable dim;
     private Container contentContainer;
 
+    private LowPassFilter lowPass;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(AudioManager audio)
     {
         RelativeSizeAxes = Axes.Both;
 
@@ -43,6 +43,7 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
             RelativeSizeAxes = Axes.Both,
             Children = new[]
             {
+                lowPass = new LowPassFilter(audio.TrackMixer),
                 dim = new FullInputBlockingContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -103,10 +104,10 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
 
     private void setCutOff(int cutoff)
     {
-        if (clock?.LowPassFilter == null)
+        if (lowPass == null)
             return;
 
-        clock.LowPassFilter.Cutoff = cutoff;
+        lowPass.Cutoff = cutoff;
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

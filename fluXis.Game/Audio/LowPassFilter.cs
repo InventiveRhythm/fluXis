@@ -1,3 +1,4 @@
+using System;
 using ManagedBass.Fx;
 using osu.Framework.Audio.Mixing;
 using osu.Framework.Graphics;
@@ -14,7 +15,7 @@ public partial class LowPassFilter : Component
     public const int MAX = 22049;
     public const int MIN = 1000;
 
-    private int cutoff;
+    private int cutoff = MAX;
 
     public int Cutoff
     {
@@ -32,14 +33,8 @@ public partial class LowPassFilter : Component
 
             addFilter();
 
-            if (value < MIN)
-                value = MIN;
-
-            cutoff = value;
-
-            addFilter();
-
-            parameters.fCenter = cutoff;
+            value = Math.Max(MIN, value);
+            parameters.fCenter = cutoff = value;
             mixer.UpdateEffect(parameters);
         }
     }
@@ -54,20 +49,11 @@ public partial class LowPassFilter : Component
             fBandwidth = 0,
             fQ = .7f
         };
-
-        Cutoff = MAX;
     }
 
     public void CutoffTo(int value, float duration = 0, Easing easing = Easing.None)
     {
-        if (value >= MAX)
-            removeFilter();
-        else
-            addFilter();
-
-        if (value < MIN)
-            value = MIN;
-
+        value = Math.Max(MIN, value);
         this.TransformTo(nameof(Cutoff), value, duration, easing);
     }
 
@@ -87,5 +73,11 @@ public partial class LowPassFilter : Component
 
         mixer.AddEffect(parameters);
         enabled = true;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        removeFilter();
     }
 }

@@ -11,6 +11,7 @@ using fluXis.Game.Mods.Drawables;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.UI.Tips;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -39,6 +40,8 @@ public partial class GameplayLoader : FluXisScreen
     private RealmMap map { get; }
     private List<IMod> mods { get; }
 
+    private LowPassFilter lowPass;
+
     private Container loadingContainer;
     private FillFlowContainer content;
     private FluXisSpriteText tip;
@@ -51,7 +54,7 @@ public partial class GameplayLoader : FluXisScreen
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(AudioManager audio)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -59,6 +62,7 @@ public partial class GameplayLoader : FluXisScreen
 
         InternalChildren = new Drawable[]
         {
+            lowPass = new LowPassFilter(audio.TrackMixer),
             content = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -300,7 +304,7 @@ public partial class GameplayLoader : FluXisScreen
             tip.FadeIn();
             content.MoveToY(0);
             loadingContainer.FadeIn(FADE_DURATION);
-            clock.LowPassFilter.CutoffTo(LowPassFilter.MIN, MOVE_DURATION, Easing.OutQuint);
+            lowPass.CutoffTo(LowPassFilter.MIN, MOVE_DURATION, Easing.OutQuint);
         }
 
         tip.Text = LoadingTips.RandomTip;
@@ -310,7 +314,7 @@ public partial class GameplayLoader : FluXisScreen
     {
         this.Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
         tip.FadeOut(FADE_DURATION);
-        clock.LowPassFilter.CutoffTo(LowPassFilter.MAX);
+        lowPass.CutoffTo(LowPassFilter.MAX);
 
         if (moveDown)
             content.MoveToY(800, MOVE_DURATION + FADE_DURATION + 300, Easing.InQuint);

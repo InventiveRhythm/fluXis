@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
@@ -18,39 +19,41 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     public override float BackgroundDim => .7f;
     public override float BackgroundBlur => .4f;
 
-    [Resolved]
-    private GlobalClock globalClock { get; set; }
-
     protected virtual string Title => "Work in Progress";
 
+    private LowPassFilter lowPass;
     private FillFlowContainer flowContainer;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(AudioManager audio)
     {
-        InternalChild = flowContainer = new FillFlowContainer
+        InternalChildren = new Drawable[]
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Children = new Drawable[]
+            lowPass = new LowPassFilter(audio.TrackMixer),
+            flowContainer = new FillFlowContainer
             {
-                new FluXisSpriteText
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
                 {
-                    Text = Title,
-                    FontSize = 50,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre
-                },
-                new FluXisTextFlow
-                {
-                    Text = "This screen is not yet implemented.\nPlease check back later.",
-                    FontSize = 30,
-                    Width = 600,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    TextAnchor = Anchor.TopCentre
+                    new FluXisSpriteText
+                    {
+                        Text = Title,
+                        FontSize = 50,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
+                    },
+                    new FluXisTextFlow
+                    {
+                        Text = "This screen is not yet implemented.\nPlease check back later.",
+                        FontSize = 30,
+                        Width = 600,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        TextAnchor = Anchor.TopCentre
+                    }
                 }
             }
         };
@@ -60,14 +63,14 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     {
         this.FadeInFromZero(200);
         flowContainer.ScaleTo(.8f).ScaleTo(1, 1000, Easing.OutElastic);
-        globalClock.LowPassFilter.CutoffTo(LowPassFilter.MIN, 200);
+        lowPass.CutoffTo(LowPassFilter.MIN, 200);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         this.FadeOutFromOne(400);
         flowContainer.ScaleTo(.8f, 600);
-        globalClock.LowPassFilter.CutoffTo(LowPassFilter.MAX, 200);
+        lowPass.CutoffTo(LowPassFilter.MAX, 200);
 
         return base.OnExiting(e);
     }

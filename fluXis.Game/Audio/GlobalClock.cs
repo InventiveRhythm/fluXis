@@ -75,8 +75,6 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
         }
     }
 
-    public LowPassFilter LowPassFilter { get; private set; }
-
     private string trackPath;
 
     [CanBeNull]
@@ -102,9 +100,8 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
     }
 
     [BackgroundDependencyLoader]
-    private void load(AudioManager manager, FluXisConfig config)
+    private void load(FluXisConfig config)
     {
-        AddInternal(LowPassFilter = new LowPassFilter(manager.TrackMixer));
         offset = config.GetBindable<float>(FluXisSetting.GlobalOffset);
         loopMode = config.GetBindable<LoopMode>(FluXisSetting.LoopMode);
     }
