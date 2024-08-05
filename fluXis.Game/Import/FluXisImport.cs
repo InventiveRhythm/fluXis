@@ -216,7 +216,7 @@ public class FluXisImport : MapImporter
                         Title = mapInfo.Metadata.Title ?? "",
                         Artist = mapInfo.Metadata.Artist ?? "",
                         Mapper = mapInfo.Metadata.Mapper ?? "",
-                        Source = mapInfo.Metadata.Source ?? "",
+                        Source = mapInfo.Metadata.AudioSource ?? "",
                         Tags = mapInfo.Metadata.Tags ?? "",
                         Audio = mapInfo.AudioFile,
                         Background = mapInfo.BackgroundFile,

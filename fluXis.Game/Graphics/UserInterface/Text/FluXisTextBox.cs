@@ -79,7 +79,9 @@ public partial class FluXisTextBox : BasicTextBox
 
     protected override void OnTextCommitted(bool textChanged)
     {
-        samples.Accept();
+        if (textChanged)
+            samples.Accept();
+
         OnCommitAction?.Invoke();
     }
 

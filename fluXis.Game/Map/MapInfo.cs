@@ -20,6 +20,8 @@ public class MapInfo
     public string VideoFile { get; set; } = string.Empty;
     public string EffectFile { get; set; } = string.Empty;
     public string StoryboardFile { get; set; } = string.Empty;
+
+    [JsonProperty("metadata")]
     public MapMetadata Metadata { get; set; }
 
     [JsonProperty("colors")]

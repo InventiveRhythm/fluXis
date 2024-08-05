@@ -72,7 +72,7 @@ public class OsuMap
                 Artist = Artist?.Trim() ?? "",
                 Mapper = Creator?.Trim() ?? "",
                 Difficulty = Version?.Trim() ?? "",
-                Source = Source?.Trim() ?? "",
+                AudioSource = Source?.Trim() ?? "",
                 Tags = Tags?.Trim() ?? "",
                 PreviewTime = PreviewTime
             },

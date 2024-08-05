@@ -153,7 +153,7 @@ public class StepmaniaFile
                     Artist = Artist,
                     Mapper = Credit,
                     Difficulty = chart.Difficulty,
-                    Source = "",
+                    AudioSource = "",
                     Tags = "",
                     PreviewTime = (int)(SampleStart * 1000)
                 },

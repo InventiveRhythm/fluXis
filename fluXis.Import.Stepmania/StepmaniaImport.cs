@@ -108,7 +108,7 @@ public class StepmaniaImport : MapImporter
                     {
                         Title = info.Metadata.Title,
                         Artist = info.Metadata.Artist,
-                        Source = info.Metadata.Source,
+                        Source = info.Metadata.AudioSource,
                         Audio = info.AudioFile,
                         Background = info.BackgroundFile,
                         PreviewTime = info.Metadata.PreviewTime,

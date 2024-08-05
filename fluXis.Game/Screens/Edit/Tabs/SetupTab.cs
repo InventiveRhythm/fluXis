@@ -103,12 +103,6 @@ public partial class SetupTab : EditorTab
                                                             Placeholder = "...",
                                                             OnChange = value => map.MapInfo.Metadata.Difficulty = map.RealmMap.Difficulty = value
                                                         },
-                                                        new SetupTextBox("Source")
-                                                        {
-                                                            Default = map.MapInfo.Metadata.Source,
-                                                            Placeholder = "No Source",
-                                                            OnChange = value => map.MapInfo.Metadata.Source = map.RealmMap.Metadata.Source = value
-                                                        },
                                                         new SetupTextBox("Tags")
                                                         {
                                                             Default = map.MapInfo.Metadata.Tags,
@@ -182,6 +176,30 @@ public partial class SetupTab : EditorTab
                                                             Path = map.MapInfo.VideoFile,
                                                             OnChange = map.SetVideo
                                                         }
+                                                    }
+                                                },
+                                                new SetupSection("Sources")
+                                                {
+                                                    Entries = new Drawable[]
+                                                    {
+                                                        new SetupTextBox("Audio")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.AudioSource,
+                                                            Placeholder = "No Source",
+                                                            OnChange = value => map.MapInfo.Metadata.AudioSource = map.RealmMap.Metadata.Source = value
+                                                        },
+                                                        new SetupTextBox("Background")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.BackgroundSource,
+                                                            Placeholder = "No Source",
+                                                            OnChange = value => map.MapInfo.Metadata.BackgroundSource = value
+                                                        },
+                                                        new SetupTextBox("Cover")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.CoverSource,
+                                                            Placeholder = "No Source",
+                                                            OnChange = value => map.MapInfo.Metadata.CoverSource = value
+                                                        },
                                                     }
                                                 },
                                                 new SetupSection("Keymode")

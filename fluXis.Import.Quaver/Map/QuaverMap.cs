@@ -34,7 +34,7 @@ public class QuaverMap
         {
             Title = Title,
             Artist = Artist,
-            Source = Source,
+            AudioSource = Source,
             Tags = Tags,
             Mapper = Creator,
             Difficulty = DifficultyName,
