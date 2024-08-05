@@ -13,9 +13,11 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK.Graphics;
+using osuTK.Input;
 
 namespace fluXis.Game.Screens.Menu.UI.Buttons;
 
@@ -31,6 +33,8 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
     public LocalisableString Text { get; init; } = "Default Text";
     public virtual LocalisableString Description { get; set; } = string.Empty;
     public Action Action { get; init; }
+    public Key[] Keys { get; init; }
+    public JoystickButton GamepadButton { get; init; }
     public BindableBool Enabled { get; } = new(true);
 
     // used for animation delay
@@ -129,6 +133,24 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
     protected override void OnMouseUp(MouseUpEvent e)
     {
         content.ScaleTo(1, 1000, Easing.OutElasticHalf);
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (Keys is null || !Keys.Contains(e.Key))
+            return false;
+
+        TriggerClick();
+        return true;
+    }
+
+    protected override bool OnJoystickPress(JoystickPressEvent e)
+    {
+        if (e.Button != GamepadButton)
+            return false;
+
+        TriggerClick();
+        return true;
     }
 
     public override void Show()

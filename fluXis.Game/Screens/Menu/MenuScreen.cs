@@ -36,6 +36,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
@@ -202,6 +203,8 @@ public partial class MenuScreen : FluXisScreen
                                         {
                                             Text = LocalizationStrings.MainMenu.PlayText,
                                             Icon = FontAwesome6.Solid.Play,
+                                            Keys = new[] { Key.Enter, Key.P },
+                                            GamepadButton = JoystickButton.Button2, // A
                                             Action = continueToPlay,
                                             Size = new Vector2(350, 200)
                                         },
@@ -210,6 +213,8 @@ public partial class MenuScreen : FluXisScreen
                                             Text = LocalizationStrings.MainMenu.MultiplayerText,
                                             Description = LocalizationStrings.MainMenu.MultiplayerDescription,
                                             Icon = FontAwesome6.Solid.Users,
+                                            Keys = new[] { Key.M },
+                                            GamepadButton = JoystickButton.Button3, // B
                                             Action = continueToMultiplayer,
                                             DefaultSprite = new Sprite
                                             {
@@ -225,6 +230,7 @@ public partial class MenuScreen : FluXisScreen
                                             Text = LocalizationStrings.MainMenu.EditText,
                                             Description = LocalizationStrings.MainMenu.EditDescription,
                                             Icon = FontAwesome6.Solid.PenRuler,
+                                            Keys = new[] { Key.E },
                                             Action = () => this.Push(new EditorLoader()),
                                             DefaultSprite = new Sprite
                                             {
@@ -240,6 +246,8 @@ public partial class MenuScreen : FluXisScreen
                                             Text = LocalizationStrings.MainMenu.DashboardText,
                                             Description = LocalizationStrings.MainMenu.DashboardDescription,
                                             Icon = FontAwesome6.Solid.ChartLine,
+                                            Keys = new[] { Key.D },
+                                            GamepadButton = JoystickButton.Button1, // X
                                             Action = openDashboard,
                                             Size = new Vector2(385, 80),
                                             Position = new Vector2(0, 220),
@@ -250,6 +258,8 @@ public partial class MenuScreen : FluXisScreen
                                             Text = LocalizationStrings.MainMenu.BrowseText,
                                             Description = LocalizationStrings.MainMenu.BrowseDescription,
                                             Icon = FontAwesome6.Solid.EarthAmericas,
+                                            GamepadButton = JoystickButton.Button4, // Y
+                                            Keys = new[] { Key.B },
                                             Action = continueToBrowse,
                                             Size = new Vector2(385, 80),
                                             Position = new Vector2(405, 220),
@@ -260,6 +270,7 @@ public partial class MenuScreen : FluXisScreen
                                         {
                                             Icon = FontAwesome6.Solid.DoorOpen,
                                             Action = Game.Exit,
+                                            GamepadButton = JoystickButton.Button9, // Back
                                             Size = new Vector2(100, 80),
                                             Position = new Vector2(810, 220),
                                             Row = 2,
@@ -444,6 +455,20 @@ public partial class MenuScreen : FluXisScreen
     protected override bool OnMouseDown(MouseDownEvent e) => canPlayAnimation();
     protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
     protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
+
+    protected override bool OnJoystickPress(JoystickPressEvent e)
+    {
+        if (canPlayAnimation()) return true;
+
+        switch (e.Button)
+        {
+            case JoystickButton.Button10: // Start
+                settings.ToggleVisibility();
+                return true;
+        }
+
+        return false;
+    }
 
     private void showMenu(bool longer = false)
     {
