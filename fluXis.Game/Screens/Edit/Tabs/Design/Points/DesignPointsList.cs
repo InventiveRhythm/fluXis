@@ -36,6 +36,11 @@ public partial class DesignPointsList : PointsList
         Map.PlayfieldScaleEventRemoved += RemovePoint;
         Map.MapEvents.PlayfieldScaleEvents.ForEach(AddPoint);
 
+        Map.HitObjectFadeEventAdded += AddPoint;
+        Map.HitObjectFadeEventUpdated += UpdatePoint;
+        Map.HitObjectFadeEventRemoved += RemovePoint;
+        Map.MapEvents.HitObjectFadeEvents.ForEach(AddPoint);
+
         Map.ShaderEventAdded += AddPoint;
         Map.ShaderEventUpdated += UpdatePoint;
         Map.ShaderEventRemoved += RemovePoint;
@@ -66,6 +71,7 @@ public partial class DesignPointsList : PointsList
             PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
             PlayfieldFadeEvent fade => new PlayfieldFadeEntry(fade),
             PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
+            HitObjectFadeEvent scale => new HitObjectFadeEntry(scale),
             BeatPulseEvent pulse => new BeatPulseEntry(pulse),
             PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
             ShaderEvent shader => new ShaderEntry(shader),
@@ -74,8 +80,6 @@ public partial class DesignPointsList : PointsList
         };
     }
 
-    // flash is covered by the menu bar
-    // TODO: Redesign the "add" menu
     protected override IEnumerable<AddButtonEntry> CreateAddEntries()
     {
         var entries = new List<AddButtonEntry>
@@ -86,6 +90,7 @@ public partial class DesignPointsList : PointsList
             new("Playfield Scale", FluXisColors.PlayfieldScale, () => Create(new PlayfieldScaleEvent())),
             new("Playfield Rotate", FluXisColors.PlayfieldRotate, () => Create(new PlayfieldRotateEvent())),
             new("Playfield Fade", FluXisColors.PlayfieldFade, () => Create(new PlayfieldFadeEvent())),
+            new("HitObject Fade", FluXisColors.HitObjectFade, () => Create(new HitObjectFadeEvent())),
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent())),
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }))

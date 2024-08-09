@@ -72,6 +72,10 @@ public class EditorMap
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventRemoved;
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventUpdated;
 
+    public event Action<HitObjectFadeEvent> HitObjectFadeEventAdded;
+    public event Action<HitObjectFadeEvent> HitObjectFadeEventRemoved;
+    public event Action<HitObjectFadeEvent> HitObjectFadeEventUpdated;
+
     public event Action<ShaderEvent> ShaderEventAdded;
     public event Action<ShaderEvent> ShaderEventRemoved;
     public event Action<ShaderEvent> ShaderEventUpdated;
@@ -229,6 +233,11 @@ public class EditorMap
                 PlayfieldScaleEventAdded?.Invoke(scaleEvent);
                 break;
 
+            case HitObjectFadeEvent hitFade:
+                MapEvents.HitObjectFadeEvents.Add(hitFade);
+                HitObjectFadeEventAdded?.Invoke(hitFade);
+                break;
+
             case ShaderEvent shaderEvent:
                 MapEvents.ShaderEvents.Add(shaderEvent);
                 ShaderEventAdded?.Invoke(shaderEvent);
@@ -292,6 +301,10 @@ public class EditorMap
 
             case PlayfieldScaleEvent scaleEvent:
                 PlayfieldScaleEventUpdated?.Invoke(scaleEvent);
+                break;
+
+            case HitObjectFadeEvent hitFade:
+                HitObjectFadeEventUpdated?.Invoke(hitFade);
                 break;
 
             case ShaderEvent shaderEvent:
@@ -364,6 +377,11 @@ public class EditorMap
             case PlayfieldScaleEvent scaleEvent:
                 MapEvents.PlayfieldScaleEvents.Remove(scaleEvent);
                 PlayfieldScaleEventRemoved?.Invoke(scaleEvent);
+                break;
+
+            case HitObjectFadeEvent hitFade:
+                MapEvents.HitObjectFadeEvents.Remove(hitFade);
+                HitObjectFadeEventRemoved?.Invoke(hitFade);
                 break;
 
             case ShaderEvent shaderEvent:
@@ -445,6 +463,12 @@ public class EditorMap
         {
             scaleEvent.Time += offset;
             Update(scaleEvent);
+        }
+
+        foreach (var hitFade in MapEvents.HitObjectFadeEvents)
+        {
+            hitFade.Time += offset;
+            Update(hitFade);
         }
 
         foreach (var shaderEvent in MapEvents.ShaderEvents)

@@ -59,7 +59,11 @@ public partial class Playfield : Container
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
         hitsoundPanStrength = config.GetBindable<double>(FluXisSetting.HitsoundPanning);
 
-        dependencies.CacheAs(Manager = new HitObjectManager { Masking = true });
+        dependencies.CacheAs(Manager = new HitObjectManager
+        {
+            AlwaysPresent = true,
+            Masking = true
+        });
 
         InternalChildren = new[]
         {
@@ -110,7 +114,8 @@ public partial class Playfield : Container
                 screen.Shake(shake.Duration, shake.Magnitude);
             }),
             new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents, fade => this.FadeTo(fade.Alpha, fade.Duration)),
-            new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents, rotate => this.RotateTo(rotate.Roll, rotate.Duration, rotate.Easing))
+            new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents, rotate => this.RotateTo(rotate.Roll, rotate.Duration, rotate.Easing)),
+            new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration))
         };
     }
 
