@@ -24,6 +24,8 @@ public partial class Panel : Container
 
     protected bool Loading { get; private set; }
 
+    private Visibility state = Visibility.Hidden;
+
     public Panel()
     {
         Masking = true;
@@ -81,6 +83,10 @@ public partial class Panel : Container
 
     public override void Hide()
     {
+        if (state == Visibility.Hidden)
+            return;
+
+        state = Visibility.Hidden;
         samples.PanelClose(IsDangerous);
 
         this.ScaleTo(.9f, 400, Easing.OutQuint)
@@ -89,6 +95,10 @@ public partial class Panel : Container
 
     public override void Show()
     {
+        if (state == Visibility.Visible)
+            return;
+
+        state = Visibility.Visible;
         samples.PanelOpen(IsDangerous);
 
         this.RotateTo(0).ScaleTo(.75f)
