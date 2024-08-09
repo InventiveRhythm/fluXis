@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using fluXis.Game.Map.Events;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Shared.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -28,23 +28,23 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("playfieldscale")]
     public List<PlayfieldScaleEvent> PlayfieldScaleEvents { get; private set; } = new();
 
-    [JsonProperty("shake")]
-    public List<ShakeEvent> ShakeEvents { get; private set; } = new();
-
     [JsonProperty("playfieldfade")]
     public List<PlayfieldFadeEvent> PlayfieldFadeEvents { get; private set; } = new();
 
+    [JsonProperty("playfieldrotate")]
+    public List<PlayfieldRotateEvent> PlayfieldRotateEvents { get; private set; } = new();
+
     [JsonProperty("hitfade")]
     public List<HitObjectFadeEvent> HitObjectFadeEvents { get; private set; } = new();
+
+    [JsonProperty("shake")]
+    public List<ShakeEvent> ShakeEvents { get; private set; } = new();
 
     [JsonProperty("shader")]
     public List<ShaderEvent> ShaderEvents { get; private set; } = new();
 
     [JsonProperty("beatpulse")]
     public List<BeatPulseEvent> BeatPulseEvents { get; private set; } = new();
-
-    [JsonProperty("playfieldrotate")]
-    public List<PlayfieldRotateEvent> PlayfieldRotateEvents { get; private set; } = new();
 
     [JsonProperty("notes")]
     public List<NoteEvent> NoteEvents { get; private set; } = new();
@@ -55,12 +55,12 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && PulseEvents.Count == 0
                          && PlayfieldMoveEvents.Count == 0
                          && PlayfieldScaleEvents.Count == 0
-                         && ShakeEvents.Count == 0
+                         && PlayfieldRotateEvents.Count == 0
                          && PlayfieldFadeEvents.Count == 0
                          && HitObjectFadeEvents.Count == 0
+                         && ShakeEvents.Count == 0
                          && ShaderEvents.Count == 0
                          && BeatPulseEvents.Count == 0
-                         && PlayfieldRotateEvents.Count == 0
                          && NoteEvents.Count == 0;
 
     public static T Load<T>(string content)
@@ -243,9 +243,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
 
     public MapEvents DeepClone()
     {
-        var clone = MemberwiseClone() as MapEvents;
-
-        if (clone == null)
+        if (MemberwiseClone() is not MapEvents clone)
             throw new InvalidOperationException("Failed to clone MapEvents");
 
         clone.LaneSwitchEvents = new List<LaneSwitchEvent>(LaneSwitchEvents);
@@ -253,12 +251,12 @@ public class MapEvents : IDeepCloneable<MapEvents>
         clone.PulseEvents = new List<PulseEvent>(PulseEvents);
         clone.PlayfieldMoveEvents = new List<PlayfieldMoveEvent>(PlayfieldMoveEvents);
         clone.PlayfieldScaleEvents = new List<PlayfieldScaleEvent>(PlayfieldScaleEvents);
-        clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);
+        clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
         clone.PlayfieldFadeEvents = new List<PlayfieldFadeEvent>(PlayfieldFadeEvents);
         clone.HitObjectFadeEvents = new List<HitObjectFadeEvent>(HitObjectFadeEvents);
+        clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);
         clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);
         clone.BeatPulseEvents = new List<BeatPulseEvent>(BeatPulseEvents);
-        clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
         clone.NoteEvents = new List<NoteEvent>(NoteEvents);
         return clone;
     }

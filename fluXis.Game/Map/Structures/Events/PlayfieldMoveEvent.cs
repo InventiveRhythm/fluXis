@@ -1,10 +1,11 @@
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
-namespace fluXis.Game.Map.Events;
+namespace fluXis.Game.Map.Structures.Events;
 
-public class PlayfieldMoveEvent : ITimedObject, IHasDuration
+public class PlayfieldMoveEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToPlayfield
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -20,4 +21,10 @@ public class PlayfieldMoveEvent : ITimedObject, IHasDuration
 
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.OutQuint;
+
+    public void Apply(Playfield playfield)
+    {
+        playfield.MoveToX(OffsetX, Duration, Easing);
+        playfield.MoveToY(OffsetY, Duration, Easing);
+    }
 }

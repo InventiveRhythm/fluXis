@@ -1,3 +1,4 @@
+using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 

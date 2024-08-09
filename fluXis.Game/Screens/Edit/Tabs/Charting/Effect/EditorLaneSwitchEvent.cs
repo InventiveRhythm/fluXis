@@ -1,5 +1,5 @@
 using System.Linq;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using osu.Framework.Allocation;

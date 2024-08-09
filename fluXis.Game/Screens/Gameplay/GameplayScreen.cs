@@ -22,7 +22,7 @@ using fluXis.Game.Graphics.Shaders.Retro;
 using fluXis.Game.Graphics.Shaders.Vignette;
 using fluXis.Game.Input;
 using fluXis.Game.Map;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Scores;

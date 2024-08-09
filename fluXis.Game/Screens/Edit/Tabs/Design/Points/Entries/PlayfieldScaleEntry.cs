@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Events;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -80,15 +80,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
                     Map.Update(scale);
                 }
             },
-            new PointSettingsEasing
-            {
-                CurrentValue = scale.Easing,
-                OnValueChanged = easing =>
-                {
-                    scale.Easing = easing;
-                    Map.Update(scale);
-                }
-            }
+            new PointSettingsEasing<PlayfieldScaleEvent>(Map, scale)
         });
     }
 }

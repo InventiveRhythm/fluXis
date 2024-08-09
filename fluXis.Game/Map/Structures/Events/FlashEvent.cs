@@ -1,11 +1,11 @@
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Map.Events;
+namespace fluXis.Game.Map.Structures.Events;
 
-public class FlashEvent : ITimedObject, IHasDuration
+public class FlashEvent : IMapEvent, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]
     public double Time { get; set; }

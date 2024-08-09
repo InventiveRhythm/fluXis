@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Events;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 

@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.UserInterface.Panel;
-using fluXis.Game.Map.Events;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.EffectEdit;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Menus;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;

@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Events;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
@@ -64,15 +64,7 @@ public partial class PlayfieldRotateEntry : PointListEntry
                     Map.Update(rotate);
                 }
             },
-            new PointSettingsEasing
-            {
-                CurrentValue = rotate.Easing,
-                OnValueChanged = easing =>
-                {
-                    rotate.Easing = easing;
-                    Map.Update(rotate);
-                }
-            }
+            new PointSettingsEasing<PlayfieldRotateEvent>(Map, rotate)
         });
     }
 }

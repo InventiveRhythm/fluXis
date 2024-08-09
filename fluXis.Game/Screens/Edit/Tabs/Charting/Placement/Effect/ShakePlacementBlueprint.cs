@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Actions.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using osu.Framework.Graphics;

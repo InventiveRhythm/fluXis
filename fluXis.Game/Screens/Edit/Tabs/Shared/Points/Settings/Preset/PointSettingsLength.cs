@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Utils;
 using osu.Framework.Graphics;
 

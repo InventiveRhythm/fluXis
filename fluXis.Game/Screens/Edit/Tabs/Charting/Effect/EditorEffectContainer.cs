@@ -1,6 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

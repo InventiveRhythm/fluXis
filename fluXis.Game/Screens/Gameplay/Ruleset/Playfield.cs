@@ -3,7 +3,7 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
@@ -97,25 +97,12 @@ public partial class Playfield : Container
                     bottomCover = skinManager.GetLaneCover(true)
                 }
             },
-            new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents, move =>
-            {
-                this.MoveToX(move.OffsetX, move.Duration, move.Easing);
-                this.MoveToY(move.OffsetY, move.Duration, move.Easing);
-            }),
-            new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents, scale =>
-            {
-                var yScale = scale.ScaleY;
-                if (IsUpScroll) yScale *= -1;
-
-                this.ScaleTo(new Vector2(scale.ScaleX, yScale), scale.Duration, scale.Easing);
-            }),
-            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake =>
-            {
-                screen.Shake(shake.Duration, shake.Magnitude);
-            }),
-            new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents, fade => this.FadeTo(fade.Alpha, fade.Duration)),
-            new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents, rotate => this.RotateTo(rotate.Roll, rotate.Duration, rotate.Easing)),
-            new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration))
+            new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents),
+            new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents),
+            new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents),
+            new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents),
+            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
+            new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration, fade.Easing))
         };
     }
 

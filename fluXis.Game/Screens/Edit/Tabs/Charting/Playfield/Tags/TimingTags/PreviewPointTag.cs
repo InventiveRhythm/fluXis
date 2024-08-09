@@ -1,5 +1,5 @@
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 

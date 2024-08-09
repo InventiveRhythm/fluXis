@@ -5,7 +5,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Actions;
 using fluXis.Game.Screens.Edit.Actions.Events;
 using fluXis.Game.UI;

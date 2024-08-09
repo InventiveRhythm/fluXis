@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map.Events;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;

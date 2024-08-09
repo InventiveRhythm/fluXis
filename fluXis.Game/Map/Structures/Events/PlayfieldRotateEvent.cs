@@ -1,10 +1,11 @@
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
-namespace fluXis.Game.Map.Events;
+namespace fluXis.Game.Map.Structures.Events;
 
-public class PlayfieldRotateEvent : ITimedObject, IHasDuration
+public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableToPlayfield
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -26,4 +27,6 @@ public class PlayfieldRotateEvent : ITimedObject, IHasDuration
 
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.OutQuint;
+
+    public void Apply(Playfield playfield) => playfield.RotateTo(Roll, Duration, Easing);
 }

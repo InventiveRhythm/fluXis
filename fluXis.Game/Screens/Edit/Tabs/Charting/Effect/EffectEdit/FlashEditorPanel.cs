@@ -3,7 +3,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect.UI;
 using fluXis.Game.Utils;

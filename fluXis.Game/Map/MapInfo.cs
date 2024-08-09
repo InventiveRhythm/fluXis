@@ -225,23 +225,4 @@ public class MapInfo
     }
 
     public override string ToString() => $"{Hash}";
-
-    public MapInfo Clone()
-    {
-        return new MapInfo(Metadata)
-        {
-            AudioFile = AudioFile,
-            BackgroundFile = BackgroundFile,
-            CoverFile = CoverFile,
-            VideoFile = VideoFile,
-            EffectFile = EffectFile,
-            HitObjects = HitObjects,
-            TimingPoints = TimingPoints,
-            ScrollVelocities = ScrollVelocities,
-            HitSoundFades = HitSoundFades,
-            InitialKeyCount = InitialKeyCount,
-            AccuracyDifficulty = AccuracyDifficulty,
-            Map = Map
-        };
-    }
 }

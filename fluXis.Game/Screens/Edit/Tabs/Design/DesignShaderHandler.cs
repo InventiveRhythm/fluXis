@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Shaders;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;

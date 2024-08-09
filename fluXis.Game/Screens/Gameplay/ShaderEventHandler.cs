@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Shaders;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
@@ -42,7 +42,7 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
         if (handler is null)
             throw new Exception($"Handler with type {ev.ShaderName} is not in scene tree!");
 
-        handler.StrengthTo(ev.Parameters.Strength, ev.Duration);
+        handler.StrengthTo(ev.Parameters.Strength, ev.Duration, ev.Easing);
     }
 
     // the shader stack is outside the gameplay clock.

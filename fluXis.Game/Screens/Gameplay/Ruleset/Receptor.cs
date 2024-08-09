@@ -1,4 +1,4 @@
-﻿using fluXis.Game.Map.Events;
+﻿using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

@@ -1,4 +1,4 @@
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags.EffectTags;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;

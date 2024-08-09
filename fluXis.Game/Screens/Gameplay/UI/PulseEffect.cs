@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

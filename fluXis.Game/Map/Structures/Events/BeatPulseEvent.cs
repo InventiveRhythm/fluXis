@@ -1,9 +1,9 @@
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Map.Events;
+namespace fluXis.Game.Map.Structures.Events;
 
-public class BeatPulseEvent : ITimedObject
+public class BeatPulseEvent : IMapEvent
 {
     [JsonProperty("time")]
     public double Time { get; set; }

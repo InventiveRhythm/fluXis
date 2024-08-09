@@ -99,6 +99,8 @@ public partial class PointSettingsDropdown<T> : Container, IHasTooltip
             {
                 BackgroundColour = FluXisColors.Background3;
                 MaskingContainer.CornerRadius = 5;
+                MaxHeight = 280;
+                ScrollbarVisible = true;
             }
 
             protected override DrawableDropdownMenuItem CreateDrawableDropdownMenuItem(MenuItem item)

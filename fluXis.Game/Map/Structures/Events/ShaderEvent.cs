@@ -1,11 +1,12 @@
 using System;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
-namespace fluXis.Game.Map.Events;
+namespace fluXis.Game.Map.Structures.Events;
 
-public class ShaderEvent : ITimedObject, IHasDuration
+public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -28,6 +29,9 @@ public class ShaderEvent : ITimedObject, IHasDuration
 
     [JsonProperty("duration")]
     public double Duration { get; set; }
+
+    [JsonProperty("ease")]
+    public Easing Easing { get; set; }
 
     [JsonProperty("params")]
     public ShaderParameters Parameters { get; set; } = new();

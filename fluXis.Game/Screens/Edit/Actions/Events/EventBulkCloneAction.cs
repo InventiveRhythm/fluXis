@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 
 namespace fluXis.Game.Screens.Edit.Actions.Events;
 

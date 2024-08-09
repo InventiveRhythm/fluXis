@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
-using fluXis.Game.Map.Structures;
+using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Input;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using osu.Framework.Allocation;

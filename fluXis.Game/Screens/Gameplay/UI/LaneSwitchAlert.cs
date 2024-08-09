@@ -1,7 +1,7 @@
 using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;

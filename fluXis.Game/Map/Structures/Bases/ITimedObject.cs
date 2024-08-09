@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace fluXis.Game.Map.Structures;
+namespace fluXis.Game.Map.Structures.Bases;
 
 public interface ITimedObject
 {

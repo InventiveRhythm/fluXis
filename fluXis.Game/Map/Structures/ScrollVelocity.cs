@@ -1,3 +1,4 @@
+using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Structures;

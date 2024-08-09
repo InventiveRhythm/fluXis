@@ -106,6 +106,7 @@ public partial class FluXisDropdown<T> : Dropdown<T>
             MaskingContainer.CornerRadius = 10;
             BackgroundColour = FluXisColors.Background2;
             Margin = new MarginPadding { Top = 8 };
+            ScrollbarVisible = false;
         }
 
         protected override void UpdateSize(Vector2 newSize)
@@ -120,7 +121,7 @@ public partial class FluXisDropdown<T> : Dropdown<T>
 
         protected override Menu CreateSubMenu() => new FluXisMenu(Direction.Vertical);
         protected override DrawableDropdownMenuItem CreateDrawableDropdownMenuItem(MenuItem item) => new DrawableFluXisDropdownMenuItem(item);
-        protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new FluXisScrollContainer(direction) { ScrollbarVisible = false };
+        protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new FluXisScrollContainer(direction) { ScrollbarVisible = true };
 
         protected override void AnimateClose()
         {

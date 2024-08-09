@@ -1,4 +1,4 @@
-using fluXis.Game.Map.Events;
+using fluXis.Game.Map.Structures.Events;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Graphics.Shaders.Vignette;
