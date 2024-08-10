@@ -18,6 +18,18 @@ public class EditClubParameters
     public ClubJoinType? JoinType { get; set; }
 
     /// <summary>
+    /// B64-encoded image
+    /// </summary>
+    [JsonProperty("icon")]
+    public string Icon { get; set; } = null!;
+
+    /// <summary>
+    /// B64-encoded image
+    /// </summary>
+    [JsonProperty("banner")]
+    public string Banner { get; set; } = null!;
+
+    /// <summary>
     /// Hex color code
     /// </summary>
     [JsonProperty("color-start")]

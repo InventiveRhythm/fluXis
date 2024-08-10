@@ -18,6 +18,18 @@ public class CreateClubParameters
     public string Tag { get; set; } = null!;
 
     /// <summary>
+    /// B64-encoded image
+    /// </summary>
+    [JsonProperty("icon")]
+    public string Icon { get; set; } = null!;
+
+    /// <summary>
+    /// B64-encoded image
+    /// </summary>
+    [JsonProperty("banner")]
+    public string Banner { get; set; } = null!;
+
+    /// <summary>
     /// the join type of the club
     /// </summary>
     [JsonProperty("join-type")]
