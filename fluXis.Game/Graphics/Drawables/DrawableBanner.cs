@@ -53,7 +53,7 @@ public partial class DrawableBanner : Sprite
     private void unregisterCallback()
     {
         if (user != null)
-            users?.RegisterBannerCallback(user.ID, reload);
+            users?.UnregisterBannerCallback(user.ID, reload);
     }
 
     private void reload()

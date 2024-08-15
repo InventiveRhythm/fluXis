@@ -57,7 +57,7 @@ public partial class DrawableAvatar : Sprite
     private void unregisterCallback()
     {
         if (user != null)
-            users?.RegisterAvatarCallback(user.ID, reload);
+            users?.UnregisterAvatarCallback(user.ID, reload);
     }
 
     private void reload()

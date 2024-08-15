@@ -41,5 +41,9 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.Finish(ScoreProcessor.ToScoreInfo(client.Player));
     }
 
-    private void onResultsReady(List<ScoreInfo> scores) => this.Push(new MultiResults(RealmMap, scores));
+    private void onResultsReady(List<ScoreInfo> scores)
+    {
+        if (this.IsCurrentScreen())
+            this.Push(new MultiResults(RealmMap, scores));
+    }
 }

@@ -23,6 +23,7 @@ using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.Lobby;
@@ -69,6 +70,15 @@ public partial class MultiLobby : MultiSubScreen
     [BackgroundDependencyLoader]
     private void load()
     {
+        if (Room is null)
+        {
+            notifications.SendError("Failed to join room!");
+            Logger.Log("Failed to join room because its null!", LoggingTarget.Runtime, LogLevel.Error);
+            client.LeaveRoom();
+            ValidForPush = false;
+            return;
+        }
+
         InternalChildren = new Drawable[]
         {
             new FillFlowContainer
@@ -142,6 +152,9 @@ public partial class MultiLobby : MultiSubScreen
 
     private void updateRightButton()
     {
+        if (footer.RightButton is null)
+            return;
+
         if (!hasMapDownloaded)
         {
             footer.RightButton.ButtonText = "Download Map";
@@ -164,6 +177,9 @@ public partial class MultiLobby : MultiSubScreen
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        if (!ValidForPush)
+            return;
 
         footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
 

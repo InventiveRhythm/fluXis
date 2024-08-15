@@ -17,6 +17,8 @@ public partial class UserCache : Component
 
     private Dictionary<long, APIUser> users { get; } = new();
 
+    private readonly object dictLock = new();
+
     public event Action<long> OnAvatarUpdate;
     public event Action<long> OnBannerUpdate;
 
@@ -47,7 +49,9 @@ public partial class UserCache : Component
         APIUser user = fetch(id);
         if (user == null) return null;
 
-        users[id] = user;
+        lock (dictLock)
+            users[id] = user;
+
         return user;
     }
 
@@ -60,8 +64,6 @@ public partial class UserCache : Component
 
             if (req.IsSuccessful)
                 return req.Response!.Data;
-
-            var res = req.Response;
 
             Logger.Log($"Failed to load user from API: {req.FailReason?.Message}", LoggingTarget.Network, LogLevel.Error);
             return null;
