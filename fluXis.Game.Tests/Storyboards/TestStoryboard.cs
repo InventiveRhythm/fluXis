@@ -28,17 +28,17 @@ public partial class TestStoryboard : FluXisTestScene
 
         Add(GlobalClock);
 
-        var set = maps.GetFromGuid("e73344a8-9897-4149-b69a-71e03c5146af");
-        var map = set.Maps.First(m => m.ID == Guid.Parse("adf5a2a9-df58-4558-92cf-c8fb0dd25cb0"));
+        var set = maps.GetFromGuid("5955acf7-e356-459e-acf6-1456f869296f");
+        var map = set.Maps.First(m => m.ID == Guid.Parse("91707210-223f-41b8-8ff5-3bc9613bbb2d"));
         GlobalClock.LoadMap(map);
         GlobalClock.Stop();
 
-        var data = File.ReadAllText(@"C:\Users\Flux\AppData\Roaming\osu\exports\neppa\Tephe - Neppa feat. Butter (Jiysea).osb");
+        var data = File.ReadAllText(@"W:\osu-lazer\exports\mylove\Raphlesia & BilliumMoto - My Love (Mao).osb");
 
         var parser = new OsuStoryboardParser();
         var storyboard = parser.Parse(data);
 
-        var drawable = new DrawableStoryboard(storyboard, @"C:\Users\Flux\AppData\Roaming\osu\exports\neppa\");
+        var drawable = new DrawableStoryboard(storyboard, @"W:\osu-lazer\exports\mylove\");
         LoadComponent(drawable);
 
         Add(new Container

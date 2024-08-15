@@ -2,10 +2,11 @@ using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osuTK;
+using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Storyboards;
 
-public class StoryboardAnimation
+public class StoryboardAnimation : IDeepCloneable<StoryboardAnimation>
 {
     /// <summary>
     /// The start time of the animation.
@@ -71,6 +72,16 @@ public class StoryboardAnimation
             return new Vector2(xy[0].ToFloatInvariant(), xy[1].ToFloatInvariant());
         }
     }
+
+    public StoryboardAnimation DeepClone() => new()
+    {
+        StartTime = StartTime,
+        Duration = Duration,
+        Easing = Easing,
+        Type = Type,
+        ValueStart = ValueStart,
+        ValueEnd = ValueEnd
+    };
 }
 
 public enum StoryboardAnimationType
