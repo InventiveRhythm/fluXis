@@ -35,7 +35,7 @@ public partial class DangerHealthOverlay : Container
 
         RelativeSizeAxes = Axes.Both;
 
-        AddRangeInternal(new Drawable[]
+        InternalChildren = new Drawable[]
         {
             lowPass = new LowPassFilter(audio.TrackMixer),
             glow = new Box
@@ -53,7 +53,7 @@ public partial class DangerHealthOverlay : Container
                 Colour = Colour4.Black.Opacity(.6f),
                 Alpha = 0
             }
-        });
+        };
     }
 
     protected override void LoadComplete()
@@ -78,6 +78,7 @@ public partial class DangerHealthOverlay : Container
 
     protected override void Dispose(bool isDisposing)
     {
+        base.Dispose(isDisposing);
         dimOnLowHealth.ValueChanged -= onDimOnLowHealthChanged;
     }
 
