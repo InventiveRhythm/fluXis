@@ -20,6 +20,11 @@ public partial class EditorLoader : FluXisScreen
     private RealmMap map { get; set; }
     private MapInfo mapInfo { get; set; }
 
+    /// <summary>
+    /// see <see cref="Editor.StartTabIndex"/>
+    /// </summary>
+    public int StartTabIndex { get; set; } = -1;
+
     public EditorLoader(RealmMap realmMap = null, MapInfo map = null)
     {
         this.map = realmMap;
@@ -63,11 +68,14 @@ public partial class EditorLoader : FluXisScreen
     {
         var editorMap = map?.GetMapInfo<EditorMap.EditorMapInfo>();
         var events = mapInfo?.GetMapEvents();
+        var sb = mapInfo?.GetStoryboard();
 
         if (editorMap != null && events != null)
             editorMap.MapEvents = events;
+        if (editorMap != null && sb != null)
+            editorMap.Storyboard = sb;
 
-        LoadComponentAsync(new Editor(this, map, editorMap), this.Push);
+        LoadComponentAsync(new Editor(this, map, editorMap) { StartTabIndex = StartTabIndex }, this.Push);
         ValidForResume = false;
     }
 

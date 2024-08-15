@@ -33,6 +33,7 @@ using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.TabSwitcher;
+using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
@@ -80,6 +81,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     [Resolved]
     private PanelContainer panels { get; set; }
+
+    /// <summary>
+    /// overwrites the tab the editor opens with
+    /// </summary>
+    public int StartTabIndex { get; init; } = -1;
 
     private ITrackStore trackStore { get; set; }
 
@@ -158,6 +164,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         editorMap.MapInfo ??= new EditorMap.EditorMapInfo(new MapMetadata { Mapper = editorMap.RealmMap.Metadata.Mapper });
         editorMap.MapInfo.MapEvents ??= new MapEvents();
+        editorMap.MapInfo.Storyboard ??= new Storyboard();
 
         backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("maps")));
@@ -205,7 +212,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         new SetupTab(),
                                         new ChartingTab(),
                                         experiments.Get<bool>(ExperimentConfig.DesignTab) ? new DesignTab() : new WipEditorTab(FontAwesome6.Solid.Palette, "Design", "Soon you'll be able to edit effects and other stuff here."),
-                                        new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
+                                        FluXisGameBase.IsDebug ? new StoryboardTab() : new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
                                         new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
                                     }
                                 }
@@ -222,7 +229,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             new FluXisMenuSpacer(),
                                             new("Create new difficulty", FontAwesome6.Solid.Plus, () => panels.Content = new EditorDifficultyCreationPanel
                                             {
-                                                OnCreate = param => createNewDiff(param)
+                                                OnCreate = createNewDiff
                                             }) { Enabled = () => canSave },
                                             new("Switch to difficulty", FontAwesome6.Solid.RightLeft, () => { })
                                             {
@@ -411,7 +418,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     protected override void LoadComplete()
     {
-        changeTab(isNewMap ? 0 : 1);
+        var idx = isNewMap ? 0 : 1;
+
+        if (StartTabIndex != -1)
+            idx = StartTabIndex;
+
+        changeTab(idx);
 
         if (!canSave)
         {

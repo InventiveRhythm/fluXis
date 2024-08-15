@@ -13,6 +13,8 @@ public partial class TestEditor : FluXisTestScene
     [Resolved]
     private MapStore maps { get; set; }
 
+    protected override bool UseTestAPI => true;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -34,17 +36,14 @@ public partial class TestEditor : FluXisTestScene
 
         AddStep("Push existing map", () =>
         {
-            var map = maps.GetFromGuid("f2c5760f-0ebb-4498-9008-f6e52292f5a6")?
+            var map = maps.GetFromGuid("262a7734-95a5-4115-85cf-87c898e55db6")?
                 .Maps.FirstOrDefault();
 
-            var editor = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
-            screenStack.Push(editor);
+            var loader = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
+            loader.StartTabIndex = 3;
+            screenStack.Push(loader);
         });
 
-        AddStep("Push new map", () =>
-        {
-            var editor = new EditorLoader();
-            screenStack.Push(editor);
-        });
+        AddStep("Push new map", () => screenStack.Push(new EditorLoader()));
     }
 }

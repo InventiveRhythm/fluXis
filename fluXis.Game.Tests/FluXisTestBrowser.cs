@@ -19,6 +19,6 @@ public partial class FluXisTestBrowser : FluXisGameBase
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
-        host.Window.CursorState |= CursorState.Hidden;
+        host.Window.CursorState = CursorState.Hidden;
     }
 }

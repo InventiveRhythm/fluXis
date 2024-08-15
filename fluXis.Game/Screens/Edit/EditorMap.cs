@@ -7,6 +7,7 @@ using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
+using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
 using Newtonsoft.Json;
@@ -21,6 +22,7 @@ public class EditorMap
     public RealmMap RealmMap { get; set; }
 
     public MapEvents MapEvents => MapInfo.MapEvents;
+    public Storyboard Storyboard => MapInfo.Storyboard;
     public RealmMapSet MapSet => RealmMap?.MapSet;
 
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
@@ -510,6 +512,9 @@ public class EditorMap
         [JsonIgnore]
         public MapEvents MapEvents { get; set; }
 
+        [JsonIgnore]
+        public Storyboard Storyboard { get; set; }
+
         public EditorMapInfo(MapMetadata metadata)
             : base(metadata)
         {
@@ -519,10 +524,13 @@ public class EditorMap
 
         public override T GetMapEvents<T>() => MapEvents as T;
 
+        public override Storyboard GetStoryboard() => Storyboard;
+
         public EditorMapInfo DeepClone()
         {
             var clone = (EditorMapInfo)MemberwiseClone();
             clone.MapEvents = MapEvents.DeepClone();
+            clone.Storyboard = Storyboard;
             return clone;
         }
     }
