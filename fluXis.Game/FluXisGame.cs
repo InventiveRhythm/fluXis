@@ -350,7 +350,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         if (screenStack.CurrentScreen is not SelectScreen)
         {
             MenuScreen.MakeCurrent();
-            MenuScreen.Push(new SelectScreen());
+
+            if (MenuScreen.IsCurrentScreen())
+                MenuScreen.Push(new SelectScreen());
         }
     }
 
