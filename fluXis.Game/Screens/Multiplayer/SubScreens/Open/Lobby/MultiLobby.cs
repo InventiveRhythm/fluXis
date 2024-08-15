@@ -158,7 +158,7 @@ public partial class MultiLobby : MultiSubScreen
         if (set.OnlineID != Room.Map.MapSetID)
             return;
 
-        mapChanged(Room.Map);
+        Schedule(() => mapChanged(Room.Map));
     }
 
     protected override void LoadComplete()
