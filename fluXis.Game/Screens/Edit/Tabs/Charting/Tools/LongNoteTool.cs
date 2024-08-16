@@ -1,5 +1,5 @@
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 

@@ -1,9 +1,8 @@
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
 public partial class SingleNoteSelectionBlueprint : NoteSelectionBlueprint
 {

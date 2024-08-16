@@ -1,6 +1,7 @@
 using System.Linq;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Screens.Edit.Blueprints.Selection;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Utils;
@@ -15,7 +16,7 @@ public partial class ChartingSidebar : PointsSidebar
     [Resolved]
     private ChartingContainer chartingContainer { get; set; }
 
-    private SelectionHandler selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
+    private SelectionHandler<ITimedObject> selectionHandler => chartingContainer.BlueprintContainer.SelectionHandler;
 
     private SelectionInspector inspector;
 

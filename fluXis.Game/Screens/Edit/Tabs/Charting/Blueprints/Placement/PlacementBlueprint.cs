@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 
 public partial class PlacementBlueprint : Container
 {
@@ -30,21 +30,19 @@ public partial class PlacementBlueprint : Container
         Object = obj;
     }
 
+    protected void StartPlacement()
+    {
+        OnPlacementStarted();
+        State = PlacementState.Placing;
+    }
+
     public virtual void UpdatePlacement(double time, int lane)
     {
         if (State == PlacementState.Waiting)
-        {
             Object.Time = time;
-        }
     }
 
-    protected void BeginPlacement()
-    {
-        OnPlacementStarted();
-        State = PlacementState.Working;
-    }
-
-    public void EndPlacement(bool commit)
+    public void FinishPlacement(bool commit)
     {
         switch (State)
         {
@@ -52,7 +50,7 @@ public partial class PlacementBlueprint : Container
                 return;
 
             case PlacementState.Waiting:
-                BeginPlacement();
+                StartPlacement();
                 break;
         }
 
@@ -60,11 +58,11 @@ public partial class PlacementBlueprint : Container
         State = PlacementState.Completed;
     }
 
-    public virtual void OnPlacementStarted()
+    protected virtual void OnPlacementStarted()
     {
     }
 
-    public virtual void OnPlacementFinished(bool commit)
+    protected virtual void OnPlacementFinished(bool commit)
     {
     }
 
@@ -73,14 +71,14 @@ public partial class PlacementBlueprint : Container
         if (e.Button != MouseButton.Left)
             return false;
 
-        BeginPlacement();
+        StartPlacement();
         return true;
     }
 }
 
 public enum PlacementState
 {
+    Placing,
     Waiting,
-    Working,
     Completed
 }

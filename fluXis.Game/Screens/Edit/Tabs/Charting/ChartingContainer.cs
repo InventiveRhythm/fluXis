@@ -70,7 +70,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private PointsSidebar sidebar;
 
     public EditorPlayfield Playfield { get; private set; }
-    public BlueprintContainer BlueprintContainer { get; private set; }
+    public ChartingBlueprintContainer BlueprintContainer { get; private set; }
     public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
     public bool CursorInPlacementArea => Playfield.ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
 
@@ -83,6 +83,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
         dependencies.Cache(this);
         dependencies.CacheAs(Playfield = new EditorPlayfield());
+        dependencies.CacheAs<ITimePositionProvider>(Playfield);
         dependencies.CacheAs(sidebar = new ChartingSidebar());
     }
 
@@ -91,7 +92,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         return new Drawable[]
         {
             Playfield,
-            BlueprintContainer = new BlueprintContainer { ChartingContainer = this }
+            BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
         };
     }
 

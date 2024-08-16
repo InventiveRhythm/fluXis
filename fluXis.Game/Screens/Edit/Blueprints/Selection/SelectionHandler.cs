@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map.Structures;
-using fluXis.Game.Map.Structures.Bases;
-using fluXis.Game.Map.Structures.Events;
-using fluXis.Game.Screens.Edit.Actions;
-using fluXis.Game.Screens.Edit.Actions.Notes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,22 +11,16 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+namespace fluXis.Game.Screens.Edit.Blueprints.Selection;
 
-public partial class SelectionHandler : Container, IHasContextMenu
+public partial class SelectionHandler<T> : Container, IHasContextMenu
 {
-    public MenuItem[] ContextMenuItems => Array.Empty<MenuItem>();
+    public virtual MenuItem[] ContextMenuItems => Array.Empty<MenuItem>();
 
-    [Resolved]
-    private EditorActionStack actions { get; set; }
+    public IReadOnlyList<SelectionBlueprint<T>> Selected => selected;
+    private readonly List<SelectionBlueprint<T>> selected = new();
 
-    [Resolved]
-    private EditorMap map { get; set; }
-
-    public IReadOnlyList<SelectionBlueprint> Selected => selected;
-    private readonly List<SelectionBlueprint> selected = new();
-
-    public readonly BindableList<ITimedObject> SelectedObjects = new();
+    public readonly BindableList<T> SelectedObjects = new();
 
     private SelectionOutline outline;
     private bool wasVisible;
@@ -63,7 +52,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
         wasVisible = true;
     }
 
-    public void HandleSelection(SelectionBlueprint blueprint)
+    public void HandleSelection(SelectionBlueprint<T> blueprint)
     {
         if (!SelectedObjects.Contains(blueprint.Object))
             SelectedObjects.Add(blueprint.Object);
@@ -71,7 +60,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
         selected.Add(blueprint);
     }
 
-    public void HandleDeselection(SelectionBlueprint blueprint)
+    public void HandleDeselection(SelectionBlueprint<T> blueprint)
     {
         SelectedObjects.Remove(blueprint.Object);
         selected.Remove(blueprint);
@@ -84,7 +73,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
         if (SelectedObjects.Count == 0) wasVisible = false;
     }
 
-    public bool SingleClickSelection(SelectionBlueprint blueprint, MouseButtonEvent e)
+    public bool SingleClickSelection(SelectionBlueprint<T> blueprint, MouseButtonEvent e)
     {
         switch (e.Button)
         {
@@ -114,7 +103,7 @@ public partial class SelectionHandler : Container, IHasContextMenu
         }
     }
 
-    private void quickDelete(SelectionBlueprint blueprint)
+    private void quickDelete(SelectionBlueprint<T> blueprint)
     {
         if (blueprint == null) return;
 
@@ -124,30 +113,8 @@ public partial class SelectionHandler : Container, IHasContextMenu
             DeleteSelected();
     }
 
-    public void Delete(IEnumerable<ITimedObject> objects)
+    public virtual void Delete(IEnumerable<T> objects)
     {
-        if (objects == null) return;
-
-        var objs = objects.ToList();
-
-        if (objs.Any(o => o is HitObject))
-        {
-            var hits = objs.OfType<HitObject>().ToArray();
-
-            if (hits.Length > 0)
-                actions.Add(new NoteRemoveAction(hits));
-        }
-
-        // todo: maybe should move this one into the NoteRemoveAction?
-        foreach (ITimedObject obj in objs)
-        {
-            switch (obj)
-            {
-                case FlashEvent flash:
-                    map.Remove(flash);
-                    break;
-            }
-        }
     }
 
     public void DeleteSelected()

@@ -1,13 +1,12 @@
 using System;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Actions.Events;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement.Effect;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement.Effect;
 
 public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
 {
@@ -71,7 +70,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
         if (e.Button != MouseButton.Left)
             return;
 
-        EndPlacement(true);
+        FinishPlacement(true);
     }
 
     public override void UpdatePlacement(double time, int lane)
@@ -81,7 +80,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
 
         ls.Count = lane;
 
-        if (State == PlacementState.Working)
+        if (State == PlacementState.Placing)
         {
             ls.Time = time < originalStartTime ? time : originalStartTime;
             ls.Duration = Math.Abs(time - originalStartTime);
@@ -89,7 +88,7 @@ public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
         else originalStartTime = ls.Time = time;
     }
 
-    public override void OnPlacementFinished(bool commit)
+    protected override void OnPlacementFinished(bool commit)
     {
         if (commit)
             Actions.Add(new EventPlaceAction(Object));

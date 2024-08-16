@@ -1,52 +1,22 @@
 using System;
-using fluXis.Game.Map.Structures.Bases;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Game.UI;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+namespace fluXis.Game.Screens.Edit.Blueprints.Selection;
 
-public partial class SelectionBlueprint : Container
+public partial class SelectionBlueprint<T> : Container
 {
-    [Resolved]
-    private EditorPlayfield playfield { get; set; }
-
-    protected EditorHitObjectContainer HitObjectContainer => playfield.HitObjectContainer;
-
-    public ITimedObject Object { get; }
+    public T Object { get; }
     public Drawable Drawable { get; internal set; }
 
-    public event Action<SelectionBlueprint> Selected;
-    public event Action<SelectionBlueprint> Deselected;
+    public event Action<SelectionBlueprint<T>> Selected;
+    public event Action<SelectionBlueprint<T>> Deselected;
 
-    public virtual double FirstComparer => Object.Time;
-    public virtual double SecondComparer => Object.Time;
-
-    private SelectedState state;
-    public event Action<SelectedState> StateChanged;
-
-    public bool IsSelected => State == SelectedState.Selected;
-    public virtual Vector2 ScreenSpaceSelectionPoint => ScreenSpaceDrawQuad.Centre;
-
-    public override bool HandlePositionalInput => ShouldBeAlive;
-    public override bool RemoveWhenNotAlive => false;
-
-    protected SelectionBlueprint(ITimedObject info)
-    {
-        Object = info;
-        AlwaysPresent = true;
-        Anchor = Origin = Anchor.BottomLeft;
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        updateState();
-    }
+    public virtual double FirstComparer => 0;
+    public virtual double SecondComparer => 0;
 
     public SelectedState State
     {
@@ -63,6 +33,28 @@ public partial class SelectionBlueprint : Container
 
             StateChanged?.Invoke(state);
         }
+    }
+
+    private SelectedState state;
+    public event Action<SelectedState> StateChanged;
+
+    public bool IsSelected => State == SelectedState.Selected;
+    public virtual Vector2 ScreenSpaceSelectionPoint => ScreenSpaceDrawQuad.Centre;
+
+    public override bool HandlePositionalInput => ShouldBeAlive;
+    public override bool RemoveWhenNotAlive => false;
+
+    protected SelectionBlueprint(T info)
+    {
+        Object = info;
+        AlwaysPresent = true;
+        Anchor = Origin = Anchor.BottomLeft;
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        updateState();
     }
 
     private void updateState()
@@ -93,9 +85,9 @@ public partial class SelectionBlueprint : Container
             drawable.Show();
     }
 
-    protected override bool ShouldBeConsideredForInput(Drawable child) => State == SelectedState.Selected;
     public void Select() => State = SelectedState.Selected;
     public void Deselect() => State = SelectedState.Deselected;
 
+    protected override bool ShouldBeConsideredForInput(Drawable child) => State == SelectedState.Selected;
     protected override bool OnHover(HoverEvent e) => true;
 }

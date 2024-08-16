@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+namespace fluXis.Game.Screens.Edit.Blueprints.Selection;
 
 public partial class SelectionOutline : Container
 {

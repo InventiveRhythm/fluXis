@@ -1,11 +1,10 @@
 using System.Linq;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 
 public partial class SingleNotePlacementBlueprint : NotePlacementBlueprint
 {
@@ -35,11 +34,11 @@ public partial class SingleNotePlacementBlueprint : NotePlacementBlueprint
             return false;
 
         base.OnMouseDown(e);
-        EndPlacement(true);
+        FinishPlacement(true);
         return true;
     }
 
-    public override void OnPlacementFinished(bool commit)
+    protected override void OnPlacementFinished(bool commit)
     {
         if (Map.MapInfo.HitObjects.Any(h => (int)h.Time == (int)Hit.Time && h.Lane == Hit.Lane))
             return;

@@ -3,7 +3,7 @@ using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Actions.Notes;
 using osu.Framework.Allocation;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 
 public partial class NotePlacementBlueprint : PlacementBlueprint
 {
@@ -23,7 +23,7 @@ public partial class NotePlacementBlueprint : PlacementBlueprint
         ((HitObject)Object).Lane = Math.Clamp(lane, 1, Map.RealmMap.KeyCount);
     }
 
-    public override void OnPlacementFinished(bool commit)
+    protected override void OnPlacementFinished(bool commit)
     {
         if (!commit)
             return;

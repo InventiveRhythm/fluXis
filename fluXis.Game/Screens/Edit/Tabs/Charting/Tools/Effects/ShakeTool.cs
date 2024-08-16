@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Placement.Effect;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement.Effect;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Tools.Effects;

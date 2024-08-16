@@ -1,17 +1,17 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+namespace fluXis.Game.Screens.Edit.Blueprints.Selection;
 
-public partial class SelectionBlueprints : Container<SelectionBlueprint>
+public partial class SelectionBlueprints<T> : Container<SelectionBlueprint<T>>
 {
-    public override void Add(SelectionBlueprint blueprint)
+    public override void Add(SelectionBlueprint<T> blueprint)
     {
         SortInternal();
         base.Add(blueprint);
     }
 
-    public override bool Remove(SelectionBlueprint blueprint, bool disposeImmediately)
+    public override bool Remove(SelectionBlueprint<T> blueprint, bool disposeImmediately)
     {
         SortInternal();
         return base.Remove(blueprint, disposeImmediately);
@@ -19,8 +19,8 @@ public partial class SelectionBlueprints : Container<SelectionBlueprint>
 
     protected override int Compare(Drawable a, Drawable b)
     {
-        var aHit = (SelectionBlueprint)a;
-        var bHit = (SelectionBlueprint)b;
+        var aHit = (SelectionBlueprint<T>)a;
+        var bHit = (SelectionBlueprint<T>)b;
 
         int result = bHit.FirstComparer.CompareTo(aHit.FirstComparer);
         if (result != 0) return result;

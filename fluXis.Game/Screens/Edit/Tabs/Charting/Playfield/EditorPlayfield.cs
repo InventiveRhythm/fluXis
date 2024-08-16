@@ -12,10 +12,11 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 
-public partial class EditorPlayfield : Container
+public partial class EditorPlayfield : Container, ITimePositionProvider
 {
     [Resolved]
     private EditorSettings settings { get; set; }
@@ -93,4 +94,7 @@ public partial class EditorPlayfield : Container
     }
 
     public void PlayHitSound(HitObject info) => hitsounding.GetSample(info.HitSound).Play();
+
+    public double TimeAtScreenSpacePosition(Vector2 pos) => HitObjectContainer.TimeAtScreenSpacePosition(pos);
+    public Vector2 ScreenSpacePositionAtTime(double time, int lane) => HitObjectContainer.ScreenSpacePositionAtTime(time, lane);
 }

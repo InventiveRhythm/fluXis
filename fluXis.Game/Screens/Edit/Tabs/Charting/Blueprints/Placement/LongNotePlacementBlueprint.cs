@@ -1,14 +1,13 @@
 using System;
 using System.Linq;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Placement;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 
 public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
 {
@@ -65,7 +64,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
         if (e.Button != MouseButton.Left)
             return;
 
-        EndPlacement(true);
+        FinishPlacement(true);
     }
 
     public override void UpdatePlacement(double time, int lane)
@@ -73,7 +72,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
         base.UpdatePlacement(time, lane);
         if (Object is not HitObject hit) return;
 
-        if (State == PlacementState.Working)
+        if (State == PlacementState.Placing)
         {
             hit.Time = time < originalStartTime ? time : originalStartTime;
             hit.HoldTime = Math.Abs(time - originalStartTime);
@@ -81,7 +80,7 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
         else originalStartTime = hit.Time = time;
     }
 
-    public override void OnPlacementFinished(bool commit)
+    protected override void OnPlacementFinished(bool commit)
     {
         var notesBetween = Map.MapInfo.HitObjects.Where(h => h.Time > Hit.Time && h.Time < Hit.EndTime && h.Lane == Hit.Lane).ToList();
 

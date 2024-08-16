@@ -22,7 +22,7 @@ public partial class ToolboxButton : Container, IHasTooltip
     [Resolved]
     protected ChartingContainer ChartingContainer { get; private set; }
 
-    public BlueprintContainer BlueprintContainer => ChartingContainer.BlueprintContainer;
+    public ChartingBlueprintContainer BlueprintContainer => ChartingContainer.BlueprintContainer;
 
     public ChartingTool Tool { get; init; }
     public virtual LocalisableString TooltipText => Tool.Description;

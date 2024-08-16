@@ -4,9 +4,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection.Effect;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Selection.Effect;
 
-public partial class FlashSelectionBlueprint : SelectionBlueprint
+public partial class FlashSelectionBlueprint : ChartingSelectionBlueprint
 {
     public FlashEvent Flash => (FlashEvent)Object;
 

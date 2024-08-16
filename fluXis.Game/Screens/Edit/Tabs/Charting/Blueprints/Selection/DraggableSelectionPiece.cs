@@ -1,12 +1,11 @@
 using System;
-using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs.Charting.Selection;
+namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
 public partial class DraggableSelectionPiece : Container
 {
