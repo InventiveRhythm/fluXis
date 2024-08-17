@@ -13,11 +13,11 @@ public partial class TimelineElement : CompositeDrawable
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
 
-    private StoryboardElement element { get; }
+    public StoryboardElement Element { get; }
 
     public TimelineElement(StoryboardElement element)
     {
-        this.element = element;
+        Element = element;
 
         Name = $"{element.Type}";
 
@@ -30,16 +30,19 @@ public partial class TimelineElement : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        Height = 32;
+        Height = 36;
 
         InternalChildren = new Drawable[]
         {
-            new Circle
+            new Container()
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Highlight,
+                CornerRadius = 6,
+                Masking = true,
                 BorderThickness = 4,
-                BorderColour = FluXisColors.Highlight.Lighten(1f)
+                BorderColour = FluXisColors.Highlight.Lighten(1f),
+                Child = new Box { RelativeSizeAxes = Axes.Both }
             },
             new TruncatingText
             {
@@ -47,7 +50,7 @@ public partial class TimelineElement : CompositeDrawable
                 Text = createText(),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                Padding = new MarginPadding { Horizontal = 16 },
+                Padding = new MarginPadding { Horizontal = 14 },
                 WebFontSize = 12,
                 Alpha = .75f
             }
@@ -56,13 +59,13 @@ public partial class TimelineElement : CompositeDrawable
 
     private string createText()
     {
-        switch (element.Type)
+        switch (Element.Type)
         {
             case StoryboardElementType.Text:
-                return element.Parameters["text"]?.ToString();
+                return Element.Parameters["text"]?.ToString();
 
             case StoryboardElementType.Sprite:
-                return element.Parameters["file"]?.ToString();
+                return Element.Parameters["file"]?.ToString();
         }
 
         return "";
@@ -72,11 +75,11 @@ public partial class TimelineElement : CompositeDrawable
     {
         base.Update();
 
-        var start = timeline.PositionAtTime(element.StartTime);
-        var end = timeline.PositionAtTime(element.EndTime);
+        var start = timeline.PositionAtTime(Element.StartTime);
+        var end = timeline.PositionAtTime(Element.EndTime);
 
         Width = end - start;
         X = start;
-        Y = timeline.PositionAtZ(element.ZIndex);
+        Y = timeline.PositionAtZ(Element.ZIndex);
     }
 }

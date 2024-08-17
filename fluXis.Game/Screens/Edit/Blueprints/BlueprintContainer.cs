@@ -16,6 +16,8 @@ namespace fluXis.Game.Screens.Edit.Blueprints;
 
 public partial class BlueprintContainer<T> : Container, ICursorDrag
 {
+    protected virtual bool HorizontalSelection => false;
+
     protected readonly BindableList<T> SelectedObjects = new();
 
     protected SelectionBox SelectionBox { get; private set; }
@@ -42,7 +44,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
         InternalChildren = new Drawable[]
         {
-            SelectionBox = new SelectionBox(),
+            SelectionBox = new SelectionBox(HorizontalSelection),
             SelectionHandler,
             SelectionBlueprints = new SelectionBlueprints<T>()
         };

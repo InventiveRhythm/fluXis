@@ -31,10 +31,16 @@ public partial class SelectionBox : Container
         }
     }
 
-    public Container Box { get; set; }
+    public Container Box { get; private set; }
     private Box box;
 
+    private bool horizontal { get; }
     private double? startTime;
+
+    public SelectionBox(bool horizontal = false)
+    {
+        this.horizontal = horizontal;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -79,8 +85,16 @@ public partial class SelectionBox : Container
         var startPos = ToLocalSpace(positionProvider.ScreenSpacePositionAtTime(startTime.Value, 0));
         var endPos = ToLocalSpace(positionProvider.ScreenSpacePositionAtTime(end, 0));
 
-        Box.Y = Math.Min(startPos.Y, endPos.Y);
-        Box.Height = Math.Max(startPos.Y, endPos.Y) - Box.Y;
+        if (horizontal)
+        {
+            Box.X = Math.Min(startPos.X, endPos.X);
+            Box.Width = Math.Max(startPos.X, endPos.X) - Box.X;
+        }
+        else
+        {
+            Box.Y = Math.Min(startPos.Y, endPos.Y);
+            Box.Height = Math.Max(startPos.Y, endPos.Y) - Box.Y;
+        }
     }
 
     public override void Show() => State = Visibility.Visible;
