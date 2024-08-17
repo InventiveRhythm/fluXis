@@ -81,13 +81,28 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     {
         base.LoadComplete();
 
+        storyboard.ElementAdded += add;
+        storyboard.ElementRemoved += remove;
+        storyboard.Elements.ForEach(add);
+
         foreach (var element in storyboard.Elements)
         {
             elementContainer.Add(new TimelineElement(element));
         }
     }
 
-    public Drawable GetDrawable(StoryboardElement element)
+    private void add(StoryboardElement element)
+    {
+        elementContainer.Add(new TimelineElement(element));
+    }
+
+    private void remove(StoryboardElement element)
+    {
+        var drawable = GetDrawable(element);
+        elementContainer.Remove(drawable, true);
+    }
+
+    public TimelineElement GetDrawable(StoryboardElement element)
         => elementContainer.FirstOrDefault(e => e.Element == element);
 
     public float PositionAtTime(double time) => (float)(DrawWidth / 2 + .5f * ((time - clock.CurrentTime) * zoom));

@@ -1,17 +1,30 @@
-﻿using fluXis.Game.Screens.Edit.Blueprints.Selection;
+﻿using System.Collections.Generic;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Menus;
+using fluXis.Game.Screens.Edit.Blueprints.Selection;
 using fluXis.Game.Storyboards;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 
-public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardElement>
+public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardElement>, IHasContextMenu
 {
     [Resolved]
     private StoryboardTimeline timeline { get; set; }
+
+    [Resolved]
+    private Storyboard storyboard { get; set; }
+
+    public MenuItem[] ContextMenuItems => new List<MenuItem>
+    {
+        new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, delete)
+    }.ToArray();
 
     public override double FirstComparer => Object.StartTime;
     public override double SecondComparer => Object.EndTime;
@@ -49,5 +62,10 @@ public partial class TimelineElementBlueprint : SelectionBlueprint<StoryboardEle
 
         Position = start;
         Width = end.X - start.X;
+    }
+
+    private void delete()
+    {
+        storyboard.Remove(Object);
     }
 }

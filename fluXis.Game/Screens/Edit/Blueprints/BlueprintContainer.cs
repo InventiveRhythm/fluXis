@@ -76,6 +76,9 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
+        if (e.Button != MouseButton.Left)
+            return false;
+
         var foundByClick = selectByClick(e);
         var canMove = prepareMovement();
         return foundByClick || canMove;
