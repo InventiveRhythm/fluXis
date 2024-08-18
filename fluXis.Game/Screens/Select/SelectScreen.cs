@@ -385,7 +385,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         Schedule(() =>
         {
-            var results = Items.Where(i => i.Matches(oldSet));
+            var results = Items.Where(i => i.Matches(oldSet)).ToList();
 
             foreach (var item in results)
             {
