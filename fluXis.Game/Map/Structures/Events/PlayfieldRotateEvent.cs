@@ -28,5 +28,9 @@ public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplic
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.OutQuint;
 
-    public void Apply(Playfield playfield) => playfield.RotateTo(Roll, Duration, Easing);
+    public void Apply(Playfield playfield)
+    {
+        using (playfield.BeginAbsoluteSequence(Time))
+            playfield.RotateTo(Roll, Duration, Easing);
+    }
 }

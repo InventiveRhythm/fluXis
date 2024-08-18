@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
+using osu.Framework.Logging;
 using osu.Framework.Timing;
 
 namespace fluXis.Game.Screens.Gameplay.Audio;
@@ -28,6 +29,8 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     private FramedMapClock underlying { get; }
     private Bindable<float> offset;
+
+    public event Action<double, double> OnSeek;
 
     public GameplayClock(MapInfo info, Track track, bool useOffset)
     {
@@ -63,7 +66,11 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     public override bool Seek(double position)
     {
-        return underlying.Seek(position);
+        var current = CurrentTime;
+        var result = underlying.Seek(position);
+        OnSeek?.Invoke(current, position);
+        Logger.Log($"Seeking from {current} to {position}.", LoggingTarget.Runtime, LogLevel.Debug);
+        return result;
     }
 
     public override void ResetSpeedAdjustments()

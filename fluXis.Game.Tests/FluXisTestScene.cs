@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Database.Maps;
+using fluXis.Game.Map;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Testing;
@@ -24,6 +27,20 @@ public partial class FluXisTestScene : TestScene
 
     protected void CreateDummyBeatSync() => TestDependencies.CacheAs<IBeatSyncProvider>(new DummyBeatSyncProvider());
     protected void CreateDummyAmplitude() => TestDependencies.CacheAs<IAmplitudeProvider>(new DummyAmplitudeProvider());
+
+    protected virtual RealmMap GetTestMap(MapStore maps)
+    {
+        var set = maps.GetFromGuid(Program.TestSetID);
+
+        if (set is null)
+            return null;
+
+        var id = Program.TestMapID;
+
+        return string.IsNullOrEmpty(id)
+            ? set.Maps.FirstOrDefault()
+            : set.Maps.FirstOrDefault(m => m.ID == Guid.Parse(Program.TestMapID));
+    }
 
     protected override ITestSceneTestRunner CreateRunner() => new FluXisTestSceneTestRunner();
 

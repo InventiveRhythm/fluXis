@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Configuration;
+using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Mods;
@@ -10,6 +11,7 @@ using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 
@@ -24,9 +26,14 @@ public partial class ReplayGameplayScreen : GameplayScreen
     [Resolved]
     private UserCache users { get; set; }
 
+    [Resolved]
+    private ExperimentConfigManager experiments { get; set; }
+
     private Replay replay { get; }
     private List<ReplayFrame> frames { get; }
     private List<FluXisGameplayKeybind> currentPressed = new();
+
+    private Bindable<bool> allowSeeking;
 
     public ReplayGameplayScreen(RealmMap realmMap, List<IMod> mods, Replay replay)
         : base(realmMap, mods)
@@ -87,14 +94,27 @@ public partial class ReplayGameplayScreen : GameplayScreen
 
     public override bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
+        allowSeeking ??= experiments.GetBindable<bool>(ExperimentConfig.Seeking);
+
+        if (!allowSeeking.Value)
+            return base.OnPressed(e);
+
         switch (e.Action)
         {
+            case FluXisGlobalKeybind.ReplayPause:
+                if (GameplayClock.IsRunning)
+                    GameplayClock.Stop();
+                else
+                    GameplayClock.Start();
+
+                return true;
+
             case FluXisGlobalKeybind.SeekBackward:
-                OnSeek?.Invoke(GameplayClock.CurrentTime, GameplayClock.CurrentTime - 5000);
+                GameplayClock.Seek(GameplayClock.CurrentTime - 2000);
                 return true;
 
             case FluXisGlobalKeybind.SeekForward:
-                OnSeek?.Invoke(GameplayClock.CurrentTime, GameplayClock.CurrentTime + 5000);
+                GameplayClock.Seek(GameplayClock.CurrentTime + 2000);
                 return true;
         }
 

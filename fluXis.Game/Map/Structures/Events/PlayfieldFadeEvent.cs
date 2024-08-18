@@ -19,5 +19,9 @@ public class PlayfieldFadeEvent : IMapEvent, IHasDuration, IHasEasing, IApplicab
     [JsonProperty("ease")]
     public Easing Easing { get; set; }
 
-    public void Apply(Playfield playfield) => playfield.FadeTo(Alpha, Duration, Easing);
+    public void Apply(Playfield playfield)
+    {
+        using (playfield.BeginAbsoluteSequence(Time))
+            playfield.FadeTo(Alpha, Duration, Easing);
+    }
 }

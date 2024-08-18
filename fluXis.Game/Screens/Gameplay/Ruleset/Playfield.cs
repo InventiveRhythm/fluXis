@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
@@ -65,6 +67,12 @@ public partial class Playfield : Container
             Masking = true
         });
 
+        var playfieldEvents = new List<IApplicableToPlayfield>();
+        playfieldEvents.AddRange(screen.MapEvents.PlayfieldMoveEvents);
+        playfieldEvents.AddRange(screen.MapEvents.PlayfieldScaleEvents);
+        playfieldEvents.AddRange(screen.MapEvents.PlayfieldFadeEvents);
+        playfieldEvents.AddRange(screen.MapEvents.PlayfieldRotateEvents);
+
         InternalChildren = new[]
         {
             Stage = new Stage(),
@@ -97,10 +105,7 @@ public partial class Playfield : Container
                     bottomCover = skinManager.GetLaneCover(true)
                 }
             },
-            new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents),
-            new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents),
-            new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents),
-            new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents),
+            new AnimatedEventHandler<IApplicableToPlayfield>(playfieldEvents),
             new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
             new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration, fade.Easing))
         };

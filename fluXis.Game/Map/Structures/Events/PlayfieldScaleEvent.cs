@@ -31,6 +31,7 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
         if (playfield.IsUpScroll)
             yScale *= -1;
 
-        playfield.ScaleTo(new Vector2(ScaleX, yScale), Duration, Easing);
+        using (playfield.BeginAbsoluteSequence(Time))
+            playfield.ScaleTo(new Vector2(ScaleX, yScale), Duration, Easing);
     }
 }

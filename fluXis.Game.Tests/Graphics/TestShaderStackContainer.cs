@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Shaders;
 using fluXis.Game.Graphics.Shaders.Chromatic;
@@ -26,10 +24,7 @@ public partial class TestShaderStackContainer : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load(MapStore maps)
     {
-        const string set_id = "3e5822b9-9899-4476-b981-c32bcbf1a7a3";
-        const string map_id = "4edcc102-5ae6-4b38-96b2-e24fc7ffcab0";
-
-        var map = maps.GetFromGuid(set_id)?.Maps.FirstOrDefault(m => m.ID == Guid.Parse(map_id));
+        var map = GetTestMap(maps);
 
         if (map is null)
             return;

@@ -22,6 +22,11 @@ public partial class ExperimentsSection : SettingsSection
             {
                 Label = "Enable Design Tab",
                 Bindable = experiments.GetBindable<bool>(ExperimentConfig.DesignTab)
+            },
+            new SettingsToggle
+            {
+                Label = "Seeking in replays",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.Seeking)
             }
         });
     }

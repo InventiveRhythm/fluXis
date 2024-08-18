@@ -15,10 +15,12 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
     protected override void InitialiseDefaults()
     {
         SetDefault(ExperimentConfig.DesignTab, false);
+        SetDefault(ExperimentConfig.Seeking, false);
     }
 }
 
 public enum ExperimentConfig
 {
-    DesignTab
+    DesignTab,
+    Seeking
 }

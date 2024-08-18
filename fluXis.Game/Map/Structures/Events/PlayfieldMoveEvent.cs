@@ -24,7 +24,10 @@ public class PlayfieldMoveEvent : IMapEvent, IHasDuration, IHasEasing, IApplicab
 
     public void Apply(Playfield playfield)
     {
-        playfield.MoveToX(OffsetX, Duration, Easing);
-        playfield.MoveToY(OffsetY, Duration, Easing);
+        using (playfield.BeginAbsoluteSequence(Time))
+        {
+            playfield.MoveToX(OffsetX, Duration, Easing);
+            playfield.MoveToY(OffsetY, Duration, Easing);
+        }
     }
 }

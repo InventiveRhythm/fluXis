@@ -60,6 +60,7 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(InputKey.Escape, FluXisGlobalKeybind.GameplayPause),
         new KeyBinding(InputKey.Left, FluXisGlobalKeybind.SeekBackward),
         new KeyBinding(InputKey.Right, FluXisGlobalKeybind.SeekForward),
+        new KeyBinding(InputKey.Space, FluXisGlobalKeybind.ReplayPause),
         new KeyBinding(InputKey.F3, FluXisGlobalKeybind.ScrollSpeedDecrease),
         new KeyBinding(InputKey.F4, FluXisGlobalKeybind.ScrollSpeedIncrease),
     };
@@ -112,6 +113,7 @@ public enum FluXisGlobalKeybind
     GameplayPause,
     SeekBackward,
     SeekForward,
+    ReplayPause,
     ScrollSpeedIncrease,
     ScrollSpeedDecrease
 }
