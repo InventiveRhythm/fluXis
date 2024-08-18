@@ -372,10 +372,18 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         Scheduler.ScheduleIfNeeded(() =>
         {
-            var item = new MapSetItem(set);
-            MapList.Insert(item);
-            Items.Add(item);
+            var items = createItems(set);
+
+            MapList.StartBulkInsert();
+
+            foreach (var item in items)
+            {
+                MapList.Insert(item);
+                Items.Add(item);
+            }
+
             sortItems();
+            MapList.EndBulkInsert();
 
             noMapsContainer.Hide();
         });
