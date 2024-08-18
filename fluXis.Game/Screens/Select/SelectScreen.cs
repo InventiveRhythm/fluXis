@@ -41,11 +41,11 @@ using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
@@ -109,6 +109,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private SelectMapInfo selectMapInfo;
     private SearchBar searchBar;
+    private SearchFilterControls filterControl;
     private SelectFooter footer;
     private ModSelector modSelector;
 
@@ -119,9 +120,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private SelectNoMaps noMapsContainer;
     private SelectLetter letterContainer;
     private LoadingIcon loadingIcon;
-
-    private CircularContainer sortModeContainer;
-    private FluXisSpriteText sortModeText;
 
     private readonly List<IListItem> randomHistory = new();
 
@@ -189,7 +187,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                     }
                 }
             },
-            new Container
+            new PopoverContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Bottom = 50 },
@@ -206,12 +204,13 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding(10)
                             {
-                                Top = 90,
+                                Top = 140,
                                 Bottom = 40
                             },
                             Child = MapList = new MapList(sortMode)
                         }
                     },
+                    filterControl = new SearchFilterControls(),
                     searchBar = new SearchBar(),
                     selectMapInfo = new SelectMapInfo
                     {
@@ -227,29 +226,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                         {
                             noMapsContainer = new SelectNoMaps(),
                             letterContainer = new SelectLetter(),
-                            sortModeContainer = new CircularContainer
-                            {
-                                AutoSizeAxes = Axes.Both,
-                                AutoSizeEasing = Easing.OutQuint,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Masking = true,
-                                Alpha = 0,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Colour4.Black,
-                                        Alpha = .5f
-                                    },
-                                    sortModeText = new FluXisSpriteText
-                                    {
-                                        Margin = new MarginPadding { Horizontal = 16, Vertical = 8 },
-                                        WebFontSize = 20
-                                    }
-                                }
-                            },
                             loadingIcon = new LoadingIcon
                             {
                                 Anchor = Anchor.Centre,
@@ -283,6 +259,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         if (MapStore.CurrentMap.Hash == "dummy" && MapStore.MapSets.Any())
             MapStore.Select(MapStore.GetRandom()?.LowestDifficulty, true);
+
+        sortMode.BindValueChanged(setSortingMode);
+        groupMode.BindValueChanged(setGroupingMode);
 
         Task.Run(() =>
         {
@@ -327,37 +306,15 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
-    private void setSortingMode(MapUtils.SortingMode mode)
+    private void setSortingMode(ValueChangedEvent<MapUtils.SortingMode> e)
     {
-        if (mode == SortMode)
-            sortInverse.Value = !sortInverse.Value;
-        else // reset when changing modes
-            sortInverse.Value = false;
-
-        sortMode.Value = mode;
         sortItems();
         MapList.Sort();
-
-        var str = $"Sorting by {mode.GetDescription()}";
-
-        if (SortInverse)
-            str += " (Inverse)";
-
-        setText(str);
     }
 
-    private void setGroupingMode(MapUtils.GroupingMode mode)
+    private void setGroupingMode(ValueChangedEvent<MapUtils.GroupingMode> e)
     {
-        groupMode.Value = mode;
         UpdateSearch();
-        setText($"Grouping by {mode.GetDescription()}");
-    }
-
-    private void setText(string text)
-    {
-        sortModeText.Text = text;
-        sortModeContainer.AutoSizeDuration = sortModeContainer.IsPresent ? 200 : 0;
-        sortModeContainer.FadeIn().Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
     }
 
     private void loadMapSets()
@@ -727,6 +684,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                          .MoveToX(0, MOVE_DURATION, Easing.OutQuint);
 
             searchBar.Show();
+            filterControl.Show();
             footer.Show();
         }
     }
@@ -738,6 +696,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         MapList.MoveToX(-100, MOVE_DURATION, Easing.OutQuint);
         selectMapInfo.MoveToX(100, MOVE_DURATION, Easing.OutQuint);
         searchBar.Hide();
+        filterControl.Hide();
         footer.Hide();
     }
 
@@ -802,24 +761,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 if (index < footer.ButtonContainer.Count)
                     footer.ButtonContainer[index].TriggerClick();
 
-                return true;
-            }
-
-            case >= Key.Number1 and <= Key.Number9:
-            {
-                var index = (int)e.Key - (int)Key.Number1;
-                var values = Enum.GetValues<MapUtils.SortingMode>();
-
-                if (index >= values.Length)
-                    break;
-
-                setSortingMode(values[index]);
-                return true;
-            }
-
-            case Key.Number0:
-            {
-                setGroupingMode(groupMode.Value == MapUtils.GroupingMode.None ? MapUtils.GroupingMode.Difficulty : MapUtils.GroupingMode.None);
                 return true;
             }
 

@@ -223,27 +223,34 @@ public static class MapUtils
 
     public enum SortingMode
     {
+        [Icon(0xf031)]
         [Description("Title")]
         Title,
 
+        [Icon(0xf031)]
         [Description("Artist")]
         Artist,
 
+        [Icon(0xf017)]
         [Description("Length")]
         Length,
 
+        [Icon(0xf073)]
         [Description("Date Added")]
         DateAdded,
 
+        [Icon(0xf1b2)]
         [Description("Difficulty")]
         Difficulty
     }
 
     public enum GroupingMode
     {
+        [Icon(0xf068)]
         [Description("None")]
         None,
 
+        [Icon(0xf1b2)]
         [Description("Difficulty")]
         Difficulty
     }
