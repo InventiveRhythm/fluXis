@@ -78,7 +78,7 @@ public partial class PlacementBlueprint : Container
 
 public enum PlacementState
 {
-    Placing,
     Waiting,
+    Placing,
     Completed
 }
