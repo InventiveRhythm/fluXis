@@ -26,9 +26,9 @@ using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osuTK;
 
-namespace fluXis.Game.Screens.Select.List;
+namespace fluXis.Game.Screens.Select.List.Drawables.MapSet;
 
-public partial class MapSetHeader : Container, IHasContextMenu
+public partial class DrawableMapSetHeader : Container, IHasContextMenu
 {
     public MenuItem[] ContextMenuItems
     {
@@ -63,7 +63,7 @@ public partial class MapSetHeader : Container, IHasContextMenu
     [Resolved]
     private MapStore maps { get; set; }
 
-    private readonly MapListEntry parent;
+    private readonly DrawableMapSetItem parent;
     private readonly RealmMapSet mapset;
 
     private float contentWrapperPadding
@@ -79,10 +79,10 @@ public partial class MapSetHeader : Container, IHasContextMenu
     private HeaderDim gradientColor;
     private DelayedLoadWrapper contentLoader;
     private FillFlowContainer diffsContainer;
-    private Outline outlineBrighten;
+    private RoundedOutline outlineBrighten;
     private Container arrowContainer;
 
-    public MapSetHeader(MapListEntry parent, RealmMapSet mapset)
+    public DrawableMapSetHeader(DrawableMapSetItem parent, RealmMapSet mapset)
     {
         this.parent = parent;
         this.mapset = mapset;
@@ -145,11 +145,11 @@ public partial class MapSetHeader : Container, IHasContextMenu
                             Padding = new MarginPadding { Right = -1 }, // to fix the 1px seam
                             Children = new Drawable[]
                             {
-                                new Outline
+                                new RoundedOutline()
                                 {
                                     BorderColour = ColourInfo.GradientHorizontal(color.Opacity(0), color),
                                 },
-                                outlineBrighten = new Outline
+                                outlineBrighten = new RoundedOutline
                                 {
                                     BorderColour = ColourInfo.GradientHorizontal(Colour4.White.Opacity(0), Colour4.White.Opacity(.5f)),
                                     Alpha = 0
@@ -176,8 +176,8 @@ public partial class MapSetHeader : Container, IHasContextMenu
             }
         };
 
-        backgroundWrapper.DelayedLoadComplete += background => background.FadeInFromZero(200);
-        contentLoader.DelayedLoadComplete += content => content.FadeInFromZero(200);
+        backgroundWrapper.DelayedLoadComplete += background => background.FadeInFromZero(300);
+        contentLoader.DelayedLoadComplete += content => content.FadeInFromZero(300);
     }
 
     private Drawable getContent()
@@ -377,24 +377,6 @@ public partial class MapSetHeader : Container, IHasContextMenu
         this.TransformTo(nameof(contentWrapperPadding), 10f, 400, Easing.OutQuint);
         colorBrighten.FadeOut(200);
         outlineBrighten.FadeOut(200);
-    }
-
-    private partial class Outline : Container
-    {
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            RelativeSizeAxes = Axes.Both;
-            Masking = true;
-            CornerRadius = 10;
-            BorderThickness = 3;
-
-            Child = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Transparent
-            };
-        }
     }
 
     private partial class HeaderDim : Container

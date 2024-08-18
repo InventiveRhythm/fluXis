@@ -12,9 +12,9 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Game.Screens.Select.List;
+namespace fluXis.Game.Screens.Select.List.Drawables.MapSet;
 
-public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
+public partial class DrawableMapSetItem : CompositeDrawable, IComparable<DrawableMapSetItem>
 {
     [Resolved]
     private MapStore maps { get; set; }
@@ -45,11 +45,11 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
         }
     }
 
-    private MapSetHeader header;
+    private DrawableMapSetHeader header;
     private Container difficultyContainer;
-    private FillFlowContainer<MapDifficultyEntry> difficultyFlow;
+    private FillFlowContainer<DrawableMapSetDifficulty> difficultyFlow;
 
-    public MapListEntry(RealmMapSet mapSet)
+    public DrawableMapSetItem(RealmMapSet mapSet)
     {
         MapSet = mapSet;
     }
@@ -70,7 +70,7 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
                 AutoSizeAxes = Axes.Y,
                 Alpha = 0,
                 Padding = new MarginPadding { Horizontal = 10, Top = 85 },
-                Child = difficultyFlow = new FillFlowContainer<MapDifficultyEntry>
+                Child = difficultyFlow = new FillFlowContainer<DrawableMapSetDifficulty>
                 {
                     Direction = FillDirection.Vertical,
                     AutoSizeAxes = Axes.Y,
@@ -78,12 +78,12 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
                     Spacing = new Vector2(0, 5)
                 }
             },
-            header = new MapSetHeader(this, MapSet)
+            header = new DrawableMapSetHeader(this, MapSet)
         };
 
         foreach (var map in Maps)
         {
-            difficultyFlow.Add(new MapDifficultyEntry(this, map));
+            difficultyFlow.Add(new DrawableMapSetDifficulty(this, map));
         }
     }
 
@@ -108,7 +108,7 @@ public partial class MapListEntry : CompositeDrawable, IComparable<MapListEntry>
         base.Dispose(isDisposing);
     }
 
-    public int CompareTo(MapListEntry other) => MapUtils.CompareSets(MapSet, other.MapSet, screen.SortMode, screen.SortInverse);
+    public int CompareTo(DrawableMapSetItem other) => MapUtils.CompareSets(MapSet, other.MapSet, screen.SortMode, screen.SortInverse);
 
     private void updateSelected(ValueChangedEvent<RealmMapSet> set)
     {

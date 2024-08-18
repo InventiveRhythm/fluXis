@@ -16,7 +16,7 @@ public partial class MultiSongSelect : SelectScreen
 
     protected override bool ShouldAdd(RealmMapSet set) => set.OnlineID > 0;
 
-    protected override void Accept()
+    public override void Accept()
     {
         if (MapStore.CurrentMap == null)
             return;

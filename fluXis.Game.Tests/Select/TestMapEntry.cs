@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Screens.Select.List;
+using fluXis.Game.Screens.Select.List.Drawables.MapSet;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -82,7 +82,7 @@ public partial class TestMapEntry : FluXisTestScene
                 Spacing = new Vector2(10),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                ChildrenEnumerable = maps.Select(set => new MapListEntry(set))
+                ChildrenEnumerable = maps.Select(set => new DrawableMapSetItem(set))
             });
         });
     }

@@ -9,16 +9,21 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Logging;
+using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
 public partial class StatusTag : CircularContainer
 {
-    private readonly RealmMapSet set;
-    private RealmMap map => set.Maps.First();
+    private RealmMapSet set { get; }
+    private RealmMap map { get; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
+
+    public float WebFontSize { set => FontSize = FluXisSpriteText.GetWebFontSize(value); }
+    public float FontSize { get; set; } = 20;
+    public float WidthStep { get; set; } = 50;
 
     private Box box;
     private FluXisSpriteText text;
@@ -26,15 +31,21 @@ public partial class StatusTag : CircularContainer
     public StatusTag(RealmMapSet set)
     {
         this.set = set;
+        map = set.Maps.First();
+        Size = new Vector2(100, 20);
+        EdgeEffect = FluXisStyles.ShadowSmall;
+    }
+
+    public StatusTag(RealmMap map)
+        : this(map.MapSet)
+    {
+        this.map = map;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Width = 100;
-        Height = 20;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
 
         Children = new Drawable[]
         {
@@ -44,6 +55,7 @@ public partial class StatusTag : CircularContainer
             },
             text = new FluXisSpriteText
             {
+                FontSize = FontSize,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Alpha = .75f
@@ -81,10 +93,10 @@ public partial class StatusTag : CircularContainer
 
     private void updateSize()
     {
-        var widthLeft = 50 - text.DrawWidth % 50;
+        var widthLeft = WidthStep - text.DrawWidth % WidthStep;
 
         if (widthLeft < 20)
-            widthLeft += 50;
+            widthLeft += WidthStep;
 
         Width = text.DrawWidth + widthLeft;
     }

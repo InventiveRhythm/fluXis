@@ -25,6 +25,7 @@ public partial class DifficultyChip : CircularContainer
         }
     }
 
+    public float WebFontSize { set => FontSize = FluXisSpriteText.GetWebFontSize(value); }
     public float FontSize { get; set; } = 18;
 
     private double rating;

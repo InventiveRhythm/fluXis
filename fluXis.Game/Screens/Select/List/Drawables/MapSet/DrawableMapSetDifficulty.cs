@@ -27,9 +27,9 @@ using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osuTK;
 
-namespace fluXis.Game.Screens.Select.List;
+namespace fluXis.Game.Screens.Select.List.Drawables.MapSet;
 
-public partial class MapDifficultyEntry : Container, IHasContextMenu
+public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
 {
     public MenuItem[] ContextMenuItems
     {
@@ -40,9 +40,9 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
                 new FluXisMenuItem(LocalizationStrings.General.Play, FontAwesome6.Solid.Play, MenuItemType.Highlighted, () =>
                 {
                     maps.Select(map, true);
-                    mapListEntry.SelectAction?.Invoke();
+                    item.SelectAction?.Invoke();
                 }),
-                new FluXisMenuItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => mapListEntry.EditAction?.Invoke(map))
+                new FluXisMenuItem(LocalizationStrings.General.Edit, FontAwesome6.Solid.Pen, MenuItemType.Normal, () => item.EditAction?.Invoke(map))
             };
 
             if (FluXisGameBase.IsDebug)
@@ -66,14 +66,14 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     [Resolved]
     private Clipboard clipboard { get; set; }
 
-    private readonly MapListEntry mapListEntry;
+    private readonly DrawableMapSetItem item;
     private readonly RealmMap map;
     private Container outline;
     private DrawableScoreRank rank;
 
-    public MapDifficultyEntry(MapListEntry parentEntry, RealmMap map)
+    public DrawableMapSetDifficulty(DrawableMapSetItem parentEntry, RealmMap map)
     {
-        mapListEntry = parentEntry;
+        item = parentEntry;
         this.map = map;
     }
 
@@ -272,7 +272,7 @@ public partial class MapDifficultyEntry : Container, IHasContextMenu
     protected override bool OnClick(ClickEvent e)
     {
         if (Equals(maps.CurrentMap, map))
-            mapListEntry.SelectAction?.Invoke();
+            item.SelectAction?.Invoke();
         else
             maps.Select(map, true);
 
