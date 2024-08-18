@@ -54,6 +54,34 @@ public class OsuStoryboardParser
 
         foreach (var element in storyboard.Elements)
         {
+            var initialValues = new HashSet<StoryboardAnimationType>();
+            var startTime = double.MaxValue;
+            var endTime = double.MinValue;
+
+            var toAdd = new List<StoryboardAnimation>();
+
+            foreach (var animation in element.Animations)
+            {
+                if (initialValues.Add(animation.Type))
+                {
+                    toAdd.Add(new StoryboardAnimation
+                    {
+                        Type = animation.Type,
+                        ValueStart = animation.ValueStart,
+                        ValueEnd = animation.ValueStart
+                    });
+                }
+
+                startTime = Math.Min(startTime, animation.StartTime);
+                endTime = Math.Max(endTime, animation.EndTime);
+            }
+
+            foreach (var animation in toAdd)
+            {
+                animation.StartTime = startTime - 1; // just to make sure it's actually the initial
+                element.Animations.Add(animation);
+            }
+
             element.Animations.Sort((a, b) => a.StartTime.CompareTo(b.StartTime));
 
             if (element.Animations.Count <= 0)
@@ -62,11 +90,8 @@ public class OsuStoryboardParser
                 continue;
             }
 
-            var firstFade = element.Animations.FirstOrDefault(a => a.Type == StoryboardAnimationType.Fade);
-            var firstAnimation = element.Animations.FirstOrDefault();
-
-            element.StartTime = firstFade?.StartTime ?? firstAnimation?.StartTime ?? 0;
-            element.EndTime = element.Animations.Max(a => a.EndTime);
+            element.StartTime = startTime;
+            element.EndTime = endTime;
         }
 
         storyboard.Elements.Sort((a, b) => a.StartTime.CompareTo(b.StartTime));
@@ -93,7 +118,6 @@ public class OsuStoryboardParser
         {
             if (currentLoop is not null)
             {
-                Logger.Log($"meow {currentElement.Parameters["file"]}");
                 currentLoop.PushTo(currentElement.Animations);
                 currentLoop = null;
             }

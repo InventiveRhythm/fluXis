@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Map;
@@ -9,7 +8,9 @@ using fluXis.Import.osu.Storyboards;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Game.Tests.Storyboards;
 
@@ -28,10 +29,13 @@ public partial class TestStoryboard : FluXisTestScene
 
         Add(GlobalClock);
 
-        var set = maps.GetFromGuid("5955acf7-e356-459e-acf6-1456f869296f");
-        var map = set.Maps.First(m => m.ID == Guid.Parse("91707210-223f-41b8-8ff5-3bc9613bbb2d"));
-        GlobalClock.LoadMap(map);
-        GlobalClock.Stop();
+        var set = maps.MapSets.FirstOrDefault(s => s.Metadata.Title == "My Love" && s.Metadata.Artist == "Raphlesia & BilliumMoto");
+
+        if (set is not null)
+        {
+            GlobalClock.LoadMap(set.LowestDifficulty);
+            GlobalClock.Stop();
+        }
 
         var data = File.ReadAllText(@"W:\osu-lazer\exports\mylove\Raphlesia & BilliumMoto - My Love (Mao).osb");
 
@@ -58,5 +62,21 @@ public partial class TestStoryboard : FluXisTestScene
 
         AddStep("Stop", GlobalClock.Stop);
         AddStep("Start", GlobalClock.Start);
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        switch (e.Key)
+        {
+            case Key.Left:
+                GlobalClock.Seek(GlobalClock.CurrentTime - 2000);
+                return true;
+
+            case Key.Right:
+                GlobalClock.Seek(GlobalClock.CurrentTime + 2000);
+                return true;
+        }
+
+        return false;
     }
 }

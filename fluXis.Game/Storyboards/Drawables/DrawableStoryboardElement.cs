@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,8 +7,6 @@ namespace fluXis.Game.Storyboards.Drawables;
 public partial class DrawableStoryboardElement : CompositeDrawable
 {
     public StoryboardElement Element { get; }
-
-    private List<ElementAction> actions { get; } = new();
 
     public DrawableStoryboardElement(StoryboardElement element)
     {
@@ -28,93 +23,64 @@ public partial class DrawableStoryboardElement : CompositeDrawable
         Width = Element.Width;
         Height = Element.Height;
         Colour = Colour4.FromRGBA(Element.Color);
+        AlwaysPresent = true;
 
         foreach (var animation in Element.Animations)
         {
-            actions.Add(new ElementAction
+            using (BeginAbsoluteSequence(animation.StartTime))
             {
-                Time = animation.StartTime,
-                Action = () =>
+                switch (animation.Type)
                 {
-                    switch (animation.Type)
-                    {
-                        case StoryboardAnimationType.MoveX:
-                            this.MoveToX(animation.StartFloat);
-                            this.MoveToX(animation.EndFloat, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.MoveX:
+                        this.MoveToX(animation.StartFloat).Then()
+                            .MoveToX(animation.EndFloat, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.MoveY:
-                            this.MoveToY(animation.StartFloat);
-                            this.MoveToY(animation.EndFloat, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.MoveY:
+                        this.MoveToY(animation.StartFloat).Then()
+                            .MoveToY(animation.EndFloat, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.Scale:
-                            this.ScaleTo(animation.StartFloat);
-                            this.ScaleTo(animation.EndFloat, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.Scale:
+                        this.ScaleTo(animation.StartFloat).Then()
+                            .ScaleTo(animation.EndFloat, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.ScaleVector:
-                            this.ScaleTo(animation.StartVector);
-                            this.ScaleTo(animation.EndVector, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.ScaleVector:
+                        this.ScaleTo(animation.StartVector).Then()
+                            .ScaleTo(animation.EndVector, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.Width:
-                            this.ResizeWidthTo(animation.StartFloat);
-                            this.ResizeWidthTo(animation.EndFloat, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.Width:
+                        this.ResizeWidthTo(animation.StartFloat).Then()
+                            .ResizeWidthTo(animation.EndFloat, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.Height:
-                            this.ResizeHeightTo(animation.StartFloat);
-                            this.ResizeHeightTo(animation.EndFloat, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.Height:
+                        this.ResizeHeightTo(animation.StartFloat).Then()
+                            .ResizeHeightTo(animation.EndFloat, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.Rotate:
-                            this.RotateTo(animation.StartFloat);
-                            this.RotateTo(animation.EndFloat, animation.Duration, animation.Easing);
-                            break;
+                    case StoryboardAnimationType.Rotate:
+                        this.RotateTo(animation.StartFloat).Then()
+                            .RotateTo(animation.EndFloat, animation.Duration, animation.Easing);
+                        break;
 
-                        case StoryboardAnimationType.Fade:
-                            if (animation.StartFloat == 0)
-                            {
-                                this.FadeTo(0.001f); // 0 will just make it not update
-                                this.FadeTo(animation.EndFloat, animation.Duration, animation.Easing);
-                            }
-                            else
-                            {
-                                this.FadeTo(animation.StartFloat);
-                                this.FadeTo(animation.EndFloat, animation.Duration, animation.Easing);
-                            }
+                    case StoryboardAnimationType.Fade:
+                        this.FadeTo(animation.StartFloat).Then()
+                            .FadeTo(animation.EndFloat, animation.Duration, animation.Easing);
 
-                            break;
+                        break;
 
-                        case StoryboardAnimationType.Color:
-                            var startColour = Colour4.FromHex(animation.ValueStart);
-                            var endColour = Colour4.FromHex(animation.ValueEnd);
+                    case StoryboardAnimationType.Color:
+                        var startColour = Colour4.FromHex(animation.ValueStart);
+                        var endColour = Colour4.FromHex(animation.ValueEnd);
 
-                            this.FadeColour(startColour);
-                            this.FadeColour(endColour, animation.Duration, animation.Easing);
-                            break;
-                    }
+                        this.FadeColour(startColour).Then()
+                            .FadeColour(endColour, animation.Duration, animation.Easing);
+                        break;
                 }
-            });
+            }
         }
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        while (actions.Count > 0 && actions.First().Time <= Time.Current)
-        {
-            var action = actions.First();
-            action.Action?.Invoke();
-            actions.Remove(action);
-        }
-    }
-
-    private class ElementAction
-    {
-        public double Time { get; init; }
-        public Action Action { get; init; }
     }
 }
