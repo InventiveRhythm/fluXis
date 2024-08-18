@@ -394,14 +394,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         switch (groupMode.Value)
         {
-            case MapUtils.GroupingMode.MapSet:
+            case MapUtils.GroupingMode.None:
             {
                 yield return new MapSetItem(set);
 
                 break;
             }
 
-            case MapUtils.GroupingMode.None:
+            case MapUtils.GroupingMode.Difficulty:
             {
                 foreach (var map in set.Maps)
                     yield return new MapDifficultyItem(map);
@@ -819,7 +819,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
             case Key.Number0:
             {
-                setGroupingMode(groupMode.Value == MapUtils.GroupingMode.None ? MapUtils.GroupingMode.MapSet : MapUtils.GroupingMode.None);
+                setGroupingMode(groupMode.Value == MapUtils.GroupingMode.None ? MapUtils.GroupingMode.Difficulty : MapUtils.GroupingMode.None);
                 return true;
             }
 

@@ -241,10 +241,10 @@ public static class MapUtils
 
     public enum GroupingMode
     {
-        [Description("MapSet")]
-        MapSet,
+        [Description("None")]
+        None,
 
-        [Description("Nothing")]
-        None
+        [Description("Difficulty")]
+        Difficulty
     }
 }
