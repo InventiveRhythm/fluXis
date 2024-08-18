@@ -6,3 +6,4 @@ obj
 *.nupkg
 Releases
 create-release.bat
+fluXis.sln.DotSettings.user
