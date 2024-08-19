@@ -149,7 +149,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         BindableBackgroundBlur = config.GetBindable<float>(FluXisSetting.EditorBlur);
 
         globalClock.Looping = false;
-        globalClock.Stop(); // the editor clock will handle this
 
         isNewMap = editorMap.IsNew;
 
@@ -564,8 +563,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (isNewMap) // delete the map if it was new and not saved
             mapStore.DeleteMapSet(editorMap.MapSet);
 
-        exitAnimation();
-        clock.Stop();
+        // I hate this but it works. I hate this but it works. I hate this but it works.
+        this.Delay(EditorLoader.DURATION * .98f).FadeOut();
+
+        clock.Track.Value.VolumeTo(0, EditorLoader.DURATION);
         globalClock.Seek((float)clock.CurrentTime);
         panels.Content?.Hide();
         return base.OnExiting(e);

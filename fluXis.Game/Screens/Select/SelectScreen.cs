@@ -634,14 +634,19 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
-        playExitAnimation();
         clock.Looping = false;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
+
+        if (e.Next is EditorLoader)
+            this.Delay(EditorLoader.DURATION).FadeOut();
+        else
+            playExitAnimation();
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        playEnterAnimation();
+        if (e.Next is not EditorLoader)
+            playEnterAnimation();
 
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 

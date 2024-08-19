@@ -7,6 +7,7 @@ using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Timing;
 using osu.Framework.Utils;
 
@@ -14,10 +15,10 @@ namespace fluXis.Game.Screens.Edit;
 
 public partial class EditorClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock, IBeatSyncProvider
 {
-    public IBindable<Track> Track => track;
+    public IBindable<DrawableTrack> Track => track;
     public float TrackLength => (float)(track.Value?.Length ?? 10000);
 
-    public event Action<Track> TrackChanged;
+    public event Action<DrawableTrack> TrackChanged;
 
     public MapInfo MapInfo { get; set; }
     public BindableInt SnapDivisor { get; init; }
@@ -33,7 +34,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     private double currentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
 
     private readonly FramedMapClock underlying;
-    private readonly Bindable<Track> track = new();
+    private readonly Bindable<DrawableTrack> track = new();
 
     private bool playbackFinished;
 
@@ -172,12 +173,17 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
 
     public void ChangeSource(IClock source)
     {
-        track.Value?.Dispose();
-        track.Value = source as Track;
-        Track.Value.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
-        underlying.ChangeSource(source);
+        Track.Value?.Expire();
 
+        if (source is Track t)
+        {
+            track.Value = new DrawableTrack(t);
+            AddInternal(Track.Value);
+        }
+
+        underlying.ChangeSource(source);
         TrackChanged?.Invoke(Track.Value);
+        Track.Value?.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
     }
 
     protected override void Dispose(bool isDisposing)

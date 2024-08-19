@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using osu.Framework.Development;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Transforms;
 using osu.Framework.Threading;
 using osu.Framework.Utils;
 using osuTK;
@@ -61,4 +63,8 @@ public static class DrawableExtensions
         else
             scheduler.AddOnce(action.Invoke);
     }
+
+    public static TransformSequence<T> BorderTo<T>(this T drawable, float newBorder, float duration = 0f, Easing ease = Easing.None)
+        where T : class, ITransformable
+        => drawable.TransformTo(nameof(Container.BorderThickness), newBorder, duration, ease);
 }

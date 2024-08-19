@@ -1,8 +1,8 @@
 using System.Linq;
 using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
@@ -18,7 +18,7 @@ public partial class TimelineDensity : FillFlowContainer
     [Resolved]
     private EditorMap map { get; set; }
 
-    private Track track => clock.Track.Value;
+    private DrawableTrack track => clock.Track.Value;
 
     private const int sections = 200;
     private const float section_width = 1f / sections;
@@ -47,7 +47,7 @@ public partial class TimelineDensity : FillFlowContainer
         trackChanged(track);
     }
 
-    private void trackChanged(Track track)
+    private void trackChanged(DrawableTrack track)
     {
         Clear();
 
