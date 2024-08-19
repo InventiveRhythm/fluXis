@@ -261,9 +261,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         }, UseGlobalOffset);
 
         var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
-        LoadComponent(storyboard);
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
+
+        LoadComponent(GameplayClock);
+        LoadComponent(storyboard);
 
         InternalChildren = new Drawable[]
         {
