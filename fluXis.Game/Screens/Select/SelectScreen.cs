@@ -645,7 +645,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        if (e.Next is not EditorLoader)
+        if (e.Last is EditorLoader)
+            this.FadeIn();
+        else
             playEnterAnimation();
 
         songSelectBlur.ValueChanged += updateBackgroundBlur;
