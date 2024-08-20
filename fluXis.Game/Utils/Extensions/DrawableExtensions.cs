@@ -67,4 +67,8 @@ public static class DrawableExtensions
     public static TransformSequence<T> BorderTo<T>(this T drawable, float newBorder, float duration = 0f, Easing ease = Easing.None)
         where T : class, ITransformable
         => drawable.TransformTo(nameof(Container.BorderThickness), newBorder, duration, ease);
+
+    public static TransformSequence<T> BorderTo<T>(this TransformSequence<T> seq, float newBorder, float duration = 0f, Easing ease = Easing.None)
+        where T : class, ITransformable
+        => seq.Append(s => s.TransformTo(nameof(Container.BorderThickness), newBorder, duration, ease));
 }

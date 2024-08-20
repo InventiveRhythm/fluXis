@@ -415,8 +415,9 @@ public partial class MenuScreen : FluXisScreen
         backgrounds.Zoom = 1f;
 
         logoText.ScaleTo(1.1f, 1000, Easing.OutQuint).FadeOut(600);
-        animationCircle.TransformTo(nameof(animationCircle.BorderThickness), 60f).ResizeTo(0)
-                       .TransformTo(nameof(animationCircle.BorderThickness), 0f, 1200, Easing.OutQuint).ResizeTo(400, 1000, Easing.OutQuint);
+        animationCircle.BorderTo(60f).ResizeTo(0)
+                       .BorderTo(0f, 1200, Easing.OutQuint)
+                       .ResizeTo(400, 1000, Easing.OutQuint);
 
         this.Delay(800).FadeIn().OnComplete(_ =>
         {

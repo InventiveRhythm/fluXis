@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -147,7 +148,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
 
         this.Delay(800).FadeIn().OnComplete(_ => samples.Fail());
         text.ScaleTo(1, 800, Easing.InQuint).Delay(2500).FadeIn().OnComplete(_ => buttonsContainer.FadeIn(200));
-        circle.Delay(800).ResizeTo(400, 400, Easing.OutQuint).TransformTo(nameof(circle.BorderThickness), 0f, 1200, Easing.OutQuint);
+        circle.Delay(800).ResizeTo(400, 400, Easing.OutQuint).BorderTo(0f, 1200, Easing.OutQuint);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

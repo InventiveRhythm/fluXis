@@ -3,6 +3,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Other;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
@@ -135,7 +136,7 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
         if (achievement.Level == 3)
             backgroundSquare.Delay(initial_delay).ResizeTo(2000, square_duration * 2, Easing.OutQuint);
 
-        mainSquare.BorderTo(initial_delay, 20, square_duration, Easing.OutQuint);
+        mainSquare.Delay(initial_delay).BorderTo(20, square_duration, Easing.OutQuint);
         mainSquare.Delay(initial_delay).ResizeTo(400, square_duration, Easing.OutQuint);
         icon.Delay(initial_delay).ScaleTo(1, square_duration, Easing.OutQuint);
         textContainer.Delay(initial_delay + 600).FadeIn(200);
@@ -198,7 +199,5 @@ public partial class AchievementOverlay : CompositeDrawable, ICloseable
                 }
             };
         }
-
-        public void BorderTo(float delay, float thickness, float duration, Easing easing) => this.Delay(delay).TransformTo(nameof(BorderThickness), thickness, duration, easing);
     }
 }

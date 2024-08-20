@@ -4,6 +4,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Integration;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Bases.Judgements;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
@@ -185,9 +186,9 @@ public partial class JudgementDisplay : GameplayHUDComponent
                     throw new ArgumentOutOfRangeException(nameof(judgement), judgement, null);
             }
 
-            circle.TransformTo(nameof(BorderThickness), 20f)
-                  .TransformTo(nameof(BorderThickness), 0f, 1000, Easing.OutQuint)
-                  .ScaleTo(0f).ScaleTo(1.4f * (travel / base_travel), 600, Easing.OutQuint);
+            circle.BorderTo(20f).ScaleTo(0f)
+                  .BorderTo(0f, 1000, Easing.OutQuint)
+                  .ScaleTo(1.4f * (travel / base_travel), 600, Easing.OutQuint);
 
             var idx = 0;
 
