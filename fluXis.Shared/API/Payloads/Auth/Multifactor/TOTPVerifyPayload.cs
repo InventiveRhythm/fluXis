@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace fluXis.Shared.API.Parameters.Auth.Multifactor;
+namespace fluXis.Shared.API.Payloads.Auth.Multifactor;
 
-public class TOTPVerifyParameters
+public class TOTPVerifyPayload
 {
     [JsonProperty("code")]
     public string? Code { get; set; }

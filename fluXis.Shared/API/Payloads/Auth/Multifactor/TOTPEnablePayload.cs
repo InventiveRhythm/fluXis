@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace fluXis.Shared.API.Parameters.Auth.Multifactor;
+namespace fluXis.Shared.API.Payloads.Auth.Multifactor;
 
-public class TOTPEnableParameters
+public class TOTPEnablePayload
 {
     [JsonProperty("pwd")]
     public string? Password { get; set; }

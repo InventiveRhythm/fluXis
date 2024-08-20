@@ -1,5 +1,5 @@
 using System.Net.Http;
-using fluXis.Shared.API.Parameters.Auth.Multifactor;
+using fluXis.Shared.API.Payloads.Auth.Multifactor;
 using fluXis.Shared.API.Responses.Auth.Multifactor;
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
@@ -21,7 +21,7 @@ public class TOTPVerifyRequest : APIRequest<TOTPVerifyResponse>
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        req.AddRaw(new TOTPVerifyParameters { Code = code }.Serialize());
+        req.AddRaw(new TOTPVerifyPayload { Code = code }.Serialize());
         return req;
     }
 }

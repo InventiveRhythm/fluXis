@@ -1,5 +1,5 @@
 using System.Net.Http;
-using fluXis.Shared.API.Parameters.Auth;
+using fluXis.Shared.API.Payloads.Auth;
 using fluXis.Shared.API.Responses.Auth;
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
@@ -23,7 +23,7 @@ public class LoginRequest : APIRequest<LoginResponse>
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        var json = new LoginParameters(username, password);
+        var json = new LoginPayload(username, password);
         req.AddRaw(json.Serialize());
         return req;
     }

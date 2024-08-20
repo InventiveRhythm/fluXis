@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace fluXis.Shared.API.Parameters.Users;
+namespace fluXis.Shared.API.Payloads.Users;
 
-public class UserProfileUpdateParameters
+public class UserProfileUpdatePayload
 {
     /// <summary>
     /// base64 encoded image

@@ -1,21 +1,21 @@
 ﻿using fluXis.Shared.Components.Clubs;
 using Newtonsoft.Json;
 
-namespace fluXis.Shared.API.Parameters.Clubs;
+namespace fluXis.Shared.API.Payloads.Clubs;
 
-public class CreateClubParameters
+public class EditClubPayload
 {
     /// <summary>
     /// 3-16 characters. has to be unique
     /// </summary>
     [JsonProperty("name")]
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
     /// <summary>
-    /// 3-5 characters. has to be unique
+    /// the join type of the club
     /// </summary>
-    [JsonProperty("tag")]
-    public string Tag { get; set; } = null!;
+    [JsonProperty("join-type")]
+    public ClubJoinType? JoinType { get; set; }
 
     /// <summary>
     /// B64-encoded image
@@ -30,20 +30,14 @@ public class CreateClubParameters
     public string Banner { get; set; } = null!;
 
     /// <summary>
-    /// the join type of the club
-    /// </summary>
-    [JsonProperty("join-type")]
-    public ClubJoinType JoinType { get; set; }
-
-    /// <summary>
     /// Hex color code
     /// </summary>
     [JsonProperty("color-start")]
-    public string ColorStart { get; set; } = null!;
+    public string? ColorStart { get; set; }
 
     /// <summary>
     /// Hex color code
     /// </summary>
     [JsonProperty("color-end")]
-    public string ColorEnd { get; set; } = null!;
+    public string? ColorEnd { get; set; }
 }

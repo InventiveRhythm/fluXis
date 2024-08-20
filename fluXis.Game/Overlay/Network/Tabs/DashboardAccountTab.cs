@@ -15,7 +15,7 @@ using fluXis.Game.Overlay.Network.Tabs.Account;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
 using fluXis.Game.Utils;
-using fluXis.Shared.API.Parameters.Users;
+using fluXis.Shared.API.Payloads.Users;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -332,7 +332,7 @@ public partial class DashboardAccountTab : DashboardTab
 
         saving = true;
 
-        var req = new UserProfileUpdateRequest(user.ID, new UserProfileUpdateParameters
+        var req = new UserProfileUpdateRequest(user.ID, new UserProfileUpdatePayload
         {
             Twitter = getValue(user.Socials?.Twitter, twitterEntry.Value),
             YouTube = getValue(user.Socials?.YouTube, youtubeEntry.Value),
@@ -375,7 +375,7 @@ public partial class DashboardAccountTab : DashboardTab
         var bytes = File.ReadAllBytes(file.FullName);
         var b64 = Convert.ToBase64String(bytes);
 
-        var parameters = new UserProfileUpdateParameters();
+        var parameters = new UserProfileUpdatePayload();
 
         if (banner)
             parameters.Banner = b64;

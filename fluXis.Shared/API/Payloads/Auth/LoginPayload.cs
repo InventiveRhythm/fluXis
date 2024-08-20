@@ -1,9 +1,9 @@
 ﻿using fluXis.Shared.Utils;
 using Newtonsoft.Json;
 
-namespace fluXis.Shared.API.Parameters.Auth;
+namespace fluXis.Shared.API.Payloads.Auth;
 
-public class LoginParameters
+public class LoginPayload
 {
     [JsonProperty("username")]
     public string Username { get; set; } = null!;
@@ -11,7 +11,7 @@ public class LoginParameters
     [JsonProperty("password")]
     public string Password { get; set; } = null!;
 
-    public LoginParameters(string username, string password)
+    public LoginPayload(string username, string password)
     {
         Username = username;
         Password = password;
@@ -19,7 +19,7 @@ public class LoginParameters
 
     [JsonConstructor]
     [Obsolete(JsonUtils.JSON_CONSTRUCTOR_ERROR, true)]
-    public LoginParameters()
+    public LoginPayload()
     {
     }
 }

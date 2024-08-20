@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using fluXis.Shared.API.Parameters.Chat;
+using fluXis.Shared.API.Payloads.Chat;
 using fluXis.Shared.Components.Chat;
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
@@ -23,7 +23,7 @@ public class ChatMessageRequest : APIRequest<IChatMessage>
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        req.AddRaw(new ChatMessageParameters(content).Serialize());
+        req.AddRaw(new ChatMessagePayload(content).Serialize());
         return req;
     }
 }

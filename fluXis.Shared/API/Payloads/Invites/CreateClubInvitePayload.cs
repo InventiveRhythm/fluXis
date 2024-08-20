@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace fluXis.Shared.API.Parameters.Invites;
+namespace fluXis.Shared.API.Payloads.Invites;
 
-public class CreateClubInviteParameters
+public class CreateClubInvitePayload
 {
     /// <summary>
     /// The user to invite.

@@ -1,5 +1,5 @@
 using System.Net.Http;
-using fluXis.Shared.API.Parameters.Auth;
+using fluXis.Shared.API.Payloads.Auth;
 using fluXis.Shared.API.Responses.Auth;
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
@@ -25,7 +25,7 @@ public class RegisterRequest : APIRequest<RegisterResponse>
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
-        var json = new RegisterParameters(username, password, email);
+        var json = new RegisterPayload(username, password, email);
         req.AddRaw(json.Serialize());
         return req;
     }
