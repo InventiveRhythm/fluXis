@@ -25,6 +25,11 @@ public partial class ExperimentsSection : SettingsSection
             },
             new SettingsToggle
             {
+                Label = "Enable Storyboarding Tab",
+                Bindable = experiments.GetBindable<bool>(ExperimentConfig.StoryboardTab)
+            },
+            new SettingsToggle
+            {
                 Label = "Seeking in replays",
                 Bindable = experiments.GetBindable<bool>(ExperimentConfig.Seeking)
             }
