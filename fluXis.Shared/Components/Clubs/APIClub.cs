@@ -15,7 +15,7 @@ public class APIClub
     [JsonProperty("tag")]
     public string Tag { get; set; } = "";
 
-    [JsonProperty("members")]
+    [JsonProperty("count")]
     public long MemberCount { get; set; }
 
     [JsonProperty("colors")]
