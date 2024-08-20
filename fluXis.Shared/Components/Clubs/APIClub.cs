@@ -15,6 +15,9 @@ public class APIClub
     [JsonProperty("tag")]
     public string Tag { get; set; } = "";
 
+    [JsonProperty("members")]
+    public long MemberCount { get; set; }
+
     [JsonProperty("colors")]
     public List<GradientColor> Colors { get; set; } = new();
 
