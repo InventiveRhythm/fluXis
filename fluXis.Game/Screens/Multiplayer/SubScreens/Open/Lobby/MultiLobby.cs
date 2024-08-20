@@ -171,7 +171,7 @@ public partial class MultiLobby : MultiSubScreen
         if (set.OnlineID != Room.Map.MapSetID)
             return;
 
-        Schedule(() => mapChanged(Room.Map));
+        Schedule(() => onMapChange(Room.Map));
     }
 
     protected override void LoadComplete()
@@ -183,12 +183,12 @@ public partial class MultiLobby : MultiSubScreen
 
         footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
 
-        client.UserJoined += onUserJoined;
-        client.UserLeft += onUserLeft;
-        client.UserStateChanged += updateUserState;
-        client.MapChanged += mapChanged;
-        client.MapChangedFailed += mapChangeFailed;
-        client.Starting += startLoading;
+        client.OnUserJoin += onOnUserJoin;
+        client.OnUserLeave += onOnUserLeave;
+        client.OnUserStateChange += updateOnUserState;
+        client.OnMapChange += onMapChange;
+        client.MapChangeFailed += mapChangeFailed;
+        client.OnStart += startLoading;
 
         mapStore.MapSetAdded += mapAdded;
 
@@ -199,32 +199,32 @@ public partial class MultiLobby : MultiSubScreen
     {
         base.Dispose(isDisposing);
 
-        client.UserJoined -= onUserJoined;
-        client.UserLeft -= onUserLeft;
-        client.UserStateChanged -= updateUserState;
-        client.MapChanged -= mapChanged;
-        client.MapChangedFailed -= mapChangeFailed;
-        client.Starting -= startLoading;
+        client.OnUserJoin -= onOnUserJoin;
+        client.OnUserLeave -= onOnUserLeave;
+        client.OnUserStateChange -= updateOnUserState;
+        client.OnMapChange -= onMapChange;
+        client.MapChangeFailed -= mapChangeFailed;
+        client.OnStart -= startLoading;
 
         mapStore.MapSetAdded -= mapAdded;
     }
 
-    private void onUserJoined(MultiplayerParticipant user)
+    private void onOnUserJoin(MultiplayerParticipant user)
     {
         if (!IsCurrentScreen)
         {
-            Scheduler.AddOnce(() => onUserJoined(user));
+            Scheduler.AddOnce(() => onOnUserJoin(user));
             return;
         }
 
         playerList.AddPlayer(user);
     }
 
-    private void onUserLeft(MultiplayerParticipant user)
+    private void onOnUserLeave(MultiplayerParticipant user)
     {
         if (!IsCurrentScreen)
         {
-            Scheduler.AddOnce(() => onUserLeft(user));
+            Scheduler.AddOnce(() => onOnUserLeave(user));
             return;
         }
 
@@ -234,7 +234,7 @@ public partial class MultiLobby : MultiSubScreen
     private void changeMap() => MultiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
     private void mapChangeFailed(string error) => notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
 
-    private void mapChanged(APIMap map)
+    private void onMapChange(APIMap map)
     {
         updateRightButton();
 
@@ -257,11 +257,11 @@ public partial class MultiLobby : MultiSubScreen
         startClockMusic();
     }
 
-    private void updateUserState(long id, MultiplayerUserState state)
+    private void updateOnUserState(long id, MultiplayerUserState state)
     {
         if (!IsCurrentScreen)
         {
-            Scheduler.AddOnce(() => updateUserState(id, state));
+            Scheduler.AddOnce(() => updateOnUserState(id, state));
             return;
         }
 
@@ -332,7 +332,7 @@ public partial class MultiLobby : MultiSubScreen
     public override void OnResuming(ScreenTransitionEvent e)
     {
         base.OnResuming(e);
-        mapChanged(Room.Map);
+        onMapChange(Room.Map);
         api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
     }
 

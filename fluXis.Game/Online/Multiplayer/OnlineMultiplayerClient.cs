@@ -15,7 +15,6 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     private IAPIClient api { get; set; }
 
     public override APIUser Player => api.User.Value;
-    private IMultiplayerClient impl => this;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -40,12 +39,12 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         api.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
-    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => impl.UserJoined(reply.Data.Participant as MultiplayerParticipant);
-    private void onUserLeave(FluxelReply<MultiLeavePacket> reply) => impl.UserLeft(reply.Data.UserID);
-    private void onUserStateChange(FluxelReply<MultiStatePacket> reply) => impl.UserStateChanged(reply.Data!.UserID, reply.Data.State);
-    private void onMapChange(FluxelReply<MultiMapPacket> reply) => impl.MapChanged(reply.Success, reply.Data.Map, reply.Message);
-    private void onStartGame(FluxelReply<MultiStartPacket> reply) => impl.Starting();
-    private void onGameFinished(FluxelReply<MultiFinishPacket> reply) => impl.ResultsReady(reply.Data.Scores);
+    private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => UserJoined(reply.Data.Participant as MultiplayerParticipant);
+    private void onUserLeave(FluxelReply<MultiLeavePacket> reply) => UserLeft(reply.Data.UserID);
+    private void onUserStateChange(FluxelReply<MultiStatePacket> reply) => UserStateChanged(reply.Data!.UserID, reply.Data.State);
+    private void onMapChange(FluxelReply<MultiMapPacket> reply) => MapChanged(reply.Success, reply.Data.Map, reply.Message);
+    private void onStartGame(FluxelReply<MultiStartPacket> reply) => Starting();
+    private void onGameFinished(FluxelReply<MultiFinishPacket> reply) => ResultsReady(reply.Data.Scores);
 
     protected override async Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash)
     {

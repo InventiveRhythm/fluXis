@@ -27,13 +27,13 @@ public partial class MultiGameplayScreen : GameplayScreen
         base.LoadComplete();
         HealthProcessor.CanFail = false;
 
-        client.ResultsReady += onResultsReady;
+        client.OnResultsReady += onOnResultsReady;
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
-        client.ResultsReady -= onResultsReady;
+        client.OnResultsReady -= onOnResultsReady;
     }
 
     protected override void End()
@@ -41,7 +41,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         client.Finish(ScoreProcessor.ToScoreInfo(client.Player));
     }
 
-    private void onResultsReady(List<ScoreInfo> scores)
+    private void onOnResultsReady(List<ScoreInfo> scores)
     {
         if (this.IsCurrentScreen())
             this.Push(new MultiResults(RealmMap, scores));
