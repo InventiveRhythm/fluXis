@@ -44,6 +44,18 @@ public static class Program
             Console.WriteLine($"Running with profile {profile}");
         }
 
+        if (Args.Contains("--post-update"))
+        {
+            try
+            {
+                var dir = Path.Combine(AppContext.BaseDirectory, "patches");
+
+                if (Directory.Exists(dir))
+                    Directory.Delete(dir, true);
+            }
+            catch { }
+        }
+
         if (OperatingSystem.IsWindows())
             FileExtensionHelper.EnsureAssociationsSet();
 

@@ -9,6 +9,7 @@
     <Version>0.0.0</Version>
     <FileVersion>0.0.0</FileVersion>
     <Authors>TeamFluXis</Authors>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />

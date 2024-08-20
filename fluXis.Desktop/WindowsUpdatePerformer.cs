@@ -25,28 +25,10 @@ public partial class WindowsUpdatePerformer : IUpdatePerformer
     public WindowsUpdatePerformer(NotificationManager notifications)
     {
         this.notifications = notifications;
-
-        if (Program.Args.Contains("--post-update"))
-        {
-            logger.Add("Update complete. Cleaning up...");
-
-            if (Directory.Exists(patches))
-                Directory.Delete(patches, true);
-
-            logger.Add("Cleanup complete.");
-        }
     }
 
     public void Perform(string version)
     {
-        /*if (!UpdateAvailable && !forceUpdate)
-        {
-            if (!silent)
-                notifications.SendText("No updates available.", "You are running the latest version.", FontAwesome6.Solid.Check);
-
-            return;
-        }*/
-
         if (string.IsNullOrEmpty(version))
             return;
 
