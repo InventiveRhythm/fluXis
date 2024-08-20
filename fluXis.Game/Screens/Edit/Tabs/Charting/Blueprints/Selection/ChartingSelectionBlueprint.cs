@@ -10,6 +10,9 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     [Resolved]
     private EditorPlayfield playfield { get; set; }
 
+    [Resolved]
+    protected EditorSnapProvider Snaps { get; private set; }
+
     protected EditorHitObjectContainer HitObjectContainer => playfield.HitObjectContainer;
 
     public override double FirstComparer => Object.Time;

@@ -112,6 +112,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private string lastMapHash;
     private string lastEffectHash;
+    private string lastStoryboardHash;
 
     private bool canSave => editorMap.RealmMap.StatusInt < 100;
 
@@ -122,7 +123,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             if (!canSave)
                 return false;
 
-            return editorMap.MapEventsHash != lastEffectHash || editorMap.MapInfoHash != lastMapHash;
+            return editorMap.MapEventsHash != lastEffectHash
+                   || editorMap.MapInfoHash != lastMapHash
+                   || editorMap.StoryboardHash != lastStoryboardHash;
         }
     }
 
@@ -183,6 +186,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         clock.ChangeSource(loadMapTrack());
         dependencies.CacheAs(clock);
         dependencies.CacheAs<IBeatSyncProvider>(clock);
+
+        dependencies.CacheAs(new EditorSnapProvider(editorMap, settings, clock));
 
         InternalChild = new EditorKeybindingContainer(this, realm)
         {
@@ -371,6 +376,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         lastMapHash = editorMap.MapInfoHash;
         lastEffectHash = editorMap.MapEventsHash;
+        lastStoryboardHash = editorMap.StoryboardHash;
     }
 
     private void applyOffset()
@@ -630,7 +636,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return true;
         }
 
-        mapStore.Save(editorMap.RealmMap, editorMap.MapInfo, editorMap.MapEvents, setStatus);
+        mapStore.Save(editorMap.RealmMap, editorMap.MapInfo, editorMap.MapEvents, editorMap.Storyboard, setStatus);
         Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), editorMap.MapSet));
 
         isNewMap = false;

@@ -18,6 +18,7 @@ using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Overlay.Notifications.Tasks;
+using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Maps;
@@ -172,7 +173,7 @@ public partial class MapStore : Component
         game.ShowMap(map);
     }
 
-    public void Save(RealmMap map, MapInfo info, MapEvents events, bool setStatus)
+    public void Save(RealmMap map, MapInfo info, MapEvents events, Storyboard storyboard, bool setStatus)
     {
         if (map == null || info == null)
             throw new ArgumentNullException();
@@ -199,6 +200,15 @@ public partial class MapStore : Component
         }
         else
             info.EffectFile = "";
+
+        if (storyboard is { Empty: false })
+        {
+            var filename = string.IsNullOrWhiteSpace(info.StoryboardFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb" : info.StoryboardFile;
+            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(filename)), storyboard.Serialize());
+            info.StoryboardFile = filename;
+        }
+        else
+            info.StoryboardFile = "";
 
         realm.RunWrite(r =>
         {

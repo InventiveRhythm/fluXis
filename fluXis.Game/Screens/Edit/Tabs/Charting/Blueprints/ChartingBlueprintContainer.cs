@@ -21,6 +21,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
     [Resolved]
     private EditorMap map { get; set; }
 
+    [Resolved]
+    private EditorSnapProvider snaps { get; set; }
+
     public ChartingContainer ChartingContainer { get; init; }
 
     public ChartingTool CurrentTool
@@ -109,7 +112,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         var hitObjectContainer = ChartingContainer.Playfield.HitObjectContainer;
         var mousePosition = InputManager.CurrentState.Mouse.Position;
 
-        var time = hitObjectContainer.SnapTime(hitObjectContainer.TimeAtScreenSpacePosition(mousePosition));
+        var time = snaps.SnapTime(hitObjectContainer.TimeAtScreenSpacePosition(mousePosition));
         var lane = hitObjectContainer.LaneAtScreenSpacePosition(mousePosition);
         currentPlacement.UpdatePlacement(time, lane);
     }
@@ -149,8 +152,6 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
     protected override void MoveSelection(DragEvent e)
     {
-        base.MoveSelection(e);
-
         if (DraggedBlueprints == null) return;
 
         var delta = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
@@ -158,7 +159,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         var position = DraggedBlueprintsPositions.First() + delta;
         var time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
         int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(position);
-        var snappedTime = ChartingContainer.Playfield.HitObjectContainer.SnapTime(time);
+        var snappedTime = snaps.SnapTime(time);
 
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.Time;
         int laneDelta = 0;

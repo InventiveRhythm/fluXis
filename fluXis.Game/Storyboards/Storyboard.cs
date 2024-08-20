@@ -13,6 +13,9 @@ public class Storyboard
     [JsonProperty("elements")]
     public List<StoryboardElement> Elements { get; set; } = new();
 
+    [JsonIgnore]
+    public bool Empty => Elements.Count == 0;
+
     public event Action<StoryboardElement> ElementAdded;
     public event Action<StoryboardElement> ElementRemoved;
 

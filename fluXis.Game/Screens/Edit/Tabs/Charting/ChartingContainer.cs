@@ -58,6 +58,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private Clipboard clipboard { get; set; }
 
     [Resolved]
+    private EditorSnapProvider snaps { get; set; }
+
+    [Resolved]
     private NotificationManager notifications { get; set; }
 
     public Bindable<string> CurrentHitSound { get; } = new($"{Hitsounding.DEFAULT_PREFIX}normal");
@@ -222,11 +225,11 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             return;
 
         var time = EditorClock.CurrentTime;
-        var snapped = Playfield.HitObjectContainer.SnapTime(time);
+        var snapped = snaps.SnapTime(time);
 
         var tp = Map.MapInfo.GetTimingPoint(time);
         var increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
-        var next = Playfield.HitObjectContainer.SnapTime(time + increase);
+        var next = snaps.SnapTime(time + increase);
 
         // take the closest snap
         time = Math.Abs(time - snapped) < Math.Abs(time - next) ? snapped : next;
@@ -325,7 +328,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         if (!objects.Any())
             objects = HitObjects.Select(h => h.Data).ToList();
 
-        ActionStack.Add(new NoteReSnapAction(objects, Playfield.HitObjectContainer.SnapTime, settings.SnapDivisor));
+        ActionStack.Add(new NoteReSnapAction(objects, snaps.SnapTime, settings.SnapDivisor));
     }
 
     public void Copy(bool deleteAfter = false)

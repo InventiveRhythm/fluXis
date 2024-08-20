@@ -89,5 +89,5 @@ public partial class SelectionBlueprint<T> : Container
     public void Deselect() => State = SelectedState.Deselected;
 
     protected override bool ShouldBeConsideredForInput(Drawable child) => State == SelectedState.Selected;
-    protected override bool OnHover(HoverEvent e) => true;
+    protected override bool OnHover(HoverEvent e) => false;
 }

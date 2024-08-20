@@ -27,6 +27,7 @@ public class EditorMap
 
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());
+    public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
 
     public bool IsNew => RealmMap == null || MapInfo == null;
 
