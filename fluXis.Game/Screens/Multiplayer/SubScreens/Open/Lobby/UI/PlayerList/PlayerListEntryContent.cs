@@ -1,8 +1,10 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -56,11 +58,18 @@ public partial class PlayerListEntryContent : CompositeDrawable
                 Origin = Anchor.CentreLeft,
                 Children = new Drawable[]
                 {
-                    new FluXisSpriteText
-                    {
-                        Text = participant.User.Username,
-                        WebFontSize = 20
-                    },
+                    participant.User.NamePaint is not null
+                        ? new GradientText
+                        {
+                            Text = participant.User.Username,
+                            WebFontSize = 20,
+                            Colour = participant.User.NamePaint.Colors.CreateColorInfo()
+                        }
+                        : new FluXisSpriteText
+                        {
+                            Text = participant.User.Username,
+                            WebFontSize = 20
+                        },
                     new CircularContainer
                     {
                         Size = new Vector2(100, 20),
