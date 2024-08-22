@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
-using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
@@ -25,6 +23,9 @@ public partial class Playfield : Container
 
     [Resolved]
     private GameplayScreen screen { get; set; }
+
+    private bool canSeek { get; }
+    public override bool RemoveCompletedTransforms => !canSeek;
 
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager Manager { get; private set; }
@@ -47,6 +48,11 @@ public partial class Playfield : Container
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
+    public Playfield(bool canSeek)
+    {
+        this.canSeek = canSeek;
+    }
+
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
@@ -66,12 +72,6 @@ public partial class Playfield : Container
             AlwaysPresent = true,
             Masking = true
         });
-
-        var playfieldEvents = new List<IApplicableToPlayfield>();
-        playfieldEvents.AddRange(screen.MapEvents.PlayfieldMoveEvents);
-        playfieldEvents.AddRange(screen.MapEvents.PlayfieldScaleEvents);
-        playfieldEvents.AddRange(screen.MapEvents.PlayfieldFadeEvents);
-        playfieldEvents.AddRange(screen.MapEvents.PlayfieldRotateEvents);
 
         InternalChildren = new[]
         {
@@ -105,10 +105,27 @@ public partial class Playfield : Container
                     bottomCover = skinManager.GetLaneCover(true)
                 }
             },
-            new AnimatedEventHandler<IApplicableToPlayfield>(playfieldEvents),
             new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
             new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration, fade.Easing))
         };
+
+        if (canSeek)
+        {
+            screen.MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
+            screen.MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
+            screen.MapEvents.PlayfieldFadeEvents.ForEach(e => e.Apply(this));
+            screen.MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
+        }
+        else
+        {
+            AddRangeInternal(new Drawable[]
+            {
+                new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents),
+                new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents),
+                new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents),
+                new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents),
+            });
+        }
     }
 
     protected override void LoadComplete()
@@ -133,5 +150,6 @@ public partial class Playfield : Container
         screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(relativePos * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
     }
 
-    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 }

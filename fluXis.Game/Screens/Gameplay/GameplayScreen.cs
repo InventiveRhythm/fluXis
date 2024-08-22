@@ -8,6 +8,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Configuration;
+using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -165,7 +166,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ExperimentConfigManager experiments)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -220,7 +221,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
 
         dependencies.CacheAs(Input = GetInput());
-        dependencies.Cache(Playfield = new Playfield());
+        dependencies.Cache(Playfield = new Playfield(experiments.Get<bool>(ExperimentConfig.Seeking)));
 
         var shaders = new ShaderStackContainer();
         var shaderTypes = MapEvents.ShaderEvents.Select(e => e.Type).Distinct().ToList();
