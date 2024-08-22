@@ -1,57 +1,42 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Select.List.Items;
 using fluXis.Game.UI;
-using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
-using osuTK;
+using osu.Framework.Utils;
 
 namespace fluXis.Game.Screens.Select.List.Drawables.MapSet;
 
-public partial class DrawableMapSetItem : CompositeDrawable, IComparable<DrawableMapSetItem>
+public partial class DrawableMapSetItem : CompositeDrawable
 {
     [Resolved]
     private MapStore maps { get; set; }
-
-    [Resolved]
-    private SelectScreen screen { get; set; }
 
     public Action SelectAction;
     public Action<RealmMap> EditAction;
     public Action<RealmMapSet> ExportAction;
     public Action<RealmMapSet> DeleteAction;
 
+    private MapSetItem item { get; }
     public RealmMapSet MapSet { get; private set; }
 
     private SelectedState selectedState = SelectedState.Deselected;
 
-    public bool Selected => MapSet.ID == maps.MapSetBindable.Value.ID;
-
-    public List<RealmMap> Maps
-    {
-        get
-        {
-            var diffs = MapSet.Maps.ToList();
-
-            // sorting by nps until we have a proper difficulty system
-            diffs.Sort((a, b) => a.Filters.NotesPerSecond.CompareTo(b.Filters.NotesPerSecond));
-            return diffs;
-        }
-    }
+    public bool Selected => MapSet.ID == maps.MapSetBindable.Value?.ID;
 
     private DrawableMapSetHeader header;
-    private Container difficultyContainer;
-    private FillFlowContainer<DrawableMapSetDifficulty> difficultyFlow;
+    private Container<DrawableMapSetDifficulty> difficultyFlow;
 
-    public DrawableMapSetItem(RealmMapSet mapSet)
+    public DrawableMapSetItem(MapSetItem item, RealmMapSet mapSet)
     {
         MapSet = mapSet;
+        this.item = item;
     }
 
     [BackgroundDependencyLoader]
@@ -64,24 +49,16 @@ public partial class DrawableMapSetItem : CompositeDrawable, IComparable<Drawabl
 
         InternalChildren = new Drawable[]
         {
-            difficultyContainer = new Container
+            difficultyFlow = new Container<DrawableMapSetDifficulty>
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Alpha = 0,
-                Padding = new MarginPadding { Horizontal = 10, Top = 85 },
-                Child = difficultyFlow = new FillFlowContainer<DrawableMapSetDifficulty>
-                {
-                    Direction = FillDirection.Vertical,
-                    AutoSizeAxes = Axes.Y,
-                    RelativeSizeAxes = Axes.X,
-                    Spacing = new Vector2(0, 5)
-                }
+                Padding = new MarginPadding { Horizontal = 10 }
             },
             header = new DrawableMapSetHeader(this, MapSet)
         };
 
-        foreach (var map in Maps)
+        foreach (var map in MapSet.MapsSorted)
         {
             difficultyFlow.Add(new DrawableMapSetDifficulty(this, map));
         }
@@ -94,9 +71,36 @@ public partial class DrawableMapSetItem : CompositeDrawable, IComparable<Drawabl
         base.LoadComplete();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Precision.AlmostEquals(item.Position, Y))
+            Y = item.Position;
+        else
+            Y = (float)Interpolation.Lerp(item.Position, Y, Math.Exp(-0.01 * Time.Elapsed));
+
+        if (!Selected)
+        {
+            difficultyFlow.ForEach(d => d.TargetY = 30);
+            return;
+        }
+
+        var pos = 85f;
+
+        foreach (var difficulty in difficultyFlow)
+        {
+            difficulty.TargetY = pos;
+            pos += 48 + 5;
+        }
+    }
+
     protected override void Dispose(bool isDisposing)
     {
-        maps.MapSetBindable.ValueChanged -= updateSelected;
+        base.Dispose(isDisposing);
+
+        if (maps is not null)
+            maps.MapSetBindable.ValueChanged -= updateSelected;
 
         SelectAction = null;
         EditAction = null;
@@ -104,11 +108,7 @@ public partial class DrawableMapSetItem : CompositeDrawable, IComparable<Drawabl
         DeleteAction = null;
 
         MapSet = null;
-
-        base.Dispose(isDisposing);
     }
-
-    public int CompareTo(DrawableMapSetItem other) => MapUtils.CompareSets(MapSet, other.MapSet, screen.SortMode, screen.SortInverse);
 
     private void updateSelected(ValueChangedEvent<RealmMapSet> set)
     {
@@ -124,7 +124,6 @@ public partial class DrawableMapSetItem : CompositeDrawable, IComparable<Drawabl
             return;
 
         header.Show();
-        difficultyContainer.FadeIn(200);
         selectedState = SelectedState.Selected;
     }
 
@@ -134,7 +133,6 @@ public partial class DrawableMapSetItem : CompositeDrawable, IComparable<Drawabl
             return;
 
         header.Hide();
-        difficultyContainer.FadeOut(200);
         selectedState = SelectedState.Deselected;
     }
 

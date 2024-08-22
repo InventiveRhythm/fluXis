@@ -18,6 +18,9 @@ public class MapDifficultyItem : IListItem
 
     public RealmMapMetadata Metadata => map.Metadata;
 
+    public float Size => 80;
+    public float Position { get; set; }
+
     public Drawable Drawable { get; set; }
 
     private RealmMap map { get; }

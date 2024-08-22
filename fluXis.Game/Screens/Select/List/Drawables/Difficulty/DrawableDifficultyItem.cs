@@ -22,6 +22,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.List.Drawables.Difficulty;
@@ -291,6 +292,16 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
     protected override void LoadComplete()
     {
         item.State.BindValueChanged(stateChanged, true);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Precision.AlmostEquals(item.Position, Y))
+            Y = item.Position;
+        else
+            Y = (float)Interpolation.Lerp(item.Position, Y, Math.Exp(-0.01 * Time.Elapsed));
     }
 
     protected override void Dispose(bool isDisposing)

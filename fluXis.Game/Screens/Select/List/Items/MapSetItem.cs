@@ -20,6 +20,21 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
 
     public RealmMapMetadata Metadata => set.Metadata;
 
+    public float Size
+    {
+        get
+        {
+            if (State.Value != SelectedState.Selected)
+                return 80;
+
+            var diffs = set.Maps.Count;
+
+            return 85 + diffs * 53 - 5;
+        }
+    }
+
+    public float Position { get; set; }
+
     public Drawable Drawable { get; set; }
 
     private RealmMapSet set { get; }
@@ -31,7 +46,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
 
     public Drawable CreateDrawable()
     {
-        return Drawable = new DrawableMapSetItem(set)
+        return Drawable = new DrawableMapSetItem(this, set)
         {
             SelectAction = Screen.Accept,
             EditAction = Screen.EditMap,

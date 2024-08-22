@@ -18,6 +18,9 @@ public interface IListItem : IComparable<IListItem>
 
     RealmMapMetadata Metadata { get; }
 
+    float Size { get; }
+    float Position { get; set; }
+
     Drawable Drawable { get; set; }
     Drawable CreateDrawable();
 

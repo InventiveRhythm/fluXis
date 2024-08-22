@@ -25,6 +25,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Framework.Platform;
+using osu.Framework.Utils;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.List.Drawables.MapSet;
@@ -70,6 +71,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
     private readonly RealmMap map;
     private Container outline;
     private DrawableScoreRank rank;
+
+    public float TargetY = 0;
 
     public DrawableMapSetDifficulty(DrawableMapSetItem parentEntry, RealmMap map)
     {
@@ -250,6 +253,16 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
 
         scores.TopScoreUpdated += updateTopScore;
         updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Precision.AlmostEquals(TargetY, Y))
+            Y = TargetY;
+        else
+            Y = (float)Interpolation.Lerp(TargetY, Y, Math.Exp(-0.01 * Time.Elapsed));
     }
 
     private void updateTopScore(Guid id, [CanBeNull] RealmScore score)

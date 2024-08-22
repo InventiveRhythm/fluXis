@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
@@ -9,13 +10,12 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osuTK;
 
 namespace fluXis.Game.Screens.Select.List;
 
 public partial class MapList : FluXisScrollContainer
 {
-    public new FillFlowContainer Content { get; private set; }
+    public new Container Content { get; private set; }
 
     [Resolved]
     private SelectScreen screen { get; set; }
@@ -45,12 +45,9 @@ public partial class MapList : FluXisScrollContainer
         ScrollbarAnchor = Anchor.TopLeft;
         ScrollbarOverlapsContent = false;
 
-        Child = Content = new FillFlowContainer
+        Child = Content = new Container()
         {
-            AutoSizeAxes = Axes.Y,
-            RelativeSizeAxes = Axes.X,
-            Spacing = new Vector2(10),
-            Direction = FillDirection.Vertical
+            RelativeSizeAxes = Axes.X
         };
     }
 
@@ -70,7 +67,7 @@ public partial class MapList : FluXisScrollContainer
         item.Bind();
 
         items.Add(item);
-        Content.Add(item.CreateDrawable());
+        item.CreateDrawable();
 
         if (bulkInserting)
             return;
@@ -83,17 +80,43 @@ public partial class MapList : FluXisScrollContainer
         if (items.Contains(item))
         {
             items.Remove(item);
-            Content.Remove(item.Drawable, true);
+
+            if (item.Drawable is not null && !Content.Remove(item.Drawable, true))
+                item.Drawable.Dispose();
+
             item.Unbind();
         }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        var pos = 0f;
+
+        for (var idx = 0; idx < items.Count; idx++)
+        {
+            var item = items[idx];
+            item.Position = pos;
+
+            var size = item.Size;
+            pos += size + 10;
+
+            if (item.Position + size < Current - 250 || item.Position > Current + DrawHeight + 250)
+                Content.Remove(item.Drawable, false);
+            else if (item.Drawable.Parent == null)
+            {
+                Content.Add(item.Drawable);
+                item.Drawable.Y = item.Position;
+            }
+        }
+
+        Content.Height = pos;
     }
 
     public void Sort()
     {
         items.Sort((a, b) => a.CompareTo(b));
-
-        for (int i = 0; i < items.Count; i++)
-            Content.SetLayoutPosition(items[i].Drawable, i);
     }
 
     public void ScrollToSelected()
@@ -106,6 +129,15 @@ public partial class MapList : FluXisScrollContainer
 
     public void ScrollToItem(IListItem item)
     {
-        ScrollTo(item.Drawable);
+        var pos1 = item.Position;
+        var pos2 = item.Position + item.Size;
+
+        var min = Math.Min(pos1, pos2);
+        var max = Math.Max(pos1, pos2);
+
+        if (min < Current || (min > Current && pos2 > AvailableContent))
+            ScrollTo(min);
+        else if (max > Current + DisplayableContent)
+            ScrollTo(max - DisplayableContent);
     }
 }
