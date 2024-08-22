@@ -10,6 +10,7 @@ public static class PacketIDs
     public const string ACHIEVEMENT = "achievement";
     public const string SERVER_MESSAGE = "server/message";
     public const string MAINTENANCE = "server/maintenance";
+    public const string ACTIVITY = "user/activity";
 
     public const string FRIEND_ONLINE = "friend/online";
     public const string FRIEND_OFFLINE = "friend/offline";

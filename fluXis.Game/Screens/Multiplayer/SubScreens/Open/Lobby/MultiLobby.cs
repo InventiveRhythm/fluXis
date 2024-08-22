@@ -10,6 +10,7 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
@@ -32,6 +33,8 @@ public partial class MultiLobby : MultiSubScreen
 {
     public override string Title => "Open Match";
     public override string SubTitle => "Lobby";
+
+    protected override UserActivity InitialActivity => new UserActivity.MultiLobby(Room);
 
     [Resolved]
     private MapStore mapStore { get; set; }
@@ -217,6 +220,7 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
+        RefreshActivity();
         playerList.AddPlayer(user);
     }
 
@@ -228,6 +232,7 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
+        RefreshActivity();
         playerList.RemovePlayer(user.ID);
     }
 

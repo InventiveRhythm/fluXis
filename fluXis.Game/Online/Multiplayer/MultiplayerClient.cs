@@ -37,12 +37,12 @@ public abstract partial class MultiplayerClient : Component
         Room = await CreateRoom(name, mapid, hash);
     }
 
-    public async Task Join(MultiplayerRoom room, string password = "")
+    public async Task Join(long id, string password = "")
     {
         if (Room != null)
             throw new InvalidOperationException("Cannot join a room while already in one");
 
-        Room = await JoinRoom(room.RoomID, password);
+        Room = await JoinRoom(id, password);
     }
 
     #region Abstract Methods

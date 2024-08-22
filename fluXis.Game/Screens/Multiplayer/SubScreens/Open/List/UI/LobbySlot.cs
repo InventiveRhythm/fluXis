@@ -62,7 +62,7 @@ public partial class LobbySlot : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        List.JoinLobby(Room);
+        List.JoinLobby(Room.RoomID);
         return true;
     }
 }

@@ -1,7 +1,9 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
+using fluXis.Game.Online.Activity;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -21,6 +23,9 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     [Resolved]
     protected MultiplayerScreen MultiScreen { get; private set; }
+
+    public Bindable<UserActivity> Activity => MultiScreen.Activity;
+    protected virtual UserActivity InitialActivity => new UserActivity.MenuGeneral();
 
     private Container titleContainer;
     private Box titleLine;
@@ -90,6 +95,8 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     private void fadeIn()
     {
+        RefreshActivity();
+
         titleContainer.MoveToX(0);
         titleLine.ResizeHeightTo(0).ResizeHeightTo(1, 500, Easing.OutQuint);
         titleText.MoveToX(-10).MoveToX(0, 300, Easing.OutQuint);
@@ -102,6 +109,8 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
         titleContainer.MoveToX(50, 400);
         this.FadeOut(200);
     }
+
+    protected void RefreshActivity() => Activity.Value = InitialActivity;
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {

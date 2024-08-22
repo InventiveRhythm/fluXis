@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Shared.API;
 using fluXis.Shared.API.Packets;
@@ -14,6 +15,8 @@ public interface IAPIClient
 {
     Bindable<APIUser?> User { get; }
     Bindable<ConnectionStatus> Status { get; }
+
+    Bindable<UserActivity> Activity { get; }
 
     bool IsLoggedIn { get; }
 

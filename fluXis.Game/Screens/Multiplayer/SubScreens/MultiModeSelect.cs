@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Open.List;
 using fluXis.Game.Screens.Multiplayer.SubScreens.Ranked;
 using fluXis.Game.UI;
@@ -23,6 +24,8 @@ public partial class MultiModeSelect : MultiSubScreen
 {
     public override string Title => "Multiplayer";
     public override string SubTitle => "Mode Select";
+
+    protected override UserActivity InitialActivity => new UserActivity.MenuGeneral();
 
     [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }
@@ -98,7 +101,7 @@ public partial class MultiModeSelect : MultiSubScreen
                         Description = "Play freely against your\nfriends with no restrictions.",
                         Background = "lobby",
                         RightSide = true,
-                        Action = () => this.Push(new MultiLobbyList()),
+                        Action = () => OpenList(),
                         HoverAction = () => mode.Value = Mode.OpenLobby,
                         HoverLostAction = () => mode.Value = Mode.None
                     }
@@ -147,6 +150,11 @@ public partial class MultiModeSelect : MultiSubScreen
             else
                 openLobbyButton.Deselect();
         }, true);
+    }
+
+    public void OpenList(long id = -1, string password = "")
+    {
+        Schedule(() => this.Push(new MultiLobbyList(id, password)));
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

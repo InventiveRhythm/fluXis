@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Multi;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Shared.API;
@@ -55,6 +56,10 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     protected override async Task<MultiplayerRoom> JoinRoom(long id, string password)
     {
         var res = await api.SendAndWait(MultiJoinPacket.CreateC2SInitialJoin(id, password));
+
+        if (!res.Success)
+            throw new APIException(res.Message);
+
         return res.Success ? res.Data.Room as MultiplayerRoom : null;
     }
 

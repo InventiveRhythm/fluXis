@@ -21,7 +21,6 @@ using fluXis.Game.IO;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Online;
-using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.API.Models.Groups;
 using fluXis.Game.Online.API.Models.Multi;
@@ -97,7 +96,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
 
-    protected Bindable<UserActivity> Activity { get; } = new();
     public Season CurrentSeason { get; private set; }
 
     public static string VersionString

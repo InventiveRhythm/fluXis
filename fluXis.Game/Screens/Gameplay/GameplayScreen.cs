@@ -377,14 +377,14 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual void UpdatePausedState()
     {
-        Activity.Value = !IsPaused.Value ? GetPlayingActivity() : new UserActivity.Paused(RealmMap);
+        Activity.Value = !IsPaused.Value ? GetPlayingActivity() : new UserActivity.Paused(this, RealmMap);
         AllowOverlays.Value = IsPaused.Value;
     }
 
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
     protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount);
     protected virtual Drawable CreateTextOverlay() => Empty();
-    protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(RealmMap);
+    protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(this, RealmMap);
 
     protected HealthProcessor CreateHealthProcessor()
     {

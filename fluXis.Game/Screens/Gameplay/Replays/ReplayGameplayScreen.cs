@@ -44,7 +44,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
 
     protected override GameplayInput GetInput() => new ReplayInput(this, RealmMap.KeyCount);
     protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
-    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(RealmMap, replay.GetPlayer(users));
+    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(users));
 
     protected override void UpdatePausedState()
     {

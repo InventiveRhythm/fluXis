@@ -3,7 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
-using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Multiplayer;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Online.Multiplayer;
@@ -22,6 +22,8 @@ public partial class MultiLobbyList : MultiSubScreen
 {
     public override string Title => "Open Match";
     public override string SubTitle => "Lobby List";
+
+    protected override UserActivity InitialActivity => new UserActivity.MenuGeneral();
 
     [Resolved]
     private MultiplayerMenuMusic menuMusic { get; set; }
@@ -44,6 +46,16 @@ public partial class MultiLobbyList : MultiSubScreen
     private FillFlowContainer lobbyList;
     private LoadingIcon loadingIcon;
     private MultiLobbyListFooter footer;
+
+    // invite stuff
+    private long id { get; }
+    private string password { get; }
+
+    public MultiLobbyList(long id = -1, string password = "")
+    {
+        this.id = id;
+        this.password = password;
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -78,6 +90,9 @@ public partial class MultiLobbyList : MultiSubScreen
         base.LoadComplete();
 
         loadLobbies();
+
+        if (id > 0)
+            JoinLobby(id, password);
     }
 
     private void loadLobbies()
@@ -107,10 +122,9 @@ public partial class MultiLobbyList : MultiSubScreen
         });
     }
 
-    public async void JoinLobby(MultiplayerRoom room, string password = "")
+    public async void JoinLobby(long room, string password = "")
     {
-        var panel = new LoadingPanel { Text = "Joining lobby...", };
-        Schedule(() => panels.Content = panel);
+        Schedule(() => panels.Content = new LoadingPanel { Text = "Joining lobby..." });
 
         try
         {
@@ -124,7 +138,7 @@ public partial class MultiLobbyList : MultiSubScreen
             notifications.SendError("Failed to join lobby", e.Message);
         }
 
-        Schedule(() => panel.Hide());
+        ScheduleAfterChildren(() => panels.Content.Hide());
     }
 
     public override void OnEntering(ScreenTransitionEvent e)

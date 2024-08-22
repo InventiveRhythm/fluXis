@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Shared.Scoring;
@@ -20,6 +21,16 @@ public partial class MultiGameplayScreen : GameplayScreen
         : base(realmMap, mods)
     {
         this.client = client;
+    }
+
+    protected override UserActivity GetPlayingActivity()
+    {
+        var activity = base.GetPlayingActivity();
+
+        if (activity is UserActivity.Playing playing)
+            playing.Room = client.Room;
+
+        return activity;
     }
 
     protected override void LoadComplete()

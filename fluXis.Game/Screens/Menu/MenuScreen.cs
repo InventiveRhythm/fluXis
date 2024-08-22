@@ -398,7 +398,7 @@ public partial class MenuScreen : FluXisScreen
     private void openDashboard() => dashboard.Show();
     private void continueToBrowse() => this.Push(new MapBrowser());
 
-    private bool canPlayAnimation()
+    public bool CanPlayAnimation()
     {
         if (pressedStart) return false;
 
@@ -450,16 +450,16 @@ public partial class MenuScreen : FluXisScreen
             return true;
         }
 
-        return canPlayAnimation();
+        return CanPlayAnimation();
     }
 
-    protected override bool OnMouseDown(MouseDownEvent e) => canPlayAnimation();
-    protected override bool OnTouchDown(TouchDownEvent e) => canPlayAnimation();
-    protected override bool OnMidiDown(MidiDownEvent e) => canPlayAnimation();
+    protected override bool OnMouseDown(MouseDownEvent e) => CanPlayAnimation();
+    protected override bool OnTouchDown(TouchDownEvent e) => CanPlayAnimation();
+    protected override bool OnMidiDown(MidiDownEvent e) => CanPlayAnimation();
 
     protected override bool OnJoystickPress(JoystickPressEvent e)
     {
-        if (canPlayAnimation()) return true;
+        if (CanPlayAnimation()) return true;
 
         switch (e.Button)
         {

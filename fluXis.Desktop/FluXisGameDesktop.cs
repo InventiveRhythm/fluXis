@@ -6,6 +6,7 @@ using fluXis.Game;
 using fluXis.Game.Integration;
 using fluXis.Game.IPC;
 using fluXis.Game.Updater;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 
@@ -35,9 +36,17 @@ public partial class FluXisGameDesktop : FluXisGame
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        new DiscordActivity().Initialize(APIClient, Activity);
+        new DiscordActivity().Initialize(this, APIClient);
 
         var args = Program.Args.ToList();
+
+        if (args.Contains("--debug-join-multi"))
+        {
+            var idx = args.IndexOf("--debug-join-multi");
+            var id = args[idx + 1];
+            JoinMultiplayerRoom(id.ToIntInvariant(), "");
+        }
+
         args.RemoveAll(a => a.StartsWith('-'));
         WaitForReady(() => HandleDragDrop(args.ToArray()));
     }

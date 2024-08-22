@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using fluXis.Game.Online;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Shared.API;
@@ -22,6 +23,9 @@ public class TestAPIClient : IAPIClient
     });
 
     public Bindable<ConnectionStatus> Status { get; } = new(ConnectionStatus.Online);
+
+    public Bindable<UserActivity> Activity { get; } = new();
+
     public string AccessToken => "token";
     public string MultifactorToken { get; set; } = "mfa-token";
     public APIEndpointConfig Endpoint => new();

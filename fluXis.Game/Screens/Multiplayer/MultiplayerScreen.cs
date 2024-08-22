@@ -30,6 +30,9 @@ public partial class MultiplayerScreen : FluXisScreen
     [Cached]
     private MultiplayerMenuMusic menuMusic = new();
 
+    public long TargetLobby { get; init; }
+    public string LobbyPassword { get; init; }
+
     private ScreenStack screenStack;
 
     [BackgroundDependencyLoader]
@@ -49,7 +52,12 @@ public partial class MultiplayerScreen : FluXisScreen
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        screenStack.Push(new MultiModeSelect());
+
+        var modes = new MultiModeSelect();
+        screenStack.Push(modes);
+
+        if (TargetLobby > 0)
+            modes.OpenList(TargetLobby, LobbyPassword);
 
         screenStack.ScreenExited += (_, _) =>
         {

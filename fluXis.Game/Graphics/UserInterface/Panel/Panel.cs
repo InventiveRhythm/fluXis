@@ -17,14 +17,14 @@ public partial class Panel : Container
     public bool IsDangerous { get; init; }
 
     public new Container Content { get; }
-    public bool ShowOnCreate { get; set; } = true;
 
     private Container loadingOverlay { get; }
     private Box flashBox { get; }
 
     protected bool Loading { get; private set; }
 
-    private Visibility state = Visibility.Hidden;
+    private Visibility state = Visibility.Visible;
+    private bool initial = true;
 
     public Panel()
     {
@@ -73,7 +73,11 @@ public partial class Panel : Container
 
     protected override void LoadComplete()
     {
-        if (ShowOnCreate) Show();
+        if (state == Visibility.Hidden)
+            return;
+
+        Show();
+        initial = true;
     }
 
     public void Flash()
@@ -95,7 +99,7 @@ public partial class Panel : Container
 
     public override void Show()
     {
-        if (state == Visibility.Visible)
+        if (state == Visibility.Visible && !initial)
             return;
 
         state = Visibility.Visible;

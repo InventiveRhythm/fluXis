@@ -121,6 +121,7 @@ public partial class IntroAnimation : FluXisScreen
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
+        logo.FadeOut(bars_duration);
         this.Delay(bars_duration + bars_delay).FadeOut();
         Schedule(slideBars);
     }

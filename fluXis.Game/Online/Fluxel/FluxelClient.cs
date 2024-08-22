@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Requests.Auth;
 using fluXis.Game.Overlay.Notifications;
@@ -19,6 +20,7 @@ using fluXis.Shared.API.Packets.Other;
 using fluXis.Shared.API.Packets.User;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Utils;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Development;
@@ -63,6 +65,8 @@ public partial class FluxelClient : Component, IAPIClient
     public Bindable<ConnectionStatus> Status { get; } = new();
     public Exception? LastException { get; private set; } = null!;
 
+    public Bindable<UserActivity> Activity { get; } = new();
+
     public long MaintenanceTime { get; set; }
 
     public bool IsLoggedIn => User.Value != null;
@@ -85,6 +89,21 @@ public partial class FluxelClient : Component, IAPIClient
         RegisterListener<LoginPacket>(EventType.Login, onLoginResponse);
         RegisterListener<LogoutPacket>(EventType.Logout, onLogout);
         RegisterListener<MaintenancePacket>(EventType.Maintenance, onMaintenance);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Activity.BindValueChanged(e =>
+        {
+            var activity = e.NewValue;
+
+            if (activity is null)
+                return;
+
+            SendPacketAsync(ActivityPacket.CreateC2S(activity.GetType().Name, JObject.FromObject(activity)));
+        }, true);
     }
 
     private async void loop()

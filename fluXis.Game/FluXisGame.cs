@@ -27,12 +27,15 @@ using fluXis.Game.Overlay.Toolbar;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Overlay.Volume;
 using fluXis.Game.Screens;
+using fluXis.Game.Screens.Intro;
 using fluXis.Game.Screens.Loading;
 using fluXis.Game.Screens.Menu;
+using fluXis.Game.Screens.Multiplayer;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Screens.Select;
 using fluXis.Game.Screens.Skinning;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Game.Utils.Sentry;
 using fluXis.Shared.API.Packets.Other;
 using fluXis.Shared.API.Packets.User;
@@ -116,7 +119,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(globalBackground = new GlobalBackground { InitialDim = 1 }, buffer.Add, true);
         loadComponent(screenContainer = new Container { RelativeSizeAxes = Axes.Both }, buffer.Add);
-        loadComponent(screenStack = new FluXisScreenStack(Activity, allowOverlays), screenContainer.Add, true);
+        loadComponent(screenStack = new FluXisScreenStack(APIClient.Activity, allowOverlays), screenContainer.Add, true);
 
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
@@ -210,7 +213,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public void WaitForReady(Action action)
     {
-        if (screenStack?.CurrentScreen is null or LoadingScreen)
+        if (screenStack?.CurrentScreen is null or LoadingScreen or IntroAnimation)
             Schedule(() => WaitForReady(action));
         else
             action();
@@ -355,6 +358,23 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 MenuScreen.Push(new SelectScreen());
         }
     }
+
+    public void JoinMultiplayerRoom(long id, string password) => Scheduler.ScheduleIfNeeded(() => WaitForReady(() =>
+    {
+        Logger.Log($"joining multi room [{id}, {password}]");
+
+        MenuScreen.MakeCurrent();
+        MenuScreen.CanPlayAnimation();
+
+        if (MenuScreen.IsCurrentScreen())
+        {
+            MenuScreen.Push(new MultiplayerScreen
+            {
+                TargetLobby = id,
+                LobbyPassword = password
+            });
+        }
+    }));
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
