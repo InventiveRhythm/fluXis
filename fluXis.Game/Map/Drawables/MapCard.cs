@@ -15,7 +15,6 @@ using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -219,7 +218,7 @@ public partial class MapCard : Container, IHasContextMenu
                                                             },
                                                             new RoundedChip
                                                             {
-                                                                Alpha = MapSet.Flags.HasFlagFast(MapSetFlag.Explicit) ? 1f : 0f,
+                                                                Alpha = MapSet.Flags.HasFlag(MapSetFlag.Explicit) ? 1f : 0f,
                                                                 Text = "EXPLICIT",
                                                                 BackgroundColour = Colour4.Black.Opacity(.5f),
                                                                 TextColour = Colour4.White,
