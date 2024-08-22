@@ -77,7 +77,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     protected override bool OnMouseDown(MouseDownEvent e)
     {
         var foundByClick = selectByClick(e);
-        var canMove = prepareMovement();
+        var canMove = prepareMovement(e);
         return foundByClick || canMove;
     }
 
@@ -179,8 +179,11 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     private void onSelected(SelectionBlueprint<T> blueprint) => SelectionHandler.HandleSelection(blueprint);
     private void onDeselected(SelectionBlueprint<T> blueprint) => SelectionHandler.HandleDeselection(blueprint);
 
-    private bool prepareMovement()
+    private bool prepareMovement(MouseDownEvent e)
     {
+        if (e.Button != MouseButton.Left)
+            return false;
+
         if (!SelectionHandler.Selected.Any())
             return false;
 

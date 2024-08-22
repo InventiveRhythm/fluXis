@@ -32,6 +32,7 @@ using fluXis.Game.Screens.Edit.Input;
 using fluXis.Game.Screens.Edit.MenuBar;
 using fluXis.Game.Screens.Edit.Tabs;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
+using fluXis.Game.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;

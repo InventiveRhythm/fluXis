@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -24,7 +25,8 @@ public partial class EditorLoader : FluXisScreen
     [Resolved]
     private MapStore maps { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private GlobalClock clock { get; set; }
 
     private RealmMap map { get; set; }
@@ -122,7 +124,7 @@ public partial class EditorLoader : FluXisScreen
     {
         this.Delay(DURATION).FadeIn();
         circle.ScaleTo(1f, DURATION, Easing.OutQuint);
-        clock.VolumeOut(DURATION).OnComplete(c => c.Stop());
+        clock.VolumeOut(DURATION)?.OnComplete(c => c.Stop());
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
@@ -149,8 +151,8 @@ public partial class EditorLoader : FluXisScreen
     {
         this.FadeIn().Then(DURATION).FadeOut();
         circle.ScaleTo(0f, DURATION, Easing.OutQuint);
-        clock.Start();
-        clock.VolumeIn(DURATION);
+        clock?.Start();
+        clock?.VolumeIn(DURATION);
 
         return false;
     }

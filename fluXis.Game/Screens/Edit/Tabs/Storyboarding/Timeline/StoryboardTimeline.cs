@@ -9,7 +9,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK;
 using osuTK.Input;
 
@@ -28,9 +27,10 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
 
     private Storyboard storyboard => map.Storyboard;
 
-    private DependencyContainer dependencies;
     private Container<TimelineElement> elementContainer;
+    public TimelineBlueprintContainer Blueprints { get; set; } = new();
 
+    private bool dragging;
     private float zoom = 2;
 
     [BackgroundDependencyLoader]
@@ -38,10 +38,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     {
         RelativeSizeAxes = Axes.X;
         Height = 400;
-
-        dependencies.CacheAs(storyboard);
-        dependencies.CacheAs(this);
-        dependencies.CacheAs<ITimePositionProvider>(this);
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {
@@ -60,7 +57,7 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                     {
                         RelativeSizeAxes = Axes.Both
                     },
-                    new TimelineBlueprintContainer(),
+                    Blueprints
                 }
             },
             new Box
@@ -70,12 +67,14 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            new DragHandle(y => Height = Math.Clamp(Height -= y, min_height, max_height))
+            new Box
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 4,
+                Colour = FluXisColors.Background3
+            }
         };
     }
-
-    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     protected override void LoadComplete()
     {
@@ -131,29 +130,26 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
         return false;
     }
 
-    protected override bool OnClick(ClickEvent e)
+    protected override bool OnMouseDown(MouseDownEvent e)
     {
-        Logger.Log($"{TimeAtPosition(e.MousePosition.X)}");
-        return base.OnClick(e);
+        if (e.Button != MouseButton.Middle)
+            return false;
+
+        dragging = true;
+        return true;
     }
 
-    private partial class DragHandle : Box
+    protected override void OnMouseUp(MouseUpEvent e)
     {
-        private Action<float> dragged { get; }
+        dragging = false;
+    }
 
-        public DragHandle(Action<float> dragged)
-        {
-            RelativeSizeAxes = Axes.X;
-            Height = 8;
-            Colour = FluXisColors.Background4;
-            this.dragged = dragged;
-        }
+    protected override bool OnMouseMove(MouseMoveEvent e)
+    {
+        if (!dragging)
+            return false;
 
-        protected override bool OnDragStart(DragStartEvent e) => e.Button == MouseButton.Left;
-
-        protected override void OnDrag(DragEvent e)
-        {
-            dragged?.Invoke(e.Delta.Y);
-        }
+        Height = Math.Clamp(Height -= e.Delta.Y, min_height, max_height);
+        return true;
     }
 }

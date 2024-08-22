@@ -1,5 +1,6 @@
 ﻿using System;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Screens.Edit.Tabs.Storyboarding.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Storyboarding.Timeline;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -8,7 +9,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
-namespace fluXis.Game.Screens.Edit.Tabs;
+namespace fluXis.Game.Screens.Edit.Tabs.Storyboarding;
 
 public partial class StoryboardTab : EditorTab
 {
@@ -21,32 +22,66 @@ public partial class StoryboardTab : EditorTab
     [Resolved]
     private EditorMap map { get; set; }
 
+    private DependencyContainer dependencies;
+
     private float scrollAccumulation;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = new GridContainer
+        var timeline = new StoryboardTimeline();
+
+        dependencies.CacheAs(map.Storyboard);
+        dependencies.CacheAs(timeline);
+        dependencies.CacheAs<ITimePositionProvider>(timeline);
+        dependencies.CacheAs(timeline.Blueprints);
+
+        InternalChildren = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            RowDimensions = new Dimension[]
+            new GridContainer
             {
-                new(),
-                new(GridSizeMode.AutoSize)
-            },
-            Content = new[]
-            {
-                new Drawable[]
+                RelativeSizeAxes = Axes.Both,
+                RowDimensions = new Dimension[]
                 {
-                    new Container()
+                    new(),
+                    new(GridSizeMode.AutoSize)
                 },
-                new Drawable[]
+                Content = new[]
                 {
-                    new StoryboardTimeline()
+                    new Drawable[]
+                    {
+                        new GridContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            ColumnDimensions = new Dimension[]
+                            {
+                                new(),
+                                new(GridSizeMode.Absolute, 560)
+                            },
+                            Content = new[]
+                            {
+                                new Drawable[]
+                                {
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both
+                                    },
+                                    new StoryboardElementSettings()
+                                }
+                            }
+                        }
+                    },
+                    new Drawable[]
+                    {
+                        timeline
+                    }
                 }
             }
         };
     }
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
