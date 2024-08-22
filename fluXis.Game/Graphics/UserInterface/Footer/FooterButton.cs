@@ -135,12 +135,13 @@ public partial class FooterButton : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
+        samples.Click(!Enabled.Value);
+
         if (!Enabled.Value)
             return false;
 
         flash.FadeOutFromOne(1000, Easing.OutQuint);
         Action?.Invoke();
-        samples.Click();
         return true;
     }
 
