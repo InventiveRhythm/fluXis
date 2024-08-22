@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Storyboarding.Timeline.Blueprints;
 using fluXis.Game.Screens.Edit.Tabs.Storyboarding.Timeline.Elements;
 using fluXis.Game.Storyboards;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,13 +27,17 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     [Resolved]
     private EditorClock clock { get; set; }
 
+    [Resolved]
+    private EditorSettings settings { get; set; }
+
     private Storyboard storyboard => map.Storyboard;
 
     private Container<TimelineElement> elementContainer;
     public TimelineBlueprintContainer Blueprints { get; set; } = new();
 
     private bool dragging;
-    private float zoom = 2;
+
+    private FluXisSpriteText overlayText;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -47,6 +53,14 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2
             },
+            new Box
+            {
+                Width = 4,
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Alpha = .5f
+            },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -60,12 +74,13 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
                     Blueprints
                 }
             },
-            new Box
+            overlayText = new FluXisSpriteText
             {
-                Width = 4,
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Y = 48,
+                WebFontSize = 16,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
+                Shadow = true
             },
             new Box
             {
@@ -104,13 +119,13 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
     public TimelineElement GetDrawable(StoryboardElement element)
         => elementContainer.FirstOrDefault(e => e.Element == element);
 
-    public float PositionAtTime(double time) => (float)(DrawWidth / 2 + .5f * ((time - clock.CurrentTime) * zoom));
+    public float PositionAtTime(double time) => (float)(DrawWidth / 2 + .5f * ((time - clock.CurrentTime) * settings.Zoom));
     public float PositionAtZ(long index) => index * 48;
 
     public Vector2 ScreenSpacePositionAtTime(double time, int z)
         => ToScreenSpace(new Vector2(PositionAtTime(time), PositionAtZ(z) + 8));
 
-    public double TimeAtPosition(float x) => (x - DrawWidth / 2) * 2 / zoom + clock.CurrentTime;
+    public double TimeAtPosition(float x) => (x - DrawWidth / 2) * 2 / settings.Zoom + clock.CurrentTime;
     public int ZAtPosition(float y) => (int)(y / 48);
 
     public double TimeAtScreenSpacePosition(Vector2 pos) => TimeAtPosition(ToLocalSpace(pos).X);
@@ -123,8 +138,9 @@ public partial class StoryboardTimeline : CompositeDrawable, ITimePositionProvid
 
         if (e.ControlPressed)
         {
-            var newZoom = Math.Clamp(zoom += delta * .1f, 1f, 5f);
-            this.TransformTo(nameof(zoom), newZoom, 400, Easing.OutQuint);
+            settings.Zoom = Math.Clamp(settings.Zoom += delta * .1f, 1f, 5f);
+            overlayText.Text = $"Zoom: {(settings.Zoom / 2f).ToStringInvariant("0.00")}x";
+            overlayText.FadeIn().Delay(600).FadeOut(200);
         }
 
         return false;
