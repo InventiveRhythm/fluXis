@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
-using osuTK;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -51,23 +50,19 @@ public class CroppedBackgroundLoader : IResourceStore<TextureUpload>
     {
         var image = Image.LoadPixelData<Rgba32>(tex.Data.ToArray(), tex.Width, tex.Height);
 
-        var visibleSize = new Vector2(1000, 100);
-        var ratio = visibleSize.X / visibleSize.Y;
+        var visibleSize = new Size(1000, 100);
 
-        var imageRatio = image.Width / image.Height;
+        if (visibleSize.Width > image.Width)
+        {
+            var ratio = image.Width / (float)visibleSize.Width;
+            visibleSize = (Size)(visibleSize * ratio);
+        }
 
-        if (imageRatio > ratio)
+        image.Mutate(x => x.Resize(new ResizeOptions
         {
-            var newWidth = (int)(image.Height * ratio);
-            var cropX = (image.Width - newWidth) / 2;
-            image.Mutate(x => x.Crop(new Rectangle(Math.Max(1, cropX), 0, Math.Max(1, newWidth), image.Height)));
-        }
-        else
-        {
-            var newHeight = (int)(image.Width / ratio);
-            var cropY = (image.Height - newHeight) / 2;
-            image.Mutate(x => x.Crop(new Rectangle(0, Math.Max(1, cropY), image.Width, Math.Max(1, newHeight))));
-        }
+            Size = visibleSize,
+            Mode = ResizeMode.Crop
+        }));
 
         return new TextureUpload(image);
     }
