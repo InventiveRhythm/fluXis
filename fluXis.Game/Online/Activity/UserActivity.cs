@@ -174,17 +174,31 @@ public abstract class UserActivity
 
     public class Editing : UserActivity
     {
+        [JsonProperty("time")]
+        public long OpenTime { get; set; }
+
+        public Editing(long openTime)
+        {
+            OpenTime = openTime;
+        }
+
         public override DiscordRichPresence CreateDiscord()
         {
             var rpc = base.CreateDiscord();
             rpc.Details = "Editing a map";
             rpc.LargeImage = "editor";
+            rpc.StartTime = Convert.ToUInt64(OpenTime);
             return rpc;
         }
     }
 
     public class Modding : Editing
     {
+        public Modding(long openTime)
+            : base(openTime)
+        {
+        }
+
         public override DiscordRichPresence CreateDiscord()
         {
             var rpc = base.CreateDiscord();

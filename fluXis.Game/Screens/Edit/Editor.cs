@@ -106,6 +106,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorSettings settings;
     private EditorActionStack actionStack;
 
+    private long openTime;
+
     private DependencyContainer dependencies;
     private bool exitConfirmed;
     private bool isNewMap;
@@ -424,6 +426,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     protected override void LoadComplete()
     {
+        openTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
         var idx = isNewMap ? 0 : 1;
 
         if (StartTabIndex != -1)
@@ -602,9 +606,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         // this check won't work 100% of the time, we need a better way of storing the mappers
         if (editorMap.RealmMap.Metadata.Mapper == api.User.Value?.Username)
-            Activity.Value = new UserActivity.Editing();
+            Activity.Value = new UserActivity.Editing(openTime);
         else
-            Activity.Value = new UserActivity.Modding();
+            Activity.Value = new UserActivity.Modding(openTime);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

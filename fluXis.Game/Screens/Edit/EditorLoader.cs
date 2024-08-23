@@ -3,7 +3,6 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map;
-using fluXis.Game.Online.Activity;
 using fluXis.Game.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -20,7 +19,6 @@ public partial class EditorLoader : FluXisScreen
     public override bool AllowMusicControl => false;
     public override bool PlayBackSound => false;
     public override bool ShowToolbar => false;
-    public override UserActivity InitialActivity => new UserActivity.Editing();
 
     [Resolved]
     private MapStore maps { get; set; }
