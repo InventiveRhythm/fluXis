@@ -62,7 +62,7 @@ public partial class WindowsUpdatePerformer : IUpdatePerformer
             {
                 FileName = patcher,
                 UseShellExecute = true,
-                Arguments = $"{file.FullName} {folder}",
+                Arguments = $"\"{file.FullName}\" \"{folder}\"",
                 WorkingDirectory = folder
             });
             Environment.Exit(0);
