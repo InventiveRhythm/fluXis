@@ -11,6 +11,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Scoring;
+using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Scoring.Enums;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -305,31 +306,31 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
 
         var effects = map.Filters.Effects;
 
-        if (effects.HasFlag(EffectType.LaneSwitch))
+        if (effects.HasFlag(MapEffectType.LaneSwitch))
             icons.Add(new GimmickIcon(FluXisIconType.LaneSwitch, "Contains lane switches"));
 
-        if (effects.HasFlag(EffectType.Flash))
+        if (effects.HasFlag(MapEffectType.Flash))
             icons.Add(new GimmickIcon(FluXisIconType.Flash, "Contains flashes"));
 
-        if (effects.HasFlag(EffectType.Pulse))
+        if (effects.HasFlag(MapEffectType.Pulse))
             icons.Add(new GimmickIcon(FluXisIconType.Pulse, "Contains pulses"));
 
-        if (effects.HasFlag(EffectType.PlayfieldMove))
+        if (effects.HasFlag(MapEffectType.PlayfieldMove))
             icons.Add(new GimmickIcon(FluXisIconType.PlayfieldMove, "Contains playfield moves"));
 
-        if (effects.HasFlag(EffectType.PlayfieldScale))
+        if (effects.HasFlag(MapEffectType.PlayfieldScale))
             icons.Add(new GimmickIcon(FluXisIconType.PlayfieldScale, "Contains playfield scales"));
 
-        if (effects.HasFlag(EffectType.PlayfieldFade))
+        if (effects.HasFlag(MapEffectType.PlayfieldFade))
             icons.Add(new GimmickIcon(FluXisIconType.PlayfieldFade, "Contains playfield fades"));
 
-        if (effects.HasFlag(EffectType.Shake))
+        if (effects.HasFlag(MapEffectType.Shake))
             icons.Add(new GimmickIcon(FluXisIconType.Shake, "Contains shakes"));
 
-        if (effects.HasFlag(EffectType.Shader))
+        if (effects.HasFlag(MapEffectType.Shader))
             icons.Add(new GimmickIcon(FluXisIconType.Shader, "Contains shaders"));
 
-        if (effects.HasFlag(EffectType.BeatPulse))
+        if (effects.HasFlag(MapEffectType.BeatPulse))
             icons.Add(new GimmickIcon(FluXisIconType.BeatPulse, "Contains beat pulses"));
 
         return icons.ToArray();

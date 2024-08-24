@@ -8,6 +8,7 @@ using System.Text;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
+using fluXis.Shared.Components.Maps;
 
 namespace fluXis.Game.Utils;
 
@@ -132,7 +133,7 @@ public static class MapUtils
         {
             if (scrollVelocity.Multiplier != 1)
             {
-                filters.Effects |= EffectType.ScrollVelocity;
+                filters.Effects |= MapEffectType.ScrollVelocity;
                 break;
             }
         }
@@ -143,39 +144,39 @@ public static class MapUtils
         return filters;
     }
 
-    private static EffectType getEffects(MapEvents events)
+    private static MapEffectType getEffects(MapEvents events)
     {
-        EffectType effects = 0;
+        MapEffectType effects = 0;
 
         if (events.LaneSwitchEvents.Count > 0)
-            effects |= EffectType.LaneSwitch;
+            effects |= MapEffectType.LaneSwitch;
 
         if (events.FlashEvents.Count > 0)
-            effects |= EffectType.Flash;
+            effects |= MapEffectType.Flash;
 
         if (events.PulseEvents.Count > 0)
-            effects |= EffectType.Pulse;
+            effects |= MapEffectType.Pulse;
 
         if (events.PlayfieldMoveEvents.Count > 0)
-            effects |= EffectType.PlayfieldMove;
+            effects |= MapEffectType.PlayfieldMove;
 
         if (events.PlayfieldScaleEvents.Count > 0)
-            effects |= EffectType.PlayfieldScale;
+            effects |= MapEffectType.PlayfieldScale;
 
         if (events.PlayfieldRotateEvents.Count > 0)
-            effects |= EffectType.PlayfieldRotate;
+            effects |= MapEffectType.PlayfieldRotate;
 
         if (events.PlayfieldFadeEvents.Count > 0)
-            effects |= EffectType.PlayfieldFade;
+            effects |= MapEffectType.PlayfieldFade;
 
         if (events.ShakeEvents.Count > 0)
-            effects |= EffectType.Shake;
+            effects |= MapEffectType.Shake;
 
         if (events.ShaderEvents.Count > 0)
-            effects |= EffectType.Shader;
+            effects |= MapEffectType.Shader;
 
         if (events.BeatPulseEvents.Count > 0)
-            effects |= EffectType.BeatPulse;
+            effects |= MapEffectType.BeatPulse;
 
         return effects;
     }

@@ -59,6 +59,9 @@ public class APIMap
     [JsonProperty("rating")]
     public double Rating { get; init; }
 
+    [JsonProperty("effects")]
+    public MapEffectType Effects { get; init; }
+
     [JsonProperty("ups")]
     public long UpVotes { get; init; }
 
