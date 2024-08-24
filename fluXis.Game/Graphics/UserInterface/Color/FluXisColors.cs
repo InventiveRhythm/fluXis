@@ -56,13 +56,6 @@ public static class FluXisColors
     public static Colour4 DownloadFinished => Colour4.FromHex("#7BE87B");
     public static Colour4 DownloadQueued => Colour4.FromHex("#7BB1E8");
 
-    public static Colour4 RoleAdmin => Colour4.FromHex("#f7b373");
-    public static Colour4 RoleMod => Colour4.FromHex("#73d173");
-    public static Colour4 RolePurifier => Colour4.FromHex("#55b2ff");
-    public static Colour4 RoleFeatured => Colour4.FromHex("#ff7b74");
-    public static Colour4 RoleUser => Colour4.FromHex("#AA99FF");
-    public static Colour4 RoleBot => Colour4.FromHex("#1f1e33");
-
     public static Colour4 SocialTwitter => Colour4.FromHex("#1da1f2");
     public static Colour4 SocialYoutube => Colour4.FromHex("#ff0000");
     public static Colour4 SocialTwitch => Colour4.FromHex("#6441a5");
@@ -109,32 +102,6 @@ public static class FluXisColors
             2 => Colour4.FromHex("#ff7b74"),
             3 => Colour4.FromHex("#55b2ff"),
             _ => Colour4.Black
-        };
-    }
-
-    public static Colour4 GetRoleColor(int role)
-    {
-        return role switch
-        {
-            1 => RoleFeatured,
-            2 => RolePurifier,
-            3 => RoleMod,
-            4 => RoleAdmin,
-            5 => RoleBot,
-            _ => RoleUser
-        };
-    }
-
-    public static Colour4 GetNameColor(int role)
-    {
-        return role switch
-        {
-            1 => RoleFeatured,
-            2 => RolePurifier,
-            3 => RoleMod,
-            4 => RoleAdmin,
-            5 => RoleBot,
-            _ => Colour4.White
         };
     }
 
