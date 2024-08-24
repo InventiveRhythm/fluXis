@@ -150,6 +150,7 @@ public partial class EditorLoader : FluXisScreen
         this.FadeIn().Then(DURATION).FadeOut();
         circle.ScaleTo(0f, DURATION, Easing.OutQuint);
         clock?.Start();
+        clock?.VolumeOut();
         clock?.VolumeIn(DURATION);
 
         return false;
