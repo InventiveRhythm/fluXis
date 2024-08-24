@@ -33,8 +33,18 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
     [JsonProperty("ease")]
     public Easing Easing { get; set; }
 
+    [JsonProperty("use-start")]
+    public bool UseStartParams { get; set; }
+
+    [JsonProperty("start-params")]
+    public ShaderParameters StartParameters { get; set; } = new();
+
+    [JsonProperty("end-params")]
+    public ShaderParameters EndParameters { get; set; } = new();
+
     [JsonProperty("params")]
-    public ShaderParameters Parameters { get; set; } = new();
+    [Obsolete($"Use {nameof(EndParameters)} instead.")]
+    public ShaderParameters Parameters { set => EndParameters = value; }
 
     public class ShaderParameters
     {

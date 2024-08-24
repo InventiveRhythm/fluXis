@@ -47,7 +47,7 @@ public partial class DesignShaderHandler : CompositeComponent
         }
 
         var progress = (clock.CurrentTime - current.Time) / current.Duration;
-        var end = current.Parameters.Strength;
+        var end = current.EndParameters.Strength;
 
         if (progress >= 1)
         {
@@ -56,7 +56,7 @@ public partial class DesignShaderHandler : CompositeComponent
         }
 
         var previous = events.LastOrDefault(e => e.Time < current.Time);
-        var start = previous?.Parameters.Strength ?? 0;
+        var start = current.UseStartParams ? current.StartParameters.Strength : previous?.EndParameters.Strength ?? 0;
 
         if (progress < 0)
         {

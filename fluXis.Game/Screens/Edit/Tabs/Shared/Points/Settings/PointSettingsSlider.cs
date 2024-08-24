@@ -15,6 +15,9 @@ namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 public partial class PointSettingsSlider<T> : Container, IHasTooltip
     where T : struct, INumber<T>, IMinMaxValue<T>
 {
+    public override bool PropagateNonPositionalInputSubTree => Enabled.Value;
+    public override bool PropagatePositionalInputSubTree => Enabled.Value;
+
     public string Text { get; init; }
     public LocalisableString TooltipText { get; init; } = string.Empty;
     public string Formatting { get; init; } = "0.##";
@@ -26,6 +29,8 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
     public T Max { get; init; }
 
     public Bindable<T> Bindable { get; set; }
+
+    public Bindable<bool> Enabled { get; init; } = new(true);
 
     private FluXisSpriteText valText;
 
@@ -77,6 +82,8 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
         base.LoadComplete();
 
         Bindable.BindValueChanged(valueChanged);
+
+        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : .4f, 200), true);
     }
 
     protected override void Dispose(bool isDisposing)

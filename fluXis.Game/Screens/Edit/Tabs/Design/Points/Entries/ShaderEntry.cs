@@ -8,6 +8,7 @@ using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
@@ -53,20 +54,32 @@ public partial class ShaderEntry : PointListEntry
             Time = Object.Time,
             Duration = shader.Duration,
             Type = shader.Type,
-            Parameters = new ShaderEvent.ShaderParameters
+            UseStartParams = shader.UseStartParams,
+            StartParameters = new ShaderEvent.ShaderParameters
             {
-                Strength = shader.Parameters.Strength
+                Strength = shader.StartParameters.Strength
+            },
+            EndParameters = new ShaderEvent.ShaderParameters
+            {
+                Strength = shader.EndParameters.Strength
             }
         };
     }
 
     protected override Drawable[] CreateValueContent()
     {
+        var text = $"{shader.ShaderName} {(int)shader.Duration}ms (";
+
+        if (shader.UseStartParams)
+            text += $"{shader.StartParameters.Strength} > ";
+
+        text += $"{shader.EndParameters.Strength})";
+
         return new Drawable[]
         {
             new FluXisSpriteText
             {
-                Text = $"{shader.ShaderName} {(int)shader.Duration}ms ({shader.Parameters.Strength})",
+                Text = text,
                 Colour = Color
             }
         };
@@ -74,6 +87,18 @@ public partial class ShaderEntry : PointListEntry
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
+        var startValToggle = new PointSettingsToggle
+        {
+            Text = "Use Start Value",
+            TooltipText = "Enables whether start values should be used.",
+            Bindable = new Bindable<bool>(shader.UseStartParams),
+            OnStateChanged = enabled =>
+            {
+                shader.UseStartParams = enabled;
+                Map.Update(shader);
+            }
+        };
+
         return base.CreateSettings().Concat(new Drawable[]
         {
             new PointSettingsLength<ShaderEvent>(Map, shader, BeatLength),
@@ -89,17 +114,33 @@ public partial class ShaderEntry : PointListEntry
                     Map.Update(shader);
                 }
             },
+            startValToggle,
             new PointSettingsSlider<float>
             {
-                Text = "Strength",
+                Enabled = startValToggle.Bindable,
+                Text = "Start Strength",
                 TooltipText = "The strength of the shader effect.",
-                CurrentValue = shader.Parameters.Strength,
+                CurrentValue = shader.StartParameters.Strength,
                 Min = 0,
                 Max = maxStrength,
                 Step = step,
                 OnValueChanged = value =>
                 {
-                    shader.Parameters.Strength = value;
+                    shader.StartParameters.Strength = value;
+                    Map.Update(shader);
+                }
+            },
+            new PointSettingsSlider<float>
+            {
+                Text = "End Strength",
+                TooltipText = "The strength of the shader effect.",
+                CurrentValue = shader.EndParameters.Strength,
+                Min = 0,
+                Max = maxStrength,
+                Step = step,
+                OnValueChanged = value =>
+                {
+                    shader.EndParameters.Strength = value;
                     Map.Update(shader);
                 }
             },

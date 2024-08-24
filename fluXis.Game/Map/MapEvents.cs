@@ -206,7 +206,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture),
                         ShaderName = args[1],
-                        Parameters = data
+                        EndParameters = data
                     });
                     break;
             }
