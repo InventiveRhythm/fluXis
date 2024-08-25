@@ -58,7 +58,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         // UI // Song Select
         SetDefault(FluXisSetting.SongSelectBlur, true);
         SetDefault(FluXisSetting.LoopMode, LoopMode.Limited);
-        SetDefault(FluXisSetting.GroupingMode, MapUtils.GroupingMode.None);
+        SetDefault(FluXisSetting.GroupingMode, MapUtils.GroupingMode.Default);
         SetDefault(FluXisSetting.SortingMode, MapUtils.SortingMode.Title);
         SetDefault(FluXisSetting.SortingInverse, false);
         SetDefault(FluXisSetting.LeaderboardType, ScoreListType.Local);

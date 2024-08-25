@@ -351,14 +351,14 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     {
         switch (groupMode.Value)
         {
-            case MapUtils.GroupingMode.None:
+            case MapUtils.GroupingMode.Default:
             {
                 yield return new MapSetItem(set);
 
                 break;
             }
 
-            case MapUtils.GroupingMode.Difficulty:
+            case MapUtils.GroupingMode.Nothing:
             {
                 foreach (var map in set.Maps)
                     yield return new MapDifficultyItem(map);

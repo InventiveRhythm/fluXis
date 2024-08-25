@@ -248,11 +248,11 @@ public static class MapUtils
     public enum GroupingMode
     {
         [Icon(0xf068)]
-        [Description("None")]
-        None,
+        [Description("Default")]
+        Default,
 
-        [Icon(0xf1b2)]
-        [Description("Difficulty")]
-        Difficulty
+        [Icon(0xf068)]
+        [Description("Nothing")]
+        Nothing
     }
 }
