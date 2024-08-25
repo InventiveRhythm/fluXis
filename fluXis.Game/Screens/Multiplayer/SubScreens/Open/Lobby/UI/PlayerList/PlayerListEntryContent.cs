@@ -96,6 +96,12 @@ public partial class PlayerListEntryContent : CompositeDrawable
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        SetState(participant.State);
+    }
+
     public void SetState(MultiplayerUserState state)
     {
         stateBackground.Colour = state switch
