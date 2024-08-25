@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
@@ -29,6 +30,8 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     [Resolved]
     private FluXisConfig config { get; set; }
+
+    public event Action<string> HitSoundPlayed;
 
     public EditorHitObjectContainer HitObjectContainer { get; private set; }
     public EditorEffectContainer Effects { get; private set; }
@@ -93,7 +96,12 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             hitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
     }
 
-    public void PlayHitSound(HitObject info) => hitsounding.GetSample(info.HitSound).Play();
+    public void PlayHitSound(HitObject info)
+    {
+        var channel = hitsounding.GetSample(info.HitSound);
+        channel.Play();
+        HitSoundPlayed?.Invoke(channel.SampleName);
+    }
 
     public double TimeAtScreenSpacePosition(Vector2 pos) => HitObjectContainer.TimeAtScreenSpacePosition(pos);
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => HitObjectContainer.ScreenSpacePositionAtTime(time, lane);

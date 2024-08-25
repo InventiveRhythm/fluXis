@@ -36,7 +36,7 @@ public partial class ToolboxButton : Container, IHasTooltip
 
     private Container content;
     private Box hover;
-    private Box flash;
+    protected Box Flash { get; private set; }
     private Drawable icon;
 
     [BackgroundDependencyLoader]
@@ -66,7 +66,7 @@ public partial class ToolboxButton : Container, IHasTooltip
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0
                     },
-                    flash = new Box
+                    Flash = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0
@@ -134,13 +134,13 @@ public partial class ToolboxButton : Container, IHasTooltip
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        content.ScaleTo(.9f, 4000, Easing.OutQuint);
+        content.ScaleTo(.9f, 1000, Easing.OutQuint);
         return base.OnMouseDown(e);
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
     {
-        content.ScaleTo(1, 1000, Easing.OutElastic);
+        content.ScaleTo(1, 100, Easing.OutElastic);
         base.OnMouseUp(e);
     }
 
@@ -159,7 +159,7 @@ public partial class ToolboxButton : Container, IHasTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(400);
+        Flash.FadeOutFromOne(1000, Easing.OutQuint);
 
         if (PlayClickSound)
             samples.Click();

@@ -44,6 +44,9 @@ public partial class ToolboxHitsoundButton : ToolboxButton
     private EditorPlayfield playfield { get; set; }
 
     [Resolved]
+    private EditorClock clock { get; set; }
+
+    [Resolved]
     private ChartingContainer chartingContainer { get; set; }
 
     private IEnumerable<HitObject> hits => BlueprintContainer.SelectionHandler.SelectedObjects.Where(o => o is HitObject).Cast<HitObject>();
@@ -83,6 +86,11 @@ public partial class ToolboxHitsoundButton : ToolboxButton
         map.HitSoundsChanged += UpdateSelectionState;
 
         chartingContainer.CurrentHitSound.BindValueChanged(_ => UpdateSelectionState(), true);
+        playfield.HitSoundPlayed += sound =>
+        {
+            if (sound == sampleFormatted)
+                Flash.FadeTo(Flash.Alpha + .2f).FadeOut(clock.BeatTime * 2, Easing.OutQuint);
+        };
     }
 
     public override void Select()
