@@ -285,4 +285,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     public Sample[] GetMissSamples() => currentSkin.GetMissSamples() ?? defaultSkin.GetMissSamples();
     public Sample GetFailSample() => currentSkin.GetFailSample() ?? defaultSkin.GetFailSample();
     public Sample GetRestartSample() => currentSkin.GetRestartSample() ?? defaultSkin.GetRestartSample();
+    public Sample GetFullComboSample() => currentSkin.GetFullComboSample() ?? defaultSkin.GetFullComboSample();
+    public Sample GetAllFlawlessSample() => currentSkin.GetAllFlawlessSample() ?? defaultSkin.GetAllFlawlessSample();
 }

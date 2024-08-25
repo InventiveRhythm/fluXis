@@ -1,8 +1,10 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Skinning;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -17,11 +19,17 @@ public partial class FullComboOverlay : CompositeDrawable
     private OutlinedSquare diamond;
     private FluXisSpriteText text;
 
+    private Sample sampleFullCombo;
+    private Sample sampleAllFlawless;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(SkinManager skins)
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
+
+        sampleFullCombo = skins.GetFullComboSample();
+        sampleAllFlawless = skins.GetAllFlawlessSample();
 
         InternalChildren = new Drawable[]
         {
@@ -68,10 +76,14 @@ public partial class FullComboOverlay : CompositeDrawable
 
         if (type == FullComboType.AllFlawless)
         {
+            sampleAllFlawless?.Play();
+
             diamond.ScaleTo(1, 1200, Easing.OutQuint)
                    .RotateTo(-45).RotateTo(45, 1200, Easing.OutQuint)
                    .BorderTo(0, 1200, Easing.OutQuint);
         }
+        else
+            sampleFullCombo?.Play();
 
         background.FadeTo(.4f, 400);
         text.ScaleTo(1.2f, 1000, Easing.OutQuint);

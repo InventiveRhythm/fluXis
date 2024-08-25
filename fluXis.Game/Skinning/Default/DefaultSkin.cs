@@ -108,6 +108,8 @@ public class DefaultSkin : ISkin
     public Sample[] GetMissSamples() => new[] { samples.Get("Gameplay/combobreak") };
     public Sample GetFailSample() => samples.Get("Gameplay/fail");
     public Sample GetRestartSample() => samples.Get("Gameplay/restart");
+    public Sample GetFullComboSample() => samples.Get("Gameplay/full-combo");
+    public Sample GetAllFlawlessSample() => samples.Get("Gameplay/all-flawless");
 
     public void Dispose()
     {

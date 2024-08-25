@@ -279,6 +279,8 @@ public class CustomSkin : ISkin
 
     public Sample GetFailSample() => samples.Get("Samples/Gameplay/fail");
     public Sample GetRestartSample() => samples.Get("Samples/Gameplay/restart");
+    public Sample GetFullComboSample() => samples.Get("Samples/Gameplay/full-combo");
+    public Sample GetAllFlawlessSample() => samples.Get("Samples/Gameplay/all-flawless");
 
     public void Dispose()
     {

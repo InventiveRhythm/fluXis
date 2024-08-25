@@ -43,4 +43,6 @@ public interface ISkin : IDisposable
     public Sample[] GetMissSamples();
     public Sample GetFailSample();
     public Sample GetRestartSample();
+    public Sample GetFullComboSample();
+    public Sample GetAllFlawlessSample();
 }
