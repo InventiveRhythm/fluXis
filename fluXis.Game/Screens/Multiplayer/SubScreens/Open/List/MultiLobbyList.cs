@@ -1,8 +1,10 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Multiplayer;
 using fluXis.Game.Online.Fluxel;
@@ -44,6 +46,7 @@ public partial class MultiLobbyList : MultiSubScreen
     private MultiplayerClient client { get; set; }
 
     private FillFlowContainer lobbyList;
+    private FluXisTextFlow textFlow;
     private LoadingIcon loadingIcon;
     private MultiLobbyListFooter footer;
 
@@ -71,6 +74,16 @@ public partial class MultiLobbyList : MultiSubScreen
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
+            textFlow = new FluXisTextFlow()
+            {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Width = .5f,
+                WebFontSize = 20,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                TextAnchor = Anchor.TopCentre
+            },
             loadingIcon = new LoadingIcon
             {
                 Anchor = Anchor.Centre,
@@ -97,7 +110,9 @@ public partial class MultiLobbyList : MultiSubScreen
 
     private void loadLobbies()
     {
-        loadingIcon.FadeIn(200);
+        loadingIcon.Show();
+        textFlow.Text = "";
+
         lobbyList.FadeOut(200).OnComplete(_ =>
         {
             lobbyList.Clear();
@@ -114,8 +129,19 @@ public partial class MultiLobbyList : MultiSubScreen
                 for (var i = 0; i < 12 - lobbies.Count; i++)
                     lobbyList.Add(new EmptyLobbySlot());
 
-                loadingIcon.FadeOut(200);
+                loadingIcon.Hide();
                 lobbyList.FadeIn(200);
+            };
+
+            request.Failure += ex =>
+            {
+                loadingIcon.Hide();
+                textFlow.AddParagraph("Failed to fetch lobbies.");
+                textFlow.AddParagraph<FluXisSpriteText>(ex.Message, text =>
+                {
+                    text.WebFontSize = 14;
+                    text.Alpha = .8f;
+                });
             };
 
             api.PerformRequestAsync(request);
