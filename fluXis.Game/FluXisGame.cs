@@ -392,23 +392,20 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
                 return true;
         }
 
-        if (screenStack.AllowMusicControl)
+        switch (e.Action)
         {
-            switch (e.Action)
-            {
-                case FluXisGlobalKeybind.MusicPause:
-                    if (globalClock.IsRunning) globalClock.Stop();
-                    else globalClock.Start();
-                    return true;
+            case FluXisGlobalKeybind.MusicPause when screenStack.AllowMusicPausing:
+                if (globalClock.IsRunning) globalClock.Stop();
+                else globalClock.Start();
+                return true;
 
-                case FluXisGlobalKeybind.MusicPrevious:
-                    PreviousSong();
-                    return true;
+            case FluXisGlobalKeybind.MusicPrevious when screenStack.AllowMusicControl:
+                PreviousSong();
+                return true;
 
-                case FluXisGlobalKeybind.MusicNext:
-                    NextSong();
-                    return true;
-            }
+            case FluXisGlobalKeybind.MusicNext when screenStack.AllowMusicControl:
+                NextSong();
+                return true;
         }
 
         return false;

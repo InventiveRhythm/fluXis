@@ -35,6 +35,7 @@ public partial class MultiLobby : MultiSubScreen
     public override string SubTitle => "Lobby";
 
     protected override UserActivity InitialActivity => new UserActivity.MultiLobby(Room);
+    public override bool AllowMusicPausing => true;
 
     [Resolved]
     private MapStore mapStore { get; set; }
@@ -216,7 +217,7 @@ public partial class MultiLobby : MultiSubScreen
 
     private void onDisconnect()
     {
-        if (MultiScreen.IsCurrentScreen())
+        if (IsCurrentScreen)
         {
             clock.Stop();
             panels.Content = new DisconnectedPanel(() =>

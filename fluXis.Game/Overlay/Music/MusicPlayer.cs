@@ -190,7 +190,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                                                             Icon = FontAwesome6.Solid.Play,
                                                             Action = () =>
                                                             {
-                                                                if (!screens.AllowMusicControl)
+                                                                if (!screens.AllowMusicPausing)
                                                                     return;
 
                                                                 if (globalClock.IsRunning)

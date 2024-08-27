@@ -20,6 +20,7 @@ public partial class FluXisScreenStack : ScreenStack
     private Toolbar toolbar { get; set; }
 
     public bool AllowMusicControl => CurrentScreen is FluXisScreen { AllowMusicControl: true };
+    public bool AllowMusicPausing => CurrentScreen is FluXisScreen { AllowMusicPausing: true };
 
     private Bindable<UserActivity> activity { get; } = new();
     private Bindable<bool> allowOverlays { get; } = new();

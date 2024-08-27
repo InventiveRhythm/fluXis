@@ -16,6 +16,7 @@ public partial class MultiplayerScreen : FluXisScreen
     public override float BackgroundDim => .5f;
     public override float BackgroundBlur => .2f;
     public override bool AllowMusicControl => false;
+    public override bool AllowMusicPausing => screenStack?.CurrentScreen is MultiSubScreen { AllowMusicPausing: true };
     public override bool AllowExit => canExit();
 
     [Resolved]

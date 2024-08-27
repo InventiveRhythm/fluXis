@@ -26,6 +26,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     public Bindable<UserActivity> Activity => MultiScreen.Activity;
     protected virtual UserActivity InitialActivity => new UserActivity.MenuGeneral();
+    public virtual bool AllowMusicPausing => false;
 
     private Container titleContainer;
     private Box titleLine;
