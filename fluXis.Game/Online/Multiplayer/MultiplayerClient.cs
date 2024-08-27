@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Multi;
 using fluXis.Shared.Components.Users;
@@ -26,6 +27,8 @@ public abstract partial class MultiplayerClient : Component
     public event Action OnStart;
     public event Action<List<ScoreInfo>> OnResultsReady;
 
+    public event Action OnDisconnect;
+
     public virtual APIUser Player => APIUser.Dummy;
     public MultiplayerRoom Room { get; set; }
 
@@ -44,18 +47,6 @@ public abstract partial class MultiplayerClient : Component
 
         Room = await JoinRoom(id, password);
     }
-
-    #region Abstract Methods
-
-    protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
-    protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
-    public abstract Task LeaveRoom();
-    public abstract Task ChangeMap(long map, string hash);
-    public abstract Task Finish(ScoreInfo score);
-
-    #endregion
-
-    #region IMultiplayerClient Implementation
 
     protected Task UserJoined(MultiplayerParticipant participant)
     {
@@ -143,6 +134,20 @@ public abstract partial class MultiplayerClient : Component
         Schedule(() => OnResultsReady?.Invoke(scores));
         return Task.CompletedTask;
     }
+
+    protected void Disconnect()
+    {
+        Room = null;
+        Scheduler.ScheduleIfNeeded(() => OnDisconnect?.Invoke());
+    }
+
+    #region Abstract Methods
+
+    protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
+    protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
+    public abstract Task LeaveRoom();
+    public abstract Task ChangeMap(long map, string hash);
+    public abstract Task Finish(ScoreInfo score);
 
     #endregion
 }

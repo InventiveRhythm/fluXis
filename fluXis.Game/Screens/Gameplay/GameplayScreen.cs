@@ -70,7 +70,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
-    public override bool ShowCursor => HealthProcessor.Failed || IsPaused.Value;
+    public override bool ShowCursor => HealthProcessor.Failed || IsPaused.Value || CursorVisible;
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
@@ -80,6 +80,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
+
+    protected bool CursorVisible { get; set; }
 
     [Resolved]
     protected FluXisConfig Config { get; private set; }

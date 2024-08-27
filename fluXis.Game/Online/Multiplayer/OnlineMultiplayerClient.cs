@@ -7,6 +7,7 @@ using fluXis.Shared.API.Packets.Multiplayer;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 
 namespace fluXis.Game.Online.Multiplayer;
 
@@ -20,6 +21,8 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     [BackgroundDependencyLoader]
     private void load()
     {
+        api.Status.BindValueChanged(statusChanged);
+
         api.RegisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
         api.RegisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
         api.RegisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
@@ -32,12 +35,29 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     {
         base.Dispose(isDisposing);
 
+        api.Status.ValueChanged -= statusChanged;
+
         api.UnregisterListener<MultiJoinPacket>(EventType.MultiplayerJoin, onUserJoined);
         api.UnregisterListener<MultiLeavePacket>(EventType.MultiplayerLeave, onUserLeave);
         api.UnregisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
         api.UnregisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
         api.UnregisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
         api.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
+    }
+
+    private void statusChanged(ValueChangedEvent<ConnectionStatus> e)
+    {
+        switch (e.NewValue)
+        {
+            case ConnectionStatus.Online:
+                break;
+
+            default:
+                if (Room is not null)
+                    Disconnect();
+
+                break;
+        }
     }
 
     private void onUserJoined(FluxelReply<MultiJoinPacket> reply) => UserJoined(reply.Data.Participant as MultiplayerParticipant);

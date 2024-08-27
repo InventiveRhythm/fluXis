@@ -93,6 +93,7 @@ public class FontAwesome6
         public static IconUsage Plane => GetSolid(0xf072);
         public static IconUsage Play => GetSolid(0xf04b);
         public static IconUsage Plug => GetSolid(0xf1e6);
+        public static IconUsage PlugCircleXMark => GetSolid(0xe560);
         public static IconUsage Plus => GetSolid(0x2b);
         public static IconUsage PuzzlePiece => GetSolid(0xf12e);
         public static IconUsage Question => GetSolid(0x3f);

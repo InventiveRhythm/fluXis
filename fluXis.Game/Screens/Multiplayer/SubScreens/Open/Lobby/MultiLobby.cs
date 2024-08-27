@@ -186,6 +186,7 @@ public partial class MultiLobby : MultiSubScreen
 
         footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
 
+        client.OnDisconnect += onDisconnect;
         client.OnUserJoin += onOnUserJoin;
         client.OnUserLeave += onOnUserLeave;
         client.OnUserStateChange += updateOnUserState;
@@ -202,6 +203,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         base.Dispose(isDisposing);
 
+        client.OnDisconnect -= onDisconnect;
         client.OnUserJoin -= onOnUserJoin;
         client.OnUserLeave -= onOnUserLeave;
         client.OnUserStateChange -= updateOnUserState;
@@ -210,6 +212,19 @@ public partial class MultiLobby : MultiSubScreen
         client.OnStart -= startLoading;
 
         mapStore.MapSetAdded -= mapAdded;
+    }
+
+    private void onDisconnect()
+    {
+        if (MultiScreen.IsCurrentScreen())
+        {
+            clock.Stop();
+            panels.Content = new DisconnectedPanel(() =>
+            {
+                confirmExit = true;
+                this.Exit();
+            });
+        }
     }
 
     private void onOnUserJoin(MultiplayerParticipant user)
@@ -300,10 +315,12 @@ public partial class MultiLobby : MultiSubScreen
     {
         if (confirmExit)
         {
+            if (Room is not null)
+                client.LeaveRoom();
+
             clock.Looping = false;
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
-            client.LeaveRoom();
             footer.Hide();
             return base.OnExiting(e);
         }
@@ -336,6 +353,13 @@ public partial class MultiLobby : MultiSubScreen
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
+        if (Room is null)
+        {
+            confirmExit = true;
+            this.Exit();
+            return;
+        }
+
         base.OnResuming(e);
         onMapChange(Room.Map);
         api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
