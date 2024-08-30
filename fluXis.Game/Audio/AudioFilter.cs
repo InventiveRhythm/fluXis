@@ -5,9 +5,10 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Game.Audio;
 
-public partial class LowPassFilter : Component
+public partial class AudioFilter : Component
 {
     private AudioMixer mixer { get; }
+    private BQFType type { get; }
     private BQFParameters parameters { get; }
 
     private bool enabled { get; set; }
@@ -25,35 +26,56 @@ public partial class LowPassFilter : Component
             if (value == cutoff)
                 return;
 
-            if (value >= MAX)
+            switch (type)
             {
-                removeFilter();
-                return;
+                case BQFType.LowPass:
+                    if (value >= MAX)
+                    {
+                        removeFilter();
+                        return;
+                    }
+
+                    value = Math.Max(MIN, value);
+                    break;
+
+                case BQFType.HighPass:
+                    if (value <= 1)
+                    {
+                        removeFilter();
+                        return;
+                    }
+
+                    break;
             }
 
             addFilter();
 
-            value = Math.Max(MIN, value);
             parameters.fCenter = cutoff = value;
             mixer.UpdateEffect(parameters);
         }
     }
 
-    public LowPassFilter(AudioMixer mixer)
+    public AudioFilter(AudioMixer mixer, BQFType type = BQFType.LowPass)
     {
         this.mixer = mixer;
+        this.type = type;
 
         parameters = new BQFParameters
         {
-            lFilter = BQFType.LowPass,
+            lFilter = type,
             fBandwidth = 0,
             fQ = .7f
         };
+
+        if (type == BQFType.HighPass)
+            Cutoff = 1;
     }
 
     public void CutoffTo(int value, float duration = 0, Easing easing = Easing.None)
     {
-        value = Math.Max(MIN, value);
+        if (type == BQFType.LowPass)
+            value = Math.Max(MIN, value);
+
         this.TransformTo(nameof(Cutoff), value, duration, easing);
     }
 

@@ -21,7 +21,7 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
 
     protected virtual string Title => "Work in Progress";
 
-    private LowPassFilter lowPass;
+    private AudioFilter lowPass;
     private FillFlowContainer flowContainer;
 
     [BackgroundDependencyLoader]
@@ -29,7 +29,7 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     {
         InternalChildren = new Drawable[]
         {
-            lowPass = new LowPassFilter(audio.TrackMixer),
+            lowPass = new AudioFilter(audio.TrackMixer),
             flowContainer = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -63,14 +63,14 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
     {
         this.FadeInFromZero(200);
         flowContainer.ScaleTo(.8f).ScaleTo(1, 1000, Easing.OutElastic);
-        lowPass.CutoffTo(LowPassFilter.MIN, 200);
+        lowPass.CutoffTo(AudioFilter.MIN, 200);
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         this.FadeOutFromOne(400);
         flowContainer.ScaleTo(.8f, 600);
-        lowPass.CutoffTo(LowPassFilter.MAX, 200);
+        lowPass.CutoffTo(AudioFilter.MAX, 200);
 
         return base.OnExiting(e);
     }

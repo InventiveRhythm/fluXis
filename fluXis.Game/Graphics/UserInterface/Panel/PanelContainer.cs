@@ -31,7 +31,7 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
     private Drawable dim;
     private Container contentContainer;
 
-    private LowPassFilter lowPass;
+    private AudioFilter lowPass;
 
     [BackgroundDependencyLoader]
     private void load(AudioManager audio)
@@ -43,7 +43,7 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
             RelativeSizeAxes = Axes.Both,
             Children = new[]
             {
-                lowPass = new LowPassFilter(audio.TrackMixer),
+                lowPass = new AudioFilter(audio.TrackMixer),
                 dim = new FullInputBlockingContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -73,13 +73,13 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
             Schedule(() => contentContainer.Remove(Content, false));
             dim.Alpha = 0;
             setBlur(0);
-            setCutOff(LowPassFilter.MAX);
+            setCutOff(AudioFilter.MAX);
         }
         else if (Content is { IsLoaded: true })
         {
             dim.Alpha = Content.Alpha;
             setBlur(Content.Alpha);
-            setCutOff((int)(LowPassFilter.MAX - (LowPassFilter.MAX - LowPassFilter.MIN) * Content.Alpha));
+            setCutOff((int)(AudioFilter.MAX - (AudioFilter.MAX - AudioFilter.MIN) * Content.Alpha));
         }
         else if (BlurContainer?.BlurSigma != Vector2.Zero || dim.Alpha != 0)
         {

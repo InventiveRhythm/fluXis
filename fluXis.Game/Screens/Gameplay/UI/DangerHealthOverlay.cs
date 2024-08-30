@@ -18,7 +18,7 @@ public partial class DangerHealthOverlay : Container
 
     private Bindable<bool> dimOnLowHealth;
 
-    private LowPassFilter lowPass;
+    private AudioFilter lowPass;
     private bool exited;
 
     private Box glow;
@@ -37,7 +37,7 @@ public partial class DangerHealthOverlay : Container
 
         InternalChildren = new Drawable[]
         {
-            lowPass = new LowPassFilter(audio.TrackMixer),
+            lowPass = new AudioFilter(audio.TrackMixer),
             glow = new Box
             {
                 RelativeSizeAxes = Axes.Both,
@@ -63,7 +63,7 @@ public partial class DangerHealthOverlay : Container
         screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
         screen.OnExit += () =>
         {
-            lowPass.CutoffTo(LowPassFilter.MAX, FluXisScreen.MOVE_DURATION);
+            lowPass.CutoffTo(AudioFilter.MAX, FluXisScreen.MOVE_DURATION);
             exited = true;
         };
     }
@@ -98,14 +98,14 @@ public partial class DangerHealthOverlay : Container
             var multiplier = health / threshold;
 
             darken.Alpha = glow.Alpha = (float)(1 - multiplier);
-            lowPass.Cutoff = (int)(LowPassFilter.MAX * multiplier);
+            lowPass.Cutoff = (int)(AudioFilter.MAX * multiplier);
         }
         else
         {
             darken.Alpha = 0;
             glow.Alpha = 0;
 
-            lowPass.Cutoff = LowPassFilter.MAX;
+            lowPass.Cutoff = AudioFilter.MAX;
         }
     }
 }

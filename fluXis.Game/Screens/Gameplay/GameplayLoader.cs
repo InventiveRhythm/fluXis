@@ -40,7 +40,7 @@ public partial class GameplayLoader : FluXisScreen
     private RealmMap map { get; }
     private List<IMod> mods { get; }
 
-    private LowPassFilter lowPass;
+    private AudioFilter lowPass;
 
     private Container loadingContainer;
     private FillFlowContainer content;
@@ -62,7 +62,7 @@ public partial class GameplayLoader : FluXisScreen
 
         InternalChildren = new Drawable[]
         {
-            lowPass = new LowPassFilter(audio.TrackMixer),
+            lowPass = new AudioFilter(audio.TrackMixer),
             content = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -304,7 +304,7 @@ public partial class GameplayLoader : FluXisScreen
             tip.FadeIn();
             content.MoveToY(0);
             loadingContainer.FadeIn(FADE_DURATION);
-            lowPass.CutoffTo(LowPassFilter.MIN, MOVE_DURATION, Easing.OutQuint);
+            lowPass.CutoffTo(AudioFilter.MIN, MOVE_DURATION, Easing.OutQuint);
         }
 
         tip.Text = LoadingTips.RandomTip;
@@ -314,7 +314,7 @@ public partial class GameplayLoader : FluXisScreen
     {
         this.Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
         tip.FadeOut(FADE_DURATION);
-        lowPass.CutoffTo(LowPassFilter.MAX);
+        lowPass.CutoffTo(AudioFilter.MAX);
 
         if (moveDown)
             content.MoveToY(800, MOVE_DURATION + FADE_DURATION + 300, Easing.InQuint);

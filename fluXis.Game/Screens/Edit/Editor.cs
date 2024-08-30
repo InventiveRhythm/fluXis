@@ -37,6 +37,7 @@ using fluXis.Game.Screens.Edit.TabSwitcher;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
+using ManagedBass.Fx;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -107,6 +108,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorActionStack actionStack;
 
     private long openTime;
+
+    private AudioFilter lowPass;
+    private AudioFilter highPass;
+    private bool lowPassEnabled;
+    private bool highPassEnabled;
 
     private DependencyContainer dependencies;
     private bool exitConfirmed;
@@ -196,6 +202,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         {
             Children = new Drawable[]
             {
+                lowPass = new AudioFilter(audioManager.TrackMixer),
+                highPass = new AudioFilter(audioManager.TrackMixer, BQFType.HighPass),
                 clock,
                 new FluXisContextMenuContainer
                 {
@@ -358,6 +366,22 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                     = editorMap.RealmMap.Metadata.PreviewTime
                                                         = (int)clock.CurrentTime;
                                             })
+                                        }
+                                    },
+                                    new("Audio", FontAwesome6.Solid.VolumeHigh)
+                                    {
+                                        Items = new FluXisMenuItem[]
+                                        {
+                                            new("Enable Low Pass filter", () =>
+                                            {
+                                                lowPassEnabled = !lowPassEnabled;
+                                                lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
+                                            }) { IsActive = () => lowPassEnabled },
+                                            new("Enable High Pass filter", () =>
+                                            {
+                                                highPassEnabled = !highPassEnabled;
+                                                highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
+                                            }) { IsActive = () => highPassEnabled }
                                         }
                                     },
                                     new("Wiki", FontAwesome6.Solid.Book, openHelp)
@@ -577,6 +601,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         // I hate this but it works. I hate this but it works. I hate this but it works.
         this.Delay(EditorLoader.DURATION * .98f).FadeOut();
 
+        lowPass.CutoffTo(AudioFilter.MAX, 400);
+        highPass.CutoffTo(0, 400);
         clock.Track.Value.VolumeTo(0, EditorLoader.DURATION);
         globalClock.Seek((float)clock.CurrentTime);
         panels.Content?.Hide();
@@ -589,6 +615,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void exitAnimation()
     {
+        lowPass.CutoffTo(AudioFilter.MAX, 400);
+        highPass.CutoffTo(0, 400);
         this.FadeOut(200);
         menuBar.MoveToY(-menuBar.Height, 300, Easing.OutQuint);
         tabSwitcher.MoveToY(-menuBar.Height, 300, Easing.OutQuint);
@@ -599,6 +627,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private void enterAnimation()
     {
         this.FadeInFromZero(200);
+        lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
+        highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
         menuBar.MoveToY(0, 300, Easing.OutQuint);
         tabSwitcher.MoveToY(0, 300, Easing.OutQuint);
         bottomBar.MoveToY(0, 300, Easing.OutQuint);
