@@ -34,7 +34,7 @@ public partial class Progressbar : GameplayHUDComponent
             {
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopLeft,
-                Y = 10,
+                Y = 18,
                 X = 10,
                 FontSize = 32
             },
@@ -42,14 +42,14 @@ public partial class Progressbar : GameplayHUDComponent
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Y = 10,
+                Y = 18,
                 FontSize = 32
             },
             timeLeftText = new FluXisSpriteText
             {
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight,
-                Y = 10,
+                Y = 18,
                 X = -10,
                 FontSize = 32
             }
