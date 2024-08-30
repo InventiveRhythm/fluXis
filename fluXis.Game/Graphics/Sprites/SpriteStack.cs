@@ -18,7 +18,8 @@ public partial class SpriteStack<T> : CompositeDrawable
 
     public void Add(T sprite, float duration = 300)
     {
-        Current?.Delay(duration).Expire();
+        if (sprite is not IHasLoadedValue)
+            Current?.Delay(duration).Expire();
 
         sprite.RelativeSizeAxes = Axes.Both;
         sprite.Anchor = sprite.Origin = Anchor.Centre;
@@ -27,5 +28,32 @@ public partial class SpriteStack<T> : CompositeDrawable
             sprite.FillMode = FillMode.Fill;
 
         AddInternal(sprite);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (Current is not IHasLoadedValue)
+            return;
+
+        for (var i = 0; i < InternalChildren.Count; i++)
+        {
+            var child = InternalChildren[i];
+
+            if (child == Current)
+                continue;
+
+            var next = InternalChildren[i + 1];
+            bool invalid;
+
+            if (next is IHasLoadedValue loaded)
+                invalid = loaded.Loaded;
+            else
+                invalid = next.Alpha >= 1;
+
+            if (invalid)
+                child.Expire();
+        }
     }
 }

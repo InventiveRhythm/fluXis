@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Map.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -7,9 +8,10 @@ using osuTK;
 
 namespace fluXis.Game.Graphics.Background;
 
-public partial class BlurableBackground : CompositeDrawable
+public partial class BlurableBackground : CompositeDrawable, IHasLoadedValue
 {
     public RealmMap Map { get; }
+    public bool Loaded { get; private set; }
 
     private float blur { get; }
     private float duration { get; }
@@ -29,8 +31,6 @@ public partial class BlurableBackground : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        Alpha = 0f;
-
         sprite = new MapBackground(Map)
         {
             RelativeSizeAxes = Axes.Both,
@@ -39,22 +39,24 @@ public partial class BlurableBackground : CompositeDrawable
             FillMode = FillMode.Fill
         };
 
+        var wrapper = new LoadWrapper<Drawable>
+        {
+            RelativeSizeAxes = Axes.Both,
+            OnComplete = d => d.FadeInFromZero(duration).OnComplete(_ => Loaded = true)
+        };
+
         if (blur > 0)
         {
-            AddInternal(new BufferedContainer(cachedFrameBuffer: true)
+            wrapper.LoadContent = () => new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
                 BlurSigma = new Vector2(blur * 25),
                 RedrawOnScale = false,
                 Child = sprite
-            });
+            };
         }
-        else AddInternal(sprite);
-    }
+        else wrapper.LoadContent = () => sprite;
 
-    protected override void LoadComplete()
-    {
-        this.FadeInFromZero(duration);
-        base.LoadComplete();
+        InternalChild = wrapper;
     }
 }

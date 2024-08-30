@@ -1,4 +1,5 @@
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics;
 using fluXis.Game.Skinning;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -7,7 +8,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Map.Drawables;
 
-public partial class MapBackground : Sprite
+public partial class MapBackground : Sprite, IHasLoadedValue
 {
     [CanBeNull]
     private RealmMap map;
@@ -28,6 +29,8 @@ public partial class MapBackground : Sprite
         }
     }
 
+    public bool Loaded { get; private set; }
+
     private bool cropped { get; }
 
     public MapBackground([CanBeNull] RealmMap map, bool cropped = false)
@@ -46,4 +49,6 @@ public partial class MapBackground : Sprite
         var custom = cropped ? Map?.GetPanelBackground() : Map?.GetBackground();
         Texture = custom ?? skinManager.GetDefaultBackground();
     }
+
+    public override void Show() => this.FadeInFromZero(400).OnComplete(_ => Loaded = true);
 }

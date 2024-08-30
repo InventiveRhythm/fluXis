@@ -247,12 +247,12 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         updateDifficultyValues(map, mods.SelectedMods);
 
         var background = new MapBackground(map);
-        backgrounds.Add(background, 400);
-        background.FadeInFromZero(400, Easing.OutQuint);
+        backgrounds.Add(background);
+        background.Show();
 
         var cover = new MapCover(map.MapSet);
-        covers.Add(cover, 400);
-        cover.FadeInFromZero(400, Easing.OutQuint);
+        covers.Add(cover);
+        cover.Show();
     }
 
     private void updateDifficultyValues(RealmMap map, IList<IMod> list)

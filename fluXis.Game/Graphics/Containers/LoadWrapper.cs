@@ -8,7 +8,7 @@ public partial class LoadWrapper<T> : Container
     where T : Drawable
 {
     public Action<T> OnComplete { get; init; }
-    public Func<T> LoadContent { get; init; }
+    public Func<T> LoadContent { get; set; }
 
     protected override void LoadComplete()
     {

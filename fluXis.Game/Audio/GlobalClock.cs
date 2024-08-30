@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Game.Configuration;
@@ -15,6 +16,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
+using osu.Framework.Logging;
 using osu.Framework.Timing;
 
 namespace fluXis.Game.Audio;
@@ -123,12 +125,18 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
 
     private void onMapChange(ValueChangedEvent<RealmMap> e)
     {
+        var watch = new Stopwatch();
+        watch.Start();
+
         var newPath = e.NewValue?.MapSet.GetPathForFile(e.NewValue.Metadata.Audio);
 
         if (newPath == trackPath) return;
 
         LoadMap(e.NewValue);
         trackPath = newPath;
+
+        watch.Stop();
+        Logger.Log($"Song load took {watch.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);
 
         if (screens.CurrentScreen is SelectScreen) Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
     }
