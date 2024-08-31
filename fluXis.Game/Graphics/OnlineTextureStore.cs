@@ -70,7 +70,8 @@ public class OnlineTextureStore : TextureStore
     private void purge(AssetType type, string id, AssetSize size, bool addExtension = false)
     {
         var url = getUrl(type, id, size, addExtension);
-        if (TryGetCached(getLookup(url), out var tex))
+
+        if (TryGetCached(getLookup(url), out var tex) && tex != null)
             Purge(tex);
     }
 
