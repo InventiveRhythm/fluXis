@@ -1,4 +1,8 @@
-﻿using osu.Framework.Allocation;
+﻿using System.Linq;
+using fluXis.Game.Mods.Drawables;
+using fluXis.Game.Utils;
+using fluXis.Shared.Scoring;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -13,11 +17,12 @@ public partial class ResultsCenter : CompositeDrawable
     private Container rankCenter;
 
     private ResultsCenterScore score;
+    private ModList mods;
     private Circle line;
     private ResultsCenterStats stats;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ScoreInfo scoreInfo)
     {
         Width = 480;
         RelativeSizeAxes = Axes.Y;
@@ -50,7 +55,19 @@ public partial class ResultsCenter : CompositeDrawable
                     }
                 },
                 new Drawable[] { score = new ResultsCenterScore() },
-                new Drawable[] { Empty() }, // TODO: mods
+                new Drawable[]
+                {
+                    mods = new ModList
+                    {
+                        AutoSizeAxes = Axes.X,
+                        Height = 40,
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Alpha = scoreInfo.Mods.Count != 0 ? 1 : 0,
+                        Mods = scoreInfo.Mods.Select(ModUtils.GetFromAcronym).ToList(),
+                        Margin = new MarginPadding { Top = 36 }
+                    }
+                },
                 new Drawable[]
                 {
                     line = new Circle
@@ -69,6 +86,7 @@ public partial class ResultsCenter : CompositeDrawable
     public override void Show()
     {
         score.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        mods.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         line.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         stats.MoveToY(50).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
@@ -76,6 +94,7 @@ public partial class ResultsCenter : CompositeDrawable
     public override void Hide()
     {
         score.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        mods.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         line.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         stats.MoveToY(50, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }

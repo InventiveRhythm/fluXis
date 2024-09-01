@@ -56,7 +56,7 @@ public partial class ResultsCenterScore : CompositeDrawable
                     Shadow = true,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Alpha = .6f
+                    Alpha = string.IsNullOrEmpty(difference) ? 0 : .6f,
                 }
             }
         };
