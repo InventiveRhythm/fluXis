@@ -34,7 +34,7 @@ public partial class DefaultResultsRank : CompositeDrawable
                 Texture = textures.Get("Results/outer-circle"),
                 Origin = Anchor.Centre,
                 Blending = BlendingParameters.Additive,
-                Alpha = .3f
+                Alpha = .1f
             },
             mid = new Sprite
             {
@@ -42,7 +42,7 @@ public partial class DefaultResultsRank : CompositeDrawable
                 Texture = textures.Get("Results/circle"),
                 Origin = Anchor.Centre,
                 Blending = BlendingParameters.Additive,
-                Alpha = .3f
+                Alpha = .1f
             },
             inner = new Sprite
             {
@@ -50,7 +50,7 @@ public partial class DefaultResultsRank : CompositeDrawable
                 Texture = textures.Get("Results/inner-circle"),
                 Origin = Anchor.Centre,
                 Blending = BlendingParameters.Additive,
-                Alpha = .3f
+                Alpha = .1f
             },
             rankSpr = new Sprite
             {
