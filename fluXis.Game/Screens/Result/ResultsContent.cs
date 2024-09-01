@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
-using osuTK;
 
 namespace fluXis.Game.Screens.Result;
 
@@ -40,7 +39,12 @@ public partial class ResultsContent : CompositeDrawable
 
         InternalChildren = new[]
         {
-            rank = skins.GetResultsScoreRank(score.Rank).With(d => d.Origin = Anchor.Centre),
+            rank = skins.GetResultsScoreRank(score.Rank).With(d =>
+            {
+                d.RelativePositionAxes = Axes.X;
+                d.X = 0.5f;
+                d.Origin = Anchor.Centre;
+            }),
             new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
@@ -111,20 +115,19 @@ public partial class ResultsContent : CompositeDrawable
 
     private void updateRankPosition(bool instant)
     {
-        var pos = ToLocalSpace(rankUseCenter ? ScreenSpaceDrawQuad.Centre : center.ScreenSpaceRankPosition);
-        pos -= new Vector2(Padding.Left, Padding.Right);
+        var y = ToLocalSpace(rankUseCenter ? ScreenSpaceDrawQuad.Centre : center.ScreenSpaceRankPosition).Y;
+        y -= Padding.Top;
 
         if (rankUseCenter)
-            pos.Y -= 80; // to account for bottom padding
+            y -= Padding.Bottom; // to account for bottom padding
 
         if (instant)
         {
-            rank.Position = pos;
+            rank.Y = y;
             return;
         }
 
-        rank.X = (float)Interpolation.Lerp(pos.X, rank.X, Math.Exp(-0.01 * Time.Elapsed));
-        rank.Y = (float)Interpolation.Lerp(pos.Y, rank.Y, Math.Exp(-0.01 * Time.Elapsed));
+        rank.Y = (float)Interpolation.Lerp(y, rank.Y, Math.Exp(-0.002 * Time.Elapsed));
     }
 
     public void Show(bool fromGameplay = false)
@@ -156,6 +159,7 @@ public partial class ResultsContent : CompositeDrawable
             center.FadeIn(FluXisScreen.FADE_DURATION);
             center.Show();
             right.MoveToX(200).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint).FadeIn(FluXisScreen.FADE_DURATION);
+            this.TransformTo(nameof(rankUseCenter), false);
         }
     }
 
