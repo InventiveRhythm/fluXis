@@ -281,6 +281,8 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     public Drawable GetHitLine() => currentSkin.GetHitLine() ?? defaultSkin.GetHitLine();
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => currentSkin.GetJudgement(judgement, isLate) ?? defaultSkin.GetJudgement(judgement, isLate);
 
+    public Drawable GetResultsScoreRank(ScoreRank rank) => currentSkin.GetResultsScoreRank(rank) ?? defaultSkin.GetResultsScoreRank(rank);
+
     public Sample GetHitSample() => currentSkin.GetHitSample() ?? defaultSkin.GetHitSample();
     public Sample[] GetMissSamples() => currentSkin.GetMissSamples() ?? defaultSkin.GetMissSamples();
     public Sample GetFailSample() => currentSkin.GetFailSample() ?? defaultSkin.GetFailSample();

@@ -1,22 +1,12 @@
 using System;
 using fluXis.Game.Database.Maps;
-using fluXis.Game.Graphics;
-using fluXis.Game.Graphics.Background;
-using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Buttons;
-using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
-using fluXis.Game.Localization;
 using fluXis.Game.Online.API.Requests.Scores;
-using fluXis.Game.Screens.Result.Extended;
-using fluXis.Game.Screens.Result.Normal;
-using fluXis.Game.UI;
+using fluXis.Game.Screens.Gameplay;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
@@ -26,11 +16,10 @@ namespace fluXis.Game.Screens.Result;
 public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.2f;
-    public override float BackgroundDim => 0.5f;
+    public override float BackgroundDim => 0.75f;
     public override float BackgroundBlur => 0.2f;
 
-    [Resolved]
-    private GlobalBackground backgrounds { get; set; }
+    public bool ForceFromGameplay { get; init; }
 
     public ScoreInfo Score { get; }
     public RealmMap Map { get; }
@@ -42,13 +31,9 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
     private DependencyContainer dependencies;
 
     public Action OnRestart;
-    private bool extendedState;
 
-    private NormalResults normal;
-    private ExtendedResults extended;
-
-    private CornerButton backButton;
-    private CornerButton retryButton;
+    private ResultsContent content;
+    private ResultsFooter footer;
 
     public SoloResults(RealmMap map, ScoreInfo score, APIUser player)
     {
@@ -67,79 +52,16 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
 
         InternalChildren = new Drawable[]
         {
-            normal = new NormalResults(),
-            extended = new ExtendedResults(),
-            new Container
+            content = new ResultsContent(),
+            footer = new ResultsFooter
             {
-                RelativeSizeAxes = Axes.X,
-                Height = 60,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Children = new Drawable[]
-                {
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Masking = true,
-                        EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
-                        Child = new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
-                        }
-                    },
-                    backButton = new CornerButton
-                    {
-                        ButtonText = LocalizationStrings.General.Back,
-                        Icon = FontAwesome6.Solid.ChevronLeft,
-                        Action = this.Exit
-                    },
-                    retryButton = new CornerButton
-                    {
-                        ButtonText = "Retry",
-                        Corner = Corner.BottomRight,
-                        Icon = FontAwesome6.Solid.RotateRight,
-                        ButtonColor = FluXisColors.Accent2,
-                        Alpha = OnRestart is not null ? 1f : 0f,
-                        Action = () => OnRestart?.Invoke()
-                    }
-                }
+                BackAction = this.Exit,
+                RestartAction = OnRestart
             }
         };
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        extended.Alpha = 0f;
-        extended.Y = 100f;
-    }
-
-    private void setState(bool state)
-    {
-        if (extendedState == state) return;
-
-        extendedState = state;
-
-        backgrounds.SetBlur(state ? .5f : .2f, 400);
-        backgrounds.SetDim(state ? .8f : .5f, 400);
-
-        const float distance = 150;
-        const float delay = 180;
-        const float duration = 400;
-
-        normal.Delay(state ? 0 : delay).FadeTo(state ? 0f : 1f, duration / 2).MoveToY(state ? -distance : 0, duration, Easing.Out);
-        extended.Delay(state ? delay : 0).FadeTo(state ? 1f : 0f, duration / 2).MoveToY(state ? 0 : distance, duration, Easing.Out);
-    }
-
-    protected override bool OnScroll(ScrollEvent e)
-    {
-        setState(e.ScrollDelta.Y < 0);
-        return true;
-    }
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
@@ -148,21 +70,16 @@ public partial class SoloResults : FluXisScreen, IKeyBindingHandler<FluXisGlobal
         using (BeginDelayedSequence(ENTER_DELAY))
         {
             this.FadeInFromZero(FADE_DURATION);
-            normal.ScaleTo(.8f).ScaleTo(1f, MOVE_DURATION, Easing.OutQuint);
-
-            backButton.Show();
-            retryButton.Show();
+            content.Show(e.Last is GameplayScreen || ForceFromGameplay);
+            footer.Show();
         }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         this.FadeOut(FADE_DURATION);
-        normal.ScaleTo(.8f, MOVE_DURATION, Easing.OutQuint);
-        extended.ScaleTo(.8f, MOVE_DURATION, Easing.OutQuint);
-
-        backButton.Hide();
-        retryButton.Hide();
+        content.Hide();
+        footer.Hide();
         return base.OnExiting(e);
     }
 

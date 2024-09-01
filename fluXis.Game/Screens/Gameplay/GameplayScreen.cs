@@ -45,6 +45,7 @@ using fluXis.Game.Screens.Result;
 using fluXis.Game.Skinning.Default;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
 using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
@@ -80,6 +81,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
+    protected virtual APIUser CurrentPlayer => api.User.Value;
 
     protected bool CursorVisible { get; set; }
 
@@ -474,7 +476,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var player = api.User.Value;
+            var player = CurrentPlayer;
 
             var bestScore = scores.GetCurrentTop(RealmMap.ID);
 

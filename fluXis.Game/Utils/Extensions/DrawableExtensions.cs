@@ -40,6 +40,39 @@ public static class DrawableExtensions
               .Then().MoveToX(0, duration / 2, Easing.InSine);
     }
 
+    public static void Rainbow(this Drawable drawable)
+    {
+        const float len = 800;
+
+        var colors = new[]
+        {
+            Colour4.FromHSL(0, 1, .66f),
+            Colour4.FromHSL(30 / 360f, 1, .66f),
+            Colour4.FromHSL(60 / 360f, 1, .66f),
+            Colour4.FromHSL(90 / 360f, 1, .66f),
+            Colour4.FromHSL(120 / 360f, 1, .66f),
+            Colour4.FromHSL(150 / 360f, 1, .66f),
+            Colour4.FromHSL(180 / 360f, 1, .66f),
+            Colour4.FromHSL(210 / 360f, 1, .66f),
+            Colour4.FromHSL(240 / 360f, 1, .66f),
+            Colour4.FromHSL(270 / 360f, 1, .66f),
+            Colour4.FromHSL(300 / 360f, 1, .66f),
+            Colour4.FromHSL(330 / 360f, 1, .66f),
+        };
+
+        drawable.Colour = colors[0];
+
+        var seq = drawable.FadeColour(colors[1], len);
+
+        for (var i = 2; i < colors.Length + 2; i++)
+        {
+            var col = colors[i % colors.Length];
+            seq.Then().FadeColour(col, len);
+        }
+
+        seq.Loop();
+    }
+
     public static void RunOnUpdate(this Drawable _, Scheduler scheduler, Action action)
     {
         if (ThreadSafety.IsUpdateThread)

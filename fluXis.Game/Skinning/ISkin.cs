@@ -39,6 +39,8 @@ public interface ISkin : IDisposable
 
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate);
 
+    public Drawable GetResultsScoreRank(ScoreRank rank);
+
     public Sample GetHitSample();
     public Sample[] GetMissSamples();
     public Sample GetFailSample();

@@ -40,7 +40,7 @@ public partial class DrawableAvatar : Sprite
 
     private void setTexture()
     {
-        if (user != null) // the texture from the online store could still be null
+        if (user is { ID: >= 0 }) // the texture from the online store could still be null
             Texture = store.GetAvatar(user.ID) ?? textures.Get("Online/default-avatar");
         else
             Texture = textures.Get("Online/default-avatar");

@@ -15,6 +15,7 @@ using fluXis.Game.Overlay.Mouse;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -362,31 +363,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                .MoveToX(0, 500, Easing.OutQuint).FadeIn(400);
 
         if (ScoreInfo.Rank == ScoreRank.X)
-        {
-            const float len = 1000;
-
-            var colors = new[]
-            {
-                Colour4.FromHSL(0, 1, .66f),
-                Colour4.FromHSL(60 / 360f, 1, .66f),
-                Colour4.FromHSL(120 / 360f, 1, .66f),
-                Colour4.FromHSL(180 / 360f, 1, .66f),
-                Colour4.FromHSL(240 / 360f, 1, .66f),
-                Colour4.FromHSL(300 / 360f, 1, .66f),
-            };
-
-            rankBackground.Colour = colors[0];
-
-            var seq = rankBackground.FadeColour(colors[1], len);
-
-            for (var i = 2; i < colors.Length + 2; i++)
-            {
-                var col = colors[i % colors.Length];
-                seq.Then().FadeColour(col, len);
-            }
-
-            seq.Loop();
-        }
+            rankBackground.Rainbow();
     }
 
     protected override void Update()

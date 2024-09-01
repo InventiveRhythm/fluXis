@@ -9,6 +9,7 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -22,6 +23,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
     protected override bool InstantlyExitOnPause => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
+    protected override APIUser CurrentPlayer => replay.GetPlayer(users);
 
     [Resolved]
     private UserCache users { get; set; }

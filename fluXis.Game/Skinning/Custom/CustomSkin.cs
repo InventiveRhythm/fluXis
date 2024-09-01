@@ -264,6 +264,8 @@ public class CustomSkin : ISkin
         return null;
     }
 
+    public Drawable GetResultsScoreRank(ScoreRank rank) => null;
+
     public Sample GetHitSample() => samples.Get("Samples/Gameplay/hit");
 
     public Sample[] GetMissSamples()

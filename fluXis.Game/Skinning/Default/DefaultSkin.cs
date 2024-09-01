@@ -8,6 +8,7 @@ using fluXis.Game.Skinning.Default.HitObject;
 using fluXis.Game.Skinning.Default.Judgements;
 using fluXis.Game.Skinning.Default.Lighting;
 using fluXis.Game.Skinning.Default.Receptor;
+using fluXis.Game.Skinning.Default.Results;
 using fluXis.Game.Skinning.Default.Stage;
 using fluXis.Game.Skinning.Json;
 using fluXis.Shared.Scoring.Enums;
@@ -103,6 +104,8 @@ public class DefaultSkin : ISkin
 
     public Drawable GetHitLine() => new DefaultHitLine(SkinJson);
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
+
+    public Drawable GetResultsScoreRank(ScoreRank rank) => new DefaultResultsRank(rank);
 
     public Sample GetHitSample() => samples.Get("Gameplay/hitsound");
     public Sample[] GetMissSamples() => new[] { samples.Get("Gameplay/combobreak") };
