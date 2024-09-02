@@ -58,11 +58,14 @@ public partial class WindowsUpdatePerformer : IUpdatePerformer
                 return;
             }
 
+            // the backslash to forward slash is absolutely needed here
+            // else the patcher thinks the closing quote of the folder
+            // is escaped since it ends in \
             Process.Start(new ProcessStartInfo
             {
                 FileName = patcher,
                 UseShellExecute = true,
-                Arguments = $"\"{file.FullName}\" \"{folder}\"",
+                Arguments = $"\"{file.FullName.Replace("\\", "/")}\" \"{folder.Replace("\\", "/")}\" ",
                 WorkingDirectory = folder
             });
             Environment.Exit(0);
