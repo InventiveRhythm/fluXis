@@ -38,7 +38,7 @@ public partial class ResultsSideRankings : ResultsSideContainer
             {
                 new Statistic("Overall Rating", request.Response.Data.OverallRating),
                 new Statistic("Potential Rating", request.Response.Data.PotentialRating),
-                new Statistic("Rank", request.Response.Data.OverallRating, true)
+                new Statistic("Rank", request.Response.Data.Rank, true)
             }
         };
     }
