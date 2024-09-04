@@ -3,7 +3,7 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
-using fluXis.Game.Skinning;
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -21,7 +21,7 @@ public partial class KeyOverlay : Container
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private LaneSwitchManager laneSwitchManager { get; set; }
 
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
@@ -51,18 +51,18 @@ public partial class KeyOverlay : Container
 
     protected override void Update()
     {
-        if (keyCount != screen.Playfield.Manager.CurrentKeyCount)
+        if (keyCount != laneSwitchManager.CurrentCount)
         {
-            keyCount = screen.Playfield.Manager.CurrentKeyCount;
+            keyCount = laneSwitchManager.CurrentCount;
             flow.FadeIn(200).Delay(1200).FadeOut(200);
         }
 
-        Y = -skinManager.SkinJson.GetKeymode(keyCount).HitPosition - 50;
+        Y = -laneSwitchManager.HitPosition - 50;
 
         for (var i = 0; i < flow.Count; i++)
         {
             var con = flow[i];
-            con.Width = screen.Playfield.Receptors[i].Width;
+            con.Width = laneSwitchManager.WidthFor(i + 1);
             con.Alpha = con.Width == 0 ? 0 : 1;
         }
     }

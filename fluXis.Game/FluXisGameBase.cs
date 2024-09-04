@@ -199,6 +199,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         cacheComponent(Plugins = new PluginManager(), true);
         cacheComponent(importManager = new ImportManager(), true, true);
         cacheComponent(SkinManager = new SkinManager(), true, true);
+        cacheComponent<ISkin>(SkinManager);
         cacheComponent(new LayoutManager(), true);
         cacheComponent(new PreviewManager(), true);
 

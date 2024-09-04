@@ -1,5 +1,4 @@
-﻿using fluXis.Game.Map.Structures.Events;
-using fluXis.Game.Skinning;
+﻿using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -17,14 +16,14 @@ public partial class Receptor : CompositeDrawable
     [Resolved]
     private Playfield playfield { get; set; }
 
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
     private readonly int idx;
 
     private Drawable up;
     private Drawable down;
     private VisibilityContainer hitLighting;
-
-    private int currentKeyCount;
-    private bool visible;
 
     public bool IsDown;
 
@@ -36,8 +35,6 @@ public partial class Receptor : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        currentKeyCount = playfield.Map.InitialKeyCount;
-
         RelativeSizeAxes = Axes.Y;
         Masking = true;
 
@@ -54,11 +51,6 @@ public partial class Receptor : CompositeDrawable
         };
     }
 
-    protected override void LoadComplete()
-    {
-        updateKeyCount(true);
-    }
-
     protected override void Update()
     {
         IsDown = screen.Input.Pressed[idx];
@@ -71,39 +63,6 @@ public partial class Receptor : CompositeDrawable
         else
             hitLighting.Hide();
 
-        if (currentKeyCount != playfield.Manager.CurrentKeyCount)
-        {
-            currentKeyCount = playfield.Manager.CurrentKeyCount;
-            updateKeyCount(false);
-        }
-    }
-
-    private void updateKeyCount(bool instant)
-    {
-        // Since the current count is the same as the maximum,
-        // every receptor should be visible
-        if (currentKeyCount == playfield.RealmMap.KeyCount)
-            visible = true;
-        else
-        {
-            bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[playfield.RealmMap.KeyCount - 2];
-            bool[] current = mode[currentKeyCount - 1];
-            visible = current[idx];
-        }
-
-        var width = visible ? skinManager.SkinJson.GetKeymode(currentKeyCount).ColumnWidth : 0;
-
-        if (instant)
-        {
-            FinishTransforms();
-            Width = width;
-        }
-        else
-        {
-            var current = playfield.Manager.CurrentLaneSwitchEvent;
-            var duration = current?.Duration ?? 200;
-            var ease = current?.Easing ?? Easing.OutQuint;
-            this.ResizeWidthTo(width, duration, ease);
-        }
+        Width = laneSwitchManager.WidthFor(idx + 1);
     }
 }

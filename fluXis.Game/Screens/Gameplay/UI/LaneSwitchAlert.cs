@@ -23,6 +23,9 @@ public partial class LaneSwitchAlert : Container
     [Resolved]
     private Playfield playfield { get; set; }
 
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
     private LaneSwitchEvent currentEvent;
 
     private readonly Container leftContainer;
@@ -85,7 +88,7 @@ public partial class LaneSwitchAlert : Container
         if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts)) return;
 
         if (currentEvent == null)
-            currentEvent = playfield.Manager.CurrentLaneSwitchEvent;
+            currentEvent = laneSwitchManager.Current;
         else
         {
             var time = clock.BeatTime;

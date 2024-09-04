@@ -52,12 +52,6 @@ public partial class DesignContainer : EditorTabContainer
                 Child = createShaderStack().AddContent(new Drawable[]
                 {
                     backgroundStack = new SpriteStack<BlurableBackground> { AutoFill = false },
-                    backgroundDim = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = Editor.BindableBackgroundDim.Value
-                    },
                     backgroundVideo = new BackgroundVideo
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -65,6 +59,12 @@ public partial class DesignContainer : EditorTabContainer
                         Origin = Anchor.Centre,
                         VideoClock = EditorClock,
                         ShowDim = false
+                    },
+                    backgroundDim = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.Black,
+                        Alpha = Editor.BindableBackgroundDim.Value
                     },
                     new EditorFlashLayer { InBackground = true },
                     new EditorDesignPlayfield(),

@@ -24,6 +24,9 @@ public partial class Playfield : Container
     [Resolved]
     private GameplayScreen screen { get; set; }
 
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
     private bool canSeek { get; }
     public override bool RemoveCompletedTransforms => !canSeek;
 
@@ -38,6 +41,7 @@ public partial class Playfield : Container
 
     private TimingLineManager timingLineManager;
 
+    private Drawable hitline;
     private Drawable topCover;
     private Drawable bottomCover;
 
@@ -87,11 +91,10 @@ public partial class Playfield : Container
                 Direction = FillDirection.Horizontal,
                 ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i))
             },
-            skinManager.GetHitLine().With(d =>
+            hitline = skinManager.GetHitLine().With(d =>
             {
                 d.Width = 1;
                 d.RelativeSizeAxes = Axes.X;
-                d.Y = -skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).HitPosition;
             }),
             new Container
             {
@@ -142,6 +145,8 @@ public partial class Playfield : Container
 
     protected override void Update()
     {
+        hitline.Y = -laneSwitchManager.HitPosition;
+
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
 

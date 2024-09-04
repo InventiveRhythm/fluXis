@@ -4,7 +4,6 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
-using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Mods;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
@@ -30,6 +29,9 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     [Resolved]
     private Playfield playfield { get; set; }
 
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
     private GameplayInput input => screen.Input;
 
     private Bindable<bool> useSnapColors;
@@ -47,8 +49,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     public List<DrawableHitObject> HitObjects { get; } = new();
 
     public double CurrentTime { get; private set; }
-    public int CurrentKeyCount { get; private set; }
-    public LaneSwitchEvent CurrentLaneSwitchEvent { get; private set; }
 
     public bool Seeking { get; private set; }
 
@@ -206,19 +206,10 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         foreach (var hitObject in HitObjects.Where(h => h.CanBeRemoved).ToList())
             removeHitObject(hitObject);
 
-        foreach (var laneSwitchEvent in screen.MapEvents.LaneSwitchEvents)
-        {
-            if (laneSwitchEvent.Time <= Clock.CurrentTime)
-            {
-                CurrentKeyCount = laneSwitchEvent.Count;
-                CurrentLaneSwitchEvent = laneSwitchEvent;
-            }
-        }
-
         base.Update();
     }
 
-    public float HitPosition => DrawHeight - skinManager.SkinJson.GetKeymode(CurrentKeyCount).HitPosition;
+    public float HitPosition => DrawHeight - laneSwitchManager.HitPosition;
 
     public bool ShouldDisplay(double time) => ScrollVelocityPositionFromTime(time) <= ScrollVelocityPositionFromTime(Clock.CurrentTime) + DrawHeight * screen.Rate;
     public float PositionAtTime(double time) => (float)(HitPosition - .5f * ((time - (float)CurrentTime) * ScrollSpeed));
@@ -239,15 +230,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         return x;
     }
 
-    public float WidthOfLane(int lane)
-    {
-        var receptors = playfield.Receptors;
-
-        if (lane > receptors.Count)
-            return skinManager.SkinJson.GetKeymode(KeyCount).ColumnWidth;
-
-        return receptors[lane - 1].Width;
-    }
+    public float WidthOfLane(int lane) => laneSwitchManager.WidthFor(lane);
 
     public bool IsFirstInColumn(DrawableHitObject hitObject) => HitObjects.FirstOrDefault(h => h.Data.Lane == hitObject.Data.Lane && h.Data.Time < hitObject.Data.Time) == null;
 
@@ -349,7 +332,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     private void loadMap()
     {
-        CurrentKeyCount = Map.InitialKeyCount;
         initScrollVelocityMarks();
         initSnapIndices();
 

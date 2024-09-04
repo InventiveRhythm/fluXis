@@ -1,3 +1,4 @@
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -8,10 +9,12 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Playfield;
 public partial class EditorDesignReceptor : CompositeDrawable
 {
     private int idx { get; }
+    private LaneSwitchManager manager { get; }
 
-    public EditorDesignReceptor(int idx)
+    public EditorDesignReceptor(int idx, LaneSwitchManager manager)
     {
         this.idx = idx;
+        this.manager = manager;
     }
 
     [BackgroundDependencyLoader]
@@ -22,5 +25,11 @@ public partial class EditorDesignReceptor : CompositeDrawable
         Masking = true;
 
         InternalChild = skinManager.GetReceptor(idx + 1, map.RealmMap.KeyCount, false);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        Width = manager.WidthFor(idx + 1);
     }
 }

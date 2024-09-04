@@ -255,8 +255,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             shaders.AddShader(shader);
         }
 
+        var laneSwitchManager = new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount);
+        dependencies.CacheAs(laneSwitchManager);
+
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
+            laneSwitchManager,
             new ShaderEventHandler(MapEvents.ShaderEvents, shaders),
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             new PulseEffect(),
