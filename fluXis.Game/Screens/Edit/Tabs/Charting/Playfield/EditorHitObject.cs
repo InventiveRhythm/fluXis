@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Skinning.Bases;
 using fluXis.Game.Skinning.Default.HitObject;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -84,6 +85,19 @@ public partial class EditorHitObject : Container
 
             default:
                 tickNotePiece.Hide();
+
+                if (Data.LongNote)
+                {
+                    (longNoteBody as ColorableSkinDrawable)?.UpdateColor(0, 0);
+                    (LongNoteEnd as ColorableSkinDrawable)?.UpdateColor(0, 0);
+                }
+                else
+                {
+                    longNoteBody.Hide();
+                    LongNoteEnd.Hide();
+                }
+
+                (HitObjectPiece as ColorableSkinDrawable)?.UpdateColor(0, 0);
                 break;
         }
     }
@@ -101,8 +115,8 @@ public partial class EditorHitObject : Container
         if (Data.LongNote)
         {
             var endY = playfield.HitObjectContainer.PositionAtTime(Data.EndTime);
-            longNoteBody.Height = Y - endY;
-            longNoteBody.Y = -LongNoteEnd.Height / 2;
+            longNoteBody.Height = Y - endY - LongNoteEnd.Height + 4;
+            longNoteBody.Y = -LongNoteEnd.Height + 2;
             LongNoteEnd.Y = endY - Y;
         }
 
