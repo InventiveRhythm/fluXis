@@ -26,6 +26,8 @@ public partial class AudioFilter : Component
             if (value == cutoff)
                 return;
 
+            cutoff = value;
+
             switch (type)
             {
                 case BQFType.LowPass:
@@ -50,7 +52,7 @@ public partial class AudioFilter : Component
 
             addFilter();
 
-            parameters.fCenter = cutoff = value;
+            parameters.fCenter = value;
             mixer.UpdateEffect(parameters);
         }
     }
