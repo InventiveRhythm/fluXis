@@ -159,15 +159,6 @@ public partial class MenuScreen : FluXisScreen
                                     Y = -50,
                                     Children = new Drawable[]
                                     {
-                                        /*new FluXisSpriteText
-                                        {
-                                            Text = "fluXis",
-                                            Anchor = Anchor.TopCentre,
-                                            Origin = Anchor.TopCentre,
-                                            WebFontSize = 72,
-                                            Shadow = true,
-                                            ShadowOffset = new Vector2(0, 0.04f)
-                                        },*/
                                         logoText = new Sprite
                                         {
                                             Texture = textures.Get("Logos/logo-text-shadow"),
