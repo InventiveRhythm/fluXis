@@ -21,6 +21,7 @@ namespace fluXis.Game.Screens.Gameplay.Replays;
 public partial class ReplayGameplayScreen : GameplayScreen
 {
     protected override bool InstantlyExitOnPause => true;
+    protected override bool AllowRestart => false;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
     protected override APIUser CurrentPlayer => replay.GetPlayer(users);
@@ -33,6 +34,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
 
     private Replay replay { get; }
     private List<ReplayFrame> frames { get; }
+    private Stack<ReplayFrame> handledFrames { get; }
     private List<FluXisGameplayKeybind> currentPressed = new();
 
     private Bindable<bool> allowSeeking;
@@ -42,6 +44,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
     {
         this.replay = replay;
         frames = replay.Frames;
+        handledFrames = new Stack<ReplayFrame>();
     }
 
     protected override GameplayInput GetInput() => new ReplayInput(this, RealmMap.KeyCount);
@@ -67,8 +70,28 @@ public partial class ReplayGameplayScreen : GameplayScreen
         {
             var frame = frames[0];
             frames.RemoveAt(0);
+            handledFrames.Push(frame);
             handlePresses(frame.Actions);
         }
+
+        while (handledFrames.Count > 0)
+        {
+            var result = handledFrames.Peek();
+
+            if (GameplayClock.CurrentTime >= result.Time)
+                break;
+
+            revertFrame(handledFrames.Pop());
+        }
+    }
+
+    private void revertFrame(ReplayFrame frame)
+    {
+        foreach (var keybind in currentPressed)
+            Input.ReleaseKey(keybind);
+
+        currentPressed.Clear();
+        frames.Insert(0, frame);
     }
 
     private void handlePresses(List<int> frameActionsInt)

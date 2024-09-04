@@ -19,6 +19,8 @@ public partial class Receptor : CompositeDrawable
     [Resolved]
     private LaneSwitchManager laneSwitchManager { get; set; }
 
+    public override bool RemoveCompletedTransforms => true;
+
     private readonly int idx;
 
     private Drawable up;

@@ -44,7 +44,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public MapInfo Map => playfield.Map;
     public int KeyCount => playfield.RealmMap.KeyCount;
-    public List<HitObject> PastHitObjects { get; } = new();
+    public Stack<HitObject> PastHitObjects { get; } = new();
     public List<HitObject> FutureHitObjects { get; } = new();
     public List<DrawableHitObject> HitObjects { get; } = new();
 
@@ -206,7 +206,15 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         foreach (var hitObject in HitObjects.Where(h => h.CanBeRemoved).ToList())
             removeHitObject(hitObject);
 
-        base.Update();
+        while (PastHitObjects.Count > 0)
+        {
+            var result = PastHitObjects.Peek().Result;
+
+            if (result is null || Clock.CurrentTime >= result.Time)
+                break;
+
+            revertHitObject(PastHitObjects.Pop());
+        }
     }
 
     public float HitPosition => DrawHeight - laneSwitchManager.HitPosition;
@@ -255,6 +263,18 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         return drawable;
     }
 
+    private void revertHitObject(HitObject hit)
+    {
+        if (hit.HoldEndResult is not null)
+            judgementProcessor.RevertResult(hit.HoldEndResult);
+
+        judgementProcessor.RevertResult(hit.Result);
+
+        var draw = createHitObject(hit);
+        HitObjects.Insert(0, draw);
+        AddInternal(draw);
+    }
+
     private void removeHitObject(DrawableHitObject hitObject, bool addToFuture = false)
     {
         if (!addToFuture)
@@ -267,7 +287,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         if (addToFuture)
             FutureHitObjects.Insert(0, hitObject.Data);
         else
-            PastHitObjects.Add(hitObject.Data);
+            PastHitObjects.Push(hitObject.Data);
 
         RemoveInternal(hitObject, true);
     }
@@ -328,6 +348,19 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
         var channel = screen.Hitsounding.GetSample(hitObject.HitSound, hitsounds.Value);
         channel?.Play();
+    }
+
+    protected override int Compare(Drawable x, Drawable y)
+    {
+        var a = (DrawableHitObject)x;
+        var b = (DrawableHitObject)y;
+
+        var result = a.Data.Time.CompareTo(b.Data.Time);
+
+        if (result != 0)
+            return result;
+
+        return a.Data.Lane.CompareTo(b.Data.Lane);
     }
 
     private void loadMap()

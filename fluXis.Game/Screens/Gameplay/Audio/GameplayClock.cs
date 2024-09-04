@@ -66,6 +66,8 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     public override bool Seek(double position)
     {
+        position = Math.Max(-2000, position);
+
         var current = CurrentTime;
         var result = underlying.Seek(position);
         OnSeek?.Invoke(current, position);
