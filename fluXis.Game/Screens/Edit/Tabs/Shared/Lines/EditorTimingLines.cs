@@ -116,6 +116,7 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
                 var line = new Line
                 {
                     Time = position,
+                    Height = j % (point.Signature * settings.SnapDivisor) == 0 ? 5 : 3,
                     Colour = FluXisColors.GetEditorSnapColor(divisor)
                 };
 
