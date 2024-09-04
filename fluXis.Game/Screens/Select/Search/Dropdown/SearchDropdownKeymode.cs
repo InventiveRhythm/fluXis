@@ -20,8 +20,6 @@ public partial class SearchDropdownKeymode : CompositeDrawable
 
     private readonly int[] keymodes = { 4, 5, 6, 7, 8 };
 
-    private FillFlowContainer tictacs;
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -38,7 +36,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft
             },
-            tictacs = new FillFlowContainer
+            new FillFlowContainer
             {
                 AutoSizeAxes = Axes.X,
                 RelativeSizeAxes = Axes.Y,
@@ -55,7 +53,7 @@ public partial class SearchDropdownKeymode : CompositeDrawable
     {
         base.LoadComplete();
 
-        keymodeBindable.BindValueChanged(e => filters.KeyMode = e.NewValue, true);
+        keymodeBindable.BindValueChanged(e => filters.KeyMode = e.NewValue);
     }
 
     private partial class KeymodeButton : ClickableContainer
