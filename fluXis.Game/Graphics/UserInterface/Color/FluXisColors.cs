@@ -193,38 +193,18 @@ public static class FluXisColors
         };
     }
 
-    public static Colour4 GetEditorSnapColor(int divisor)
+    public static Colour4 GetEditorSnapColor(int divisor) => divisor switch
     {
-        switch (divisor)
-        {
-            case 1:
-                return Colour4.White;
-
-            case 2:
-                return Colour4.FromHex("#FF5555");
-
-            case 3:
-                return Colour4.FromHex("#8EFF55");
-
-            case 4:
-                return Colour4.FromHex("#558EFF");
-
-            case 6:
-                return Colour4.FromHex("#C655FF");
-
-            case 8:
-                return Colour4.FromHex("#FFE355");
-
-            case 12:
-                return Colour4.FromHex("#FF55AA");
-
-            case 16:
-                return Colour4.FromHex("#BFBFBF");
-
-            default:
-                return Colour4.White;
-        }
-    }
+        1 => Colour4.White,
+        2 => Colour4.FromHex("#FF5555"),
+        3 => Colour4.FromHex("#8EFF55"),
+        4 => Colour4.FromHex("#558EFF"),
+        6 => Colour4.FromHex("#C655FF"),
+        8 => Colour4.FromHex("#FFE355"),
+        12 => Colour4.FromHex("#FF55AA"),
+        16 => Colour4.FromHex("#BFBFBF"),
+        _ => Colour4.White
+    };
 
     public static Colour4 GetModTypeColor(ModType modType)
     {
