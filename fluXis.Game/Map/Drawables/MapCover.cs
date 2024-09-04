@@ -43,6 +43,7 @@ public partial class MapCover : Sprite, IHasLoadedValue
     private void setTexture()
     {
         Texture = MapSet?.GetCover() ?? textures.Get("Covers/default.png");
-        Loaded = true;
     }
+
+    public override void Show() => this.FadeInFromZero(400).OnComplete(_ => Loaded = true);
 }
