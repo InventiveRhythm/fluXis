@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -100,21 +101,22 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
         {
             var point = points[i];
 
-            if (point.HideLines || point.Signature == 0)
+            if (point.Signature == 0)
                 continue;
 
-            double target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
-            double increase = point.Signature * point.MsPerBeat / (4 * settings.SnapDivisor);
-            double position = point.Time;
+            var target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
+            var increase = point.MsPerBeat / settings.SnapDivisor;
 
             int j = 0;
 
-            while (position < target)
+            for (var position = point.Time; position < target; position += increase)
             {
+                var divisor = divisorForIndex(j, settings.SnapDivisor);
+
                 var line = new Line
                 {
                     Time = position,
-                    Colour = FluXisColors.GetEditorSnapColor(settings.SnapDivisor, j % settings.SnapDivisor, j)
+                    Colour = FluXisColors.GetEditorSnapColor(divisor)
                 };
 
                 LoadComponent(line);
@@ -126,10 +128,22 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
                 else
                     Add(line);
 
-                position += increase;
                 j++;
             }
         }
+    }
+
+    private static int divisorForIndex(int index, int snap)
+    {
+        var beat = index % snap;
+
+        foreach (int divisor in ChartingContainer.SNAP_DIVISORS)
+        {
+            if (beat * divisor % snap == 0)
+                return divisor;
+        }
+
+        return 0;
     }
 
     public partial class Line : Box, IComparable<Line>

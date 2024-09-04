@@ -193,37 +193,7 @@ public static class FluXisColors
         };
     }
 
-    public static Colour4 GetSnapColor(int divisor)
-    {
-        switch (divisor)
-        {
-            case 1:
-                return Colour4.FromHex("#FF5555");
-
-            case 2:
-                return Colour4.FromHex("#558EFF");
-
-            case 3:
-                return Colour4.FromHex("#8EFF55");
-
-            case 4:
-                return Colour4.FromHex("#FFE355");
-
-            case 6:
-                return Colour4.FromHex("#C655FF");
-
-            case 8:
-                return Colour4.FromHex("#55FFAA");
-
-            case 12:
-                return Colour4.FromHex("#FF55AA");
-
-            default:
-                return Colour4.FromHex("#BFBFBF");
-        }
-    }
-
-    public static Colour4 GetEditorSnapColor(int divisor, int val, int i)
+    public static Colour4 GetEditorSnapColor(int divisor)
     {
         switch (divisor)
         {
@@ -231,32 +201,28 @@ public static class FluXisColors
                 return Colour4.White;
 
             case 2:
-                return val == 0 ? Colour4.White : Colour4.Red;
-
-            case 4:
-                return val switch
-                {
-                    0 or 4 => Colour4.White,
-                    1 or 3 => Colour4.FromHex("#0085ff"),
-                    _ => Colour4.Red
-                };
+                return Colour4.FromHex("#FF5555");
 
             case 3:
-            case 6:
-            case 12:
-                if (val % 3 == 0) return Colour4.Red;
+                return Colour4.FromHex("#8EFF55");
 
-                return val == 0 ? Colour4.White : Colour4.Purple;
+            case 4:
+                return Colour4.FromHex("#558EFF");
+
+            case 6:
+                return Colour4.FromHex("#C655FF");
 
             case 8:
-            case 16:
-                if (val == 0) return Colour4.White;
-                if ((i - 1) % 2 == 0) return Colour4.Gold;
+                return Colour4.FromHex("#FFE355");
 
-                return i % 4 == 0 ? Colour4.Red : Colour4.FromHex("#0085ff");
+            case 12:
+                return Colour4.FromHex("#FF55AA");
+
+            case 16:
+                return Colour4.FromHex("#BFBFBF");
 
             default:
-                return val != 0 ? Colour4.FromHex(i % 2 == 0 ? "#af4fb8" : "#4e94b7") : Colour4.White;
+                return Colour4.White;
         }
     }
 
