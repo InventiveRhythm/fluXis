@@ -86,6 +86,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     private readonly BindableDouble inactiveVolume = new(1f);
 
+    public bool AnyOverlayOpen => overlayContainer.Any(x => x.State.Value == Visibility.Visible);
     private Bindable<bool> allowOverlays { get; } = new(true);
 
     [UsedImplicitly]

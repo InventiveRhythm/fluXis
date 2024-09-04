@@ -556,7 +556,8 @@ public partial class MenuScreen : FluXisScreen
     {
         playButton.Description = LocalizationStrings.MainMenu.PlayDescription(mapCount);
 
-        inactivityTime += Time.Elapsed;
+        if (!Game.AnyOverlayOpen)
+            inactivityTime += Time.Elapsed;
 
         if (inactivityTime > inactivity_timeout && pressedStart)
         {
