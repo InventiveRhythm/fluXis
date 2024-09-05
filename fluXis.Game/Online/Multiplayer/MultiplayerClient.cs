@@ -25,6 +25,7 @@ public abstract partial class MultiplayerClient : Component
     public event Action<string> MapChangeFailed;
 
     public event Action OnStart;
+    public event Action<long, int> OnScore;
     public event Action<List<ScoreInfo>> OnResultsReady;
 
     public event Action OnDisconnect;
@@ -109,7 +110,27 @@ public abstract partial class MultiplayerClient : Component
 
     protected Task Starting()
     {
-        Schedule(() => OnStart?.Invoke());
+        Schedule(() =>
+        {
+            Room.Scores = new List<ScoreInfo>();
+            Room.Scores.AddRange(Room.Participants.Where(p => p.ID != Player.ID).Select(p => new ScoreInfo { PlayerID = p.ID }));
+
+            OnStart?.Invoke();
+        });
+
+        return Task.CompletedTask;
+    }
+
+    protected Task ScoreUpdated(long id, int score)
+    {
+        Schedule(() =>
+        {
+            if (id == Player.ID)
+                return;
+
+            OnScore?.Invoke(id, score);
+        });
+
         return Task.CompletedTask;
     }
 
@@ -147,6 +168,7 @@ public abstract partial class MultiplayerClient : Component
     protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
     public abstract Task LeaveRoom();
     public abstract Task ChangeMap(long map, string hash);
+    public abstract Task UpdateScore(int score);
     public abstract Task Finish(ScoreInfo score);
 
     #endregion

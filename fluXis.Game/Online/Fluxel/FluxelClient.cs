@@ -343,6 +343,7 @@ public partial class FluxelClient : Component, IAPIClient
             // EventType.MultiplayerRoomUpdate => handleListener<MultiplayerRoomUpdate>,
             EventType.MultiplayerReady => handleListener<MultiReadyPacket>,
             EventType.MultiplayerStartGame => handleListener<MultiStartPacket>,
+            EventType.MultiplayerScore => handleListener<MultiScorePacket>,
             EventType.MultiplayerFinish => handleListener<MultiFinishPacket>,
             _ => _ => { }
         };
@@ -538,6 +539,7 @@ public partial class FluxelClient : Component, IAPIClient
             PacketIDs.MULTIPLAYER_UPDATE => EventType.MultiplayerRoomUpdate,
             PacketIDs.MULTIPLAYER_READY => EventType.MultiplayerReady,
             PacketIDs.MULTIPLAYER_START => EventType.MultiplayerStartGame,
+            PacketIDs.MULTIPLAYER_SCORE => EventType.MultiplayerScore,
             PacketIDs.MULTIPLAYER_FINISH => EventType.MultiplayerFinish,
 
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown packet ID!")
@@ -581,5 +583,6 @@ public enum EventType
     MultiplayerRoomUpdate,
     MultiplayerReady,
     MultiplayerStartGame,
+    MultiplayerScore,
     MultiplayerFinish
 }

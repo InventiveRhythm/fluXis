@@ -309,7 +309,7 @@ public partial class MultiLobby : MultiSubScreen
 
         var mods = new List<IMod>();
 
-        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods)));
+        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room.Scores }));
     }
 
     public override bool OnExiting(ScreenExitEvent e)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Mods;
@@ -6,6 +7,7 @@ using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
 using osu.Framework.Screens;
 
@@ -43,6 +45,9 @@ public partial class MultiGameplayScreen : GameplayScreen
         base.LoadComplete();
         HealthProcessor.CanFail = false;
 
+        JudgementProcessor.ResultAdded += sendScore;
+
+        client.OnScore += onScoreUpdate;
         client.OnResultsReady += onOnResultsReady;
         client.OnDisconnect += onDisconnect;
     }
@@ -50,6 +55,10 @@ public partial class MultiGameplayScreen : GameplayScreen
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
+
+        JudgementProcessor.ResultAdded -= sendScore;
+
+        client.OnScore -= onScoreUpdate;
         client.OnResultsReady -= onOnResultsReady;
         client.OnDisconnect -= onDisconnect;
     }
@@ -57,6 +66,18 @@ public partial class MultiGameplayScreen : GameplayScreen
     protected override void End()
     {
         client.Finish(ScoreProcessor.ToScoreInfo());
+    }
+
+    private void sendScore(HitResult _) => client.UpdateScore(ScoreProcessor.Score);
+
+    private void onScoreUpdate(long user, int score)
+    {
+        var si = client.Room.Scores.FirstOrDefault(s => s.PlayerID == user);
+
+        if (si is null)
+            return;
+
+        si.Score = score;
     }
 
     private void onOnResultsReady(List<ScoreInfo> scores)

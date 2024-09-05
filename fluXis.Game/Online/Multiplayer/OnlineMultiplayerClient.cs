@@ -28,6 +28,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         api.RegisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
         api.RegisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
         api.RegisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
+        api.RegisterListener<MultiScorePacket>(EventType.MultiplayerScore, onScoreUpdate);
         api.RegisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
@@ -42,6 +43,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         api.UnregisterListener<MultiStatePacket>(EventType.MultiplayerState, onUserStateChange);
         api.UnregisterListener<MultiMapPacket>(EventType.MultiplayerMap, onMapChange);
         api.UnregisterListener<MultiStartPacket>(EventType.MultiplayerStartGame, onStartGame);
+        api.UnregisterListener<MultiScorePacket>(EventType.MultiplayerScore, onScoreUpdate);
         api.UnregisterListener<MultiFinishPacket>(EventType.MultiplayerFinish, onGameFinished);
     }
 
@@ -65,6 +67,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     private void onUserStateChange(FluxelReply<MultiStatePacket> reply) => UserStateChanged(reply.Data!.UserID, reply.Data.State);
     private void onMapChange(FluxelReply<MultiMapPacket> reply) => MapChanged(reply.Success, reply.Data.Map, reply.Message);
     private void onStartGame(FluxelReply<MultiStartPacket> reply) => Starting();
+    private void onScoreUpdate(FluxelReply<MultiScorePacket> reply) => ScoreUpdated(reply.Data!.UserID, reply.Data.Score);
     private void onGameFinished(FluxelReply<MultiFinishPacket> reply) => ResultsReady(reply.Data.Scores);
 
     protected override async Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash)
@@ -93,6 +96,12 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     public override Task ChangeMap(long map, string hash)
     {
         api.SendPacketAsync(MultiMapPacket.CreateC2S(map, hash));
+        return Task.CompletedTask;
+    }
+
+    public override Task UpdateScore(int score)
+    {
+        api.SendPacketAsync(MultiScorePacket.CreateC2S(score));
         return Task.CompletedTask;
     }
 
