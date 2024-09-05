@@ -330,7 +330,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         if (screen.HealthProcessor.Failed)
             return;
 
-        var result = new HitResult(hitObject.Data.Time, difference, judgement);
+        var result = new HitResult(Time.Current, difference, judgement);
         judgementProcessor.AddResult(result);
 
         if (isHoldEnd)
