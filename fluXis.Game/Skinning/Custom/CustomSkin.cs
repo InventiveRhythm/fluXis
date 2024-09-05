@@ -264,7 +264,11 @@ public class CustomSkin : ISkin
         return null;
     }
 
-    public Drawable GetResultsScoreRank(ScoreRank rank) => null;
+    public Drawable GetResultsScoreRank(ScoreRank rank)
+    {
+        var path = SkinJson.GetOverrideOrDefault($"Results/rank-{rank.ToString().ToLower()}") + ".png";
+        return storage.Exists(path) ? new SkinnableSprite(textures.Get(path)) : null;
+    }
 
     public Sample GetHitSample() => samples.Get("Samples/Gameplay/hit");
 
