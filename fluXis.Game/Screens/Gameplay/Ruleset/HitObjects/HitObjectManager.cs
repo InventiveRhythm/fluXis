@@ -360,7 +360,12 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         if (result != 0)
             return result;
 
-        return a.Data.Lane.CompareTo(b.Data.Lane);
+        result = a.Data.Lane.CompareTo(b.Data.Lane);
+
+        if (result != 0)
+            return result;
+
+        return a.Data.GetHashCode().CompareTo(b.Data.GetHashCode());
     }
 
     private void loadMap()
