@@ -30,6 +30,15 @@ public partial class Playfield : Container
     private bool canSeek { get; }
     public override bool RemoveCompletedTransforms => !canSeek;
 
+    public float RelativePosition
+    {
+        get
+        {
+            var screenWidth = screen.DrawWidth;
+            return (X + screenWidth / 2) / screenWidth;
+        }
+    }
+
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager Manager { get; private set; }
     public Stage Stage { get; private set; }
@@ -150,9 +159,7 @@ public partial class Playfield : Container
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
 
-        var screenWidth = screen.DrawWidth;
-        var relativePos = (X + screenWidth / 2) / screenWidth;
-        screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(relativePos * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
+        screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(RelativePosition * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

@@ -36,6 +36,7 @@ using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Game.Screens.Gameplay.HUD;
+using fluXis.Game.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
 using fluXis.Game.Screens.Gameplay.Overlay.Effect;
@@ -47,6 +48,7 @@ using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
+using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
@@ -132,6 +134,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public Action OnRestart { get; set; }
     private ReplayRecorder replayRecorder;
 
+    public List<ScoreInfo> Scores { get; init; } = new();
+
     public MapInfo Map { get; private set; }
     public RealmMap RealmMap { get; }
     public MapEvents MapEvents { get; private set; }
@@ -215,6 +219,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             HealthProcessor = CreateHealthProcessor(),
             ScoreProcessor = new ScoreProcessor
             {
+                Player = CurrentPlayer,
                 HitWindows = HitWindows,
                 Map = RealmMap,
                 MapInfo = Map,
@@ -330,6 +335,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                 new ModsDisplay()
                             }
                         },
+                        new GameplayLeaderboard(Scores, ScoreProcessor),
                         CreateTextOverlay(),
                         new DangerHealthOverlay(),
                         new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay),
@@ -480,14 +486,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         Task.Run(() =>
         {
-            var player = CurrentPlayer;
-
             var bestScore = scores.GetCurrentTop(RealmMap.ID);
 
-            var score = ScoreProcessor.ToScoreInfo(player);
+            var score = ScoreProcessor.ToScoreInfo();
             score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
-            var screen = new SoloResults(RealmMap, score, player);
+            var screen = new SoloResults(RealmMap, score, CurrentPlayer);
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 

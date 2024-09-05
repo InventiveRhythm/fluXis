@@ -519,7 +519,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             });
         }
         else
-            this.Push(new GameplayLoader(MapStore.CurrentMap, mods, () => new GameplayScreen(MapStore.CurrentMap, mods)));
+            this.Push(new GameplayLoader(MapStore.CurrentMap, mods, () => new GameplayScreen(MapStore.CurrentMap, mods) { Scores = selectMapInfo.ScoreList.CurrentScores.ToList() }));
     }
 
     public void ViewReplay(RealmMap map, RealmScore score)
@@ -555,7 +555,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         this.Push(new GameplayLoader(map, mods, () =>
         {
             var replay = replayFunc();
-            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay);
+            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay) { Scores = selectMapInfo.ScoreList.CurrentScores.ToList() };
         }));
     }
 

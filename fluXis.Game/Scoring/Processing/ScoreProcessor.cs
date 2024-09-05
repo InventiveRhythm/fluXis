@@ -16,6 +16,8 @@ public class ScoreProcessor : JudgementDependant
 {
     public event Action OnComboBreak;
 
+    public APIUser Player { get; set; } = APIUser.Default;
+
     public HitWindows HitWindows { get; init; }
     public RealmMap Map { get; init; }
     public MapInfo MapInfo { get; init; }
@@ -115,7 +117,7 @@ public class ScoreProcessor : JudgementDependant
         return val;
     }
 
-    public ScoreInfo ToScoreInfo(APIUser player = null) => new()
+    public ScoreInfo ToScoreInfo() => new()
     {
         Accuracy = Accuracy.Value,
         PerformanceRating = PerformanceRating.Value,
@@ -131,7 +133,7 @@ public class ScoreProcessor : JudgementDependant
         Miss = Miss,
         HitResults = JudgementProcessor.Results,
         MapID = Map.OnlineID,
-        PlayerID = player?.ID ?? -1,
+        PlayerID = Player.ID,
         MapHash = MapInfo.Hash,
         Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
         Mods = Mods.Select(m => m.Acronym).ToList()

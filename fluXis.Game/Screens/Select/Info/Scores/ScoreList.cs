@@ -27,6 +27,7 @@ using fluXis.Game.Scoring;
 using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Scores;
 using fluXis.Shared.Replays;
+using fluXis.Shared.Scoring;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -70,6 +71,8 @@ public partial class ScoreList : GridContainer
     [Resolved(CanBeNull = true)]
     private SelectScreen screen { get; set; }
 
+    public IEnumerable<ScoreInfo> CurrentScores => scrollContainer.ScrollContent.Children.Select(c => c.ScoreInfo);
+
     private RealmMap map;
     private Bindable<ScoreListType> type;
 
@@ -78,7 +81,7 @@ public partial class ScoreList : GridContainer
 
     private FillFlowContainer outOfDateContainer;
     private FluXisSpriteText noScoresText;
-    private FluXisScrollContainer scrollContainer;
+    private FluXisScrollContainer<ScoreListEntry> scrollContainer;
     private FillFlowContainer<LeaderboardTypeButton> typeSwitcher;
     private LoadingIcon loadingIcon;
 
@@ -180,7 +183,7 @@ public partial class ScoreList : GridContainer
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding { Right = 10 },
                             Masking = true,
-                            Child = scrollContainer = new FluXisScrollContainer
+                            Child = scrollContainer = new FluXisScrollContainer<ScoreListEntry>
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 ScrollbarAnchor = Anchor.TopRight,

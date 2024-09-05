@@ -56,7 +56,7 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     protected override void End()
     {
-        client.Finish(ScoreProcessor.ToScoreInfo(client.Player));
+        client.Finish(ScoreProcessor.ToScoreInfo());
     }
 
     private void onOnResultsReady(List<ScoreInfo> scores)
