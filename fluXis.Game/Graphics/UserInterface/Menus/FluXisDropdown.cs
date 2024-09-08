@@ -1,3 +1,4 @@
+using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
@@ -58,7 +59,13 @@ public partial class FluXisDropdown<T> : Dropdown<T>
             };
         }
 
-        protected override DropdownSearchBar CreateSearchBar() => new FluXisDropdownSearchBar();
+        protected void UpdateOpenState(bool state)
+        {
+            var vec = new Vector2(1, state ? -1 : 1);
+            Icon.ScaleTo(vec, 400, Easing.OutQuint);
+        }
+
+        protected override DropdownSearchBar CreateSearchBar() => new FluXisDropdownSearchBar(UpdateOpenState);
 
         protected override bool OnHover(HoverEvent e)
         {
@@ -71,17 +78,23 @@ public partial class FluXisDropdown<T> : Dropdown<T>
             protected virtual int SidePadding => 14;
             protected virtual float FontSize => FluXisSpriteText.GetWebFontSize(16);
 
-            protected override TextBox CreateTextBox()
+            private Action<bool> stateAction { get; }
+
+            public FluXisDropdownSearchBar(Action<bool> stateAction)
             {
-                return new FluXisTextBox
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 40,
-                    SidePadding = SidePadding,
-                    FontSize = FontSize,
-                    PlaceholderText = "Search"
-                };
+                this.stateAction = stateAction;
             }
+
+            protected override TextBox CreateTextBox() => new FluXisTextBox
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 40,
+                SidePadding = SidePadding,
+                FontSize = FontSize,
+                PlaceholderText = "Search",
+                OnFocusAction = () => stateAction?.Invoke(true),
+                OnFocusLostAction = () => stateAction?.Invoke(false)
+            };
 
             protected override void PopIn() => this.FadeIn(200);
             protected override void PopOut() => this.FadeOut(200);

@@ -85,10 +85,15 @@ public partial class PointSettingsDropdown<T> : Container, IHasTooltip
                 Foreground.Padding = new MarginPadding { Horizontal = 10 };
             }
 
-            protected override DropdownSearchBar CreateSearchBar() => new CustomSearch();
+            protected override DropdownSearchBar CreateSearchBar() => new CustomSearch(UpdateOpenState);
 
             private partial class CustomSearch : FluXisDropdownSearchBar
             {
+                public CustomSearch(Action<bool> stateAction)
+                    : base(stateAction)
+                {
+                }
+
                 protected override int SidePadding => 10;
             }
         }

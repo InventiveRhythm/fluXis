@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
@@ -23,8 +24,12 @@ public partial class FluXisTextBox : BasicTextBox
     public int SidePadding { get; set; } = 5;
     public float TextContainerHeight { get; set; } = .75f;
     public bool IsPassword { get; set; }
+
     public Action OnTextChanged { get; set; }
     public Action OnCommitAction { get; set; }
+
+    public Action OnFocusAction { get; set; }
+    public Action OnFocusLostAction { get; set; }
 
     private Container textContainer => TextContainer;
 
@@ -116,6 +121,18 @@ public partial class FluXisTextBox : BasicTextBox
     {
         samples.Error();
         base.NotifyInputError();
+    }
+
+    protected override void OnFocus(FocusEvent e)
+    {
+        base.OnFocus(e);
+        OnFocusAction?.Invoke();
+    }
+
+    protected override void OnFocusLost(FocusLostEvent e)
+    {
+        base.OnFocusLost(e);
+        OnFocusLostAction?.Invoke();
     }
 
     protected override Drawable GetDrawableCharacter(char c)
