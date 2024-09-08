@@ -14,13 +14,15 @@ namespace fluXis.Game.Screens.Result;
 public partial class ResultsContent : CompositeDrawable
 {
     [Resolved]
-    private SoloResults screen { get; set; }
+    private Results screen { get; set; }
 
     [Resolved]
     private SkinManager skins { get; set; }
 
     [Resolved]
     private ScoreInfo score { get; set; }
+
+    private Drawable[] rightContent;
 
     private bool rankMoveSmoothly;
     private bool rankUseCenter;
@@ -30,6 +32,11 @@ public partial class ResultsContent : CompositeDrawable
     private ResultsSideList left;
     private ResultsCenter center;
     private ResultsSideList right;
+
+    public ResultsContent(Drawable[] rightContent)
+    {
+        this.rightContent = rightContent;
+    }
 
     [BackgroundDependencyLoader]
     private void load(SkinManager skins)
@@ -86,10 +93,7 @@ public partial class ResultsContent : CompositeDrawable
                                     center = new ResultsCenter(),
                                     right = new ResultsSideList
                                     {
-                                        Children = new Drawable[]
-                                        {
-                                            new ResultsSideRankings(screen.SubmitRequest)
-                                        }
+                                        Children = rightContent
                                     }
                                 }
                             }

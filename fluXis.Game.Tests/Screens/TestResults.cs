@@ -68,19 +68,13 @@ public partial class TestResults : FluXisTestScene
     };
 
     [Test]
-    public void FromGameplay()
-    {
-        AddStep("Push", () => stack.Push(new SoloResults(getMap(), getScore(), APIUser.Dummy) { ForceFromGameplay = true }));
-    }
-
-    [Test]
     public void Normal()
     {
-        AddStep("Push", () => stack.Push(new SoloResults(getMap(), getScore(), APIUser.Dummy)));
+        AddStep("Push", () => stack.Push(new Results(getMap(), getScore(), APIUser.Dummy)));
     }
 
     [Test]
-    public void WithRequest()
+    public void WithRequestFromGameplay()
     {
         var score = getScore();
         AddStep("Push With Request", () => stack.Push(new SoloResults(getMap(), score, APIUser.Dummy) { SubmitRequest = new SimulatedScoreRequest(score) }));
@@ -89,7 +83,7 @@ public partial class TestResults : FluXisTestScene
     [Test]
     public void WithRestart()
     {
-        AddStep("Push With Restart", () => stack.Push(new SoloResults(getMap(), getScore(), APIUser.Dummy) { OnRestart = () => Logger.Log("Restart pressed.") }));
+        AddStep("Push With Restart", () => stack.Push(new Results(getMap(), getScore(), APIUser.Dummy) { OnRestart = () => Logger.Log("Restart pressed.") }));
     }
 
     private class SimulatedScoreRequest : ScoreSubmitRequest

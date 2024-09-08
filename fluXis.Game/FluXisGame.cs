@@ -340,7 +340,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         if (map == null || score == null)
             throw new ArgumentNullException();
 
-        screenStack.Push(new SoloResults(map, score, player));
+        screenStack.Push(new Results(map, score, player));
     }
 
     public void PresentUser(long id)

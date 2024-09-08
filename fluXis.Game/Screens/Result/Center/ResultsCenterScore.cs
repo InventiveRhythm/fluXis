@@ -10,7 +10,7 @@ namespace fluXis.Game.Screens.Result.Center;
 public partial class ResultsCenterScore : CompositeDrawable
 {
     [BackgroundDependencyLoader]
-    private void load(SoloResults results, ScoreInfo score)
+    private void load(Results results, ScoreInfo score)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
