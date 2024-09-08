@@ -52,7 +52,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = LocalizationStrings.General.Back,
-        Icon = FontAwesome6.Solid.ChevronLeft,
+        Icon = FontAwesome6.Solid.AngleLeft,
         Action = BackAction,
         PlayClickSound = false
     };

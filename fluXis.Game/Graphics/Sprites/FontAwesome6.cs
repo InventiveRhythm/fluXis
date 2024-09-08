@@ -13,6 +13,10 @@ public class FontAwesome6
         public static IconUsage GetSolid(int icon) => get(icon).With(weight: "Solid");
 
         public static IconUsage AngleDoubleRight => GetSolid(0xf101);
+        public static IconUsage AngleDown => GetSolid(0xf107);
+        public static IconUsage AngleLeft => GetSolid(0xf104);
+        public static IconUsage AngleRight => GetSolid(0xf105);
+        public static IconUsage AngleUp => GetSolid(0xf106);
         public static IconUsage ArrowDown => GetSolid(0xf063);
         public static IconUsage ArrowPointer => GetSolid(0xf245);
         public static IconUsage ArrowRight => GetSolid(0xf061);
@@ -29,10 +33,6 @@ public class FontAwesome6
         public static IconUsage CandyCane => GetSolid(0xf786);
         public static IconUsage ChartLine => GetSolid(0xf201);
         public static IconUsage Check => GetSolid(0xf00c);
-        public static IconUsage ChevronDown => GetSolid(0xf078);
-        public static IconUsage ChevronLeft => GetSolid(0xf053);
-        public static IconUsage ChevronRight => GetSolid(0xf054);
-        public static IconUsage ChevronUp => GetSolid(0xf077);
         public static IconUsage Circle => GetSolid(0xf111);
         public static IconUsage Clock => GetSolid(0xf017);
         public static IconUsage Clone => GetSolid(0xf24d);

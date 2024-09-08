@@ -32,7 +32,7 @@ public partial class HitErrorBar : GameplayHUDComponent
         {
             icon = new SpriteIcon
             {
-                Icon = FontAwesome6.Solid.ChevronDown,
+                Icon = FontAwesome6.Solid.AngleDown,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Size = new Vector2(16)

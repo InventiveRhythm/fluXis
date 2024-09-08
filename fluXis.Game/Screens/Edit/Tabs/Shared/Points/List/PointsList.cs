@@ -116,7 +116,7 @@ public abstract partial class PointsList : Container
                             },
                             iconUp = new SpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.ChevronUp,
+                                Icon = FontAwesome6.Solid.AngleUp,
                                 Size = new Vector2(16),
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
@@ -124,7 +124,7 @@ public abstract partial class PointsList : Container
                             },
                             iconDown = new SpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.ChevronDown,
+                                Icon = FontAwesome6.Solid.AngleDown,
                                 Size = new Vector2(16),
                                 Anchor = Anchor.BottomCentre,
                                 Origin = Anchor.BottomCentre,

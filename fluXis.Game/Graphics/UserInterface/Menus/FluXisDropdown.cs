@@ -50,7 +50,7 @@ public partial class FluXisDropdown<T> : Dropdown<T>
                 },
                 Icon = new SpriteIcon
                 {
-                    Icon = FontAwesome6.Solid.ChevronDown,
+                    Icon = FontAwesome6.Solid.AngleDown,
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight,
                     Size = new Vector2(16)

@@ -9,6 +9,6 @@ public class TickNoteTool : ChartingTool
 {
     public override string Name => "Tick Note";
     public override string Description => "Creates a tick note.";
-    public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome6.Solid.ChevronDown };
+    public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome6.Solid.AngleDown };
     public override PlacementBlueprint CreateBlueprint() => new TickNotePlacementBlueprint();
 }

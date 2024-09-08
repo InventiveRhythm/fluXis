@@ -19,7 +19,7 @@ public partial class MultiLobbyListFooter : Footer
     protected override CornerButton CreateLeftButton() => new()
     {
         ButtonText = LocalizationStrings.General.Back,
-        Icon = FontAwesome6.Solid.ChevronLeft,
+        Icon = FontAwesome6.Solid.AngleLeft,
         Action = BackAction
     };
 

@@ -182,7 +182,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             },
             backButton = new CornerButton
             {
-                Icon = FontAwesome6.Solid.ChevronLeft,
+                Icon = FontAwesome6.Solid.AngleLeft,
                 ButtonText = LocalizationStrings.General.Back,
                 Action = this.Exit
             },

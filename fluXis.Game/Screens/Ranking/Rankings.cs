@@ -159,7 +159,7 @@ public partial class Rankings : FluXisScreen, IKeyBindingHandler<FluXisGlobalKey
                                 {
                                     Corner = Corner.BottomLeft,
                                     ButtonText = LocalizationStrings.General.Back,
-                                    Icon = FontAwesome6.Solid.ChevronLeft,
+                                    Icon = FontAwesome6.Solid.AngleLeft,
                                     Action = this.Exit
                                 }
                             }

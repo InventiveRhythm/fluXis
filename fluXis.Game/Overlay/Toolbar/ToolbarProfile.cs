@@ -139,7 +139,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
                             },
                             arrow = new SpriteIcon
                             {
-                                Icon = FontAwesome6.Solid.ChevronDown,
+                                Icon = FontAwesome6.Solid.AngleDown,
                                 Size = new Vector2(10),
                                 Y = 40,
                                 Anchor = Anchor.TopCentre,

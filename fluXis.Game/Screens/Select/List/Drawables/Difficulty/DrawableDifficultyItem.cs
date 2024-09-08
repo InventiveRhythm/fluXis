@@ -182,7 +182,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                 Child = new SpriteIcon
                 {
                     X = -2,
-                    Icon = FontAwesome6.Solid.ChevronLeft,
+                    Icon = FontAwesome6.Solid.AngleLeft,
                     Size = new Vector2(16),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,

@@ -40,7 +40,7 @@ public partial class DropdownIcon : Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Icon = FontAwesome6.Solid.ChevronDown,
+                    Icon = FontAwesome6.Solid.AngleDown,
                     Size = new Vector2(24)
                 }
             }

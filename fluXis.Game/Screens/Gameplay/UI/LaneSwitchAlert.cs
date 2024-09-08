@@ -49,7 +49,7 @@ public partial class LaneSwitchAlert : Container
                 {
                     leftIcon = new SpriteIcon
                     {
-                        Icon = FontAwesome6.Solid.ChevronLeft,
+                        Icon = FontAwesome6.Solid.AngleLeft,
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -66,7 +66,7 @@ public partial class LaneSwitchAlert : Container
                 {
                     rightIcon = new SpriteIcon
                     {
-                        Icon = FontAwesome6.Solid.ChevronRight,
+                        Icon = FontAwesome6.Solid.AngleRight,
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,

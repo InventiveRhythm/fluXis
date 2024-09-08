@@ -163,7 +163,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
             return new SpriteIcon
             {
                 Size = new Vector2(16),
-                Icon = FontAwesome6.Solid.ChevronRight
+                Icon = FontAwesome6.Solid.AngleRight
             };
         }
 
