@@ -1,4 +1,5 @@
-﻿using fluXis.Game.Database.Maps;
+﻿using System.Collections.Generic;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Screens.Result.Sides.Types;
 using fluXis.Shared.Components.Users;
@@ -25,8 +26,14 @@ public partial class SoloResults : Results
         ExtraDependencies.CacheAs(this);
     }
 
-    protected override Drawable[] CreateRightContent() => new Drawable[]
+    protected override Drawable[] CreateRightContent()
     {
-        new ResultsSideRankings(SubmitRequest)
-    };
+        var list = new List<Drawable>();
+
+        if (Map.OnlineID > 0)
+            list.Add(new ResultsSideVoting());
+
+        list.Add(new ResultsSideRankings(SubmitRequest));
+        return list.ToArray();
+    }
 }
