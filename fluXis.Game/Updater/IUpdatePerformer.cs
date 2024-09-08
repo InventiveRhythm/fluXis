@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace fluXis.Game.Updater;
 
 /// <summary>
@@ -10,16 +8,11 @@ public interface IUpdatePerformer
     /// <summary>
     /// Performs an update. (If available)
     /// </summary>
-    /// <param name="version">
-    /// The version to update to.
+    /// <param name="silent">
+    /// Whether to show a notification when there is no new update.
     /// </param>
-    public void Perform(string version);
-
-    /// <summary>
-    /// Installs an update from a file.
-    /// </summary>
-    /// <param name="file">
-    /// The file to install from.
+    /// <param name="beta">
+    /// Whether to include beta versions.
     /// </param>
-    public void UpdateFromFile(FileInfo file);
+    public void Perform(bool silent, bool beta);
 }

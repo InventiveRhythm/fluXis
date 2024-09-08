@@ -42,20 +42,6 @@ public partial class DebugSection : SettingsSection
                     };
                 }
             },
-            new SettingsButton
-            {
-                Label = strings.InstallUpdateFromFile,
-                Description = strings.InstallUpdateFromFileDescription,
-                ButtonText = "Find",
-                Action = () =>
-                {
-                    panels.Content = new FileSelect
-                    {
-                        AllowedExtensions = new[] { ".zip" },
-                        OnFileSelected = file => game.CreateUpdatePerformer()?.UpdateFromFile(file)
-                    };
-                }
-            },
             new SettingsToggle
             {
                 Label = strings.LogAPI,

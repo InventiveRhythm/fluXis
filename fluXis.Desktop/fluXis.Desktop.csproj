@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="OpenRGB.NET" Version="3.0.1" />
+    <PackageReference Include="Velopack" Version="0.0.594" />
   </ItemGroup>
   <ItemGroup Label="Resources">
     <EmbeddedResource Include="game.ico" />

@@ -12,6 +12,7 @@ using osu.Framework.Platform;
 using osu.Framework;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
+using Velopack;
 
 namespace fluXis.Desktop;
 
@@ -21,6 +22,8 @@ public static class Program
 
     public static void Main(string[] args)
     {
+        VelopackApp.Build().Run();
+
         if (args.Contains("--generate-langfiles"))
         {
             generateDefaultLangfiles();

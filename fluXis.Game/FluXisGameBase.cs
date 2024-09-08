@@ -289,26 +289,15 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
-    public void PerformUpdateCheck(bool silent, bool forceUpdate = false)
+    public void PerformUpdateCheck(bool silent) => Task.Run(() =>
     {
-        Task.Run(() =>
-        {
-            var checker = new UpdateChecker(Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel));
+        var performer = CreateUpdatePerformer();
 
-            if (forceUpdate || checker.UpdateAvailable)
-            {
-                var performer = CreateUpdatePerformer();
-                var version = checker.LatestVersion;
+        if (performer is null)
+            return;
 
-                if (performer != null)
-                    performer.Perform(version);
-                else
-                    NotificationManager.SendText($"New update available! ({version})", "Check the github releases to download the latest version.", FontAwesome6.Solid.Download);
-            }
-            else if (!silent)
-                NotificationManager.SendText("No updates available.", "You are running the latest version.", FontAwesome6.Solid.Check);
-        });
-    }
+        performer.Perform(silent, Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel) == ReleaseChannel.Beta);
+    });
 
     private Season getSeason()
     {

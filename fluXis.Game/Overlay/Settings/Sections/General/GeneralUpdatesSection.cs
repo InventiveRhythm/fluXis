@@ -7,7 +7,6 @@ using fluXis.Game.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Input;
 using osu.Framework.Localisation;
 
 namespace fluXis.Game.Overlay.Settings.Sections.General;
@@ -18,8 +17,6 @@ public partial class GeneralUpdatesSection : SettingsSubSection
     public override IconUsage Icon => FontAwesome6.Solid.Rotate;
 
     private SettingsGeneralStrings strings => LocalizationStrings.Settings.General;
-
-    private InputManager inputManager;
 
     [BackgroundDependencyLoader]
     private void load(FluXisGameBase game)
@@ -38,14 +35,8 @@ public partial class GeneralUpdatesSection : SettingsSubSection
                 Label = strings.UpdatesCheck,
                 Description = strings.UpdatesCheckDescription,
                 ButtonText = "Check",
-                Action = () => game.PerformUpdateCheck(false, inputManager.CurrentState.Keyboard.AltPressed)
+                Action = () => game.PerformUpdateCheck(false)
             }
         });
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        inputManager = GetContainingInputManager();
     }
 }
