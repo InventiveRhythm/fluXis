@@ -79,7 +79,7 @@ public partial class CornerButton : Container
             _ => Anchor
         };
 
-        Shear = new Vector2(Corner is Corner.BottomLeft or Corner.TopLeft ? -.1f : .1f, 0);
+        Shear = new Vector2(Corner is Corner.BottomLeft or Corner.TopRight ? -.1f : .1f, 0);
         Position = new Vector2(Corner is Corner.BottomLeft or Corner.TopLeft ? -200 : 200, Corner is Corner.TopLeft or Corner.TopRight ? -corner_radius : corner_radius);
 
         InternalChildren = new Drawable[]
@@ -116,7 +116,7 @@ public partial class CornerButton : Container
                     Direction = FillDirection.Horizontal,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Spacing = new Vector2(10),
+                    Spacing = new Vector2(8),
                     Children = new Drawable[]
                     {
                         icon = new SpriteIcon
@@ -124,13 +124,13 @@ public partial class CornerButton : Container
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             Icon = Icon,
-                            Size = new Vector2(24)
+                            Size = new Vector2(16)
                         },
                         text = new FluXisSpriteText
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            FontSize = 24,
+                            WebFontSize = 16,
                             Text = ButtonText
                         }
                     }
