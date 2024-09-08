@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Audio;
@@ -172,7 +173,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         if (preload)
         {
-            AddInternal(component);
             action(component);
             return component;
         }
@@ -195,6 +195,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         if (LoadQueue.Count == 0)
             return;
 
+        var sw = new Stopwatch();
+        sw.Start();
+
         var next = LoadQueue.First();
         LoadQueue.Remove(next.Key);
 
@@ -208,6 +211,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         {
             action(c);
             loadInfo.FinishCurrent();
+
+            sw.Stop();
+            Logger.Log($"Finished loading {name} in {sw.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);
+
             loadNext();
         });
     }
