@@ -79,6 +79,7 @@ public partial class SearchFilterControls : CompositeDrawable
                     Margin = new MarginPadding { Top = 44 },
                     CornerRadius = 8,
                     Masking = true,
+                    EdgeEffect = FluXisStyles.ShadowSmall,
                     Children = new Drawable[]
                     {
                         new Box
@@ -96,6 +97,8 @@ public partial class SearchFilterControls : CompositeDrawable
                     }
                 }
             };
+
+            updateDropdown(false);
         }
 
         protected override void LoadComplete()
@@ -109,9 +112,15 @@ public partial class SearchFilterControls : CompositeDrawable
         private void updateDropdown(bool state)
         {
             if (state)
-                dropdown.ResizeHeightTo(item_height * values.Length, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+            {
+                dropdown.ResizeHeightTo(item_height * values.Length, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+                        .FadeEdgeEffectTo(FluXisStyles.SHADOW_OPACITY, FluXisScreen.FADE_DURATION);
+            }
             else
-                dropdown.ResizeHeightTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+            {
+                dropdown.ResizeHeightTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+                        .FadeEdgeEffectTo(0, FluXisScreen.FADE_DURATION);
+            }
         }
 
         private partial class Header : CompositeDrawable

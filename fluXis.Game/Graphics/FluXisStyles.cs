@@ -6,6 +6,8 @@ namespace fluXis.Game.Graphics;
 
 public static class FluXisStyles
 {
+    public const float SHADOW_OPACITY = .25f;
+
     public static EdgeEffectParameters ShadowSmall => createShadow(5, 2);
     public static EdgeEffectParameters ShadowSmallNoOffset => createShadow(5, 0);
 
@@ -25,7 +27,7 @@ public static class FluXisStyles
     private static EdgeEffectParameters createShadow(int radius, float offset) => new()
     {
         Type = EdgeEffectType.Shadow,
-        Colour = Colour4.Black.Opacity(.25f),
+        Colour = Colour4.Black.Opacity(SHADOW_OPACITY),
         Radius = radius,
         Offset = new Vector2(0, offset)
     };
