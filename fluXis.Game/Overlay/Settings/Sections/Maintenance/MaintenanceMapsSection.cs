@@ -86,6 +86,13 @@ public partial class MaintenanceMapsSection : SettingsSubSection
                             continue;
 
                         var data = map.GetMapInfo();
+
+                        if (data is null)
+                            continue;
+
+                        existing.AccuracyDifficulty = map.AccuracyDifficulty = data.AccuracyDifficulty;
+                        existing.HealthDifficulty = map.HealthDifficulty = data.HealthDifficulty;
+
                         var events = data.GetMapEvents();
 
                         var filters = MapUtils.GetMapFilters(data, events);

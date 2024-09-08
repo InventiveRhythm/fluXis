@@ -224,6 +224,8 @@ public class FluXisImport : MapImporter
                         ColorHex = string.IsNullOrEmpty(mapInfo.Colors.AccentHex) ? "" : mapInfo.Colors.AccentHex,
                     },
                     Difficulty = mapInfo.Metadata.Difficulty ?? "",
+                    AccuracyDifficulty = mapInfo.AccuracyDifficulty,
+                    HealthDifficulty = mapInfo.HealthDifficulty,
                     MapSet = mapSet,
                     Hash = hash,
                     KeyCount = keys,
