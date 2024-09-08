@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;
@@ -65,7 +64,7 @@ public partial class AudioDeviceSection : SettingsSubSection
     {
         protected override Dropdown<string> CreateMenu() => new AudioDropdownMenu();
 
-        private partial class AudioDropdownMenu : FluXisDropdown<string>
+        private partial class AudioDropdownMenu : CustomDropdown
         {
             protected override LocalisableString GenerateItemText(string item)
                 => string.IsNullOrEmpty(item) ? "Default" : base.GenerateItemText(item);

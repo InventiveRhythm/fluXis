@@ -58,7 +58,21 @@ public partial class SettingsDropdown<T> : SettingsItem
         }));
     }
 
-    protected virtual Dropdown<T> CreateMenu() => new FluXisDropdown<T>();
+    protected virtual Dropdown<T> CreateMenu() => new CustomDropdown();
 
     protected override void Reset() => Bindable.SetDefault();
+
+    protected partial class CustomDropdown : FluXisDropdown<T>
+    {
+        protected override DropdownMenu CreateMenu() => new CustomMenu();
+
+        protected partial class CustomMenu : FluXisDropdownMenu
+        {
+            public CustomMenu()
+            {
+                MaxHeight = 280;
+                ScrollbarVisible = true;
+            }
+        }
+    }
 }
