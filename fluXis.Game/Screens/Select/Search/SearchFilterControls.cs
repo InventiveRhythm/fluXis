@@ -194,7 +194,7 @@ public partial class SearchFilterControls : CompositeDrawable
                 };
             }
 
-            protected override bool OnClick(ClickEvent e) => true;
+            protected override bool OnClick(ClickEvent e) => !HasFocus;
             protected override void OnFocus(FocusEvent e) => focusAction?.Invoke(true);
             protected override void OnFocusLost(FocusLostEvent e) => focusAction?.Invoke(false);
         }
