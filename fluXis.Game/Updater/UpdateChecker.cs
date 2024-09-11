@@ -63,7 +63,7 @@ public class UpdateChecker
 
     private string fetchLatestVersion()
     {
-        const string url = "https://api.github.com/repos/TeamFluXis/fluXis/releases";
+        const string url = "https://api.github.com/repos/InventiveRhythm/fluXis/releases";
         var request = new WebRequest(url);
         request.AddHeader("User-Agent", "fluXis.Updater");
         request.Method = HttpMethod.Get;

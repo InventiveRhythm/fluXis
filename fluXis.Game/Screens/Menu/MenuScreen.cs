@@ -333,7 +333,7 @@ public partial class MenuScreen : FluXisScreen
                             new MenuLinkButton
                             {
                                 Icon = FontAwesome6.Brands.GitHub,
-                                Action = () => host.OpenUrlExternally("https://github.com/TeamFluXis/fluXis"),
+                                Action = () => host.OpenUrlExternally("https://github.com/InventiveRhythm/fluXis"),
                                 Text = "GitHub"
                             },
                             new MenuLinkButton

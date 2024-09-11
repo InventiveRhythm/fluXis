@@ -28,7 +28,7 @@ public partial class VelopackUpdatePerformer : IUpdatePerformer
         }
 
         logger.Add("Checking for updates...");
-        var mgr = new UpdateManager(new GithubSource("https://github.com/TeamFluXis/fluXis", "", beta));
+        var mgr = new UpdateManager(new GithubSource("https://github.com/InventiveRhythm/fluXis", "", beta));
 
         var update = mgr.CheckForUpdates();
 
