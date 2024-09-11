@@ -30,4 +30,9 @@ public class Storyboard
         Elements.Remove(element);
         ElementRemoved?.Invoke(element);
     }
+
+    public void Sort()
+    {
+        Elements.Sort((a, b) => a.StartTime.CompareTo(b.StartTime));
+    }
 }

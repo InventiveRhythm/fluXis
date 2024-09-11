@@ -34,8 +34,12 @@ public partial class DrawableStoryboardLayer : Container<DrawableStoryboardEleme
                 StoryboardElementType.Box => new DrawableStoryboardBox(element),
                 StoryboardElementType.Sprite => new DrawableStoryboardSprite(element),
                 StoryboardElementType.Text => new DrawableStoryboardText(element),
-                _ => new DrawableStoryboardElement(element),
+                StoryboardElementType.Script => null,
+                _ => new DrawableStoryboardElement(element)
             };
+
+            if (drawable is null)
+                continue;
 
             // preload to avoid lagspikes when loading sprites
             LoadComponent(drawable);

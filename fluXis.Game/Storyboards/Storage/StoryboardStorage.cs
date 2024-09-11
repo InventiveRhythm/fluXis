@@ -6,12 +6,13 @@ namespace fluXis.Game.Storyboards.Storage;
 
 public class StoryboardStorage
 {
+    public NativeStorage Storage { get; }
     public LargeTextureStore Textures { get; }
 
     public StoryboardStorage(GameHost host, string path)
     {
-        var storage = new NativeStorage(path);
-        var resources = new StorageBackedResourceStore(storage);
+        Storage = new NativeStorage(path);
+        var resources = new StorageBackedResourceStore(Storage);
 
         Textures = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(resources));
     }
