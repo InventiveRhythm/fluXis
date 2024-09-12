@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using NLua;
 using osu.Framework.Logging;
+using osu.Framework.Utils;
 
 namespace fluXis.Game.Scripting;
 
@@ -16,6 +17,8 @@ public class ScriptRunner
     protected ScriptRunner()
     {
         Lua = new Lua();
+        AddFunction("print", (string text) => Logger.Add($"[Script] {text}"));
+        AddFunction("RandomRange", (int from, int to) => RNG.Next(from, to));
         Lua.DoString("import = function() end"); // disable importing
     }
 

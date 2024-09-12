@@ -1,6 +1,8 @@
-﻿using fluXis.Game.Scripting.Models.Storyboarding;
+﻿using System;
+using fluXis.Game.Scripting.Models.Storyboarding;
 using fluXis.Game.Scripting.Models.Storyboarding.Elements;
 using fluXis.Game.Storyboards;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
 namespace fluXis.Game.Scripting.Runners;
@@ -13,7 +15,13 @@ public class StoryboardScriptRunner : ScriptRunner
     {
         this.storyboard = storyboard;
 
-        AddFunction("add", add);
+        AddFunction("Add", add);
+
+        // enums
+        AddFunction("Layer", (string str) => Enum.TryParse(str, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
+        AddFunction("Anchor", (string str) => Enum.TryParse(str, out Anchor anchor) ? anchor : Anchor.TopLeft);
+
+        // elements
         AddFunction("StoryboardBox", () => new LuaStoryboardBox());
         AddFunction("StoryboardSprite", () => new LuaStoryboardSprite());
         AddFunction("StoryboardText", () => new LuaStoryboardText());
@@ -21,18 +29,24 @@ public class StoryboardScriptRunner : ScriptRunner
 
     public void Process(StoryboardElement element)
     {
-        var func = Lua.GetFunction("process");
-
-        if (func is null)
+        try
         {
-            Logger.Add("Missing process(parent) function!", LogLevel.Error);
-            return;
-        }
+            var func = GetFunction("process");
 
-        var l = LuaStoryboardElement.FromElement(element);
-        func.Call(l);
+            if (func is null)
+            {
+                Logger.Add("Missing process(parent) function!", LogLevel.Error);
+                return;
+            }
+
+            var l = LuaStoryboardElement.FromElement(element);
+            func.Call(l);
+        }
+        catch (Exception ex)
+        {
+            Logger.Add("Error when running process()!", LogLevel.Error, ex);
+        }
     }
 
-    private void add(LuaStoryboardElement element)
-        => storyboard.Elements.Add(element.Build());
+    private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());
 }

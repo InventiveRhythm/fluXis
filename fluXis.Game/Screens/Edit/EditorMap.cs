@@ -525,7 +525,11 @@ public class EditorMap
 
         public override T GetMapEvents<T>() => MapEvents as T;
 
-        public override Storyboard GetStoryboard() => Storyboard;
+        public override Storyboard GetStoryboard() => new()
+        {
+            Resolution = Storyboard.Resolution,
+            Elements = Storyboard.Elements.ToList()
+        };
 
         public EditorMapInfo DeepClone()
         {
