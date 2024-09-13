@@ -3,6 +3,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Requests.Maps.Votes;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Shared.Components.Maps;
@@ -32,7 +33,10 @@ public partial class ResultsSideVoting : ResultsSideContainer
     private int currentVote;
 
     private Container container;
+
+    private VoteButton upButton;
     private FluXisSpriteText count;
+    private VoteButton downButton;
 
     private FluXisSpriteText error;
     private LoadingIcon loading;
@@ -98,6 +102,9 @@ public partial class ResultsSideVoting : ResultsSideContainer
         // thank you humanizer for long support :thumbsup:
         count.Text = total != 0 ? ((int)total).ToMetric() : "No Votes.";
 
+        upButton.Active = currentVote >= 0;
+        downButton.Active = currentVote <= 0;
+
         loading.FadeOut(300);
         container.Delay(300).FadeIn(300);
         sendingRequest = false;
@@ -117,16 +124,16 @@ public partial class ResultsSideVoting : ResultsSideContainer
                 {
                     count = new FluXisSpriteText
                     {
-                        WebFontSize = 16,
+                        WebFontSize = 20,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     },
-                    new VoteButton(Colour4.Orange, FontAwesome6.Solid.AngleUp, () => setVote(1)),
-                    new VoteButton(Colour4.CornflowerBlue, FontAwesome6.Solid.AngleDown, () => setVote(-1))
+                    upButton = new VoteButton(Colour4.Orange, FontAwesome6.Solid.AngleUp, () => setVote(1)),
+                    downButton = new VoteButton(Colour4.CornflowerBlue, FontAwesome6.Solid.AngleDown, () => setVote(-1))
                     {
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight
-                    },
+                    }
                 }
             },
             error = new FluXisSpriteText
@@ -151,6 +158,9 @@ public partial class ResultsSideVoting : ResultsSideContainer
         [Resolved]
         private UISamples samples { get; set; }
 
+        public bool Active { set => Colour = value ? color : FluXisColors.Background5; }
+
+        private Colour4 color { get; }
         private IconUsage icon { get; }
         private Action action { get; }
 
@@ -159,7 +169,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
 
         public VoteButton(Colour4 color, IconUsage icon, Action action)
         {
-            Colour = color;
+            this.color = color;
             this.icon = icon;
             this.action = action;
         }
@@ -170,6 +180,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
             Size = new Vector2(48);
             CornerRadius = 8;
             Masking = true;
+            Colour = color;
 
             InternalChildren = new Drawable[]
             {
