@@ -24,5 +24,8 @@ public class SettingsMaintenanceStrings : LocalizationCategory
     public TranslatableString RecalculateFilters => Get("maps-recalculate-filters", "Recalculate Filters");
     public TranslatableString RecalculateFiltersDescription => Get("maps-recalculate-filters-description", "Recalculates all filters for all maps.");
 
+    public TranslatableString CleanUpScores => Get("maps-scores-clean-up", "Clean up Scores");
+    public TranslatableString CleanUpScoresDescription => Get("maps-scores-clean-up-description", "Removes scores from maps that you do not have anymore.");
+
     #endregion
 }
