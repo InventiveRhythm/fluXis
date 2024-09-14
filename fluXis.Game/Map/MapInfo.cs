@@ -6,6 +6,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
+using fluXis.Game.Utils;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -68,6 +69,12 @@ public class MapInfo
 
     [JsonIgnore]
     public string Hash { get; set; }
+
+    [JsonIgnore]
+    public string EffectHash { get; private set; }
+
+    [JsonIgnore]
+    public string StoryboardHash { get; private set; }
 
     public MapInfo(MapMetadata metadata)
         : this()
@@ -150,6 +157,7 @@ public class MapInfo
             return events;
 
         var content = File.ReadAllText(MapFiles.GetFullPath(effectFile));
+        EffectHash = MapUtils.GetHash(content);
         return MapEvents.Load<T>(content);
     }
 
@@ -167,6 +175,7 @@ public class MapInfo
             return null;
 
         var json = File.ReadAllText(path);
+        StoryboardHash = MapUtils.GetHash(json);
         return json.Deserialize<Storyboard>();
     }
 
@@ -224,5 +233,5 @@ public class MapInfo
         return timingPoint ?? TimingPoints[0];
     }
 
-    public override string ToString() => $"{Hash}";
+    public override string ToString() => $"{Hash} - {EffectHash} - {StoryboardHash}";
 }

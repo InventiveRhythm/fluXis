@@ -135,6 +135,8 @@ public class ScoreProcessor : JudgementDependant
         MapID = Map.OnlineID,
         PlayerID = Player.ID,
         MapHash = MapInfo.Hash,
+        EffectHash = MapInfo.EffectHash,
+        StoryboardHash = MapInfo.StoryboardHash,
         Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
         Mods = Mods.Select(m => m.Acronym).ToList()
     };
