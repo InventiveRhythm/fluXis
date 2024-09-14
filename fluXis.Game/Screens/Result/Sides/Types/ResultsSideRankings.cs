@@ -20,14 +20,31 @@ public partial class ResultsSideRankings : ResultsSideContainer
     {
         this.request = request;
 
-        if (request is null || !request.IsSuccessful)
+        if (request is null)
             Alpha = 0;
     }
 
     protected override Drawable CreateContent()
     {
-        if (request is null || !request.IsSuccessful)
+        if (request is null)
             return Empty();
+
+        if (!request.IsSuccessful)
+        {
+            return new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 50,
+                Child = new TruncatingText()
+                {
+                    Text = request.FailReason?.Message ?? "Something went wrong...",
+                    WebFontSize = 16,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    MaxWidth = 380
+                }
+            };
+        }
 
         return new FillFlowContainer
         {

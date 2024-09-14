@@ -22,7 +22,7 @@ public partial class ResultsContent : CompositeDrawable
     [Resolved]
     private ScoreInfo score { get; set; }
 
-    private Drawable[] rightContent;
+    private Drawable[] rightContent { get; }
 
     private bool rankMoveSmoothly;
     private bool rankUseCenter;
