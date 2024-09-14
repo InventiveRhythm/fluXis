@@ -91,5 +91,11 @@ public class SettingsGameplayStrings : LocalizationCategory
     public TranslatableString Visibility => Get("hud-visibility", "Visibility");
     public TranslatableString VisibilityDescription => Get("hud-visibility-description", "When the HUD should be visible.");
 
+    public TranslatableString LeaderboardVisibility => Get("leaderboard-visibility", "Leaderboard Visibility");
+    public TranslatableString LeaderboardVisibilityDescription => Get("leaderboard-visibility-description", "Shows a live leaderboard on the left side of the screen while playing.");
+
+    public TranslatableString LeaderboardMode => Get("leaderboard-mode", "Leaderboard Mode");
+    public TranslatableString LeaderboardModeDescription => Get("leaderboard-mode-description", "How to sort the leaderboard.");
+
     #endregion
 }

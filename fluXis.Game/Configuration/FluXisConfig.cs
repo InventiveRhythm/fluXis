@@ -42,6 +42,8 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.LaneSwitchAlerts, true);
 
         SetDefault(FluXisSetting.HudVisibility, HudVisibility.Always);
+        SetDefault(FluXisSetting.GameplayLeaderboardVisible, true);
+        SetDefault(FluXisSetting.GameplayLeaderboardMode, GameplayLeaderboardMode.Score);
 
         // UI
         SetDefault(FluXisSetting.UIScale, 1, 1f, 1.5f, 0.01f);
@@ -124,6 +126,8 @@ public enum FluXisSetting
     LaneSwitchAlerts,
 
     HudVisibility,
+    GameplayLeaderboardVisible,
+    GameplayLeaderboardMode,
 
     // UI
     UIScale,

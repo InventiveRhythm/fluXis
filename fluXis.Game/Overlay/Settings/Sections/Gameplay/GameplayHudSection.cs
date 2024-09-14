@@ -29,6 +29,19 @@ public partial class GameplayHudSection : SettingsSubSection
                 Description = strings.VisibilityDescription,
                 Items = Enum.GetValues<HudVisibility>(),
                 Bindable = Config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility)
+            },
+            new SettingsToggle
+            {
+                Label = strings.LeaderboardVisibility,
+                Description = strings.LeaderboardVisibilityDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.GameplayLeaderboardVisible)
+            },
+            new SettingsDropdown<GameplayLeaderboardMode>
+            {
+                Label = strings.LeaderboardMode,
+                Description = strings.LeaderboardModeDescription,
+                Items = Enum.GetValues<GameplayLeaderboardMode>(),
+                Bindable = Config.GetBindable<GameplayLeaderboardMode>(FluXisSetting.GameplayLeaderboardMode)
             }
         });
     }
