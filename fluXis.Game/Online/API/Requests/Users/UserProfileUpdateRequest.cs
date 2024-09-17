@@ -3,7 +3,6 @@ using fluXis.Shared.API.Payloads.Users;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Utils;
 using osu.Framework.IO.Network;
-using osu.Framework.Logging;
 
 namespace fluXis.Game.Online.API.Requests.Users;
 
@@ -25,7 +24,6 @@ public class UserProfileUpdateRequest : APIRequest<APIUser>
     {
         var req = base.CreateWebRequest(url);
         var json = payload.Serialize();
-        Logger.Log($"{json}", LoggingTarget.Network, LogLevel.Debug);
         req.AddRaw(json);
         return req;
     }

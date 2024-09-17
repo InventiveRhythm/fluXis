@@ -223,7 +223,6 @@ public partial class LoginOverlay : CompositeDrawable
     {
         if (api.Status.Value == ConnectionStatus.Online)
         {
-            Logger.Log(api.GetType().FullName);
             Logger.Log("Already connected, skipping login overlay.", LoggingTarget.Network, LogLevel.Debug);
             return;
         }

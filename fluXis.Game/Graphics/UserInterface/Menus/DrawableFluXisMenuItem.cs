@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Graphics.UserInterface.Menus;
@@ -128,7 +127,6 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
         if (getRightContent() != null)
             num += 30;
 
-        Logger.Log($"{shouldShowChevron} {shouldShowCheck} {num}");
         return num;
     }
 

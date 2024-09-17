@@ -152,13 +152,10 @@ public class FluXisImport : MapImporter
         using var archive = ZipFile.OpenRead(path);
         var maps = new List<RealmMap>();
 
-        Logger.Log(id.ToString());
-
         var mapSet = new RealmMapSet(maps)
         {
             ID = id ?? Guid.NewGuid()
         };
-        Logger.Log(mapSet.ID.ToString());
 
         MapStore.AssignResources(mapSet);
 
