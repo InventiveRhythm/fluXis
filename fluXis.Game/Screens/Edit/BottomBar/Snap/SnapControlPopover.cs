@@ -78,7 +78,7 @@ public partial class SnapControlPopover : CompositeDrawable
                 },
                 new FluXisSpriteText
                 {
-                    Text = $"1/{snap.ToOrdinalShort(true)}",
+                    Text = $"1/{snap.NumberWithOrderSuffix()}",
                     WebFontSize = 14,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre

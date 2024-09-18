@@ -70,7 +70,7 @@ public partial class SnapControl : CompositeDrawable, IHasPopover, IHasTooltip
         settings.SnapDivisorBindable.BindValueChanged(e =>
         {
             var snap = e.NewValue;
-            text.Text = $"1/{snap.ToOrdinalShort(true)}";
+            text.Text = $"1/{snap.NumberWithOrderSuffix()}";
 
             var idx = Array.IndexOf(DefaultSnaps, snap);
             Colour = skinManager.SkinJson.SnapColors.GetColor(idx);
