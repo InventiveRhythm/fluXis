@@ -94,6 +94,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Misc
         SetDefault(FluXisSetting.ReleaseChannel, ReleaseChannel.Stable);
+        SetDefault(FluXisSetting.OpenRGBIntegration, false);
     }
 }
 
@@ -177,5 +178,6 @@ public enum FluXisSetting
     LogAPIResponses,
 
     // Misc
-    ReleaseChannel
+    ReleaseChannel,
+    OpenRGBIntegration
 }

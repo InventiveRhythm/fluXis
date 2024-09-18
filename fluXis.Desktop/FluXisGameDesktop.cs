@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Desktop.Integration;
 using fluXis.Game;
+using fluXis.Game.Configuration;
 using fluXis.Game.Integration;
 using fluXis.Game.IPC;
 using fluXis.Game.Updater;
@@ -57,6 +58,6 @@ public partial class FluXisGameDesktop : FluXisGame
         ipc?.Dispose();
     }
 
-    public override LightController CreateLightController() => new OpenRGBController();
+    public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
     public override IUpdatePerformer CreateUpdatePerformer() => OperatingSystem.IsWindows() ? new VelopackUpdatePerformer(NotificationManager) : null;
 }
