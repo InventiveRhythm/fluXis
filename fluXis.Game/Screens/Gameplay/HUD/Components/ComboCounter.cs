@@ -19,7 +19,7 @@ public partial class ComboCounter : GameplayHUDComponent
     {
         AutoSizeAxes = Axes.Both;
 
-        scaleAdditive = Settings.GetSetting("scale-additive", false);
+        scaleAdditive = Settings.GetSetting("scale-additive", true);
 
         InternalChild = text = new FluXisSpriteText
         {

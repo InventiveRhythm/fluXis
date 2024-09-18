@@ -202,7 +202,7 @@ public partial class LayoutManager : Component
                         Position = new Vector2(0, -32),
                         Settings = new Dictionary<string, object>
                         {
-                            { "scale-additive", false }
+                            { "scale-additive", true }
                         }
                     }
                 },
