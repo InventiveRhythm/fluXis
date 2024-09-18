@@ -50,23 +50,20 @@ public class SkinJson : IDeepCloneable<SkinJson>
     [JsonProperty("overrides")]
     public Dictionary<string, string> Overrides { get; set; } = new();
 
-    public SkinKeymode GetKeymode(int keyCount)
+    public SkinKeymode GetKeymode(int keyCount) => keyCount switch
     {
-        return keyCount switch
-        {
-            1 => OneKey,
-            2 => TwoKey,
-            3 => ThreeKey,
-            4 => FourKey,
-            5 => FiveKey,
-            6 => SixKey,
-            7 => SevenKey,
-            8 => EightKey,
-            9 => NineKey,
-            10 => TenKey,
-            _ => throw new ArgumentOutOfRangeException(nameof(keyCount), keyCount, null)
-        };
-    }
+        1 => OneKey,
+        2 => TwoKey,
+        3 => ThreeKey,
+        4 => FourKey,
+        5 => FiveKey,
+        6 => SixKey,
+        7 => SevenKey,
+        8 => EightKey,
+        9 => NineKey,
+        >= 10 => TenKey,
+        _ => throw new ArgumentOutOfRangeException(nameof(keyCount), keyCount, null)
+    };
 
     public Colour4 GetColorForJudgement(Judgement judgement)
     {

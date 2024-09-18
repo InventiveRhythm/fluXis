@@ -245,7 +245,11 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     private DrawableHitObject createHitObject(HitObject hitObject)
     {
         var drawable = getDrawableFor(hitObject);
-        drawable.Keybind = screen.Input.Keys[hitObject.Lane - 1];
+        var idx = hitObject.Lane - 1;
+
+        if (screen.Input.Keys.Count > idx)
+            drawable.Keybind = screen.Input.Keys[idx];
+
         drawable.OnHit += hit;
 
         drawable.OnLoadComplete += _ =>

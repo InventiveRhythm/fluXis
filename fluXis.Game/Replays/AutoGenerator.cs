@@ -46,6 +46,9 @@ public class AutoGenerator
         if (map.HitObjects.Count == 0)
             return;
 
+        if (keys.Count <= 0)
+            return;
+
         var actions = generateActions().GroupBy(a => a.Time).OrderBy(g => g.First().Time);
 
         var currentKeys = new List<FluXisGameplayKeybind>();
