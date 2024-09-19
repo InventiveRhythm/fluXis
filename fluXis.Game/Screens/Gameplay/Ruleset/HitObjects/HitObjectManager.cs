@@ -15,6 +15,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Utils;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 
@@ -220,7 +221,19 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     public float HitPosition => DrawHeight - laneSwitchManager.HitPosition;
 
     public bool ShouldDisplay(double time) => ScrollVelocityPositionFromTime(time) <= ScrollVelocityPositionFromTime(Clock.CurrentTime) + DrawHeight * screen.Rate;
-    public float PositionAtTime(double time) => (float)(HitPosition - .5f * ((time - (float)CurrentTime) * ScrollSpeed));
+
+    public float PositionAtTime(double time, Easing ease = Easing.None)
+    {
+        var pos = HitPosition;
+        var y = (float)(pos - .5f * ((time - (float)CurrentTime) * ScrollSpeed));
+
+        if (ease <= Easing.None || y < 0 || y > pos)
+            return y;
+
+        var progress = y / pos;
+        y = Interpolation.ValueAt(progress, 0, pos, 0, 1, ease);
+        return float.IsFinite(y) ? y : 0;
+    }
 
     public float PositionAtLane(int lane)
     {
@@ -236,6 +249,17 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         }
 
         return x;
+    }
+
+    public Easing EasingAtTime(double time)
+    {
+        var events = screen.MapEvents.HitObjectEaseEvents;
+
+        if (events.Count == 0)
+            return Easing.None;
+
+        var first = events.LastOrDefault(e => e.Time <= time);
+        return first?.Easing ?? Easing.None;
     }
 
     public float WidthOfLane(int lane) => laneSwitchManager.WidthFor(lane);

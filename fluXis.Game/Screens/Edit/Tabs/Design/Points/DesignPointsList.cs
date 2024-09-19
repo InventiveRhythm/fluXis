@@ -41,6 +41,11 @@ public partial class DesignPointsList : PointsList
         Map.HitObjectFadeEventRemoved += RemovePoint;
         Map.MapEvents.HitObjectFadeEvents.ForEach(AddPoint);
 
+        Map.HitObjectEaseEventAdded += AddPoint;
+        Map.HitObjectEaseEventUpdated += UpdatePoint;
+        Map.HitObjectEaseEventRemoved += RemovePoint;
+        Map.MapEvents.HitObjectEaseEvents.ForEach(AddPoint);
+
         Map.ShaderEventAdded += AddPoint;
         Map.ShaderEventUpdated += UpdatePoint;
         Map.ShaderEventRemoved += RemovePoint;
@@ -71,7 +76,8 @@ public partial class DesignPointsList : PointsList
             PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
             PlayfieldFadeEvent fade => new PlayfieldFadeEntry(fade),
             PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
-            HitObjectFadeEvent scale => new HitObjectFadeEntry(scale),
+            HitObjectFadeEvent fade => new HitObjectFadeEntry(fade),
+            HitObjectEaseEvent ease => new HitObjectEaseEntry(ease),
             BeatPulseEvent pulse => new BeatPulseEntry(pulse),
             PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
             ShaderEvent shader => new ShaderEntry(shader),
@@ -91,6 +97,7 @@ public partial class DesignPointsList : PointsList
             new("Playfield Rotate", FluXisColors.PlayfieldRotate, () => Create(new PlayfieldRotateEvent())),
             new("Playfield Fade", FluXisColors.PlayfieldFade, () => Create(new PlayfieldFadeEvent())),
             new("HitObject Fade", FluXisColors.HitObjectFade, () => Create(new HitObjectFadeEvent())),
+            new("HitObject Ease", FluXisColors.HitObjectEase, () => Create(new HitObjectEaseEvent())),
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent())),
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }))

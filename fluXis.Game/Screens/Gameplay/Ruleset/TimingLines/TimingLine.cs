@@ -11,6 +11,7 @@ public partial class TimingLine : Box
 
     public double OriginalTime { get; }
     private double scrollVelocityTime;
+    private Easing easing = Easing.None;
 
     public TimingLine(double time)
     {
@@ -25,10 +26,11 @@ public partial class TimingLine : Box
         Origin = Anchor.BottomLeft;
 
         scrollVelocityTime = playfield.Manager.ScrollVelocityPositionFromTime(OriginalTime);
+        easing = playfield.Manager.EasingAtTime(OriginalTime);
     }
 
     protected override void Update()
     {
-        Y = playfield.Manager.PositionAtTime(scrollVelocityTime);
+        Y = playfield.Manager.PositionAtTime(scrollVelocityTime, easing);
     }
 }

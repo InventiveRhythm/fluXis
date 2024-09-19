@@ -36,6 +36,9 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("hitfade")]
     public List<HitObjectFadeEvent> HitObjectFadeEvents { get; private set; } = new();
 
+    [JsonProperty("hitease")]
+    public List<HitObjectEaseEvent> HitObjectEaseEvents { get; private set; } = new();
+
     [JsonProperty("shake")]
     public List<ShakeEvent> ShakeEvents { get; private set; } = new();
 
@@ -57,6 +60,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && PlayfieldRotateEvents.Count == 0
                          && PlayfieldFadeEvents.Count == 0
                          && HitObjectFadeEvents.Count == 0
+                         && HitObjectEaseEvents.Count == 0
                          && ShakeEvents.Count == 0
                          && ShaderEvents.Count == 0
                          && BeatPulseEvents.Count == 0
@@ -222,6 +226,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         PlayfieldScaleEvents.Sort(compare);
         PlayfieldFadeEvents.Sort(compare);
         HitObjectFadeEvents.Sort(compare);
+        HitObjectEaseEvents.Sort(compare);
         ShakeEvents.Sort(compare);
         ShaderEvents.Sort(compare);
         BeatPulseEvents.Sort(compare);
@@ -252,6 +257,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
         clone.PlayfieldFadeEvents = new List<PlayfieldFadeEvent>(PlayfieldFadeEvents);
         clone.HitObjectFadeEvents = new List<HitObjectFadeEvent>(HitObjectFadeEvents);
+        clone.HitObjectEaseEvents = new List<HitObjectEaseEvent>(HitObjectEaseEvents);
         clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);
         clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);
         clone.BeatPulseEvents = new List<BeatPulseEvent>(BeatPulseEvents);
