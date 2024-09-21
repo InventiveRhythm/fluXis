@@ -32,7 +32,7 @@ public partial class DrawableUserCard : CompositeDrawable
     private void load()
     {
         Size = new Vector2(300, 80);
-        CornerRadius = 20;
+        CornerRadius = 12;
         Masking = true;
 
         InternalChildren = new Drawable[]
@@ -69,7 +69,7 @@ public partial class DrawableUserCard : CompositeDrawable
                     new LoadWrapper<DrawableAvatar>
                     {
                         Size = new Vector2(80),
-                        CornerRadius = 20,
+                        CornerRadius = 12,
                         Masking = true,
                         LoadContent = () => new DrawableAvatar(user)
                         {

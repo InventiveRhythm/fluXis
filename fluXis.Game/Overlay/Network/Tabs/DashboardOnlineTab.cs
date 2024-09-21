@@ -36,7 +36,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Full,
-                Spacing = new Vector2(20)
+                Spacing = new Vector2(12)
             }
         };
     }
