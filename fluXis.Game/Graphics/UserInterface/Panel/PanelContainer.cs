@@ -20,9 +20,18 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
 
     public Drawable Content
     {
-        get => contentContainer.Count == 0 ? null : contentContainer[0];
+        get
+        {
+            if (contentContainer is null)
+                return null;
+
+            return contentContainer.Count == 0 ? null : contentContainer[0];
+        }
         set
         {
+            if (contentContainer is null)
+                return;
+
             contentContainer.Clear();
             if (value != null) contentContainer.Add(value);
         }
