@@ -57,7 +57,7 @@ public partial class TimingPointEntry : PointListEntry
                 DefaultText = timing.BPM.ToStringInvariant("0.00"),
                 OnTextChanged = box =>
                 {
-                    if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result))
+                    if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result) && result > 0)
                         timing.BPM = result;
                     else
                         box.NotifyError();
