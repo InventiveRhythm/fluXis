@@ -1,25 +1,60 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Menus;
+using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User;
 using fluXis.Shared.Components.Users;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Game.Online.Drawables;
 
-public partial class DrawableUserCard : CompositeDrawable
+public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
 {
+    public MenuItem[] ContextMenuItems
+    {
+        get
+        {
+            var list = new List<MenuItem>
+            {
+                new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
+                new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => host.OpenUrlExternally($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
+            };
+
+            if (FluXisGameBase.IsDebug)
+            {
+                list.Add(new FluXisMenuSpacer());
+                list.Add(new FluXisMenuItem("Copy ID", FontAwesome6.Solid.Copy, MenuItemType.Normal, () => clipboard.SetText($"{user.ID}")));
+            }
+
+            return list.ToArray();
+        }
+    }
+
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profile { get; set; }
+
+    [Resolved]
+    private GameHost host { get; set; }
+
+    [Resolved]
+    private Clipboard clipboard { get; set; }
+
+    [Resolved]
+    private IAPIClient api { get; set; }
 
     private APIUser user { get; }
 

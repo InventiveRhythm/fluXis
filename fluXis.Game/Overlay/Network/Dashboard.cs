@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Input;
 using fluXis.Game.Overlay.Network.Sidebar;
 using fluXis.Game.Overlay.Network.Tabs;
@@ -88,10 +89,14 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
                                         {
                                             SelectAction = selectTab
                                         },
-                                        tabsContainer = new Container<DashboardTab>
+                                        new FluXisContextMenuContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Padding = new MarginPadding(10) { Top = 40 },
+                                            Child = tabsContainer = new Container<DashboardTab>
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Padding = new MarginPadding(10) { Top = 40 },
+                                            }
                                         }
                                     }
                                 }
