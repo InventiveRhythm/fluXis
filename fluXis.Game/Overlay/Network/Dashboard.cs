@@ -95,7 +95,7 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
                                             Child = tabsContainer = new Container<DashboardTab>
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Padding = new MarginPadding(10) { Top = 40 },
+                                                Padding = new MarginPadding(10) { Top = 48 },
                                             }
                                         }
                                     }

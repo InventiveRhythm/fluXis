@@ -12,6 +12,7 @@ public abstract partial class DashboardTab : Container
     public abstract IconUsage Icon { get; }
     public abstract DashboardTabType Type { get; }
 
+    protected Container Header { get; private set; }
     protected new Container Content { get; private set; }
 
     private const int title_height = 50;
@@ -39,28 +40,36 @@ public abstract partial class DashboardTab : Container
                 {
                     new Drawable[]
                     {
-                        new FillFlowContainer
+                        new Container
                         {
                             RelativeSizeAxes = Axes.X,
                             Height = title_height,
-                            Direction = FillDirection.Horizontal,
                             Children = new Drawable[]
                             {
-                                new SpriteIcon
+                                new FillFlowContainer
                                 {
-                                    Icon = Icon,
-                                    Size = new Vector2(icon_size),
-                                    Margin = new MarginPadding((title_height - icon_size) / 2f),
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft
+                                    RelativeSizeAxes = Axes.Both,
+                                    Direction = FillDirection.Horizontal,
+                                    Children = new Drawable[]
+                                    {
+                                        new SpriteIcon
+                                        {
+                                            Icon = Icon,
+                                            Size = new Vector2(icon_size),
+                                            Margin = new MarginPadding((title_height - icon_size) / 2f),
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft
+                                        },
+                                        new FluXisSpriteText
+                                        {
+                                            Text = Title,
+                                            FontSize = 22,
+                                            Anchor = Anchor.CentreLeft,
+                                            Origin = Anchor.CentreLeft
+                                        }
+                                    }
                                 },
-                                new FluXisSpriteText
-                                {
-                                    Text = Title,
-                                    FontSize = 22,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft
-                                }
+                                Header = new Container { RelativeSizeAxes = Axes.Both }
                             }
                         }
                     },

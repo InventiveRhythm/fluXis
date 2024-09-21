@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
@@ -28,6 +29,18 @@ public partial class DashboardOnlineTab : DashboardWipTab
     [BackgroundDependencyLoader]
     private void load()
     {
+        Header.Child = new FluXisButton
+        {
+            Text = "Refresh",
+            FontSize = 20,
+            Size = new Vector2(144, 36),
+            Anchor = Anchor.CentreRight,
+            Origin = Anchor.CentreRight,
+            Margin = new MarginPadding { Right = 20 },
+            Color = Colour4.Transparent,
+            Action = refresh
+        };
+
         Content.Child = new FluXisScrollContainer
         {
             RelativeSizeAxes = Axes.Both,
@@ -41,9 +54,8 @@ public partial class DashboardOnlineTab : DashboardWipTab
         };
     }
 
-    public override void Enter()
+    private void refresh()
     {
-        visible = true;
         flow.Clear();
 
         try
@@ -53,26 +65,32 @@ public partial class DashboardOnlineTab : DashboardWipTab
 
             if (req.IsSuccessful)
             {
-                foreach (var user in req.Response.Data.Users)
+                Schedule(() =>
                 {
-                    Schedule(() =>
-                    {
-                        if (!visible)
-                            return;
+                    if (!visible)
+                        return;
 
+                    foreach (var user in req.Response.Data.Users)
+                    {
                         flow.Add(new DrawableUserCard(user)
                         {
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre
                         });
-                    });
-                }
+                    }
+                });
             }
         }
         catch (Exception e)
         {
             Logger.Error(e, "Failed to get online users");
         }
+    }
+
+    public override void Enter()
+    {
+        visible = true;
+        refresh();
     }
 
     public override void Exit()
