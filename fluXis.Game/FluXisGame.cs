@@ -457,11 +457,14 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         return !isExiting;
     }
 
-    public override void Exit()
+    public override void Exit(bool restart)
     {
+        if (restart && !RestartOnClose())
+            return;
+
         toolbar.Hide();
         globalClock.VolumeOut(1500);
-        exitAnimation.Show(buffer.Hide, base.Exit);
+        exitAnimation.Show(buffer.Hide, () => base.Exit(false));
         isExiting = true;
     }
 

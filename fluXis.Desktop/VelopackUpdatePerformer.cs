@@ -58,4 +58,17 @@ public partial class VelopackUpdatePerformer : IUpdatePerformer
         notification.State = LoadingState.Complete;
         mgr.ApplyUpdatesAndRestart(update);
     }
+
+    public bool RestartOnClose()
+    {
+        try
+        {
+            UpdateExe.Start();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

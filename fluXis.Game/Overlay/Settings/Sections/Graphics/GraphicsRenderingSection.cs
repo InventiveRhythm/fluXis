@@ -86,7 +86,7 @@ public partial class GraphicsRenderingSection : SettingsSubSection
             Icon = FontAwesome6.Solid.ArrowsRotate,
             Buttons = new ButtonData[]
             {
-                new PrimaryButtonData("Restart now.", game.Exit),
+                new PrimaryButtonData("Restart now.", () => game.Exit(true)),
                 new CancelButtonData("I'll do it later.")
             }
         };

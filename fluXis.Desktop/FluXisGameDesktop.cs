@@ -16,6 +16,7 @@ namespace fluXis.Desktop;
 public partial class FluXisGameDesktop : FluXisGame
 {
     private IPCImportChannel ipc;
+    private VelopackUpdatePerformer updatePerformer;
 
     public override void SetHost(GameHost host)
     {
@@ -52,6 +53,8 @@ public partial class FluXisGameDesktop : FluXisGame
         WaitForReady(() => HandleDragDrop(args.ToArray()));
     }
 
+    protected override bool RestartOnClose() => updatePerformer?.RestartOnClose() ?? false;
+
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
@@ -59,5 +62,5 @@ public partial class FluXisGameDesktop : FluXisGame
     }
 
     public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
-    public override IUpdatePerformer CreateUpdatePerformer() => OperatingSystem.IsWindows() ? new VelopackUpdatePerformer(NotificationManager) : null;
+    public override IUpdatePerformer CreateUpdatePerformer() => OperatingSystem.IsWindows() ? updatePerformer ??= new VelopackUpdatePerformer(NotificationManager) : null;
 }

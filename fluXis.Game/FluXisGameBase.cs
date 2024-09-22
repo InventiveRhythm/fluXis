@@ -347,11 +347,18 @@ public partial class FluXisGameBase : osu.Framework.Game
         // Resharper restore StringLiteralTypo
     }
 
-    public new virtual void Exit()
+    public new void Exit() => Exit(false);
+
+    public virtual void Exit(bool restart)
     {
+        if (restart && !RestartOnClose())
+            return;
+
         APIClient.Disconnect();
         base.Exit();
     }
+
+    protected virtual bool RestartOnClose() => false;
 
     public override void SetHost(GameHost host)
     {
