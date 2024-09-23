@@ -46,7 +46,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.GameplayLeaderboardMode, GameplayLeaderboardMode.Score);
 
         // UI
-        SetDefault(FluXisSetting.UIScale, 1, 1f, 1.5f, 0.01f);
+        SetDefault(FluXisSetting.UIScale, 1, 1f, 1.25f, 0.01f);
         SetDefault(FluXisSetting.HoldToConfirm, 400f, 0f, 1000f, 200f);
         SetDefault(FluXisSetting.SkipIntro, false);
         SetDefault(FluXisSetting.Parallax, true);
