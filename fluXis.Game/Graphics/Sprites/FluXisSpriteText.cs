@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Graphics.Sprites;
@@ -37,6 +38,7 @@ public partial class FluXisSpriteText : SpriteText
 
     public FluXisSpriteText()
     {
+        Colour = FluXisColors.Text;
         Font = FluXisFont.RenogareSoft;
     }
 

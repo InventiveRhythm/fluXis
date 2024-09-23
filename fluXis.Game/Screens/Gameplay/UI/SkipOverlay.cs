@@ -24,6 +24,7 @@ public partial class SkipOverlay : Container
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        AlwaysPresent = true;
 
         InternalChild = content = new FillFlowContainer
         {
@@ -74,6 +75,25 @@ public partial class SkipOverlay : Container
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        clock.OnBeat += onBeat;
+    }
+
+    private void onBeat(int beat)
+    {
+        if (!visible) return;
+
+        double timeLeft = screen.Map.StartTime - (clock.CurrentTime + 2000);
+        var progress = (float)(timeLeft / screen.Map.StartTime);
+
+        if (float.IsFinite(progress))
+            bar.ResizeWidthTo(progress, clock.BeatTime, Easing.OutQuint);
+        else
+            bar.Width = 0;
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -90,15 +110,5 @@ public partial class SkipOverlay : Container
                 content.FadeOut(200);
                 break;
         }
-
-        if (!visible) return;
-
-        double timeLeft = screen.Map.StartTime - (clock.CurrentTime + 2000);
-        var progress = (float)(timeLeft / screen.Map.StartTime);
-
-        if (float.IsFinite(progress))
-            bar.ResizeWidthTo(progress, 400, Easing.OutQuint);
-        else
-            bar.Width = 0;
     }
 }

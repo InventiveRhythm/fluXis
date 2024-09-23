@@ -232,6 +232,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         base.LoadComplete();
         WaitForReady(() => PerformUpdateCheck(true));
 
+        var num = SDL2.SDL.SDL_NumJoysticks();
+        Logger.Log($"{num} sdl controllers");
+
+        for (int i = 0; i < num; i++)
+        {
+            int instanceID = SDL2.SDL.SDL_JoystickGetDeviceInstanceID(i);
+            var name = SDL2.SDL.SDL_JoystickNameForIndex(i);
+            Logger.Log($"sdl joystick [{instanceID}] {name}");
+        }
+
         sentry.BindUser(APIClient.User);
 
         loadLocales();
