@@ -226,10 +226,12 @@ public partial class MapCard : Container, IHasContextMenu
                                                             {
                                                                 Alpha = MapSet.Flags.HasFlag(MapSetFlag.Explicit) ? 1f : 0f,
                                                                 Text = "EXPLICIT",
-                                                                BackgroundColour = Colour4.Black.Opacity(.5f),
-                                                                TextColour = Colour4.White,
                                                                 Anchor = Anchor.CentreRight,
                                                                 Origin = Anchor.CentreRight,
+                                                                BackgroundColour = Colour4.Black.Opacity(.5f),
+                                                                TextColour = Colour4.White,
+                                                                WebFontSize = 8,
+                                                                Height = 16,
                                                                 Margin = new MarginPadding { Left = 8 }
                                                             }
                                                         }

@@ -11,7 +11,8 @@ namespace fluXis.Game.Graphics.UserInterface;
 public partial class RoundedChip : CircularContainer
 {
     public string Text { get; init; } = "text";
-    public float FontSize { get; init; } = FluXisSpriteText.GetWebFontSize(12);
+    public float FontSize { get; set; } = FluXisSpriteText.GetWebFontSize(12);
+    public float WebFontSize { set => FontSize = FluXisSpriteText.GetWebFontSize(value); }
     public ColourInfo TextColour { get; init; } = FluXisColors.Text.Opacity(.75f);
     public ColourInfo BackgroundColour { get; init; } = FluXisColors.Background2;
     public float SidePadding { get; init; } = 12;
