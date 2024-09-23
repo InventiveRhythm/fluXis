@@ -10,7 +10,7 @@ namespace fluXis.Game.Overlay.Mouse;
 
 public abstract partial class CustomTooltipContainer<T> : CustomTooltipContainer, ITooltip<T>
 {
-    public override void SetContent(object content) => SetContent((T)content);
+    public sealed override void SetContent(object content) => SetContent((T)content);
     public abstract void SetContent(T content);
 }
 
@@ -24,7 +24,7 @@ public abstract partial class CustomTooltipContainer : VisibilityContainer, IToo
     protected CustomTooltipContainer()
     {
         AutoSizeAxes = Axes.Both;
-        CornerRadius = 5;
+        CornerRadius = 8;
         Masking = true;
         AutoSizeEasing = Easing.OutQuint;
         EdgeEffect = FluXisStyles.ShadowSmall;

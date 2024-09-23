@@ -76,7 +76,7 @@ public partial class BrowseInfoMap : Container, IHasTooltip
             },
             new DifficultyChip
             {
-                Rating = map.Rating,
+                Rating = map.NotesPerSecond,
                 Width = 70,
                 Height = 20,
                 Anchor = Anchor.CentreRight,

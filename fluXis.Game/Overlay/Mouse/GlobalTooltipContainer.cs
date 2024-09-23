@@ -1,4 +1,3 @@
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
@@ -24,11 +23,6 @@ public partial class GlobalTooltipContainer : TooltipContainer
 
         public TextTooltip()
         {
-            CornerRadius = 5;
-            Masking = true;
-            AutoSizeEasing = Easing.OutQuint;
-            EdgeEffect = FluXisStyles.ShadowSmall;
-
             Child = text = new FluXisTextFlow()
             {
                 AutoSizeAxes = Axes.Both,

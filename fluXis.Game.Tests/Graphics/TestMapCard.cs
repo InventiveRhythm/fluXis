@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Map.Drawables;
+using fluXis.Game.Map.Drawables.Card;
+using fluXis.Game.Overlay.Mouse;
 using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Components.Users;
 using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -15,16 +17,23 @@ public partial class TestMapCard : FluXisTestScene
 {
     private FillFlowContainer container;
 
+    [Resolved]
+    private GlobalCursorOverlay cursor { get; set; }
+
     [SetUp]
     public void Setup() => Schedule(() =>
     {
-        Child = container = new FillFlowContainer()
+        Child = new GlobalTooltipContainer(cursor.Cursor)
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Spacing = new Vector2(10),
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre
+            RelativeSizeAxes = Axes.Both,
+            Child = container = new FillFlowContainer()
+            {
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(10),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            }
         };
     });
 

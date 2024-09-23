@@ -25,9 +25,9 @@ using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK;
 
-namespace fluXis.Game.Map.Drawables;
+namespace fluXis.Game.Map.Drawables.Card;
 
-public partial class MapCard : Container, IHasContextMenu
+public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasContextMenu
 {
     [Resolved]
     private MapStore maps { get; set; }
@@ -66,6 +66,8 @@ public partial class MapCard : Container, IHasContextMenu
             return list.ToArray();
         }
     }
+
+    public APIMapSet TooltipContent => MapSet;
 
     public int CardWidth { get; init; } = 430;
     public APIMapSet MapSet { get; }
@@ -347,6 +349,8 @@ public partial class MapCard : Container, IHasContextMenu
 
         return true;
     }
+
+    public ITooltip<APIMapSet> GetCustomTooltip() => new MapCardTooltip();
 
     private void selectAndShow()
     {

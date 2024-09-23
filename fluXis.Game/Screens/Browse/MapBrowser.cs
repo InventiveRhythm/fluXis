@@ -10,7 +10,7 @@ using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
-using fluXis.Game.Map.Drawables;
+using fluXis.Game.Map.Drawables.Card;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Requests.MapSets;
