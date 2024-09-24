@@ -127,6 +127,7 @@ public partial class Playfield : Container
             screen.MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
             screen.MapEvents.PlayfieldFadeEvents.ForEach(e => e.Apply(this));
             screen.MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
+            screen.MapEvents.ScrollMultiplyEvents.ForEach(e => e.Apply(Manager));
         }
         else
         {
@@ -136,6 +137,7 @@ public partial class Playfield : Container
                 new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents),
                 new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents),
                 new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents),
+                new EventHandler<ScrollMultiplierEvent>(screen.MapEvents.ScrollMultiplyEvents),
             });
         }
     }

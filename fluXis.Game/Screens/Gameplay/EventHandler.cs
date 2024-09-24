@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Gameplay.Ruleset;
+using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 
@@ -12,6 +14,10 @@ public partial class EventHandler<T> : CompositeComponent where T : ITimedObject
 {
     [Resolved]
     private Playfield playfield { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private HitObjectManager manager { get; set; }
 
     private List<T> objects { get; }
     private List<T> previous { get; } = new();
@@ -40,12 +46,19 @@ public partial class EventHandler<T> : CompositeComponent where T : ITimedObject
 
     private void trigger(T obj)
     {
-        if (obj is IApplicableToPlayfield applicableToPlayfield)
+        switch (obj)
         {
-            applicableToPlayfield.Apply(playfield);
-            return;
-        }
+            case IApplicableToPlayfield pf:
+                pf.Apply(playfield);
+                return;
 
-        Trigger?.Invoke(obj);
+            case IApplicableToHitManager hm when manager is not null:
+                hm.Apply(manager);
+                return;
+
+            default:
+                Trigger?.Invoke(obj);
+                break;
+        }
     }
 }

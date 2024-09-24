@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Game.Database;
@@ -30,6 +31,8 @@ public class EditorMap
     public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
 
     public bool IsNew => RealmMap == null || MapInfo == null;
+
+    private List<IChangeNotifier> notifiers = new();
 
     #region Events
 
@@ -92,6 +95,10 @@ public class EditorMap
     public event Action<BeatPulseEvent> BeatPulseEventRemoved;
     public event Action<BeatPulseEvent> BeatPulseEventUpdated;
 
+    public event Action<ScrollMultiplierEvent> ScrollMultiplierEventAdded;
+    public event Action<ScrollMultiplierEvent> ScrollMultiplierEventRemoved;
+    public event Action<ScrollMultiplierEvent> ScrollMultiplierEventUpdated;
+
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventAdded;
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventRemoved;
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventUpdated;
@@ -101,6 +108,29 @@ public class EditorMap
     public event Action<NoteEvent> NoteEventUpdated;
 
     #endregion
+
+    public void SetupNotifiers()
+    {
+        notifiers = new List<IChangeNotifier>
+        {
+            new ChangeNotifier<HitObject>(MapInfo.HitObjects, obj => HitObjectAdded?.Invoke(obj), obj => HitObjectRemoved?.Invoke(obj), obj => HitObjectUpdated?.Invoke(obj)),
+            new ChangeNotifier<TimingPoint>(MapInfo.TimingPoints, obj => TimingPointAdded?.Invoke(obj), obj => TimingPointRemoved?.Invoke(obj), obj => TimingPointUpdated?.Invoke(obj)),
+            new ChangeNotifier<ScrollVelocity>(MapInfo.ScrollVelocities, obj => ScrollVelocityAdded?.Invoke(obj), obj => ScrollVelocityRemoved?.Invoke(obj), obj => ScrollVelocityUpdated?.Invoke(obj)),
+            new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents, obj => LaneSwitchEventAdded?.Invoke(obj), obj => LaneSwitchEventRemoved?.Invoke(obj), obj => LaneSwitchEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents, obj => FlashEventAdded?.Invoke(obj), obj => FlashEventRemoved?.Invoke(obj), obj => FlashEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj), obj => PlayfieldMoveEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents, obj => PlayfieldScaleEventAdded?.Invoke(obj), obj => PlayfieldScaleEventRemoved?.Invoke(obj), obj => PlayfieldScaleEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldFadeEvent>(MapEvents.PlayfieldFadeEvents, obj => PlayfieldFadeEventAdded?.Invoke(obj), obj => PlayfieldFadeEventRemoved?.Invoke(obj), obj => PlayfieldFadeEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents, obj => PlayfieldRotateEventAdded?.Invoke(obj), obj => PlayfieldRotateEventRemoved?.Invoke(obj), obj => PlayfieldRotateEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<HitObjectFadeEvent>(MapEvents.HitObjectFadeEvents, obj => HitObjectFadeEventAdded?.Invoke(obj), obj => HitObjectFadeEventRemoved?.Invoke(obj), obj => HitObjectFadeEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents, obj => HitObjectEaseEventAdded?.Invoke(obj), obj => HitObjectEaseEventRemoved?.Invoke(obj), obj => HitObjectEaseEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ShakeEvent>(MapEvents.ShakeEvents, obj => ShakeEventAdded?.Invoke(obj), obj => ShakeEventRemoved?.Invoke(obj), obj => ShakeEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ShaderEvent>(MapEvents.ShaderEvents, obj => ShaderEventAdded?.Invoke(obj), obj => ShaderEventRemoved?.Invoke(obj), obj => ShaderEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents, obj => BeatPulseEventAdded?.Invoke(obj), obj => BeatPulseEventRemoved?.Invoke(obj), obj => BeatPulseEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents, obj => ScrollMultiplierEventAdded?.Invoke(obj), obj => ScrollMultiplierEventRemoved?.Invoke(obj), obj => ScrollMultiplierEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj))
+        };
+    }
 
     public bool SetKeyMode(int mode)
     {
@@ -192,337 +222,45 @@ public class EditorMap
 
     #region Objects
 
+    private bool tryFindNotifier(ITimedObject obj, Action<IChangeNotifier> action)
+    {
+        var n = notifiers.FirstOrDefault(n => n.Matches(obj.GetType()));
+
+        if (n is not null)
+            action?.Invoke(n);
+
+        return n != null;
+    }
+
     public void Add(ITimedObject obj)
     {
-        switch (obj)
-        {
-            case HitObject hitObject:
-                MapInfo.HitObjects.Add(hitObject);
-                HitObjectAdded?.Invoke(hitObject);
-                break;
+        if (tryFindNotifier(obj, n => n.Add(obj)))
+            return;
 
-            case TimingPoint timingPoint:
-                MapInfo.TimingPoints.Add(timingPoint);
-                TimingPointAdded?.Invoke(timingPoint);
-                break;
-
-            case ScrollVelocity scrollVelocity:
-                MapInfo.ScrollVelocities.Add(scrollVelocity);
-                ScrollVelocityAdded?.Invoke(scrollVelocity);
-                break;
-
-            case LaneSwitchEvent laneSwitchEvent:
-                MapEvents.LaneSwitchEvents.Add(laneSwitchEvent);
-                LaneSwitchEventAdded?.Invoke(laneSwitchEvent);
-                break;
-
-            case FlashEvent flashEvent:
-                MapEvents.FlashEvents.Add(flashEvent);
-                FlashEventAdded?.Invoke(flashEvent);
-                break;
-
-            case ShakeEvent shakeEvent:
-                MapEvents.ShakeEvents.Add(shakeEvent);
-                ShakeEventAdded?.Invoke(shakeEvent);
-                break;
-
-            case PlayfieldFadeEvent fadeEvent:
-                MapEvents.PlayfieldFadeEvents.Add(fadeEvent);
-                PlayfieldFadeEventAdded?.Invoke(fadeEvent);
-                break;
-
-            case PlayfieldMoveEvent moveEvent:
-                MapEvents.PlayfieldMoveEvents.Add(moveEvent);
-                PlayfieldMoveEventAdded?.Invoke(moveEvent);
-                break;
-
-            case PlayfieldScaleEvent scaleEvent:
-                MapEvents.PlayfieldScaleEvents.Add(scaleEvent);
-                PlayfieldScaleEventAdded?.Invoke(scaleEvent);
-                break;
-
-            case HitObjectFadeEvent hitFade:
-                MapEvents.HitObjectFadeEvents.Add(hitFade);
-                HitObjectFadeEventAdded?.Invoke(hitFade);
-                break;
-
-            case HitObjectEaseEvent hitEase:
-                MapEvents.HitObjectEaseEvents.Add(hitEase);
-                HitObjectEaseEventAdded?.Invoke(hitEase);
-                break;
-
-            case ShaderEvent shaderEvent:
-                MapEvents.ShaderEvents.Add(shaderEvent);
-                ShaderEventAdded?.Invoke(shaderEvent);
-                break;
-
-            case BeatPulseEvent pulseEvent:
-                MapEvents.BeatPulseEvents.Add(pulseEvent);
-                BeatPulseEventAdded?.Invoke(pulseEvent);
-                break;
-
-            case PlayfieldRotateEvent rotateEvent:
-                MapEvents.PlayfieldRotateEvents.Add(rotateEvent);
-                PlayfieldRotateEventAdded?.Invoke(rotateEvent);
-                break;
-
-            case NoteEvent noteEvent:
-                MapEvents.NoteEvents.Add(noteEvent);
-                NoteEventAdded?.Invoke(noteEvent);
-                break;
-
-            default:
-                throw new NotImplementedException();
-        }
+        throwMissingHandler(obj);
     }
 
     public void Update(ITimedObject obj)
     {
-        switch (obj)
-        {
-            case HitObject hitObject:
-                HitObjectUpdated?.Invoke(hitObject);
-                break;
+        if (tryFindNotifier(obj, n => n.Update(obj)))
+            return;
 
-            case TimingPoint timingPoint:
-                TimingPointUpdated?.Invoke(timingPoint);
-                break;
-
-            case ScrollVelocity scrollVelocity:
-                ScrollVelocityUpdated?.Invoke(scrollVelocity);
-                break;
-
-            case LaneSwitchEvent laneSwitchEvent:
-                LaneSwitchEventUpdated?.Invoke(laneSwitchEvent);
-                break;
-
-            case FlashEvent flashEvent:
-                FlashEventUpdated?.Invoke(flashEvent);
-                break;
-
-            case ShakeEvent shakeEvent:
-                ShakeEventUpdated?.Invoke(shakeEvent);
-                break;
-
-            case PlayfieldFadeEvent fadeEvent:
-                PlayfieldFadeEventUpdated?.Invoke(fadeEvent);
-                break;
-
-            case PlayfieldMoveEvent moveEvent:
-                PlayfieldMoveEventUpdated?.Invoke(moveEvent);
-                break;
-
-            case PlayfieldScaleEvent scaleEvent:
-                PlayfieldScaleEventUpdated?.Invoke(scaleEvent);
-                break;
-
-            case HitObjectFadeEvent hitFade:
-                HitObjectFadeEventUpdated?.Invoke(hitFade);
-                break;
-
-            case HitObjectEaseEvent hitEase:
-                HitObjectEaseEventUpdated?.Invoke(hitEase);
-                break;
-
-            case ShaderEvent shaderEvent:
-                ShaderEventUpdated?.Invoke(shaderEvent);
-                break;
-
-            case BeatPulseEvent pulseEvent:
-                BeatPulseEventUpdated?.Invoke(pulseEvent);
-                break;
-
-            case PlayfieldRotateEvent rotateEvent:
-                PlayfieldRotateEventUpdated?.Invoke(rotateEvent);
-                break;
-
-            case NoteEvent noteEvent:
-                NoteEventUpdated?.Invoke(noteEvent);
-                break;
-
-            default:
-                throw new NotImplementedException();
-        }
+        throwMissingHandler(obj);
     }
 
     public void UpdateHitSounds() => HitSoundsChanged?.Invoke();
 
     public void Remove(ITimedObject obj)
     {
-        switch (obj)
-        {
-            case HitObject hitObject:
-                MapInfo.HitObjects.Remove(hitObject);
-                HitObjectRemoved?.Invoke(hitObject);
-                break;
+        if (tryFindNotifier(obj, n => n.Remove(obj)))
+            return;
 
-            case TimingPoint timingPoint:
-                MapInfo.TimingPoints.Remove(timingPoint);
-                TimingPointRemoved?.Invoke(timingPoint);
-                break;
-
-            case ScrollVelocity scrollVelocity:
-                MapInfo.ScrollVelocities.Remove(scrollVelocity);
-                ScrollVelocityRemoved?.Invoke(scrollVelocity);
-                break;
-
-            case LaneSwitchEvent laneSwitchEvent:
-                MapEvents.LaneSwitchEvents.Remove(laneSwitchEvent);
-                LaneSwitchEventRemoved?.Invoke(laneSwitchEvent);
-                break;
-
-            case FlashEvent flashEvent:
-                MapEvents.FlashEvents.Remove(flashEvent);
-                FlashEventRemoved?.Invoke(flashEvent);
-                break;
-
-            case ShakeEvent shakeEvent:
-                MapEvents.ShakeEvents.Remove(shakeEvent);
-                ShakeEventRemoved?.Invoke(shakeEvent);
-                break;
-
-            case PlayfieldFadeEvent fadeEvent:
-                MapEvents.PlayfieldFadeEvents.Remove(fadeEvent);
-                PlayfieldFadeEventRemoved?.Invoke(fadeEvent);
-                break;
-
-            case PlayfieldMoveEvent moveEvent:
-                MapEvents.PlayfieldMoveEvents.Remove(moveEvent);
-                PlayfieldMoveEventRemoved?.Invoke(moveEvent);
-                break;
-
-            case PlayfieldScaleEvent scaleEvent:
-                MapEvents.PlayfieldScaleEvents.Remove(scaleEvent);
-                PlayfieldScaleEventRemoved?.Invoke(scaleEvent);
-                break;
-
-            case HitObjectFadeEvent hitFade:
-                MapEvents.HitObjectFadeEvents.Remove(hitFade);
-                HitObjectFadeEventRemoved?.Invoke(hitFade);
-                break;
-
-            case HitObjectEaseEvent hitEase:
-                MapEvents.HitObjectEaseEvents.Remove(hitEase);
-                HitObjectEaseEventRemoved?.Invoke(hitEase);
-                break;
-
-            case ShaderEvent shaderEvent:
-                MapEvents.ShaderEvents.Remove(shaderEvent);
-                ShaderEventRemoved?.Invoke(shaderEvent);
-                break;
-
-            case BeatPulseEvent pulseEvent:
-                MapEvents.BeatPulseEvents.Remove(pulseEvent);
-                BeatPulseEventRemoved?.Invoke(pulseEvent);
-                break;
-
-            case PlayfieldRotateEvent rotateEvent:
-                MapEvents.PlayfieldRotateEvents.Remove(rotateEvent);
-                PlayfieldRotateEventRemoved?.Invoke(rotateEvent);
-                break;
-
-            case NoteEvent noteEvent:
-                MapEvents.NoteEvents.Remove(noteEvent);
-                NoteEventRemoved?.Invoke(noteEvent);
-                break;
-
-            default:
-                throw new NotImplementedException();
-        }
+        throwMissingHandler(obj);
     }
 
-    public void ApplyOffsetToAll(float offset)
-    {
-        foreach (var hitObject in MapInfo.HitObjects)
-        {
-            hitObject.Time += offset;
-            Update(hitObject);
-        }
+    private void throwMissingHandler(ITimedObject obj) => throw new ArgumentException($"Type '{obj.GetType().Name}' does not have a change handler associated with it.");
 
-        foreach (var timingPoint in MapInfo.TimingPoints)
-        {
-            timingPoint.Time += offset;
-            Update(timingPoint);
-        }
-
-        foreach (var scrollVelocity in MapInfo.ScrollVelocities)
-        {
-            scrollVelocity.Time += offset;
-            Update(scrollVelocity);
-        }
-
-        foreach (var laneSwitchEvent in MapEvents.LaneSwitchEvents)
-        {
-            laneSwitchEvent.Time += offset;
-            Update(laneSwitchEvent);
-        }
-
-        foreach (var flashEvent in MapEvents.FlashEvents)
-        {
-            flashEvent.Time += offset;
-            Update(flashEvent);
-        }
-
-        foreach (var shakeEvent in MapEvents.ShakeEvents)
-        {
-            shakeEvent.Time += offset;
-            Update(shakeEvent);
-        }
-
-        foreach (var fadeEvent in MapEvents.PlayfieldFadeEvents)
-        {
-            fadeEvent.Time += offset;
-            Update(fadeEvent);
-        }
-
-        foreach (var moveEvent in MapEvents.PlayfieldMoveEvents)
-        {
-            moveEvent.Time += offset;
-            Update(moveEvent);
-        }
-
-        foreach (var scaleEvent in MapEvents.PlayfieldScaleEvents)
-        {
-            scaleEvent.Time += offset;
-            Update(scaleEvent);
-        }
-
-        foreach (var hitFade in MapEvents.HitObjectFadeEvents)
-        {
-            hitFade.Time += offset;
-            Update(hitFade);
-        }
-
-        foreach (var hitEase in MapEvents.HitObjectEaseEvents)
-        {
-            hitEase.Time += offset;
-            Update(hitEase);
-        }
-
-        foreach (var shaderEvent in MapEvents.ShaderEvents)
-        {
-            shaderEvent.Time += offset;
-            Update(shaderEvent);
-        }
-
-        foreach (var pulseEvent in MapEvents.BeatPulseEvents)
-        {
-            pulseEvent.Time += offset;
-            Update(pulseEvent);
-        }
-
-        foreach (var rotateEvent in MapEvents.PlayfieldRotateEvents)
-        {
-            rotateEvent.Time += offset;
-            Update(rotateEvent);
-        }
-
-        foreach (var noteEvent in MapEvents.NoteEvents)
-        {
-            noteEvent.Time += offset;
-            Update(noteEvent);
-        }
-    }
+    public void ApplyOffsetToAll(float offset) => notifiers.ForEach(n => n.ApplyOffset(offset));
 
     public void Sort()
     {
@@ -562,5 +300,58 @@ public class EditorMap
             clone.Storyboard = Storyboard;
             return clone;
         }
+    }
+
+    private interface IChangeNotifier
+    {
+        void Add(ITimedObject obj);
+        void Remove(ITimedObject obj);
+        void Update(ITimedObject obj);
+
+        void ApplyOffset(float offset);
+
+        bool Matches(Type type);
+    }
+
+    private class ChangeNotifier<T> : IChangeNotifier
+        where T : class, ITimedObject
+    {
+        private List<T> list { get; }
+        private Action<T> add { get; }
+        private Action<T> remove { get; }
+        private Action<T> update { get; }
+
+        public ChangeNotifier(List<T> list, Action<T> add, Action<T> remove, Action<T> update)
+        {
+            this.list = list;
+            this.add = add;
+            this.remove = remove;
+            this.update = update;
+        }
+
+        public void Add(ITimedObject obj)
+        {
+            list.Add((T)obj);
+            add?.Invoke((T)obj);
+        }
+
+        public void Remove(ITimedObject obj)
+        {
+            list.Remove((T)obj);
+            remove?.Invoke((T)obj);
+        }
+
+        public void Update(ITimedObject obj) => update?.Invoke((T)obj);
+
+        public void ApplyOffset(float offset)
+        {
+            foreach (var obj in list)
+            {
+                obj.Time += offset;
+                Update(obj);
+            }
+        }
+
+        public bool Matches(Type type) => typeof(T) == type;
     }
 }

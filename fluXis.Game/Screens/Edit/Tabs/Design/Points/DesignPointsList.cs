@@ -61,6 +61,11 @@ public partial class DesignPointsList : PointsList
         Map.PlayfieldRotateEventRemoved += RemovePoint;
         Map.MapEvents.PlayfieldRotateEvents.ForEach(AddPoint);
 
+        Map.ScrollMultiplierEventAdded += AddPoint;
+        Map.ScrollMultiplierEventUpdated += UpdatePoint;
+        Map.ScrollMultiplierEventRemoved += RemovePoint;
+        Map.MapEvents.ScrollMultiplyEvents.ForEach(AddPoint);
+
         Map.NoteEventAdded += AddPoint;
         Map.NoteEventUpdated += UpdatePoint;
         Map.NoteEventRemoved += RemovePoint;
@@ -81,6 +86,7 @@ public partial class DesignPointsList : PointsList
             BeatPulseEvent pulse => new BeatPulseEntry(pulse),
             PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
             ShaderEvent shader => new ShaderEntry(shader),
+            ScrollMultiplierEvent scroll => new ScrollMultiplierEntry(scroll),
             NoteEvent note => new NoteEntry(note),
             _ => null
         };
@@ -99,8 +105,9 @@ public partial class DesignPointsList : PointsList
             new("HitObject Fade", FluXisColors.HitObjectFade, () => Create(new HitObjectFadeEvent())),
             new("HitObject Ease", FluXisColors.HitObjectEase, () => Create(new HitObjectEaseEvent())),
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
+            new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" })),
+            new("Scroll Multiplier", FluXisColors.PlayfieldRotate, () => Create(new ScrollMultiplierEvent())),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent())),
-            new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }))
         };
 
         return entries;

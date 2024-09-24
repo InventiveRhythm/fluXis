@@ -41,6 +41,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     private Bindable<float> scrollSpeed;
     public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * screen.Rate));
 
+    public float DirectScrollMultiplier { get; set; } = 1;
+
     private Bindable<bool> hitsounds;
 
     public MapInfo Map => playfield.Map;
@@ -99,7 +101,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         useSnapColors = config.GetBindable<bool>(FluXisSetting.SnapColoring);
         hitsounds = config.GetBindable<bool>(FluXisSetting.Hitsounding);
-        screen.OnSeek += onSeek;
     }
 
     protected override void LoadComplete()
@@ -116,67 +117,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
             PlayHitSound(hit);
         };
-    }
-
-    private void onSeek(double prevTime, double newTime)
-    {
-        newTime = Math.Max(newTime, 0);
-
-        /*Seeking = true;
-        (Clock as GameplayClock)?.Seek(newTime);
-
-        if (newTime < prevTime)
-        {
-            var hitObjects = PastHitObjects.Where(h => h.Time >= newTime).ToList();
-
-            foreach (var hitObject in hitObjects)
-            {
-                if (hitObject.LongNote && hitObject.EndTime >= newTime && hitObject.HoldEndResult != null)
-                {
-                    var endResult = hitObject.HoldEndResult;
-                    judgementProcessor.RevertResult(endResult);
-                    hitObject.HoldEndResult = null;
-                }
-
-                if (hitObject.Result == null) continue;
-
-                var result = hitObject.Result;
-                judgementProcessor.RevertResult(result);
-                hitObject.Result = null;
-
-                var hit = new OldDrawableHitObject(this, hitObject);
-                HitObjects.Add(hit);
-                AddInternal(hit);
-            }
-
-            PastHitObjects.RemoveAll(h => h.Time >= newTime);
-            FutureHitObjects.RemoveAll(h => h.Time <= newTime);
-            FutureHitObjects.Sort((a, b) => a.Time.CompareTo(b.Time));
-        }
-        else
-        {
-            // all future hitobjects behind the new time
-            var hitObjects = FutureHitObjects.Where(h => h.Time <= newTime).ToList();
-
-            // remove all hitobjects behind the new time
-            foreach (var info in hitObjects)
-            {
-                var hitResult = new HitResult(info.Time, 0, Judgement.Flawless);
-                judgementProcessor.AddResult(hitResult);
-                info.Result = hitResult;
-
-                if (info.LongNote)
-                {
-                    var endHitResult = new HitResult(info.EndTime, 0, Judgement.Flawless);
-                    judgementProcessor.AddResult(endHitResult);
-                    info.HoldEndResult = endHitResult;
-                }
-            }
-
-            var toPast = FutureHitObjects.Where(h => h.Time <= newTime);
-            PastHitObjects.AddRange(toPast);
-            FutureHitObjects.RemoveAll(h => h.Time <= newTime);
-        }*/
     }
 
     protected override void Update()
@@ -220,12 +160,17 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public float HitPosition => DrawHeight - laneSwitchManager.HitPosition;
 
-    public bool ShouldDisplay(double time) => ScrollVelocityPositionFromTime(time) <= ScrollVelocityPositionFromTime(Clock.CurrentTime) + DrawHeight * screen.Rate;
+    public bool ShouldDisplay(double time)
+    {
+        var svTime = ScrollVelocityPositionFromTime(time);
+        var y = PositionAtTime(svTime);
+        return y >= 0;
+    }
 
     public float PositionAtTime(double time, Easing ease = Easing.None)
     {
         var pos = HitPosition;
-        var y = (float)(pos - .5f * ((time - (float)CurrentTime) * ScrollSpeed));
+        var y = (float)(pos - .5f * ((time - (float)CurrentTime) * (ScrollSpeed * DirectScrollMultiplier)));
 
         if (ease <= Easing.None || y < 0 || y > pos)
             return y;

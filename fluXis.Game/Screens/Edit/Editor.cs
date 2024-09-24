@@ -177,6 +177,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         editorMap.MapInfo.MapEvents ??= new MapEvents();
         editorMap.MapInfo.Storyboard ??= new Storyboard();
 
+        editorMap.SetupNotifiers();
+
         backgrounds.AddBackgroundFromMap(editorMap.RealmMap);
         trackStore = audioManager.GetTrackStore(new StorageBackedResourceStore(storage.GetStorageForDirectory("maps")));
 
