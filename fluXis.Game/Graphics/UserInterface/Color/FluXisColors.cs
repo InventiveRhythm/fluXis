@@ -49,6 +49,7 @@ public static class FluXisColors
     public static Colour4 HitObjectFade => Colour4.FromHex("#8AF3F7");
     public static Colour4 HitObjectEase => Colour4.FromHex("#5B92FF");
     public static Colour4 BeatPulse => Colour4.FromHex("#FF6666");
+    public static Colour4 ScrollMultiply => Colour4.FromHex("#c73673");
     public static Colour4 Note => Colour4.FromHex("#FFFFFF");
     public static Colour4 Shader => Colour4.FromHex("#D65C5C");
 

@@ -106,7 +106,7 @@ public partial class DesignPointsList : PointsList
             new("HitObject Ease", FluXisColors.HitObjectEase, () => Create(new HitObjectEaseEvent())),
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" })),
-            new("Scroll Multiplier", FluXisColors.PlayfieldRotate, () => Create(new ScrollMultiplierEvent())),
+            new("Scroll Multiplier", FluXisColors.ScrollMultiply, () => Create(new ScrollMultiplierEvent())),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent())),
         };
 

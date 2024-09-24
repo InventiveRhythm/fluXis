@@ -15,7 +15,7 @@ namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class ScrollMultiplierEntry : PointListEntry
 {
     protected override string Text => "Scroll Multiplier";
-    protected override Colour4 Color => FluXisColors.PlayfieldRotate;
+    protected override Colour4 Color => FluXisColors.ScrollMultiply;
 
     private ScrollMultiplierEvent scroll => Object as ScrollMultiplierEvent;
 
