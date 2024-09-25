@@ -51,6 +51,9 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("scroll-multiply")]
     public List<ScrollMultiplierEvent> ScrollMultiplyEvents { get; private set; } = new();
 
+    [JsonProperty("time-offset")]
+    public List<TimeOffsetEvent> TimeOffsetEvents { get; private set; } = new();
+
     [JsonProperty("notes")]
     public List<NoteEvent> NoteEvents { get; private set; } = new();
 
@@ -68,6 +71,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && ShaderEvents.Count == 0
                          && BeatPulseEvents.Count == 0
                          && ScrollMultiplyEvents.Count == 0
+                         && TimeOffsetEvents.Count == 0
                          && NoteEvents.Count == 0;
 
     public static T Load<T>(string content)
@@ -236,6 +240,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         BeatPulseEvents.Sort(compare);
         PlayfieldRotateEvents.Sort(compare);
         ScrollMultiplyEvents.Sort(compare);
+        TimeOffsetEvents.Sort(compare);
         NoteEvents.Sort(compare);
 
         return this;
@@ -267,6 +272,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);
         clone.BeatPulseEvents = new List<BeatPulseEvent>(BeatPulseEvents);
         clone.ScrollMultiplyEvents = new List<ScrollMultiplierEvent>(ScrollMultiplyEvents);
+        clone.TimeOffsetEvents = new List<TimeOffsetEvent>(TimeOffsetEvents);
         clone.NoteEvents = new List<NoteEvent>(NoteEvents);
         return clone;
     }

@@ -66,6 +66,11 @@ public partial class DesignPointsList : PointsList
         Map.ScrollMultiplierEventRemoved += RemovePoint;
         Map.MapEvents.ScrollMultiplyEvents.ForEach(AddPoint);
 
+        Map.TimeOffsetEventAdded += AddPoint;
+        Map.TimeOffsetEventUpdated += UpdatePoint;
+        Map.TimeOffsetEventRemoved += RemovePoint;
+        Map.MapEvents.TimeOffsetEvents.ForEach(AddPoint);
+
         Map.NoteEventAdded += AddPoint;
         Map.NoteEventUpdated += UpdatePoint;
         Map.NoteEventRemoved += RemovePoint;
@@ -87,6 +92,7 @@ public partial class DesignPointsList : PointsList
             PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
             ShaderEvent shader => new ShaderEntry(shader),
             ScrollMultiplierEvent scroll => new ScrollMultiplierEntry(scroll),
+            TimeOffsetEvent offset => new TimeOffsetEntry(offset),
             NoteEvent note => new NoteEntry(note),
             _ => null
         };
@@ -107,6 +113,7 @@ public partial class DesignPointsList : PointsList
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" })),
             new("Scroll Multiplier", FluXisColors.ScrollMultiply, () => Create(new ScrollMultiplierEvent())),
+            new("Time Offset", FluXisColors.TimeOffset, () => Create(new TimeOffsetEvent())),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent())),
         };
 

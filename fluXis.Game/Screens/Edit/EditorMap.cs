@@ -103,6 +103,10 @@ public class EditorMap
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventRemoved;
     public event Action<PlayfieldRotateEvent> PlayfieldRotateEventUpdated;
 
+    public event Action<TimeOffsetEvent> TimeOffsetEventAdded;
+    public event Action<TimeOffsetEvent> TimeOffsetEventRemoved;
+    public event Action<TimeOffsetEvent> TimeOffsetEventUpdated;
+
     public event Action<NoteEvent> NoteEventAdded;
     public event Action<NoteEvent> NoteEventRemoved;
     public event Action<NoteEvent> NoteEventUpdated;
@@ -128,6 +132,7 @@ public class EditorMap
             new ChangeNotifier<ShaderEvent>(MapEvents.ShaderEvents, obj => ShaderEventAdded?.Invoke(obj), obj => ShaderEventRemoved?.Invoke(obj), obj => ShaderEventUpdated?.Invoke(obj)),
             new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents, obj => BeatPulseEventAdded?.Invoke(obj), obj => BeatPulseEventRemoved?.Invoke(obj), obj => BeatPulseEventUpdated?.Invoke(obj)),
             new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents, obj => ScrollMultiplierEventAdded?.Invoke(obj), obj => ScrollMultiplierEventRemoved?.Invoke(obj), obj => ScrollMultiplierEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj), obj => TimeOffsetEventUpdated?.Invoke(obj)),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj))
         };
     }

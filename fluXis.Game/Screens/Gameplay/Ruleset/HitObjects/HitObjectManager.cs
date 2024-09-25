@@ -42,6 +42,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * screen.Rate));
 
     public float DirectScrollMultiplier { get; set; } = 1;
+    public double VisualTimeOffset { get; set; } = 0;
 
     private Bindable<bool> hitsounds;
 
@@ -170,7 +171,8 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     public float PositionAtTime(double time, Easing ease = Easing.None)
     {
         var pos = HitPosition;
-        var y = (float)(pos - .5f * ((time - (float)CurrentTime) * (ScrollSpeed * DirectScrollMultiplier)));
+        var current = CurrentTime + VisualTimeOffset;
+        var y = (float)(pos - .5f * ((time - (float)current) * (ScrollSpeed * DirectScrollMultiplier)));
 
         if (ease <= Easing.None || y < 0 || y > pos)
             return y;
