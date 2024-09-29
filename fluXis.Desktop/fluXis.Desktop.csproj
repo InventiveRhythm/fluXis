@@ -18,8 +18,8 @@
     <ProjectReference Include="..\fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj" />
   </ItemGroup>
   <ItemGroup Label="Package References">
-    <PackageReference Include="OpenRGB.NET" Version="3.0.1" />
-    <PackageReference Include="Velopack" Version="0.0.594" />
+    <PackageReference Include="OpenRGB.NET" Version="3.1.1" />
+    <PackageReference Include="Velopack" Version="0.0.626" />
   </ItemGroup>
   <ItemGroup Label="Resources">
     <EmbeddedResource Include="game.ico" />
