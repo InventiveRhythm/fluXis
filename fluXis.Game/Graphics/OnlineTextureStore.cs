@@ -23,15 +23,15 @@ public class OnlineTextureStore : TextureStore
     }
 
     public Texture GetAchievement(string id) => get(AssetType.Achievement, id, AssetSize.Small, true);
-    public Texture GetAvatar(long id) => get(AssetType.Avatar, id);
-    public Texture GetBanner(long id) => get(AssetType.Banner, id);
+    public Texture GetAvatar(string hash) => get(AssetType.Avatar, hash);
+    public Texture GetBanner(string hash) => get(AssetType.Banner, hash);
     public Texture GetBackground(long id, AssetSize size = AssetSize.Small) => get(AssetType.Background, id, size);
     public Texture GetCover(long id, AssetSize size = AssetSize.Small) => get(AssetType.Cover, id, size);
-    public Texture GetClubIcon(long id) => get(AssetType.ClubIcon, id);
-    public Texture GetClubBanner(long id) => get(AssetType.ClubBanner, id);
+    public Texture GetClubIcon(string id) => get(AssetType.ClubIcon, id);
+    public Texture GetClubBanner(string id) => get(AssetType.ClubBanner, id);
 
     private Texture get(AssetType type, long id, AssetSize size = AssetSize.Small, bool addExtension = false) => get(type, id.ToString(), size, addExtension);
-    private Texture get(AssetType type, string id, AssetSize size = AssetSize.Small, bool addExtension = false) => Get(getUrl(type, id, size, addExtension));
+    private Texture get(AssetType type, string id, AssetSize size = AssetSize.Small, bool addExtension = false) => string.IsNullOrEmpty(id) ? null : Get(getUrl(type, id, size, addExtension));
 
     private string getUrl(AssetType type, string id, AssetSize size, bool addExtension)
     {

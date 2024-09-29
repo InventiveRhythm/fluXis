@@ -21,6 +21,6 @@ public partial class DrawableClubBanner : Sprite
     [BackgroundDependencyLoader]
     private void load()
     {
-        Texture = store.GetClubBanner(club.ID);
+        Texture = store.GetClubBanner(club.BannerHash);
     }
 }

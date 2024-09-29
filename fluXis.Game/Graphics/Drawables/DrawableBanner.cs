@@ -37,7 +37,7 @@ public partial class DrawableBanner : Sprite
     private void setTexture()
     {
         if (user is { ID: >= 0 }) // the texture from the online store could still be null
-            Texture = store.GetBanner(user.ID) ?? textures.Get("Online/default-banner");
+            Texture = store.GetBanner(user.BannerHash) ?? textures.Get("Online/default-banner");
         else
             Texture = textures.Get("Online/default-banner");
 

@@ -15,6 +15,12 @@ public class APIClub
     [JsonProperty("tag")]
     public string Tag { get; set; } = "";
 
+    [JsonProperty("icon")]
+    public string? IconHash { get; set; }
+
+    [JsonProperty("banner")]
+    public string? BannerHash { get; set; }
+
     [JsonProperty("count")]
     public long MemberCount { get; set; }
 

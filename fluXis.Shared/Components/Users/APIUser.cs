@@ -16,6 +16,12 @@ public class APIUser
     [JsonProperty("displayname")]
     public string? DisplayName { get; set; }
 
+    [JsonProperty("avatar")]
+    public string? AvatarHash { get; set; }
+
+    [JsonProperty("banner")]
+    public string? BannerHash { get; set; }
+
     [JsonProperty("aboutme")]
     public string? AboutMe { get; set; }
 
