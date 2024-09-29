@@ -497,11 +497,7 @@ public partial class MenuScreen : FluXisScreen
     {
         if (config.Get<bool>(FluXisSetting.IntroTheme))
         {
-            maps.CurrentMap = maps.CreateBuiltinMap(MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
-
-            // this doesn't loop perfectly and I hate it and can't do anything about it
-            clock.RestartPoint = maps.CurrentMap?.Metadata.PreviewTime ?? 0;
-            clock.AllowLimitedLoop = false;
+            maps.CurrentMap = maps.CreateBuiltinMap(Game.CurrentSeason == Season.Halloween ? MapStore.BuiltinMap.Spoophouse : MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
             clock.Seek(0);
         }
         else // if disabled, load a random map

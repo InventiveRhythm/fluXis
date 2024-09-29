@@ -4,19 +4,19 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;
 using Realms;
 
-namespace fluXis.Game.Map.Builtin.Roundhouse;
+namespace fluXis.Game.Map.Builtin.Spoophouse;
 
 [Ignored]
-public class RoundhouseMap : RealmMap
+public class SpoophouseMap : RealmMap
 {
-    public RoundhouseMap()
+    public SpoophouseMap()
     {
         ID = default;
         Hash = "dummy";
         Filters = new RealmMapFilters();
         Metadata = new RealmMapMetadata
         {
-            Title = "Roundhouse",
+            Title = "Spoophouse",
             Artist = "Akiri"
         };
     }
@@ -28,14 +28,6 @@ public class RoundhouseMap : RealmMap
     public override Track GetTrack()
     {
         var tracks = MapSet.Resources?.TrackStore;
-        var track = tracks?.Get("Menu/Roundhouse");
-
-        if (track is not null)
-        {
-            track.RestartPoint = 1443;
-            track.Looping = true;
-        }
-
-        return track;
+        return tracks?.Get("Menu/Spoophouse.ogg");
     }
 }

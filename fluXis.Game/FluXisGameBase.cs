@@ -305,8 +305,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         return date switch
         {
-            { Month: 7 } or { Month: 8 } or { Month: 9 } => Season.Summer,
-            { Month: 10, Day: >= 18 } => Season.Halloween,
+            { Month: 7 } or { Month: 8 } or { Month: 9, Day: <= 7 } => Season.Summer,
+            { Month: 10, Day: >= 14 } => Season.Halloween,
             { Month: 12 } or { Month: 1 } => Season.Winter,
             _ => Season.Normal
         };

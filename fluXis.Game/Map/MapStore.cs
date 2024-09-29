@@ -12,6 +12,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
 using fluXis.Game.Map.Builtin.Roundhouse;
+using fluXis.Game.Map.Builtin.Spoophouse;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Online.API.Requests.Maps;
 using fluXis.Game.Online.API.Requests.MapSets;
@@ -703,9 +704,10 @@ public partial class MapStore : Component
 
     public RealmMapSet CreateBuiltinMap(BuiltinMap map)
     {
-        var set = map switch
+        RealmMapSet set = map switch
         {
             BuiltinMap.Roundhouse => new RoundhouseMapSet(),
+            BuiltinMap.Spoophouse => new SpoophouseMapSet(),
             _ => throw new ArgumentOutOfRangeException(nameof(map), map, null)
         };
 
@@ -715,6 +717,7 @@ public partial class MapStore : Component
 
     public enum BuiltinMap
     {
-        Roundhouse
+        Roundhouse,
+        Spoophouse
     }
 }
