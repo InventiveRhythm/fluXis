@@ -148,7 +148,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         foreach (var hitObject in HitObjects.Where(h => h.CanBeRemoved).ToList())
             removeHitObject(hitObject);
 
-        while (PastHitObjects.Count > 0)
+        while (screen.AllowReverting && PastHitObjects.Count > 0)
         {
             var result = PastHitObjects.Peek().Result;
 

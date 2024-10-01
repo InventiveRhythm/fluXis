@@ -21,6 +21,7 @@ namespace fluXis.Game.Screens.Gameplay.Replays;
 public partial class ReplayGameplayScreen : GameplayScreen
 {
     protected override bool InstantlyExitOnPause => true;
+    public override bool AllowReverting => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
     protected override APIUser CurrentPlayer => replay.GetPlayer(users);
@@ -73,7 +74,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
             handlePresses(frame.Actions);
         }
 
-        while (handledFrames.Count > 0)
+        while (AllowReverting && handledFrames.Count > 0)
         {
             var result = handledFrames.Peek();
 

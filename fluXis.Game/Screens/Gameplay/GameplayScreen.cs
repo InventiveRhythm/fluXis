@@ -80,6 +80,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected virtual double GameplayStartTime => 0;
     protected virtual bool InstantlyExitOnPause => false;
     protected virtual bool AllowRestart => true;
+    public virtual bool AllowReverting => false;
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
