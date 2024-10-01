@@ -20,6 +20,6 @@ public static class UserExtensions
         if (user.IsDeveloper())
             return true;
 
-        return user.Groups.Any(g => g.ID == "moderator");
+        return user.Groups.Any(g => g.ID == "moderators");
     }
 }

@@ -93,7 +93,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
             if (user == null)
                 return false;
 
-            if (user.IsDeveloper() || user.CanModerate() || MapSet?.Creator.ID == user.ID)
+            if (user.CanModerate() || MapSet?.Creator.ID == user.ID)
                 return true;
 
             return false;
