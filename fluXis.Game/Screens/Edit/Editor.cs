@@ -164,6 +164,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         globalClock.Looping = false;
 
+        editorMap.Panels = panels;
         isNewMap = editorMap.IsNew;
 
         if (editorMap.RealmMap == null)

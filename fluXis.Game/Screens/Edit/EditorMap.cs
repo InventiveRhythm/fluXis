@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Presets;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Map.Structures.Bases;
@@ -31,6 +33,8 @@ public class EditorMap
     public string StoryboardHash => MapUtils.GetHash(Storyboard.Serialize());
 
     public bool IsNew => RealmMap == null || MapInfo == null;
+
+    public PanelContainer Panels { get; set; }
 
     private List<IChangeNotifier> notifiers = new();
 
@@ -158,10 +162,9 @@ public class EditorMap
 
     public void SetAudio(FileInfo file)
     {
-        if (file == null)
+        if (file == null || !copyFile(file))
             return;
 
-        copyFile(file);
         MapInfo.AudioFile = file.Name;
         RealmMap.Metadata.Audio = file.Name;
         AudioChanged?.Invoke();
@@ -169,10 +172,9 @@ public class EditorMap
 
     public void SetBackground(FileInfo file)
     {
-        if (file == null)
+        if (file == null || !copyFile(file))
             return;
 
-        copyFile(file);
         MapInfo.BackgroundFile = file.Name;
         RealmMap.Metadata.Background = file.Name;
         BackgroundChanged?.Invoke();
@@ -189,10 +191,9 @@ public class EditorMap
 
     public void SetCover(FileInfo file)
     {
-        if (file == null)
+        if (file == null || !copyFile(file))
             return;
 
-        copyFile(file);
         RealmMap.MapSet.Cover = file.Name;
         MapInfo.CoverFile = file.Name;
         CoverChanged?.Invoke();
@@ -200,27 +201,35 @@ public class EditorMap
 
     public void SetVideo(FileInfo file)
     {
-        if (file == null)
+        if (file == null || !copyFile(file))
             return;
 
-        copyFile(file);
         MapInfo.VideoFile = file.Name;
     }
 
-    private void copyFile(FileInfo file)
+    private bool copyFile(FileInfo file)
     {
-        var mapDir = new DirectoryInfo(MapFiles.GetFullPath(MapSet.ID.ToString()));
+        try
+        {
+            var mapDir = new DirectoryInfo(MapFiles.GetFullPath(MapSet.ID.ToString()));
 
-        if (file.Directory != null && file.Directory.FullName == mapDir.FullName)
-            return;
+            if (file.Directory != null && file.Directory.FullName == mapDir.FullName)
+                return true;
 
-        string path = MapFiles.GetFullPath(MapSet.GetPathForFile(file.Name));
-        var dir = Path.GetDirectoryName(path);
+            string path = MapFiles.GetFullPath(MapSet.GetPathForFile(file.Name));
+            var dir = Path.GetDirectoryName(path);
 
-        if (!Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
-        File.Copy(file.FullName, path, true);
+            File.Copy(file.FullName, path, true);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Panels.Content = new ExceptionPanel(ex);
+            return false;
+        }
     }
 
     #endregion
