@@ -63,6 +63,9 @@ public class APIUser
     [JsonProperty("email")]
     public string? Email { get; set; }
 
+    [JsonProperty("flags")]
+    public long? Flags { get; set; }
+
     #endregion
 
     #region Misc
