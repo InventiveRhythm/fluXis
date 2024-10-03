@@ -1,35 +1,31 @@
 <h1 align="center">fluXis</h1>
-<p align="center"><img src="https://fluXis.flux.moe/src/assets/images/icon.png" width="128"/></p>
+<p align="center"><img src="https://github.com/InventiveRhythm/fluXis-web/blob/master/src/assets/images/icon.png?raw=true" width="128" alt="fluXis logo"/></p>
 <p align="center">A community-driven rhythm game with a focus on creativity and expression.</p>
 
 <p align="center">
-<a href="https://github.com/TeamFluXis/fluXis/releases"><img src="https://img.shields.io/github/v/release/TeamFluXis/fluXis"></a>
-<a href="https://crowdin.com/project/fluxis"><img src="https://badges.crowdin.net/fluxis/localized.svg"/></a>
-<a href="https://github.com/TeamFluXis/fluXis/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/TeamFluXis/fluXis"></a>
-
+<a href="https://github.com/TeamFluXis/fluXis/releases"><img src="https://img.shields.io/github/v/release/TeamFluXis/fluXis" alt="github release badge"></a>
+<a href="https://github.com/TeamFluXis/fluXis/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/TeamFluXis/fluXis" alt="license badge"></a>
 </p>
 
 ## Downloading and playing the game
 ### Windows 8.1+
 1. Download and install the .NET 8.0 desktop runtime from [here](https://dotnet.microsoft.com/download/dotnet/8.0/runtime).
-2. Download the installer from [here](https://dl.flux.moe/install/fluXis-installer.zip) or the download button on the website.
-3. Extract the zip file.
-4. Run the installer (`fluXis.Installer.exe`).
-5. Follow the instructions in the installer.
-
-You can find the game in the start menu or on your desktop (if you chose to create a desktop shortcut).
+2. Download `install.exe` from [the latest release](https://github.com/InventiveRhythm/fluXis/releases/latest) or the download button on the website.
+3. Run the installer.
 
 *Make sure to report any issues with the installer to the [discord server](https://discord.gg/29hMftpNq9).*
 
 ### Linux
-Linux releases soon™
+1. Download and install the .NET 8.0 desktop runtime.
+2. Download `fluXis.AppImage` from [the latest release](https://github.com/InventiveRhythm/fluXis/releases/latest).
+3. Run the AppImage.
 
 ### macOS
 macOS releases soon™
 
 ## Building and Developing
 ### Requirements
-* A desktop computer running Windows, macOS, or Linux with the [.NET 7.0 SDK](https://dotnet.microsoft.com/download) installed.
+* A desktop computer running Windows, macOS, or Linux with the [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) installed.
 * An IDE of your choice, for example [JetBrains Rider](https://www.jetbrains.com/rider/), [Visual Studio](https://visualstudio.microsoft.com/vs/) or [Visual Studio Code](https://code.visualstudio.com/).
 
 ### Downloading the source code
