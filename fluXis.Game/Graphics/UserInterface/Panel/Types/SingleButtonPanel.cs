@@ -3,7 +3,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Game.Graphics.UserInterface.Panel;
+namespace fluXis.Game.Graphics.UserInterface.Panel.Types;
 
 public partial class SingleButtonPanel : ButtonPanel
 {

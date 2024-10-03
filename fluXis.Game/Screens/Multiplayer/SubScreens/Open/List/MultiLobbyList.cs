@@ -4,6 +4,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Multiplayer;

@@ -8,6 +8,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Presets;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Stores;

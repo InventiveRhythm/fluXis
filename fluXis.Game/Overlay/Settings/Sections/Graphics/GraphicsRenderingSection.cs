@@ -4,6 +4,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;

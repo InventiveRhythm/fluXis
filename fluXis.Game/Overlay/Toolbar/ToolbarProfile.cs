@@ -7,6 +7,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using fluXis.Game.Localization;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Auth;

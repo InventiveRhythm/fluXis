@@ -13,6 +13,8 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Presets;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
 using fluXis.Game.IO;

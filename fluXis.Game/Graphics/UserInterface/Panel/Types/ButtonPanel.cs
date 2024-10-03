@@ -11,7 +11,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
-namespace fluXis.Game.Graphics.UserInterface.Panel;
+namespace fluXis.Game.Graphics.UserInterface.Panel.Types;
 
 public partial class ButtonPanel : Panel, ICloseable
 {

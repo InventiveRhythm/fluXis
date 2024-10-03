@@ -1,6 +1,7 @@
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using osu.Framework.Allocation;
 
 namespace fluXis.Game.Tests.Panels;

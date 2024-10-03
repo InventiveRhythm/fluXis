@@ -1,10 +1,11 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 
-namespace fluXis.Game.Graphics.UserInterface.Panel;
+namespace fluXis.Game.Graphics.UserInterface.Panel.Presets;
 
 public partial class ExternalLinkPanel : ButtonPanel
 {

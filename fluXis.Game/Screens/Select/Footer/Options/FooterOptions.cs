@@ -10,6 +10,7 @@ using fluXis.Game.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Footer;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Overlay.Settings;

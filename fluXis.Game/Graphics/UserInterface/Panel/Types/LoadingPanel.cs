@@ -6,7 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Game.Graphics.UserInterface.Panel;
+namespace fluXis.Game.Graphics.UserInterface.Panel.Types;
 
 public partial class LoadingPanel : Panel
 {

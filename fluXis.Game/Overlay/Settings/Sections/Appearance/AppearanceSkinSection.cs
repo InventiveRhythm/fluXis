@@ -1,6 +1,7 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Presets;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Overlay.Settings.UI;

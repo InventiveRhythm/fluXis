@@ -8,6 +8,7 @@ using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Context;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Presets;
 using fluXis.Game.Input;
 using fluXis.Game.Localization;
 using fluXis.Game.Map.Drawables.Card;

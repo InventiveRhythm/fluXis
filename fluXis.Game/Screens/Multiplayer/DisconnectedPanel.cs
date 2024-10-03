@@ -1,6 +1,6 @@
 ﻿using System;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Types;
 
 namespace fluXis.Game.Screens.Multiplayer;
 

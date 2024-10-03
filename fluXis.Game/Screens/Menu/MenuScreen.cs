@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Graphics.UserInterface.Panel.Presets;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
