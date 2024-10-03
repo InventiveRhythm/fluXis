@@ -1,3 +1,4 @@
+using System.Threading;
 using fluXis.Game.Graphics;
 using fluXis.Game.Online.Fluxel;
 using osu.Framework.Allocation;
@@ -14,6 +15,8 @@ public partial class PreviewManager : Component
     [Resolved]
     private IAPIClient api { get; set; }
 
+    private SemaphoreSlim semaphore { get; } = new(1, 1);
+
     private ITrackStore trackStore;
     private long currentId = -1;
     private Track track;
@@ -29,33 +32,59 @@ public partial class PreviewManager : Component
 
     public async void PlayPreview(long id)
     {
-        if (currentId == id)
-            return;
+        await semaphore.WaitAsync();
 
-        currentId = id;
-
-        if (track != null)
-            await track.StopAsync();
-
-        track = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/preview/{id}");
-
-        if (track == null)
+        try
         {
-            Logger.Log($"Failed to load preview track for {id}", LoggingTarget.Runtime, LogLevel.Error);
-            return;
+            if (currentId == id)
+                return;
+
+            currentId = id;
+
+            if (track != null)
+            {
+                await track.StopAsync();
+                track.Dispose();
+            }
+
+            track = await trackStore.GetAsync($"{api.Endpoint.AssetUrl}/preview/{id}");
+
+            if (track == null)
+            {
+                Logger.Log($"Failed to load preview track for {id}", LoggingTarget.Runtime, LogLevel.Error);
+                return;
+            }
+
+            // If the id has changed since we started loading, don't play the track
+            if (currentId != id)
+                return;
+
+            track.Looping = true;
+            await track.RestartAsync();
         }
-
-        // If the id has changed since we started loading, don't play the track
-        if (currentId != id)
-            return;
-
-        track.Looping = true;
-        await track.RestartAsync();
+        finally
+        {
+            semaphore.Release();
+        }
     }
 
-    public void StopPreview()
+    public async void StopPreview()
     {
-        currentId = -1;
-        track?.Stop();
+        await semaphore.WaitAsync();
+
+        try
+        {
+            currentId = -1;
+
+            if (track is not null)
+            {
+                await track.StopAsync();
+                track.Dispose();
+            }
+        }
+        finally
+        {
+            semaphore.Release();
+        }
     }
 }
