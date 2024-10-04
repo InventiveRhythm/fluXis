@@ -121,10 +121,11 @@ public class ScoreProcessor : JudgementDependant
         {
             var rate = mods.OfType<RateMod>().First().Rate;
 
+            // https://www.geogebra.org/calculator/fjxrbmdq
             if (rate < 1)
-                rate *= 0.6f * rate;
+                rate = (float)Math.Pow(rate, 3);
             else
-                rate *= 1.1f;
+                rate = 1.5f * rate - .5f;
 
             val *= rate;
         }
