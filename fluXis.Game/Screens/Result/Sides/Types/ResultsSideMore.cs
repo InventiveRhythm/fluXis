@@ -1,6 +1,8 @@
-﻿using fluXis.Game.Screens.Result.Sides.Presets;
+﻿using System.Linq;
+using fluXis.Game.Screens.Result.Sides.Presets;
 using fluXis.Game.Utils;
 using fluXis.Shared.Scoring;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
@@ -19,21 +21,31 @@ public partial class ResultsSideMore : ResultsSideContainer
         this.score = score;
     }
 
-    protected override Drawable CreateContent() => new FillFlowContainer
+    protected override Drawable CreateContent()
     {
-        RelativeSizeAxes = Axes.X,
-        AutoSizeAxes = Axes.Y,
-        Direction = FillDirection.Vertical,
-        Spacing = new Vector2(16),
-        Children = new Drawable[]
+        var flow = new FillFlowContainer
         {
-            new ResultsSideDoubleText("FL:PF Ratio", score.Flawless switch
-            {
-                0 => "0",
-                > 0 when score.Perfect == 0 => "Full Flawless",
-                _ => $"{(score.Flawless / (float)score.Perfect).ToStringInvariant("0.0")}:1"
-            }),
-            new ResultsSideDoubleText("Scroll Speed", $"{score.ScrollSpeed.ToStringInvariant()}")
+            RelativeSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Y,
+            Direction = FillDirection.Vertical,
+            Spacing = new Vector2(16)
+        };
+
+        flow.Add(new ResultsSideDoubleText("FL:PF Ratio", score.Flawless switch
+        {
+            0 => "0",
+            > 0 when score.Perfect == 0 => "Full Flawless",
+            _ => $"{(score.Flawless / (float)score.Perfect).ToStringInvariant("0.0")}:1"
+        }));
+
+        if (score.HitResults is { Count: > 0 })
+        {
+            var nonMiss = score.HitResults.Where(r => r.Judgement > Judgement.Miss);
+            var avg = nonMiss.Average(x => x.Difference);
+            flow.Add(new ResultsSideDoubleText("Mean", $"{(int)avg}ms"));
         }
-    };
+
+        flow.Add(new ResultsSideDoubleText("Scroll Speed", $"{score.ScrollSpeed.ToStringInvariant()}"));
+        return flow;
+    }
 }
