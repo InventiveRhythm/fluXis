@@ -15,46 +15,65 @@ public partial class MenuLongButton : MenuButtonBase
     {
         return new Drawable[]
         {
-            new FillFlowContainer
+            new Container
             {
-                RelativeSizeAxes = Axes.Both,
-                Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(8),
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
                 Padding = new MarginPadding(20),
-                Children = new Drawable[]
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Child = new GridContainer
                 {
-                    new SpriteIcon
+                    RelativeSizeAxes = Axes.X,
+                    Height = 32,
+                    ColumnDimensions = new[]
                     {
-                        Icon = Icon,
-                        Size = new Vector2(32),
-                        Origin = Anchor.CentreLeft,
-                        Anchor = Anchor.CentreLeft,
-                        Shear = new Vector2(-SHEAR_AMOUNT, 0),
+                        new Dimension(GridSizeMode.Absolute, 32),
+                        new Dimension(GridSizeMode.Absolute, 12),
+                        new Dimension(),
                     },
-                    new FillFlowContainer
+                    Content = new[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Direction = FillDirection.Vertical,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Shear = new Vector2(-SHEAR_AMOUNT, 0),
-                        Spacing = new Vector2(-6),
-                        Children = new Drawable[]
+                        new[]
                         {
-                            new FluXisSpriteText
+                            new SpriteIcon
                             {
-                                Text = Text,
-                                WebFontSize = 20,
+                                Icon = Icon,
+                                Size = new Vector2(32),
                                 Origin = Anchor.CentreLeft,
-                                Anchor = Anchor.CentreLeft
+                                Anchor = Anchor.CentreLeft,
+                                Shear = new Vector2(-SHEAR_AMOUNT, 0),
                             },
-                            new FluXisSpriteText
+                            Empty(),
+                            new FillFlowContainer
                             {
-                                Text = Description,
-                                WebFontSize = 14,
-                                Alpha = .8f,
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Vertical,
+                                Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
-                                Anchor = Anchor.CentreLeft
+                                Shear = new Vector2(-SHEAR_AMOUNT, 0),
+                                Spacing = new Vector2(-6),
+                                Children = new Drawable[]
+                                {
+                                    new TruncatingText()
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Text = Text,
+                                        WebFontSize = 20,
+                                        Origin = Anchor.CentreLeft,
+                                        Anchor = Anchor.CentreLeft
+                                    },
+                                    new TruncatingText
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Text = Description,
+                                        WebFontSize = 14,
+                                        Alpha = .8f,
+                                        Origin = Anchor.CentreLeft,
+                                        Anchor = Anchor.CentreLeft
+                                    }
+                                }
                             }
                         }
                     }
