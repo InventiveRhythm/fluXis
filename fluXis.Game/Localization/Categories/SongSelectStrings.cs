@@ -1,12 +1,34 @@
+using JetBrains.Annotations;
 using osu.Framework.Localisation;
 
 namespace fluXis.Game.Localization.Categories;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class SongSelectStrings : LocalizationCategory
 {
     protected override string File => "song-select";
 
+    private static SongSelectStrings instance;
+
+    public SongSelectStrings()
+    {
+        instance = this;
+    }
+
     public TranslatableString SearchPlaceholder => Get("search-placeholder", "Click to Search...");
+
+    // for the LocalisableString attribute to
+    // work the fields have to be static...
+    public TranslatableString SortBy => Get("sort-by", "sort by");
+    public static LocalisableString SortByTitle => instance.Get("sort-by-title", "Title");
+    public static LocalisableString SortByArtist => instance.Get("sort-by-artist", "Artist");
+    public static LocalisableString SortByLength => instance.Get("sort-by-length", "Length");
+    public static LocalisableString SortByDateAdded => instance.Get("sort-by-date-added", "Date Added");
+    public static LocalisableString SortByDifficulty => instance.Get("sort-by-difficulty", "Difficulty");
+
+    public TranslatableString GroupBy => Get("group-by", "group by");
+    public static LocalisableString GroupByDefault => instance.Get("group-by-default", "Default");
+    public static LocalisableString GroupByNothing => instance.Get("group-by-nothing", "Nothing");
 
     public TranslatableString FooterMods => Get("footer-mods", "Mods");
     public TranslatableString FooterRandom => Get("footer-random", "Random");

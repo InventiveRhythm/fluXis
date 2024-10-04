@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Localization.Categories;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
 using fluXis.Shared.Components.Maps;
+using osu.Framework.Localisation;
 
 namespace fluXis.Game.Utils;
 
@@ -240,34 +241,34 @@ public static class MapUtils
     public enum SortingMode
     {
         [Icon(0xf031)]
-        [Description("Title")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByTitle))]
         Title,
 
         [Icon(0xf031)]
-        [Description("Artist")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByArtist))]
         Artist,
 
         [Icon(0xf017)]
-        [Description("Length")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByLength))]
         Length,
 
         [Icon(0xf073)]
-        [Description("Date Added")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByDateAdded))]
         DateAdded,
 
         [Icon(0xf1b2)]
-        [Description("Difficulty")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.SortByDifficulty))]
         Difficulty
     }
 
     public enum GroupingMode
     {
         [Icon(0xf068)]
-        [Description("Default")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.GroupByDefault))]
         Default,
 
         [Icon(0xf068)]
-        [Description("Nothing")]
+        [LocalisableDescription(typeof(SongSelectStrings), nameof(SongSelectStrings.GroupByNothing))]
         Nothing
     }
 }

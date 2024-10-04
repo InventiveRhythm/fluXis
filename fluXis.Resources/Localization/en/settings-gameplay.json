@@ -38,5 +38,9 @@
   "lane-switch-alerts-description": "Shows arrows next to the playfield before a lane switch.",
   "hud-title": "HUD",
   "hud-visibility": "Visibility",
-  "hud-visibility-description": "When the HUD should be visible."
+  "hud-visibility-description": "When the HUD should be visible.",
+  "leaderboard-visibility": "Leaderboard Visibility",
+  "leaderboard-visibility-description": "Shows a live leaderboard on the left side of the screen while playing.",
+  "leaderboard-mode": "Leaderboard Mode",
+  "leaderboard-mode-description": "How to sort the leaderboard."
 }

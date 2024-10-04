@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using fluXis.Game;
 using fluXis.Game.IPC;
 using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories;
 using fluXis.Game.Localization.Categories.Settings;
+using fluXis.Game.Mods;
 using fluXis.Shared.Utils;
 using osu.Framework.Platform;
 using osu.Framework;
@@ -130,22 +132,55 @@ public static class Program
         foreach (var cat in cats)
         {
             var file = cat.FileName;
-            var props = cat.GetType().GetProperties().Where(p => p.PropertyType == typeof(TranslatableString));
+            var props = cat.GetType().GetProperties().Where(p => p.PropertyType == typeof(TranslatableString) || p.PropertyType == typeof(LocalisableString));
 
             var dict = new Dictionary<string, string>();
 
+            if (cat is ModStrings modstr)
+            {
+                var mods = typeof(FluXisGameBase).Assembly.GetTypes()
+                                                 .Where(t => t.GetInterfaces().Contains(typeof(IMod))).ToList()
+                                                 .Select(t => (IMod)Activator.CreateInstance(t));
+
+                foreach (var mod in mods)
+                {
+                    var name = modstr.GetName(mod);
+                    var description = modstr.GetDescription(mod);
+
+                    var (nameKey, nameDefault) = getValues(name);
+                    var (descriptionKey, descriptionDefault) = getValues(description);
+
+                    dict.Add(nameKey, nameDefault);
+                    dict.Add(descriptionKey, descriptionDefault);
+                }
+            }
+
             foreach (var prop in props)
             {
-                var value = (TranslatableString)prop.GetValue(cat)!;
+                var val = prop.GetValue(cat)!;
+                TranslatableString value = null!;
 
-                var key = value.Key.Split(':')[1];
-                var defaultStr = value.Format;
+                if (prop.PropertyType == typeof(LocalisableString))
+                {
+                    var localType = typeof(LocalisableString);
+                    var dataField = localType.GetField("Data", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var data = (TranslatableString)dataField!.GetValue(val);
+                    value = data;
+                }
+                else if (prop.PropertyType == typeof(TranslatableString))
+                    value = (TranslatableString)val;
 
+                if (value is null)
+                    continue;
+
+                var (key, defaultStr) = getValues(value);
                 dict.Add(key, defaultStr);
             }
 
             var json = dict.Serialize(true);
             File.WriteAllText($"langfiles/{file}.json", json);
         }
+
+        (string, string) getValues(TranslatableString str) => (str.Key.Split(':')[1], str.Format);
     }
 }

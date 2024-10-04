@@ -4,6 +4,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -13,6 +14,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.Search;
@@ -36,8 +38,8 @@ public partial class SearchFilterControls : CompositeDrawable
             Shear = new Vector2(-.2f, 0),
             Children = new Drawable[]
             {
-                new Control<MapUtils.SortingMode>("sort by", Enum.GetValues<MapUtils.SortingMode>(), config.GetBindable<MapUtils.SortingMode>(FluXisSetting.SortingMode)),
-                new Control<MapUtils.GroupingMode>("group by", Enum.GetValues<MapUtils.GroupingMode>(), config.GetBindable<MapUtils.GroupingMode>(FluXisSetting.GroupingMode)),
+                new Control<MapUtils.SortingMode>(LocalizationStrings.SongSelect.SortBy, Enum.GetValues<MapUtils.SortingMode>(), config.GetBindable<MapUtils.SortingMode>(FluXisSetting.SortingMode)),
+                new Control<MapUtils.GroupingMode>(LocalizationStrings.SongSelect.GroupBy, Enum.GetValues<MapUtils.GroupingMode>(), config.GetBindable<MapUtils.GroupingMode>(FluXisSetting.GroupingMode)),
             }
         };
     }
@@ -47,7 +49,7 @@ public partial class SearchFilterControls : CompositeDrawable
 
     private partial class Control<T> : CompositeDrawable
     {
-        private string title { get; }
+        private LocalisableString title { get; }
         private T[] values { get; }
         private Bindable<T> bind { get; }
 
@@ -56,7 +58,7 @@ public partial class SearchFilterControls : CompositeDrawable
         private Header header;
         private Container dropdown;
 
-        public Control(string title, T[] values, Bindable<T> bind)
+        public Control(LocalisableString title, T[] values, Bindable<T> bind)
         {
             this.title = title;
             this.values = values;
@@ -104,7 +106,7 @@ public partial class SearchFilterControls : CompositeDrawable
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            bind.BindValueChanged(e => header.ValueText.Text = e.NewValue.GetDescription(), true);
+            bind.BindValueChanged(e => header.ValueText.Text = e.NewValue.GetLocalisableDescription(), true);
         }
 
         protected override bool OnClick(ClickEvent e) => true;
@@ -131,7 +133,7 @@ public partial class SearchFilterControls : CompositeDrawable
 
             private Action<bool> focusAction { get; }
 
-            public Header(string text, Action<bool> focusAction)
+            public Header(LocalisableString text, Action<bool> focusAction)
             {
                 this.focusAction = focusAction;
 
@@ -174,14 +176,15 @@ public partial class SearchFilterControls : CompositeDrawable
                                             RelativeSizeAxes = Axes.Both,
                                             Colour = FluXisColors.Background3
                                         },
-                                        new FluXisSpriteText
+                                        new TruncatingText()
                                         {
                                             Text = text,
                                             WebFontSize = 14,
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
                                             Margin = new MarginPadding(14),
-                                            Shear = new Vector2(.2f, 0)
+                                            Shear = new Vector2(.2f, 0),
+                                            MaxWidth = 100
                                         }
                                     }
                                 },
@@ -191,6 +194,7 @@ public partial class SearchFilterControls : CompositeDrawable
                                     Padding = new MarginPadding(12),
                                     Child = ValueText = new TruncatingText
                                     {
+                                        RelativeSizeAxes = Axes.X,
                                         WebFontSize = 14,
                                         Shear = new Vector2(.2f, 0),
                                         Anchor = Anchor.CentreLeft,
@@ -246,7 +250,7 @@ public partial class SearchFilterControls : CompositeDrawable
                             },
                             new FluXisSpriteText
                             {
-                                Text = value.GetDescription(),
+                                Text = value.GetLocalisableDescription(),
                                 WebFontSize = 14,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
