@@ -16,6 +16,9 @@ public static class MapUtils
 {
     public static int CompareMap(RealmMap first, RealmMap second, SortingMode mode, bool inverse = false)
     {
+        if (first is null) return 1;
+        if (second is null) return -1;
+
         var result = mode switch
         {
             SortingMode.Title => compareTitle(first, second),
@@ -34,6 +37,9 @@ public static class MapUtils
 
     public static int CompareSets(RealmMapSet first, RealmMapSet second, SortingMode mode, bool inverse = false)
     {
+        if (first is null) return 1;
+        if (second is null) return -1;
+
         var result = mode switch
         {
             SortingMode.Title => compareTitle(first.LowestDifficulty, second.LowestDifficulty),
@@ -52,6 +58,9 @@ public static class MapUtils
 
     private static int compareTitle(RealmMap first, RealmMap second)
     {
+        if (first.Metadata is null) return 1;
+        if (second.Metadata is null) return -1;
+
         var result = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.OrdinalIgnoreCase);
 
         if (result != 0)
@@ -65,6 +74,9 @@ public static class MapUtils
 
     private static int compareArtist(RealmMap first, RealmMap second)
     {
+        if (first.Metadata is null) return 1;
+        if (second.Metadata is null) return -1;
+
         var result = string.Compare(first.Metadata.Artist, second.Metadata.Artist, StringComparison.OrdinalIgnoreCase);
 
         if (result != 0)
@@ -78,8 +90,8 @@ public static class MapUtils
 
     private static int compareLength(RealmMapSet first, RealmMapSet second)
     {
-        var firstHighest = first.Maps.MaxBy(x => x.Filters.Length);
-        var secondHighest = second.Maps.MaxBy(x => x.Filters.Length);
+        var firstHighest = first.Maps.MaxBy(x => x.Filters?.Length);
+        var secondHighest = second.Maps.MaxBy(x => x.Filters?.Length);
         return compareLength(firstHighest, secondHighest);
     }
 
@@ -91,6 +103,9 @@ public static class MapUtils
 
     private static int compareDifficulty(RealmMap first, RealmMap second)
     {
+        if (first.Filters is null) return 1;
+        if (second.Filters is null) return -1;
+
         var firstHighest = first.Filters.NotesPerSecond;
         var secondHighest = second.Filters.NotesPerSecond;
         var result = firstHighest.CompareTo(secondHighest);
@@ -99,8 +114,8 @@ public static class MapUtils
 
     private static int compareDifficulty(RealmMapSet first, RealmMapSet second)
     {
-        var firstLowest = first.Maps.MaxBy(x => x.Filters.NotesPerSecond);
-        var secondLowest = second.Maps.MaxBy(x => x.Filters.NotesPerSecond);
+        var firstLowest = first.Maps.MaxBy(x => x.Filters?.NotesPerSecond);
+        var secondLowest = second.Maps.MaxBy(x => x.Filters?.NotesPerSecond);
         return compareDifficulty(firstLowest, secondLowest);
     }
 

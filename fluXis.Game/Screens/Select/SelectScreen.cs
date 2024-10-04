@@ -351,6 +351,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private IEnumerable<IListItem> createItems(RealmMapSet set)
     {
+        if (set is null || set.Maps.Count < 1)
+            yield break;
+
         switch (groupMode.Value)
         {
             case MapUtils.GroupingMode.Default:
@@ -408,10 +411,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         });
     }
 
-    private void sortItems()
-    {
-        Items.Sort((a, b) => a.CompareTo(b));
-    }
+    private void sortItems() => Items.Sort();
 
     private void mapSetBindableChanged(ValueChangedEvent<RealmMapSet> e) => selectMapSet(e.NewValue);
     private void mapBindableChanged(ValueChangedEvent<RealmMap> e) => selectMap(e.NewValue);
