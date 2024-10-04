@@ -3,5 +3,7 @@
   "show-log-overlay": "Show Log Overlay",
   "import-file": "Import File",
   "log-api": "Log API Responses.",
-  "log-api-description": "Logs all API request responses to the console and log files. This might contain sensitive info like emails and tokens."
+  "log-api-description": "Logs all API request responses to the console and log files. This might contain sensitive info like emails and tokens.",
+  "show-missing-localizations": "Show missing localizations.",
+  "show-missing-localizations-description": "Shows the ID of strings that do not have a localization defined. (switch languages to update)"
 }

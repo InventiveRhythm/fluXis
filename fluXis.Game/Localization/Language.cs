@@ -68,9 +68,6 @@ public enum Language
     [Description("繁體中文（台灣）")]
     zh_TW,
 
-    [Description("testing (marks missing defaults)")]
-    testing,
-
     [Description("Debug (raw keys)")]
     debug
 }

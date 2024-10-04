@@ -486,16 +486,17 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         var languages = Enum.GetValues<Language>();
 
+        var missingBindable = Config.GetBindable<bool>(FluXisSetting.ShowMissingLocalizations);
+
         var mappings = languages.Select(l =>
         {
-            if (l == Language.testing) return new LocaleMapping("testing", new TestingLocaleStore("en", localeStore));
             if (l == Language.debug) return new LocaleMapping("debug", new DebugLocaleStore());
 
             var code = l.ToCultureCode();
 
             try
             {
-                return new LocaleMapping(code, new ResourceLocaleStore(code, localeStore));
+                return new LocaleMapping(code, new ResourceLocaleStore(code, localeStore, missingBindable));
             }
             catch (FileNotFoundException)
             {

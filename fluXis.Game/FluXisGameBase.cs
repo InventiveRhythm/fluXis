@@ -432,7 +432,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             if (!IsDebug)
             {
-                languages.Remove(Language.testing);
                 languages.Remove(Language.debug);
             }
 

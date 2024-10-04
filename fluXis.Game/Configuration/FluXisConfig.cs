@@ -91,6 +91,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Debug
         SetDefault(FluXisSetting.LogAPIResponses, false);
+        SetDefault(FluXisSetting.ShowMissingLocalizations, false);
 
         // Misc
         SetDefault(FluXisSetting.ReleaseChannel, ReleaseChannel.Stable);
@@ -176,6 +177,7 @@ public enum FluXisSetting
 
     // Debug
     LogAPIResponses,
+    ShowMissingLocalizations,
 
     // Misc
     ReleaseChannel,

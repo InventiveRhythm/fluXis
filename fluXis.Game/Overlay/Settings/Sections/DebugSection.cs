@@ -47,6 +47,12 @@ public partial class DebugSection : SettingsSection
                 Label = strings.LogAPI,
                 Description = strings.LogAPIDescription,
                 Bindable = config.GetBindable<bool>(FluXisSetting.LogAPIResponses)
+            },
+            new SettingsToggle
+            {
+                Label = strings.ShowMissingLocalizations,
+                Description = strings.ShowMissingLocalizationsDescription,
+                Bindable = config.GetBindable<bool>(FluXisSetting.ShowMissingLocalizations)
             }
         });
     }

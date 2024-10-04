@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Shared.Utils;
+using osu.Framework.Bindables;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
 
@@ -16,20 +17,32 @@ public class ResourceLocaleStore : ILocalisationStore
 
     public CultureInfo EffectiveCulture { get; }
     private ResourceStore<byte[]> store { get; }
+    private Bindable<bool> showMissing { get; }
 
     private readonly Dictionary<string, Dictionary<string, string>> cache = new();
 
-    public ResourceLocaleStore(string code, ResourceStore<byte[]> store)
+    public ResourceLocaleStore(string code, ResourceStore<byte[]> store, Bindable<bool> showMissing)
     {
         EffectiveCulture = new CultureInfo(code);
         this.store = store;
+        this.showMissing = showMissing;
     }
 
     public virtual string Get(string name)
     {
+        var result = get(name, showMissing.Value);
+
+        if (showMissing.Value)
+            result ??= $"[[{name}]]";
+
+        return result;
+    }
+
+    private string get(string name, bool skipFallback)
+    {
         // If the language is English, use the fallback values,
         // since they are always more up-to-date.
-        if (ForceFallback)
+        if (ForceFallback && !skipFallback)
             return null;
 
         var split = name.Split(':');

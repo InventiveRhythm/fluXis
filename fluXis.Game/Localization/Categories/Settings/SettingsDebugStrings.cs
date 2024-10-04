@@ -13,4 +13,7 @@ public class SettingsDebugStrings : LocalizationCategory
 
     public TranslatableString LogAPI => Get("log-api", "Log API Responses.");
     public TranslatableString LogAPIDescription => Get("log-api-description", "Logs all API request responses to the console and log files. This might contain sensitive info like emails and tokens.");
+
+    public TranslatableString ShowMissingLocalizations => Get("show-missing-localizations", "Show missing localizations.");
+    public TranslatableString ShowMissingLocalizationsDescription => Get("show-missing-localizations-description", "Shows the ID of strings that do not have a localization defined. (switch languages to update)");
 }
