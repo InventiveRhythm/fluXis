@@ -1,5 +1,5 @@
 {
-  "title": "Spiel Modifizierer",
+  "title": "Mods",
   "description": "Mach das Spiel schwieriger oder einfacher für dich!",
   "section-rate": "Tempo",
   "section-difficulty-increase": "Schwierigkeit steigend",
@@ -7,5 +7,5 @@
   "section-misc": "Verschiedenes",
   "section-automation": "Automatisation",
   "max-score": "Maximale Punktzahl: {0:0}%",
-  "incompatible-mods": "Inkompatible Modifikationen:"
+  "incompatible-mods": "Inkompatible Mods:"
 }

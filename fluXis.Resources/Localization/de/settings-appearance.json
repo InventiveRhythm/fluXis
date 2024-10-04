@@ -1,0 +1,16 @@
+{
+  "title": "Aussehen",
+  "skin-title": "Skin",
+  "skin-current": "Aktueller Skin",
+  "skin-current-description": "Der Skin, den du nutzen möchtest.",
+  "skin-refresh": "Skin-Liste aktualisieren",
+  "skin-refresh-description": "Aktualisiert die liste der verfügbaren Skins.",
+  "skin-open-editor": "Skin-Editor öffnen",
+  "skin-open-editor-description": "Öffnet den Skin im In-Game-Editor.",
+  "skin-open-folder": "Skin-Ordner öffnen",
+  "skin-open-folder-description": "Öffnet den Ordner mit dem aktuellen Skin im Datei-Explorer.",
+  "skin-export": "Skin exportieren",
+  "skin-export-description": "Exportiert den aktuellen Skin als eine .fsk-Datei.",
+  "skin-delete": "Skin löschen",
+  "skin-delete-description": "Löscht den aktuellen Skin."
+}
