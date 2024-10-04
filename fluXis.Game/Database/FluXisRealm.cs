@@ -34,8 +34,9 @@ public class FluXisRealm : IDisposable
     ///    - RealmMap.OnlineHash, RealmMap.AccuracyDifficulty and RealmMap.HealthDifficulty
     /// 14 - Replaced RealmMapFilters effects with a bitfield
     /// 15 - Add `PerformanceRating` and `ScrollSpeed` to `RealmScore` and change OnlineID to long
+    /// 16 - Add `Version` to `RealmScore`
     /// </summary>
-    private const int schema_version = 15;
+    private const int schema_version = 16;
 
     private Realm updateRealm;
 
@@ -245,6 +246,13 @@ public class FluXisRealm : IDisposable
                     map.Filters = filters;
                 }
 
+                break;
+            }
+
+            case 16:
+            {
+                var scores = migration.NewRealm.All<RealmScore>().ToList();
+                scores.ForEach(s => s.Version = 1);
                 break;
             }
         }

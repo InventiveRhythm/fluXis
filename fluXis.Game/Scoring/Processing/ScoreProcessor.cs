@@ -51,7 +51,7 @@ public class ScoreProcessor : JudgementDependant
     public void Recalculate()
     {
         Accuracy.Value = totalNotes == 0 ? 100 : ratedNotes / totalNotes * 100;
-        PerformanceRating.Value = (float)getPerformance();
+        PerformanceRating.Value = (float)CalculatePerformance(mapRating, Accuracy.Value, Flawless, Perfect, Great, Alright, Okay, Miss, Mods);
         Rank.Value = Accuracy.Value switch
         {
             100 => ScoreRank.X,
@@ -84,39 +84,6 @@ public class ScoreProcessor : JudgementDependant
         return accBased + comboBased;
     }
 
-    private double getPerformance()
-    {
-        var val = Math.Pow(6 * Math.Max(1, mapRating / .1f), 2) / 2500; // base curve
-        val *= Math.Max(0, 5 * (Accuracy.Value / 100f) - 4); // accuracy
-        val *= 1 + .1f * Math.Min(1, ratedNotes / 2500); // length
-        val *= Math.Pow(.99, Miss); // misses
-
-        if (Mods.Any(x => x is RateMod))
-        {
-            var rate = Mods.OfType<RateMod>().First().Rate;
-
-            if (rate < 1)
-                rate *= 0.67f;
-            else
-                rate *= 1.1f;
-
-            val *= rate;
-        }
-
-        if (Mods.Any(x => x is EasyMod))
-            val *= 0.8;
-        if (Mods.Any(x => x is HardMod))
-            val *= 1.05;
-        if (Mods.Any(x => x is NoFailMod))
-            val *= 0.4;
-        if (Mods.Any(x => x is NoSvMod))
-            val *= 0.6;
-        if (Mods.Any(x => x is NoLnMod))
-            val *= 0.6;
-
-        return val;
-    }
-
     public ScoreInfo ToScoreInfo() => new()
     {
         Accuracy = Accuracy.Value,
@@ -140,4 +107,39 @@ public class ScoreProcessor : JudgementDependant
         Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
         Mods = Mods.Select(m => m.Acronym).ToList()
     };
+
+    public static double CalculatePerformance(float rating, float accuracy, int flawless, int perfect, int great, int alright, int okay, int miss, List<IMod> mods)
+    {
+        var ratedNotes = flawless + perfect * 0.98f + great * 0.65f + alright * 0.25f + okay * 0.1f;
+
+        var val = Math.Pow(6 * Math.Max(1, rating / .1f), 2) / 2500; // base curve
+        val *= Math.Max(0, 5 * (accuracy / 100f) - 4); // accuracy
+        val *= 1 + .1f * Math.Min(1, ratedNotes / 2500); // length
+        val *= Math.Pow(.99, miss); // misses
+
+        if (mods.Any(x => x is RateMod))
+        {
+            var rate = mods.OfType<RateMod>().First().Rate;
+
+            if (rate < 1)
+                rate *= 0.6f * rate;
+            else
+                rate *= 1.1f;
+
+            val *= rate;
+        }
+
+        if (mods.Any(x => x is EasyMod))
+            val *= 0.8;
+        if (mods.Any(x => x is HardMod))
+            val *= 1.05;
+        if (mods.Any(x => x is NoFailMod))
+            val *= 0.4;
+        if (mods.Any(x => x is NoSvMod))
+            val *= 0.6;
+        if (mods.Any(x => x is NoLnMod))
+            val *= 0.6;
+
+        return val;
+    }
 }

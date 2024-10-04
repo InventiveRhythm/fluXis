@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Database;
+using fluXis.Game.Database.Maps;
 using fluXis.Game.Database.Score;
 using fluXis.Game.Map;
+using fluXis.Game.Scoring.Processing;
+using fluXis.Game.Utils;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Scoring;
 
@@ -21,6 +25,8 @@ public partial class ScoreManager : CompositeComponent
 
     private Dictionary<Guid, Guid> highestScores { get; } = new();
 
+    public const int SCORE_VERSION = 2;
+
     [Resolved]
     private FluXisRealm realm { get; set; } = null!;
 
@@ -32,6 +38,7 @@ public partial class ScoreManager : CompositeComponent
     [BackgroundDependencyLoader]
     private void load()
     {
+        checkForUpdates();
         maps.MapSets.ForEach(set => set.Maps.ForEach(map => processMap(map.ID)));
     }
 
@@ -39,6 +46,34 @@ public partial class ScoreManager : CompositeComponent
     {
         base.LoadComplete();
         initialProcessing = false;
+    }
+
+    private void checkForUpdates()
+    {
+        realm.RunWrite(r =>
+        {
+            var old = r.All<RealmScore>().Where(s => s.Version < SCORE_VERSION);
+            var failed = 0;
+
+            foreach (var score in old)
+            {
+                try
+                {
+                    for (int i = score.Version + 1; i < SCORE_VERSION + 1; i++)
+                    {
+                        processUpdate(score, i);
+                        score.Version = i;
+                    }
+                }
+                catch
+                {
+                    failed++;
+                }
+            }
+
+            if (failed > 0)
+                Logger.Log($"Failed to update ${failed} scores!");
+        });
     }
 
     public RealmScore Add(Guid map, ScoreInfo score, long onlineID = -1) => realm.RunWrite(r =>
@@ -124,4 +159,32 @@ public partial class ScoreManager : CompositeComponent
         if (!initialProcessing && hasPrevious && previous != top.ID)
             TopScoreUpdated?.Invoke(map, top.Detach());
     });
+
+    private void processUpdate(RealmScore score, long version)
+    {
+        switch (version)
+        {
+            case 2:
+            {
+                var map = realm.Run(r => r.Find<RealmMap>(score.MapID).Detach());
+
+                if (map is null)
+                    return;
+
+                var mods = score.Mods.Split(' ').Select(ModUtils.GetFromAcronym).ToList();
+                score.PerformanceRating = ScoreProcessor.CalculatePerformance(
+                    map.Filters.NotesPerSecond,
+                    score.Accuracy,
+                    score.Flawless,
+                    score.Perfect,
+                    score.Great,
+                    score.Alright,
+                    score.Okay,
+                    score.Miss,
+                    mods
+                );
+                break;
+            }
+        }
+    }
 }

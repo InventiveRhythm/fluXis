@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Scoring;
 using fluXis.Game.Utils;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Enums;
@@ -13,6 +14,8 @@ public class RealmScore : RealmObject
 {
     [PrimaryKey]
     public Guid ID { get; set; }
+
+    public int Version { get; set; } = ScoreManager.SCORE_VERSION;
 
     public long OnlineID { get; set; } = -1;
     public float Accuracy { get; set; }
