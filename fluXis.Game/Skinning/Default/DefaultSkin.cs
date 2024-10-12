@@ -15,6 +15,7 @@ using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Skinning.Default;
@@ -104,6 +105,8 @@ public class DefaultSkin : ISkin
 
     public Drawable GetHitLine() => new DefaultHitLine(SkinJson);
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
+
+    public Drawable GetFailFlash() => new Box();
 
     public Drawable GetResultsScoreRank(ScoreRank rank) => new DefaultResultsRank(rank);
 

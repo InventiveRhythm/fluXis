@@ -264,6 +264,12 @@ public class CustomSkin : ISkin
         return null;
     }
 
+    public Drawable GetFailFlash()
+    {
+        var path = SkinJson.GetOverrideOrDefault($"Gameplay/fail-flash") + ".png";
+        return storage.Exists(path) ? new SkinnableSprite(textures.Get(path)) { FillMode = FillMode.Fill } : null;
+    }
+
     public Drawable GetResultsScoreRank(ScoreRank rank)
     {
         var path = SkinJson.GetOverrideOrDefault($"Results/rank-{rank.ToString().ToLower()}") + ".png";

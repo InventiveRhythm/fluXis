@@ -4,7 +4,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
-using fluXis.Game.Utils.Extensions;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -25,21 +25,22 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
     private GameplaySamples samples => screen.Samples;
 
     private Box dim;
-    private CircularContainer circle;
     private FluXisSpriteText text;
+    private FillFlowContainer flow;
     private Container buttonsContainer;
     private SelectionCycleContainer<GameplayMenuButton> buttons;
+    private Drawable flash;
 
     private Bindable<bool> dimOnLowHealth;
     private bool failed;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load(SkinManager skins, FluXisConfig config)
     {
         dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
 
         RelativeSizeAxes = Axes.Both;
-        Alpha = 0.001f; // making sure the flow is centered
+        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
@@ -49,36 +50,20 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                 Colour = Colour4.Black.Opacity(.5f),
                 Alpha = dimOnLowHealth.Value ? 0 : 1
             },
-            circle = new CircularContainer
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Masking = true,
-                BorderThickness = 20,
-                Size = new Vector2(0),
-                BorderColour = Colour4.White,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    AlwaysPresent = true,
-                    Alpha = 0
-                }
-            },
-            new FillFlowContainer
+            flow = new FillFlowContainer
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
-                Spacing = new Vector2(0, 20),
-                AutoSizeDuration = 400,
+                Spacing = new Vector2(0, 40),
                 AutoSizeEasing = Easing.OutQuint,
                 Children = new Drawable[]
                 {
                     text = new FluXisSpriteText
                     {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
                         Text = "FAILED",
                         FontSize = 100,
                         Scale = new Vector2(1.2f)
@@ -87,8 +72,8 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                     {
                         Width = 300,
                         AutoSizeAxes = Axes.Y,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
                         CornerRadius = 20,
                         Masking = true,
                         Alpha = 0,
@@ -129,7 +114,12 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                         }
                     }
                 }
-            }
+            },
+            flash = skins.GetFailFlash().With(d =>
+            {
+                d.RelativeSizeAxes = Axes.Both;
+                d.Size = Vector2.One;
+            })
         };
     }
 
@@ -142,13 +132,20 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
 
     public override void Show()
     {
-        this.FadeIn(200);
+        this.FadeIn();
+        flash.FadeOutFromOne(2400);
 
         failed = true;
+        samples.Fail();
 
-        this.Delay(800).FadeIn().OnComplete(_ => samples.Fail());
-        text.ScaleTo(1, 800, Easing.InQuint).Delay(2500).FadeIn().OnComplete(_ => buttonsContainer.FadeIn(200));
-        circle.Delay(800).ResizeTo(400, 400, Easing.OutQuint).BorderTo(0f, 1200, Easing.OutQuint);
+        text.ScaleTo(8f).RotateTo(280)
+            .RotateTo(-6, 1600, Easing.OutQuint)
+            .ScaleTo(1, 1200, Easing.OutQuint)
+            .Then(400).FadeIn().OnComplete(_ =>
+            {
+                flow.AutoSizeDuration = 600;
+                buttonsContainer.FadeIn(300);
+            });
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

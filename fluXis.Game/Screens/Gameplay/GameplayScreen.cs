@@ -455,7 +455,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual void OnDeath()
     {
         failMenu.Show();
-        GameplayClock.RateTo(.4f, 2000, Easing.OutQuart);
+        GameplayClock.RateTo(Rate * .75f, 2000, Easing.OutQuart);
     }
 
     protected virtual void End()

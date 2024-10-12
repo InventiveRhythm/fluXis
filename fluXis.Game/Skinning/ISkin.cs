@@ -14,37 +14,39 @@ namespace fluXis.Game.Skinning;
 
 public interface ISkin : IDisposable
 {
-    public SkinJson SkinJson { get; }
+    SkinJson SkinJson { get; }
 
-    public Texture GetDefaultBackground();
+    Texture GetDefaultBackground();
 
-    public Sample GetUISample(UISamples.SampleType type);
-    public Sample GetCourseSample(CourseScreen.SampleType type);
+    Sample GetUISample(UISamples.SampleType type);
+    Sample GetCourseSample(CourseScreen.SampleType type);
 
-    public Drawable GetStageBackground();
-    public Drawable GetStageBorder(bool right);
-    public Drawable GetLaneCover(bool bottom);
+    Drawable GetStageBackground();
+    Drawable GetStageBorder(bool right);
+    Drawable GetLaneCover(bool bottom);
 
-    public Drawable GetHealthBarBackground();
-    public Drawable GetHealthBar(HealthProcessor processor);
+    Drawable GetHealthBarBackground();
+    Drawable GetHealthBar(HealthProcessor processor);
 
-    public Drawable GetHitObject(int lane, int keyCount);
-    public Drawable GetTickNote(int lane, int keyCount);
-    public Drawable GetLongNoteBody(int lane, int keyCount);
-    public Drawable GetLongNoteEnd(int lane, int keyCount);
+    Drawable GetHitObject(int lane, int keyCount);
+    Drawable GetTickNote(int lane, int keyCount);
+    Drawable GetLongNoteBody(int lane, int keyCount);
+    Drawable GetLongNoteEnd(int lane, int keyCount);
 
-    public VisibilityContainer GetColumnLighting(int lane, int keyCount);
-    public Drawable GetReceptor(int lane, int keyCount, bool down);
-    public Drawable GetHitLine();
+    VisibilityContainer GetColumnLighting(int lane, int keyCount);
+    Drawable GetReceptor(int lane, int keyCount, bool down);
+    Drawable GetHitLine();
 
-    public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate);
+    AbstractJudgementText GetJudgement(Judgement judgement, bool isLate);
 
-    public Drawable GetResultsScoreRank(ScoreRank rank);
+    Drawable GetFailFlash();
 
-    public Sample GetHitSample();
-    public Sample[] GetMissSamples();
-    public Sample GetFailSample();
-    public Sample GetRestartSample();
-    public Sample GetFullComboSample();
-    public Sample GetAllFlawlessSample();
+    Drawable GetResultsScoreRank(ScoreRank rank);
+
+    Sample GetHitSample();
+    Sample[] GetMissSamples();
+    Sample GetFailSample();
+    Sample GetRestartSample();
+    Sample GetFullComboSample();
+    Sample GetAllFlawlessSample();
 }
