@@ -22,7 +22,7 @@ public abstract class UserActivity
         if (API is { IsLoggedIn: true })
         {
             var user = API.User.Value;
-            rpc.SmallImage = $"{API.Endpoint.AssetUrl}/avatar/{user.ID}";
+            rpc.SmallImage = $"{API.Endpoint.AssetUrl}/avatar/{user.AvatarHash}";
             rpc.SmallImageText = user.Username;
         }
 
