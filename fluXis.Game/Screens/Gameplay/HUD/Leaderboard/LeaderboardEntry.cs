@@ -42,7 +42,7 @@ public partial class LeaderboardEntry : CompositeDrawable, IComparable<Leaderboa
     }
 
     [BackgroundDependencyLoader]
-    private void load(UserCache users)
+    private void load()
     {
         AutoSizeAxes = Axes.Both;
 

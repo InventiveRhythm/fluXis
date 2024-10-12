@@ -220,7 +220,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             HealthProcessor = CreateHealthProcessor(),
             ScoreProcessor = new ScoreProcessor
             {
-                Player = CurrentPlayer,
+                Player = CurrentPlayer ?? APIUser.Default,
                 HitWindows = HitWindows,
                 Map = RealmMap,
                 MapInfo = Map,
