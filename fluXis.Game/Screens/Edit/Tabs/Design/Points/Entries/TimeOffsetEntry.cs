@@ -8,6 +8,7 @@ using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Game.Utils;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Design.Points.Entries;
@@ -28,37 +29,81 @@ public partial class TimeOffsetEntry : PointListEntry
     {
         Time = Object.Time,
         Duration = offset.Duration,
-        Offset = offset.Offset,
+        UseStartValue = offset.UseStartValue,
+        StartOffset = offset.StartOffset,
+        TargetOffset = offset.TargetOffset,
         Easing = offset.Easing
     };
 
-    protected override Drawable[] CreateValueContent() => new Drawable[]
+    protected override Drawable[] CreateValueContent()
     {
-        new FluXisSpriteText
-        {
-            Text = $"{offset.Offset.ToStringInvariant("0.##")}ms {(int)offset.Duration}ms",
-            Colour = Color
-        }
-    };
+        var text = "";
 
-    protected override IEnumerable<Drawable> CreateSettings() => base.CreateSettings().Concat(new Drawable[]
-    {
-        new PointSettingsLength<TimeOffsetEvent>(Map, offset, BeatLength),
-        new PointSettingsTextBox
+        if (offset.UseStartValue)
+            text += $"{(int)offset.StartOffset}ms > ";
+
+        text += $"{(int)offset.TargetOffset}ms";
+
+        return new Drawable[]
         {
-            Text = "Offset",
-            TooltipText = "The visual offset in milliseconds.",
-            DefaultText = offset.Offset.ToStringInvariant(),
-            OnTextChanged = box =>
+            new FluXisSpriteText
             {
-                if (box.Text.TryParseIntInvariant(out var result))
-                    offset.Offset = result;
-                else
-                    box.NotifyError();
+                Text = $"{text} {(int)offset.Duration}ms",
+                Colour = Color
+            }
+        };
+    }
 
+    protected override IEnumerable<Drawable> CreateSettings()
+    {
+        var startToggle = new PointSettingsToggle
+        {
+            Text = "Use Start Value",
+            TooltipText = "Enables whether start values should be used.",
+            Bindable = new Bindable<bool>(offset.UseStartValue),
+            OnStateChanged = enabled =>
+            {
+                offset.UseStartValue = enabled;
                 Map.Update(offset);
             }
-        },
-        new PointSettingsEasing<TimeOffsetEvent>(Map, offset)
-    });
+        };
+
+        return base.CreateSettings().Concat(new Drawable[]
+        {
+            new PointSettingsLength<TimeOffsetEvent>(Map, offset, BeatLength),
+            startToggle,
+            new PointSettingsTextBox
+            {
+                Enabled = startToggle.Bindable,
+                Text = "Start Offset",
+                TooltipText = "The visual offset at the start of the event in milliseconds.",
+                DefaultText = offset.StartOffset.ToStringInvariant(),
+                OnTextChanged = box =>
+                {
+                    if (box.Text.TryParseIntInvariant(out var result))
+                        offset.StartOffset = result;
+                    else
+                        box.NotifyError();
+
+                    Map.Update(offset);
+                }
+            },
+            new PointSettingsTextBox
+            {
+                Text = "Target Offset",
+                TooltipText = "The visual offset in milliseconds.",
+                DefaultText = offset.TargetOffset.ToStringInvariant(),
+                OnTextChanged = box =>
+                {
+                    if (box.Text.TryParseIntInvariant(out var result))
+                        offset.TargetOffset = result;
+                    else
+                        box.NotifyError();
+
+                    Map.Update(offset);
+                }
+            },
+            new PointSettingsEasing<TimeOffsetEvent>(Map, offset)
+        });
+    }
 }

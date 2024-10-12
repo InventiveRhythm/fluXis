@@ -3,6 +3,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -21,6 +22,8 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
     public Action<FluXisTextBox> OnTextChanged { get; set; }
 
     public FluXisTextBox TextBox { get; private set; }
+
+    public Bindable<bool> Enabled { get; init; } = new(true);
 
     [BackgroundDependencyLoader]
     private void load()
@@ -78,6 +81,13 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
                 }
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : .4f, 200), true);
     }
 
     protected virtual Drawable CreateExtraButton() => Empty().With(d => d.Alpha = 0);
