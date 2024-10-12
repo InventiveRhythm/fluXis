@@ -1,11 +1,13 @@
 using System;
 using fluXis.Game.Online;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 
 namespace fluXis.Game.Graphics.Drawables;
 
@@ -36,6 +38,7 @@ public partial class DrawableAvatar : Sprite
     private void load()
     {
         setTexture();
+        registerCallback();
     }
 
     private void setTexture()
@@ -60,13 +63,11 @@ public partial class DrawableAvatar : Sprite
             users?.UnregisterAvatarCallback(user.ID, reload);
     }
 
-    private void reload()
+    private void reload(string hash)
     {
-        // clear from texture store
-        Texture = null;
-
-        // wait 2 frames to allow texture store to clear
-        Schedule(() => Schedule(setTexture));
+        Logger.Log($"updating to {hash}");
+        user!.AvatarHash = hash;
+        Scheduler.ScheduleOnceIfNeeded(setTexture);
     }
 
     public void UpdateUser(APIUser? newUser)

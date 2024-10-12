@@ -11,15 +11,12 @@ public class OnlineTextureStore : TextureStore
 {
     private APIEndpointConfig endpointConfig { get; }
 
-    public OnlineTextureStore(GameHost host, APIEndpointConfig endpointConfig, UserCache users)
+    public OnlineTextureStore(GameHost host, APIEndpointConfig endpointConfig)
         : base(host.Renderer)
     {
         this.endpointConfig = endpointConfig;
         AddTextureSource(host.CreateTextureLoaderStore(new OnlineStore()));
         AddTextureSource(host.CreateTextureLoaderStore(new HttpOnlineStore()));
-
-        users.OnAvatarUpdate += id => purge(AssetType.Avatar, id);
-        users.OnBannerUpdate += id => purge(AssetType.Banner, id);
     }
 
     public Texture GetAchievement(string id) => get(AssetType.Achievement, id, AssetSize.Small, true);
@@ -56,23 +53,6 @@ public class OnlineTextureStore : TextureStore
             builder.Append(".png");
 
         return builder.ToString();
-    }
-
-    private static string getLookup(string name, WrapMode wrapModeS = default, WrapMode wrapModeT = default)
-        => $"{name}:wrap-{(int)wrapModeS}-{(int)wrapModeT}";
-
-    private void purge(AssetType type, long id)
-    {
-        purge(type, id.ToString(), AssetSize.Small);
-        purge(type, id.ToString(), AssetSize.Large);
-    }
-
-    private void purge(AssetType type, string id, AssetSize size, bool addExtension = false)
-    {
-        var url = getUrl(type, id, size, addExtension);
-
-        if (TryGetCached(getLookup(url), out var tex) && tex != null)
-            Purge(tex);
     }
 
     public enum AssetType

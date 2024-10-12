@@ -1,4 +1,5 @@
 using fluXis.Game.Online;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -32,6 +33,7 @@ public partial class DrawableBanner : Sprite
     private void load()
     {
         setTexture();
+        registerCallback();
     }
 
     private void setTexture()
@@ -56,13 +58,10 @@ public partial class DrawableBanner : Sprite
             users?.UnregisterBannerCallback(user.ID, reload);
     }
 
-    private void reload()
+    private void reload(string hash)
     {
-        // clear from texture store
-        Texture = null;
-
-        // wait 2 frames to allow texture store to clear
-        Schedule(() => Schedule(setTexture));
+        user!.BannerHash = hash;
+        Scheduler.ScheduleOnceIfNeeded(setTexture);
     }
 
     public void UpdateUser(APIUser? newUser)

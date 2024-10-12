@@ -190,7 +190,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         cacheComponent(new BackgroundTextureStore(Host, mapStorage));
         cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
-        cacheComponent(new OnlineTextureStore(Host, endpoint, users));
+        cacheComponent(new OnlineTextureStore(Host, endpoint));
 
         cacheComponent(MapStore = new MapStore(), true, true);
         cacheComponent(new ScoreManager(), true, true);

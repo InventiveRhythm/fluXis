@@ -391,12 +391,12 @@ public partial class DashboardAccountTab : DashboardTab
             notification.State = LoadingState.Failed;
         };
 
-        req.Success += _ =>
+        req.Success += res =>
         {
             if (banner)
-                users.TriggerBannerUpdate(user.ID);
+                users.TriggerBannerUpdate(user.ID, res.Data.BannerHash);
             else
-                users.TriggerAvatarUpdate(user.ID);
+                users.TriggerAvatarUpdate(user.ID, res.Data.AvatarHash);
 
             notification.State = LoadingState.Complete;
         };
