@@ -3,16 +3,20 @@
 [Flags]
 public enum MapEffectType : ulong
 {
-    ScrollVelocity = 1 << 0, // 1
-    LaneSwitch = 1 << 1, // 2
-    Flash = 1 << 2, // 4
-    Pulse = 1 << 3, // 8
-    PlayfieldMove = 1 << 4, // 16
-    PlayfieldScale = 1 << 5, // 32
-    PlayfieldRotate = 1 << 6, // 64
-    PlayfieldFade = 1 << 7, // 128
-    Shake = 1 << 8, // 256
-    Shader = 1 << 9, // 512
-    BeatPulse = 1 << 10, // 1024
+    ScrollVelocity = 1 << 0,
+    LaneSwitch = 1 << 1,
+    Flash = 1 << 2,
+    Pulse = 1 << 3,
+    PlayfieldMove = 1 << 4,
+    PlayfieldScale = 1 << 5,
+    PlayfieldRotate = 1 << 6,
+    PlayfieldFade = 1 << 7,
+    Shake = 1 << 8,
+    Shader = 1 << 9,
+    BeatPulse = 1 << 10,
+    HitObjectFade = 1 << 11,
+    HitObjectEase = 1 << 12,
+    ScrollMultiply = 1 << 13,
+    TimeOffset = 1 << 14
 }
 

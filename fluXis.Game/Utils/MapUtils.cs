@@ -145,14 +145,8 @@ public static class MapUtils
             filters.BPMMax = Math.Max(filters.BPMMax, timingPoint.BPM);
         }
 
-        foreach (var scrollVelocity in map.ScrollVelocities)
-        {
-            if (scrollVelocity.Multiplier != 1)
-            {
-                filters.Effects |= MapEffectType.ScrollVelocity;
-                break;
-            }
-        }
+        if (map.ScrollVelocities.Count >= 20)
+            filters.Effects |= MapEffectType.ScrollVelocity;
 
         if (events != null)
             filters.Effects = getEffects(events);
@@ -193,6 +187,18 @@ public static class MapUtils
 
         if (events.BeatPulseEvents.Count > 0)
             effects |= MapEffectType.BeatPulse;
+
+        if (events.HitObjectFadeEvents.Count > 0)
+            effects |= MapEffectType.HitObjectFade;
+
+        if (events.HitObjectEaseEvents.Count > 0)
+            effects |= MapEffectType.HitObjectEase;
+
+        if (events.ScrollMultiplyEvents.Count > 0)
+            effects |= MapEffectType.ScrollMultiply;
+
+        if (events.TimeOffsetEvents.Count > 0)
+            effects |= MapEffectType.TimeOffset;
 
         return effects;
     }

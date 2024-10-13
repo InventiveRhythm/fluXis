@@ -321,6 +321,9 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
         if (effects.HasFlag(MapEffectType.PlayfieldScale))
             icons.Add(new GimmickIcon(FluXisIconType.PlayfieldScale, "Contains playfield scales"));
 
+        if (effects.HasFlag(MapEffectType.PlayfieldRotate))
+            icons.Add(new GimmickIcon(FluXisIconType.PlayfieldRotate, "Contains playfield rotates"));
+
         if (effects.HasFlag(MapEffectType.PlayfieldFade))
             icons.Add(new GimmickIcon(FluXisIconType.PlayfieldFade, "Contains playfield fades"));
 
@@ -332,6 +335,18 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
 
         if (effects.HasFlag(MapEffectType.BeatPulse))
             icons.Add(new GimmickIcon(FluXisIconType.BeatPulse, "Contains beat pulses"));
+
+        if (effects.HasFlag(MapEffectType.HitObjectFade))
+            icons.Add(new GimmickIcon(FluXisIconType.HitObjectFade, "Contains hitobject fades"));
+
+        if (effects.HasFlag(MapEffectType.HitObjectEase))
+            icons.Add(new GimmickIcon(FluXisIconType.HitObjectEase, "Contains hitobject eases"));
+
+        if (effects.HasFlag(MapEffectType.ScrollMultiply))
+            icons.Add(new GimmickIcon(FluXisIconType.ScrollMultiply, "Contains scroll multipliers"));
+
+        if (effects.HasFlag(MapEffectType.TimeOffset))
+            icons.Add(new GimmickIcon(FluXisIconType.TimeOffset, "Contains time offsets"));
 
         return icons.ToArray();
     }

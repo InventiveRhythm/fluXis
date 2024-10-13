@@ -44,5 +44,9 @@ public enum FluXisIconType
     PlayfieldFade,
     Shake,
     Shader,
-    BeatPulse
+    BeatPulse,
+    HitObjectFade,
+    HitObjectEase,
+    ScrollMultiply,
+    TimeOffset
 }
