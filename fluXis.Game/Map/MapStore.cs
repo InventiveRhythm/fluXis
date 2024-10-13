@@ -395,6 +395,7 @@ public partial class MapStore : Component
         }
 
         var info = refInfo.JsonCopy();
+        info.Metadata.Difficulty = param.DifficultyName;
         info.EffectFile = effectName;
 
         if (!param.CopyNotes)
