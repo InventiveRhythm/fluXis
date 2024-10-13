@@ -5,6 +5,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Requests.Users;
+using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User.Sections;
 using fluXis.Game.Overlay.User.Sidebar;
@@ -32,6 +33,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer flow;
+    private OnlineErrorContainer error;
     private LoadingIcon loading;
 
     [BackgroundDependencyLoader]
@@ -91,6 +93,11 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                 Spacing = new Vector2(20)
                             }
                         },
+                        error = new OnlineErrorContainer
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        },
                         loading = new LoadingIcon
                         {
                             Anchor = Anchor.Centre,
@@ -124,11 +131,19 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
         Schedule(() =>
         {
             flow.Clear();
+            error.Hide();
             loading.Show();
         });
 
         user = await users.UserAsync(id, true);
-        if (user == null) return;
+
+        if (user == null)
+        {
+            error.Text = "User not found.";
+            error.Show();
+            loading.Hide();
+            return;
+        }
 
         var mapsReq = new UserMapsRequest(id);
         await api.PerformRequestAsync(mapsReq);
@@ -222,6 +237,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
 
     protected override void PopOut()
     {
+        error.Hide();
         content.ResizeHeightTo(0, 800, Easing.OutQuint);
         this.FadeOut(200);
     }
