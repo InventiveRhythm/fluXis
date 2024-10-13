@@ -25,6 +25,7 @@ using fluXis.Game.Input;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Mods;
+using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Online.Fluxel;
@@ -108,6 +109,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     [Resolved]
     private Storage storage { get; set; }
+
+    [Resolved]
+    protected UserCache Users { get; private set; }
 
     private DependencyContainer dependencies;
 

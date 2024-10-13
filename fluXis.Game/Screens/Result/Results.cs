@@ -28,6 +28,7 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     protected virtual bool PlayEnterAnimation => false;
 
     public Action OnRestart;
+    public Action ViewReplay;
 
     private ResultsContent content;
     private ResultsFooter footer;
@@ -53,6 +54,7 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
             footer = new ResultsFooter
             {
                 BackAction = this.Exit,
+                ViewReplayAction = ViewReplay,
                 RestartAction = OnRestart
             }
         };

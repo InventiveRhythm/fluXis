@@ -451,7 +451,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         }
     }
 
-    private void viewDetails() => game.PresentScore(Map, ScoreInfo, Player);
+    private void viewDetails() => game.PresentScore(Map, ScoreInfo, Player, ReplayAction);
 
     public ITooltip<ScoreInfo> GetCustomTooltip() => new ScoreListEntryTooltip();
 

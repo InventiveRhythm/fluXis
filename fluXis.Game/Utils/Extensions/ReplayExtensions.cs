@@ -8,7 +8,7 @@ public static class ReplayExtensions
 {
     public static APIUser GetPlayer(this Replay replay, UserCache users)
     {
-        if (replay.PlayerID == -1)
+        if (replay.PlayerID == -1 || users is null)
             return APIUser.Default;
 
         if (replay.PlayerID == 0)

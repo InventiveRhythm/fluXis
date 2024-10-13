@@ -79,6 +79,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     private int exceptionCount;
     protected virtual int MaxExceptions => IsDebug ? 5 : 1;
 
+    protected FluXisRealm Realm { get; private set; }
     protected FluXisConfig Config { get; private set; }
     protected NotificationManager NotificationManager { get; private set; }
     protected IAPIClient APIClient { get; private set; }
@@ -171,8 +172,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         var mapStorage = storage.GetStorageForDirectory("maps");
         MapFiles.Initialize(mapStorage);
 
-        var realm = new FluXisRealm(storage);
-        cacheComponent(realm);
+        Realm = new FluXisRealm(storage);
+        cacheComponent(Realm);
 
         cacheComponent(Config = new FluXisConfig(storage));
         cacheComponent(new ExperimentConfigManager(storage));
@@ -220,7 +221,7 @@ public partial class FluXisGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    keybinds = new GlobalKeybindContainer(this, realm)
+                    keybinds = new GlobalKeybindContainer(this, Realm)
                     {
                         Child = CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
                         {
@@ -232,10 +233,10 @@ public partial class FluXisGameBase : osu.Framework.Game
             }
         });
 
-        keybindStore = new KeybindStore(realm);
+        keybindStore = new KeybindStore(Realm);
         keybindStore.AssignDefaults(keybinds);
-        keybindStore.AssignDefaults(new GameplayKeybindContainer(realm, 0));
-        keybindStore.AssignDefaults(new EditorKeybindingContainer(null, realm));
+        keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0));
+        keybindStore.AssignDefaults(new EditorKeybindingContainer(null, Realm));
 
         cacheComponent(keybinds);
         MenuSplashes.Load(Host.CacheStorage);
@@ -415,7 +416,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     public virtual void CloseOverlays() { }
-    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUser player) { }
+    public virtual void PresentScore(RealmMap map, ScoreInfo score, APIUser player, Action replayAction = null) { }
     public virtual void ShowMap(RealmMapSet map) { }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => GameDependencies = new DependencyContainer(base.CreateChildDependencies(parent));

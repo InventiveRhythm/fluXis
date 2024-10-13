@@ -6,12 +6,14 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Footer;
 using fluXis.Game.Localization;
 using fluXis.Game.UI;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Result;
 
 public partial class ResultsFooter : Footer
 {
     public Action BackAction { get; init; }
+    public Action ViewReplayAction { get; init; }
     public Action RestartAction { get; init; }
 
     protected override CornerButton CreateLeftButton() => new()
@@ -36,5 +38,17 @@ public partial class ResultsFooter : Footer
         };
     }
 
-    protected override IEnumerable<FooterButton> CreateButtons() => ArraySegment<FooterButton>.Empty;
+    protected override IEnumerable<FooterButton> CreateButtons()
+    {
+        if (ViewReplayAction is not null)
+        {
+            yield return new FooterButton
+            {
+                Text = "View Replay",
+                Icon = FontAwesome6.Solid.Film,
+                AccentColor = Colour4.FromHex("#98cbed"),
+                Action = ViewReplayAction
+            };
+        }
+    }
 }

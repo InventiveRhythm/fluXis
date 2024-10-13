@@ -5,7 +5,6 @@ using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
 using fluXis.Game.Mods;
-using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Utils.Extensions;
@@ -24,10 +23,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
     public override bool AllowReverting => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
-    protected override APIUser CurrentPlayer => replay.GetPlayer(users);
-
-    [Resolved]
-    private UserCache users { get; set; }
+    protected override APIUser CurrentPlayer => replay.GetPlayer(Users);
 
     [Resolved]
     private ExperimentConfigManager experiments { get; set; }
@@ -49,7 +45,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
 
     protected override GameplayInput GetInput() => new ReplayInput(this, RealmMap.KeyCount);
     protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
-    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(users));
+    protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(Users));
 
     protected override void UpdatePausedState()
     {

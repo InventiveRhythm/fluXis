@@ -526,6 +526,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public void ViewReplay(RealmMap map, RealmScore score)
     {
+        if (!this.IsCurrentScreen())
+            this.MakeCurrent();
+
         var scoreMods = score.Mods.Split(' ').ToList();
         scoreMods.RemoveAll(string.IsNullOrEmpty);
 
