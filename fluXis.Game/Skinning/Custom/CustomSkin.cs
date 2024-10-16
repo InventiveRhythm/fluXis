@@ -16,6 +16,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
+using osuTK;
 
 namespace fluXis.Game.Skinning.Custom;
 
@@ -64,42 +65,60 @@ public class CustomSkin : ISkin
         };
     }
 
-    public Drawable GetStageBackground()
+    public Drawable GetStageBackgroundPart(Anchor part)
     {
-        string path = SkinJson.GetOverrideOrDefault("Stage/background") + ".png";
-
-        if (storage.Exists(path))
+        var file = part switch
         {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.X,
-                Width = 1
-            };
+            Anchor.TopLeft => "border-left-top",
+            Anchor.TopCentre => "background-top",
+            Anchor.TopRight => "border-right-top",
+            Anchor.CentreLeft => "border-left",
+            Anchor.Centre => "background",
+            Anchor.CentreRight => "border-right",
+            Anchor.BottomLeft => "border-left-bottom",
+            Anchor.BottomCentre => "background-bottom",
+            Anchor.BottomRight => "border-right-bottom",
+            _ => throw new ArgumentOutOfRangeException(nameof(part), part, null)
+        };
+
+        string path = SkinJson.GetOverrideOrDefault($"Stage/{file}") + ".png";
+
+        if (!storage.Exists(path))
+            return null;
+
+        var sprite = new SkinnableSprite(textures.Get(path));
+
+        switch (part)
+        {
+            case Anchor.Centre:
+                sprite.RelativeSizeAxes = Axes.Both;
+                sprite.Size = Vector2.One;
+                break;
+
+            case Anchor.CentreLeft:
+            case Anchor.CentreRight:
+                sprite.RelativeSizeAxes = Axes.Y;
+                sprite.BypassAutoSizeAxes = Axes.None;
+                sprite.Height = 1;
+                break;
+
+            case Anchor.TopCentre:
+            case Anchor.BottomCentre:
+                sprite.RelativeSizeAxes = Axes.X;
+                sprite.Width = 1;
+                sprite.SkipResizing = true;
+                break;
+
+            case Anchor.TopLeft:
+            case Anchor.TopRight:
+            case Anchor.BottomLeft:
+            case Anchor.BottomRight:
+                sprite.RelativeSizeAxes = Axes.X;
+                sprite.Width = 1;
+                break;
         }
 
-        return null;
-    }
-
-    public Drawable GetStageBorder(bool right)
-    {
-        var path = SkinJson.GetOverrideOrDefault($"Stage/border-{(right ? "right" : "left")}") + ".png";
-
-        if (storage.Exists(path))
-        {
-            return new SkinnableSprite
-            {
-                Texture = textures.Get(path),
-                Anchor = right ? Anchor.TopRight : Anchor.TopLeft,
-                Origin = right ? Anchor.TopLeft : Anchor.TopRight,
-                RelativeSizeAxes = Axes.Y,
-                Height = 1
-            };
-        }
-
-        return null;
+        return sprite;
     }
 
     public Drawable GetLaneCover(bool bottom)

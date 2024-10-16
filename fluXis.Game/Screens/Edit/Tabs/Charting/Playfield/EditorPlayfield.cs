@@ -5,7 +5,7 @@ using fluXis.Game.Screens.Edit.Tabs.Charting.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield.Tags;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
-using fluXis.Game.Skinning.Default.Stage;
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Audio.Track;
@@ -56,9 +56,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
                 DirectVolume = true,
                 Clock = clock
             },
-            new DefaultStageBackground(),
-            new DefaultStageBorderLeft(null),
-            new DefaultStageBorderRight(null),
+            new Stage(),
             waveform = new WaveformGraph
             {
                 Height = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount,

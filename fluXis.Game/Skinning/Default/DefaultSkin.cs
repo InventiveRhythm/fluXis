@@ -14,6 +14,7 @@ using fluXis.Game.Skinning.Json;
 using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
@@ -58,8 +59,42 @@ public class DefaultSkin : ISkin
         return null;
     }
 
-    public Drawable GetStageBackground() => new DefaultStageBackground();
-    public Drawable GetStageBorder(bool right) => right ? new DefaultStageBorderRight(SkinJson) : new DefaultStageBorderLeft(SkinJson);
+    private const float extended = 48;
+
+    public Drawable GetStageBackgroundPart(Anchor part) => part switch
+    {
+        Anchor.TopLeft => new DefaultStageBorderLeft(SkinJson)
+        {
+            RelativeSizeAxes = Axes.None,
+            Colour = ColourInfo.GradientVertical(Colour4.White.Opacity(0), Colour4.White),
+            Height = extended
+        },
+        Anchor.TopCentre => new DefaultStageBackgroundTop { Height = extended },
+        Anchor.TopRight => new DefaultStageBorderRight(SkinJson)
+        {
+            RelativeSizeAxes = Axes.None,
+            Colour = ColourInfo.GradientVertical(Colour4.White.Opacity(0), Colour4.White),
+            Height = extended
+        },
+        Anchor.CentreLeft => new DefaultStageBorderLeft(SkinJson),
+        Anchor.Centre => new DefaultStageBackground(),
+        Anchor.CentreRight => new DefaultStageBorderRight(SkinJson),
+        Anchor.BottomLeft => new DefaultStageBorderLeft(SkinJson)
+        {
+            RelativeSizeAxes = Axes.None,
+            Colour = ColourInfo.GradientVertical(Colour4.White, Colour4.White.Opacity(0)),
+            Height = extended
+        },
+        Anchor.BottomCentre => new DefaultStageBackgroundBottom { Height = extended },
+        Anchor.BottomRight => new DefaultStageBorderRight(SkinJson)
+        {
+            RelativeSizeAxes = Axes.None,
+            Colour = ColourInfo.GradientVertical(Colour4.White, Colour4.White.Opacity(0)),
+            Height = extended
+        },
+        _ => throw new ArgumentOutOfRangeException(nameof(part), part, null)
+    };
+
     public Drawable GetLaneCover(bool bottom) => bottom ? new DefaultBottomLaneCover() : new DefaultTopLaneCover();
 
     public Drawable GetHealthBarBackground() => new DefaultHealthBackground();

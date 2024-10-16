@@ -1,3 +1,4 @@
+using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Skinning;
 using fluXis.Game.Skinning.Json;
 using osu.Framework.Allocation;
@@ -12,7 +13,6 @@ public partial class SkinEditorPlayfield : Container
     public SkinManager SkinManager { get; set; }
     public int KeyMode { get; set; }
 
-    private Container stageContainer;
     private Drawable hitline;
     private FillFlowContainer receptorContainer;
     private Container hitObjectContainer;
@@ -35,20 +35,9 @@ public partial class SkinEditorPlayfield : Container
 
     private void addContent()
     {
-        InternalChildren = new Drawable[]
+        InternalChildren = new[]
         {
-            stageContainer = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Children = new[]
-                {
-                    SkinManager.GetStageBorder(false),
-                    SkinManager.GetStageBackground(),
-                    SkinManager.GetStageBorder(true)
-                }
-            },
+            new Stage(),
             receptorContainer = new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.Both,

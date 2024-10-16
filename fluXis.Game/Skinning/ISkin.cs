@@ -21,8 +21,7 @@ public interface ISkin : IDisposable
     Sample GetUISample(UISamples.SampleType type);
     Sample GetCourseSample(CourseScreen.SampleType type);
 
-    Drawable GetStageBackground();
-    Drawable GetStageBorder(bool right);
+    Drawable GetStageBackgroundPart(Anchor part);
     Drawable GetLaneCover(bool bottom);
 
     Drawable GetHealthBarBackground();

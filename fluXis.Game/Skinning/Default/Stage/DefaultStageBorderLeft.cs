@@ -12,16 +12,13 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
     public DefaultStageBorderLeft(SkinJson skinJson)
         : base(skinJson)
     {
+        AutoSizeAxes = Axes.X;
+        RelativeSizeAxes = Axes.Y;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        AutoSizeAxes = Axes.X;
-        RelativeSizeAxes = Axes.Y;
-        Anchor = Anchor.TopLeft;
-        Origin = Anchor.TopRight;
-
         InternalChildren = new Drawable[]
         {
             new Box

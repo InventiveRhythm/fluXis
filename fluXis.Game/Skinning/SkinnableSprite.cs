@@ -6,6 +6,8 @@ namespace fluXis.Game.Skinning;
 
 public partial class SkinnableSprite : Sprite
 {
+    public bool SkipResizing { get; set; }
+
     public SkinnableSprite(Texture texture = null)
     {
         Texture = texture;
@@ -13,6 +15,9 @@ public partial class SkinnableSprite : Sprite
 
     protected override void Update()
     {
+        if (SkipResizing)
+            return;
+
         if (Texture != null)
         {
             switch (RelativeSizeAxes)

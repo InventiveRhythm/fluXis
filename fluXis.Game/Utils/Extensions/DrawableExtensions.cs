@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using osu.Framework.Development;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
@@ -104,4 +105,12 @@ public static class DrawableExtensions
     public static TransformSequence<T> BorderTo<T>(this TransformSequence<T> seq, float newBorder, float duration = 0f, Easing ease = Easing.None)
         where T : class, ITransformable
         => seq.Append(s => s.TransformTo(nameof(Container.BorderThickness), newBorder, duration, ease));
+
+    public static Anchor OppositeHorizontal(this Anchor anchor)
+    {
+        if (anchor.HasFlagFast(Anchor.x0) || anchor.HasFlagFast(Anchor.x2))
+            anchor ^= Anchor.x0 | Anchor.x2;
+
+        return anchor;
+    }
 }

@@ -42,9 +42,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
         InternalChildren = new[]
         {
             laneSwitchManager,
-            skinManager.GetStageBackground(),
-            skinManager.GetStageBorder(false),
-            skinManager.GetStageBorder(true),
+            new Stage(),
             new EditorTimingLines(),
             Receptors = new FillFlowContainer<EditorDesignReceptor>
             {
