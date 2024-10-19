@@ -9,7 +9,6 @@ using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User.Sections;
 using fluXis.Game.Overlay.User.Sidebar;
-using fluXis.Shared.Components.Clubs;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -197,10 +196,7 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                     Spacing = new Vector2(20),
                                     Children = new Drawable[]
                                     {
-                                        new ProfileSidebarClub(user.Club ?? new APIClub())
-                                        {
-                                            Alpha = user.Club?.ID == 0 ? 0 : 1
-                                        },
+                                        new ProfileSidebarClub(user.Club),
                                         new ProfileFollowerList(user.ID),
                                     }
                                 },

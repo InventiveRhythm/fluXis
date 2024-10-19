@@ -25,6 +25,12 @@ public partial class ProfileSidebarClub : FillFlowContainer
     [BackgroundDependencyLoader(true)]
     private void load([CanBeNull] ClubOverlay clubOverlay)
     {
+        if (club is null)
+        {
+            Alpha = 0;
+            return;
+        }
+
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
