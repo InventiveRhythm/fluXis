@@ -21,6 +21,7 @@ public partial class LoadingScreen : FluXisScreen
 
     private FluXisGame.LoadInfo loadInfo { get; }
     private FluXisSpriteText loadingText { get; }
+    private Circle bar;
 
     public LoadingScreen(FluXisGame.LoadInfo loadInfo)
     {
@@ -42,18 +43,45 @@ public partial class LoadingScreen : FluXisScreen
                 Padding = new MarginPadding(30),
                 Children = new Drawable[]
                 {
-                    loadingText = new FluXisSpriteText
+                    new FillFlowContainer
                     {
-                        Text = "Loading...",
-                        FontSize = 28,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Vertical,
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Spacing = new Vector2(6),
+                        Children = new Drawable[]
+                        {
+                            loadingText = new FluXisSpriteText
+                            {
+                                Text = "Loading...",
+                                WebFontSize = 16
+                            },
+                            new CircularContainer
+                            {
+                                Size = new Vector2(240, 8),
+                                Masking = true,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Alpha = .2f
+                                    },
+                                    bar = new Circle
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Width = 0,
+                                    }
+                                }
+                            }
+                        }
                     },
                     new LoadingIcon
                     {
-                        Size = new Vector2(50),
-                        Anchor = Anchor.CentreRight,
-                        Origin = Anchor.CentreRight
+                        Size = new Vector2(32),
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight
                     }
                 }
             }
@@ -64,7 +92,12 @@ public partial class LoadingScreen : FluXisScreen
     {
         base.LoadComplete();
 
-        loadInfo.TaskStarted += task => loadingText.Text = $"Loading... {task} ({loadInfo.TasksDone + 1}/{loadInfo.TotalTasks})";
+        loadInfo.TaskStarted += task =>
+        {
+            loadingText.Text = $"Loading {task}... ({loadInfo.TasksDone + 1}/{loadInfo.TotalTasks})";
+            bar.ResizeWidthTo((loadInfo.TasksDone + 1) / (float)loadInfo.TotalTasks, 300, Easing.OutQuint);
+        };
+
         loadInfo.AllFinished += complete;
     }
 
@@ -74,5 +107,11 @@ public partial class LoadingScreen : FluXisScreen
             this.Push(new IntroAnimation());
         else
             this.Push(new WarningScreen());
+    }
+
+    public override void OnSuspending(ScreenTransitionEvent e)
+    {
+        this.FadeOut(FADE_DURATION);
+        base.OnSuspending(e);
     }
 }

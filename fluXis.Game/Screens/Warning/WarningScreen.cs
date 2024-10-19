@@ -1,4 +1,3 @@
-using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Text;
@@ -6,7 +5,8 @@ using fluXis.Game.Screens.Intro;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Transforms;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -19,35 +19,22 @@ public partial class WarningScreen : FluXisScreen
     [Resolved]
     private GlobalBackground backgrounds { get; set; }
 
+    private int step;
+
     private FillFlowContainer epilepsyContainer;
     private FluXisTextFlow epilepsyText;
 
     private FillFlowContainer earlyAccessContainer;
     private FluXisTextFlow earlyAccessText;
 
-    private bool shouldSkip;
-
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
-        if (config.Get<bool>(FluXisSetting.SkipIntro))
-        {
-            shouldSkip = true;
-            return;
-        }
-
         InternalChildren = new Drawable[]
         {
-            new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black
-            },
             epilepsyContainer = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
-                AutoSizeDuration = 500,
-                AutoSizeEasing = Easing.OutQuint,
                 Direction = FillDirection.Vertical,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -63,6 +50,7 @@ public partial class WarningScreen : FluXisScreen
                     },
                     epilepsyText = new FluXisTextFlow
                     {
+                        AlwaysPresent = true,
                         AutoSizeAxes = Axes.Y,
                         Text = "This game contains flashing lights and colors that may cause discomfort and/or seizures for people with photosensitive epilepsy.",
                         TextAnchor = Anchor.TopCentre,
@@ -76,15 +64,13 @@ public partial class WarningScreen : FluXisScreen
             },
             earlyAccessContainer = new FillFlowContainer
             {
+                AlwaysPresent = true,
+                Alpha = 0,
                 AutoSizeAxes = Axes.Both,
-                AutoSizeDuration = 500,
-                AutoSizeEasing = Easing.OutQuint,
                 Direction = FillDirection.Vertical,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Spacing = new Vector2(0, 20),
-                Alpha = 0,
-                Y = 20,
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText
@@ -96,13 +82,14 @@ public partial class WarningScreen : FluXisScreen
                     },
                     earlyAccessText = new FluXisTextFlow
                     {
+                        AlwaysPresent = true,
                         AutoSizeAxes = Axes.Y,
                         Text = "This means that the game is not finished yet and that you may encounter bugs and other issues.\n\nIf you encounter any issues, please report them on the GitHub repository or the Discord server.\n",
                         TextAnchor = Anchor.TopCentre,
                         FontSize = 30,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        Width = 1400,
+                        Width = 800,
                         Alpha = 0
                     }
                 }
@@ -114,25 +101,73 @@ public partial class WarningScreen : FluXisScreen
     {
         backgrounds.SetDim(1f, 0);
 
-        if (shouldSkip)
+        next();
+
+        // yes, this is stupid, and I know
+        this.Delay(200).FadeIn().OnComplete(_ =>
         {
-            continueToMenu();
-            return;
+            epilepsyContainer.AutoSizeDuration = 99999;
+            earlyAccessContainer.AutoSizeDuration = 99999;
+        });
+    }
+
+    private void next()
+    {
+        step++;
+
+        TransformSequence<FillFlowContainer> seq;
+
+        switch (step)
+        {
+            case 1:
+                seq = epilepsyContainer.ScaleTo(1.1f).FadeInFromZero(FADE_DURATION)
+                                       .ScaleTo(1, MOVE_DURATION, Easing.OutQuint)
+                                       .Then(5000)
+                                       .ScaleTo(0.9f, MOVE_DURATION, Easing.OutQuint)
+                                       .FadeOut(FADE_DURATION);
+
+                epilepsyText.Delay(2000).ScaleTo(1.1f)
+                            .FadeIn(FADE_DURATION)
+                            .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
+                break;
+
+            case 2:
+                seq = earlyAccessContainer.FadeOut().ScaleTo(1.1f)
+                                          .FadeInFromZero(FADE_DURATION)
+                                          .ScaleTo(1, MOVE_DURATION, Easing.OutQuint)
+                                          .Then(5000)
+                                          .ScaleTo(0.9f, MOVE_DURATION, Easing.OutQuint)
+                                          .FadeOut(FADE_DURATION);
+
+                earlyAccessText.Delay(2000).ScaleTo(1.1f)
+                               .FadeIn(FADE_DURATION)
+                               .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
+                break;
+
+            case 3:
+                continueToMenu();
+                return;
+
+            default:
+                return;
         }
 
-        epilepsyContainer.FadeInFromZero(400)
-                         .Then(5000).MoveToY(-20, 800, Easing.OutQuint).FadeOut(400);
+        seq.OnComplete(_ => next());
+    }
 
-        epilepsyText.Delay(2000).FadeIn(400);
-
-        earlyAccessContainer.Delay(6000).FadeInFromZero(400).MoveToY(0, 800, Easing.OutQuint)
-                            .Then(5000).MoveToY(-20, 800, Easing.OutQuint).FadeOut(400).OnComplete(_ => continueToMenu());
-
-        earlyAccessText.Delay(7000).FadeIn(400);
+    protected override bool OnClick(ClickEvent e)
+    {
+        continueToMenu();
+        return true;
     }
 
     private void continueToMenu()
     {
         this.Push(new IntroAnimation());
+    }
+
+    public override void OnSuspending(ScreenTransitionEvent e)
+    {
+        this.ScaleTo(0.9f, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
     }
 }
