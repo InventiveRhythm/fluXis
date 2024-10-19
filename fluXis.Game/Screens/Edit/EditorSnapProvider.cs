@@ -1,4 +1,6 @@
-﻿namespace fluXis.Game.Screens.Edit;
+﻿using System;
+
+namespace fluXis.Game.Screens.Edit;
 
 public class EditorSnapProvider
 {
@@ -13,7 +15,9 @@ public class EditorSnapProvider
         this.clock = clock;
     }
 
-    public double SnapTime(double time)
+    public double SnapTime(double time) => SnapTime(time, false);
+
+    public double SnapTime(double time, bool allowNext)
     {
         var tp = map.MapInfo.GetTimingPoint(time);
         double t = tp.Time;
@@ -40,7 +44,21 @@ public class EditorSnapProvider
             while (true)
             {
                 var next = t + increase;
-                if (next > time) break;
+
+                if (next > time)
+                {
+                    if (!allowNext)
+                        break;
+
+                    // if the next snap is closer,
+                    // then use it
+                    var diffN = Math.Abs(time - next);
+
+                    if (diffN / increase < .3f)
+                        t = next;
+
+                    break;
+                }
 
                 t = next;
             }

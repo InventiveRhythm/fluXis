@@ -45,7 +45,7 @@ public partial class TimelineBlueprintContainer : BlueprintContainer<StoryboardE
         var position = DraggedBlueprintsPositions.First() + delta;
         var time = timeline.TimeAtScreenSpacePosition(position);
         int lane = timeline.ZAtScreenSpacePosition(position);
-        var snappedTime = snaps.SnapTime(time);
+        var snappedTime = snaps.SnapTime(time, true);
 
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.StartTime;
 

@@ -159,7 +159,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         var position = DraggedBlueprintsPositions.First() + delta;
         var time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
         int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(position);
-        var snappedTime = snaps.SnapTime(time);
+        var snappedTime = snaps.SnapTime(time, true);
 
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.Time;
         int laneDelta = 0;
