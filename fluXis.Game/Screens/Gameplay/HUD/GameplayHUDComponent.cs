@@ -1,3 +1,5 @@
+using fluXis.Game.Scoring.Processing;
+using fluXis.Game.Scoring.Processing.Health;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 
@@ -7,6 +9,10 @@ public partial class GameplayHUDComponent : Container
 {
     [Resolved]
     protected GameplayScreen Screen { get; private set; }
+
+    public JudgementProcessor JudgementProcessor { get; set; }
+    public HealthProcessor HealthProcessor { get; set; }
+    public ScoreProcessor ScoreProcessor { get; set; }
 
     public HUDComponentSettings Settings { get; set; } = new();
 }

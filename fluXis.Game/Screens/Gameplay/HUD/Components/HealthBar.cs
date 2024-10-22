@@ -25,7 +25,7 @@ public partial class HealthBar : GameplayHUDComponent
         InternalChildren = new[]
         {
             skinManager.GetHealthBarBackground(),
-            bar = skinManager.GetHealthBar(Screen.HealthProcessor),
+            bar = skinManager.GetHealthBar(HealthProcessor),
             icon = new SpriteIcon
             {
                 Size = new Vector2(30),
@@ -39,13 +39,13 @@ public partial class HealthBar : GameplayHUDComponent
 
     protected override void Update()
     {
-        if (!showingIcon && Screen.HealthProcessor.FailedAlready)
+        if (!showingIcon && HealthProcessor.FailedAlready)
         {
             showingIcon = true;
             icon.FadeIn(600).Then(400).FadeOut(600).Loop();
         }
 
-        bar.Height = Screen.HealthProcessor.SmoothHealth / 100;
+        bar.Height = HealthProcessor.SmoothHealth / 100;
 
         base.Update();
     }

@@ -23,7 +23,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
     public override bool AllowReverting => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
-    protected override APIUser CurrentPlayer => replay.GetPlayer(Users);
+    public override APIUser CurrentPlayer => replay.GetPlayer(Users);
 
     [Resolved]
     private ExperimentConfigManager experiments { get; set; }
@@ -43,7 +43,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
         handledFrames = new Stack<ReplayFrame>();
     }
 
-    protected override GameplayInput GetInput() => new ReplayInput(this, RealmMap.KeyCount);
+    protected override GameplayInput GetInput() => new ReplayInput(this, RealmMap.KeyCount, Map.IsDual);
     protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
     protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(Users));
 

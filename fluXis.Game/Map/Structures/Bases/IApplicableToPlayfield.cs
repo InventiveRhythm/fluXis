@@ -1,4 +1,4 @@
-﻿using fluXis.Game.Screens.Gameplay.Ruleset;
+﻿using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 
 namespace fluXis.Game.Map.Structures.Bases;
 

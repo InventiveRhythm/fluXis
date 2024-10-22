@@ -8,7 +8,6 @@ using fluXis.Game.Audio;
 using fluXis.Game.Audio.Transforms;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Configuration;
-using fluXis.Game.Configuration.Experiments;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
@@ -32,7 +31,6 @@ using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Replays;
 using fluXis.Game.Scoring;
-using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
@@ -41,12 +39,14 @@ using fluXis.Game.Screens.Gameplay.HUD.Leaderboard;
 using fluXis.Game.Screens.Gameplay.Input;
 using fluXis.Game.Screens.Gameplay.Overlay;
 using fluXis.Game.Screens.Gameplay.Overlay.Effect;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Game.Screens.Gameplay.UI;
 using fluXis.Game.Screens.Gameplay.UI.Menus;
 using fluXis.Game.Screens.Result;
 using fluXis.Game.Skinning.Default;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
+using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
 using fluXis.Shared.Scoring;
@@ -74,7 +74,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
-    public override bool ShowCursor => HealthProcessor.Failed || IsPaused.Value || CursorVisible;
+    public override bool ShowCursor => PlayfieldManager.Playfields[0].HealthProcessor.Failed || IsPaused.Value || CursorVisible;
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
@@ -85,7 +85,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
-    protected virtual APIUser CurrentPlayer => api.User.Value;
+    public virtual APIUser CurrentPlayer => api.User.Value;
 
     protected bool CursorVisible { get; set; }
 
@@ -127,15 +127,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public GameplayClock GameplayClock { get; private set; }
     public Action<double, double> OnSeek { get; set; }
 
-    public JudgementProcessor JudgementProcessor { get; } = new();
-    public HealthProcessor HealthProcessor { get; private set; }
-    public ScoreProcessor ScoreProcessor { get; private set; }
-
     public GameplayInput Input { get; private set; }
     public HitWindows HitWindows { get; private set; }
     public ReleaseWindows ReleaseWindows { get; private set; }
 
-    public GameplayLoader Loader { get; set; }
     public Action OnRestart { get; set; }
     private ReplayRecorder replayRecorder;
 
@@ -150,7 +145,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private GlobalBackground background;
     private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
-    public Playfield Playfield { get; private set; }
+    public PlayfieldManager PlayfieldManager { get; private set; }
     private Container hud { get; set; }
     private ScoreSubmissionOverlay scoreSubmissionOverlay;
 
@@ -179,11 +174,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load(ExperimentConfigManager experiments)
+    private void load()
     {
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
-
         dependencies.CacheAs(this);
 
         hudVisibility = Config.GetBindable<HudVisibility>(FluXisSetting.HudVisibility);
@@ -211,6 +203,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Map.Sort();
         getKeyCountFromEvents();
 
+        dependencies.CacheAs(Samples);
         dependencies.CacheAs<ICustomColorProvider>(Map.Colors);
 
         var difficulty = Map.AccuracyDifficulty == 0 ? 8 : Map.AccuracyDifficulty;
@@ -219,76 +212,30 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         HitWindows = new HitWindows(difficulty, Rate);
         ReleaseWindows = new ReleaseWindows(difficulty, Rate);
 
-        JudgementProcessor.AddDependants(new JudgementDependant[]
-        {
-            HealthProcessor = CreateHealthProcessor(),
-            ScoreProcessor = new ScoreProcessor
-            {
-                Player = CurrentPlayer ?? APIUser.Default,
-                HitWindows = HitWindows,
-                Map = RealmMap,
-                MapInfo = Map,
-                Mods = Mods
-            }
-        });
-
-        HealthProcessor.CanFail = !Mods.Any(m => m is NoFailMod);
-
         dependencies.CacheAs(Input = GetInput());
-        dependencies.Cache(Playfield = new Playfield(experiments.Get<bool>(ExperimentConfig.Seeking)));
 
-        var shaders = new ShaderStackContainer();
-        var shaderTypes = MapEvents.ShaderEvents.Select(e => e.Type).Distinct().ToList();
-
-        foreach (var shaderType in shaderTypes)
-        {
-            ShaderContainer shader = shaderType switch
-            {
-                ShaderType.Chromatic => new ChromaticContainer(),
-                ShaderType.Greyscale => new GreyscaleContainer(),
-                ShaderType.Invert => new InvertContainer(),
-                ShaderType.Bloom => new BloomContainer(),
-                ShaderType.Mosaic => new MosaicContainer(),
-                ShaderType.Noise => new NoiseContainer(),
-                ShaderType.Vignette => new VignetteContainer(),
-                ShaderType.Retro => new RetroContainer(),
-                _ => null
-            };
-
-            if (shader == null)
-            {
-                Logger.Log($"Shader '{shaderType}' not found", LoggingTarget.Runtime, LogLevel.Error);
-                continue;
-            }
-
-            shader.RelativeSizeAxes = Axes.Both;
-            shaders.AddShader(shader);
-        }
-
-        var laneSwitchManager = new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount);
-        dependencies.CacheAs(laneSwitchManager);
+        var shaders = buildShaders();
 
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
-            laneSwitchManager,
+            dependencies.CacheAsAndReturn(new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount)),
             new ShaderEventHandler(MapEvents.ShaderEvents, shaders),
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
-            new PulseEffect(),
-            Playfield,
-            new LaneSwitchAlert(),
+            dependencies.CacheAsAndReturn(PlayfieldManager = new PlayfieldManager(Map.DualMode)),
             replayRecorder = new ReplayRecorder()
         }, UseGlobalOffset);
 
         var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
+        dependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
 
         LoadComponent(GameplayClock);
         LoadComponent(storyboard);
 
         InternalChildren = new Drawable[]
         {
-            keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount)
+            keybindContainer = new GameplayKeybindContainer(realm, RealmMap.KeyCount, Map.IsDual)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -327,7 +274,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                     Alpha = BackgroundDim
                                 },
                                 clockContainer,
-                                new KeyOverlay(),
                                 new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
                             }
                         },
@@ -340,7 +286,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                 new ModsDisplay()
                             }
                         },
-                        new GameplayLeaderboard(Scores, ScoreProcessor),
+                        new GameplayLeaderboard(Scores),
                         CreateTextOverlay(),
                         new DangerHealthOverlay(),
                         new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay),
@@ -365,23 +311,50 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         Input.OnRelease += replayRecorder.ReleaseKey;
     }
 
+    private ShaderStackContainer buildShaders()
+    {
+        var stack = new ShaderStackContainer();
+        var shaderTypes = MapEvents.ShaderEvents.Select(e => e.Type).Distinct().ToList();
+
+        foreach (var shaderType in shaderTypes)
+        {
+            ShaderContainer shader = shaderType switch
+            {
+                ShaderType.Chromatic => new ChromaticContainer(),
+                ShaderType.Greyscale => new GreyscaleContainer(),
+                ShaderType.Invert => new InvertContainer(),
+                ShaderType.Bloom => new BloomContainer(),
+                ShaderType.Mosaic => new MosaicContainer(),
+                ShaderType.Noise => new NoiseContainer(),
+                ShaderType.Vignette => new VignetteContainer(),
+                ShaderType.Retro => new RetroContainer(),
+                _ => null
+            };
+
+            if (shader == null)
+            {
+                Logger.Log($"Shader '{shaderType}' not found", LoggingTarget.Runtime, LogLevel.Error);
+                continue;
+            }
+
+            shader.RelativeSizeAxes = Axes.Both;
+            stack.AddShader(shader);
+        }
+
+        return stack;
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        JudgementProcessor.ApplyMap(Map);
-        ScoreProcessor.OnComboBreak += () =>
-        {
-            if (!Playfield.Manager.Seeking)
-                Samples.Miss();
-        };
 
         background.ParallaxStrength = 0;
 
-        Playfield.Manager.OnFinished = () =>
+        PlayfieldManager.OnFinish += () =>
         {
-            if (HealthProcessor.Failed) return;
+            if (PlayfieldManager.AnyFailed) return;
 
-            if (HealthProcessor.OnComplete())
+            if (PlayfieldManager.OnComplete())
                 End();
         };
 
@@ -401,11 +374,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     }
 
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
-    protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount);
+    protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount, Map.IsDual);
     protected virtual Drawable CreateTextOverlay() => Empty();
     protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(this, RealmMap);
 
-    protected HealthProcessor CreateHealthProcessor()
+    public HealthProcessor CreateHealthProcessor()
     {
         var processor = null as HealthProcessor;
 
@@ -425,13 +398,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (Mods.Any(m => m is FlawlessMod))
             processor.ExtraFailCondition = r => r.Judgement < Judgement.Flawless;
 
+        processor.CanFail = !Mods.Any(m => m is NoFailMod);
         return processor;
     }
 
     protected override void Update()
     {
-        HealthProcessor.Update();
-
         if (GameplayClock.CurrentTime >= 0 && starting)
         {
             starting = false;
@@ -445,8 +417,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         hudVisible = hudVisibility.Value switch
         {
             HudVisibility.Hidden => false,
-            HudVisibility.ShowDuringBreaks => Playfield.Manager.Break,
-            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !Playfield.Manager.Break,
+            HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak,
+            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak,
             _ => true
         };
 
@@ -464,23 +436,25 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual void End()
     {
+        var field = PlayfieldManager.Playfields[0];
+
         // no fail was enabled, but the player never actually failed
         // so, we just remove the mod to make the score count normally
-        if (Mods.Any(m => m is NoFailMod) && !HealthProcessor.FailedAlready)
+        if (Mods.Any(m => m is NoFailMod) && !field.HealthProcessor.FailedAlready)
         {
             Mods.RemoveAll(m => m is NoFailMod);
-            ScoreProcessor.Recalculate();
+            field.ScoreProcessor.Recalculate();
         }
 
         replayRecorder.IsRecording.Value = false;
 
-        var showingOverlay = ScoreProcessor.FullCombo || ScoreProcessor.FullFlawless;
+        var showingOverlay = field.ScoreProcessor.FullCombo || field.ScoreProcessor.FullFlawless;
 
         var stopwatch = Stopwatch.StartNew();
 
         if (showingOverlay)
         {
-            fcOverlay.Show(ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
+            fcOverlay.Show(field.ScoreProcessor.FullFlawless ? FullComboOverlay.FullComboType.AllFlawless : FullComboOverlay.FullComboType.FullCombo);
             Scheduler.AddDelayed(() => fcOverlay.Hide(), 1400);
         }
 
@@ -493,7 +467,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         {
             var bestScore = scores.GetCurrentTop(RealmMap.ID);
 
-            var score = ScoreProcessor.ToScoreInfo();
+            var score = field.ScoreProcessor.ToScoreInfo();
             score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
             var screen = new SoloResults(RealmMap, score, CurrentPlayer);
@@ -617,7 +591,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Repeat || Playfield.Manager.Finished) return false;
+        if (e.Repeat || PlayfieldManager.Finished) return false;
 
         switch (e.Action)
         {
@@ -632,7 +606,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 return true;
 
             case FluXisGlobalKeybind.GameplayPause:
-                if (HealthProcessor.Failed) return false;
+                if (PlayfieldManager.AnyFailed) return false;
 
                 if (InstantlyExitOnPause)
                 {

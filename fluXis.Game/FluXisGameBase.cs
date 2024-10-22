@@ -235,7 +235,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         keybindStore = new KeybindStore(Realm);
         keybindStore.AssignDefaults(keybinds);
-        keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0));
+        keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0, true));
         keybindStore.AssignDefaults(new EditorKeybindingContainer(null, Realm));
 
         cacheComponent(keybinds);
@@ -315,6 +315,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     private APIEndpointConfig getApiEndpoint()
     {
+#if CLOSED_TESTING
+        return new APIEndpointConfig().AddLocalDefaults();
+#else
         var path = Host.Storage.GetFullPath("server.json");
 
         if (File.Exists(path))
@@ -327,6 +330,7 @@ public partial class FluXisGameBase : osu.Framework.Game
         File.WriteAllText(path, defaultEndpoint.Serialize());
 
         return getApiEndpoint();
+#endif
     }
 
     private void initFonts()

@@ -16,15 +16,21 @@ public class AutoGenerator
     /// </summary>
     private const float key_down_time = 50;
 
-    private MapInfo map { get; init; }
+    private MapInfo map { get; }
+    private int mode { get; }
+    private bool dual { get; }
+
     private List<FluXisGameplayKeybind> keys { get; }
 
     private List<ReplayFrame> frames { get; } = new();
 
-    public AutoGenerator(MapInfo map, int keycount)
+    public AutoGenerator(MapInfo map, int mode)
     {
         this.map = map;
-        keys = GameplayInput.GetKeys(keycount).ToList();
+        this.mode = mode;
+        dual = map.IsDual;
+
+        keys = GameplayInput.GetKeys(mode, dual).ToList();
     }
 
     public Replay Generate()
@@ -61,10 +67,18 @@ public class AutoGenerator
                 {
                     case PressAction:
                         currentKeys.Add(keys[point.Lane - 1]);
+
+                        if (dual)
+                            currentKeys.Add(keys[point.Lane - 1 + mode]);
+
                         break;
 
                     case ReleaseAction:
                         currentKeys.Remove(keys[point.Lane - 1]);
+
+                        if (dual)
+                            currentKeys.Remove(keys[point.Lane - 1 + mode]);
+
                         break;
                 }
             }

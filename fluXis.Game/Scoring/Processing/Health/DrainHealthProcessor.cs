@@ -28,7 +28,7 @@ public class DrainHealthProcessor : HealthProcessor
             return;
         }
 
-        if (Screen.Playfield.Manager.Break)
+        if (Screen.PlayfieldManager.InBreak)
         {
             // assign the time so that it doesn't jump when the break ends
             lastTime = GameplayClock.CurrentTime;

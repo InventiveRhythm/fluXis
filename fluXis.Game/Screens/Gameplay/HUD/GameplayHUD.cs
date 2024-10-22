@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
@@ -16,12 +19,15 @@ public partial class GameplayHUD : Container
     private GameplayScreen screen { get; set; }
 
     [Resolved]
+    private PlayfieldManager playfieldManager { get; set; }
+
+    [Resolved]
     private LayoutManager layouts { get; set; }
 
     private readonly Dictionary<string, Type> componentLookup = new();
 
     private Container components;
-    private Container playfieldComponents;
+    private PlayfieldHUD[] playfields;
 
     public GameplayHUD()
     {
@@ -47,12 +53,15 @@ public partial class GameplayHUD : Container
             {
                 RelativeSizeAxes = Axes.Both
             },
-            playfieldComponents = new Container
+            new GridContainer
             {
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                AlwaysPresent = true
+                RelativeSizeAxes = Axes.Both,
+                Content = new[]
+                {
+                    playfields = Enumerable.Range(0, playfieldManager.Count)
+                                           .Select(i => new PlayfieldHUD(playfieldManager.Playfields[i]))
+                                           .ToArray()
+                }
             }
         };
 
@@ -75,23 +84,6 @@ public partial class GameplayHUD : Container
         layouts.Layout.ValueChanged -= bindableRefreshLayout;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-
-        playfieldComponents.Position = screen.Playfield.Position;
-        playfieldComponents.Width = screen.Playfield.DrawWidth;
-        playfieldComponents.Rotation = screen.Playfield.Rotation;
-        playfieldComponents.Alpha = screen.Playfield.Alpha;
-
-        var scale = screen.Playfield.Scale;
-
-        if (screen.Playfield.IsUpScroll)
-            scale *= new Vector2(1, -1);
-
-        playfieldComponents.Scale = scale;
-    }
-
     private void bindableRefreshLayout(ValueChangedEvent<HUDLayout> _)
     {
         refreshLayout();
@@ -100,7 +92,7 @@ public partial class GameplayHUD : Container
     private void refreshLayout()
     {
         components.Clear();
-        playfieldComponents.Clear();
+        playfields.ForEach(hud => hud.Clear());
 
         loadLayout();
     }
@@ -119,24 +111,65 @@ public partial class GameplayHUD : Container
 
             try
             {
-                var component = (GameplayHUDComponent)Activator.CreateInstance(type);
+                var loop = value.AnchorToPlayfield ? playfields.Length : 1;
 
-                if (component == null)
-                    throw new Exception($"Failed to create instance of {type}.");
+                for (int i = 0; i < loop; i++)
+                {
+                    var component = (GameplayHUDComponent)Activator.CreateInstance(type);
 
-                component.Settings = value;
-                LoadComponent(component);
-                value.ApplyTo(component);
+                    if (component == null)
+                        throw new Exception($"Failed to create instance of {type}.");
 
-                if (value.AnchorToPlayfield)
-                    playfieldComponents.Add(component);
-                else
-                    components.Add(component);
+                    var field = playfields[i].Playfield;
+                    component.JudgementProcessor = field.JudgementProcessor;
+                    component.ScoreProcessor = field.ScoreProcessor;
+                    component.HealthProcessor = field.HealthProcessor;
+
+                    component.Settings = value;
+                    LoadComponent(component);
+                    value.ApplyTo(component);
+
+                    if (value.AnchorToPlayfield)
+                        playfields[i].Add(component);
+                    else
+                        components.Add(component);
+                }
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Failed to load component {key}.");
             }
+        }
+    }
+
+    private partial class PlayfieldHUD : Container
+    {
+        public Playfield Playfield { get; }
+
+        public PlayfieldHUD(Playfield playfield)
+        {
+            Playfield = playfield;
+
+            AlwaysPresent = true;
+            RelativeSizeAxes = Axes.Y;
+            Anchor = Origin = Anchor.Centre;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            Position = Playfield.Position;
+            Width = Playfield.DrawWidth;
+            Rotation = Playfield.Rotation;
+            Alpha = Playfield.Alpha;
+
+            var scale = Playfield.Scale;
+
+            if (Playfield.IsUpScroll)
+                scale *= new Vector2(1, -1);
+
+            Scale = scale;
         }
     }
 }

@@ -65,14 +65,14 @@ public partial class JudgementDisplay : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.JudgementProcessor.ResultAdded += popUp;
+        JudgementProcessor.ResultAdded += popUp;
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        Screen.JudgementProcessor.ResultAdded -= popUp;
+        JudgementProcessor.ResultAdded -= popUp;
     }
 
     private void popUp(HitResult result)

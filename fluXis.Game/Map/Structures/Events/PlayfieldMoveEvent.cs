@@ -1,5 +1,5 @@
 using fluXis.Game.Map.Structures.Bases;
-using fluXis.Game.Screens.Gameplay.Ruleset;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 

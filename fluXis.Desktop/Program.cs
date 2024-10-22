@@ -36,6 +36,10 @@ public static class Program
 
         string name = "fluXis";
 
+#if CLOSED_TESTING
+        name += "-ct";
+#endif
+
         if (args.Contains("--profile"))
         {
             var idx = Array.IndexOf(args, "--profile");

@@ -6,8 +6,8 @@ namespace fluXis.Game.Screens.Gameplay.Replays;
 
 public partial class ReplayInput : GameplayInput
 {
-    public ReplayInput(GameplayScreen screen, int mode = 4)
-        : base(screen, mode)
+    public ReplayInput(GameplayScreen screen, int mode, bool dual)
+        : base(screen, mode, dual)
     {
     }
 

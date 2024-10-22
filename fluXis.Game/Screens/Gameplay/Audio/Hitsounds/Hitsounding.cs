@@ -26,6 +26,7 @@ public partial class Hitsounding : CompositeDrawable
     public static IEnumerable<string> Defaults { get; } = new[] { hit_normal, hit_kick, hit_clap, hit_snare };
 
     public Bindable<double> PlayfieldPanning { get; } = new();
+    public int PlayfieldCount { get; set; } = 1;
 
     private List<HitSoundChannel> channels { get; } = new();
 
@@ -39,6 +40,7 @@ public partial class Hitsounding : CompositeDrawable
     /// </summary>
     public bool DirectVolume { get; init; } = false;
 
+    private Bindable<double> userVolume;
     private Bindable<double> volume;
 
     public Hitsounding(RealmMapSet set, List<HitSoundFade> fades, Bindable<double> rate)
@@ -51,7 +53,8 @@ public partial class Hitsounding : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load(ISampleStore defaultSamples, SkinManager skinManager, FluXisConfig config)
     {
-        volume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
+        userVolume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
+        volume = new Bindable<double>();
 
         foreach (var sample in Defaults)
         {
@@ -89,6 +92,13 @@ public partial class Hitsounding : CompositeDrawable
 
         channels.ForEach(x => x.DirectVolume = DirectVolume);
         channels.ForEach(AddInternal);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        userVolume.BindValueChanged(v => volume.Value = v.NewValue * (1 / (float)PlayfieldCount), true);
     }
 
     public HitSoundChannel GetSample(string sample, bool allowCustom = true)

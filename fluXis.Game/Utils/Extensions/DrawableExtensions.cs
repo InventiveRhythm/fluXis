@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using osu.Framework.Allocation;
 using osu.Framework.Development;
 using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
@@ -13,6 +14,13 @@ namespace fluXis.Game.Utils.Extensions;
 
 public static class DrawableExtensions
 {
+    public static T CacheAsAndReturn<T>(this DependencyContainer deps, T draw)
+        where T : class
+    {
+        deps.CacheAs(draw);
+        return draw;
+    }
+
     public static void Shake(this Drawable target, double shakeDuration, float shakeMagnitude)
     {
         var rngPositions = new List<Vector2>();

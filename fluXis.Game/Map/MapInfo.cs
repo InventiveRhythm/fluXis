@@ -7,6 +7,7 @@ using fluXis.Game.Map.Structures;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.Utils;
+using fluXis.Shared.Components.Maps;
 using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -35,6 +36,12 @@ public class MapInfo
 
     public float AccuracyDifficulty { get; set; } = 8;
     public float HealthDifficulty { get; set; } = 8;
+
+    [JsonIgnore]
+    public DualMode DualMode => DualMode.Disabled;
+
+    [JsonIgnore]
+    public bool IsDual => DualMode > DualMode.Disabled;
 
     [JsonIgnore]
     public double StartTime => HitObjects[0].Time;

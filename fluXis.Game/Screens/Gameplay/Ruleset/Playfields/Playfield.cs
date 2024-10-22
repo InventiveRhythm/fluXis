@@ -4,17 +4,21 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures.Events;
+using fluXis.Game.Scoring.Processing;
+using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields.UI;
 using fluXis.Game.Screens.Gameplay.Ruleset.TimingLines;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils.Extensions;
+using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Game.Screens.Gameplay.Ruleset;
+namespace fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 
 public partial class Playfield : Container
 {
@@ -25,8 +29,12 @@ public partial class Playfield : Container
     private GameplayScreen screen { get; set; }
 
     [Resolved]
+    private GameplaySamples samples { get; set; }
+
+    [Resolved]
     private LaneSwitchManager laneSwitchManager { get; set; }
 
+    public int Index { get; }
     private bool canSeek { get; }
     public override bool RemoveCompletedTransforms => !canSeek;
 
@@ -34,21 +42,22 @@ public partial class Playfield : Container
     {
         get
         {
-            var screenWidth = screen.DrawWidth;
+            var screenWidth = Parent!.DrawWidth;
             return (X + screenWidth / 2) / screenWidth;
         }
     }
 
+    public JudgementProcessor JudgementProcessor { get; } = new();
+    public HealthProcessor HealthProcessor { get; private set; }
+    public ScoreProcessor ScoreProcessor { get; private set; }
+
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager Manager { get; private set; }
-    public Stage Stage { get; private set; }
 
     public MapInfo Map => screen.Map;
     public RealmMap RealmMap => screen.RealmMap;
 
     private DependencyContainer dependencies;
-
-    private TimingLineManager timingLineManager;
 
     private Drawable hitline;
     private Drawable topCover;
@@ -61,8 +70,9 @@ public partial class Playfield : Container
 
     public bool IsUpScroll => scrollDirection.Value == ScrollDirection.Up;
 
-    public Playfield(bool canSeek)
+    public Playfield(int idx, bool canSeek)
     {
+        Index = idx;
         this.canSeek = canSeek;
     }
 
@@ -80,6 +90,20 @@ public partial class Playfield : Container
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
         hitsoundPanStrength = config.GetBindable<double>(FluXisSetting.HitsoundPanning);
 
+        JudgementProcessor.AddDependants(new JudgementDependant[]
+        {
+            HealthProcessor = screen.CreateHealthProcessor(),
+            ScoreProcessor = new ScoreProcessor
+            {
+                Player = screen.CurrentPlayer ?? APIUser.Default,
+                HitWindows = screen.HitWindows,
+                Map = RealmMap,
+                MapInfo = Map,
+                Mods = screen.Mods
+            }
+        });
+
+        dependencies.CacheAs(this);
         dependencies.CacheAs(Manager = new HitObjectManager
         {
             AlwaysPresent = true,
@@ -88,8 +112,10 @@ public partial class Playfield : Container
 
         InternalChildren = new[]
         {
-            Stage = new Stage(),
-            timingLineManager = new TimingLineManager(),
+            new LaneSwitchAlert(),
+            new PulseEffect(),
+            new Stage(),
+            new TimingLineManager(),
             Manager,
             Receptors = new FillFlowContainer<Receptor>
             {
@@ -117,6 +143,7 @@ public partial class Playfield : Container
                     bottomCover = skinManager.GetLaneCover(true)
                 }
             },
+            new KeyOverlay(),
             new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
             new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration, fade.Easing))
         };
@@ -146,8 +173,10 @@ public partial class Playfield : Container
 
     protected override void LoadComplete()
     {
-        timingLineManager.CreateLines(Map);
         base.LoadComplete();
+
+        JudgementProcessor.ApplyMap(Map);
+        ScoreProcessor.OnComboBreak += samples.Miss;
 
         scrollDirection.BindValueChanged(_ =>
         {

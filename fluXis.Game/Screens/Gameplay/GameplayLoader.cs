@@ -249,7 +249,6 @@ public partial class GameplayLoader : FluXisScreen
             return;
         }
 
-        GameplayScreen.Loader = this;
         GameplayScreen.OnRestart += requestRestart;
         fadeBackToGlobalClock = GameplayScreen.FadeBackToGlobalClock;
 

@@ -6,6 +6,7 @@ using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Multiplayer;
 using fluXis.Game.Screens.Gameplay;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Shared.Scoring;
 using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
@@ -18,6 +19,8 @@ public partial class MultiGameplayScreen : GameplayScreen
     protected override bool InstantlyExitOnPause => true;
     protected override bool AllowRestart => false;
     public override bool SubmitScore => false;
+
+    private Playfield field => PlayfieldManager.Playfields[0];
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -43,9 +46,9 @@ public partial class MultiGameplayScreen : GameplayScreen
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        HealthProcessor.CanFail = false;
 
-        JudgementProcessor.ResultAdded += sendScore;
+        field.HealthProcessor.CanFail = false;
+        field.JudgementProcessor.ResultAdded += sendScore;
 
         client.OnScore += onScoreUpdate;
         client.OnResultsReady += onOnResultsReady;
@@ -56,7 +59,7 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         base.Dispose(isDisposing);
 
-        JudgementProcessor.ResultAdded -= sendScore;
+        field.JudgementProcessor.ResultAdded -= sendScore;
 
         client.OnScore -= onScoreUpdate;
         client.OnResultsReady -= onOnResultsReady;
@@ -65,10 +68,10 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     protected override void End()
     {
-        client.Finish(ScoreProcessor.ToScoreInfo());
+        client.Finish(field.ScoreProcessor.ToScoreInfo());
     }
 
-    private void sendScore(HitResult _) => client.UpdateScore(ScoreProcessor.Score);
+    private void sendScore(HitResult _) => client.UpdateScore(field.ScoreProcessor.Score);
 
     private void onScoreUpdate(long user, int score)
     {

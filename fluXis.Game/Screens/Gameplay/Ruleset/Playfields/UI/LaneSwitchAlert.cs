@@ -3,14 +3,13 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Gameplay.Audio;
-using fluXis.Game.Screens.Gameplay.Ruleset;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
 
-namespace fluXis.Game.Screens.Gameplay.UI;
+namespace fluXis.Game.Screens.Gameplay.Ruleset.Playfields.UI;
 
 public partial class LaneSwitchAlert : Container
 {
@@ -28,8 +27,6 @@ public partial class LaneSwitchAlert : Container
 
     private LaneSwitchEvent currentEvent;
 
-    private readonly Container leftContainer;
-    private readonly Container rightContainer;
     private readonly SpriteIcon leftIcon;
     private readonly SpriteIcon rightIcon;
 
@@ -40,11 +37,12 @@ public partial class LaneSwitchAlert : Container
         Origin = Anchor.Centre;
         Children = new Drawable[]
         {
-            leftContainer = new Container
+            new Container
             {
+                X = -100,
                 Size = new Vector2(100),
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreRight,
                 Children = new Drawable[]
                 {
                     leftIcon = new SpriteIcon
@@ -57,11 +55,12 @@ public partial class LaneSwitchAlert : Container
                     }
                 }
             },
-            rightContainer = new Container
+            new Container
             {
+                X = 100,
                 Size = new Vector2(100),
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreLeft,
                 Children = new Drawable[]
                 {
                     rightIcon = new SpriteIcon
@@ -81,9 +80,6 @@ public partial class LaneSwitchAlert : Container
     {
         if (playfield.Clock is not GameplayClock clock) return;
         if (screen.IsPaused.Value) return;
-
-        leftContainer.X = -playfield.DrawWidth / 2 - 100;
-        rightContainer.X = playfield.DrawWidth / 2 + 100;
 
         if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts)) return;
 

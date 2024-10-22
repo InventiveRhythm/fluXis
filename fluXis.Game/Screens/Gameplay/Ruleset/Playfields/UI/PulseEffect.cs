@@ -7,7 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Game.Screens.Gameplay.UI;
+namespace fluXis.Game.Screens.Gameplay.Ruleset.Playfields.UI;
 
 public partial class PulseEffect : Container
 {
@@ -40,31 +40,27 @@ public partial class PulseEffect : Container
         {
             pulses.RemoveAt(0);
 
-            var width = screen.Playfield.Stage.Width;
-
             var left = new Box
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = 4,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.CentreRight,
-                X = -width / 2,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreRight
             };
 
             var right = new Box
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = 4,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.CentreLeft,
-                X = width / 2,
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreLeft
             };
 
             Add(left);
             Add(right);
 
-            left.MoveToX(-width / 2 - 400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
-            right.MoveToX(width / 2 + 400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
+            left.MoveToX(-400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
+            right.MoveToX(400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
         }
     }
 }

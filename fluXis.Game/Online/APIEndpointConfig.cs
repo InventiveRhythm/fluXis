@@ -35,4 +35,14 @@ public class APIEndpointConfig
 
         return this;
     }
+
+    public APIEndpointConfig AddLocalDefaults()
+    {
+        APIUrl = "http://localhost:2434";
+        AssetUrl = "http://localhost:2434/assets";
+        WebsocketUrl = "http://localhost:2435";
+        WebsiteRootUrl = "http://localhost:2432";
+        WikiRootUrl = "http://localhost:2432/wiki";
+        return this;
+    }
 }

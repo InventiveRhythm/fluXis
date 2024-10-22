@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Configuration;
-using fluXis.Game.Scoring.Processing;
-using fluXis.Game.Screens.Gameplay.Ruleset;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Leaderboard;
 
+#nullable enable
+
 public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 {
     [Resolved]
-    private Playfield playfield { get; set; }
+    private PlayfieldManager playfields { get; set; } = null!;
 
-    private Bindable<bool> visible;
-    public Bindable<GameplayLeaderboardMode> Mode { get; private set; }
+    private Bindable<bool> visible = null!;
+    public Bindable<GameplayLeaderboardMode> Mode { get; private set; } = null!;
 
     private List<ScoreInfo> scores { get; }
-    private ScoreProcessor processor { get; }
 
-    public GameplayLeaderboard(List<ScoreInfo> scores, ScoreProcessor processor)
+    public GameplayLeaderboard(List<ScoreInfo> scores)
     {
         this.scores = scores;
-        this.processor = processor;
     }
 
     [BackgroundDependencyLoader]
@@ -43,7 +43,8 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
         AlwaysPresent = true;
 
         InternalChildrenEnumerable = scores.Take(10).Select(s => new LeaderboardEntry(this, s)).OrderDescending();
-        AddInternal(new SelfLeaderboardEntry(this, processor));
+
+        playfields.Playfields.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
     }
 
     public void PerformSort() => SortInternal();
@@ -67,6 +68,8 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
     private void updateOpacity()
     {
+        var playfield = playfields.Playfields[0];
+
         // lowers the opacity of the list when the playfield gets close to it
         var alpha = visible.Value ? 1f : 0f;
 

@@ -13,11 +13,11 @@ public class HitWindows
     public virtual Judgement ComboBreakJudgement => Judgement.Miss;
     public virtual Judgement Lowest => Judgement.Miss;
 
-    protected Timing[] Timings { get; set; }
+    protected Timing[] Timings { get; }
 
-    public HitWindows(float difficulty, float multiplier)
+    public HitWindows(float difficulty, float rate)
     {
-        Timings = CreateTimings(difficulty, multiplier);
+        Timings = CreateTimings(difficulty, rate);
     }
 
     protected virtual Timing[] CreateTimings(float difficulty, float multiplier) => new Timing[]

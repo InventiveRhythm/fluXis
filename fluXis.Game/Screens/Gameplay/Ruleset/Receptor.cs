@@ -1,4 +1,5 @@
-﻿using fluXis.Game.Skinning;
+﻿using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
+using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -55,7 +56,12 @@ public partial class Receptor : CompositeDrawable
 
     protected override void Update()
     {
-        IsDown = screen.Input.Pressed[idx];
+        var i = idx;
+
+        if (playfield.Index > 0)
+            i += playfield.RealmMap.KeyCount;
+
+        IsDown = screen.Input.Pressed[i];
 
         up.Alpha = IsDown ? 0 : 1;
         down.Alpha = IsDown ? 1 : 0;

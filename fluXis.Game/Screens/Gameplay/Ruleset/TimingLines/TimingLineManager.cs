@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -31,6 +32,7 @@ public partial class TimingLineManager : CompositeDrawable
     private void load(FluXisConfig config)
     {
         showTimingLines = config.GetBindable<bool>(FluXisSetting.TimingLines);
+        createLines(playfield.Map);
     }
 
     protected override void LoadComplete()
@@ -40,7 +42,7 @@ public partial class TimingLineManager : CompositeDrawable
         showTimingLines.BindValueChanged(e => this.FadeTo(e.NewValue ? 1 : 0, 400), true);
     }
 
-    public void CreateLines(MapInfo map)
+    private void createLines(MapInfo map)
     {
         for (int i = 0; i < map.TimingPoints.Count; i++)
         {

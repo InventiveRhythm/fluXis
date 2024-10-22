@@ -2,29 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map.Structures.Bases;
-using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
-using JetBrains.Annotations;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Screens.Gameplay;
 
+#nullable enable
+
 public partial class EventHandler<T> : CompositeComponent where T : ITimedObject
 {
     [Resolved]
-    private Playfield playfield { get; set; }
+    private Playfield? playfield { get; set; }
 
-    [CanBeNull]
-    [Resolved(CanBeNull = true)]
-    private HitObjectManager manager { get; set; }
+    [Resolved]
+    private HitObjectManager? manager { get; set; }
 
     private List<T> objects { get; }
     private List<T> previous { get; } = new();
 
-    protected Action<T> Trigger { get; init; }
+    protected Action<T>? Trigger { get; init; }
 
-    public EventHandler(IEnumerable<T> objects, Action<T> trigger = null)
+    public EventHandler(IEnumerable<T> objects, Action<T>? trigger = null)
     {
         this.objects = objects.ToList(); // Copy the list to avoid modifying the original
         Trigger = trigger;
@@ -48,7 +48,7 @@ public partial class EventHandler<T> : CompositeComponent where T : ITimedObject
     {
         switch (obj)
         {
-            case IApplicableToPlayfield pf:
+            case IApplicableToPlayfield pf when playfield is not null:
                 pf.Apply(playfield);
                 return;
 

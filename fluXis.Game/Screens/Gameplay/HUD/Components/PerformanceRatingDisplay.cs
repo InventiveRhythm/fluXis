@@ -33,14 +33,14 @@ public partial class PerformanceRatingDisplay : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.ScoreProcessor.PerformanceRating.BindValueChanged(prChanged, true);
+        ScoreProcessor.PerformanceRating.BindValueChanged(prChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        Screen.ScoreProcessor.PerformanceRating.ValueChanged -= prChanged;
+        ScoreProcessor.PerformanceRating.ValueChanged -= prChanged;
     }
 
     private void prChanged(ValueChangedEvent<float> e)

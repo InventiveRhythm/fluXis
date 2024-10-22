@@ -273,6 +273,132 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key10k10
                 }
             },
+            new KeybindSectionTitle { Text = "waow" },
+            new SettingsKeybind
+            {
+                Label = strings.OneKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key1k1D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.TwoKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key2k1D,
+                    FluXisGameplayKeybind.Key2k2D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.ThreeKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key3k1D,
+                    FluXisGameplayKeybind.Key3k2D,
+                    FluXisGameplayKeybind.Key3k3D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.FourKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key4k1D,
+                    FluXisGameplayKeybind.Key4k2D,
+                    FluXisGameplayKeybind.Key4k3D,
+                    FluXisGameplayKeybind.Key4k4D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.FiveKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key5k1D,
+                    FluXisGameplayKeybind.Key5k2D,
+                    FluXisGameplayKeybind.Key5k3D,
+                    FluXisGameplayKeybind.Key5k4D,
+                    FluXisGameplayKeybind.Key5k5D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.SixKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key6k1D,
+                    FluXisGameplayKeybind.Key6k2D,
+                    FluXisGameplayKeybind.Key6k3D,
+                    FluXisGameplayKeybind.Key6k4D,
+                    FluXisGameplayKeybind.Key6k5D,
+                    FluXisGameplayKeybind.Key6k6D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.SevenKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key7k1D,
+                    FluXisGameplayKeybind.Key7k2D,
+                    FluXisGameplayKeybind.Key7k3D,
+                    FluXisGameplayKeybind.Key7k4D,
+                    FluXisGameplayKeybind.Key7k5D,
+                    FluXisGameplayKeybind.Key7k6D,
+                    FluXisGameplayKeybind.Key7k7D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.EightKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key8k1D,
+                    FluXisGameplayKeybind.Key8k2D,
+                    FluXisGameplayKeybind.Key8k3D,
+                    FluXisGameplayKeybind.Key8k4D,
+                    FluXisGameplayKeybind.Key8k5D,
+                    FluXisGameplayKeybind.Key8k6D,
+                    FluXisGameplayKeybind.Key8k7D,
+                    FluXisGameplayKeybind.Key8k8D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.NineKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key9k1D,
+                    FluXisGameplayKeybind.Key9k2D,
+                    FluXisGameplayKeybind.Key9k3D,
+                    FluXisGameplayKeybind.Key9k4D,
+                    FluXisGameplayKeybind.Key9k5D,
+                    FluXisGameplayKeybind.Key9k6D,
+                    FluXisGameplayKeybind.Key9k7D,
+                    FluXisGameplayKeybind.Key9k8D,
+                    FluXisGameplayKeybind.Key9k9D
+                }
+            },
+            new SettingsKeybind
+            {
+                Label = strings.TenKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key10k1D,
+                    FluXisGameplayKeybind.Key10k2D,
+                    FluXisGameplayKeybind.Key10k3D,
+                    FluXisGameplayKeybind.Key10k4D,
+                    FluXisGameplayKeybind.Key10k5D,
+                    FluXisGameplayKeybind.Key10k6D,
+                    FluXisGameplayKeybind.Key10k7D,
+                    FluXisGameplayKeybind.Key10k8D,
+                    FluXisGameplayKeybind.Key10k9D,
+                    FluXisGameplayKeybind.Key10k10D
+                }
+            },
             new KeybindSectionTitle { Text = strings.InGame },
             new SettingsKeybind
             {

@@ -36,14 +36,14 @@ public partial class ComboCounter : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.ScoreProcessor.Combo.BindValueChanged(comboChanged, true);
+        ScoreProcessor.Combo.BindValueChanged(comboChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        Screen.ScoreProcessor.Combo.ValueChanged -= comboChanged;
+        ScoreProcessor.Combo.ValueChanged -= comboChanged;
     }
 
     private void comboChanged(ValueChangedEvent<int> e)

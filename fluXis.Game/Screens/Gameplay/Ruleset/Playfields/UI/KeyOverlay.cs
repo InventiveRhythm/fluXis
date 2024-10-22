@@ -3,19 +3,21 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Input;
-using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 
-namespace fluXis.Game.Screens.Gameplay.UI;
+namespace fluXis.Game.Screens.Gameplay.Ruleset.Playfields.UI;
 
 public partial class KeyOverlay : Container
 {
     [Resolved]
     private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private Playfield playfield { get; set; }
 
     [Resolved]
     private FluXisRealm realm { get; set; }
@@ -26,7 +28,22 @@ public partial class KeyOverlay : Container
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
-    public List<FluXisGameplayKeybind> Keybinds => screen.Input.Keys;
+    public List<FluXisGameplayKeybind> Keybinds
+    {
+        get
+        {
+            var binds = screen.Input.Keys;
+
+            if (screen.Input.Dual)
+            {
+                var half = screen.Input.Keys.Count / 2;
+                var start = half * playfield.Index;
+                return binds.GetRange(start, half);
+            }
+
+            return binds;
+        }
+    }
 
     private FillFlowContainer flow;
     private int keyCount;

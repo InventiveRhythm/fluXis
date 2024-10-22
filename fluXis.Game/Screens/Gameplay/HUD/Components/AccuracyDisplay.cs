@@ -45,16 +45,16 @@ public partial class AccuracyDisplay : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.ScoreProcessor.Accuracy.BindValueChanged(accuracyChanged, true);
-        Screen.ScoreProcessor.Rank.BindValueChanged(rankChanged, true);
+        ScoreProcessor.Accuracy.BindValueChanged(accuracyChanged, true);
+        ScoreProcessor.Rank.BindValueChanged(rankChanged, true);
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        Screen.ScoreProcessor.Accuracy.ValueChanged -= accuracyChanged;
-        Screen.ScoreProcessor.Rank.ValueChanged -= rankChanged;
+        ScoreProcessor.Accuracy.ValueChanged -= accuracyChanged;
+        ScoreProcessor.Rank.ValueChanged -= rankChanged;
     }
 
     private void accuracyChanged(ValueChangedEvent<float> e)

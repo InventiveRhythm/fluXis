@@ -8,6 +8,7 @@ using fluXis.Game.Mods;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Screens.Gameplay.Input;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Game.Skinning;
 using fluXis.Shared.Scoring.Structs;
 using JetBrains.Annotations;
@@ -54,8 +55,6 @@ public partial class HitObjectManager : Container<DrawableHitObject>
 
     public double CurrentTime { get; private set; }
 
-    public bool Seeking { get; private set; }
-
     public HealthMode HealthMode
     {
         get
@@ -66,14 +65,13 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         }
     }
 
-    private JudgementProcessor judgementProcessor => screen.JudgementProcessor;
+    private JudgementProcessor judgementProcessor => playfield.JudgementProcessor;
 
     private List<double> scrollVelocityMarks { get; } = new();
 
     private static int[] snaps { get; } = { 48, 24, 16, 12, 8, 6, 4, 3 };
     private Dictionary<int, int> snapIndices { get; } = new();
 
-    public Action OnFinished { get; set; }
     public bool Finished { get; private set; }
 
     public bool Break => timeUntilNextHitObject >= 2000;
@@ -124,11 +122,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
     {
         updateTime();
 
-        if (HitObjects.Count == 0 && FutureHitObjects.Count == 0 && !Finished)
-        {
-            Finished = true;
-            OnFinished?.Invoke();
-        }
+        Finished = HitObjects.Count == 0 && FutureHitObjects.Count == 0;
 
         while (FutureHitObjects is { Count: > 0 } && (ShouldDisplay(FutureHitObjects[0].Time) || HitObjects.Count < minimum_loaded_hit_objects))
         {
@@ -218,6 +212,9 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         var drawable = getDrawableFor(hitObject);
         var idx = hitObject.Lane - 1;
 
+        if (playfield.Index > 0)
+            idx += playfield.Index * (screen.Input.Keys.Count / 2);
+
         if (screen.Input.Keys.Count > idx)
             drawable.Keybind = screen.Input.Keys[idx];
 
@@ -302,7 +299,7 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
         var judgement = hitWindows.JudgementFor(difference);
 
-        if (screen.HealthProcessor.Failed)
+        if (playfield.HealthProcessor.Failed)
             return;
 
         var result = new HitResult(Time.Current, difference, judgement);

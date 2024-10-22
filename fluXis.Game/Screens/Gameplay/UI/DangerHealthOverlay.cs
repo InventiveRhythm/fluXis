@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
-using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
@@ -15,6 +16,11 @@ public partial class DangerHealthOverlay : Container
 {
     [Resolved]
     private GameplayScreen screen { get; set; }
+
+    [Resolved]
+    private PlayfieldManager playfieldManager { get; set; }
+
+    private Playfield playfield => playfieldManager.Playfields[0];
 
     private Bindable<bool> dimOnLowHealth;
 
@@ -60,7 +66,7 @@ public partial class DangerHealthOverlay : Container
     {
         base.LoadComplete();
 
-        screen.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
+        playfield.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
         screen.OnExit += () =>
         {
             lowPass.CutoffTo(AudioFilter.MAX, FluXisScreen.MOVE_DURATION);
@@ -87,10 +93,10 @@ public partial class DangerHealthOverlay : Container
         base.Update();
 
         // on easy health, this effect can only be seen at the very end of the song
-        if (screen.Playfield.Manager.HealthMode == HealthMode.Requirement || !screen.HealthProcessor.CanFail)
+        if (playfield.HealthProcessor is DrainHealthProcessor || !playfield.HealthProcessor.CanFail)
             return;
 
-        if (screen.HealthProcessor.Failed || exited)
+        if (playfield.HealthProcessor.Failed || exited)
             return;
 
         if (health < threshold && dimOnLowHealth.Value)

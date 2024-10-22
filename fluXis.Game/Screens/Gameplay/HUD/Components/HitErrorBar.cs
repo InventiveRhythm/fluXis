@@ -102,14 +102,14 @@ public partial class HitErrorBar : GameplayHUDComponent
     {
         base.LoadComplete();
 
-        Screen.JudgementProcessor.ResultAdded += addHit;
+        JudgementProcessor.ResultAdded += addHit;
     }
 
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
 
-        Screen.JudgementProcessor.ResultAdded -= addHit;
+        JudgementProcessor.ResultAdded -= addHit;
     }
 
     private void addHit(HitResult result)
@@ -146,7 +146,7 @@ public partial class HitErrorBar : GameplayHUDComponent
 
     private void updateAverage()
     {
-        var avg = Screen.JudgementProcessor.Results.Average(h => h.Difference);
+        var avg = JudgementProcessor.Results.Average(h => h.Difference);
         var judgement = Screen.HitWindows.JudgementFor(avg);
         avg /= Screen.Rate;
 
