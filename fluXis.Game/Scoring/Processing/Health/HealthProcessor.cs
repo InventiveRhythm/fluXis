@@ -77,6 +77,12 @@ public class HealthProcessor : JudgementDependant
     /// <returns>True if gameplay should exit normally.</returns>
     public virtual bool OnComplete() => true;
 
+    public virtual void Kill()
+    {
+        Health.Value = 0;
+        TriggerFailure();
+    }
+
     public virtual void Update()
     {
         SmoothHealth = (float)Interpolation.Lerp(Health.Value, SmoothHealth, Math.Exp(-0.012 * Screen.Clock.ElapsedFrameTime));

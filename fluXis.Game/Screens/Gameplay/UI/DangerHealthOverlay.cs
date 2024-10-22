@@ -93,7 +93,7 @@ public partial class DangerHealthOverlay : Container
         base.Update();
 
         // on easy health, this effect can only be seen at the very end of the song
-        if (playfield.HealthProcessor is DrainHealthProcessor || !playfield.HealthProcessor.CanFail)
+        if (playfield.HealthProcessor is RequirementHeathProcessor || !playfield.HealthProcessor.CanFail)
             return;
 
         if (playfield.HealthProcessor.Failed || exited)

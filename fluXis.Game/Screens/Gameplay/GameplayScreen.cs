@@ -54,6 +54,7 @@ using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -428,8 +429,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         base.Update();
     }
 
+    private bool failed;
+
     public virtual void OnDeath()
     {
+        if (failed)
+            return;
+
+        PlayfieldManager.Playfields.ForEach(p => p.HealthProcessor.Kill());
+        failed = true;
         failMenu.Show();
         GameplayClock.RateTo(Rate * .75f, 2000, Easing.OutQuart);
     }
