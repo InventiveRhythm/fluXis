@@ -17,7 +17,7 @@ public partial class UserCache : Component
 
     private Dictionary<long, APIUser> users { get; } = new();
 
-    private readonly object dictLock = new();
+    private readonly object @lock = new();
 
     private Dictionary<long, List<Action<string>>> avatarUpdateCallbacks { get; } = new();
     private Dictionary<long, List<Action<string>>> bannerUpdateCallbacks { get; } = new();
@@ -46,7 +46,7 @@ public partial class UserCache : Component
         APIUser user = fetch(id);
         if (user == null) return null;
 
-        lock (dictLock)
+        lock (@lock)
             users[id] = user;
 
         return user;
@@ -74,49 +74,67 @@ public partial class UserCache : Component
 
     public void TriggerAvatarUpdate(long id, string hash)
     {
-        if (!avatarUpdateCallbacks.TryGetValue(id, out var callbacks))
-            return;
+        lock (@lock)
+        {
+            if (!avatarUpdateCallbacks.TryGetValue(id, out var callbacks))
+                return;
 
-        callbacks.ForEach(c => c.Invoke(hash));
+            callbacks.ForEach(c => c.Invoke(hash));
+        }
     }
 
     public void TriggerBannerUpdate(long id, string hash)
     {
-        if (!bannerUpdateCallbacks.TryGetValue(id, out var callbacks))
-            return;
+        lock (@lock)
+        {
+            if (!bannerUpdateCallbacks.TryGetValue(id, out var callbacks))
+                return;
 
-        callbacks.ForEach(c => c.Invoke(hash));
+            callbacks.ForEach(c => c.Invoke(hash));
+        }
     }
 
     public void RegisterAvatarCallback(long id, Action<string> callback)
     {
-        if (!avatarUpdateCallbacks.ContainsKey(id))
-            avatarUpdateCallbacks[id] = new List<Action<string>>();
+        lock (@lock)
+        {
+            if (!avatarUpdateCallbacks.ContainsKey(id))
+                avatarUpdateCallbacks[id] = new List<Action<string>>();
 
-        avatarUpdateCallbacks[id].Add(callback);
+            avatarUpdateCallbacks[id].Add(callback);
+        }
     }
 
     public void RegisterBannerCallback(long id, Action<string> callback)
     {
-        if (!bannerUpdateCallbacks.ContainsKey(id))
-            bannerUpdateCallbacks[id] = new List<Action<string>>();
+        lock (@lock)
+        {
+            if (!bannerUpdateCallbacks.ContainsKey(id))
+                bannerUpdateCallbacks[id] = new List<Action<string>>();
 
-        bannerUpdateCallbacks[id].Add(callback);
+            bannerUpdateCallbacks[id].Add(callback);
+        }
     }
 
     public void UnregisterAvatarCallback(long id, Action<string> callback)
     {
-        if (!avatarUpdateCallbacks.TryGetValue(id, out var callbacks))
-            return;
+        lock (@lock)
+        {
+            if (!avatarUpdateCallbacks.TryGetValue(id, out var callbacks))
+                return;
 
-        callbacks.Remove(callback);
+            callbacks.Remove(callback);
+        }
     }
 
     public void UnregisterBannerCallback(long id, Action<string> callback)
     {
-        if (!bannerUpdateCallbacks.TryGetValue(id, out var callbacks))
-            return;
+        lock (@lock)
+        {
+            if (!bannerUpdateCallbacks.TryGetValue(id, out var callbacks))
+                return;
 
-        callbacks.Remove(callback);
+            callbacks.Remove(callback);
+        }
     }
 }
