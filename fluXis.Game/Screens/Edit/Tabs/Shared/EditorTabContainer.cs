@@ -127,9 +127,6 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
         var scroll = e.ShiftPressed ? e.ScrollDelta.X : e.ScrollDelta.Y;
         int delta = scroll > 0 ? 1 : -1;
 
-        Logger.Log(delta.ToString());
-
-
         if (scrollAccumulation != 0 && Math.Sign(scrollAccumulation) != delta)
             scrollAccumulation = delta * (1 - Math.Abs(scrollAccumulation));
 
