@@ -130,6 +130,7 @@ public abstract partial class EditorTabContainer : CompositeDrawable, IKeyBindin
             scrollAccumulation = delta * (1 - Math.Abs(scrollAccumulation));
 
         scrollAccumulation += e.ScrollDelta.Y;
+        scrollAccumulation *= Settings.InvertedScroll.Value ? -1 : 1;
 
         while (Math.Abs(scrollAccumulation) >= 1)
         {
