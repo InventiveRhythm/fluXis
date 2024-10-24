@@ -191,7 +191,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs(actionStack = new EditorActionStack(editorMap) { NotificationManager = notifications });
         dependencies.CacheAs(settings = new EditorSettings
         {
-            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples)
+            ShowSamples = config.GetBindable<bool>(FluXisSetting.EditorShowSamples),
+            InvertedScroll = config.GetBindable<bool>(FluXisSetting.InvertScroll)
         });
 
         updateStateHash();
@@ -358,7 +359,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             },
                                             new FluXisMenuSpacer(),
                                             new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
-                                                { IsActive = () => settings.ShowSamples.Value }
+                                                { IsActive = () => settings.ShowSamples.Value },
+                                            new FluXisMenuSpacer(),
+                                            new("Invert scroll direction", FontAwesome6.Solid.UpDown, () => settings.InvertedScroll.Value = !settings.InvertedScroll.Value)
+                                                { IsActive = () => settings.InvertedScroll.Value }
                                         }
                                     },
                                     new("Timing", FontAwesome6.Solid.Clock)

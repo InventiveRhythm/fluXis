@@ -69,6 +69,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.EditorDim, 0.4f, 0f, .8f, 0.2f);
         SetDefault(FluXisSetting.EditorBlur, 0f, 0f, 1f, 0.2f);
         SetDefault(FluXisSetting.EditorShowSamples, false);
+        SetDefault(FluXisSetting.InvertScroll, false);
 
         // Audio
         SetDefault(FluXisSetting.InactiveVolume, 0.5d, 0d, 1d, 0.01d);
@@ -155,6 +156,7 @@ public enum FluXisSetting
     EditorDim,
     EditorBlur,
     EditorShowSamples,
+    InvertScroll,
 
     // Audio
     InactiveVolume,
