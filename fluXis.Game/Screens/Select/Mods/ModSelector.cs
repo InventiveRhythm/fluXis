@@ -192,6 +192,7 @@ public partial class ModSelector : Container
                                                                         {
                                                                             new NoSvMod(),
                                                                             new NoLnMod(),
+                                                                            new NoEventMod(),
                                                                             new MirrorMod()
                                                                         }
                                                                     }

@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Mods;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.Utils;
@@ -143,6 +144,16 @@ public class MapInfo
         TimingPoints.Sort((a, b) => a.Time.CompareTo(b.Time));
         ScrollVelocities?.Sort((a, b) => a.Time.CompareTo(b.Time));
         HitSoundFades?.Sort((a, b) => a.Time.CompareTo(b.Time));
+    }
+
+    public MapEvents GetMapEvents(List<IMod> mods)
+    {
+        var events = GetMapEvents<MapEvents>();
+
+        foreach (var mod in mods.OfType<IApplicableToEvents>())
+            mod.Apply(events);
+
+        return events;
     }
 
     public MapEvents GetMapEvents() => GetMapEvents<MapEvents>();
