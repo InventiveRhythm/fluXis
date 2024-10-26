@@ -5,6 +5,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Input;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Mods;
 using fluXis.Game.Mods.Drawables;
@@ -15,12 +16,14 @@ using osu.Framework.Audio;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay;
 
-public partial class GameplayLoader : FluXisScreen
+public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 1.3f;
     public override float ParallaxStrength => .1f;
@@ -40,6 +43,7 @@ public partial class GameplayLoader : FluXisScreen
     private RealmMap map { get; }
     private List<IMod> mods { get; }
 
+    private bool allowExiting = true;
     private AudioFilter lowPass;
 
     private Container loadingContainer;
@@ -241,6 +245,7 @@ public partial class GameplayLoader : FluXisScreen
 
     private void loadGameplay()
     {
+        allowExiting = true;
         GameplayScreen = createFunc();
 
         if (GameplayScreen == null)
@@ -254,6 +259,15 @@ public partial class GameplayLoader : FluXisScreen
 
         LoadComponentAsync(GameplayScreen, _ =>
         {
+            allowExiting = false;
+
+            if (!GameplayScreen.ValidForPush)
+            {
+                GameplayScreen.Dispose();
+                this.Exit();
+                return;
+            }
+
             if (!this.IsCurrentScreen())
                 GameplayScreen.Dispose();
             else
@@ -311,11 +325,33 @@ public partial class GameplayLoader : FluXisScreen
 
     private void contentOut(bool moveDown = true)
     {
-        this.Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
-        tip.FadeOut(FADE_DURATION);
         lowPass.CutoffTo(AudioFilter.MAX);
 
         if (moveDown)
+        {
+            this.Delay(MOVE_DURATION).FadeOut(FADE_DURATION);
+            tip.FadeOut(FADE_DURATION);
             content.MoveToY(800, MOVE_DURATION + FADE_DURATION + 300, Easing.InQuint);
+        }
+        else
+        {
+            this.FadeOut(FADE_DURATION);
+            content.ScaleTo(.9f, MOVE_DURATION, Easing.OutQuint);
+            tip.MoveToX(-40, MOVE_DURATION, Easing.OutQuint);
+        }
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        switch (e.Action)
+        {
+            case FluXisGlobalKeybind.Back when allowExiting:
+                this.Exit();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

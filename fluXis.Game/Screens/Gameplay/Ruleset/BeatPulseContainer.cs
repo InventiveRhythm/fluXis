@@ -34,7 +34,9 @@ public partial class BeatPulseContainer : CompositeDrawable
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
-        beatSync.OnBeat -= onBeat;
+
+        if (beatSync is not null)
+            beatSync.OnBeat -= onBeat;
     }
 
     private void onBeat(int idx)
