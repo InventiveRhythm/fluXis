@@ -49,6 +49,9 @@ public class SettingsInputStrings : LocalizationCategory
     public TranslatableString Keymodes => Get("keybindings-keymodes", "Keymodes");
     public TranslatableString OtherKeymodes => Get("keybindings-other-keymodes", "Other Keymodes");
 
+    public TranslatableString KeymodesDual => Get("keybindings-keymodes-dual", "Keymodes (Dual)");
+    public TranslatableString OtherKeymodesDual => Get("keybindings-other-keymodes-dual", "Other Keymodes (Dual)");
+
     public TranslatableString OneKey => Get("keybindings-1k", "1 Key Layout");
     public TranslatableString TwoKey => Get("keybindings-2k", "2 Key Layout");
     public TranslatableString ThreeKey => Get("keybindings-3k", "3 Key Layout");

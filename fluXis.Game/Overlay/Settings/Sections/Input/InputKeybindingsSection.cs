@@ -31,7 +31,13 @@ public partial class InputKeybindingsSection : SettingsSubSection
         twoKeyLayout,
         threeKeyLayout,
         nineKeyLayout,
-        tenKeyLayout
+        tenKeyLayout,
+        otherKeymodesTitleDual,
+        oneKeyLayoutDual,
+        twoKeyLayoutDual,
+        threeKeyLayoutDual,
+        nineKeyLayoutDual,
+        tenKeyLayoutDual
     };
 
     private KeybindSectionTitle otherKeymodesTitle;
@@ -40,6 +46,12 @@ public partial class InputKeybindingsSection : SettingsSubSection
     private SettingsKeybind threeKeyLayout;
     private SettingsKeybind nineKeyLayout;
     private SettingsKeybind tenKeyLayout;
+    private KeybindSectionTitle otherKeymodesTitleDual;
+    private SettingsKeybind oneKeyLayoutDual;
+    private SettingsKeybind twoKeyLayoutDual;
+    private SettingsKeybind threeKeyLayoutDual;
+    private SettingsKeybind nineKeyLayoutDual;
+    private SettingsKeybind tenKeyLayoutDual;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -212,95 +224,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key8k8
                 }
             },
-            otherKeymodesTitle = new KeybindSectionTitle { Text = strings.OtherKeymodes },
-            oneKeyLayout = new SettingsKeybind
-            {
-                Label = strings.OneKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key1k1
-                }
-            },
-            twoKeyLayout = new SettingsKeybind
-            {
-                Label = strings.TwoKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key2k1,
-                    FluXisGameplayKeybind.Key2k2
-                }
-            },
-            threeKeyLayout = new SettingsKeybind
-            {
-                Label = strings.ThreeKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key3k1,
-                    FluXisGameplayKeybind.Key3k2,
-                    FluXisGameplayKeybind.Key3k3
-                }
-            },
-            nineKeyLayout = new SettingsKeybind
-            {
-                Label = strings.NineKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key9k1,
-                    FluXisGameplayKeybind.Key9k2,
-                    FluXisGameplayKeybind.Key9k3,
-                    FluXisGameplayKeybind.Key9k4,
-                    FluXisGameplayKeybind.Key9k5,
-                    FluXisGameplayKeybind.Key9k6,
-                    FluXisGameplayKeybind.Key9k7,
-                    FluXisGameplayKeybind.Key9k8,
-                    FluXisGameplayKeybind.Key9k9
-                }
-            },
-            tenKeyLayout = new SettingsKeybind
-            {
-                Label = strings.TenKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key10k1,
-                    FluXisGameplayKeybind.Key10k2,
-                    FluXisGameplayKeybind.Key10k3,
-                    FluXisGameplayKeybind.Key10k4,
-                    FluXisGameplayKeybind.Key10k5,
-                    FluXisGameplayKeybind.Key10k6,
-                    FluXisGameplayKeybind.Key10k7,
-                    FluXisGameplayKeybind.Key10k8,
-                    FluXisGameplayKeybind.Key10k9,
-                    FluXisGameplayKeybind.Key10k10
-                }
-            },
-            new KeybindSectionTitle { Text = "waow" },
-            new SettingsKeybind
-            {
-                Label = strings.OneKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key1k1D
-                }
-            },
-            new SettingsKeybind
-            {
-                Label = strings.TwoKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key2k1D,
-                    FluXisGameplayKeybind.Key2k2D
-                }
-            },
-            new SettingsKeybind
-            {
-                Label = strings.ThreeKey,
-                Keybinds = new object[]
-                {
-                    FluXisGameplayKeybind.Key3k1D,
-                    FluXisGameplayKeybind.Key3k2D,
-                    FluXisGameplayKeybind.Key3k3D
-                }
-            },
+            new KeybindSectionTitle { Text = strings.KeymodesDual },
             new SettingsKeybind
             {
                 Label = strings.FourKey,
@@ -366,7 +290,96 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key8k8D
                 }
             },
-            new SettingsKeybind
+            otherKeymodesTitle = new KeybindSectionTitle { Text = strings.OtherKeymodes },
+            oneKeyLayout = new SettingsKeybind
+            {
+                Label = strings.OneKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key1k1
+                }
+            },
+            twoKeyLayout = new SettingsKeybind
+            {
+                Label = strings.TwoKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key2k1,
+                    FluXisGameplayKeybind.Key2k2
+                }
+            },
+            threeKeyLayout = new SettingsKeybind
+            {
+                Label = strings.ThreeKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key3k1,
+                    FluXisGameplayKeybind.Key3k2,
+                    FluXisGameplayKeybind.Key3k3
+                }
+            },
+            nineKeyLayout = new SettingsKeybind
+            {
+                Label = strings.NineKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key9k1,
+                    FluXisGameplayKeybind.Key9k2,
+                    FluXisGameplayKeybind.Key9k3,
+                    FluXisGameplayKeybind.Key9k4,
+                    FluXisGameplayKeybind.Key9k5,
+                    FluXisGameplayKeybind.Key9k6,
+                    FluXisGameplayKeybind.Key9k7,
+                    FluXisGameplayKeybind.Key9k8,
+                    FluXisGameplayKeybind.Key9k9
+                }
+            },
+            tenKeyLayout = new SettingsKeybind
+            {
+                Label = strings.TenKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key10k1,
+                    FluXisGameplayKeybind.Key10k2,
+                    FluXisGameplayKeybind.Key10k3,
+                    FluXisGameplayKeybind.Key10k4,
+                    FluXisGameplayKeybind.Key10k5,
+                    FluXisGameplayKeybind.Key10k6,
+                    FluXisGameplayKeybind.Key10k7,
+                    FluXisGameplayKeybind.Key10k8,
+                    FluXisGameplayKeybind.Key10k9,
+                    FluXisGameplayKeybind.Key10k10
+                }
+            },
+            otherKeymodesTitleDual = new KeybindSectionTitle { Text = strings.OtherKeymodesDual },
+            oneKeyLayoutDual = new SettingsKeybind
+            {
+                Label = strings.OneKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key1k1D
+                }
+            },
+            twoKeyLayoutDual = new SettingsKeybind
+            {
+                Label = strings.TwoKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key2k1D,
+                    FluXisGameplayKeybind.Key2k2D
+                }
+            },
+            threeKeyLayoutDual = new SettingsKeybind
+            {
+                Label = strings.ThreeKey,
+                Keybinds = new object[]
+                {
+                    FluXisGameplayKeybind.Key3k1D,
+                    FluXisGameplayKeybind.Key3k2D,
+                    FluXisGameplayKeybind.Key3k3D
+                }
+            },
+            nineKeyLayoutDual = new SettingsKeybind
             {
                 Label = strings.NineKey,
                 Keybinds = new object[]
@@ -382,7 +395,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key9k9D
                 }
             },
-            new SettingsKeybind
+            tenKeyLayoutDual = new SettingsKeybind
             {
                 Label = strings.TenKey,
                 Keybinds = new object[]
