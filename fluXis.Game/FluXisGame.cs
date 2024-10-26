@@ -103,6 +103,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     [BackgroundDependencyLoader]
     private void load()
     {
+        if (LoadFailed)
+            return;
+
         GameDependencies.CacheAs(this);
 
         Children = new Drawable[]
@@ -230,6 +233,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     protected override void LoadComplete()
     {
+        if (LoadFailed)
+            return;
+
         base.LoadComplete();
         WaitForReady(() => PerformUpdateCheck(true));
 
@@ -437,6 +443,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     protected override void Update()
     {
+        if (LoadFailed)
+            return;
+
         screenContainer.Padding = new MarginPadding { Top = toolbar.Height + toolbar.Y };
         notificationContainer.Y = toolbar.Height + toolbar.Y;
 
@@ -448,6 +457,9 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     protected override bool OnExiting()
     {
+        if (LoadFailed)
+            return base.OnExiting();
+
         if (panelContainer.Content != null && panelContainer.Content is not ConfirmExitPanel)
         {
             Logger.Log("Blocking exit due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);

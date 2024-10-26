@@ -14,6 +14,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Import;
 using fluXis.Game.Input;
 using fluXis.Game.Integration;
@@ -66,6 +67,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected DependencyContainer GameDependencies { get; private set; }
 
     public Vector2 ContentSize => content.DrawSize;
+
+    protected bool LoadFailed { get; set; }
 
     protected virtual bool LoadComponentsLazy => false;
     protected Dictionary<Drawable, Action<Drawable>> LoadQueue { get; } = new();
@@ -142,105 +145,139 @@ public partial class FluXisGameBase : osu.Framework.Game
     {
         try
         {
-            using var fs = File.OpenRead(typeof(FluXisGameBase).Assembly.Location);
-            ClientHash = MapUtils.GetHash(fs);
+            try
+            {
+                using var fs = File.OpenRead(typeof(FluXisGameBase).Assembly.Location);
+                ClientHash = MapUtils.GetHash(fs);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get client hash!");
+                ClientHash = MapUtils.GetHash(VersionString);
+            }
+
+            frameworkLocale = frameworkConfig.GetBindable<string>(FrameworkSetting.Locale);
+            frameworkLocale.BindValueChanged(_ => updateLanguage());
+
+            localisationParameters = Localisation.CurrentParameters.GetBoundCopy();
+            localisationParameters.BindValueChanged(_ => updateLanguage(), true);
+
+            CurrentLanguage.BindValueChanged(val => frameworkLocale.Value = val.NewValue.ToCultureCode());
+
+            Resources.AddExtension("json");
+            Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
+            initFonts();
+
+            CurrentSeason = getSeason();
+
+            var endpoint = getApiEndpoint();
+
+            cacheComponent(this);
+
+            var mapStorage = storage.GetStorageForDirectory("maps");
+            MapFiles.Initialize(mapStorage);
+
+            Realm = new FluXisRealm(storage);
+            cacheComponent(Realm);
+
+            cacheComponent(Config = new FluXisConfig(storage));
+            cacheComponent(new ExperimentConfigManager(storage));
+            uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
+
+            cacheComponent(NotificationManager = new NotificationManager());
+
+            cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
+            cacheComponent(APIClient as FluxelClient);
+            cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
+            cacheComponent(new ChatClient(), true, true);
+
+            var users = new UserCache();
+            cacheComponent(users, true, true);
+
+            cacheComponent(new BackgroundTextureStore(Host, mapStorage));
+            cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
+            cacheComponent(new OnlineTextureStore(Host, endpoint));
+
+            cacheComponent(MapStore = new MapStore(), true, true);
+            cacheComponent(new ScoreManager(), true, true);
+            cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));
+
+            cacheComponent(Plugins = new PluginManager(), true);
+            cacheComponent(importManager = new ImportManager(), true, true);
+            cacheComponent(SkinManager = new SkinManager(), true, true);
+            cacheComponent<ISkin>(SkinManager);
+            cacheComponent(new LayoutManager(), true);
+            cacheComponent(new PreviewManager(), true);
+
+            cacheComponent(new UISamples(), true, true);
+            cacheComponent(CreateLightController(), true, true);
+            cacheComponent(CursorOverlay = new GlobalCursorOverlay());
+
+            Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
+
+            GlobalKeybindContainer keybinds;
+
+            base.Content.Add(new SafeAreaContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = drawSizePreserver = new DrawSizePreservingFillContainer
+                {
+                    TargetDrawSize = targetDrawSize,
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        keybinds = new GlobalKeybindContainer(this, Realm)
+                        {
+                            Child = CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
+                            {
+                                RelativeSizeAxes = Axes.Both
+                            })
+                        },
+                        new GamepadHandler()
+                    }
+                }
+            });
+
+            keybindStore = new KeybindStore(Realm);
+            keybindStore.AssignDefaults(keybinds);
+            keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0, true));
+            keybindStore.AssignDefaults(new EditorKeybindingContainer(null, Realm));
+
+            cacheComponent(keybinds);
+            MenuSplashes.Load(Host.CacheStorage);
+            LoadingTips.Load(Host.CacheStorage);
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "Failed to get client hash!");
-            ClientHash = MapUtils.GetHash(VersionString);
-        }
+            LoadFailed = true;
+            Logger.Error(ex, "Failed to initialize game!");
 
-        frameworkLocale = frameworkConfig.GetBindable<string>(FrameworkSetting.Locale);
-        frameworkLocale.BindValueChanged(_ => updateLanguage());
-
-        localisationParameters = Localisation.CurrentParameters.GetBoundCopy();
-        localisationParameters.BindValueChanged(_ => updateLanguage(), true);
-
-        CurrentLanguage.BindValueChanged(val => frameworkLocale.Value = val.NewValue.ToCultureCode());
-
-        Resources.AddExtension("json");
-        Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
-        initFonts();
-
-        CurrentSeason = getSeason();
-
-        var endpoint = getApiEndpoint();
-
-        cacheComponent(this);
-
-        var mapStorage = storage.GetStorageForDirectory("maps");
-        MapFiles.Initialize(mapStorage);
-
-        Realm = new FluXisRealm(storage);
-        cacheComponent(Realm);
-
-        cacheComponent(Config = new FluXisConfig(storage));
-        cacheComponent(new ExperimentConfigManager(storage));
-        uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
-
-        cacheComponent(NotificationManager = new NotificationManager());
-
-        cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
-        cacheComponent(APIClient as FluxelClient);
-        cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
-        cacheComponent(new ChatClient(), true, true);
-
-        var users = new UserCache();
-        cacheComponent(users, true, true);
-
-        cacheComponent(new BackgroundTextureStore(Host, mapStorage));
-        cacheComponent(new CroppedBackgroundStore(Host, mapStorage));
-        cacheComponent(new OnlineTextureStore(Host, endpoint));
-
-        cacheComponent(MapStore = new MapStore(), true, true);
-        cacheComponent(new ScoreManager(), true, true);
-        cacheComponent(new ReplayStorage(storage.GetStorageForDirectory("replays")));
-
-        cacheComponent(Plugins = new PluginManager(), true);
-        cacheComponent(importManager = new ImportManager(), true, true);
-        cacheComponent(SkinManager = new SkinManager(), true, true);
-        cacheComponent<ISkin>(SkinManager);
-        cacheComponent(new LayoutManager(), true);
-        cacheComponent(new PreviewManager(), true);
-
-        cacheComponent(new UISamples(), true, true);
-        cacheComponent(CreateLightController(), true, true);
-        cacheComponent(CursorOverlay = new GlobalCursorOverlay());
-
-        Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
-
-        GlobalKeybindContainer keybinds;
-
-        base.Content.Add(new SafeAreaContainer
-        {
-            RelativeSizeAxes = Axes.Both,
-            Child = drawSizePreserver = new DrawSizePreservingFillContainer
+            Child = new FillFlowContainer
             {
-                TargetDrawSize = targetDrawSize,
-                RelativeSizeAxes = Axes.Both,
+                AutoSizeAxes = Axes.Both,
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
-                    keybinds = new GlobalKeybindContainer(this, Realm)
+                    new FluXisSpriteText
                     {
-                        Child = CursorOverlay.WithChild(content = new GlobalTooltipContainer(CursorOverlay.Cursor)
-                        {
-                            RelativeSizeAxes = Axes.Both
-                        })
+                        Text = "Failed to initialize game!",
+                        WebFontSize = 32,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
                     },
-                    new GamepadHandler()
+                    new FluXisSpriteText
+                    {
+                        Text = $"{ex.GetType().Name}: {ex.Message}",
+                        WebFontSize = 16,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Colour = FluXisColors.Red
+                    }
                 }
-            }
-        });
-
-        keybindStore = new KeybindStore(Realm);
-        keybindStore.AssignDefaults(keybinds);
-        keybindStore.AssignDefaults(new GameplayKeybindContainer(Realm, 0, true));
-        keybindStore.AssignDefaults(new EditorKeybindingContainer(null, Realm));
-
-        cacheComponent(keybinds);
-        MenuSplashes.Load(Host.CacheStorage);
-        LoadingTips.Load(Host.CacheStorage);
+            };
+        }
     }
 
     private void cacheComponent<T>(T component, bool load = false, bool add = false)
