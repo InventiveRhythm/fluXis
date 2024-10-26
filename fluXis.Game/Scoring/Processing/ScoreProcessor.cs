@@ -140,6 +140,8 @@ public class ScoreProcessor : JudgementDependant
             val *= 0.6;
         if (mods.Any(x => x is NoLnMod))
             val *= 0.6;
+        if (mods.Any(x => x is NoEventMod))
+            val *= 0.4;
 
         return val;
     }
