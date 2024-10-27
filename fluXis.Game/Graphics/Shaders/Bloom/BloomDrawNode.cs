@@ -16,8 +16,8 @@ public partial class BloomContainer
 {
     private class BloomContainerDrawNode : ShaderDrawNode<BloomContainer>
     {
-        private IUniformBuffer<BlurParameters> blurParametersBuffer;
         private float strength;
+        private IUniformBuffer<BlurParameters> parametersBuffer;
 
         private int radius;
 
@@ -52,7 +52,7 @@ public partial class BloomContainer
 
         private void drawFrameBuffer(IRenderer renderer, int kernelRadius, float sigma, int rotation)
         {
-            blurParametersBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<BlurParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -61,7 +61,7 @@ public partial class BloomContainer
             {
                 float radians = float.DegreesToRadians(rotation);
 
-                blurParametersBuffer.Data = blurParametersBuffer.Data with
+                parametersBuffer.Data = parametersBuffer.Data with
                 {
                     Radius = kernelRadius,
                     Sigma = sigma,
@@ -69,11 +69,17 @@ public partial class BloomContainer
                     Direction = new Vector2(MathF.Cos(radians), MathF.Sin(radians))
                 };
 
-                Shader.BindUniformBlock("m_BlurParameters", blurParametersBuffer);
+                Shader.BindUniformBlock("m_BlurParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
             }
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            parametersBuffer?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

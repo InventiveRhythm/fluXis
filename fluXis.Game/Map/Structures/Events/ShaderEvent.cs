@@ -50,6 +50,12 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
     {
         [JsonProperty("strength")]
         public float Strength { get; set; }
+
+        [JsonProperty("strength2")]
+        public float Strength2 { get; set; }
+
+        [JsonProperty("strength3")]
+        public float Strength3 { get; set; }
     }
 }
 
@@ -62,5 +68,8 @@ public enum ShaderType
     Mosaic,
     Noise,
     Vignette,
-    Retro
+    Retro,
+    HueShift,
+    Pixelate,
+    Glitch
 }

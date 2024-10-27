@@ -6,16 +6,16 @@ using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Graphics.Shaders.Greyscale;
+namespace fluXis.Game.Graphics.Shaders.Pixelate;
 
-public partial class GreyscaleContainer
+public partial class PixelateContainer
 {
-    private class GreyscaleDrawNode : ShaderDrawNode<GreyscaleContainer>
+    private class PixelateContainerDrawNode : ShaderDrawNode<PixelateContainer>
     {
         private float strength;
-        private IUniformBuffer<GreyscaleParameters> parametersBuffer;
+        private IUniformBuffer<PixelateParameters> parametersBuffer;
 
-        public GreyscaleDrawNode(ShaderContainer source, BufferedDrawNodeSharedData sharedData)
+        public PixelateContainerDrawNode(PixelateContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
         {
         }
@@ -37,7 +37,7 @@ public partial class GreyscaleContainer
 
         private void drawFrameBuffer(IRenderer renderer)
         {
-            parametersBuffer ??= renderer.CreateUniformBuffer<GreyscaleParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<PixelateParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -49,10 +49,10 @@ public partial class GreyscaleContainer
                 parametersBuffer.Data = parametersBuffer.Data with
                 {
                     TexSize = current.Size,
-                    Strength = Source.Strength
+                    Strength = strength
                 };
 
-                Shader.BindUniformBlock("m_GreyscaleParameters", parametersBuffer);
+                Shader.BindUniformBlock("m_PixelateParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -66,7 +66,7 @@ public partial class GreyscaleContainer
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private record struct GreyscaleParameters
+        private record struct PixelateParameters
         {
             public UniformVector2 TexSize;
             public UniformFloat Strength;

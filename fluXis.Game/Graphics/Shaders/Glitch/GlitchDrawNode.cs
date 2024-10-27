@@ -6,16 +6,18 @@ using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
 using osuTK.Graphics;
 
-namespace fluXis.Game.Graphics.Shaders.Greyscale;
+namespace fluXis.Game.Graphics.Shaders.Glitch;
 
-public partial class GreyscaleContainer
+public partial class GlitchContainer
 {
-    private class GreyscaleDrawNode : ShaderDrawNode<GreyscaleContainer>
+    private class GlitchContainerDrawNode : ShaderDrawNode<GlitchContainer>
     {
-        private float strength;
-        private IUniformBuffer<GreyscaleParameters> parametersBuffer;
+        private float strength; // x strength
+        private float strength2; // y strength
+        private float strength3; // glitch block size
+        private IUniformBuffer<GlitchParameters> parametersBuffer;
 
-        public GreyscaleDrawNode(ShaderContainer source, BufferedDrawNodeSharedData sharedData)
+        public GlitchContainerDrawNode(GlitchContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
         {
         }
@@ -24,20 +26,22 @@ public partial class GreyscaleContainer
         {
             base.ApplyState();
 
-            strength = Source.Strength;
+            strength = Source.Strength / 10f;
+            strength2 = Source.Strength2 / 10f;
+            strength3 = Source.Strength3;
         }
 
         protected override void PopulateContents(IRenderer renderer)
         {
             base.PopulateContents(renderer);
 
-            if (strength > 0)
+            if (strength > 0 || strength2 > 0)
                 drawFrameBuffer(renderer);
         }
 
         private void drawFrameBuffer(IRenderer renderer)
         {
-            parametersBuffer ??= renderer.CreateUniformBuffer<GreyscaleParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<GlitchParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -49,10 +53,13 @@ public partial class GreyscaleContainer
                 parametersBuffer.Data = parametersBuffer.Data with
                 {
                     TexSize = current.Size,
-                    Strength = Source.Strength
+                    StrengthX = strength,
+                    StrengthY = strength2,
+                    BlockSize = strength3,
+                    Time = (float)Source.Time.Current % 10000f
                 };
 
-                Shader.BindUniformBlock("m_GreyscaleParameters", parametersBuffer);
+                Shader.BindUniformBlock("m_GlitchParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -66,11 +73,14 @@ public partial class GreyscaleContainer
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private record struct GreyscaleParameters
+        private record struct GlitchParameters
         {
             public UniformVector2 TexSize;
-            public UniformFloat Strength;
-            private readonly UniformPadding4 pad1;
+            public UniformFloat StrengthX;
+            public UniformFloat StrengthY;
+            public UniformFloat BlockSize;
+            public UniformFloat Time;
+            private readonly UniformPadding8 pad1;
         }
     }
 }
