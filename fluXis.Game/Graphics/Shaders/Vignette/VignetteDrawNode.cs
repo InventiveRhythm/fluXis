@@ -32,10 +32,10 @@ public partial class VignetteContainer
             base.PopulateContents(renderer);
 
             if (strength > 0)
-                drawFrameBuffer(renderer, strength);
+                drawFrameBuffer(renderer);
         }
 
-        private void drawFrameBuffer(IRenderer renderer, float strength)
+        private void drawFrameBuffer(IRenderer renderer)
         {
             parametersBuffer ??= renderer.CreateUniformBuffer<VignetteParameters>();
 

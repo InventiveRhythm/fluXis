@@ -13,7 +13,7 @@ public partial class HueShiftContainer
     private class HueShiftContainerDrawNode : ShaderDrawNode<HueShiftContainer>
     {
         private float strength;
-        private IUniformBuffer<HueShiftParameters> hueShiftParametersBuffer;
+        private IUniformBuffer<HueShiftParameters> parametersBuffer;
 
         public HueShiftContainerDrawNode(HueShiftContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
@@ -32,12 +32,12 @@ public partial class HueShiftContainer
             base.PopulateContents(renderer);
 
             if (strength > 0)
-                drawFrameBuffer(renderer, strength);
+                drawFrameBuffer(renderer);
         }
 
-        private void drawFrameBuffer(IRenderer renderer, float strength)
+        private void drawFrameBuffer(IRenderer renderer)
         {
-            hueShiftParametersBuffer ??= renderer.CreateUniformBuffer<HueShiftParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<HueShiftParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -46,13 +46,13 @@ public partial class HueShiftContainer
 
             using (BindFrameBuffer(target))
             {
-                hueShiftParametersBuffer.Data = hueShiftParametersBuffer.Data with
+                parametersBuffer.Data = parametersBuffer.Data with
                 {
                     TexSize = current.Size,
                     Strength = strength
                 };
 
-                Shader.BindUniformBlock("m_HueShiftParameters", hueShiftParametersBuffer);
+                Shader.BindUniformBlock("m_HueShiftParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -62,7 +62,7 @@ public partial class HueShiftContainer
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            hueShiftParametersBuffer?.Dispose();
+            parametersBuffer?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -70,8 +70,7 @@ public partial class HueShiftContainer
         {
             public UniformVector2 TexSize;
             public UniformFloat Strength;
-            private readonly UniformPadding8 pad1;
-            private readonly UniformPadding12 pad2;
+            private readonly UniformPadding4 pad1;
         }
     }
 }

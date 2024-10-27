@@ -13,7 +13,7 @@ public partial class ChromaticContainer
     private class ChromaticContainerDrawNode : ShaderDrawNode<ChromaticContainer>
     {
         private float strength;
-        private IUniformBuffer<ChromaticParameters> chromaticParametersBuffer;
+        private IUniformBuffer<ChromaticParameters> parametersBuffer;
 
         public ChromaticContainerDrawNode(ChromaticContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
@@ -32,12 +32,12 @@ public partial class ChromaticContainer
             base.PopulateContents(renderer);
 
             if (strength > 0)
-                drawFrameBuffer(renderer, strength);
+                drawFrameBuffer(renderer);
         }
 
-        private void drawFrameBuffer(IRenderer renderer, float strength)
+        private void drawFrameBuffer(IRenderer renderer)
         {
-            chromaticParametersBuffer ??= renderer.CreateUniformBuffer<ChromaticParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<ChromaticParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -46,13 +46,13 @@ public partial class ChromaticContainer
 
             using (BindFrameBuffer(target))
             {
-                chromaticParametersBuffer.Data = chromaticParametersBuffer.Data with
+                parametersBuffer.Data = parametersBuffer.Data with
                 {
                     TexSize = current.Size,
                     Radius = strength
                 };
 
-                Shader.BindUniformBlock("m_ChromaticParameters", chromaticParametersBuffer);
+                Shader.BindUniformBlock("m_ChromaticParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -62,7 +62,7 @@ public partial class ChromaticContainer
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            chromaticParametersBuffer?.Dispose();
+            parametersBuffer?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -70,8 +70,7 @@ public partial class ChromaticContainer
         {
             public UniformVector2 TexSize;
             public UniformFloat Radius;
-            private readonly UniformPadding8 pad1;
-            private readonly UniformPadding12 pad2;
+            private readonly UniformPadding4 pad1;
         }
     }
 }

@@ -11,6 +11,7 @@ layout(location = 0) out vec4 o_Colour;
 
 void main(void) {
     vec2 uv = gl_FragCoord.xy / g_TexSize;
+
     float pixelSizeFactor = mix(1.0, min(g_TexSize.x, g_TexSize.y), 1.0 - g_Strength);
     vec2 pixelSize = vec2(pixelSizeFactor, pixelSizeFactor * (g_TexSize.y / g_TexSize.x));
     vec2 pixelatedUV = (floor(uv * pixelSize) + 0.5) / pixelSize;

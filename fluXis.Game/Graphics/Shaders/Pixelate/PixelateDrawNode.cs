@@ -13,7 +13,7 @@ public partial class PixelateContainer
     private class PixelateContainerDrawNode : ShaderDrawNode<PixelateContainer>
     {
         private float strength;
-        private IUniformBuffer<PixelateParameters> pixelateParametersBuffer;
+        private IUniformBuffer<PixelateParameters> parametersBuffer;
 
         public PixelateContainerDrawNode(PixelateContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
@@ -32,12 +32,12 @@ public partial class PixelateContainer
             base.PopulateContents(renderer);
 
             if (strength > 0)
-                drawFrameBuffer(renderer, strength);
+                drawFrameBuffer(renderer);
         }
 
-        private void drawFrameBuffer(IRenderer renderer, float strength)
+        private void drawFrameBuffer(IRenderer renderer)
         {
-            pixelateParametersBuffer ??= renderer.CreateUniformBuffer<PixelateParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<PixelateParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -46,13 +46,13 @@ public partial class PixelateContainer
 
             using (BindFrameBuffer(target))
             {
-                pixelateParametersBuffer.Data = pixelateParametersBuffer.Data with
+                parametersBuffer.Data = parametersBuffer.Data with
                 {
                     TexSize = current.Size,
                     Strength = strength
                 };
 
-                Shader.BindUniformBlock("m_PixelateParameters", pixelateParametersBuffer);
+                Shader.BindUniformBlock("m_PixelateParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -62,7 +62,7 @@ public partial class PixelateContainer
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            pixelateParametersBuffer?.Dispose();
+            parametersBuffer?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -70,8 +70,7 @@ public partial class PixelateContainer
         {
             public UniformVector2 TexSize;
             public UniformFloat Strength;
-            private readonly UniformPadding8 pad1;
-            private readonly UniformPadding12 pad2;
+            private readonly UniformPadding4 pad1;
         }
     }
 }

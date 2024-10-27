@@ -12,8 +12,8 @@ public partial class MosaicContainer
 {
     private class MosaicDrawNode : ShaderDrawNode<MosaicContainer>
     {
-        private IUniformBuffer<MosaicParameters> paramBuffer;
         private float strength;
+        private IUniformBuffer<MosaicParameters> parametersBuffer;
 
         public MosaicDrawNode(MosaicContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
@@ -37,7 +37,7 @@ public partial class MosaicContainer
 
         private void drawFrameBuffer(IRenderer renderer)
         {
-            paramBuffer ??= renderer.CreateUniformBuffer<MosaicParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<MosaicParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -46,9 +46,13 @@ public partial class MosaicContainer
 
             using (BindFrameBuffer(target))
             {
-                paramBuffer.Data = new MosaicParameters { TexSize = current.Size, Strength = strength };
+                parametersBuffer.Data = parametersBuffer.Data with
+                {
+                    TexSize = current.Size,
+                    Strength = strength
+                };
 
-                Shader.BindUniformBlock("m_MosaicParameters", paramBuffer);
+                Shader.BindUniformBlock("m_MosaicParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -58,7 +62,7 @@ public partial class MosaicContainer
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            paramBuffer?.Dispose();
+            parametersBuffer?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -66,7 +70,7 @@ public partial class MosaicContainer
         {
             public UniformVector2 TexSize;
             public UniformFloat Strength;
-            public UniformPadding4 _padding;
+            private readonly UniformPadding4 pad1;
         }
     }
 }

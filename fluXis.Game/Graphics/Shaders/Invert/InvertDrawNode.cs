@@ -32,10 +32,10 @@ public partial class InvertContainer
             base.PopulateContents(renderer);
 
             if (strength > 0)
-                drawFrameBuffer(renderer, strength);
+                drawFrameBuffer(renderer);
         }
 
-        private void drawFrameBuffer(IRenderer renderer, float strength)
+        private void drawFrameBuffer(IRenderer renderer)
         {
             invertParametersBuffer ??= renderer.CreateUniformBuffer<InvertParameters>();
 
@@ -70,8 +70,7 @@ public partial class InvertContainer
         {
             public UniformVector2 TexSize;
             public UniformFloat Strength;
-            private readonly UniformPadding8 pad1;
-            private readonly UniformPadding12 pad2;
+            private readonly UniformPadding4 pad1;
         }
     }
 }

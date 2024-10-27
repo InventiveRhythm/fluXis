@@ -53,6 +53,9 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
 
         [JsonProperty("strength2")]
         public float Strength2 { get; set; }
+
+        [JsonProperty("strength3")]
+        public float Strength3 { get; set; }
     }
 }
 

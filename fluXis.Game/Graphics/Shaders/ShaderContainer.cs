@@ -20,6 +20,7 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
 
     private float strength;
     private float strength2;
+    private float strength3;
 
     public float Strength
     {
@@ -43,6 +44,19 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
                 return;
 
             strength2 = value;
+            Invalidate(Invalidation.DrawNode);
+        }
+    }
+
+    public float Strength3
+    {
+        get => strength3;
+        set
+        {
+            if (value == strength3)
+                return;
+
+            strength3 = value;
             Invalidate(Invalidation.DrawNode);
         }
     }

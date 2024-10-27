@@ -32,10 +32,10 @@ public partial class RetroContainer
             base.PopulateContents(renderer);
 
             if (strength > 0)
-                drawFrameBuffer(renderer, strength);
+                drawFrameBuffer(renderer);
         }
 
-        private void drawFrameBuffer(IRenderer renderer, float strength)
+        private void drawFrameBuffer(IRenderer renderer)
         {
             parametersBuffer ??= renderer.CreateUniformBuffer<RetroParameters>();
 
@@ -70,7 +70,7 @@ public partial class RetroContainer
         {
             public UniformVector2 TexSize;
             public UniformFloat Strength;
-            public readonly UniformPadding4 Pad;
+            public readonly UniformPadding4 pad1;
         }
     }
 }

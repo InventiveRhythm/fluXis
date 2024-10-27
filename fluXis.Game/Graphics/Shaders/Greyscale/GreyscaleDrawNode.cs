@@ -12,22 +12,32 @@ public partial class GreyscaleContainer
 {
     private class GreyscaleDrawNode : ShaderDrawNode<GreyscaleContainer>
     {
-        private IUniformBuffer<GreyscaleParameters> parameters;
+        private float strength;
+        private IUniformBuffer<GreyscaleParameters> parametersBuffer;
 
         public GreyscaleDrawNode(ShaderContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
         {
         }
 
+        public override void ApplyState()
+        {
+            base.ApplyState();
+
+            strength = Source.Strength;
+        }
+
         protected override void PopulateContents(IRenderer renderer)
         {
             base.PopulateContents(renderer);
-            drawFrameBuffer(renderer);
+
+            if (strength > 0)
+                drawFrameBuffer(renderer);
         }
 
         private void drawFrameBuffer(IRenderer renderer)
         {
-            parameters ??= renderer.CreateUniformBuffer<GreyscaleParameters>();
+            parametersBuffer ??= renderer.CreateUniformBuffer<GreyscaleParameters>();
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
@@ -36,13 +46,13 @@ public partial class GreyscaleContainer
 
             using (BindFrameBuffer(target))
             {
-                parameters.Data = parameters.Data with
+                parametersBuffer.Data = parametersBuffer.Data with
                 {
                     TexSize = current.Size,
                     Strength = Source.Strength
                 };
 
-                Shader.BindUniformBlock("m_GreyscaleParameters", parameters);
+                Shader.BindUniformBlock("m_GreyscaleParameters", parametersBuffer);
                 Shader.Bind();
                 renderer.DrawFrameBuffer(current, new RectangleF(0, 0, current.Texture.Width, current.Texture.Height), ColourInfo.SingleColour(Color4.White));
                 Shader.Unbind();
@@ -52,7 +62,7 @@ public partial class GreyscaleContainer
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            parameters?.Dispose();
+            parametersBuffer?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -61,8 +71,6 @@ public partial class GreyscaleContainer
             public UniformVector2 TexSize;
             public UniformFloat Strength;
             private readonly UniformPadding4 pad1;
-            private readonly UniformPadding4 pad2;
-            private readonly UniformPadding12 pad3;
         }
     }
 }
