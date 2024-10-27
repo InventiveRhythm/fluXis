@@ -47,7 +47,7 @@ public partial class ShaderStackContainer : CompositeDrawable
 
         if (shaders.Count == 0)
         {
-            children = InternalChildren;
+            children = InternalChildren.ToArray();
             ClearInternal(false);
         }
         else
