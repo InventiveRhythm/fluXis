@@ -4,12 +4,15 @@ using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Shaders;
 using fluXis.Game.Graphics.Shaders.Bloom;
 using fluXis.Game.Graphics.Shaders.Chromatic;
+using fluXis.Game.Graphics.Shaders.Glitch;
 using fluXis.Game.Graphics.Shaders.Greyscale;
 using fluXis.Game.Graphics.Shaders.Invert;
 using fluXis.Game.Graphics.Shaders.Mosaic;
 using fluXis.Game.Graphics.Shaders.Noise;
 using fluXis.Game.Graphics.Shaders.Retro;
 using fluXis.Game.Graphics.Shaders.Vignette;
+using fluXis.Game.Graphics.Shaders.HueShift;
+using fluXis.Game.Graphics.Shaders.Pixelate;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Design.Effects;
@@ -108,6 +111,9 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.Noise => new NoiseContainer(),
                 ShaderType.Vignette => new VignetteContainer(),
                 ShaderType.Retro => new RetroContainer(),
+                ShaderType.HueShift => new HueShiftContainer(),
+                ShaderType.Pixelate => new PixelateContainer(),
+                ShaderType.Glitch => new GlitchContainer(),
                 _ => null
             };
 

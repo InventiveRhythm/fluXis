@@ -43,9 +43,13 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             throw new Exception($"Handler with type {ev.ShaderName} is not in scene tree!");
 
         if (ev.UseStartParams)
+        {
             handler.StrengthTo(ev.StartParameters.Strength);
+            handler.Strength2To(ev.StartParameters.Strength2);
+        }
 
         handler.StrengthTo(ev.EndParameters.Strength, ev.Duration, ev.Easing);
+        handler.Strength2To(ev.EndParameters.Strength2, ev.Duration, ev.Easing);
     }
 
     // the shader stack is outside the gameplay clock.
@@ -61,6 +65,12 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
             set => container.Strength = value;
         }
 
+        private float strength2
+        {
+            get => container.Strength2;
+            set => container.Strength2 = value;
+        }
+
         public TransformHandler(ShaderContainer container)
         {
             this.container = container;
@@ -69,5 +79,8 @@ public partial class ShaderEventHandler : EventHandler<ShaderEvent>
 
         public void StrengthTo(float str, double dur = 0, Easing ease = Easing.None)
             => this.TransformTo(nameof(strength), str, dur, ease);
+
+        public void Strength2To(float str, double dur = 0, Easing ease = Easing.None)
+            => this.TransformTo(nameof(strength2), str, dur, ease);
     }
 }

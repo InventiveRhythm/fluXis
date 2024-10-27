@@ -31,6 +31,8 @@ public partial class ShaderEntry : PointListEntry
         }
     }
 
+    private float maxStrength2 => 1f;
+
     private float step
     {
         get
@@ -57,11 +59,13 @@ public partial class ShaderEntry : PointListEntry
             UseStartParams = shader.UseStartParams,
             StartParameters = new ShaderEvent.ShaderParameters
             {
-                Strength = shader.StartParameters.Strength
+                Strength = shader.StartParameters.Strength,
+                Strength2 = shader.StartParameters.Strength2,
             },
             EndParameters = new ShaderEvent.ShaderParameters
             {
-                Strength = shader.EndParameters.Strength
+                Strength = shader.EndParameters.Strength,
+                Strength2 = shader.EndParameters.Strength2
             }
         };
     }
@@ -99,7 +103,7 @@ public partial class ShaderEntry : PointListEntry
             }
         };
 
-        return base.CreateSettings().Concat(new Drawable[]
+        var settings = new List<Drawable>
         {
             new PointSettingsLength<ShaderEvent>(Map, shader, BeatLength),
             new PointSettingsDropdown<ShaderType>
@@ -114,7 +118,19 @@ public partial class ShaderEntry : PointListEntry
                     Map.Update(shader);
                 }
             },
-            startValToggle,
+
+            new PointSettingsToggle
+            {
+                Text = "Use Start Value",
+                TooltipText = "Enables whether start values should be used.",
+                Bindable = new Bindable<bool>(shader.UseStartParams),
+                OnStateChanged = enabled =>
+                {
+                    shader.UseStartParams = enabled;
+                    Map.Update(shader);
+                }
+            },
+
             new PointSettingsSlider<float>
             {
                 Enabled = startValToggle.Bindable,
@@ -130,6 +146,7 @@ public partial class ShaderEntry : PointListEntry
                     Map.Update(shader);
                 }
             },
+
             new PointSettingsSlider<float>
             {
                 Text = "End Strength",
@@ -143,8 +160,49 @@ public partial class ShaderEntry : PointListEntry
                     shader.EndParameters.Strength = value;
                     Map.Update(shader);
                 }
-            },
-            new PointSettingsEasing<ShaderEvent>(Map, shader)
-        });
+            }
+        };
+
+        // edge cases for shaders with extra parameters
+        if (shader.Type == ShaderType.Glitch)
+        {
+            settings.AddRange(new Drawable[]
+            {
+                new PointSettingsSlider<float>
+                {
+                    Enabled = startValToggle.Bindable,
+                    Text = "Start Block Size",
+                    TooltipText = "The size of the glitch blocks.",
+                    CurrentValue = shader.StartParameters.Strength2,
+                    Min = 0,
+                    Max = maxStrength2,
+                    Step = step,
+                    OnValueChanged = value =>
+                    {
+                        shader.StartParameters.Strength2 = value;
+                        Map.Update(shader);
+                    }
+                },
+
+                new PointSettingsSlider<float>
+                {
+                    Text = "End Block Size",
+                    TooltipText = "The size of the glitch blocks.",
+                    CurrentValue = shader.EndParameters.Strength2,
+                    Min = 0,
+                    Max = maxStrength2,
+                    Step = step,
+                    OnValueChanged = value =>
+                    {
+                        shader.EndParameters.Strength2 = value;
+                        Map.Update(shader);
+                    }
+                }
+            });
+        }
+
+        settings.Add(new PointSettingsEasing<ShaderEvent>(Map, shader));
+
+        return base.CreateSettings().Concat(settings);
     }
 }

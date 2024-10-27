@@ -19,12 +19,8 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
     protected abstract DrawNode CreateShaderDrawNode();
 
     private float strength;
+    private float strength2;
 
-    /// <summary>
-    /// The strength of the mosaic effect. From 0 to 1.
-    /// <br/>
-    /// 0 means its full resolution, 1 means its 1x1 pixel.
-    /// </summary>
     public float Strength
     {
         get => strength;
@@ -34,6 +30,19 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
                 return;
 
             strength = value;
+            Invalidate(Invalidation.DrawNode);
+        }
+    }
+
+    public float Strength2
+    {
+        get => strength2;
+        set
+        {
+            if (value == strength2)
+                return;
+
+            strength2 = value;
             Invalidate(Invalidation.DrawNode);
         }
     }

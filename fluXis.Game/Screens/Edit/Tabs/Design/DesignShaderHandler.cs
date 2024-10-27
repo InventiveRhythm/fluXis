@@ -43,6 +43,7 @@ public partial class DesignShaderHandler : CompositeComponent
         if (current == null)
         {
             container.Strength = 0;
+            container.Strength2 = 0;
             return;
         }
 
@@ -52,6 +53,7 @@ public partial class DesignShaderHandler : CompositeComponent
         if (progress >= 1)
         {
             container.Strength = end;
+            container.Strength2 = end;
             return;
         }
 

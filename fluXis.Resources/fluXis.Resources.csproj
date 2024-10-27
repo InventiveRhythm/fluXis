@@ -11,4 +11,6 @@
     <EmbeddedResource Include="Tracks\**\*" />
     <EmbeddedResource Include="Localization\**\*" />
   </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
 </Project>
