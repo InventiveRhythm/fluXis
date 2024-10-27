@@ -152,7 +152,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         InternalChildren = new Drawable[]
         {
-            searchTracker = new IdleTracker(400, UpdateSearch),
+            searchTracker = new IdleTracker(250, UpdateSearch),
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
