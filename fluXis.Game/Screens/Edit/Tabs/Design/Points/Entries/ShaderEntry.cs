@@ -242,7 +242,6 @@ public partial class ShaderEntry : PointListEntry
             case ShaderType.Vignette:
             case ShaderType.Retro:
             case ShaderType.HueShift:
-            case ShaderType.Pixelate:
             default: // default shader settings
                 settings.AddRange(new Drawable[]
                 {

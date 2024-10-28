@@ -70,6 +70,5 @@ public enum ShaderType
     Vignette,
     Retro,
     HueShift,
-    Pixelate,
     Glitch
 }
