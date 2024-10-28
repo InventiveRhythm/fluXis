@@ -1,4 +1,4 @@
-layout(std140, set = 0, binding = 0) uniform m_PixelateParameters
+layout(std140, set = 0, binding = 0) uniform m_MosaicParameters
 {
     vec2 g_TexSize;
     float g_Strength;
