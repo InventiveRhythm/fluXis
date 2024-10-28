@@ -86,7 +86,8 @@ public partial class FullComboOverlay : CompositeDrawable
             sampleFullCombo?.Play();
 
         background.FadeTo(.4f, 400);
-        text.ScaleTo(1.2f, 1000, Easing.OutQuint);
+        text.ScaleTo(1.2f, 1000, Easing.OutQuint)
+            .TransformSpacingTo(new Vector2(20, 0), 2000, Easing.OutQuint);
 
         text.Text = type switch
         {
@@ -108,7 +109,8 @@ public partial class FullComboOverlay : CompositeDrawable
                .BorderTo(400f, 1200, Easing.InQuint);
 
         background.Delay(800).FadeOut(400);
-        text.Delay(200).ScaleTo(0, 1000, Easing.InQuint);
+        text.Delay(200).ScaleTo(0, 1000, Easing.InQuint)
+            .TransformSpacingTo(new Vector2(-8, 0), 1000, Easing.InQuint);
     }
 
     public enum FullComboType
