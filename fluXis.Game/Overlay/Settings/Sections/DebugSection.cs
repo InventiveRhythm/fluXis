@@ -53,6 +53,94 @@ public partial class DebugSection : SettingsSection
                 Label = strings.ShowMissingLocalizations,
                 Description = strings.ShowMissingLocalizationsDescription,
                 Bindable = config.GetBindable<bool>(FluXisSetting.ShowMissingLocalizations)
+            },
+            new FluXisSpriteText
+            {
+                Text = "there is nothing down here... go back.",
+                WebFontSize = 16,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                Margin = new MarginPadding { Top = 1200 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "i said go back.",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 60, Top = 800 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "stop scrolling.",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 160, Top = 1500 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "are you even listening???",
+                WebFontSize = 16,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                Margin = new MarginPadding { Right = 130, Top = 1900 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "hello????",
+                WebFontSize = 16,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                Margin = new MarginPadding { Right = 320, Top = 1200 }
+            },
+            new FluXisSpriteText
+            {
+                Text = ".....",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 220, Top = 2200 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "please?",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 320, Top = 1800 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "guess not then.",
+                WebFontSize = 16,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                Margin = new MarginPadding { Right = 420, Top = 2800 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "if you really want to know...",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 340, Top = 2200 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "the answer is a loading screen text",
+                WebFontSize = 20,
+                Margin = new MarginPadding { Left = 380 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "once you found it,",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 280, Top = 400 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "come back here and use WASD to enter the code....",
+                WebFontSize = 16,
+                Margin = new MarginPadding { Left = 290, Top = 200 }
+            },
+            new FluXisSpriteText
+            {
+                Text = "if anybody asks... you heard nothing from me.",
+                WebFontSize = 16,
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight,
+                Margin = new MarginPadding { Right = 290, Top = 100 }
             }
         });
     }
