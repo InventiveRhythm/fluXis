@@ -62,11 +62,11 @@ public class HealthProcessor : JudgementDependant
 
         Health.Value += GetHealthIncreaseFor(result, Difficulty);
 
-        if (meetsFailCondition(result))
+        if (MeetsFailCondition(result))
             TriggerFailure();
     }
 
-    private bool meetsFailCondition(HitResult result)
+    protected bool MeetsFailCondition(HitResult result)
     {
         if (DefaultFailCondition)
             return true;
