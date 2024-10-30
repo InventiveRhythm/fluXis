@@ -48,6 +48,7 @@ public class FontAwesome6
         public static IconUsage Download => GetSolid(0xf019);
         public static IconUsage Drum => GetSolid(0xf569);
         public static IconUsage EarthAmericas => GetSolid(0xf57d);
+        public static IconUsage EllipsisVertical => GetSolid(0xf142);
         public static IconUsage Eraser => GetSolid(0xf12d);
         public static IconUsage ExclamationTriangle => GetSolid(0xf071);
         public static IconUsage Eye => GetSolid(0xf06e);

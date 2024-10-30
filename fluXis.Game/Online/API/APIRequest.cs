@@ -96,7 +96,19 @@ public abstract class APIRequest
         Request = CreateWebRequest($"{RootUrl}{Path}");
         Request.Method = Method;
         Request.AllowRetryOnTimeout = false;
-        Request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
+
+        switch (Method.Method)
+        {
+            case "POST":
+            case "PATCH":
+                Request.UploadProgress += (current, total) => Progress?.Invoke(current, total);
+                break;
+
+            default:
+                Request.DownloadProgress += (current, total) => Progress?.Invoke(current, total);
+                break;
+        }
+
         Request.Failed += Fail;
 
         if (!string.IsNullOrEmpty(APIClient.AccessToken))

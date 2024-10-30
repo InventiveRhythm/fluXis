@@ -93,9 +93,9 @@ public partial class MapStore : Component
     public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
     public Action CollectionUpdated;
 
-    public List<long> DownloadQueue { get; } = new();
-    public Action<long> DownloadStarted { get; set; }
-    public Action<long> DownloadFinished { get; set; }
+    public List<DownloadStatus> DownloadQueue { get; } = new();
+    public Action<DownloadStatus> DownloadStarted { get; set; }
+    public Action<DownloadStatus> DownloadFinished { get; set; }
 
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
@@ -480,26 +480,21 @@ public partial class MapStore : Component
         });
     }
 
-    protected void StartDownload(APIMapSet mapSet) => StartDownload(mapSet.ID);
-    protected void FinishDownload(APIMapSet mapSet) => FinishDownload(mapSet.ID);
-
-    protected void StartDownload(long id)
+    private void startDownload(DownloadStatus status)
     {
-        DownloadQueue.Add(id);
-        DownloadStarted?.Invoke(id);
+        DownloadQueue.Add(status);
+        DownloadStarted?.Invoke(status);
     }
 
-    protected void FinishDownload(long id)
+    private void finishDownload(DownloadStatus status)
     {
-        DownloadQueue.Remove(id);
-        DownloadFinished?.Invoke(id);
+        DownloadQueue.Remove(status);
+        DownloadFinished?.Invoke(status);
     }
 
     public void DownloadMapSet(long id)
     {
-        var set = DownloadQueue.FirstOrDefault(x => x == id, -1);
-
-        if (set != -1)
+        if (DownloadQueue.Any(x => x.OnlineID == id))
             return;
 
         var req = new MapSetRequest(id);
@@ -523,7 +518,7 @@ public partial class MapStore : Component
             return;
         }
 
-        if (DownloadQueue.Any(x => x == set.ID))
+        if (DownloadQueue.Any(x => x.OnlineID == set.ID))
             return;
 
         var notification = new TaskNotificationData
@@ -535,19 +530,21 @@ public partial class MapStore : Component
 
         Logger.Log($"Downloading mapset: {set.Title} - {set.Artist}", LoggingTarget.Network);
 
+        var status = new DownloadStatus(set.ID);
+
         var req = new MapSetDownloadRequest(set.ID);
-        req.Progress += (current, total) => notification.Progress = (float)current / total;
+        req.Progress += (current, total) => notification.Progress = status.Progress = (float)current / total;
         req.Failure += exception =>
         {
             Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
             notification.State = LoadingState.Failed;
 
-            FinishDownload(set);
+            finishDownload(status);
         };
         req.Success += () =>
         {
-            notification.Progress = 1;
-            FinishDownload(set);
+            notification.Progress = status.Progress = 1;
+            status.State = DownloadState.Importing;
 
             Task.Run(() =>
             {
@@ -559,6 +556,7 @@ public partial class MapStore : Component
                     if (data == null)
                     {
                         notification.State = LoadingState.Failed;
+                        status.State = DownloadState.Failed;
                         return;
                     }
 
@@ -581,18 +579,25 @@ public partial class MapStore : Component
                         Storage = storage,
                         Notifications = notifications,
                         Realm = realm,
-                        Notification = notification
+                        Notification = notification,
+                        OnComplete = s => status.State = s ? DownloadState.Finished : DownloadState.Failed,
+                        OnProgress = p => status.Progress = p
                     }.Import(path);
                 }
                 catch (Exception ex)
                 {
                     notification.State = LoadingState.Failed;
+                    status.State = DownloadState.Failed;
                     Logger.Log($"Failed to import mapset: {ex.Message}", LoggingTarget.Network);
+                }
+                finally
+                {
+                    finishDownload(status);
                 }
             });
         };
 
-        StartDownload(set);
+        startDownload(status);
         api.PerformRequestAsync(req);
 
         notifications.AddTask(notification);
@@ -603,7 +608,7 @@ public partial class MapStore : Component
         if (set is not { OnlineID: > 0 })
             return;
 
-        if (DownloadQueue.Any(x => x == set.OnlineID))
+        if (DownloadQueue.Any(x => x.OnlineID == set.OnlineID))
             return;
 
         var notification = new TaskNotificationData
@@ -615,18 +620,21 @@ public partial class MapStore : Component
 
         Logger.Log($"Updating mapset: {set.Metadata.Title} - {set.Metadata.Artist}", LoggingTarget.Network);
 
+        var status = new DownloadStatus(set.OnlineID);
+
         var req = new MapSetDownloadRequest(set.OnlineID);
         req.Progress += (current, total) => notification.Progress = (float)current / total;
         req.Failure += exception =>
         {
             Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
             notification.State = LoadingState.Failed;
-            FinishDownload(set.OnlineID);
+            status.State = DownloadState.Failed;
+            finishDownload(status);
         };
         req.Success += () =>
         {
-            notification.Progress = 1;
-            FinishDownload(set.OnlineID);
+            notification.Progress = status.Progress = 1;
+            status.State = DownloadState.Importing;
 
             Task.Run(() =>
             {
@@ -638,6 +646,7 @@ public partial class MapStore : Component
                     if (data == null)
                     {
                         notification.State = LoadingState.Failed;
+                        status.State = DownloadState.Failed;
                         return;
                     }
 
@@ -667,12 +676,17 @@ public partial class MapStore : Component
                 catch (Exception ex)
                 {
                     notification.State = LoadingState.Failed;
+                    status.State = DownloadState.Failed;
                     Logger.Log($"Failed to update mapset: {ex.Message}", LoggingTarget.Network);
+                }
+                finally
+                {
+                    finishDownload(status);
                 }
             });
         };
 
-        StartDownload(set.OnlineID);
+        startDownload(status);
         api.PerformRequestAsync(req);
         notifications.AddTask(notification);
     }
@@ -720,5 +734,49 @@ public partial class MapStore : Component
     {
         Roundhouse,
         Spoophouse
+    }
+
+    public class DownloadStatus
+    {
+        public long OnlineID { get; }
+
+        public DownloadState State
+        {
+            get => state;
+            set
+            {
+                state = value;
+                StateChanged?.Invoke(state);
+            }
+        }
+
+        public float Progress
+        {
+            get => progress;
+            set
+            {
+                progress = value;
+                OnProgress?.Invoke(progress);
+            }
+        }
+
+        public event Action<DownloadState> StateChanged;
+        public event Action<float> OnProgress;
+
+        private DownloadState state = DownloadState.Downloading;
+        private float progress;
+
+        public DownloadStatus(long onlineID)
+        {
+            OnlineID = onlineID;
+        }
+    }
+
+    public enum DownloadState
+    {
+        Downloading,
+        Importing,
+        Finished,
+        Failed
     }
 }

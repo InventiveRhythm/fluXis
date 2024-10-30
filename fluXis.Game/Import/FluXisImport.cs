@@ -24,12 +24,18 @@ public class FluXisImport : MapImporter
      */
     public int MapStatus { get; set; } = -2;
 
+    public Action<float> OnProgress { get; set; }
+    public Action<bool> OnComplete { get; set; }
+
     public TaskNotificationData Notification { get; set; }
 
     public override void Import(string path)
     {
         if (!File.Exists(path))
+        {
+            OnComplete?.Invoke(false);
             return;
+        }
 
         if (Notification == null)
         {
@@ -91,11 +97,13 @@ public class FluXisImport : MapImporter
 
             Notification.ClickAction = () => MapStore.Present(set);
             Notification.State = LoadingState.Complete;
+            OnComplete?.Invoke(true);
         }
         catch (Exception e)
         {
             Notification.State = LoadingState.Failed;
             Logger.Error(e, "Failed to import mapset");
+            OnComplete?.Invoke(false);
         }
     }
 
@@ -282,7 +290,10 @@ public class FluXisImport : MapImporter
             }
 
             idx++;
-            Notification.Progress = (float)idx / fileCount;
+
+            var prog = (float)idx / fileCount;
+            Notification.Progress = prog;
+            OnProgress?.Invoke(prog);
         }
 
         return mapSet;

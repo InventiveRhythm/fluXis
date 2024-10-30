@@ -18,12 +18,9 @@ using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Auth;
 using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Screens.Browse.Info;
 using fluXis.Game.Screens.Browse.Search;
-using fluXis.Shared.Components.Maps;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -60,9 +57,11 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private MultifactorOverlay mfaOverlay { get; set; }
 
     [Resolved]
-    private NotificationManager notifications { get; set; }
+    [CanBeNull]
+    private FluXisGame game { get; set; }
 
-    private readonly Bindable<APIMapSet> selectedSet = new();
+    [Resolved]
+    private NotificationManager notifications { get; set; }
 
     private bool fetchingMore = true;
     private bool loadedAll;
@@ -113,69 +112,47 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 Child = new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ColumnDimensions = new Dimension[]
+                    RowDimensions = new Dimension[]
                     {
-                        new(),
-                        new(GridSizeMode.Absolute, 40),
-                        new(GridSizeMode.Absolute, 780)
+                        new(GridSizeMode.AutoSize),
+                        new(GridSizeMode.Absolute, 20),
+                        new()
                     },
                     Content = new[]
                     {
-                        new[]
+                        new Drawable[] { new BrowserSearchBar { MapBrowser = this } },
+                        new[] { Empty() },
+                        new Drawable[]
                         {
-                            new GridContainer
+                            new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                RowDimensions = new Dimension[]
+                                Children = new Drawable[]
                                 {
-                                    new(GridSizeMode.AutoSize),
-                                    new(GridSizeMode.Absolute, 20),
-                                    new()
-                                },
-                                Content = new[]
-                                {
-                                    new Drawable[] { new BrowserSearchBar { MapBrowser = this } },
-                                    new[] { Empty() },
-                                    new Drawable[]
+                                    new FluXisContextMenuContainer
                                     {
-                                        new Container
+                                        RelativeSizeAxes = Axes.Both,
+                                        Child = scroll = new FluXisScrollContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Children = new Drawable[]
+                                            ScrollbarAnchor = Anchor.TopLeft,
+                                            ScrollbarVisible = false,
+                                            Child = maps = new FillFlowContainer<MapCard>
                                             {
-                                                new FluXisContextMenuContainer
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Child = scroll = new FluXisScrollContainer
-                                                    {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        ScrollbarAnchor = Anchor.TopLeft,
-                                                        Child = maps = new FillFlowContainer<MapCard>
-                                                        {
-                                                            RelativeSizeAxes = Axes.X,
-                                                            AutoSizeAxes = Axes.Y,
-                                                            Direction = FillDirection.Full,
-                                                            Spacing = new Vector2(20)
-                                                        }
-                                                    }
-                                                },
-                                                loadingIcon = new LoadingIcon
-                                                {
-                                                    Anchor = Anchor.Centre,
-                                                    Origin = Anchor.Centre,
-                                                    Size = new Vector2(100)
-                                                }
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                Direction = FillDirection.Full,
+                                                Spacing = new Vector2(20)
                                             }
                                         }
+                                    },
+                                    loadingIcon = new LoadingIcon
+                                    {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Size = new Vector2(100)
                                     }
                                 }
-                            },
-                            Empty(),
-                            new BrowseInfo
-                            {
-                                BindableSet = selectedSet
                             }
                         }
                     }
@@ -228,7 +205,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
         if (reload)
             maps.Clear();
 
-        var req = new MapSetsRequest(offset, currentQuery);
+        var req = new MapSetsRequest(offset, 48, currentQuery);
         req.Success += response =>
         {
             if (response.Data.Count == 0)
@@ -238,6 +215,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             {
                 maps.Add(new MapCard(mapSet)
                 {
+                    CardWidth = 415,
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     EdgeEffect = FluXisStyles.ShadowSmall,
@@ -245,7 +223,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                     OnClickAction = set =>
                     {
                         previews.PlayPreview(set.ID);
-                        selectedSet.Value = set;
+                        game?.PresentMapSet(set.ID);
                     }
                 });
             }

@@ -12,6 +12,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Drawables;
 using fluXis.Game.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -39,6 +40,9 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             if (!Equals(maps.CurrentMapSet, mapset))
                 items.Add(new FluXisMenuItem(LocalizationStrings.General.Select, FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => maps.Select(mapset.LowestDifficulty, true)));
 
+            if (mapset.OnlineID > 0)
+                items.Add(new FluXisMenuItem("View Online", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)));
+
             items.Add(new FluXisMenuItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset)) { Enabled = () => !mapset.AutoImported });
             items.Add(new FluXisMenuItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
 
@@ -62,6 +66,10 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
     [Resolved]
     private MapStore maps { get; set; }
+
+    [Resolved]
+    [CanBeNull]
+    private FluXisGame game { get; set; }
 
     private readonly DrawableMapSetItem parent;
     private readonly RealmMapSet mapset;

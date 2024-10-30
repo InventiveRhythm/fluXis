@@ -19,6 +19,7 @@ using fluXis.Game.Overlay.Chat;
 using fluXis.Game.Overlay.Club;
 using fluXis.Game.Overlay.Exit;
 using fluXis.Game.Overlay.FPS;
+using fluXis.Game.Overlay.MapSet;
 using fluXis.Game.Overlay.Music;
 using fluXis.Game.Overlay.Network;
 using fluXis.Game.Overlay.Notifications;
@@ -75,6 +76,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private Container<VisibilityContainer> overlayContainer;
     private Dashboard dashboard;
     private UserProfileOverlay userProfileOverlay;
+    private MapSetOverlay mapSetOverlay;
     private Toolbar toolbar;
     private PanelContainer panelContainer;
     private FloatingNotificationContainer notificationContainer;
@@ -130,6 +132,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
         loadComponent(new ChatOverlay(), overlayContainer.Add, true);
+        loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new ClubOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
@@ -372,6 +375,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public void PresentUser(long id)
         => userProfileOverlay.ShowUser(id);
+
+    public void PresentMapSet(long id)
+    {
+        mapSetOverlay.ShowSet(id);
+        userProfileOverlay.Hide();
+    }
 
     public override void ShowMap(RealmMapSet set)
     {

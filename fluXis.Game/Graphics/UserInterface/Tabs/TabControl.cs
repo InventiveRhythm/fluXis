@@ -95,7 +95,7 @@ public partial class TabControl : CompositeDrawable
             {
                 new SpriteIcon
                 {
-                    Size = new Vector2(20),
+                    Size = new Vector2(16),
                     Icon = container.Icon,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft
@@ -103,7 +103,7 @@ public partial class TabControl : CompositeDrawable
                 new FluXisSpriteText
                 {
                     Text = container.Title,
-                    WebFontSize = 14,
+                    WebFontSize = 16,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft
                 }

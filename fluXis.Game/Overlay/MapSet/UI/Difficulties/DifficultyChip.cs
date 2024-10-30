@@ -1,5 +1,5 @@
-using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Map.Drawables;
 using fluXis.Shared.Components.Maps;
 using osu.Framework.Allocation;
@@ -60,7 +60,7 @@ public partial class DifficultyChip : CircularContainer
                     text = new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,
-                        Padding = new MarginPadding { Right = 14 },
+                        Padding = new MarginPadding { Right = 16 },
                         Direction = FillDirection.Vertical,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
@@ -68,13 +68,15 @@ public partial class DifficultyChip : CircularContainer
                         Alpha = 0,
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            new ForcedHeightText
                             {
+                                Height = 20,
                                 Text = map.Difficulty,
                                 WebFontSize = 14
                             },
-                            new FluXisSpriteText
+                            new ForcedHeightText
                             {
+                                Height = 16,
                                 Text = $"mapped by {map.Mapper.Username}",
                                 WebFontSize = 10,
                                 Alpha = set.Creator.ID == map.Mapper.ID ? 0 : .8f

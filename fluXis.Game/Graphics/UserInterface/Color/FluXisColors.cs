@@ -59,6 +59,9 @@ public static class FluXisColors
     public static Colour4 DownloadFinished => Colour4.FromHex("#7BE87B");
     public static Colour4 DownloadQueued => Colour4.FromHex("#7BB1E8");
 
+    public static Colour4 VoteUp => Colour4.FromHex("#43AFFC");
+    public static Colour4 VoteDown => Colour4.FromHex("#FDC872");
+
     public static Colour4 SocialTwitter => Colour4.FromHex("#1da1f2");
     public static Colour4 SocialYoutube => Colour4.FromHex("#ff0000");
     public static Colour4 SocialTwitch => Colour4.FromHex("#6441a5");

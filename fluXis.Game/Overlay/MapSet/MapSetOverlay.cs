@@ -3,10 +3,13 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Tabs;
 using fluXis.Game.Input;
 using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.MapSet.Buttons;
+using fluXis.Game.Overlay.MapSet.Sidebar;
+using fluXis.Game.Overlay.MapSet.Tabs;
 using fluXis.Game.Overlay.MapSet.UI.Difficulties;
 using fluXis.Shared.Components.Maps;
 using osu.Framework.Allocation;
@@ -94,14 +97,21 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
     public void ShowSet(long id)
     {
+        var visible = State.Value == Visibility.Visible;
         Show();
-
-        if (set?.ID != id)
-            fetch(id);
+        fetch(id, visible && id != set.ID);
     }
 
-    private async void fetch(long id)
+    private async void fetch(long id, bool wasVisible)
     {
+        if (wasVisible)
+        {
+            Schedule(() => flow.FadeOut(200).OnComplete(_ => fetch(id, false)));
+            return;
+        }
+
+        Schedule(() => flow.Clear());
+
         var request = new MapSetRequest(id);
         await api.PerformRequestAsync(request);
 
@@ -118,7 +128,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         set.Maps.Sort((a, b) => a.NotesPerSecond.CompareTo(b.NotesPerSecond));
         var bindableMap = new Bindable<APIMap>(set.Maps.First());
 
-        flow.Clear();
+        flow.Show();
         flow.Children = new Drawable[]
         {
             new MapSetHeader(set),
@@ -156,8 +166,8 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 Children = new Drawable[]
                                 {
                                     new MapSetButton(FontAwesome6.Solid.Star, () => { }),
-                                    new MapSetDownloadButton(),
-                                    // new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
+                                    new MapSetDownloadButton(set),
+                                    new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
                                 }
                             }
                         }
@@ -180,22 +190,28 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                         {
                             new[]
                             {
-                                new FluXisSpriteText
+                                new TabControl
                                 {
-                                    Text = "leadrbord",
-                                    WebFontSize = 16,
-                                    Shadow = true,
-                                    Anchor = Anchor.TopCentre,
-                                    Origin = Anchor.TopCentre
+                                    Tabs = new TabContainer[]
+                                    {
+                                        new MapSetInfoTab(),
+                                        new MapSetScoreTab(),
+                                        new MapSetCommentsTab()
+                                    }
                                 },
                                 Empty(),
-                                new FluXisSpriteText
+                                new FillFlowContainer
                                 {
-                                    Text = "creator anbd stats",
-                                    WebFontSize = 16,
-                                    Shadow = true,
-                                    Anchor = Anchor.TopCentre,
-                                    Origin = Anchor.TopCentre
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    Direction = FillDirection.Vertical,
+                                    Spacing = new Vector2(20),
+                                    Children = new Drawable[]
+                                    {
+                                        new MapSetSidebarMapper(bindableMap),
+                                        new MapSetSidebarVoting(bindableMap),
+                                        new MapSetSidebarStats(bindableMap)
+                                    }
                                 }
                             }
                         }

@@ -128,8 +128,8 @@ public partial class ResultsSideVoting : ResultsSideContainer
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     },
-                    upButton = new VoteButton(Colour4.Orange, FontAwesome6.Solid.AngleUp, () => setVote(1)),
-                    downButton = new VoteButton(Colour4.CornflowerBlue, FontAwesome6.Solid.AngleDown, () => setVote(-1))
+                    upButton = new VoteButton(FluXisColors.VoteUp, FontAwesome6.Solid.AngleUp, () => setVote(1)),
+                    downButton = new VoteButton(FluXisColors.VoteDown, FontAwesome6.Solid.AngleDown, () => setVote(-1))
                     {
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight

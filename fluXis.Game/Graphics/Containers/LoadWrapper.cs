@@ -19,4 +19,14 @@ public partial class LoadWrapper<T> : Container
             OnComplete?.Invoke(drawable);
         });
     }
+
+    public void Reload()
+    {
+        Clear();
+        LoadComponentAsync(LoadContent(), drawable =>
+        {
+            Add(drawable);
+            OnComplete?.Invoke(drawable);
+        });
+    }
 }

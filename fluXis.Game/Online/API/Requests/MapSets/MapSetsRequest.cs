@@ -9,17 +9,20 @@ public class MapSetsRequest : APIRequest<List<APIMapSet>>
     protected override string Path => "/mapsets";
 
     private long offset { get; }
+    private long limit { get; }
     private string query { get; }
 
-    public MapSetsRequest(long offset, string query = "")
+    public MapSetsRequest(long offset, long limit = 50, string query = "")
     {
         this.offset = offset;
+        this.limit = limit;
         this.query = query;
     }
 
     protected override WebRequest CreateWebRequest(string url)
     {
         var req = base.CreateWebRequest(url);
+        req.AddParameter("limit", $"{limit}");
 
         if (offset > 0)
             req.AddParameter("offset", $"{offset}");

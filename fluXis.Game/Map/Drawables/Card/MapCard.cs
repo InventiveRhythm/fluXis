@@ -36,7 +36,8 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     private UISamples samples { get; set; }
 
     [Resolved]
-    private FluXisGameBase game { get; set; }
+    [CanBeNull]
+    private FluXisGame game { get; set; }
 
     [Resolved]
     private GameHost host { get; set; }
@@ -50,7 +51,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         {
             var list = new List<MenuItem>
             {
-                new FluXisMenuItem("Select", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => OnClickAction?.Invoke(MapSet))
+                new FluXisMenuItem("View", FontAwesome6.Solid.ArrowRight, MenuItemType.Highlighted, () => game?.PresentMapSet(MapSet.ID))
             };
 
             if (downloaded)
@@ -82,7 +83,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     private SectionedGradient gradient;
 
     private bool downloaded => maps.MapSets.Any(x => x.OnlineID == MapSet?.ID);
-    private bool downloading => maps.DownloadQueue.Any(x => x == MapSet?.ID);
+    private bool downloading => maps.DownloadQueue.Any(x => x.OnlineID == MapSet?.ID);
 
     private bool canDelete
     {
@@ -268,6 +269,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                 {
                                                     Text = MapSet.Status switch
                                                     {
+                                                        -1 => "BLACKLISTED",
                                                         0 => "UNSUBMITTED",
                                                         1 => "PENDING",
                                                         2 => "IMPURE",
@@ -336,7 +338,12 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        OnClickAction?.Invoke(MapSet);
+
+        if (OnClickAction is null)
+            game?.PresentMapSet(MapSet.ID);
+        else
+            OnClickAction?.Invoke(MapSet);
+
         return true;
     }
 
@@ -357,7 +364,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
         if (localSet == null)
             return;
 
-        game.ShowMap(localSet);
+        game?.ShowMap(localSet);
     }
 
     private void download() => maps.DownloadMapSet(MapSet);
@@ -379,7 +386,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     }
 
     private void mapsetsUpdated(RealmMapSet set) => Schedule(updateState);
-    private void downloadStateChanged(long set) => Schedule(updateState);
+    private void downloadStateChanged(MapStore.DownloadStatus status) => Schedule(updateState);
 
     private void updateState()
     {

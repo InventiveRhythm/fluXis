@@ -26,7 +26,7 @@ public partial class MapSetHeader : CompositeDrawable
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 280;
+        Height = 288;
         CornerRadius = 24;
         Masking = true;
 
@@ -49,78 +49,85 @@ public partial class MapSetHeader : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2.Opacity(.5f)
             },
-            new GridContainer
+            new Container
             {
                 Width = 1200,
                 Height = 160,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                ColumnDimensions = new[]
+                Padding = new MarginPadding { Horizontal = 40 },
+                Child = new GridContainer
                 {
-                    new Dimension(GridSizeMode.Absolute, 160),
-                    new Dimension(GridSizeMode.Absolute, 10),
-                    new Dimension()
-                },
-                Content = new[]
-                {
-                    new[]
+                    RelativeSizeAxes = Axes.Both,
+                    ColumnDimensions = new[]
                     {
-                        new LoadWrapper<DrawableOnlineCover>
+                        new Dimension(GridSizeMode.Absolute, 160),
+                        new Dimension(GridSizeMode.Absolute, 12),
+                        new Dimension()
+                    },
+                    Content = new[]
+                    {
+                        new[]
                         {
-                            Size = new Vector2(160),
-                            CornerRadius = 20,
-                            Masking = true,
-                            EdgeEffect = FluXisStyles.ShadowMedium,
-                            LoadContent = () => new DrawableOnlineCover(set, OnlineTextureStore.AssetSize.Large)
+                            new LoadWrapper<DrawableOnlineCover>
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                FillMode = FillMode.Fill,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre
+                                Size = new Vector2(160),
+                                CornerRadius = 16,
+                                Masking = true,
+                                EdgeEffect = FluXisStyles.ShadowMedium,
+                                LoadContent = () => new DrawableOnlineCover(set, OnlineTextureStore.AssetSize.Large)
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    FillMode = FillMode.Fill,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre
+                                },
+                                OnComplete = cover => cover.FadeInFromZero(400)
                             },
-                            OnComplete = cover => cover.FadeInFromZero(400)
-                        },
-                        Empty(),
-                        new FillFlowContainer
-                        {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Vertical,
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            Children = new Drawable[]
+                            Empty(),
+                            new FillFlowContainer
                             {
-                                new Container
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Vertical,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft,
+                                Children = new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft,
-                                    Children = new[]
+                                    new Container
                                     {
-                                        new StatusChip(set.Status),
-                                        getUploadDate().With(d =>
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Children = new[]
                                         {
-                                            d.Anchor = Anchor.CentreRight;
-                                            d.Origin = Anchor.CentreRight;
-                                        })
+                                            new StatusChip(set.Status),
+                                            getUploadDate().With(d =>
+                                            {
+                                                d.Anchor = Anchor.CentreRight;
+                                                d.Origin = Anchor.CentreRight;
+                                            })
+                                        }
+                                    },
+                                    new TruncatingText()
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Text = set.Title,
+                                        WebFontSize = 36,
+                                        Shadow = true,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft
+                                    },
+                                    new TruncatingText
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Text = set.Artist,
+                                        WebFontSize = 24,
+                                        Shadow = true,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft
                                     }
-                                },
-                                new FluXisSpriteText
-                                {
-                                    Text = set.Title,
-                                    WebFontSize = 40,
-                                    Shadow = true,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft
-                                },
-                                new FluXisSpriteText
-                                {
-                                    Text = set.Artist,
-                                    WebFontSize = 24,
-                                    Shadow = true,
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.CentreLeft
                                 }
                             }
                         }
@@ -195,6 +202,7 @@ public partial class MapSetHeader : CompositeDrawable
                         3 => "PURE",
                         _ => "UNKNOWN"
                     },
+                    WebFontSize = 14,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Colour = Colour4.Black,
