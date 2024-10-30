@@ -7,15 +7,27 @@ public class DrainHealthProcessor : HealthProcessor
 {
     public double HealthDrainRate { get; private set; }
     private double lastTime;
+    private readonly float nps;
 
-    public DrainHealthProcessor(float difficulty)
+    public DrainHealthProcessor(float difficulty, float nps)
         : base(difficulty)
     {
+        this.nps = nps;
     }
 
     public override void AddResult(HitResult result)
     {
-        HealthDrainRate -= GetHealthIncreaseFor(result, Difficulty);
+        if (FailedAlready) return;
+
+        // only decrease health on lower judgements
+        Health.Value += Math.Min(GetHealthIncreaseFor(result, Difficulty), 0);
+
+        if (MeetsFailCondition(result))
+            TriggerFailure();
+
+        HealthDrainRate -= GetHealthIncreaseFor(result, Difficulty) >= 0
+            ? nps * 0.2 * GetHealthIncreaseFor(result, Difficulty) // reduce health drain (good judgements)
+            : nps * 0.3 * GetHealthIncreaseFor(result, Difficulty); // increase health drain (bad judgements)
     }
 
     public override void Update()
@@ -37,13 +49,10 @@ public class DrainHealthProcessor : HealthProcessor
 
         var delta = GameplayClock.CurrentTime - lastTime;
 
-        HealthDrainRate = Math.Clamp(HealthDrainRate, -1f, 2f);
+        HealthDrainRate = Math.Clamp(HealthDrainRate, -5f, 5f);
         Health.Value -= HealthDrainRate * (delta / 1000f);
-        HealthDrainRate += 0.00016f * Difficulty * delta;
+        HealthDrainRate += 0.000006f * nps * Difficulty * delta;
 
         lastTime = GameplayClock.CurrentTime;
-
-        if (Health.Value == 0)
-            TriggerFailure();
     }
 }
