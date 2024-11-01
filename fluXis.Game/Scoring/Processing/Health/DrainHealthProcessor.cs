@@ -16,6 +16,9 @@ public class DrainHealthProcessor : HealthProcessor
     public override void AddResult(HitResult result)
     {
         HealthDrainRate -= GetHealthIncreaseFor(result, Difficulty);
+
+        if (MeetsFailCondition(result))
+            TriggerFailure();
     }
 
     public override void Update()
