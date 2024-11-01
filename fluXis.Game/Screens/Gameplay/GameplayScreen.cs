@@ -52,7 +52,6 @@ using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using fluXis.Shared.Replays;
 using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
 using fluXis.Shared.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -397,13 +396,9 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         processor.Screen = this;
         processor.OnFail = OnDeath;
 
-        if (Mods.Any(m => m is FragileMod))
-            processor.ExtraFailCondition = r => r.Judgement == Judgement.Miss;
+        foreach (var mod in Mods.OfType<IApplicableToHealthProcessor>())
+            mod.Apply(processor);
 
-        if (Mods.Any(m => m is FlawlessMod))
-            processor.ExtraFailCondition = r => r.Judgement < Judgement.Flawless;
-
-        processor.CanFail = !Mods.Any(m => m is NoFailMod);
         return processor;
     }
 

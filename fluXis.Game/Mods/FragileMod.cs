@@ -1,10 +1,12 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Scoring.Processing.Health;
+using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;
 
-public class FragileMod : IMod
+public class FragileMod : IMod, IApplicableToHealthProcessor
 {
     public string Name => "Fragile";
     public string Acronym => "FR";
@@ -14,4 +16,7 @@ public class FragileMod : IMod
     public float ScoreMultiplier => 1f;
     public bool Rankable => true;
     public Type[] IncompatibleMods => new[] { typeof(FlawlessMod), typeof(AutoPlayMod), typeof(NoFailMod) };
+
+    public void Apply(HealthProcessor processor)
+        => processor.ExtraFailCondition = r => r.Judgement == Judgement.Miss;
 }
