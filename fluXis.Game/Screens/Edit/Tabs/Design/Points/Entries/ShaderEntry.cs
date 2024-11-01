@@ -63,11 +63,13 @@ public partial class ShaderEntry : PointListEntry
             {
                 Strength = shader.StartParameters.Strength,
                 Strength2 = shader.StartParameters.Strength2,
+                Strength3 = shader.StartParameters.Strength3
             },
             EndParameters = new ShaderEvent.ShaderParameters
             {
                 Strength = shader.EndParameters.Strength,
-                Strength2 = shader.EndParameters.Strength2
+                Strength2 = shader.EndParameters.Strength2,
+                Strength3 = shader.EndParameters.Strength3
             }
         };
     }
@@ -100,10 +102,8 @@ public partial class ShaderEntry : PointListEntry
             Bindable = new Bindable<bool>(shader.UseStartParams),
             OnStateChanged = enabled =>
             {
-                RequestClose?.Invoke(); // until there is a way to refresh
                 shader.UseStartParams = enabled;
                 Map.Update(shader);
-                OpenSettings();
             }
         };
 
@@ -124,17 +124,7 @@ public partial class ShaderEntry : PointListEntry
                     OpenSettings();
                 }
             },
-            new PointSettingsToggle
-            {
-                Text = "Use Start Value",
-                TooltipText = "Enables whether start values should be used.",
-                Bindable = new Bindable<bool>(shader.UseStartParams),
-                OnStateChanged = enabled =>
-                {
-                    shader.UseStartParams = enabled;
-                    Map.Update(shader);
-                }
-            }
+            startValToggle
         };
 
         // edge cases for shaders with extra/different parameter(s)
