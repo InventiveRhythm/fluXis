@@ -144,7 +144,7 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
     public void LoadMap(RealmMap info)
     {
         // reset stuff
-        AllowLimitedLoop = true;
+        AllowLimitedLoop = false;
         mapInfo = null;
 
         ChangeSource(info.GetTrack() ?? tracks.GetVirtual());

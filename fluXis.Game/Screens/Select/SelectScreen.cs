@@ -489,6 +489,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         menuScroll.Play();
         backgrounds.AddBackgroundFromMap(map);
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
+        clock.AllowLimitedLoop = true;
 
         var item = Items.FirstOrDefault(i => i.Matches(map));
 
@@ -691,6 +692,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void playEnterAnimation()
     {
+        clock.AllowLimitedLoop = true;
         this.FadeOut();
 
         using (BeginDelayedSequence(ENTER_DELAY))
@@ -711,6 +713,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void playExitAnimation()
     {
+        clock.AllowLimitedLoop = false;
         this.FadeOut(FADE_DURATION);
 
         MapList.MoveToX(-100, MOVE_DURATION, Easing.OutQuint);

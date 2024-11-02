@@ -274,7 +274,6 @@ public partial class MultiLobby : MultiSubScreen
 
         clock.VolumeOut(); // because it sets itself to 1
         clock.RestartPoint = 0;
-        clock.AllowLimitedLoop = false;
         backgrounds.AddBackgroundFromMap(localMap);
         startClockMusic();
     }
@@ -382,7 +381,6 @@ public partial class MultiLobby : MultiSubScreen
 
             clock.VolumeOut(); // because it sets itself to 1
             clock.RestartPoint = 0;
-            clock.AllowLimitedLoop = false;
             backgrounds.AddBackgroundFromMap(mapInfo);
             startClockMusic();
         }
