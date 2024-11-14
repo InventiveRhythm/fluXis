@@ -5,8 +5,10 @@ namespace fluXis.Game.Utils;
 
 public static class StringUtils
 {
+#pragma warning disable RS0030
     public static string ToStringInvariant(this float value, string style = "") => value.ToString(style, CultureInfo.InvariantCulture);
     public static string ToStringInvariant(this double value, string style = "") => value.ToString(style, CultureInfo.InvariantCulture);
+#pragma warning restore RS0030
 
     public static int ToIntInvariant(this string value) => int.Parse(value, CultureInfo.InvariantCulture);
     public static bool TryParseIntInvariant(this string value, out int result) => int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out result);

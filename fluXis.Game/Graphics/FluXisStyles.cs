@@ -17,6 +17,7 @@ public static class FluXisStyles
     public static EdgeEffectParameters ShadowLarge => createShadow(20, 2);
     public static EdgeEffectParameters ShadowLargeNoOffset => createShadow(20, 0);
 
+#pragma warning disable RS0030
     public static EdgeEffectParameters SnowShadow => new()
     {
         Type = EdgeEffectType.Shadow,
@@ -41,4 +42,5 @@ public static class FluXisStyles
             Radius = radius
         };
     }
+#pragma warning restore RS0030
 }

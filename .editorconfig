@@ -200,11 +200,3 @@ dotnet_diagnostic.IDE0052.severity = silent
 dotnet_diagnostic.IDE0067.severity = none
 dotnet_diagnostic.IDE0068.severity = none
 dotnet_diagnostic.IDE0069.severity = none
-
-# Only allow the standard .ToString() method here
-[StringUtils.cs]
-dotnet_diagnostic.RS0030.severity = none
-
-# Only allow the standard .ToString() method here
-[FluXisStyles.cs]
-dotnet_diagnostic.RS0030.severity = none
