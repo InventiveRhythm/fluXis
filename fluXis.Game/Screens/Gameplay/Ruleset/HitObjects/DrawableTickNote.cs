@@ -25,6 +25,9 @@ public partial class DrawableTickNote : DrawableHitObject
     {
         base.Update();
 
+        if (Data.VisualLane > 1)
+            X = ObjectManager.PositionAtLane(Data.VisualLane);
+
         if (isBeingHeld)
             UpdateJudgement(true);
     }

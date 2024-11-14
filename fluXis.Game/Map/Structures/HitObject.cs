@@ -12,6 +12,12 @@ public class HitObject : ITimedObject
     [JsonProperty("lane")]
     public int Lane { get; set; }
 
+    /// <summary>
+    /// the visual position of the note. (only applies to tick notes)
+    /// </summary>
+    [JsonProperty("visual-lane")]
+    public float VisualLane { get; set; }
+
     [JsonProperty("holdtime")]
     public double HoldTime { get; set; }
 
@@ -53,6 +59,7 @@ public class HitObject : ITimedObject
         {
             Time = Time,
             Lane = Lane,
+            VisualLane = VisualLane,
             HoldTime = HoldTime,
             HitSound = HitSound,
             Type = Type

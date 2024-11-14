@@ -176,19 +176,23 @@ public partial class HitObjectManager : Container<DrawableHitObject>
         return float.IsFinite(y) ? y : 0;
     }
 
-    public float PositionAtLane(int lane)
+    public float PositionAtLane(float lane)
     {
         var receptors = playfield.Receptors;
         var x = 0f;
 
-        for (int i = 1; i < lane; i++)
+        var frac = lane % 1;
+        var colWidth = skinManager.SkinJson.GetKeymode(KeyCount).ColumnWidth;
+
+        for (int i = 1; i < (int)lane; i++)
         {
             if (i > receptors.Count)
-                x += skinManager.SkinJson.GetKeymode(KeyCount).ColumnWidth;
+                x += colWidth;
             else
                 x += receptors[i - 1].Width;
         }
 
+        x += frac * colWidth;
         return x;
     }
 
