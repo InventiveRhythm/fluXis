@@ -1,3 +1,4 @@
+using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,6 +10,8 @@ public partial class TimingLine : Box
 {
     [Resolved]
     private Playfield playfield { get; set; }
+
+    private HitObjectColumn column => playfield.Manager[0];
 
     public double OriginalTime { get; }
     private double scrollVelocityTime;
@@ -26,12 +29,12 @@ public partial class TimingLine : Box
         Height = 3;
         Origin = Anchor.BottomLeft;
 
-        scrollVelocityTime = playfield.Manager.ScrollVelocityPositionFromTime(OriginalTime);
+        scrollVelocityTime = column.ScrollVelocityPositionFromTime(OriginalTime);
         easing = playfield.Manager.EasingAtTime(OriginalTime);
     }
 
     protected override void Update()
     {
-        Y = playfield.Manager.PositionAtTime(scrollVelocityTime, easing);
+        Y = column.PositionAtTime(scrollVelocityTime, easing);
     }
 }

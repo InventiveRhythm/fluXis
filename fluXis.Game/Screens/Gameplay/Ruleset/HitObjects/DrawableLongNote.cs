@@ -57,8 +57,8 @@ public partial class DrawableLongNote : DrawableHitObject
 
         if (ObjectManager.UseSnapColors)
         {
-            var startIdx = ObjectManager.GetSnapIndex(Data.Time);
-            var endIdx = ObjectManager.GetSnapIndex(Data.EndTime);
+            var startIdx = Column.GetSnapIndex(Data.Time);
+            var endIdx = Column.GetSnapIndex(Data.EndTime);
 
             if (bodyPiece is ICanHaveSnapColor colorable)
                 colorable.ApplySnapColor(startIdx, endIdx);
@@ -106,7 +106,7 @@ public partial class DrawableLongNote : DrawableHitObject
         if (IsBeingHeld.Value)
             Y = ObjectManager.HitPosition;
 
-        var endY = ObjectManager.PositionAtTime(ScrollVelocityEndTime, endEasing);
+        var endY = Column.PositionAtTime(ScrollVelocityEndTime, endEasing);
         var height = Y - endY;
 
         bodyPiece.Height = height;
@@ -116,7 +116,7 @@ public partial class DrawableLongNote : DrawableHitObject
 
     public override void OnPressed(FluXisGameplayKeybind key)
     {
-        if (key != Keybind || !ObjectManager.IsFirstInColumn(this))
+        if (key != Keybind || !Column.IsFirst(this))
             return;
 
         if (!headPiece.Hittable || missed)

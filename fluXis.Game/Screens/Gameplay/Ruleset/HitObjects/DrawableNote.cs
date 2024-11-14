@@ -27,7 +27,7 @@ public partial class DrawableNote : DrawableHitObject
         if (ObjectManager.UseSnapColors)
         {
             var child = InternalChild as ICanHaveSnapColor;
-            child?.ApplySnapColor(ObjectManager.GetSnapIndex(Data.Time), 0);
+            child?.ApplySnapColor(Column.GetSnapIndex(Data.Time), 0);
         }
     }
 
@@ -47,7 +47,7 @@ public partial class DrawableNote : DrawableHitObject
 
     public override void OnPressed(FluXisGameplayKeybind key)
     {
-        if (key != Keybind || !ObjectManager.IsFirstInColumn(this))
+        if (key != Keybind || !Column.IsFirst(this))
             return;
 
         UpdateJudgement(true);

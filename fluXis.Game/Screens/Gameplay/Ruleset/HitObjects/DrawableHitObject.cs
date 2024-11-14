@@ -19,6 +19,9 @@ public partial class DrawableHitObject : CompositeDrawable
     protected HitObjectManager ObjectManager { get; private set; }
 
     [Resolved]
+    protected HitObjectColumn Column { get; private set; }
+
+    [Resolved]
     protected GameplayInput Input { get; private set; }
 
     [Resolved]
@@ -49,8 +52,8 @@ public partial class DrawableHitObject : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         Origin = Anchor.BottomLeft;
 
-        ScrollVelocityTime = ObjectManager.ScrollVelocityPositionFromTime(Data.Time);
-        ScrollVelocityEndTime = ObjectManager.ScrollVelocityPositionFromTime(Data.EndTime);
+        ScrollVelocityTime = Column.ScrollVelocityPositionFromTime(Data.Time);
+        ScrollVelocityEndTime = Column.ScrollVelocityPositionFromTime(Data.EndTime);
         easing = ObjectManager.EasingAtTime(Data.Time);
     }
 
@@ -67,7 +70,7 @@ public partial class DrawableHitObject : CompositeDrawable
         base.Update();
 
         X = ObjectManager.PositionAtLane(Data.Lane);
-        Y = ObjectManager.PositionAtTime(ScrollVelocityTime, easing);
+        Y = Column.PositionAtTime(ScrollVelocityTime, easing);
         Width = ObjectManager.WidthOfLane(Data.Lane);
     }
 

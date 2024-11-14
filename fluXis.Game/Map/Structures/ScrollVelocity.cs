@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Structures;
 
-public class ScrollVelocity : ITimedObject
+public class ScrollVelocity : ITimedObject, IHasLaneMask
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -11,12 +12,6 @@ public class ScrollVelocity : ITimedObject
     [JsonProperty("multiplier")]
     public double Multiplier { get; set; }
 
-    public ScrollVelocity Copy()
-    {
-        return new ScrollVelocity
-        {
-            Time = Time,
-            Multiplier = Multiplier
-        };
-    }
+    [JsonProperty("mask")]
+    public List<bool> LaneMask { get; set; } = new();
 }

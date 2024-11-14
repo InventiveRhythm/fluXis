@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Map;
+using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -14,6 +15,8 @@ public partial class TimingLineManager : CompositeDrawable
 {
     [Resolved]
     private Playfield playfield { get; set; }
+
+    private HitObjectColumn column => playfield.Manager[0];
 
     private Bindable<bool> showTimingLines;
 
@@ -67,7 +70,7 @@ public partial class TimingLineManager : CompositeDrawable
 
     protected override void Update()
     {
-        while (futureTimingLines is { Count: > 0 } && playfield.Manager.ShouldDisplay(futureTimingLines[0].OriginalTime))
+        while (futureTimingLines is { Count: > 0 } && column.ShouldDisplay(futureTimingLines[0].OriginalTime))
         {
             TimingLine line = futureTimingLines[0];
             futureTimingLines.RemoveAt(0);
