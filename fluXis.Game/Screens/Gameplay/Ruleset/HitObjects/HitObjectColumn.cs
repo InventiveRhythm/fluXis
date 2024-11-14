@@ -12,7 +12,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osu.Framework.Utils;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
@@ -285,8 +284,6 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
         if (index == 0)
             return time;
-
-        Logger.Log($"{time}:{Lane} {index}");
 
         var prev = svPoints[index - 1];
 
