@@ -3,5 +3,5 @@
 public enum DualMode
 {
     Disabled,
-    Enabled
+    Mirrored
 }

@@ -38,8 +38,8 @@ public class MapInfo
     public float AccuracyDifficulty { get; set; } = 8;
     public float HealthDifficulty { get; set; } = 8;
 
-    [JsonIgnore]
-    public DualMode DualMode => DualMode.Disabled;
+    [JsonProperty("dual")]
+    public DualMode DualMode { get; set; } = DualMode.Disabled;
 
     [JsonIgnore]
     public bool IsDual => DualMode > DualMode.Disabled;

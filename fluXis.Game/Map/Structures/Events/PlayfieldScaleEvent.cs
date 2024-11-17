@@ -23,6 +23,9 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
     [JsonProperty("ease")]
     public Easing Easing { get; set; } = Easing.OutQuint;
 
+    [JsonProperty("playfield")]
+    public int PlayfieldIndex { get; set; }
+
     public void Apply(Playfield playfield)
     {
         var yScale = ScaleY;

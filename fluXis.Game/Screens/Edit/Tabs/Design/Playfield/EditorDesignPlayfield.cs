@@ -1,5 +1,5 @@
 using System.Linq;
-using fluXis.Game.Map.Structures.Events;
+using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Skinning;
@@ -17,12 +17,20 @@ public partial class EditorDesignPlayfield : CompositeDrawable
     private EditorMap map { get; set; }
 
     [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
+    [Resolved]
     private EditorClock clock { get; set; }
 
     public FillFlowContainer<EditorDesignReceptor> Receptors { get; private set; }
     private Drawable hitline;
 
-    private LaneSwitchManager laneSwitchManager;
+    private int index { get; }
+
+    public EditorDesignPlayfield(int index)
+    {
+        this.index = index;
+    }
 
     [BackgroundDependencyLoader]
     private void load(SkinManager skinManager)
@@ -33,15 +41,8 @@ public partial class EditorDesignPlayfield : CompositeDrawable
         Origin = Anchor.Centre;
         AlwaysPresent = true;
 
-        laneSwitchManager = new LaneSwitchManager(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount)
-        {
-            KeepTransforms = true,
-            Clock = clock
-        };
-
         InternalChildren = new[]
         {
-            laneSwitchManager,
             new Stage(),
             new EditorTimingLines(),
             Receptors = new FillFlowContainer<EditorDesignReceptor>
@@ -64,32 +65,13 @@ public partial class EditorDesignPlayfield : CompositeDrawable
     {
         base.LoadComplete();
 
-        map.LaneSwitchEventAdded += reloadLaneSwitches;
-        map.LaneSwitchEventUpdated += reloadLaneSwitches;
-        map.LaneSwitchEventRemoved += reloadLaneSwitches;
-
         reload();
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        base.Dispose(isDisposing);
-
-        map.LaneSwitchEventAdded -= reloadLaneSwitches;
-        map.LaneSwitchEventUpdated -= reloadLaneSwitches;
-        map.LaneSwitchEventRemoved -= reloadLaneSwitches;
     }
 
     private void reload()
     {
-        reloadLaneSwitches(null);
         Receptors.Clear();
         Receptors.ChildrenEnumerable = Enumerable.Range(0, map.RealmMap.KeyCount).Select(i => new EditorDesignReceptor(i, laneSwitchManager));
-    }
-
-    private void reloadLaneSwitches(LaneSwitchEvent _)
-    {
-        laneSwitchManager.Rebuild(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount);
     }
 
     protected override void Update()
@@ -104,9 +86,17 @@ public partial class EditorDesignPlayfield : CompositeDrawable
         updateAlpha();
     }
 
+    private bool applies(IApplicableToPlayfield ev)
+    {
+        if (ev.PlayfieldIndex == 0)
+            return true;
+
+        return ev.PlayfieldIndex == index + 1;
+    }
+
     private void updateRotation()
     {
-        var current = map.MapEvents.PlayfieldRotateEvents.LastOrDefault(e => e.Time <= clock.CurrentTime);
+        var current = map.MapEvents.PlayfieldRotateEvents.Where(applies).LastOrDefault(e => e.Time <= clock.CurrentTime);
 
         if (current == null)
         {
@@ -123,7 +113,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
             return;
         }
 
-        var previous = map.MapEvents.PlayfieldRotateEvents.LastOrDefault(e => e.Time < current.Time);
+        var previous = map.MapEvents.PlayfieldRotateEvents.Where(applies).LastOrDefault(e => e.Time < current.Time);
         var start = previous?.Roll ?? 0;
 
         if (progress < 0)
@@ -137,7 +127,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
 
     private void updateAlpha()
     {
-        var current = map.MapEvents.PlayfieldFadeEvents.LastOrDefault(e => e.Time <= clock.CurrentTime);
+        var current = map.MapEvents.PlayfieldFadeEvents.Where(applies).LastOrDefault(e => e.Time <= clock.CurrentTime);
 
         if (current == null)
         {
@@ -154,7 +144,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
             return;
         }
 
-        var previous = map.MapEvents.PlayfieldFadeEvents.LastOrDefault(e => e.Time < current.Time);
+        var previous = map.MapEvents.PlayfieldFadeEvents.Where(applies).LastOrDefault(e => e.Time < current.Time);
         var start = previous?.Alpha ?? 1;
 
         if (progress < 0)
@@ -168,7 +158,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
 
     private void updateScale()
     {
-        var curScale = map.MapEvents.PlayfieldScaleEvents.LastOrDefault(e => e.Time <= clock.CurrentTime);
+        var curScale = map.MapEvents.PlayfieldScaleEvents.Where(applies).LastOrDefault(e => e.Time <= clock.CurrentTime);
 
         if (curScale == null)
         {
@@ -185,7 +175,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
             return;
         }
 
-        var prevScale = map.MapEvents.PlayfieldScaleEvents.LastOrDefault(e => e.Time < curScale.Time);
+        var prevScale = map.MapEvents.PlayfieldScaleEvents.Where(applies).LastOrDefault(e => e.Time < curScale.Time);
         var prev = Vector2.One;
 
         if (prevScale != null)
@@ -202,7 +192,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
 
     private void updatePosition()
     {
-        var curMove = map.MapEvents.PlayfieldMoveEvents.LastOrDefault(e => e.Time <= clock.CurrentTime);
+        var curMove = map.MapEvents.PlayfieldMoveEvents.Where(applies).LastOrDefault(e => e.Time <= clock.CurrentTime);
 
         if (curMove == null)
         {
@@ -219,7 +209,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
             return;
         }
 
-        var prevMove = map.MapEvents.PlayfieldMoveEvents.LastOrDefault(e => e.Time < curMove.Time);
+        var prevMove = map.MapEvents.PlayfieldMoveEvents.Where(applies).LastOrDefault(e => e.Time < curMove.Time);
         var prev = Vector2.One;
 
         if (prevMove != null)

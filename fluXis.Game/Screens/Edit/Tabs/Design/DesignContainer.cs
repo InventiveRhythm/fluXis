@@ -69,7 +69,7 @@ public partial class DesignContainer : EditorTabContainer
                         Alpha = Editor.BindableBackgroundDim.Value
                     },
                     new EditorFlashLayer { InBackground = true },
-                    new EditorDesignPlayfield(),
+                    new EditorDesignPlayfieldManager(Map.MapInfo.DualMode),
                     new EditorFlashLayer()
                 })
             }
