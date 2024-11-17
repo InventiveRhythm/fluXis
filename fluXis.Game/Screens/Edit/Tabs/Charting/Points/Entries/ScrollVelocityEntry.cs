@@ -52,7 +52,7 @@ public partial class ScrollVelocityEntry : PointListEntry
                 TooltipText = "The speed to multiply the scroll velocity by.",
                 ExtraText = "x",
                 TextBoxWidth = 195,
-                DefaultText = sv.Multiplier.ToStringInvariant("0.00"),
+                DefaultText = sv.Multiplier.ToStringInvariant("0.0000"),
                 OnTextChanged = box =>
                 {
                     if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result))
