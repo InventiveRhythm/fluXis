@@ -139,8 +139,8 @@ public partial class FluXisTextBox : BasicTextBox
     {
         var container = new FallingDownContainer
         {
-            Anchor = Anchor.CentreLeft,
-            Origin = Anchor.CentreLeft
+            Anchor = Anchor.TopLeft,
+            Origin = Anchor.TopLeft
         };
 
         if (IsPassword)
