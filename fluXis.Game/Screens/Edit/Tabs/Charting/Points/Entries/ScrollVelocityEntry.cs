@@ -27,7 +27,8 @@ public partial class ScrollVelocityEntry : PointListEntry
     public override ITimedObject CreateClone() => new ScrollVelocity
     {
         Time = Object.Time,
-        Multiplier = sv.Multiplier
+        Multiplier = sv.Multiplier,
+        LaneMask = sv.LaneMask.ToList()
     };
 
     protected override Drawable[] CreateValueContent()
