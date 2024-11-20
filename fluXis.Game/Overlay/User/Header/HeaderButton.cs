@@ -2,6 +2,7 @@ using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -22,8 +23,8 @@ public partial class HeaderButton : CircularContainer
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -40,16 +41,8 @@ public partial class HeaderButton : CircularContainer
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -64,7 +57,7 @@ public partial class HeaderButton : CircularContainer
                 Spacing = new Vector2(10),
                 Children = new Drawable[]
                 {
-                    new SpriteIcon
+                    new FluXisSpriteIcon
                     {
                         Icon = Icon,
                         Size = new Vector2(20)
@@ -85,13 +78,13 @@ public partial class HeaderButton : CircularContainer
         samples.Hover();
         if (Action == null) return false;
 
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -100,7 +93,7 @@ public partial class HeaderButton : CircularContainer
 
         if (Action == null) return false;
 
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         Action?.Invoke();
         return true;
     }

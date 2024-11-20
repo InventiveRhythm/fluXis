@@ -18,7 +18,6 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
@@ -160,7 +159,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                             Padding = new MarginPadding { Right = -1 }, // to fix the 1px seam
                             Children = new Drawable[]
                             {
-                                new RoundedOutline()
+                                new RoundedOutline
                                 {
                                     BorderColour = ColourInfo.GradientHorizontal(color.Opacity(0), color),
                                 },
@@ -179,7 +178,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Child = new SpriteIcon
+                Child = new FluXisSpriteIcon
                 {
                     X = -2,
                     Icon = FontAwesome6.Solid.AngleLeft,

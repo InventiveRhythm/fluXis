@@ -56,7 +56,7 @@ public partial class EditorLoader : FluXisScreen
 
         InternalChildren = new Drawable[]
         {
-            circle = new CircularContainer()
+            circle = new CircularContainer
             {
                 Size = new Vector2(circle_size),
                 Scale = new Vector2(0),

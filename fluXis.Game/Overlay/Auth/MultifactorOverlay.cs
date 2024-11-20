@@ -40,7 +40,7 @@ public partial class MultifactorOverlay : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new FullInputBlockingContainer()
+            new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 OnClickAction = Hide,

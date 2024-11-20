@@ -36,7 +36,7 @@ public partial class DropdownIcon : Container
             CornerRadius = 5,
             Children = new Drawable[]
             {
-                icon = new SpriteIcon
+                icon = new FluXisSpriteIcon
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,

@@ -2,6 +2,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Screens.Edit.BottomBar.Snap;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
@@ -10,7 +11,6 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
@@ -34,8 +34,8 @@ public partial class SnapControl : CompositeDrawable, IHasPopover, IHasTooltip
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -44,16 +44,8 @@ public partial class SnapControl : CompositeDrawable, IHasPopover, IHasTooltip
 
         InternalChildren = new Drawable[]
         {
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             text = new FluXisSpriteText
             {
                 WebFontSize = 16,
@@ -79,20 +71,20 @@ public partial class SnapControl : CompositeDrawable, IHasPopover, IHasTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         this.ShowPopover();
         return true;
     }

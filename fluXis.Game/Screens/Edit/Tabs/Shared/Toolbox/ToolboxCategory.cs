@@ -61,7 +61,7 @@ public partial class ToolboxCategory : Container
                             Spacing = new Vector2(6),
                             Children = new Drawable[]
                             {
-                                new SpriteIcon
+                                new FluXisSpriteIcon
                                 {
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,

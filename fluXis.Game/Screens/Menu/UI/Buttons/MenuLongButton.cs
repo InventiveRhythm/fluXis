@@ -1,7 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI.Buttons;
@@ -36,7 +35,7 @@ public partial class MenuLongButton : MenuButtonBase
                     {
                         new[]
                         {
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Icon = Icon,
                                 Size = new Vector2(32),
@@ -56,7 +55,7 @@ public partial class MenuLongButton : MenuButtonBase
                                 Spacing = new Vector2(-6),
                                 Children = new Drawable[]
                                 {
-                                    new TruncatingText()
+                                    new TruncatingText
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Text = Text,

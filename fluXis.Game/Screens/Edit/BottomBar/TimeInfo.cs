@@ -1,11 +1,11 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK;
@@ -29,8 +29,8 @@ public partial class TimeInfo : Container
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private FluXisSpriteText timeText;
     private FluXisSpriteText bpmText;
 
@@ -41,16 +41,8 @@ public partial class TimeInfo : Container
 
         Children = new Drawable[]
         {
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.Both,
@@ -87,13 +79,13 @@ public partial class TimeInfo : Container
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -102,7 +94,7 @@ public partial class TimeInfo : Container
         notifications.SendSmallText("Copied current time to clipboard.");
 
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
 
         return true;
     }

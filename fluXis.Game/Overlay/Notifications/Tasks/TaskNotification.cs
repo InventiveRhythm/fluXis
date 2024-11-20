@@ -95,7 +95,7 @@ public partial class TaskNotification : CompositeDrawable
                                             RelativeSizeAxes = Axes.Both,
                                             Colour = FluXisColors.Background4
                                         },
-                                        icon = new SpriteIcon
+                                        icon = new FluXisSpriteIcon
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,

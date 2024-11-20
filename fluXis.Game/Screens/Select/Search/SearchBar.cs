@@ -6,7 +6,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -96,7 +95,7 @@ public partial class SearchBar : Container
                                     Colour = FluXisColors.Background3
                                 }
                             },
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,

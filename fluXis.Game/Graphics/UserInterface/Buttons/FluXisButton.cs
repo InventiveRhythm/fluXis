@@ -57,9 +57,9 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
 
     public Bindable<bool> EnabledBindable => base.Enabled;
 
-    private Box hoverBox;
+    private HoverLayer hoverBox;
     private Box holdBox;
-    private Box flashBox;
+    private FlashLayer flashBox;
     private CircularContainer content;
 
     private HoldToConfirmHandler holdToConfirmHandler;
@@ -87,22 +87,14 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color
                 },
-                hoverBox = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                hoverBox = new HoverLayer(),
                 holdBox = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Alpha = .4f,
                     Width = 0
                 },
-                flashBox = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                flashBox = new FlashLayer(),
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -142,7 +134,7 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
 
     private void triggerClick(ClickEvent e = null)
     {
-        flashBox.FadeOutFromOne(1000, Easing.OutQuint);
+        flashBox.Show();
         base.OnClick(e);
     }
 
@@ -151,13 +143,13 @@ public partial class FluXisButton : ClickableContainer, IHasTooltip
         samples.Hover();
         if (!Enabled) return false;
 
-        hoverBox.FadeTo(0.2f, 50);
+        hoverBox.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hoverBox.FadeTo(0, 200);
+        hoverBox.Hide();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

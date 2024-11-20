@@ -57,7 +57,7 @@ public partial class TestMapBrowser : FluXisTestScene
 
     private APIMapSet create(Action<APIMapSet> func = null)
     {
-        var set = new APIMapSet()
+        var set = new APIMapSet
         {
             ID = 1,
             Creator = APIUser.CreateUnknown(1),

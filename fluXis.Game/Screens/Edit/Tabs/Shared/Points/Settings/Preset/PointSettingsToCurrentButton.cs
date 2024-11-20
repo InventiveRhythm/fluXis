@@ -1,13 +1,13 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
@@ -27,8 +27,8 @@ public partial class PointSettingsToCurrentButton : Container, IHasTooltip
     public Action<double> Action { get; init; }
 
     private Container content;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -49,17 +49,9 @@ public partial class PointSettingsToCurrentButton : Container, IHasTooltip
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background3
                 },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                new SpriteIcon
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
+                new FluXisSpriteIcon
                 {
                     Size = new Vector2(16),
                     Anchor = Anchor.Centre,
@@ -73,7 +65,7 @@ public partial class PointSettingsToCurrentButton : Container, IHasTooltip
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         Action?.Invoke(clock.CurrentTime);
         return base.OnClick(e);
     }
@@ -81,13 +73,13 @@ public partial class PointSettingsToCurrentButton : Container, IHasTooltip
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

@@ -1,5 +1,5 @@
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Menu.UI.Buttons;
@@ -13,7 +13,7 @@ public partial class MenuSmallButton : MenuButtonBase
     {
         return new Drawable[]
         {
-            new SpriteIcon
+            new FluXisSpriteIcon
             {
                 Icon = Icon,
                 Size = new Vector2(32),

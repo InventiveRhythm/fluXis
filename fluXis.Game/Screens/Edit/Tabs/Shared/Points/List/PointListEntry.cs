@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Actions;
@@ -81,7 +82,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     [Resolved]
     private EditorClock clock { get; set; }
 
-    private Box hover;
+    private HoverLayer hover;
     private Circle indicator;
     private FluXisSpriteText timeText;
     private FillFlowContainer valueFlow;
@@ -109,12 +110,7 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
                 Alpha = 0,
                 AlwaysPresent = true
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Color,
-                Alpha = 0
-            },
+            hover = new HoverLayer { Colour = Color },
             indicator = new Circle
             {
                 Size = new Vector2(4, 0),
@@ -233,13 +229,13 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)

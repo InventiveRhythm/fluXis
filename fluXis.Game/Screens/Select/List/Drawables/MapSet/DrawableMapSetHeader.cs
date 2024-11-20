@@ -153,7 +153,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                             Padding = new MarginPadding { Right = -1 }, // to fix the 1px seam
                             Children = new Drawable[]
                             {
-                                new RoundedOutline()
+                                new RoundedOutline
                                 {
                                     BorderColour = ColourInfo.GradientHorizontal(color.Opacity(0), color),
                                 },
@@ -172,7 +172,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
-                Child = new SpriteIcon
+                Child = new FluXisSpriteIcon
                 {
                     X = -2,
                     Icon = FontAwesome6.Solid.AngleLeft,
@@ -451,7 +451,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                     Colour = FluXisColors.Background2,
                     Alpha = .5f
                 },
-                icon = new SpriteIcon
+                icon = new FluXisSpriteIcon
                 {
                     Icon = FontAwesome6.Solid.ArrowsRotate,
                     Size = new Vector2(32),

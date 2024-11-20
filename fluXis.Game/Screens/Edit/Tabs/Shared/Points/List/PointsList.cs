@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Actions;
@@ -114,7 +115,7 @@ public abstract partial class PointsList : Container
                                     Spacing = new Vector2(8)
                                 }
                             },
-                            iconUp = new SpriteIcon
+                            iconUp = new FluXisSpriteIcon
                             {
                                 Icon = FontAwesome6.Solid.AngleUp,
                                 Size = new Vector2(16),
@@ -122,7 +123,7 @@ public abstract partial class PointsList : Container
                                 Origin = Anchor.TopCentre,
                                 Alpha = 0
                             },
-                            iconDown = new SpriteIcon
+                            iconDown = new FluXisSpriteIcon
                             {
                                 Icon = FontAwesome6.Solid.AngleDown,
                                 Size = new Vector2(16),
@@ -355,7 +356,7 @@ public abstract partial class PointsList : Container
             private string text { get; }
             private Action create { get; }
 
-            private Box hover;
+            private HoverLayer hover;
 
             public Entry(string text, Colour4 color, Action create)
             {
@@ -372,11 +373,7 @@ public abstract partial class PointsList : Container
 
                 InternalChildren = new Drawable[]
                 {
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
                     new FluXisSpriteText
                     {
                         Margin = new MarginPadding(12),
@@ -390,13 +387,13 @@ public abstract partial class PointsList : Container
 
             protected override bool OnHover(HoverEvent e)
             {
-                hover.FadeTo(.2f, 50);
+                hover.Show();
                 return true;
             }
 
             protected override void OnHoverLost(HoverLostEvent e)
             {
-                hover.FadeOut(200);
+                hover.Hide();
             }
 
             protected override bool OnClick(ClickEvent e)
@@ -430,7 +427,7 @@ public abstract partial class PointsList : Container
         protected Action Action { get; init; }
 
         protected Box Background { get; private set; }
-        protected Box Hover { get; private set; }
+        protected HoverLayer Hover { get; private set; }
         protected SpriteIcon Icon { get; private set; }
 
         public PointsListIconButton(Action action)
@@ -451,12 +448,8 @@ public abstract partial class PointsList : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background3
                 },
-                Hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                Icon = new SpriteIcon
+                Hover = new HoverLayer(),
+                Icon = new FluXisSpriteIcon
                 {
                     Icon = ButtonIcon,
                     Size = new Vector2(16),
@@ -469,9 +462,9 @@ public abstract partial class PointsList : Container
         protected virtual void UpdateColors(bool hovered)
         {
             if (hovered)
-                Hover.FadeTo(.2f, 50);
+                Hover.Show();
             else
-                Hover.FadeOut(200);
+                Hover.Hide();
         }
 
         protected override bool OnClick(ClickEvent e)

@@ -55,8 +55,8 @@ public partial class CornerButton : Container
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     private SpriteIcon icon;
     private FluXisSpriteText text;
@@ -89,16 +89,8 @@ public partial class CornerButton : Container
                 RelativeSizeAxes = Axes.Both,
                 Colour = ButtonColor
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -119,7 +111,7 @@ public partial class CornerButton : Container
                     Spacing = new Vector2(8),
                     Children = new Drawable[]
                     {
-                        icon = new SpriteIcon
+                        icon = new FluXisSpriteIcon
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
@@ -160,14 +152,14 @@ public partial class CornerButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

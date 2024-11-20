@@ -122,6 +122,6 @@ public partial class PlayerListEntryContent : CompositeDrawable
             _ => "Not Ready"
         };
 
-        stateText.Colour = FluXisColors.IsBright(stateBackground.Colour) ? Colour4.Black : Colour4.White;
+        stateText.Colour = FluXisColors.IsBright(stateBackground.Colour) ? Colour4.Black : FluXisColors.Text;
     }
 }

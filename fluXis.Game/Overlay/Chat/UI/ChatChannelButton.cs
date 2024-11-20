@@ -1,5 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Online.Chat;
@@ -35,8 +36,8 @@ public partial class ChatChannelButton : Container, IHasContextMenu
     [Resolved]
     private ChatClient client { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private Container content;
 
     public ChatChannelButton(ChatChannel channel, Bindable<string> bind)
@@ -67,16 +68,8 @@ public partial class ChatChannelButton : Container, IHasContextMenu
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background3
                     },
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    flash = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
                     new FillFlowContainer
                     {
                         AutoSizeAxes = Axes.Both,
@@ -87,7 +80,7 @@ public partial class ChatChannelButton : Container, IHasContextMenu
                         Origin = Anchor.CentreLeft,
                         Children = new Drawable[]
                         {
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Icon = Icon,
                                 Size = new Vector2(20),
@@ -110,7 +103,7 @@ public partial class ChatChannelButton : Container, IHasContextMenu
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         samples.Click();
         bind.Value = Channel.Name;
         return true;
@@ -132,14 +125,14 @@ public partial class ChatChannelButton : Container, IHasContextMenu
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     private void leave() => client.LeaveChannel(Channel.Name);

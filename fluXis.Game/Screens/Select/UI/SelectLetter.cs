@@ -1,4 +1,5 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -45,6 +46,6 @@ public partial class SelectLetter : CompositeDrawable
         this.FadeIn(200).Delay(1000).FadeOut(300);
 
         if (!found)
-            text.FadeColour(Colour4.FromHex("#FF5555")).FadeColour(Colour4.White, 1000);
+            text.FadeColour(Colour4.FromHex("#FF5555")).FadeColour(FluXisColors.Text, 1000);
     }
 }

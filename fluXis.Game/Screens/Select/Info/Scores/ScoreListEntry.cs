@@ -27,7 +27,6 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -258,7 +257,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                                                             Alpha = .8f,
                                                             Children = new Drawable[]
                                                             {
-                                                                new SpriteIcon
+                                                                new FluXisSpriteIcon
                                                                 {
                                                                     Size = new Vector2(12),
                                                                     Icon = FontAwesome6.Regular.Clock,
@@ -424,7 +423,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
                         Direction = FillDirection.Horizontal,
                         Children = new Drawable[]
                         {
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Size = new Vector2(12),
                                 Icon = mod.Icon,

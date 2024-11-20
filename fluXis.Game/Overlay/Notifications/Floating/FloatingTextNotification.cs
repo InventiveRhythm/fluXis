@@ -60,7 +60,7 @@ public partial class FloatingTextNotification : FloatingNotification
                         Colour = FluXisColors.Background2
                     }
                 },
-                new Container()
+                new Container
                 {
                     Width = 48,
                     AutoSizeAxes = Axes.X,
@@ -84,7 +84,7 @@ public partial class FloatingTextNotification : FloatingNotification
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = AccentColor
                                 },
-                                new SpriteIcon
+                                new FluXisSpriteIcon
                                 {
                                     Icon = Icon,
                                     Size = new Vector2(20),

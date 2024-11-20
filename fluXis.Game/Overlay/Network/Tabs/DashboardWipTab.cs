@@ -2,7 +2,6 @@ using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Overlay.Network.Tabs;
@@ -22,7 +21,7 @@ public abstract partial class DashboardWipTab : DashboardTab
             Direction = FillDirection.Vertical,
             Children = new Drawable[]
             {
-                new SpriteIcon
+                new FluXisSpriteIcon
                 {
                     Icon = Icon,
                     Size = new Vector2(38),

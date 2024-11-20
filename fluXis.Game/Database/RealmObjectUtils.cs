@@ -47,7 +47,7 @@ public static class RealmObjectUtils
                  }
                  else
                  {
-                     var newMap = new RealmMap()
+                     var newMap = new RealmMap
                      {
                          ID = map.ID,
                          Metadata = new RealmMapMetadata(),

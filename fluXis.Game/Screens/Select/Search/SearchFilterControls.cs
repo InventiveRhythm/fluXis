@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Localization;
 using fluXis.Game.Utils;
@@ -12,7 +13,6 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
@@ -176,7 +176,7 @@ public partial class SearchFilterControls : CompositeDrawable
                                             RelativeSizeAxes = Axes.Both,
                                             Colour = FluXisColors.Background3
                                         },
-                                        new TruncatingText()
+                                        new TruncatingText
                                         {
                                             Text = text,
                                             WebFontSize = 14,
@@ -216,7 +216,7 @@ public partial class SearchFilterControls : CompositeDrawable
         {
             private Action action { get; }
 
-            private Box hover { get; }
+            private HoverLayer hover { get; }
 
             public Entry(T value, Action action)
             {
@@ -227,11 +227,7 @@ public partial class SearchFilterControls : CompositeDrawable
 
                 InternalChildren = new Drawable[]
                 {
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
                     new FillFlowContainer
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -240,7 +236,7 @@ public partial class SearchFilterControls : CompositeDrawable
                         Spacing = new Vector2(4),
                         Children = new Drawable[]
                         {
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Icon = value.GetIcon(),
                                 Size = new Vector2(16),
@@ -263,13 +259,13 @@ public partial class SearchFilterControls : CompositeDrawable
 
             protected override bool OnHover(HoverEvent e)
             {
-                hover.FadeTo(.2f, 50);
+                hover.Show();
                 return true;
             }
 
             protected override void OnHoverLost(HoverLostEvent e)
             {
-                hover.FadeOut(200);
+                hover.Hide();
             }
 
             protected override bool OnClick(ClickEvent e)

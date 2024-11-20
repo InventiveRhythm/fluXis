@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -29,7 +30,7 @@ public partial class MenuLinkButton : Container, IHasTooltip
         Size = new Vector2(40);
         Alpha = .6f;
 
-        Child = icon = new SpriteIcon
+        Child = icon = new FluXisSpriteIcon
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,

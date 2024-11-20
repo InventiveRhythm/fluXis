@@ -18,7 +18,6 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -160,7 +159,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 Alpha = 0,
                                                 Children = new Drawable[]
                                                 {
-                                                    new SpriteIcon
+                                                    new FluXisSpriteIcon
                                                     {
                                                         Icon = FontAwesome6.Solid.FolderOpen,
                                                         Size = new Vector2(30),
@@ -195,7 +194,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                 Alpha = 0,
                                                 Children = new Drawable[]
                                                 {
-                                                    new SpriteIcon
+                                                    new FluXisSpriteIcon
                                                     {
                                                         Icon = FontAwesome6.Solid.XMark,
                                                         Size = new Vector2(30),
@@ -370,7 +369,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                                     RelativeSizeAxes = Axes.Both,
                                                     Colour = FluXisColors.Background2
                                                 },
-                                                new SpriteIcon
+                                                new FluXisSpriteIcon
                                                 {
                                                     Size = new Vector2(20),
                                                     Anchor = Anchor.CentreLeft,
@@ -650,8 +649,8 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         [Resolved]
         private UISamples samples { get; set; }
 
-        private Box hover { get; set; }
-        private Box flash { get; set; }
+        private HoverLayer hover { get; set; }
+        private FlashLayer flash { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -664,17 +663,9 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
 
             InternalChildren = new Drawable[]
             {
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                new SpriteIcon
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
+                new FluXisSpriteIcon
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -698,20 +689,20 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
         protected override bool OnHover(HoverEvent e)
         {
             samples.Hover();
-            hover.FadeTo(.2f, 50);
+            hover.Show();
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            hover.FadeOut(200);
+            hover.Hide();
             base.OnHoverLost(e);
         }
 
         protected override bool OnClick(ClickEvent e)
         {
             samples.Click();
-            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            flash.Show();
             return base.OnClick(e);
         }
     }

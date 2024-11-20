@@ -83,7 +83,7 @@ public partial class SelectModsButton : FooterButton
                 {
                     < 1 => FluXisColors.Green,
                     > 1 => FluXisColors.Red,
-                    _ => Colour4.White
+                    _ => FluXisColors.Text
                 }, 100);
             });
         }
@@ -93,7 +93,7 @@ public partial class SelectModsButton : FooterButton
             icon.FadeIn(200);
             mods.FadeOut(200);
             SpriteText.Text = LocalizationStrings.SongSelect.FooterMods;
-            SpriteText.FadeColour(Colour4.White, 200);
+            SpriteText.FadeColour(FluXisColors.Text, 200);
         }
     }
 

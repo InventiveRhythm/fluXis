@@ -45,7 +45,7 @@ public partial class HeaderGroupChip : CircularContainer
                 Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
-                    new SpriteIcon
+                    new FluXisSpriteIcon
                     {
                         Icon = getIcon(),
                         Size = new Vector2(18),

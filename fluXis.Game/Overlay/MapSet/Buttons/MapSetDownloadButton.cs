@@ -113,7 +113,7 @@ public partial class MapSetDownloadButton : MapSetButton
         var status = maps.DownloadQueue.FirstOrDefault(s => s.OnlineID == set.ID);
         var state = status?.State ?? (downloaded ? MapStore.DownloadState.Finished : null);
 
-        var color = Colour4.White;
+        var color = FluXisColors.Text;
 
         switch (state)
         {

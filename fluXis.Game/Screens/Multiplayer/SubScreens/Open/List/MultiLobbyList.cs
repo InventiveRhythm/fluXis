@@ -75,7 +75,7 @@ public partial class MultiLobbyList : MultiSubScreen
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            textFlow = new FluXisTextFlow()
+            textFlow = new FluXisTextFlow
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,

@@ -7,28 +7,27 @@ namespace fluXis.Game.Graphics.UserInterface.Color;
 
 public static class FluXisColors
 {
-    public static Colour4 Accent => Colour4.FromHex("#3650eb");
-    public static Colour4 Accent2 => Colour4.FromHex("#4846d5");
-    public static Colour4 Accent3 => Colour4.FromHex("#533ec3");
-    public static Colour4 Accent4 => Colour4.FromHex("#5f30a7");
+    public static Colour4 Accent => Colour4.FromHex("#6F6FE2");
+    public static Colour4 Accent2 => Colour4.FromHex("#8468DC");
+    public static Colour4 Accent3 => Colour4.FromHex("#9960D5");
+    public static Colour4 Accent4 => Colour4.FromHex("#AF59CF");
 
     public static ColourInfo AccentGradient => ColourInfo.GradientHorizontal(Accent, Accent4);
 
-    public static Colour4 Background1 => GetThemeColor(.1f, .1f);
-    public static Colour4 Background2 => GetThemeColor(.1f, .15f);
-    public static Colour4 Background3 => GetThemeColor(.1f, .2f);
-    public static Colour4 Background4 => GetThemeColor(.1f, .25f);
-    public static Colour4 Background5 => GetThemeColor(.1f, .3f);
-    public static Colour4 Background6 => GetThemeColor(.1f, .35f);
-    public static Colour4 Foreground => GetThemeColor(.1f, .6f);
-    public static Colour4 Highlight => GetThemeColor(1f, .7f);
-    public static Colour4 Link => GetThemeColor(1f, .8f);
+    public static Colour4 Background1 => GetThemeColor(.2f, .12f);
+    public static Colour4 Background2 => GetThemeColor(.2f, .15f);
+    public static Colour4 Background3 => GetThemeColor(.2f, .18f);
+    public static Colour4 Background4 => GetThemeColor(.2f, .21f);
+    public static Colour4 Background5 => GetThemeColor(.2f, .24f);
+    public static Colour4 Background6 => GetThemeColor(.2f, .27f);
+    public static Colour4 Foreground => GetThemeColor(.2f, .6f);
+    public static Colour4 Highlight => GetThemeColor(.6f, .7f);
+    public static Colour4 Link => GetThemeColor(.8f, .8f);
 
     public static Colour4 GetThemeColor(float saturation, float lightness) => Colour4.FromHSL(240 / 360f, saturation, lightness);
 
-    public static Colour4 Text => Colour4.FromHex("#ffffff");
-    public static Colour4 Text2 => Colour4.FromHex("#cccccc");
-    public static Colour4 TextDisabled => Colour4.FromHex("#646464");
+    public static Colour4 Text => Colour4.FromHex("#E1E2F8");
+    public static Colour4 Text2 => Text.Opacity(.8f);
     public static Colour4 TextDark => Background3;
 
     public static Colour4 ButtonRed => Colour4.FromHSL(0f, .5f, .3f);
@@ -73,7 +72,7 @@ public static class FluXisColors
         return hsl.Z >= .5f;
     }
 
-    public static Colour4 DifficultyZero => Colour4.FromHex("#888888");
+    public static Colour4 DifficultyZero => Foreground;
     public static Colour4 Difficulty0 => Colour4.FromHex("#3355FF");
     public static Colour4 Difficulty5 => Colour4.FromHex("#3489FF");
     public static Colour4 Difficulty10 => Colour4.FromHex("#35BCFF");

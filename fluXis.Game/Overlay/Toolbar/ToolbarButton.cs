@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Database;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Input;
@@ -47,8 +48,8 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
     private Circle line;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -78,17 +79,9 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
                     Width = 0
                 }
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            new SpriteIcon
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
+            new FluXisSpriteIcon
             {
                 Icon = Icon,
                 Size = new Vector2(20),
@@ -113,20 +106,20 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     {
         if (!Enabled.Value) return true;
 
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)
     {
         if (Enabled.Value)
-            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            flash.Show();
 
         samples.Click(!Enabled.Value);
         return base.OnClick(e);
@@ -173,7 +166,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
                         Spacing = new Vector2(5),
                         Children = new Drawable[]
                         {
-                            icon = new SpriteIcon
+                            icon = new FluXisSpriteIcon
                             {
                                 Size = new Vector2(16),
                                 Margin = new MarginPadding(4)

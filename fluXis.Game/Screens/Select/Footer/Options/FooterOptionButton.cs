@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -18,14 +19,14 @@ public partial class FooterOptionButton : Container
     public LocalisableString Text { get; set; }
     public IconUsage Icon { get; set; }
     public Action Action { get; set; }
-    public Colour4 Color { get; set; } = Colour4.White;
+    public Colour4 Color { get; set; } = FluXisColors.Text;
 
     [Resolved]
     private UISamples samples { get; set; }
 
     private Container content;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -50,16 +51,8 @@ public partial class FooterOptionButton : Container
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background3
                     },
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    flash = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
                     new GridContainer
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -72,7 +65,7 @@ public partial class FooterOptionButton : Container
                         {
                             new Drawable[]
                             {
-                                new SpriteIcon
+                                new FluXisSpriteIcon
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
@@ -103,7 +96,7 @@ public partial class FooterOptionButton : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         samples.Click();
         Action?.Invoke();
         return true;
@@ -123,12 +116,12 @@ public partial class FooterOptionButton : Container
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 }

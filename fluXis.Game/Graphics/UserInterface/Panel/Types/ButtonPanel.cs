@@ -44,7 +44,7 @@ public partial class ButtonPanel : Panel, ICloseable
                 Padding = new MarginPadding(20) { Top = 30 },
                 Children = new Drawable[]
                 {
-                    new SpriteIcon
+                    new FluXisSpriteIcon
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,

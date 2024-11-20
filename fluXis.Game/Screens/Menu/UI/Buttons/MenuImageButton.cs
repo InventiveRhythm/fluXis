@@ -4,7 +4,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osuTK;
 
@@ -92,7 +91,7 @@ public partial class MenuImageButton : MenuButtonBase
                     {
                         new[]
                         {
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Icon = Icon,
                                 Size = new Vector2(32),
@@ -112,7 +111,7 @@ public partial class MenuImageButton : MenuButtonBase
                                 Spacing = new Vector2(-6),
                                 Children = new Drawable[]
                                 {
-                                    new TruncatingText()
+                                    new TruncatingText
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Text = Text,

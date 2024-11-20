@@ -49,7 +49,7 @@ public partial class LoginOverlay : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new FullInputBlockingContainer()
+            new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 OnClickAction = Hide,

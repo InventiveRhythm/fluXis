@@ -2,13 +2,13 @@
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Skinning;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -47,8 +47,8 @@ public partial class SnapControlPopover : CompositeDrawable
         private int snap { get; }
         private Action<int> action { get; }
 
-        private Box hover;
-        private Box flash;
+        private HoverLayer hover;
+        private FlashLayer flash;
 
         public SnapChip(int snap, Action<int> action)
         {
@@ -66,16 +66,8 @@ public partial class SnapControlPopover : CompositeDrawable
 
             InternalChildren = new Drawable[]
             {
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
                 new FluXisSpriteText
                 {
                     Text = $"1/{snap.NumberWithOrderSuffix()}",
@@ -88,20 +80,20 @@ public partial class SnapControlPopover : CompositeDrawable
 
         protected override bool OnHover(HoverEvent e)
         {
-            hover.FadeTo(.2f, 50);
+            hover.Show();
             samples.Hover();
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            hover.FadeOut(200);
+            hover.Hide();
         }
 
         protected override bool OnClick(ClickEvent e)
         {
             samples.Click();
-            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            flash.Show();
             action?.Invoke(snap);
             return true;
         }

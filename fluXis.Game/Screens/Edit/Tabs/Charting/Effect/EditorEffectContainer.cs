@@ -17,7 +17,7 @@ public partial class EditorEffectContainer : Container
     [Resolved]
     private EditorMap map { get; set; }
 
-    private Box flashUnderlay;
+    private Box underlay;
 
     public Container<EditorFlashEvent> Flashes { get; private set; }
     public Container<EditorLaneSwitchEvent> LaneSwitches { get; private set; }
@@ -29,7 +29,7 @@ public partial class EditorEffectContainer : Container
 
         Children = new Drawable[]
         {
-            flashUnderlay = new Box
+            underlay = new Box
             {
                 Width = 14,
                 RelativeSizeAxes = Axes.Y,
@@ -63,8 +63,8 @@ public partial class EditorEffectContainer : Container
             loadEvents();
         };
 
-        settings.FlashUnderlay.BindValueChanged(val => flashUnderlay.FadeTo(val.NewValue ? 1 : 0, 200), true);
-        settings.FlashUnderlayColor.BindValueChanged(val => flashUnderlay.Colour = val.NewValue, true);
+        settings.FlashUnderlay.BindValueChanged(val => underlay.FadeTo(val.NewValue ? 1 : 0, 200), true);
+        settings.FlashUnderlayColor.BindValueChanged(val => underlay.Colour = val.NewValue, true);
     }
 
     protected override void LoadComplete()

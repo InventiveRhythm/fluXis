@@ -1,11 +1,11 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -21,8 +21,8 @@ public partial class SettingsSidebarButton : Container
     private SettingsSubSection section { get; }
 
     private Container content;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     public SettingsSidebarButton(SettingsSubSection subSection)
     {
@@ -49,16 +49,8 @@ public partial class SettingsSidebarButton : Container
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0
                 },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -67,7 +59,7 @@ public partial class SettingsSidebarButton : Container
                     Padding = new MarginPadding(10) { Horizontal = 15 },
                     Children = new Drawable[]
                     {
-                        new SpriteIcon
+                        new FluXisSpriteIcon
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
@@ -89,7 +81,7 @@ public partial class SettingsSidebarButton : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         samples.Click();
         ClickAction?.Invoke();
         return true;
@@ -97,14 +89,14 @@ public partial class SettingsSidebarButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(0.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(0, 200);
+        hover.Hide();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

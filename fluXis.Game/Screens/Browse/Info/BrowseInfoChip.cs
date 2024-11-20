@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -36,8 +37,8 @@ public partial class BrowseInfoChip : Container
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private TruncatingText text;
 
     [BackgroundDependencyLoader]
@@ -55,16 +56,8 @@ public partial class BrowseInfoChip : Container
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
@@ -99,13 +92,13 @@ public partial class BrowseInfoChip : Container
         if (OnClickAction == null) return false;
 
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -113,7 +106,7 @@ public partial class BrowseInfoChip : Container
         if (OnClickAction == null) return false;
 
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         OnClickAction.Invoke();
         return true;
     }

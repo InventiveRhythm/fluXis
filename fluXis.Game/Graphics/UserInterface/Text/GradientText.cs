@@ -73,7 +73,7 @@ public partial class GradientText : FillFlowContainer
 
         foreach (var character in Text)
         {
-            var sprite = new FluXisSpriteText()
+            var sprite = new FluXisSpriteText
             {
                 Text = character.ToString(),
                 FontSize = FontSize,

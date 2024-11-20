@@ -26,7 +26,7 @@ public partial class TestMapCard : FluXisTestScene
         Child = new GlobalTooltipContainer(cursor.Cursor)
         {
             RelativeSizeAxes = Axes.Both,
-            Child = container = new FillFlowContainer()
+            Child = container = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
@@ -39,7 +39,7 @@ public partial class TestMapCard : FluXisTestScene
 
     private APIMapSet create(Action<APIMapSet> func = null)
     {
-        var set = new APIMapSet()
+        var set = new APIMapSet
         {
             ID = 1,
             Creator = APIUser.CreateUnknown(1),

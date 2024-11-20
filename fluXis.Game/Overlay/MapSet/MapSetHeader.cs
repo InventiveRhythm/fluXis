@@ -110,7 +110,7 @@ public partial class MapSetHeader : CompositeDrawable
                                             })
                                         }
                                     },
-                                    new TruncatingText()
+                                    new TruncatingText
                                     {
                                         RelativeSizeAxes = Axes.X,
                                         Text = set.Title,

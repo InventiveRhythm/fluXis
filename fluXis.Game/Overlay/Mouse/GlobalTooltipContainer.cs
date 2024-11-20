@@ -23,7 +23,7 @@ public partial class GlobalTooltipContainer : TooltipContainer
 
         public TextTooltip()
         {
-            Child = text = new FluXisTextFlow()
+            Child = text = new FluXisTextFlow
             {
                 AutoSizeAxes = Axes.Both,
                 WebFontSize = 16,

@@ -1,5 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Edit.Tabs.Charting;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
@@ -10,7 +11,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
@@ -35,8 +35,8 @@ public partial class ToolboxButton : Container, IHasTooltip
     private UISamples samples { get; set; }
 
     private Container content;
-    private Box hover;
-    protected Box Flash { get; private set; }
+    private HoverLayer hover;
+    protected FlashLayer Flash { get; private set; }
     private Drawable icon;
 
     [BackgroundDependencyLoader]
@@ -61,16 +61,8 @@ public partial class ToolboxButton : Container, IHasTooltip
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background4
                     },
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    Flash = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
+                    Flash = new FlashLayer(),
                     new FillFlowContainer
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -84,7 +76,7 @@ public partial class ToolboxButton : Container, IHasTooltip
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Size = new Vector2(24),
-                                Child = icon = CreateIcon() ?? new SpriteIcon
+                                Child = icon = CreateIcon() ?? new FluXisSpriteIcon
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
@@ -124,7 +116,8 @@ public partial class ToolboxButton : Container, IHasTooltip
 
     protected void UpdateSelectionState()
     {
-        hover.FadeTo(IsSelected ? .1f : 0, 200);
+        // bypass because it works different here
+        TransformableExtensions.FadeTo(hover, IsSelected ? .1f : 0, 200);
 
         if (IsSelected)
             icon.ScaleTo(1, 800, Easing.OutElastic);
@@ -146,20 +139,20 @@ public partial class ToolboxButton : Container, IHasTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(IsSelected ? .1f : 0, 200);
+        TransformableExtensions.FadeTo(hover, IsSelected ? .1f : 0, 200);
         base.OnHoverLost(e);
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        Flash.FadeOutFromOne(1000, Easing.OutQuint);
+        Flash.Show();
 
         if (PlayClickSound)
             samples.Click();

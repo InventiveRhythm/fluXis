@@ -49,7 +49,7 @@ public partial class WipEditorTab : EditorTab
                     Padding = new MarginPadding(20) { Top = 30 },
                     Children = new Drawable[]
                     {
-                        new SpriteIcon
+                        new FluXisSpriteIcon
                         {
                             Icon = Icon,
                             Anchor = Anchor.TopCentre,

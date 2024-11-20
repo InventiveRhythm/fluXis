@@ -1,11 +1,10 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -21,8 +20,8 @@ public partial class SettingsCategoryTab : Container
 
     private Container scalingContainer;
     private FillFlowContainer content;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     public SettingsCategoryTab(SettingsSection section, Bindable<SettingsSection> bind)
     {
@@ -44,16 +43,8 @@ public partial class SettingsCategoryTab : Container
             Masking = true,
             Children = new Drawable[]
             {
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
                 content = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.X,
@@ -63,7 +54,7 @@ public partial class SettingsCategoryTab : Container
                     Padding = new MarginPadding(20),
                     Children = new Drawable[]
                     {
-                        new SpriteIcon
+                        new FluXisSpriteIcon
                         {
                             Size = new Vector2(30),
                             Icon = section.Icon,
@@ -106,7 +97,7 @@ public partial class SettingsCategoryTab : Container
     {
         currentSection.Value = section;
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         return true;
     }
 
@@ -123,13 +114,13 @@ public partial class SettingsCategoryTab : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 }

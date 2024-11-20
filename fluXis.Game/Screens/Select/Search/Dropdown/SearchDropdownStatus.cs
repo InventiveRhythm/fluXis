@@ -1,5 +1,6 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -73,7 +74,7 @@ public partial class SearchDropdownStatus : Container
         private UISamples samples { get; set; }
 
         private Box colorBox;
-        private Box hoverBox;
+        private HoverLayer hoverBox;
         private FluXisSpriteText text;
 
         [BackgroundDependencyLoader]
@@ -94,11 +95,7 @@ public partial class SearchDropdownStatus : Container
                     Colour = color,
                     Alpha = 0
                 },
-                hoverBox = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                hoverBox = new HoverLayer(),
                 text = new FluXisSpriteText
                 {
                     Text = Text.ToUpper(),
@@ -129,11 +126,11 @@ public partial class SearchDropdownStatus : Container
 
         protected override bool OnHover(HoverEvent e)
         {
-            hoverBox.FadeTo(.2f, 50);
+            hoverBox.Show();
             samples.Hover();
             return true;
         }
 
-        protected override void OnHoverLost(HoverLostEvent e) => hoverBox.FadeOut(200);
+        protected override void OnHoverLost(HoverLostEvent e) => hoverBox.Hide();
     }
 }

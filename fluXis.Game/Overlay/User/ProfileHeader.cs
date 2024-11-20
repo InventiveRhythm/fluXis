@@ -16,7 +16,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Overlay.User;
@@ -170,7 +169,7 @@ public partial class ProfileHeader : Container
                                             Margin = new MarginPadding { Top = -8 },
                                             Children = new Drawable[]
                                             {
-                                                new FluXisTooltipText()
+                                                new FluXisTooltipText
                                                 {
                                                     Text = user.Username,
                                                     TooltipText = "Username",
@@ -180,7 +179,7 @@ public partial class ProfileHeader : Container
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
                                                 },
-                                                new FluXisTooltipText()
+                                                new FluXisTooltipText
                                                 {
                                                     Text = user.Pronouns,
                                                     TooltipText = "Pronouns",
@@ -215,7 +214,7 @@ public partial class ProfileHeader : Container
                                     new HeaderPlacementChip
                                     {
                                         Placement = user.Statistics!.GlobalRank,
-                                        CreateIcon = () => new SpriteIcon
+                                        CreateIcon = () => new FluXisSpriteIcon
                                         {
                                             Icon = FontAwesome6.Solid.EarthAmericas,
                                             Size = new Vector2(20)

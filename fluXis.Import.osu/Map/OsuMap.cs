@@ -64,7 +64,7 @@ public class OsuMap
         if (Mode != 3)
             return null;
 
-        var mapInfo = new OsuMapInfo()
+        var mapInfo = new OsuMapInfo
         {
             Metadata = new MapMetadata
             {

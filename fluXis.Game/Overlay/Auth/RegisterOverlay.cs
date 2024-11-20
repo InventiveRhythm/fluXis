@@ -59,7 +59,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
 
         InternalChildren = new Drawable[]
         {
-            new FullInputBlockingContainer()
+            new FullInputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 OnClickAction = Hide,

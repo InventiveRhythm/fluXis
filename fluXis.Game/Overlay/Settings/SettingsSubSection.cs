@@ -33,7 +33,7 @@ public partial class SettingsSubSection : FillFlowContainer
             Spacing = new Vector2(10, 0),
             Children = new Drawable[]
             {
-                new SpriteIcon
+                new FluXisSpriteIcon
                 {
                     Icon = Icon,
                     Size = new Vector2(24),

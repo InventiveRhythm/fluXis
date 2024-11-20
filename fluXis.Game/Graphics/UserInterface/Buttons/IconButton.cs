@@ -23,8 +23,8 @@ public partial class IconButton : Container
     private UISamples samples { get; set; }
 
     private Container content;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -45,17 +45,9 @@ public partial class IconButton : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = ButtonColor
                 },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                new SpriteIcon
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
+                new FluXisSpriteIcon
                 {
                     Icon = Icon,
                     Anchor = Anchor.Centre,
@@ -68,7 +60,7 @@ public partial class IconButton : Container
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         samples.Click();
         Action?.Invoke();
         return true;
@@ -76,14 +68,14 @@ public partial class IconButton : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(0.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(0, 200);
+        hover.Hide();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

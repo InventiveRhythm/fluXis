@@ -1,9 +1,9 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Game.Screens.Edit.BottomBar;
@@ -13,7 +13,7 @@ public partial class EditorPlayTestButton : ClickableContainer
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Box hover;
+    private HoverLayer hover;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -22,11 +22,7 @@ public partial class EditorPlayTestButton : ClickableContainer
 
         Children = new Drawable[]
         {
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
             new FluXisSpriteText
             {
                 Text = "Test!",
@@ -38,7 +34,7 @@ public partial class EditorPlayTestButton : ClickableContainer
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
@@ -51,7 +47,7 @@ public partial class EditorPlayTestButton : ClickableContainer
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
         base.OnHoverLost(e);
     }
 }

@@ -37,7 +37,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
@@ -133,7 +132,7 @@ public partial class ScoreList : GridContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Padding = new MarginPadding { Horizontal = 20 },
-                                        Child = new TruncatingText()
+                                        Child = new TruncatingText
                                         {
                                             Text = LocalizationStrings.SongSelect.LeaderboardTitle,
                                             RelativeSizeAxes = Axes.X,
@@ -208,7 +207,7 @@ public partial class ScoreList : GridContainer
                             Alpha = 0,
                             Children = new Drawable[]
                             {
-                                new SpriteIcon
+                                new FluXisSpriteIcon
                                 {
                                     Icon = FontAwesome6.Solid.TriangleExclamation,
                                     Colour = Colour4.FromHex("#ffd500"),
@@ -505,8 +504,8 @@ public partial class ScoreList : GridContainer
         private UISamples samples { get; set; }
 
         private Container content;
-        private Box hover;
-        private Box flash;
+        private HoverLayer hover;
+        private FlashLayer flash;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -540,16 +539,8 @@ public partial class ScoreList : GridContainer
                         RelativeSizeAxes = Axes.Both,
                         Colour = color
                     },
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    flash = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
                     new TruncatingText
                     {
                         MaxWidth = 80,
@@ -581,21 +572,21 @@ public partial class ScoreList : GridContainer
 
         protected override bool OnClick(ClickEvent e)
         {
-            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            flash.Show();
             samples.Click();
             return base.OnClick(e);
         }
 
         protected override bool OnHover(HoverEvent e)
         {
-            hover.FadeTo(.2f, 50);
+            hover.Show();
             samples.Hover();
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            hover.FadeOut(200);
+            hover.Hide();
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)

@@ -6,7 +6,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Browse.Search;
@@ -64,7 +63,7 @@ public partial class BrowserSearchBar : Container
                     }
                 }
             },
-            new SpriteIcon
+            new FluXisSpriteIcon
             {
                 Size = new Vector2(25),
                 Anchor = Anchor.CentreLeft,

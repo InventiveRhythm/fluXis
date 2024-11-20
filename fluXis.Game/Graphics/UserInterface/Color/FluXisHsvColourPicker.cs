@@ -42,7 +42,7 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
                     Origin = Anchor.Centre,
                     Masking = true,
                     BorderThickness = 3,
-                    BorderColour = Colour4.White,
+                    BorderColour = FluXisColors.Text,
                     Child = new Box { RelativeSizeAxes = Axes.Both }
                 };
             }
@@ -67,7 +67,7 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
                 CornerRadius = 10;
                 Masking = true;
                 BorderThickness = 3;
-                BorderColour = Colour4.White;
+                BorderColour = FluXisColors.Text;
 
                 InternalChild = new Box { RelativeSizeAxes = Axes.Both };
 

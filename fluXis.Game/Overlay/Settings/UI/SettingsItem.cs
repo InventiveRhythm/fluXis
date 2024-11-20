@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -108,8 +109,8 @@ public abstract partial class SettingsItem : Container
         public Action ClickAction { get; init; }
 
         private Container content;
-        private Box hover;
-        private Box flash;
+        private HoverLayer hover;
+        private FlashLayer flash;
         private SpriteIcon icon;
 
         [BackgroundDependencyLoader]
@@ -136,17 +137,9 @@ public abstract partial class SettingsItem : Container
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0
                     },
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    flash = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    icon = new SpriteIcon
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
+                    icon = new FluXisSpriteIcon
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -173,7 +166,7 @@ public abstract partial class SettingsItem : Container
 
         protected override bool OnClick(ClickEvent e)
         {
-            flash.FadeOutFromOne(1000, Easing.OutQuint);
+            flash.Show();
             samples.Click();
             ClickAction?.Invoke();
             return true;
@@ -181,14 +174,14 @@ public abstract partial class SettingsItem : Container
 
         protected override bool OnHover(HoverEvent e)
         {
-            hover.FadeTo(0.2f, 50);
+            hover.Show();
             samples.Hover();
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            hover.FadeTo(0, 200);
+            hover.Hide();
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)

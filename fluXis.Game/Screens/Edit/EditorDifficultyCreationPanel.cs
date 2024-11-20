@@ -46,7 +46,7 @@ public partial class EditorDifficultyCreationPanel : Panel
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre
                 },
-                textBox = new AuthOverlayTextBox()
+                textBox = new AuthOverlayTextBox
                 {
                     RelativeSizeAxes = Axes.X,
                     PlaceholderText = "New difficulty name..."

@@ -30,7 +30,7 @@ public partial class HitErrorBar : GameplayHUDComponent
 
         InternalChildren = new Drawable[]
         {
-            icon = new SpriteIcon
+            icon = new FluXisSpriteIcon
             {
                 Icon = FontAwesome6.Solid.AngleDown,
                 Anchor = Anchor.TopCentre,

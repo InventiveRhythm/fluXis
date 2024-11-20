@@ -1,5 +1,7 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,8 +21,8 @@ public partial class MapSetButton : Container
     private IconUsage icon { get; }
     private Action action { get; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     protected Container ScaleContainer { get; private set; }
     protected SpriteIcon Icon { get; private set; }
@@ -49,17 +51,9 @@ public partial class MapSetButton : Container
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background2
                 },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                Icon = new SpriteIcon
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
+                Icon = new FluXisSpriteIcon
                 {
                     Icon = icon,
                     Size = new Vector2(18),
@@ -84,19 +78,19 @@ public partial class MapSetButton : Container
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         action?.Invoke();
         return true;
     }

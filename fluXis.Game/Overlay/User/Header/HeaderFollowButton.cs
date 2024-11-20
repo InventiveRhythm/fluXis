@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
@@ -28,7 +29,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     private bool following => user.Following!.Value;
 
     private Box background;
-    private Box flash;
+    private FlashLayer flash;
     private FillFlowContainer flow;
     private SpriteIcon icon;
     private FluXisSpriteText text;
@@ -54,11 +55,7 @@ public partial class HeaderFollowButton : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Colour = following ? FluXisColors.Accent2 : FluXisColors.Background2,
             },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            flash = new FlashLayer(),
             flow = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -76,7 +73,7 @@ public partial class HeaderFollowButton : CompositeDrawable
                     new Container
                     {
                         Size = new Vector2(20),
-                        Child = icon = new SpriteIcon
+                        Child = icon = new FluXisSpriteIcon
                         {
                             Y = 2, // it looks kinda off-center without this
                             Icon = FontAwesome6.Solid.Heart,
@@ -96,7 +93,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
 
         var req = new UserFollowRequest(user.ID, following);
         api.PerformRequestAsync(req);

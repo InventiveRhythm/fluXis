@@ -30,7 +30,7 @@ public abstract partial class GenericEntry : Container
     }
 
     private Box background { get; set; }
-    private Box hover { get; set; }
+    private HoverLayer hover { get; set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -62,19 +62,14 @@ public abstract partial class GenericEntry : Container
                             RelativeSizeAxes = Axes.Both,
                             Colour = FluXisColors.Background3
                         },
-                        hover = new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Color,
-                            Alpha = 0
-                        },
+                        hover = new HoverLayer { Colour = Color },
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding(10),
                             Children = new Drawable[]
                             {
-                                new SpriteIcon
+                                new FluXisSpriteIcon
                                 {
                                     Icon = Icon,
                                     Colour = Color,
@@ -115,13 +110,13 @@ public abstract partial class GenericEntry : Container
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 
     protected void SetSelected(bool selected)

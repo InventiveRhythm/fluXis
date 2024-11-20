@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Localization;
 using fluXis.Game.Mods;
@@ -35,8 +36,8 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
     public bool Selected;
 
     private Box background;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private SpriteIcon icon;
     private FluXisSpriteText name;
     private FluXisSpriteText description;
@@ -60,18 +61,14 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Horizontal = 12 },
                 Children = new Drawable[]
                 {
-                    icon = new SpriteIcon
+                    icon = new FluXisSpriteIcon
                     {
                         Size = new Vector2(25),
                         Anchor = Anchor.CentreLeft,
@@ -106,17 +103,13 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
                     }
                 }
             },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            }
+            flash = new FlashLayer()
         };
     }
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         samples.Click();
 
         Selected = !Selected;
@@ -142,14 +135,14 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         samples.Hover();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(0, 200);
+        hover.Hide();
     }
 
     public ITooltip<ModEntry> GetCustomTooltip() => new ModEntryTooltip();

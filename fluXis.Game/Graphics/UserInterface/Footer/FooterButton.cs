@@ -40,8 +40,8 @@ public partial class FooterButton : CompositeDrawable
     [Resolved]
     private UISamples samples { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private Container content;
     private LocalisableString text = string.Empty;
 
@@ -68,11 +68,7 @@ public partial class FooterButton : CompositeDrawable
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background3
                 },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
+                hover = new HoverLayer(),
                 content = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -97,12 +93,7 @@ public partial class FooterButton : CompositeDrawable
                         }
                     }
                 },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0,
-                    Colour = AccentColor
-                }
+                flash = new FlashLayer { Colour = AccentColor }
             }
         };
     }
@@ -117,7 +108,7 @@ public partial class FooterButton : CompositeDrawable
         }, true);
     }
 
-    protected virtual Drawable CreateIcon() => new SpriteIcon
+    protected virtual Drawable CreateIcon() => new FluXisSpriteIcon
     {
         Anchor = Anchor.TopCentre,
         Origin = Anchor.TopCentre,
@@ -140,7 +131,7 @@ public partial class FooterButton : CompositeDrawable
         if (!Enabled.Value)
             return false;
 
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         Action?.Invoke();
         return true;
     }
@@ -150,7 +141,7 @@ public partial class FooterButton : CompositeDrawable
         if (!Enabled.Value)
             return false;
 
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         this.MoveToY(10, 200, Easing.OutQuint);
         samples.Hover();
         return true;
@@ -158,7 +149,7 @@ public partial class FooterButton : CompositeDrawable
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeTo(0, 200);
+        hover.Hide();
         this.MoveToY(20, 400, Easing.OutQuint);
     }
 }

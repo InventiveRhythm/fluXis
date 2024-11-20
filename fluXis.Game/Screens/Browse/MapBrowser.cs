@@ -23,7 +23,6 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -89,7 +88,7 @@ public partial class MapBrowser : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                 },
                 Children = new Drawable[]
                 {
-                    new SpriteIcon
+                    new FluXisSpriteIcon
                     {
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,

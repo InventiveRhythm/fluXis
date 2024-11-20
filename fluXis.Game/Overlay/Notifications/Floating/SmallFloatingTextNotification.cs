@@ -26,7 +26,7 @@ public partial class SmallFloatingTextNotification : FloatingNotification
             Spacing = new Vector2(8),
             Children = new Drawable[]
             {
-                new SpriteIcon
+                new FluXisSpriteIcon
                 {
                     Icon = Icon,
                     Size = new Vector2(12),

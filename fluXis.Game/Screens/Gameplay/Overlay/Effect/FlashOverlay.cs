@@ -9,8 +9,8 @@ namespace fluXis.Game.Screens.Gameplay.Overlay.Effect;
 
 public partial class FlashOverlay : Container
 {
-    private readonly List<FlashEvent> flashes;
-    private readonly Box flash;
+    private List<FlashEvent> flashes { get; }
+    private Box box { get; }
 
     public FlashOverlay(List<FlashEvent> flashes)
     {
@@ -19,7 +19,7 @@ public partial class FlashOverlay : Container
         Anchor = Origin = Anchor.Centre;
         Size = new Vector2(2f);
 
-        AddInternal(flash = new Box
+        AddInternal(box = new Box
         {
             RelativeSizeAxes = Axes.Both,
             Colour = Colour4.White,
@@ -33,11 +33,11 @@ public partial class FlashOverlay : Container
         {
             var flashEvent = flashes[0];
 
-            flash.FadeColour(flashEvent.StartColor);
-            flash.FadeTo(flashEvent.StartOpacity);
+            box.FadeColour(flashEvent.StartColor);
+            box.FadeTo(flashEvent.StartOpacity);
 
-            flash.FadeColour(flashEvent.EndColor, flashEvent.Duration, flashEvent.Easing);
-            flash.FadeTo(flashEvent.EndOpacity, flashEvent.Duration, flashEvent.Easing);
+            box.FadeColour(flashEvent.EndColor, flashEvent.Duration, flashEvent.Easing);
+            box.FadeTo(flashEvent.EndOpacity, flashEvent.Duration, flashEvent.Easing);
 
             flashes.RemoveAt(0);
         }

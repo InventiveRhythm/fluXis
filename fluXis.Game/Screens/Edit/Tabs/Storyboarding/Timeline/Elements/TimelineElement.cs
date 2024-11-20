@@ -34,7 +34,7 @@ public partial class TimelineElement : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new Container()
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Highlight,

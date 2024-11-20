@@ -9,7 +9,6 @@ using fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 
@@ -121,7 +120,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
             _ => FontAwesome6.Solid.Drum
         };
 
-        return new SpriteIcon
+        return new FluXisSpriteIcon
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,

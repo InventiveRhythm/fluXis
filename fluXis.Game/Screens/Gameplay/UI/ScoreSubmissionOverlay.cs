@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.UI;
@@ -37,7 +36,7 @@ public partial class ScoreSubmissionOverlay : Container
                 Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
-                    new SpriteIcon
+                    new FluXisSpriteIcon
                     {
                         Icon = FontAwesome6.Solid.Shapes,
                         Size = new Vector2(30),

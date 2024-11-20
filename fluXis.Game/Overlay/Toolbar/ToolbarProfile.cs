@@ -52,8 +52,8 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
     private Container avatarContainer;
     private DrawableAvatar avatar;
     private Container loadingContainer;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private SpriteIcon arrow;
 
     [BackgroundDependencyLoader]
@@ -79,16 +79,8 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background4
                     },
-                    hover = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
-                    flash = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    },
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
                     new Container
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -138,7 +130,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
                                     }
                                 }
                             },
-                            arrow = new SpriteIcon
+                            arrow = new FluXisSpriteIcon
                             {
                                 Icon = FontAwesome6.Solid.AngleDown,
                                 Size = new Vector2(10),
@@ -212,7 +204,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         samples.Click();
 
         if (api.User.Value == null)
@@ -230,7 +222,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         container.ResizeHeightTo(80, 400, Easing.OutQuint);
         arrow.FadeIn(200).MoveToY(45, 400, Easing.OutQuint);
         samples.Hover();
@@ -239,7 +231,7 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
         container.ResizeHeightTo(70, 400, Easing.OutQuint);
         arrow.FadeOut(200).MoveToY(40, 400, Easing.OutQuint);
     }

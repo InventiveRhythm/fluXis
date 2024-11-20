@@ -20,7 +20,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
@@ -126,7 +125,7 @@ public partial class DrawableChatMessage : Container
         if (groups.Count == 0)
             return Empty().With(d => d.Alpha = 0);
 
-        return new SpriteIcon
+        return new FluXisSpriteIcon
         {
             Size = new Vector2(16),
             Anchor = Anchor.CentreLeft,

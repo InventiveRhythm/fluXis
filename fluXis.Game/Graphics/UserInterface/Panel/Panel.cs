@@ -19,7 +19,7 @@ public partial class Panel : Container
     public new Container Content { get; }
 
     private Container loadingOverlay { get; }
-    private Box flashBox { get; }
+    private FlashLayer flashBox { get; }
 
     protected bool Loading { get; private set; }
 
@@ -37,12 +37,7 @@ public partial class Panel : Container
         Children = new Drawable[]
         {
             new PanelBackground(),
-            flashBox = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                Colour = FluXisColors.Red
-            },
+            flashBox = new FlashLayer(),
             Content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -80,10 +75,7 @@ public partial class Panel : Container
         initial = true;
     }
 
-    public void Flash()
-    {
-        flashBox.FadeOutFromOne(1000, Easing.OutQuint);
-    }
+    public void Flash() => flashBox.Show();
 
     public override void Hide()
     {

@@ -26,7 +26,7 @@ public partial class HealthBar : GameplayHUDComponent
         {
             skinManager.GetHealthBarBackground(),
             bar = skinManager.GetHealthBar(HealthProcessor),
-            icon = new SpriteIcon
+            icon = new FluXisSpriteIcon
             {
                 Size = new Vector2(30),
                 Anchor = Anchor.Centre,

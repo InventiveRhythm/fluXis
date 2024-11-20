@@ -45,7 +45,7 @@ public partial class LaneSwitchAlert : Container
                 Origin = Anchor.CentreRight,
                 Children = new Drawable[]
                 {
-                    leftIcon = new SpriteIcon
+                    leftIcon = new FluXisSpriteIcon
                     {
                         Icon = FontAwesome6.Solid.AngleLeft,
                         RelativeSizeAxes = Axes.Both,
@@ -63,7 +63,7 @@ public partial class LaneSwitchAlert : Container
                 Origin = Anchor.CentreLeft,
                 Children = new Drawable[]
                 {
-                    rightIcon = new SpriteIcon
+                    rightIcon = new FluXisSpriteIcon
                     {
                         Icon = FontAwesome6.Solid.AngleRight,
                         RelativeSizeAxes = Axes.Both,

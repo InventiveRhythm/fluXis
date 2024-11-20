@@ -52,7 +52,7 @@ public abstract partial class DashboardTab : Container
                                     Direction = FillDirection.Horizontal,
                                     Children = new Drawable[]
                                     {
-                                        new SpriteIcon
+                                        new FluXisSpriteIcon
                                         {
                                             Icon = Icon,
                                             Size = new Vector2(icon_size),

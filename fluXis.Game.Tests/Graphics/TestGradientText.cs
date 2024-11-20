@@ -13,7 +13,7 @@ public partial class TestGradientText : FluXisTestScene
     [BackgroundDependencyLoader]
     private void load()
     {
-        var normalText = new FluXisSpriteText()
+        var normalText = new FluXisSpriteText
         {
             Text = "framework text",
             Anchor = Anchor.Centre,

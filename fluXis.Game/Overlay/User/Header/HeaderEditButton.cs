@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Overlay.Network;
 using JetBrains.Annotations;
@@ -8,7 +9,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -23,8 +23,8 @@ public partial class HeaderEditButton : CircularContainer
     [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -41,16 +41,8 @@ public partial class HeaderEditButton : CircularContainer
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
-            flash = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
-            },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
@@ -65,7 +57,7 @@ public partial class HeaderEditButton : CircularContainer
                     new Container
                     {
                         Size = new Vector2(20),
-                        Child = new SpriteIcon
+                        Child = new FluXisSpriteIcon
                         {
                             Icon = FontAwesome6.Solid.Pen,
                             Size = new Vector2(20)
@@ -84,7 +76,7 @@ public partial class HeaderEditButton : CircularContainer
     protected override bool OnClick(ClickEvent e)
     {
         samples.Click();
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
 
         game?.OpenDashboard(DashboardTabType.Account);
         return true;
@@ -93,13 +85,13 @@ public partial class HeaderEditButton : CircularContainer
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
 
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 }

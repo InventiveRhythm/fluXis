@@ -1,6 +1,7 @@
 using System;
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.UI;
 using JetBrains.Annotations;
@@ -46,8 +47,8 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
     private UISamples samples { get; set; }
 
     private Container content;
-    private Box hover;
-    private Box flash;
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -71,17 +72,9 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background3
                 },
-                hover = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                flash = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
-                new SpriteIcon
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
+                new FluXisSpriteIcon
                 {
                     Icon = Icon,
                     Size = new Vector2(30),
@@ -120,7 +113,7 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
 
     protected override bool OnClick(ClickEvent e)
     {
-        flash.FadeOutFromOne(1000, Easing.OutQuint);
+        flash.Show();
         Action?.Invoke();
         samples.Click();
         return true;
@@ -153,12 +146,12 @@ public partial class GameplayMenuButton : Container, IStateful<SelectedState>
         switch (state)
         {
             case SelectedState.Selected:
-                hover.FadeTo(.2f, 50);
+                hover.Show();
                 samples.Hover();
                 break;
 
             case SelectedState.Deselected:
-                hover.FadeOut(200);
+                hover.Hide();
                 break;
         }
     }

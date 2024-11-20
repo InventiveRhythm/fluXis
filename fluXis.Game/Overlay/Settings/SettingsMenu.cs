@@ -14,7 +14,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -105,7 +104,7 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                             Size = new Vector2(200),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Child = new SpriteIcon
+                            Child = new FluXisSpriteIcon
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Size = new Vector2(.5f),

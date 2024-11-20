@@ -5,7 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace fluXis.Game.Screens.Select.UI;
@@ -38,7 +37,7 @@ public partial class SelectNoMaps : CompositeDrawable
                 Padding = new MarginPadding(20),
                 Children = new Drawable[]
                 {
-                    new SpriteIcon
+                    new FluXisSpriteIcon
                     {
                         Icon = FontAwesome6.Solid.TriangleExclamation,
                         Size = new Vector2(30),

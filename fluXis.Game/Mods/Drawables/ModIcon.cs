@@ -55,7 +55,7 @@ public partial class ModIcon : Container
                 Spacing = new Vector2(FlowSpacing),
                 Children = new Drawable[]
                 {
-                    icon = new SpriteIcon
+                    icon = new FluXisSpriteIcon
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,

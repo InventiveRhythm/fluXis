@@ -8,7 +8,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -26,7 +25,7 @@ public partial class DriveEntry : Container
     private float usage => (float)used / info.TotalSize;
     private Colour4 color { get; }
 
-    private Box hover { get; set; }
+    private HoverLayer hover { get; set; }
 
     public DriveEntry(DriveInfo info, FileSelect selector)
     {
@@ -54,12 +53,7 @@ public partial class DriveEntry : Container
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
-            hover = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = color,
-                Alpha = 0
-            },
+            hover = new HoverLayer { Colour = color },
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
@@ -77,7 +71,7 @@ public partial class DriveEntry : Container
                         AutoSizeAxes = Axes.Y,
                         Children = new Drawable[]
                         {
-                            new SpriteIcon
+                            new FluXisSpriteIcon
                             {
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
@@ -137,12 +131,12 @@ public partial class DriveEntry : Container
     protected override bool OnHover(HoverEvent e)
     {
         samples.Hover();
-        hover.FadeTo(.2f, 50);
+        hover.Show();
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        hover.FadeOut(200);
+        hover.Hide();
     }
 }

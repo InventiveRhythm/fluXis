@@ -39,7 +39,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
         Foreground.Origin = Anchor.CentreLeft;
 
         BackgroundColour = Colour4.Transparent;
-        BackgroundColourHover = Colour4.White.Opacity(.2f);
+        BackgroundColourHover = FluXisColors.Text.Opacity(.2f);
 
         AddInternal(getRightContainer().With(d =>
         {
@@ -96,7 +96,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
                     {
                         AutoSizeAxes = Axes.Both,
                         Padding = new MarginPadding(12),
-                        Child = icon = new SpriteIcon
+                        Child = icon = new FluXisSpriteIcon
                         {
                             Size = new Vector2(20),
                             Icon = Item.Icon
@@ -158,7 +158,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
     {
         if (shouldShowChevron)
         {
-            return new SpriteIcon
+            return new FluXisSpriteIcon
             {
                 Size = new Vector2(16),
                 Icon = FontAwesome6.Solid.AngleRight
@@ -167,7 +167,7 @@ public partial class DrawableFluXisMenuItem : Menu.DrawableMenuItem
 
         if (shouldShowCheck)
         {
-            return new SpriteIcon
+            return new FluXisSpriteIcon
             {
                 Size = new Vector2(16),
                 Icon = FontAwesome6.Solid.Check

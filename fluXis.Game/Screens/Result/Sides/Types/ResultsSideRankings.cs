@@ -1,4 +1,5 @@
 ﻿using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.API.Requests.Scores;
 using fluXis.Game.Utils;
@@ -35,7 +36,7 @@ public partial class ResultsSideRankings : ResultsSideContainer
             {
                 RelativeSizeAxes = Axes.X,
                 Height = 50,
-                Child = new TruncatingText()
+                Child = new TruncatingText
                 {
                     Text = request.FailReason?.Message ?? "Something went wrong...",
                     WebFontSize = 16,
@@ -72,7 +73,7 @@ public partial class ResultsSideRankings : ResultsSideContainer
             var diff = change.Current - change.Previous;
             var value = asRank ? $"#{(int)change.Current}" : change.Current.ToStringInvariant("00.00");
             var difference = "KEEP";
-            var color = Colour4.White.Opacity(0.6f);
+            var color = FluXisColors.Text.Opacity(0.6f);
 
             var negativeColor = Colour4.FromHex("#FF5555");
             var positiveColor = Colour4.FromHex("#55FF55");

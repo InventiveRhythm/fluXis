@@ -217,7 +217,7 @@ public partial class MapSetSidebarStats : FillFlowContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
                             },
-                            valueText = new FluXisSpriteText()
+                            valueText = new FluXisSpriteText
                             {
                                 RelativePositionAxes = Axes.X,
                                 Anchor = Anchor.CentreLeft,

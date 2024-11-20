@@ -49,7 +49,7 @@ public partial class FluXisDropdown<T> : Dropdown<T>
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft
                 },
-                Icon = new SpriteIcon
+                Icon = new FluXisSpriteIcon
                 {
                     Icon = FontAwesome6.Solid.AngleDown,
                     Anchor = Anchor.CentreRight,

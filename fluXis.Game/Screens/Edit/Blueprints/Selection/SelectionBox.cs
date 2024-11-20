@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Audio;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -51,7 +52,7 @@ public partial class SelectionBox : Container
 
         InternalChild = Box = new Container
         {
-            BorderColour = Colour4.White,
+            BorderColour = FluXisColors.Text,
             BorderThickness = 4,
             CornerRadius = 10,
             Masking = true,
