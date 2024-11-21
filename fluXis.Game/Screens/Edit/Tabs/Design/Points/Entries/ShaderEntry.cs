@@ -120,6 +120,12 @@ public partial class ShaderEntry : PointListEntry
                 {
                     RequestClose?.Invoke(); // until there is a way to refresh
                     shader.Type = value;
+                    shader.StartParameters.Strength = Math.Clamp(shader.StartParameters.Strength, 0, maxStrength);
+                    shader.StartParameters.Strength2 = Math.Clamp(shader.StartParameters.Strength2, 0, maxStrength2);
+                    shader.StartParameters.Strength3 = Math.Clamp(shader.StartParameters.Strength3, 0, maxStrength3);
+                    shader.EndParameters.Strength = Math.Clamp(shader.EndParameters.Strength, 0, maxStrength);
+                    shader.EndParameters.Strength2 = Math.Clamp(shader.EndParameters.Strength2, 0, maxStrength2);
+                    shader.EndParameters.Strength3 = Math.Clamp(shader.EndParameters.Strength3, 0, maxStrength3);
                     Map.Update(shader);
                     OpenSettings();
                 }
