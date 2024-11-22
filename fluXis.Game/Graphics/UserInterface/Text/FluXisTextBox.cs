@@ -33,6 +33,8 @@ public partial class FluXisTextBox : BasicTextBox
 
     private Container textContainer => TextContainer;
 
+    public Colour4 TextColour { get; set; }
+
     public Colour4 BackgroundInactive
     {
         get => BackgroundUnfocused;
@@ -49,10 +51,10 @@ public partial class FluXisTextBox : BasicTextBox
 
     public FluXisTextBox()
     {
-        Colour = FluXisColors.Text;
         CornerRadius = 5;
         Masking = true;
         LengthLimit = 256;
+        TextColour = FluXisColors.Text;
         BackgroundInactive = FluXisColors.Background2;
         BackgroundActive = FluXisColors.Background3;
     }
@@ -139,6 +141,7 @@ public partial class FluXisTextBox : BasicTextBox
     {
         var container = new FallingDownContainer
         {
+            Colour = TextColour,
             Anchor = Anchor.TopLeft,
             Origin = Anchor.TopLeft
         };

@@ -1,4 +1,5 @@
 using System.Linq;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -29,6 +30,7 @@ public partial class LoadingIcon : Container
     {
         Masking = true;
         CornerRadius = 10;
+        Colour = FluXisColors.Text;
 
         InternalChildren = new Drawable[]
         {
