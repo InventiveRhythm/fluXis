@@ -259,8 +259,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     {
         var multiplier = list.Any(m => m is HardMod) ? 1.5f : 1;
 
-        var acc = map.AccuracyDifficulty * multiplier;
-        var hp = (map.HealthDifficulty == 0 ? 8 : map.HealthDifficulty) * multiplier;
+        var acc = Math.Clamp(map.AccuracyDifficulty, 1, 10) * multiplier;
+        var hp = Math.Clamp(map.HealthDifficulty == 0 ? 8 : map.HealthDifficulty, 1, 10) * multiplier;
 
         accuracy.SetValue(acc);
         health.SetValue(hp);

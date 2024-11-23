@@ -210,7 +210,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         dependencies.CacheAs(Samples);
         dependencies.CacheAs<ICustomColorProvider>(Map.Colors);
 
-        var difficulty = Map.AccuracyDifficulty == 0 ? 8 : Map.AccuracyDifficulty;
+        var difficulty = Math.Clamp(Map.AccuracyDifficulty == 0 ? 8 : Map.AccuracyDifficulty, 1, 10);
         difficulty *= Mods.Any(m => m is HardMod) ? 1.5f : 1;
 
         HitWindows = new HitWindows(difficulty, Rate);
@@ -389,7 +389,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     {
         var processor = null as HealthProcessor;
 
-        var difficulty = Map.HealthDifficulty == 0 ? 8 : Map.HealthDifficulty;
+        var difficulty = Math.Clamp(Map.HealthDifficulty == 0 ? 8 : Map.HealthDifficulty, 1, 10);
         difficulty *= Mods.Any(m => m is HardMod) ? 1.2f : 1f;
 
         if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor(difficulty);
