@@ -50,7 +50,9 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     public HitObjectManager HitManager { get; }
     public int Lane { get; }
 
+    private static int[] snaps { get; } = { 48, 24, 16, 12, 8, 6, 4, 3 };
     private Dictionary<int, int> snapIndices { get; } = new();
+
     private JudgementProcessor judgementProcessor => playfield.JudgementProcessor;
     private DependencyContainer dependencies;
 
@@ -77,6 +79,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     protected override void Update()
     {
         base.Update();
+
         updateTime();
 
         while (FutureHitObjects is { Count: > 0 } && (ShouldDisplay(FutureHitObjects[0].Time) || HitObjects.Count < minimum_loaded_hit_objects))
@@ -110,12 +113,13 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
     private void updateTime()
     {
+        var current = Clock.CurrentTime;
         int svIndex = 0;
 
-        while (Map.ScrollVelocities != null && svIndex < svPoints.Count && svPoints[svIndex].Time <= Clock.CurrentTime)
+        while (Map.ScrollVelocities != null && svIndex < svPoints.Count && svPoints[svIndex].Time <= current)
             svIndex++;
 
-        CurrentTime = ScrollVelocityPositionFromTime(Clock.CurrentTime, svIndex);
+        CurrentTime = ScrollVelocityPositionFromTime(current, svIndex);
     }
 
     public bool ShouldDisplay(double time)
@@ -264,9 +268,8 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
     #region SV
 
-    private static int[] snaps { get; } = { 48, 24, 16, 12, 8, 6, 4, 3 };
-    private List<ScrollVelocity> svPoints { get; } = new();
-    private List<double> scrollVelocityMarks { get; } = new();
+    private readonly List<ScrollVelocity> svPoints = new();
+    private readonly List<double> scrollVelocityMarks = new();
 
     public double ScrollVelocityPositionFromTime(double time, int index = -1)
     {

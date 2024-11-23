@@ -8,7 +8,7 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
 {
     public new HitObject Object => (HitObject)base.Object;
 
-    public new EditorHitObject Drawable => (EditorHitObject)base.Drawable;
+    public EditorHitObject HitObject => Drawable as EditorHitObject;
 
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.EndTime;
@@ -23,7 +23,9 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
     {
         base.Update();
 
-        if (Parent != null)
-            Position = Parent.ToLocalSpace(HitObjectContainer.ScreenSpacePositionAtTime(Object.Time, Object.Lane));
+        var parent = Parent;
+
+        if (parent != null)
+            Position = parent.ToLocalSpace(HitObjectContainer.ScreenSpacePositionAtTime(Object.Time, Object.Lane));
     }
 }

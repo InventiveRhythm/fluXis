@@ -138,6 +138,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public List<ScoreInfo> Scores { get; init; } = new();
 
+    public DebugText Debug { get; private set; }
+
     public MapInfo Map { get; private set; }
     public RealmMap RealmMap { get; }
     public MapEvents MapEvents { get; private set; }
@@ -302,7 +304,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     new PauseMenu()
                 },
             },
-            scoreSubmissionOverlay = new ScoreSubmissionOverlay()
+            scoreSubmissionOverlay = new ScoreSubmissionOverlay(),
+            Debug = new DebugText()
         };
 
         clockContainer.Add(new BeatPulseContainer(MapEvents.BeatPulseEvents, keybindContainer));

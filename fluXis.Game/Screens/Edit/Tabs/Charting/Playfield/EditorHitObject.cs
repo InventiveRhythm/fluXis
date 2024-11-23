@@ -106,8 +106,8 @@ public partial class EditorHitObject : Container
     {
         base.Update();
 
-        text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
-        text.Alpha = settings.ShowSamples.Value ? 1 : 0;
+        /*text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
+        text.Alpha = settings.ShowSamples.Value ? 1 : 0;*/
 
         X = playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = playfield.HitObjectContainer.PositionAtTime(Data.Time);

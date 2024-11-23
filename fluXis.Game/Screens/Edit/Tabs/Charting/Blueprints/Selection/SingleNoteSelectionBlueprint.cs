@@ -25,6 +25,6 @@ public partial class SingleNoteSelectionBlueprint : NoteSelectionBlueprint
     protected override void Update()
     {
         base.Update();
-        Height = Drawable.HitObjectPiece.DrawHeight;
+        Height = HitObject.HitObjectPiece.DrawHeight;
     }
 }

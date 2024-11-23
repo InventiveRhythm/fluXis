@@ -57,7 +57,7 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         base.Update();
 
         var delta = HitObjectContainer.PositionAtTime(Object.EndTime) - HitObjectContainer.PositionAtTime(Object.Time);
-        Height = -(delta - Drawable.LongNoteEnd.DrawHeight / 2);
+        Height = -(delta - HitObject.LongNoteEnd.DrawHeight / 2);
     }
 
     private void dragStart(Vector2 vec)

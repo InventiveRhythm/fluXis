@@ -33,7 +33,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public event Action<string> HitSoundPlayed;
 
-    public EditorHitObjectContainer HitObjectContainer { get; private set; }
+    public EditorHitObjectContainer HitObjectContainer { get; private set; } = new();
     public EditorEffectContainer Effects { get; private set; }
     private WaveformGraph waveform;
 
@@ -66,7 +66,7 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             },
             Effects = new EditorEffectContainer(),
             new EditorTimingLines(),
-            HitObjectContainer = new EditorHitObjectContainer(),
+            HitObjectContainer,
             new TimingTagContainer(),
             new EffectTagContainer()
         };

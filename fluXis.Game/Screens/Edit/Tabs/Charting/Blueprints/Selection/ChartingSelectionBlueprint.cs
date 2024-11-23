@@ -8,12 +8,10 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObject>
 {
     [Resolved]
-    private EditorPlayfield playfield { get; set; }
-
-    [Resolved]
     protected EditorSnapProvider Snaps { get; private set; }
 
-    protected EditorHitObjectContainer HitObjectContainer => playfield.HitObjectContainer;
+    [Resolved]
+    protected EditorHitObjectContainer HitObjectContainer { get; private set; }
 
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.Time;

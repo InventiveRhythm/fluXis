@@ -87,6 +87,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         dependencies.Cache(this);
         dependencies.CacheAs(Playfield = new EditorPlayfield());
         dependencies.CacheAs<ITimePositionProvider>(Playfield);
+        dependencies.CacheAs(Playfield.HitObjectContainer);
         dependencies.CacheAs(sidebar = new ChartingSidebar());
     }
 
