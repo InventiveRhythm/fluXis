@@ -59,8 +59,8 @@ public static class MapUtils
 
     private static int compareTitle(RealmMap first, RealmMap second)
     {
-        if (first.Metadata is null) return 1;
-        if (second.Metadata is null) return -1;
+        if (first?.Metadata is null) return 1;
+        if (second?.Metadata is null) return -1;
 
         var result = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.OrdinalIgnoreCase);
 
@@ -98,8 +98,11 @@ public static class MapUtils
 
     private static int compareLength(RealmMap first, RealmMap second)
     {
+        if (first.Filters is null) return 1;
+        if (second.Filters is null) return -1;
+
         var result = first.Filters.Length.CompareTo(second.Filters.Length);
-        return result != 0 ? result : CompareMap(first, second, SortingMode.Title);
+        return result != 0 ? result : compareTitle(first, second);
     }
 
     private static int compareDifficulty(RealmMap first, RealmMap second)
