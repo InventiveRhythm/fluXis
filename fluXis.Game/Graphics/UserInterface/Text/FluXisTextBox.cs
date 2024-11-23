@@ -204,7 +204,7 @@ public partial class FluXisTextBox : BasicTextBox
             InternalChild = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Color4.White
+                Colour = FluXisColors.Text,
             };
         }
 
@@ -251,7 +251,7 @@ public partial class FluXisTextBox : BasicTextBox
             {
                 this.MoveTo(new Vector2(position.X, position.Y), 100, Easing.OutQuint);
                 this.ResizeWidthTo(2, 100, Easing.OutQuint);
-                this.FadeColour(Color4.White, 200, Easing.OutQuint);
+                this.FadeColour(FluXisColors.Text, 200, Easing.OutQuint);
             }
         }
 

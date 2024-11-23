@@ -4,6 +4,7 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Graphics.UserInterface.Panel.Presets;
 using fluXis.Game.Graphics.UserInterface.Text;
@@ -42,7 +43,6 @@ using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Graphics;
 using osuTK.Input;
 
 namespace fluXis.Game.Screens.Menu;
@@ -284,7 +284,7 @@ public partial class MenuScreen : FluXisScreen
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                                 Masking = true,
-                                BorderColour = Color4.White,
+                                BorderColour = FluXisColors.Text,
                                 BorderThickness = 60,
                                 Children = new Drawable[]
                                 {

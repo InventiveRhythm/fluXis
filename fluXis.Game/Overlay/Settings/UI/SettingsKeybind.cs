@@ -2,6 +2,7 @@ using System.Linq;
 using fluXis.Game.Database;
 using fluXis.Game.Database.Input;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -200,7 +201,7 @@ public partial class SettingsKeybind : SettingsItem
             IsCurrent.BindValueChanged(updateState, true);
         }
 
-        private void updateState(ValueChangedEvent<bool> e) => box.FadeColour(e.NewValue ? Colour4.White : Colour4.Black, 200);
+        private void updateState(ValueChangedEvent<bool> e) => box.FadeColour(e.NewValue ? FluXisColors.Text : Colour4.Black, 200);
 
         protected override bool OnClick(ClickEvent e)
         {

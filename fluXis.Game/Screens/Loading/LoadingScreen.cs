@@ -1,6 +1,7 @@
 using fluXis.Game.Configuration;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Intro;
 using fluXis.Game.Screens.Warning;
 using osu.Framework.Allocation;
@@ -61,6 +62,7 @@ public partial class LoadingScreen : FluXisScreen
                             {
                                 Size = new Vector2(240, 8),
                                 Masking = true,
+                                Colour = FluXisColors.Text,
                                 Children = new Drawable[]
                                 {
                                     new Box

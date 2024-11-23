@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -8,7 +9,7 @@ public partial class OutlinedSquare : Container
 {
     public OutlinedSquare()
     {
-        BorderColour = Colour4.White;
+        BorderColour = FluXisColors.Text;
         BorderThickness = 20;
         Masking = true;
 

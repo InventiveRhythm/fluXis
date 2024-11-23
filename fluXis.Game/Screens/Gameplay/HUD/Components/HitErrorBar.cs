@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Skinning;
 using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
@@ -51,7 +52,7 @@ public partial class HitErrorBar : GameplayHUDComponent
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.White
+                        Colour = FluXisColors.Text
                     }
                 }
             },

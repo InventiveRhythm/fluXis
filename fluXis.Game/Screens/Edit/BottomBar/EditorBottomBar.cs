@@ -99,7 +99,7 @@ public partial class EditorBottomBar : Container
                                     ButtonText = "Test",
                                     Icon = FontAwesome6.Solid.Play,
                                     ShowImmediately = true,
-                                    ButtonColor = FluXisColors.Accent2,
+                                    ButtonColor = FluXisColors.Accent,
                                     Corner = Corner.BottomRight,
                                     Action = () =>
                                     {

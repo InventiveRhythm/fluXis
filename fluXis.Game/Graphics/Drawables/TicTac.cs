@@ -1,8 +1,8 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics.Drawables;
 
@@ -28,7 +28,7 @@ public partial class TicTac : CircularContainer
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Colour = Color4.White
+            Colour = FluXisColors.Text,
         };
     }
 }

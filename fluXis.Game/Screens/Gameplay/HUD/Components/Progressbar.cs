@@ -1,5 +1,6 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens.Gameplay.Audio;
 using fluXis.Game.Utils;
 using osu.Framework.Allocation;
@@ -101,6 +102,7 @@ public partial class Progressbar : GameplayHUDComponent
             RelativeSizeAxes = Axes.X;
             Height = 10;
             Masking = true;
+            Colour = FluXisColors.Text;
 
             InternalChildren = new Drawable[]
             {

@@ -12,7 +12,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
-using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics.UserInterface.Footer;
 
@@ -32,7 +31,7 @@ public partial class FooterButton : CompositeDrawable
 
     public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public Action Action { get; init; }
-    public Colour4 AccentColor { get; init; } = Color4.White;
+    public Colour4 AccentColor { get; init; } = FluXisColors.Text;
     public int Index { get; init; }
 
     public BindableBool Enabled { get; init; } = new(true);

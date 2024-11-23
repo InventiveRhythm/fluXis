@@ -18,7 +18,6 @@ public partial class CourseScreenFooter : Footer
         ButtonText = "Exit",
         Icon = FontAwesome6.Solid.DoorOpen,
         Corner = Corner.BottomLeft,
-        ButtonColor = FluXisColors.Background4,
         Action = ExitAction,
         PlayClickSound = false
     };
@@ -28,7 +27,7 @@ public partial class CourseScreenFooter : Footer
         ButtonText = "Continue",
         Icon = FontAwesome6.Solid.Play,
         Corner = Corner.BottomRight,
-        ButtonColor = FluXisColors.Accent2,
+        ButtonColor = FluXisColors.Accent,
         Action = ContinueAction,
         PlayClickSound = false
     };

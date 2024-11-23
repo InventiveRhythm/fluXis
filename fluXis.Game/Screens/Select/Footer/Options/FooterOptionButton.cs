@@ -51,8 +51,8 @@ public partial class FooterOptionButton : Container
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background3
                     },
-                    hover = new HoverLayer(),
-                    flash = new FlashLayer(),
+                    hover = new HoverLayer { Colour = Color },
+                    flash = new FlashLayer { Colour = Color },
                     new GridContainer
                     {
                         RelativeSizeAxes = Axes.Both,

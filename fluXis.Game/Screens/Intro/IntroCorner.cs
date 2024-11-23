@@ -1,3 +1,4 @@
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -25,6 +26,7 @@ public partial class IntroCorner : Container
         Size = new Vector2(300);
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        Colour = FluXisColors.Text;
         Alpha = 0;
 
         Rotation = corner switch

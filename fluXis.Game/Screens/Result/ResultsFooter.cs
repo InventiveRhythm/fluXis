@@ -33,7 +33,7 @@ public partial class ResultsFooter : Footer
             ButtonText = "Retry",
             Corner = Corner.BottomRight,
             Icon = FontAwesome6.Solid.RotateRight,
-            ButtonColor = FluXisColors.Accent2,
+            ButtonColor = FluXisColors.Accent,
             Action = RestartAction
         };
     }
