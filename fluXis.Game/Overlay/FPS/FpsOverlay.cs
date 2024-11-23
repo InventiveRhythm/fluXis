@@ -1,13 +1,14 @@
 using System.Linq;
 using fluXis.Game.Configuration;
-using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
+using fluXis.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 
 namespace fluXis.Game.Overlay.FPS;
@@ -23,7 +24,7 @@ public partial class FpsOverlay : Container
     private double lastTime;
     private FluXisTextFlow textFlow;
     private Bindable<bool> showFps;
-    private bool visible = true;
+    private bool visible;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -31,12 +32,11 @@ public partial class FpsOverlay : Container
         AutoSizeAxes = Axes.Both;
         Anchor = Anchor.BottomRight;
         Origin = Anchor.BottomRight;
-        AlwaysPresent = true;
-        Margin = new MarginPadding(20);
-        CornerRadius = 5;
+        Margin = new MarginPadding(16);
+        CornerRadius = 4;
         Masking = true;
-        Y = -80;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        AlwaysPresent = true;
+        Alpha = 0;
 
         InternalChildren = new Drawable[]
         {
@@ -48,12 +48,12 @@ public partial class FpsOverlay : Container
             new Container
             {
                 AutoSizeAxes = Axes.Both,
-                Padding = new MarginPadding(5),
+                Padding = new MarginPadding(6),
                 Child = textFlow = new FluXisTextFlow
                 {
                     AutoSizeAxes = Axes.Both,
                     TextAnchor = Anchor.TopRight,
-                    FontSize = 16
+                    WebFontSize = 10
                 }
             }
         };
@@ -78,7 +78,7 @@ public partial class FpsOverlay : Container
                 Hide();
         }
 
-        if (Time.Current - lastTime < 1000) return;
+        if (Time.Current - lastTime < 500) return;
 
         lastTime = Time.Current;
 
@@ -90,19 +90,30 @@ public partial class FpsOverlay : Container
             var firstChar = thread.Name.First();
 
             if (firstChar is 'U' or 'D') // Update or Draw
-                textFlow.AddParagraph($"{clock.FramesPerSecond} {firstChar}PS");
+                textFlow.AddParagraph($"{clock.FramesPerSecond} {firstChar}PS ({clock.ElapsedFrameTime:0}ms)");
         }
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        this.FadeIn(FluXisScreen.FADE_DURATION);
+        return false;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        this.Delay(1200).FadeTo(.6f, FluXisScreen.FADE_DURATION);
     }
 
     public override void Show()
     {
-        this.FadeIn(200, Easing.OutQuint);
-        this.MoveToY(-80, 400, Easing.OutQuint);
+        this.FadeTo(.6f, FluXisScreen.FADE_DURATION)
+            .MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 
     public override void Hide()
     {
-        this.FadeOut(200, Easing.OutQuint);
-        this.MoveToY(-40, 400, Easing.OutQuint);
+        this.FadeOut(FluXisScreen.FADE_DURATION)
+            .MoveToX(40, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 }
