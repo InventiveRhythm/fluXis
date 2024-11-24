@@ -381,12 +381,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     {
                                         Items = new FluXisMenuItem[]
                                         {
-                                            new("Enable Low Pass filter", () =>
+                                            new("Enable Low Pass filter", FontAwesome6.Solid.AngleDown, () =>
                                             {
                                                 lowPassEnabled = !lowPassEnabled;
                                                 lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
                                             }) { IsActive = () => lowPassEnabled },
-                                            new("Enable High Pass filter", () =>
+                                            new("Enable High Pass filter", FontAwesome6.Solid.AngleUp, () =>
                                             {
                                                 highPassEnabled = !highPassEnabled;
                                                 highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
