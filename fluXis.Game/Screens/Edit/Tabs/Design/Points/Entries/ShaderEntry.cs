@@ -59,6 +59,7 @@ public partial class ShaderEntry : PointListEntry
             Duration = shader.Duration,
             Type = shader.Type,
             UseStartParams = shader.UseStartParams,
+            Easing = shader.Easing,
             StartParameters = new ShaderEvent.ShaderParameters
             {
                 Strength = shader.StartParameters.Strength,
