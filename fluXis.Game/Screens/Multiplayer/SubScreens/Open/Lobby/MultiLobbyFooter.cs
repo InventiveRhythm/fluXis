@@ -29,7 +29,7 @@ public partial class MultiLobbyFooter : Footer
     {
         ButtonText = "Ready",
         Icon = FontAwesome6.Solid.SquareCheck,
-        ButtonColor = FluXisColors.Accent2,
+        ButtonColor = FluXisColors.Primary,
         Corner = Corner.BottomRight,
         Action = RightButtonAction
     };

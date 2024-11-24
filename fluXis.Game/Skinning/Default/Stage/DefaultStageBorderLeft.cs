@@ -32,7 +32,7 @@ public partial class DefaultStageBorderLeft : ColorableSkinDrawable
             {
                 RelativeSizeAxes = Axes.Y,
                 Width = DefaultSkin.BORDER_COLOR,
-                Colour = GetIndexOrFallback(1, FluXisColors.Accent3)
+                Colour = GetIndexOrFallback(1, FluXisColors.Secondary)
             }
         };
     }

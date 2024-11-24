@@ -61,7 +61,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     {
         ButtonText = LocalizationStrings.General.Play,
         Icon = FontAwesome6.Solid.Play,
-        ButtonColor = FluXisColors.Accent,
+        ButtonColor = FluXisColors.Primary,
         Corner = Corner.BottomRight,
         Action = PlayAction,
         PlayClickSound = false

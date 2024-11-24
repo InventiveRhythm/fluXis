@@ -90,13 +90,13 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                     {
                         Width = 4,
                         Height = 160,
-                        Colour = FluXisColors.Accent
+                        Colour = FluXisColors.Primary
                     },
                     line = new Line
                     {
                         Width = 6,
                         Height = 120,
-                        Colour = FluXisColors.Accent4
+                        Colour = FluXisColors.Secondary
                     },
                     container = new Container { RelativeSizeAxes = Axes.Both }
                 }
@@ -179,7 +179,7 @@ public partial class OffsetSetup : FluXisScreen, IKeyBindingHandler<FluXisGlobal
                     X = progress < .5f ? progress : progress - 1f,
                     Width = 4,
                     Height = 100,
-                    Colour = FluXisColors.Accent2
+                    Colour = FluXisColors.Primary
                 };
 
                 container.Add(l);

@@ -7,12 +7,10 @@ namespace fluXis.Game.Graphics.UserInterface.Color;
 
 public static class FluXisColors
 {
-    public static Colour4 Accent => Colour4.FromHex("#6F6FE2");
-    public static Colour4 Accent2 => Colour4.FromHex("#8468DC");
-    public static Colour4 Accent3 => Colour4.FromHex("#9960D5");
-    public static Colour4 Accent4 => Colour4.FromHex("#AF59CF");
+    public static Colour4 Primary => Colour4.FromHex("#6F6FE2");
+    public static Colour4 Secondary => Colour4.FromHex("#AF59CF");
 
-    public static ColourInfo AccentGradient => ColourInfo.GradientHorizontal(Accent, Accent4);
+    public static ColourInfo AccentGradient => ColourInfo.GradientHorizontal(Primary, Secondary);
 
     public static Colour4 Background1 => GetThemeColor(.2f, .12f);
     public static Colour4 Background2 => GetThemeColor(.2f, .15f);
@@ -136,9 +134,9 @@ public static class FluXisColors
         var colors = new[]
         {
             Colour4.White,
-            Accent,
-            Accent4,
-            Accent.Lighten(.4f)
+            Primary,
+            Secondary,
+            Primary.Lighten(.4f)
         };
 
         return colors[index];

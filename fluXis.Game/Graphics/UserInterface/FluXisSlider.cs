@@ -63,8 +63,8 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                     {
                         RelativeSizeAxes = Axes.Both,
                         Current = Bindable,
-                        BackgroundColour = FluXisColors.Accent2.Opacity(.2f),
-                        SelectionColour = FluXisColors.Accent2,
+                        BackgroundColour = FluXisColors.Primary.Opacity(.2f),
+                        SelectionColour = FluXisColors.Primary,
                         KeyboardStep = Step
                     }
                 }

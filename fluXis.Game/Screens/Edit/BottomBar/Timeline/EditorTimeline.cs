@@ -1,4 +1,5 @@
 using System;
+using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -30,6 +31,7 @@ public partial class EditorTimeline : Container
         {
             new Circle
             {
+                Colour = FluXisColors.Text,
                 RelativeSizeAxes = Axes.X,
                 Height = 5,
                 Anchor = Anchor.Centre,
@@ -45,6 +47,7 @@ public partial class EditorTimeline : Container
             },
             timingPoints = new Container
             {
+                Colour = FluXisColors.Text,
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

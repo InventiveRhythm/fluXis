@@ -36,7 +36,7 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
         Origin = Anchor.BottomLeft;
         CornerRadius = 10;
         Masking = true;
-        BorderColour = ColourInfo.GradientVertical(GetIndexOrFallback(1, FluXisColors.Accent), GetIndexOrFallback(2, FluXisColors.Accent4));
+        BorderColour = ColourInfo.GradientVertical(GetIndexOrFallback(1, FluXisColors.Primary), GetIndexOrFallback(2, FluXisColors.Secondary));
         BorderThickness = 4;
         InternalChildren = new Drawable[]
         {
@@ -49,7 +49,7 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Colour = GetIndexOrFallback(1, FluXisColors.Accent),
+                Colour = GetIndexOrFallback(1, FluXisColors.Primary),
                 FontSize = 18,
                 Y = 10
             }

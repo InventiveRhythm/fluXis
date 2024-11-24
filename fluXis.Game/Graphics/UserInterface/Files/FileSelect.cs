@@ -273,7 +273,7 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
                                             Origin = Anchor.CentreRight,
                                             FontSize = 20,
                                             Text = "Select",
-                                            Color = FluXisColors.Accent2,
+                                            Color = FluXisColors.Primary,
                                             Action = OnSelect,
                                             Enabled = false
                                         }

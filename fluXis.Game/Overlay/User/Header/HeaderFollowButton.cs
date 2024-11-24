@@ -53,7 +53,7 @@ public partial class HeaderFollowButton : CompositeDrawable
             background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = following ? FluXisColors.Accent2 : FluXisColors.Background2,
+                Colour = following ? FluXisColors.Primary : FluXisColors.Background2,
             },
             flash = new FlashLayer(),
             flow = new FillFlowContainer
@@ -100,7 +100,7 @@ public partial class HeaderFollowButton : CompositeDrawable
 
         user.Following = !following;
         text.Text = user.Following!.Value ? "Unfollow" : "Follow";
-        background.FadeColour(user.Following!.Value ? FluXisColors.Red : FluXisColors.Accent2, 200);
+        background.FadeColour(user.Following!.Value ? FluXisColors.Red : FluXisColors.Primary, 200);
         icon.Icon = user.Following!.Value ? FontAwesome6.Solid.HeartCrack : FontAwesome6.Solid.Heart;
 
         return base.OnClick(e);
@@ -120,7 +120,7 @@ public partial class HeaderFollowButton : CompositeDrawable
             text.Text = "Unfollow";
         }
         else
-            background.FadeColour(FluXisColors.Accent2, 50);
+            background.FadeColour(FluXisColors.Primary, 50);
 
         return base.OnHover(e);
     }
@@ -131,7 +131,7 @@ public partial class HeaderFollowButton : CompositeDrawable
         text.Text = user.Following!.Value ? "Following" : "Follow";
 
         if (following)
-            background.FadeColour(FluXisColors.Accent2, 200);
+            background.FadeColour(FluXisColors.Primary, 200);
         else
         {
             background.FadeColour(FluXisColors.Background2, 200);

@@ -27,7 +27,7 @@ public partial class CourseScreenFooter : Footer
         ButtonText = "Continue",
         Icon = FontAwesome6.Solid.Play,
         Corner = Corner.BottomRight,
-        ButtonColor = FluXisColors.Accent,
+        ButtonColor = FluXisColors.Primary,
         Action = ContinueAction,
         PlayClickSound = false
     };
