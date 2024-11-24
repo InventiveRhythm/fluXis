@@ -28,9 +28,9 @@ public class MapColors : ICustomColorProvider
         get
         {
             if (string.IsNullOrEmpty(AccentHex))
-                return FluXisColors.Primary;
+                return FluXisColors.Highlight;
 
-            return Colour4.TryParseHex(AccentHex, out var color) ? color : FluXisColors.Primary;
+            return Colour4.TryParseHex(AccentHex, out var color) ? color : FluXisColors.Highlight;
         }
         set => AccentHex = value.ToHex();
     }
