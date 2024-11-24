@@ -43,7 +43,7 @@ public partial class EditorHitObject : Container
         Children = new[]
         {
             HitObjectPiece = new DefaultHitObjectPiece(null),
-            tickNotePiece = new DefaultTickNote(),
+            tickNotePiece = new DefaultTickNote(false),
             longNoteBody = new DefaultHitObjectBody(null).With(b =>
             {
                 b.Anchor = Anchor.BottomCentre;
@@ -106,8 +106,11 @@ public partial class EditorHitObject : Container
     {
         base.Update();
 
-        /*text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
-        text.Alpha = settings.ShowSamples.Value ? 1 : 0;*/
+        text.Text = Data.HitSound?.Replace(".wav", "") ?? "";
+        text.Alpha = settings.ShowSamples.Value ? 1 : 0;
+
+        if (Data.Type == 1)
+            tickNotePiece.Width = Data.HoldTime > 0 ? 0.8f : 1f;
 
         X = playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = playfield.HitObjectContainer.PositionAtTime(Data.Time);

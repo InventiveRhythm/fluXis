@@ -175,9 +175,9 @@ public class CustomSkin : ISkin
         return null;
     }
 
-    public Drawable GetTickNote(int lane, int keyCount)
+    public Drawable GetTickNote(int lane, int keyCount, bool small)
     {
-        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Tick/{keyCount}k-{lane}") + ".png";
+        var path = SkinJson.GetOverrideOrDefault($"HitObjects/Tick/{keyCount}k-{lane}{(small ? "-small" : "")}") + ".png";
 
         if (storage.Exists(path))
         {

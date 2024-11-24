@@ -96,7 +96,17 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public void PlayHitSound(HitObject info)
     {
-        var channel = hitsounding.GetSample(info.HitSound);
+        var sound = info.HitSound;
+
+        if (sound == ":normal" && info.Type == 1)
+        {
+            sound = ":tick-big";
+
+            if (info.HoldTime > 0)
+                sound = ":tick-small";
+        }
+
+        var channel = hitsounding.GetSample(sound);
         channel.Play();
         HitSoundPlayed?.Invoke(channel.SampleName);
     }

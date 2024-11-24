@@ -18,7 +18,7 @@ public partial class DrawableTickNote : DrawableHitObject
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = SkinManager.GetTickNote(Data.Lane, ObjectManager.KeyCount);
+        InternalChild = SkinManager.GetTickNote(Data.Lane, ObjectManager.KeyCount, Data.HoldTime > 0);
     }
 
     protected override void Update()

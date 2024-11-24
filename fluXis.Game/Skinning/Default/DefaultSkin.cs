@@ -107,7 +107,7 @@ public class DefaultSkin : ISkin
         return piece;
     }
 
-    public Drawable GetTickNote(int lane, int keyCount) => new DefaultTickNote();
+    public Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultTickNote(small);
 
     public Drawable GetLongNoteBody(int lane, int keyCount)
     {

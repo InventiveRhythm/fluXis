@@ -6,8 +6,10 @@ namespace fluXis.Game.Skinning.Default.HitObject;
 
 public partial class DefaultTickNote : CompositeDrawable
 {
-    public DefaultTickNote()
+    public DefaultTickNote(bool small)
     {
+        Width = small ? 0.8f : 1f;
+
         RelativeSizeAxes = Axes.X;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;

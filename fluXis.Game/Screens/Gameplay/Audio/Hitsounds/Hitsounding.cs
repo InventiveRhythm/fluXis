@@ -22,6 +22,8 @@ public partial class Hitsounding : CompositeDrawable
     private const string hit_kick = "kick";
     private const string hit_clap = "clap";
     private const string hit_snare = "snare";
+    private const string tick_big = "tick-big";
+    private const string tick_small = "tick-small";
 
     public static IEnumerable<string> Defaults { get; } = new[] { hit_normal, hit_kick, hit_clap, hit_snare };
 
@@ -56,7 +58,8 @@ public partial class Hitsounding : CompositeDrawable
         userVolume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
         volume = new Bindable<double>();
 
-        foreach (var sample in Defaults)
+        // tick-big and tick-small shouldn't show up in the editor toolbox
+        foreach (var sample in Defaults.Concat(new[] { tick_big, tick_small }))
         {
             var s = sample == hit_normal
                 ? skinManager.GetHitSample()

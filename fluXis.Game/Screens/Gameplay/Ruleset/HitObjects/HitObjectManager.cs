@@ -178,7 +178,17 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         // when hitting them as a normal note
         if (hitObject is { Type: 1 } && userTriggered) return;
 
-        var channel = screen.Hitsounding.GetSample(hitObject.HitSound, hitsounds.Value);
+        var sound = hitObject.HitSound;
+
+        if (sound == ":normal" && hitObject.Type == 1)
+        {
+            sound = ":tick-big";
+
+            if (hitObject.HoldTime > 0)
+                sound = ":tick-small";
+        }
+
+        var channel = screen.Hitsounding.GetSample(sound, hitsounds.Value);
         channel?.Play();
     }
 }
