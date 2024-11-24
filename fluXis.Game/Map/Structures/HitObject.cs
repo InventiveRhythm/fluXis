@@ -1,5 +1,7 @@
 using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Shared.Scoring.Structs;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace fluXis.Game.Map.Structures;
@@ -52,6 +54,10 @@ public class HitObject : ITimedObject
 
     [JsonIgnore]
     public HitResult HoldEndResult { get; set; }
+
+    [CanBeNull]
+    [JsonIgnore]
+    public EditorHitObject EditorDrawable { get; set; }
 
     public HitObject Copy()
     {

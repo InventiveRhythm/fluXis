@@ -62,11 +62,15 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         map.FlashEventAdded += AddBlueprint;
         map.FlashEventRemoved += RemoveBlueprint;
 
+        SelectionBlueprints.StartBulk();
+
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
 
         foreach (var flash in ChartingContainer.Playfield.Effects.Flashes)
             AddBlueprint(flash.FlashEvent);
+
+        SelectionBlueprints.EndBulk();
     }
 
     protected override void Update()
@@ -131,7 +135,7 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         switch (obj)
         {
             case HitObject hit:
-                var hitDrawable = ChartingContainer.HitObjects.FirstOrDefault(d => d.Data == obj);
+                var hitDrawable = hit.EditorDrawable;
                 if (hitDrawable == null) return null;
 
                 blueprint = hit.LongNote ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);

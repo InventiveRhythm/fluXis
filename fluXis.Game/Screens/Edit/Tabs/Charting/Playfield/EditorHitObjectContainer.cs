@@ -46,13 +46,18 @@ public partial class EditorHitObjectContainer : Container
 
     private void add(HitObject info)
     {
-        Add(new EditorHitObject { Data = info });
+        var draw = new EditorHitObject { Data = info };
+        info.EditorDrawable = draw;
+        Add(draw);
     }
 
     private void remove(HitObject info)
     {
-        var hitObject = InternalChildren.OfType<EditorHitObject>().FirstOrDefault(h => h.Data == info);
-        if (hitObject != null) Remove(hitObject, true);
+        var draw = info.EditorDrawable;
+        if (draw == null) return;
+
+        Remove(draw, true);
+        info.EditorDrawable = null;
     }
 
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));

@@ -5,15 +5,29 @@ namespace fluXis.Game.Screens.Edit.Blueprints.Selection;
 
 public partial class SelectionBlueprints<T> : Container<SelectionBlueprint<T>>
 {
+    private bool bulk;
+
+    public void StartBulk() => bulk = true;
+
+    public void EndBulk()
+    {
+        bulk = false;
+        SortInternal();
+    }
+
     public override void Add(SelectionBlueprint<T> blueprint)
     {
-        SortInternal();
+        if (!bulk)
+            SortInternal();
+
         base.Add(blueprint);
     }
 
     public override bool Remove(SelectionBlueprint<T> blueprint, bool disposeImmediately)
     {
-        SortInternal();
+        if (!bulk)
+            SortInternal();
+
         return base.Remove(blueprint, disposeImmediately);
     }
 
