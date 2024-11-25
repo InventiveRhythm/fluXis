@@ -71,7 +71,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.Y;
+        RelativeSizeAxes = Axes.Both;
 
         dependencies.CacheAs(this);
     }
