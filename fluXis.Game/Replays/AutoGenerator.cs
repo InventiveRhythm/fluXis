@@ -89,14 +89,25 @@ public class AutoGenerator
 
     private IEnumerable<IAction> generateActions()
     {
+        var down = new bool[mode];
+
         for (int i = 0; i < map.HitObjects.Count; i++)
         {
             var currentObject = map.HitObjects[i];
             var nextObjectInColumn = getNextObject(i);
             var releaseTime = calculateReleaseTime(currentObject, nextObjectInColumn);
 
-            yield return new PressAction { Time = currentObject.Time, Lane = currentObject.Lane };
-            yield return new ReleaseAction { Time = releaseTime, Lane = currentObject.Lane };
+            if (!down[currentObject.Lane - 1])
+            {
+                down[currentObject.Lane - 1] = true;
+                yield return new PressAction { Time = currentObject.Time, Lane = currentObject.Lane };
+            }
+
+            if (releaseTime is not null)
+            {
+                down[currentObject.Lane - 1] = false;
+                yield return new ReleaseAction { Time = releaseTime.Value, Lane = currentObject.Lane };
+            }
         }
     }
 
@@ -113,8 +124,16 @@ public class AutoGenerator
         return null;
     }
 
-    private double calculateReleaseTime(HitObject currentObject, HitObject nextObject)
+    private double? calculateReleaseTime(HitObject currentObject, HitObject nextObject)
     {
+        if (nextObject?.Type == 1)
+        {
+            var diff = nextObject.Time - currentObject.Time;
+
+            if (diff < 80)
+                return null;
+        }
+
         var endTime = currentObject.EndTime;
 
         if (currentObject.LongNote)
