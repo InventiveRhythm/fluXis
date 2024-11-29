@@ -18,13 +18,15 @@ public partial class LaneSwitchManager : CompositeComponent
 
     private List<LaneSwitchEvent> events { get; set; }
     private int keycount { get; set; }
+    private bool newLayout { get; set; }
 
     public LaneSwitchEvent Current { get; private set; }
     public int CurrentCount { get; private set; }
     public float HitPosition { get; private set; }
 
-    public LaneSwitchManager(List<LaneSwitchEvent> events, int keycount)
+    public LaneSwitchManager(List<LaneSwitchEvent> events, int keycount, bool newLayout)
     {
+        this.newLayout = newLayout;
         this.events = events;
         this.keycount = keycount;
     }
@@ -32,10 +34,11 @@ public partial class LaneSwitchManager : CompositeComponent
     [BackgroundDependencyLoader]
     private void load() => build();
 
-    public void Rebuild(List<LaneSwitchEvent> events, int keycount)
+    public void Rebuild(List<LaneSwitchEvent> events, int keycount, bool newLayout)
     {
         this.events = events;
         this.keycount = keycount;
+        this.newLayout = newLayout;
         build();
     }
 
@@ -100,7 +103,9 @@ public partial class LaneSwitchManager : CompositeComponent
         if (ev.Count == keycount)
             return Enumerable.Repeat(0, keycount).Select(_ => w);
 
-        var mode = LaneSwitchEvent.SWITCH_VISIBILITY[keycount - 2];
+        var layout = newLayout ? LaneSwitchEvent.SWITCH_VISIBILITY_V2 : LaneSwitchEvent.SWITCH_VISIBILITY;
+
+        var mode = layout[keycount - 2];
         return mode[ev.Count - 1].Select(l => l ? w : 0);
     }
 }

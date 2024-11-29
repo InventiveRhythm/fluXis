@@ -31,7 +31,7 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
     {
         RelativeSizeAxes = Axes.Both;
 
-        dependencies.CacheAs(laneSwitchManager = new LaneSwitchManager(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount)
+        dependencies.CacheAs(laneSwitchManager = new LaneSwitchManager(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout)
         {
             KeepTransforms = true,
             Clock = clock
@@ -75,7 +75,7 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
 
     private void reloadLaneSwitches(LaneSwitchEvent _)
     {
-        laneSwitchManager.Rebuild(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount);
+        laneSwitchManager.Rebuild(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout);
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

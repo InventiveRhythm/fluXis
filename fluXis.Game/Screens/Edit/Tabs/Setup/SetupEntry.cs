@@ -1,16 +1,26 @@
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Setup;
 
-public partial class SetupEntry : CompositeDrawable
+public partial class SetupEntry : CompositeDrawable, IHasTooltip
 {
+    public LocalisableString TooltipText { get; set; }
+
     protected virtual float ContentSpacing => 4;
+    protected virtual bool ShowHoverFlash => false;
+
+    private HoverLayer hover;
+    private FlashLayer flash;
 
     private string title { get; }
 
@@ -34,6 +44,8 @@ public partial class SetupEntry : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
             new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
@@ -72,4 +84,24 @@ public partial class SetupEntry : CompositeDrawable
 
     protected virtual Drawable CreateContent() => Empty();
     protected virtual Drawable CreateRightTitle() => Empty();
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        if (!ShowHoverFlash)
+            return false;
+
+        hover.Show();
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e) => hover.Hide();
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        if (!ShowHoverFlash)
+            return false;
+
+        flash.Show();
+        return true;
+    }
 }

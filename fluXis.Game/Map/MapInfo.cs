@@ -41,6 +41,9 @@ public class MapInfo
     [JsonProperty("dual")]
     public DualMode DualMode { get; set; } = DualMode.Disabled;
 
+    [JsonProperty("ls-v2")]
+    public bool NewLaneSwitchLayout { get; set; }
+
     [JsonIgnore]
     public bool IsDual => DualMode > DualMode.Disabled;
 

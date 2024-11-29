@@ -82,7 +82,9 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         else
             length = clock.TrackLength - Event.Time;
 
-        bool[][] mode = LaneSwitchEvent.SWITCH_VISIBILITY[map.RealmMap.KeyCount - 2];
+        var layout = map.MapInfo.NewLaneSwitchLayout ? LaneSwitchEvent.SWITCH_VISIBILITY_V2 : LaneSwitchEvent.SWITCH_VISIBILITY;
+
+        bool[][] mode = layout[map.RealmMap.KeyCount - 2];
         StateChange[] states = new StateChange[map.RealmMap.KeyCount];
 
         var current = Event.Count == map.RealmMap.KeyCount

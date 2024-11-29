@@ -223,7 +223,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
-            dependencies.CacheAsAndReturn(new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount)),
+            dependencies.CacheAsAndReturn(new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount, Map.NewLaneSwitchLayout)),
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             dependencies.CacheAsAndReturn(PlayfieldManager = new PlayfieldManager(Map.DualMode)),
             replayRecorder = new ReplayRecorder()

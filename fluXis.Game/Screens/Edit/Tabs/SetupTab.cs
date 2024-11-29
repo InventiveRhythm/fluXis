@@ -136,6 +136,21 @@ public partial class SetupTab : EditorTab
                                                             OnColorChanged = color => map.MapInfo.Colors.MiddleHex = color.ToHex()
                                                         }
                                                     }
+                                                },
+                                                new SetupSection("Special")
+                                                {
+                                                    Entries = new Drawable[]
+                                                    {
+                                                        new SetupToggle("New Lane Switch Layout", map.MapInfo.NewLaneSwitchLayout)
+                                                        {
+                                                            TooltipText = "Improves the 6k and 8k layouts for lane switches",
+                                                            OnChange = value =>
+                                                            {
+                                                                map.MapInfo.NewLaneSwitchLayout = value;
+                                                                map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         },
@@ -221,7 +236,7 @@ public partial class SetupTab : EditorTab
                                                             OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value
                                                         },
                                                     }
-                                                }
+                                                },
                                             }
                                         }
                                     }
