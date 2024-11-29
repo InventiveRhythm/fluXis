@@ -30,7 +30,9 @@ public partial class ShaderStackContainer : CompositeDrawable
         else
             shaders.Last().Add(shader);
 
-        LoadComponent(shader);
+        if (IsLoaded)
+            LoadComponent(shader);
+
         shaders.Add(shader);
         return shader.TransformHandler;
     }
