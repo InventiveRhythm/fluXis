@@ -219,15 +219,15 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         dependencies.CacheAs(Input = GetInput());
 
         var shaders = buildShaders();
+        var transforms = shaders.TransformHandlers.ToList();
 
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
             dependencies.CacheAsAndReturn(new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount)),
-            new ShaderEventHandler(MapEvents.ShaderEvents, shaders),
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             dependencies.CacheAsAndReturn(PlayfieldManager = new PlayfieldManager(Map.DualMode)),
             replayRecorder = new ReplayRecorder()
-        }, UseGlobalOffset);
+        }.Concat(transforms), UseGlobalOffset);
 
         var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
 
@@ -319,7 +319,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private ShaderStackContainer buildShaders()
     {
         var stack = new ShaderStackContainer();
-        var shaderTypes = MapEvents.ShaderEvents.Select(e => e.Type).Distinct().ToList();
+        var shaders = MapEvents.ShaderEvents;
+        var shaderTypes = shaders.Select(e => e.Type).Distinct().ToList();
+
+        LoadComponent(stack);
 
         foreach (var shaderType in shaderTypes)
         {
@@ -345,7 +348,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             }
 
             shader.RelativeSizeAxes = Axes.Both;
-            stack.AddShader(shader);
+            var handler = stack.AddShader(shader);
+            LoadComponent(handler);
+
+            shaders.Where(x => x.Type == shaderType)
+                   .ForEach(s => s.Apply(handler));
         }
 
         return stack;

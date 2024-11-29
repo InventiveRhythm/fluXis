@@ -1,5 +1,7 @@
 using System;
+using fluXis.Game.Graphics.Shaders;
 using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Utils.Extensions;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -56,6 +58,23 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
 
         [JsonProperty("strength3")]
         public float Strength3 { get; set; }
+    }
+
+    public void Apply(ShaderTransformHandler shader)
+    {
+        using (shader.BeginAbsoluteSequence(Time))
+        {
+            if (UseStartParams)
+            {
+                shader.StrengthTo(StartParameters.Strength);
+                shader.Strength2To(StartParameters.Strength2);
+                shader.Strength3To(StartParameters.Strength3);
+            }
+
+            shader.StrengthTo(EndParameters.Strength, Duration, Easing);
+            shader.Strength2To(EndParameters.Strength2, Duration, Easing);
+            shader.Strength3To(EndParameters.Strength3, Duration, Easing);
+        }
     }
 }
 

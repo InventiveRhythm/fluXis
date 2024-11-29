@@ -18,6 +18,8 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
     public abstract ShaderType Type { get; }
     protected abstract DrawNode CreateShaderDrawNode();
 
+    public ShaderTransformHandler TransformHandler { get; }
+
     private float strength;
     private float strength2;
     private float strength3;
@@ -91,6 +93,11 @@ public abstract partial class ShaderContainer : Container, IBufferedDrawable
 
     private long updateVersion;
     private long childrenUpdateVersion = -1;
+
+    protected ShaderContainer()
+    {
+        TransformHandler = new ShaderTransformHandler(this);
+    }
 
     [BackgroundDependencyLoader]
     private void load(ShaderManager shaders)

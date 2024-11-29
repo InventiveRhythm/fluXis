@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fluXis.Game.Graphics.Shaders;
 using osu.Framework.Allocation;
 using osu.Framework.Development;
 using osu.Framework.Extensions.EnumExtensions;
@@ -105,6 +106,15 @@ public static class DrawableExtensions
         else
             scheduler.AddOnce(action.Invoke);
     }
+
+    public static void StrengthTo(this ShaderTransformHandler shader, float str, double dur = 0, Easing ease = Easing.None)
+        => shader.TransformTo(nameof(shader.Strength), str, dur, ease);
+
+    public static void Strength2To(this ShaderTransformHandler shader, float str, double dur = 0, Easing ease = Easing.None)
+        => shader.TransformTo(nameof(shader.Strength2), str, dur, ease);
+
+    public static void Strength3To(this ShaderTransformHandler shader, float str, double dur = 0, Easing ease = Easing.None)
+        => shader.TransformTo(nameof(shader.Strength3), str, dur, ease);
 
     public static TransformSequence<T> BorderTo<T>(this T drawable, float newBorder, float duration = 0f, Easing ease = Easing.None)
         where T : class, ITransformable

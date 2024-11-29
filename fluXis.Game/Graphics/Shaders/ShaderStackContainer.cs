@@ -11,6 +11,8 @@ public partial class ShaderStackContainer : CompositeDrawable
 {
     private readonly List<ShaderContainer> shaders = new();
 
+    public IEnumerable<ShaderTransformHandler> TransformHandlers => shaders.Select(x => x.TransformHandler);
+
     public IReadOnlyList<ShaderType> ShaderTypes => shaders.DistinctBy(x => x.Type).Select(x => x.Type).ToList();
 
     public ShaderStackContainer()
@@ -18,7 +20,7 @@ public partial class ShaderStackContainer : CompositeDrawable
         RelativeSizeAxes = Axes.Both;
     }
 
-    public void AddShader(ShaderContainer shader)
+    public ShaderTransformHandler AddShader(ShaderContainer shader)
     {
         Logger.Log($"Adding shader {shader.GetType().Name} to stack", LoggingTarget.Runtime, LogLevel.Debug);
         Logger.Log($"{shaders.Count}", LoggingTarget.Runtime, LogLevel.Debug);
@@ -28,7 +30,9 @@ public partial class ShaderStackContainer : CompositeDrawable
         else
             shaders.Last().Add(shader);
 
+        LoadComponent(shader);
         shaders.Add(shader);
+        return shader.TransformHandler;
     }
 
     public ShaderStackContainer AddContent(Drawable[] content)

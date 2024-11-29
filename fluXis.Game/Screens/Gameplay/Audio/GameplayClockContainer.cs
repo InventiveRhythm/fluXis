@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using fluXis.Game.Audio;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
@@ -14,7 +15,7 @@ public partial class GameplayClockContainer : Container
 
     private DependencyContainer dependencies;
 
-    public GameplayClockContainer(RealmMap realmMap, MapInfo info, Drawable[] drawables, bool useOffset = true)
+    public GameplayClockContainer(RealmMap realmMap, MapInfo info, IEnumerable<Drawable> drawables, bool useOffset = true)
     {
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
@@ -28,7 +29,7 @@ public partial class GameplayClockContainer : Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Clock = GameplayClock,
-                Children = drawables
+                ChildrenEnumerable = drawables
             }
         };
     }
