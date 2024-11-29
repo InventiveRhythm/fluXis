@@ -17,6 +17,7 @@ public class FontAwesome6
         public static IconUsage AngleLeft => GetSolid(0xf104);
         public static IconUsage AngleRight => GetSolid(0xf105);
         public static IconUsage AngleUp => GetSolid(0xf106);
+        public static IconUsage Aperture => GetSolid(0xe2df);
         public static IconUsage ArrowDown => GetSolid(0xf063);
         public static IconUsage ArrowPointer => GetSolid(0xf245);
         public static IconUsage ArrowRight => GetSolid(0xf061);
@@ -126,6 +127,7 @@ public class FontAwesome6
         public static IconUsage Users => GetSolid(0xf0c0);
         public static IconUsage VolumeHigh => GetSolid(0xf028);
         public static IconUsage WandMagicSparkles => GetSolid(0xe2ca);
+        public static IconUsage WaveformLines => GetSolid(0xf8f2);
         public static IconUsage WindowRestore => GetSolid(0xf2d2);
         public static IconUsage WineGlassEmpty => GetSolid(0xf5ce);
         public static IconUsage XMark => GetSolid(0xf00d);

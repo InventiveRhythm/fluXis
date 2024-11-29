@@ -282,7 +282,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             new FluXisMenuSpacer(),
                                             new("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
                                             new FluXisMenuSpacer(),
-                                            new("Exit", FontAwesome6.Solid.XMark, MenuItemType.Dangerous, tryExit)
+                                            new("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, tryExit)
                                         }
                                     },
                                     new("Edit", FontAwesome6.Solid.Pen)
@@ -311,7 +311,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     {
                                         Items = new FluXisMenuItem[]
                                         {
-                                            new("Background Dim", FontAwesome6.Solid.Percent)
+                                            new("Background Dim", FontAwesome6.Solid.Image)
                                             {
                                                 Items = new FluXisMenuItem[]
                                                 {
@@ -322,7 +322,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                     new("80%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .8f) { IsActive = () => BindableBackgroundDim.Value == .8f },
                                                 }
                                             },
-                                            new("Background Blur", FontAwesome6.Solid.Percent)
+                                            new("Background Blur", FontAwesome6.Solid.Aperture)
                                             {
                                                 Items = new FluXisMenuItem[]
                                                 {
@@ -335,7 +335,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                 }
                                             },
                                             new FluXisMenuSpacer(),
-                                            new("Waveform opacity", FontAwesome6.Solid.Percent)
+                                            new("Waveform opacity", FontAwesome6.Solid.WaveformLines)
                                             {
                                                 Items = new FluXisMenuItem[]
                                                 {
