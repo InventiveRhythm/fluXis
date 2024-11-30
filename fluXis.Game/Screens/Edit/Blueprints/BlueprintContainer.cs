@@ -67,6 +67,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         if (DraggedBlueprints != null)
         {
             isDragging = true;
+            StartedMoving();
             return true;
         }
 
@@ -101,6 +102,9 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     private void clearDragStuff()
     {
+        if (isDragging)
+            FinishedMoving();
+
         lastDragEvent = null;
         isDragging = false;
         DraggedBlueprints = null;
@@ -202,5 +206,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         return true;
     }
 
+    protected virtual void StartedMoving() { }
     protected virtual void MoveSelection(DragEvent e) { }
+    protected virtual void FinishedMoving() { }
 }

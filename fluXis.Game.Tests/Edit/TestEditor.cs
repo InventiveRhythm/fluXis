@@ -2,6 +2,7 @@ using System.Linq;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
+using fluXis.Game.Overlay.Notifications;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Edit;
 using osu.Framework.Allocation;
@@ -16,7 +17,7 @@ public partial class TestEditor : FluXisTestScene
     protected override bool UseTestAPI => true;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(NotificationManager notifications)
     {
         CreateClock();
 
@@ -29,10 +30,15 @@ public partial class TestEditor : FluXisTestScene
         var panels = new PanelContainer();
         TestDependencies.CacheAs(panels);
 
+        var floating = new FloatingNotificationContainer();
+        notifications.Floating = floating;
+        TestDependencies.CacheAs(floating);
+
         Add(GlobalClock);
         Add(backgrounds);
         Add(screenStack);
         Add(panels);
+        Add(floating);
 
         AddStep("Push existing map", () =>
         {

@@ -3,16 +3,20 @@ using System.Linq;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
+using fluXis.Game.Screens.Edit.Actions;
+using fluXis.Game.Screens.Edit.Actions.Notes;
 using fluXis.Game.Screens.Edit.Blueprints;
 using fluXis.Game.Screens.Edit.Blueprints.Selection;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints.Selection.Effect;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Tools;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 
@@ -22,6 +26,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
     [Resolved]
     private EditorMap map { get; set; }
+
+    [Resolved]
+    private EditorActionStack actions { get; set; }
 
     [Resolved]
     private EditorSnapProvider snaps { get; set; }
@@ -156,6 +163,14 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         return blueprint;
     }
 
+    [CanBeNull]
+    private NoteMoveAction moveAction;
+
+    protected override void StartedMoving()
+    {
+        moveAction = new NoteMoveAction(SelectedObjects.OfType<HitObject>().ToArray());
+    }
+
     protected override void MoveSelection(DragEvent e)
     {
         if (DraggedBlueprints == null) return;
@@ -170,10 +185,10 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.Time;
         int laneDelta = 0;
 
-        if (DraggedBlueprints.Any(x => x is NoteSelectionBlueprint))
-        {
-            var hitBlueprints = DraggedBlueprints.OfType<NoteSelectionBlueprint>().ToArray();
+        var hitBlueprints = DraggedBlueprints.OfType<NoteSelectionBlueprint>().ToArray();
 
+        if (hitBlueprints.Length != 0)
+        {
             laneDelta = lane - hitBlueprints.First().Object.Lane;
 
             var minLane = hitBlueprints.Min(b => b.Object.Lane);
@@ -183,12 +198,19 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
                 laneDelta = 0;
         }
 
-        foreach (var blueprint in DraggedBlueprints)
-        {
-            blueprint.Object.Time += timeDelta;
+        var hits = hitBlueprints.Select(b => b.HitObject.Data).ToArray();
+        var vecs = NoteMoveAction.CreateFrom(hits);
+        moveAction?.Apply(vecs.Select(v => new Vector2d(v.X + timeDelta, v.Y + laneDelta)).ToArray(), true);
+    }
 
-            if (blueprint is NoteSelectionBlueprint noteBlueprint)
-                noteBlueprint.Object.Lane += laneDelta;
+    protected override void FinishedMoving()
+    {
+        base.FinishedMoving();
+
+        if (moveAction is not null)
+        {
+            actions.Add(moveAction);
+            moveAction = null;
         }
     }
 }
