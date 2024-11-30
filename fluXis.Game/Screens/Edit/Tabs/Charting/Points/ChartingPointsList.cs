@@ -41,7 +41,7 @@ public partial class ChartingPointsList : PointsList
 
     protected override IEnumerable<AddButtonEntry> CreateAddEntries() => new AddButtonEntry[]
     {
-        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint { BPM = 120 })),
-        new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity { Multiplier = 1 }))
+        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint())),
+        new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()))
     };
 }
