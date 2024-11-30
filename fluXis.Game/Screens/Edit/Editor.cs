@@ -110,6 +110,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     private EditorActionStack actionStack;
 
     private long openTime;
+    private long lastSaveTime;
 
     private AudioFilter lowPass;
     private AudioFilter highPass;
@@ -459,7 +460,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     protected override void LoadComplete()
     {
-        openTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        openTime = lastSaveTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         var idx = isNewMap ? 0 : 1;
 
@@ -680,12 +681,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return true;
         }
 
+        var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        editorMap.MapInfo.TimeInEditor += now - lastSaveTime;
+
         mapStore.Save(editorMap.RealmMap, editorMap.MapInfo, editorMap.MapEvents, editorMap.Storyboard, setStatus);
         Scheduler.ScheduleOnceIfNeeded(() => mapStore.UpdateMapSet(mapStore.GetFromGuid(editorMap.MapSet.ID), editorMap.MapSet));
 
         isNewMap = false;
         updateStateHash();
         notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
+        lastSaveTime = now;
         return true;
     }
 
