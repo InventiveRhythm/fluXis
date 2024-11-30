@@ -618,30 +618,30 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         return base.OnExiting(e);
     }
 
-    public override void OnEntering(ScreenTransitionEvent e) => enterAnimation();
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        enterAnimation();
+        FinishTransforms(true);
+    }
+
     public override void OnResuming(ScreenTransitionEvent e) => enterAnimation();
     public override void OnSuspending(ScreenTransitionEvent e) => exitAnimation();
 
     private void exitAnimation()
     {
-        lowPass.CutoffTo(AudioFilter.MAX, 400);
-        highPass.CutoffTo(0, 400);
-        this.FadeOut(200);
-        menuBar.MoveToY(-menuBar.Height, 300, Easing.OutQuint);
-        tabSwitcher.MoveToY(-menuBar.Height, 300, Easing.OutQuint);
-        bottomBar.MoveToY(bottomBar.Height, 300, Easing.OutQuint);
-        tabs.ScaleTo(.9f, 300, Easing.OutQuint);
+        lowPass.CutoffTo(AudioFilter.MAX, MOVE_DURATION);
+        highPass.CutoffTo(0, MOVE_DURATION);
+        this.ScaleTo(1.2f, MOVE_DURATION, Easing.OutQuint).FadeOut(FADE_DURATION);
     }
 
     private void enterAnimation()
     {
-        this.FadeInFromZero(200);
-        lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, 400);
-        highPass.CutoffTo(highPassEnabled ? 300 : 0, 400);
-        menuBar.MoveToY(0, 300, Easing.OutQuint);
-        tabSwitcher.MoveToY(0, 300, Easing.OutQuint);
-        bottomBar.MoveToY(0, 300, Easing.OutQuint);
-        tabs.ScaleTo(1, 300, Easing.OutQuint);
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.ScaleTo(1f).FadeInFromZero(FADE_DURATION);
+            lowPass.CutoffTo(lowPassEnabled ? AudioFilter.MIN : AudioFilter.MAX, MOVE_DURATION);
+            highPass.CutoffTo(highPassEnabled ? 300 : 0, MOVE_DURATION);
+        }
 
         // this check won't work 100% of the time, we need a better way of storing the mappers
         if (editorMap.RealmMap.Metadata.Mapper == api.User.Value?.Username)
