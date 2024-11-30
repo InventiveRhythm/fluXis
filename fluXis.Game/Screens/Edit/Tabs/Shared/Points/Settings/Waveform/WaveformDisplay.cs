@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Waveform;
@@ -25,7 +26,7 @@ public partial class WaveformDisplay : Container
 
     private TimingPoint point { get; }
 
-    private double currentTime;
+    private double currentTime = -10;
     private double endTime;
 
     private int lastIndex = -1;
@@ -99,6 +100,7 @@ public partial class WaveformDisplay : Container
     private void regenerate()
     {
         var index = (int)Math.Round((currentTime - point.Time) / point.MsPerBeat);
+        Logger.Log($"{index}");
 
         // 10ms leniency
         if (clock.IsRunning && lastIndex != index && clock.CurrentTime > point.Time - 10 && clock.CurrentTime < endTime + 10)
