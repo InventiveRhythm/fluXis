@@ -11,6 +11,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.Background.Cropped;
 using fluXis.Game.Import;
+using fluXis.Game.Map.Builtin.Christmashouse;
 using fluXis.Game.Map.Builtin.Roundhouse;
 using fluXis.Game.Map.Builtin.Spoophouse;
 using fluXis.Game.Map.Structures;
@@ -723,6 +724,7 @@ public partial class MapStore : Component
         {
             BuiltinMap.Roundhouse => new RoundhouseMapSet(),
             BuiltinMap.Spoophouse => new SpoophouseMapSet(),
+            BuiltinMap.Christmashouse => new ChristmashouseMapSet(),
             _ => throw new ArgumentOutOfRangeException(nameof(map), map, null)
         };
 
@@ -733,7 +735,8 @@ public partial class MapStore : Component
     public enum BuiltinMap
     {
         Roundhouse,
-        Spoophouse
+        Spoophouse,
+        Christmashouse,
     }
 
     public class DownloadStatus

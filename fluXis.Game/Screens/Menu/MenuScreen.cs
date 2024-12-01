@@ -498,7 +498,12 @@ public partial class MenuScreen : FluXisScreen
     {
         if (config.Get<bool>(FluXisSetting.IntroTheme))
         {
-            maps.CurrentMap = maps.CreateBuiltinMap(Game.CurrentSeason == Season.Halloween ? MapStore.BuiltinMap.Spoophouse : MapStore.BuiltinMap.Roundhouse).LowestDifficulty;
+            maps.CurrentMap = maps.CreateBuiltinMap(Game.CurrentSeason switch
+            {
+                Season.Halloween => MapStore.BuiltinMap.Spoophouse,
+                Season.Winter => MapStore.BuiltinMap.Christmashouse,
+                _ => MapStore.BuiltinMap.Roundhouse
+            }).LowestDifficulty;
             clock.Seek(0);
         }
         else // if disabled, load a random map
