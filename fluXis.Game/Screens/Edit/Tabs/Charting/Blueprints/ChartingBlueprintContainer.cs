@@ -18,6 +18,8 @@ namespace fluXis.Game.Screens.Edit.Tabs.Charting.Blueprints;
 
 public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObject>
 {
+    protected override bool InArea => ChartingContainer.CursorInPlacementArea;
+
     [Resolved]
     private EditorMap map { get; set; }
 

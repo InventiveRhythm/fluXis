@@ -17,6 +17,7 @@ namespace fluXis.Game.Screens.Edit.Blueprints;
 public partial class BlueprintContainer<T> : Container, ICursorDrag
 {
     protected virtual bool HorizontalSelection => false;
+    protected virtual bool InArea => false;
 
     protected readonly BindableList<T> SelectedObjects = new();
 
@@ -78,7 +79,13 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     {
         var foundByClick = selectByClick(e);
         var canMove = prepareMovement(e);
-        return foundByClick || canMove;
+
+        var handle = foundByClick || canMove;
+
+        if (!handle && !InArea)
+            SelectionHandler.DeselectAll();
+
+        return handle;
     }
 
     protected override void OnDrag(DragEvent e)

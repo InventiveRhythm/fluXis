@@ -68,7 +68,7 @@ public partial class SelectionHandler<T> : Container, IHasContextMenu
 
     private void updateVisibility()
     {
-        outline.FadeTo(SelectedObjects.Count > 0 ? 1 : 0);
+        outline.FadeTo(SelectedObjects.Count > 0 ? 1 : 0, 100);
 
         if (SelectedObjects.Count == 0) wasVisible = false;
     }
