@@ -66,7 +66,7 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
             new[] { false, false, true, false, false, true, false, false }, // 2k
             new[] { false, false, true, true, true, false, false, false }, // 3k
             new[] { false, true, true, false, false, true, true, false }, // 4k
-            new[] { true, true, true, false, false, true, true, false }, // 5k
+            new[] { false, true, true, true, false, true, true, false }, // 5k
             new[] { true, true, true, false, false, true, true, true }, // 6k
             new[] { true, true, true, true, false, true, true, true } // 7k
         },
