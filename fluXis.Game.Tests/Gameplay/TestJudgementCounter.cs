@@ -1,6 +1,6 @@
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Gameplay.HUD.Components;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
 
 namespace fluXis.Game.Tests.Gameplay;
 

@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
-using fluXis.Shared.API.Payloads.Maps;
-using fluXis.Shared.Components.Maps;
-using fluXis.Shared.Utils;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Payloads.Maps;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Maps.Votes;

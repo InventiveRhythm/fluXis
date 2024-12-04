@@ -5,11 +5,10 @@ using fluXis.Game.Database;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map.Structures;
 using fluXis.Game.Mods;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.Utils;
-using fluXis.Shared.Components.Maps;
-using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

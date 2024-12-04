@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using fluXis.Shared.Components.Maps;
-using fluXis.Shared.Components.Multi;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring;
 
 namespace fluXis.Game.Online.API.Models.Multi;
 

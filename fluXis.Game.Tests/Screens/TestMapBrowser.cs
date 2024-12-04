@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.MapSets;
 using fluXis.Game.Screens;
 using fluXis.Game.Screens.Browse;
-using fluXis.Shared.Components.Maps;
-using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 

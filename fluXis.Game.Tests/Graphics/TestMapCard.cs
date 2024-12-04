@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Map.Drawables.Card;
+using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Overlay.Mouse;
-using fluXis.Shared.Components.Maps;
-using fluXis.Shared.Components.Users;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

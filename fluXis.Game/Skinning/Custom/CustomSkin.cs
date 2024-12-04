@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Game.Audio;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing.Health;
 using fluXis.Game.Screens.Course;
 using fluXis.Game.Skinning.Bases.Judgements;
@@ -9,7 +10,6 @@ using fluXis.Game.Skinning.Custom.HitObjects;
 using fluXis.Game.Skinning.Custom.Judgements;
 using fluXis.Game.Skinning.Custom.Lighting;
 using fluXis.Game.Skinning.Json;
-using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -285,7 +285,7 @@ public class CustomSkin : ISkin
 
     public Drawable GetFailFlash()
     {
-        var path = SkinJson.GetOverrideOrDefault($"Gameplay/fail-flash") + ".png";
+        var path = SkinJson.GetOverrideOrDefault("Gameplay/fail-flash") + ".png";
         return storage.Exists(path) ? new SkinnableSprite(textures.Get(path)) { FillMode = FillMode.Fill } : null;
     }
 

@@ -48,7 +48,7 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
                 Origin = Anchor.CentreRight,
                 Direction = FillDirection.Horizontal,
                 Spacing = new Vector2(5),
-                Children = new Drawable[]
+                Children = new[]
                 {
                     TextBox = new FluXisTextBox
                     {

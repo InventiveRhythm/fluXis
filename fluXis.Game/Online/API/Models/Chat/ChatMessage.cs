@@ -1,5 +1,4 @@
-using fluXis.Shared.Components.Chat;
-using fluXis.Shared.Components.Users;
+using fluXis.Game.Online.API.Models.Users;
 
 namespace fluXis.Game.Online.API.Models.Chat;
 

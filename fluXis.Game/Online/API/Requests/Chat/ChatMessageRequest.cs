@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
-using fluXis.Shared.API.Payloads.Chat;
-using fluXis.Shared.Components.Chat;
-using fluXis.Shared.Utils;
+using fluXis.Game.Online.API.Models.Chat;
+using fluXis.Game.Online.API.Payloads.Chat;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Chat;

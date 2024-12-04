@@ -5,7 +5,7 @@ using DiscordRPC.Message;
 using fluXis.Game;
 using fluXis.Game.Integration;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Utils;
+using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using EventType = DiscordRPC.EventType;

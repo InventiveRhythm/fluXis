@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
-using fluXis.Shared.Scoring.Enums;
+using fluXis.Game.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

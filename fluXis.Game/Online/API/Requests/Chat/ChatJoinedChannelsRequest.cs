@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using fluXis.Shared.Components.Chat;
+using fluXis.Game.Online.API.Models.Chat;
 
 namespace fluXis.Game.Online.API.Requests.Chat;
 

@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.WebSockets;
 using fluXis.Game.Configuration;
 using fluXis.Game.Online.API;
-using fluXis.Shared.Components.Users;
+using fluXis.Game.Online.API.Models.Users;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

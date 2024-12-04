@@ -8,7 +8,7 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Localization.Categories;
 using fluXis.Game.Map;
 using fluXis.Game.Map.Structures;
-using fluXis.Shared.Components.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using osu.Framework.Localisation;
 
 namespace fluXis.Game.Utils;

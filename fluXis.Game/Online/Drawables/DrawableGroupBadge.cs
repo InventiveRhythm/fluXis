@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Shared.Components.Groups;
+using fluXis.Game.Online.API.Models.Groups;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

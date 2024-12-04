@@ -39,7 +39,6 @@ using fluXis.Game.Storyboards.Drawables;
 using fluXis.Game.UI;
 using fluXis.Game.Utils;
 using fluXis.Game.Utils.Extensions;
-using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;

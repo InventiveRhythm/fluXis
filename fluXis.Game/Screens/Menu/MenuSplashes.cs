@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using fluXis.Shared.Utils;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 using osu.Framework.Platform;

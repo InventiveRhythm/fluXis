@@ -1,5 +1,5 @@
 using System;
-using fluXis.Shared.Components.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using Realms;
 
 namespace fluXis.Game.Database.Maps;

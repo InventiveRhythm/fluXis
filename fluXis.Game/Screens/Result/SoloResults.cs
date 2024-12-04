@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using fluXis.Game.Database.Maps;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Scores;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result.Sides.Types;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 

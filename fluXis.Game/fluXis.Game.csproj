@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
-    <ProjectReference Include="..\fluXis.Shared\fluXis.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
@@ -22,6 +21,7 @@
     <PackageReference Include="Realm" Version="11.7.0" />
     <PackageReference Include="Sentry" Version="4.11.0" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    <PackageReference Include="MessagePack" Version="2.5.192" />
 
     <!-- Required for building specific platforms with TeamCity -->
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

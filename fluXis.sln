@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.osu", "fluXis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.Stepmania", "fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj", "{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Shared", "fluXis.Shared\fluXis.Shared.csproj", "{21AA3FE0-6B08-4DC6-BA96-154E54DA1D36}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

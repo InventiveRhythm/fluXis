@@ -3,7 +3,7 @@ using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
-using fluXis.Shared.Components.Clubs;
+using fluXis.Game.Online.API.Models.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

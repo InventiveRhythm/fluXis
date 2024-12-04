@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Graphics.UserInterface.Context;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Select.Info.Scores;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;

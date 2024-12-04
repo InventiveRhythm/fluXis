@@ -1,5 +1,5 @@
 ﻿using fluXis.Game.Graphics.UserInterface.Text;
-using fluXis.Shared.Scoring;
+using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

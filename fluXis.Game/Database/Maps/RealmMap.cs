@@ -5,7 +5,6 @@ using System.Linq;
 using fluXis.Game.Map;
 using fluXis.Game.Mods;
 using fluXis.Game.Utils;
-using fluXis.Shared.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Textures;

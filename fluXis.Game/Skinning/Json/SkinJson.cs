@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Shared.Scoring.Enums;
+using fluXis.Game.Scoring.Enums;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;

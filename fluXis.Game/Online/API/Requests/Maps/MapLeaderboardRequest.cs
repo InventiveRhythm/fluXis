@@ -1,5 +1,5 @@
+using fluXis.Game.Online.API.Responses.Maps;
 using fluXis.Game.Screens.Select.Info.Scores;
-using fluXis.Shared.API.Responses.Maps;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Maps;

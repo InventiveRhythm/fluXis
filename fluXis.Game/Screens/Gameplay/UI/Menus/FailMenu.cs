@@ -42,7 +42,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        InternalChildren = new Drawable[]
+        InternalChildren = new[]
         {
             dim = new Box
             {

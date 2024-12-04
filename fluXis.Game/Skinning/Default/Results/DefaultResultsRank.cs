@@ -1,5 +1,5 @@
-﻿using fluXis.Game.Utils.Extensions;
-using fluXis.Shared.Scoring.Enums;
+﻿using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

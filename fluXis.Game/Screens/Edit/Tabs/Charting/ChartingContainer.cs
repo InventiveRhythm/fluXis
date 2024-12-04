@@ -17,7 +17,7 @@ using fluXis.Game.Screens.Edit.Tabs.Shared;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Game.Screens.Gameplay.Audio.Hitsounds;
-using fluXis.Shared.Utils;
+using fluXis.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

@@ -1,4 +1,4 @@
-using fluXis.Shared.API.Responses.Users;
+using fluXis.Game.Online.API.Responses.Users;
 
 namespace fluXis.Game.Online.API.Requests.Users;
 

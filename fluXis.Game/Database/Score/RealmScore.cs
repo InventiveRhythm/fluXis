@@ -2,9 +2,8 @@ using System;
 using System.Linq;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Utils;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
 using JetBrains.Annotations;
 using Realms;
 

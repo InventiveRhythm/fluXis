@@ -1,6 +1,6 @@
 using System;
 using fluXis.Game.Online;
-using fluXis.Shared.Components.Users;
+using fluXis.Game.Online.API.Models.Users;
 
 namespace fluXis.Game.Utils;
 

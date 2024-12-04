@@ -2,8 +2,8 @@
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.API.Requests.Scores;
+using fluXis.Game.Online.API.Responses.Scores;
 using fluXis.Game.Utils;
-using fluXis.Shared.API.Responses.Scores;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;

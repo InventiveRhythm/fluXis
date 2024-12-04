@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using fluXis.Game.Online.API.Packets.Chat;
 using fluXis.Game.Online.API.Requests.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Utils.Extensions;
-using fluXis.Shared.API;
-using fluXis.Shared.API.Packets.Chat;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

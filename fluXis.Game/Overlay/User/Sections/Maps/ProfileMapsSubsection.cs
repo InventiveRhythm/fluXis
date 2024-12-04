@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Drawables.Card;
-using fluXis.Shared.Components.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

@@ -1,8 +1,8 @@
 using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
-using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

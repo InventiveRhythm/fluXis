@@ -1,7 +1,7 @@
 using System.Net.Http;
-using fluXis.Shared.API.Responses.Scores;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Utils;
+using fluXis.Game.Online.API.Responses.Scores;
+using fluXis.Game.Scoring;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Scores;

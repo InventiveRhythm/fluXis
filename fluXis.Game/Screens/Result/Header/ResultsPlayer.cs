@@ -2,10 +2,10 @@
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Drawables;
+using fluXis.Game.Scoring;
 using fluXis.Game.Utils;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

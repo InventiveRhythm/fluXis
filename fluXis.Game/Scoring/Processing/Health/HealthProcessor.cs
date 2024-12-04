@@ -1,8 +1,8 @@
 using System;
+using fluXis.Game.Scoring.Enums;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Gameplay.Audio;
-using fluXis.Shared.Scoring.Enums;
-using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Bindables;
 using osu.Framework.Utils;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.API.Requests.Chat;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Components.Chat;
 
 namespace fluXis.Game.Online.Chat;
 

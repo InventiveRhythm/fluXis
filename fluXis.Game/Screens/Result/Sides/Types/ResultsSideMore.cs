@@ -1,8 +1,8 @@
 ﻿using System.Linq;
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Result.Sides.Presets;
 using fluXis.Game.Utils;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;

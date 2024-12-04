@@ -1,7 +1,7 @@
 using System.Net.Http;
-using fluXis.Shared.API.Payloads.Users;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Utils;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.API.Payloads.Users;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Users;

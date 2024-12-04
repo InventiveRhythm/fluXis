@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Game.Map;
-using fluXis.Shared.Scoring.Structs;
+using fluXis.Game.Scoring.Structs;
 
 namespace fluXis.Game.Scoring.Processing;
 

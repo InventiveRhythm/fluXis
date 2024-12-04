@@ -1,7 +1,7 @@
 using System;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing.Health;
-using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Game.Mods;

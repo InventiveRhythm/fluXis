@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using fluXis.Game.Mods.Drawables;
+using fluXis.Game.Scoring;
 using fluXis.Game.Utils;
-using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

@@ -1,9 +1,9 @@
 ﻿using System;
+using fluXis.Game.Scoring;
 using fluXis.Game.Screens.Result.Center;
 using fluXis.Game.Screens.Result.Sides;
 using fluXis.Game.Screens.Result.Sides.Types;
 using fluXis.Game.Skinning;
-using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,12 +13,6 @@ namespace fluXis.Game.Screens.Result;
 
 public partial class ResultsContent : CompositeDrawable
 {
-    [Resolved]
-    private Results screen { get; set; }
-
-    [Resolved]
-    private SkinManager skins { get; set; }
-
     [Resolved]
     private ScoreInfo score { get; set; }
 

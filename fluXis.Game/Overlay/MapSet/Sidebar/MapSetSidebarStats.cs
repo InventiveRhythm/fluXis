@@ -2,8 +2,8 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Text;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Utils;
-using fluXis.Shared.Components.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

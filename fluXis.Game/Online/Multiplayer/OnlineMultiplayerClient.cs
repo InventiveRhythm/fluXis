@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
 using fluXis.Game.Online.API;
 using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.API.Packets.Multiplayer;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.API;
-using fluXis.Shared.API.Packets.Multiplayer;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
+using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 

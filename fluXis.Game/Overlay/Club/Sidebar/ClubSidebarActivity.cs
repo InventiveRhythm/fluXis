@@ -1,5 +1,5 @@
 ﻿using fluXis.Game.Graphics.Sprites;
-using fluXis.Shared.Components.Clubs;
+using fluXis.Game.Online.API.Models.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

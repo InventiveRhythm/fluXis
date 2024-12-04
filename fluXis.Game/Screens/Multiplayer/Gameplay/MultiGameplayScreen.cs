@@ -5,10 +5,10 @@ using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Mods;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.Multiplayer;
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay;
 using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Structs;
 using osu.Framework.Allocation;
 using osu.Framework.Screens;
 

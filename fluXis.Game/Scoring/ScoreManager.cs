@@ -7,7 +7,6 @@ using fluXis.Game.Database.Score;
 using fluXis.Game.Map;
 using fluXis.Game.Scoring.Processing;
 using fluXis.Game.Utils;
-using fluXis.Shared.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Containers;

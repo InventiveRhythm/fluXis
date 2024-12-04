@@ -4,9 +4,9 @@ using fluXis.Game.Database.Maps;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Online.API.Models.Maps;
 using fluXis.Game.Online.API.Requests.Maps.Votes;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Components.Maps;
 using Humanizer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -28,7 +28,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
     [Resolved]
     private IAPIClient api { get; set; }
 
-    private bool sendingRequest = false;
+    private bool sendingRequest;
     private int currentVote;
 
     private Container container;

@@ -1,6 +1,6 @@
 using fluXis.Game.Graphics.UserInterface.Panel;
+using fluXis.Game.Online.API.Models.Other;
 using fluXis.Game.Overlay.Achievements;
-using fluXis.Shared.Components.Other;
 using osu.Framework.Allocation;
 
 namespace fluXis.Game.Tests.Overlay;

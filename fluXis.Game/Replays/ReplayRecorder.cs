@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Input;
-using fluXis.Shared.Replays;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 

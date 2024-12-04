@@ -1,7 +1,7 @@
 using System.Net.Http;
-using fluXis.Shared.API.Payloads.Auth.Multifactor;
-using fluXis.Shared.API.Responses.Auth.Multifactor;
-using fluXis.Shared.Utils;
+using fluXis.Game.Online.API.Payloads.Auth.Multifactor;
+using fluXis.Game.Online.API.Responses.Auth.Multifactor;
+using fluXis.Game.Utils;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Game.Online.API.Requests.Auth.Multifactor;

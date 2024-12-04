@@ -1,6 +1,6 @@
 using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
-using fluXis.Shared.Scoring.Structs;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

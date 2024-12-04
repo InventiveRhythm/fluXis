@@ -1,5 +1,3 @@
-using fluXis.Shared.Components.Multi;
-
 namespace fluXis.Game.Online.API.Models.Multi;
 
 public class MultiplayerRoomSettings : IMultiplayerRoomSettings

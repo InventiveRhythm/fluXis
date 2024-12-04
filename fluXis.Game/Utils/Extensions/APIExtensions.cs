@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Shared.Components.Clubs;
-using fluXis.Shared.Components.Other;
-using fluXis.Shared.Components.Scores;
-using fluXis.Shared.Scoring;
-using fluXis.Shared.Scoring.Enums;
+using fluXis.Game.Online.API.Models.Clubs;
+using fluXis.Game.Online.API.Models.Other;
+using fluXis.Game.Online.API.Models.Scores;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring;
+using fluXis.Game.Scoring.Enums;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Logging;
@@ -33,6 +34,25 @@ public static class APIExtensions
             Logger.Error(e, "Failed to create colour info.");
             return Colour4.White;
         }
+    }
+
+    public static bool IsDeveloper(this APIUser user)
+        => user.Groups.Any(g => g.ID == "dev");
+
+    public static bool IsPurifier(this APIUser user)
+    {
+        if (user.IsDeveloper())
+            return true;
+
+        return user.Groups.Any(g => g.ID == "purifier");
+    }
+
+    public static bool CanModerate(this APIUser user)
+    {
+        if (user.IsDeveloper())
+            return true;
+
+        return user.Groups.Any(g => g.ID == "moderators");
     }
 
     public static ScoreInfo ToScoreInfo(this APIScore score) => new()

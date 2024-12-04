@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Shared.Components.Users;
+using fluXis.Game.Online.API.Models.Users;
 
 namespace fluXis.Game.Online.API.Requests.Users;
 

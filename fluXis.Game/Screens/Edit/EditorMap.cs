@@ -12,7 +12,6 @@ using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Storyboards;
 using fluXis.Game.Utils;
-using fluXis.Shared.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using SixLabors.ImageSharp;

@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 using fluXis.Game.Online;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.API.Packets;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.API;
-using fluXis.Shared.API.Packets;
-using fluXis.Shared.Components.Users;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 

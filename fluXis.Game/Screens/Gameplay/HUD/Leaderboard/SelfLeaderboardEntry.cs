@@ -1,5 +1,5 @@
-﻿using fluXis.Game.Scoring.Processing;
-using fluXis.Shared.Components.Users;
+﻿using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring.Processing;
 
 namespace fluXis.Game.Screens.Gameplay.HUD.Leaderboard;
 

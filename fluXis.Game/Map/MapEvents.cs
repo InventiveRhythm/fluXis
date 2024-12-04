@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
-using fluXis.Shared.Utils;
+using fluXis.Game.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 using SixLabors.ImageSharp;

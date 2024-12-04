@@ -16,9 +16,6 @@ namespace fluXis.Game.Screens.Gameplay.HUD;
 public partial class GameplayHUD : Container
 {
     [Resolved]
-    private GameplayScreen screen { get; set; }
-
-    [Resolved]
     private PlayfieldManager playfieldManager { get; set; }
 
     [Resolved]

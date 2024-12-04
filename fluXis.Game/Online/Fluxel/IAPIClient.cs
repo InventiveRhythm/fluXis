@@ -2,9 +2,8 @@ using System;
 using System.Threading.Tasks;
 using fluXis.Game.Online.Activity;
 using fluXis.Game.Online.API;
-using fluXis.Shared.API;
-using fluXis.Shared.API.Packets;
-using fluXis.Shared.Components.Users;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.API.Packets;
 using osu.Framework.Bindables;
 
 namespace fluXis.Game.Online.Fluxel;

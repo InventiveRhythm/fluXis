@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Fluxel;
-using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;

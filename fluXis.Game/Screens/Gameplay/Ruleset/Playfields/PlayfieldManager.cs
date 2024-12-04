@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using fluXis.Game.Configuration.Experiments;
-using fluXis.Shared.Components.Maps;
+using fluXis.Game.Online.API.Models.Maps;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;

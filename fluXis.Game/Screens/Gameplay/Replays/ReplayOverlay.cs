@@ -1,7 +1,7 @@
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online;
+using fluXis.Game.Replays;
 using fluXis.Game.Utils.Extensions;
-using fluXis.Shared.Replays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

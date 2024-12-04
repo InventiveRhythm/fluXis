@@ -1,8 +1,8 @@
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
+using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Screens.Gameplay.Ruleset.HitObjects.Long;
 using fluXis.Game.Skinning.Bases.HitObjects;
-using fluXis.Shared.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

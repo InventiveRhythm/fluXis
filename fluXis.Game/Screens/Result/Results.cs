@@ -1,8 +1,8 @@
 using System;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Input;
-using fluXis.Shared.Components.Users;
-using fluXis.Shared.Scoring;
+using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;

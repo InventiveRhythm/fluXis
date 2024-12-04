@@ -1,4 +1,4 @@
-﻿using fluXis.Shared.Components.Clubs;
+﻿using fluXis.Game.Online.API.Models.Clubs;
 
 namespace fluXis.Game.Online.API.Requests.Clubs;
 

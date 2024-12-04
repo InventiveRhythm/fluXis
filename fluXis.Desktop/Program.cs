@@ -9,7 +9,7 @@ using fluXis.Game.Localization;
 using fluXis.Game.Localization.Categories;
 using fluXis.Game.Localization.Categories.Settings;
 using fluXis.Game.Mods;
-using fluXis.Shared.Utils;
+using fluXis.Game.Utils;
 using osu.Framework.Platform;
 using osu.Framework;
 using osu.Framework.Localisation;

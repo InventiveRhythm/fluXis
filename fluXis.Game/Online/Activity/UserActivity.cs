@@ -1,10 +1,10 @@
 using System;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Integration;
+using fluXis.Game.Online.API.Models.Multi;
+using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Screens.Gameplay;
-using fluXis.Shared.Components.Multi;
-using fluXis.Shared.Components.Users;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
