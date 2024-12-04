@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace fluXis.Game.Online.API.Models.Other;
 
-public class GradientColor
+public class APIGradientColor
 {
     [JsonProperty("color")]
     public string Color { get; set; } = "#ffffff";

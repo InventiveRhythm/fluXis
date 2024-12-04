@@ -89,6 +89,19 @@ public class MapInfo
     [JsonIgnore]
     public string StoryboardHash { get; private set; }
 
+    #region Server-Side Stuff
+
+    [JsonIgnore]
+    public string RawContent { get; set; } = "";
+
+    [JsonIgnore]
+    public string FileName { get; set; } = "";
+
+    [JsonIgnore]
+    public int KeyCount => HitObjects.Max(x => x.Lane);
+
+    #endregion
+
     public MapInfo(MapMetadata metadata)
         : this()
     {

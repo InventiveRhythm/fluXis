@@ -82,6 +82,13 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && TimeOffsetEvents.Count == 0
                          && NoteEvents.Count == 0;
 
+    #region Server-Side Stuff
+
+    [JsonIgnore]
+    public string RawContent { get; set; } = "";
+
+    #endregion
+
     public static T Load<T>(string content)
         where T : MapEvents, new()
     {
@@ -89,6 +96,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
             return new T().loadLegacy(content) as T;
 
         var events = content.Deserialize<T>();
+        events.RawContent = content;
         return events.Sort() as T;
     }
 

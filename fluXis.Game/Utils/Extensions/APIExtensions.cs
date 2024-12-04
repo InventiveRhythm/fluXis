@@ -21,7 +21,7 @@ public static class APIExtensions
     public static ColourInfo CreateColorInfo(this APIClub club)
         => CreateColorInfo(club.Colors);
 
-    public static ColourInfo CreateColorInfo(this List<GradientColor> colors)
+    public static ColourInfo CreateColorInfo(this List<APIGradientColor> colors)
     {
         try
         {

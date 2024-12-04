@@ -13,5 +13,5 @@ public class APINamePaint
     public string Name { get; set; } = "";
 
     [JsonProperty("colors")]
-    public List<GradientColor> Colors { get; set; } = new();
+    public List<APIGradientColor> Colors { get; set; } = new();
 }

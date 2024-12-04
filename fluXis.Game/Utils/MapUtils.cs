@@ -137,7 +137,7 @@ public static class MapUtils
                 filters.NoteCount++;
         }
 
-        filters.NotesPerSecond = getNps(map.HitObjects);
+        filters.NotesPerSecond = GetNps(map.HitObjects);
 
         foreach (var timingPoint in map.TimingPoints)
         {
@@ -152,12 +152,15 @@ public static class MapUtils
             filters.Effects |= MapEffectType.ScrollVelocity;
 
         if (events != null)
-            filters.Effects = getEffects(events);
+            filters.Effects = GetEffects(events);
 
         return filters;
     }
 
-    private static MapEffectType getEffects(MapEvents events)
+    public static RealmMapFilters GetMapFilters(MapInfo map, MapEvents events)
+        => new RealmMapFilters().UpdateFilters(map, events);
+
+    public static MapEffectType GetEffects(MapEvents events)
     {
         MapEffectType effects = 0;
 
@@ -206,10 +209,7 @@ public static class MapUtils
         return effects;
     }
 
-    public static RealmMapFilters GetMapFilters(MapInfo map, MapEvents events)
-        => new RealmMapFilters().UpdateFilters(map, events);
-
-    private static float getNps(List<HitObject> hitObjects)
+    public static float GetNps(List<HitObject> hitObjects)
     {
         if (hitObjects.Count == 0) return 0;
 

@@ -8,13 +8,13 @@ public class APIChatChannel
     public string Name { get; init; } = null!;
 
     [JsonProperty("type")]
-    public ChannelType Type { get; init; }
+    public APIChannelType Type { get; init; }
 
     [JsonProperty("count")]
     public long UserCount { get; init; }
 }
 
-public enum ChannelType
+public enum APIChannelType
 {
     Public = 0,
     Private = 1

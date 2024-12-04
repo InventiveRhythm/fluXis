@@ -28,7 +28,7 @@ public class APIClub
     public long MemberCount { get; set; }
 
     [JsonProperty("colors")]
-    public List<GradientColor> Colors { get; set; } = new();
+    public List<APIGradientColor> Colors { get; set; } = new();
 
     #region Optional
 
@@ -53,7 +53,7 @@ public class APIClub
             ID = id,
             Name = "Unknown Club",
             Tag = "UNK",
-            Colors = new List<GradientColor>
+            Colors = new List<APIGradientColor>
             {
                 new() { Color = "#ffffff", Position = 0 },
                 new() { Color = "#ffffff", Position = 0 }
