@@ -336,11 +336,11 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
         if (effects.HasFlag(MapEffectType.BeatPulse))
             icons.Add(new GimmickIcon(FluXisIconType.BeatPulse, "Contains beat pulses"));
 
-        if (effects.HasFlag(MapEffectType.HitObjectFade))
-            icons.Add(new GimmickIcon(FluXisIconType.HitObjectFade, "Contains hitobject fades"));
-
         if (effects.HasFlag(MapEffectType.HitObjectEase))
             icons.Add(new GimmickIcon(FluXisIconType.HitObjectEase, "Contains hitobject eases"));
+
+        if (effects.HasFlag(MapEffectType.LayerFade))
+            icons.Add(new GimmickIcon(FluXisIconType.LayerFade, "Contains layer fades"));
 
         if (effects.HasFlag(MapEffectType.ScrollMultiply))
             icons.Add(new GimmickIcon(FluXisIconType.ScrollMultiply, "Contains scroll multipliers"));

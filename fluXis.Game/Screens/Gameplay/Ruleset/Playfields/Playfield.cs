@@ -14,6 +14,7 @@ using fluXis.Game.Utils.Extensions;
 using fluXis.Shared.Components.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -59,6 +60,7 @@ public partial class Playfield : Container
 
     private DependencyContainer dependencies;
 
+    private Stage stage;
     private Drawable hitline;
     private Drawable topCover;
     private Drawable bottomCover;
@@ -114,7 +116,7 @@ public partial class Playfield : Container
         {
             new LaneSwitchAlert(),
             new PulseEffect(),
-            new Stage(),
+            stage = new Stage(),
             new TimingLineManager(),
             Manager,
             Receptors = new FillFlowContainer<Receptor>
@@ -144,9 +146,12 @@ public partial class Playfield : Container
                 }
             },
             new KeyOverlay(),
-            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude)),
-            new EventHandler<HitObjectFadeEvent>(screen.MapEvents.HitObjectFadeEvents, fade => Manager.FadeTo(fade.Alpha, fade.Duration, fade.Easing))
+            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude))
         };
+
+        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.HitObjects).ForEach(e => e.Apply(Manager));
+        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Stage).ForEach(e => e.Apply(stage));
+        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Receptors).ForEach(e => e.Apply(Receptors));
 
         if (canSeek)
         {

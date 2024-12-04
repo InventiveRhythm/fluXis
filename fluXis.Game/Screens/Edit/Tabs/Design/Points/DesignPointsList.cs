@@ -36,15 +36,15 @@ public partial class DesignPointsList : PointsList
         Map.PlayfieldScaleEventRemoved += RemovePoint;
         Map.MapEvents.PlayfieldScaleEvents.ForEach(AddPoint);
 
-        Map.HitObjectFadeEventAdded += AddPoint;
-        Map.HitObjectFadeEventUpdated += UpdatePoint;
-        Map.HitObjectFadeEventRemoved += RemovePoint;
-        Map.MapEvents.HitObjectFadeEvents.ForEach(AddPoint);
-
         Map.HitObjectEaseEventAdded += AddPoint;
         Map.HitObjectEaseEventUpdated += UpdatePoint;
         Map.HitObjectEaseEventRemoved += RemovePoint;
         Map.MapEvents.HitObjectEaseEvents.ForEach(AddPoint);
+
+        Map.LayerFadeEventAdded += AddPoint;
+        Map.LayerFadeEventUpdated += UpdatePoint;
+        Map.LayerFadeEventRemoved += RemovePoint;
+        Map.MapEvents.LayerFadeEvents.ForEach(AddPoint);
 
         Map.ShaderEventAdded += AddPoint;
         Map.ShaderEventUpdated += UpdatePoint;
@@ -86,7 +86,7 @@ public partial class DesignPointsList : PointsList
             PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
             PlayfieldFadeEvent fade => new PlayfieldFadeEntry(fade),
             PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
-            HitObjectFadeEvent fade => new HitObjectFadeEntry(fade),
+            LayerFadeEvent fade => new LayerFadeEntry(fade),
             HitObjectEaseEvent ease => new HitObjectEaseEntry(ease),
             BeatPulseEvent pulse => new BeatPulseEntry(pulse),
             PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
@@ -108,8 +108,8 @@ public partial class DesignPointsList : PointsList
             new("Playfield Scale", FluXisColors.PlayfieldScale, () => Create(new PlayfieldScaleEvent())),
             new("Playfield Rotate", FluXisColors.PlayfieldRotate, () => Create(new PlayfieldRotateEvent())),
             new("Playfield Fade", FluXisColors.PlayfieldFade, () => Create(new PlayfieldFadeEvent())),
-            new("HitObject Fade", FluXisColors.HitObjectFade, () => Create(new HitObjectFadeEvent())),
             new("HitObject Ease", FluXisColors.HitObjectEase, () => Create(new HitObjectEaseEvent())),
+            new("Layer Fade", FluXisColors.LayerFade, () => Create(new LayerFadeEvent())),
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" })),
             new("Scroll Multiplier", FluXisColors.ScrollMultiply, () => Create(new ScrollMultiplierEvent())),

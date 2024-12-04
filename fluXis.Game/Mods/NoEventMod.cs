@@ -24,7 +24,7 @@ public class NoEventMod : IMod, IApplicableToEvents
         events.PlayfieldScaleEvents.Clear();
         events.PlayfieldFadeEvents.Clear();
         events.PlayfieldRotateEvents.Clear();
-        events.HitObjectFadeEvents.Clear();
+        events.LayerFadeEvents.Clear();
         events.HitObjectEaseEvents.Clear();
         events.ShakeEvents.Clear();
         events.ShaderEvents.Clear();

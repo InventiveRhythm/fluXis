@@ -83,13 +83,13 @@ public class EditorMap
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventRemoved;
     public event Action<PlayfieldScaleEvent> PlayfieldScaleEventUpdated;
 
-    public event Action<HitObjectFadeEvent> HitObjectFadeEventAdded;
-    public event Action<HitObjectFadeEvent> HitObjectFadeEventRemoved;
-    public event Action<HitObjectFadeEvent> HitObjectFadeEventUpdated;
-
     public event Action<HitObjectEaseEvent> HitObjectEaseEventAdded;
     public event Action<HitObjectEaseEvent> HitObjectEaseEventRemoved;
     public event Action<HitObjectEaseEvent> HitObjectEaseEventUpdated;
+
+    public event Action<LayerFadeEvent> LayerFadeEventAdded;
+    public event Action<LayerFadeEvent> LayerFadeEventRemoved;
+    public event Action<LayerFadeEvent> LayerFadeEventUpdated;
 
     public event Action<ShaderEvent> ShaderEventAdded;
     public event Action<ShaderEvent> ShaderEventRemoved;
@@ -130,7 +130,7 @@ public class EditorMap
             new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents, obj => PlayfieldScaleEventAdded?.Invoke(obj), obj => PlayfieldScaleEventRemoved?.Invoke(obj), obj => PlayfieldScaleEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldFadeEvent>(MapEvents.PlayfieldFadeEvents, obj => PlayfieldFadeEventAdded?.Invoke(obj), obj => PlayfieldFadeEventRemoved?.Invoke(obj), obj => PlayfieldFadeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents, obj => PlayfieldRotateEventAdded?.Invoke(obj), obj => PlayfieldRotateEventRemoved?.Invoke(obj), obj => PlayfieldRotateEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<HitObjectFadeEvent>(MapEvents.HitObjectFadeEvents, obj => HitObjectFadeEventAdded?.Invoke(obj), obj => HitObjectFadeEventRemoved?.Invoke(obj), obj => HitObjectFadeEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<LayerFadeEvent>(MapEvents.LayerFadeEvents, obj => LayerFadeEventAdded?.Invoke(obj), obj => LayerFadeEventRemoved?.Invoke(obj), obj => LayerFadeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents, obj => HitObjectEaseEventAdded?.Invoke(obj), obj => HitObjectEaseEventRemoved?.Invoke(obj), obj => HitObjectEaseEventUpdated?.Invoke(obj)),
             new ChangeNotifier<ShakeEvent>(MapEvents.ShakeEvents, obj => ShakeEventAdded?.Invoke(obj), obj => ShakeEventRemoved?.Invoke(obj), obj => ShakeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<ShaderEvent>(MapEvents.ShaderEvents, obj => ShaderEventAdded?.Invoke(obj), obj => ShaderEventRemoved?.Invoke(obj), obj => ShaderEventUpdated?.Invoke(obj)),

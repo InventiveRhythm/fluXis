@@ -14,7 +14,7 @@ public enum MapEffectType : ulong
     Shake = 1 << 8,
     Shader = 1 << 9,
     BeatPulse = 1 << 10,
-    HitObjectFade = 1 << 11,
+    LayerFade = 1 << 11,
     HitObjectEase = 1 << 12,
     ScrollMultiply = 1 << 13,
     TimeOffset = 1 << 14

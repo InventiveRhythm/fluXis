@@ -191,8 +191,8 @@ public static class MapUtils
         if (events.BeatPulseEvents.Count > 0)
             effects |= MapEffectType.BeatPulse;
 
-        if (events.HitObjectFadeEvents.Count > 0)
-            effects |= MapEffectType.HitObjectFade;
+        if (events.LayerFadeEvents.Count > 0)
+            effects |= MapEffectType.LayerFade;
 
         if (events.HitObjectEaseEvents.Count > 0)
             effects |= MapEffectType.HitObjectEase;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Map.Structures.Events;
 using fluXis.Shared.Utils;
@@ -33,11 +34,11 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("playfieldrotate")]
     public List<PlayfieldRotateEvent> PlayfieldRotateEvents { get; private set; } = new();
 
-    [JsonProperty("hitfade")]
-    public List<HitObjectFadeEvent> HitObjectFadeEvents { get; private set; } = new();
-
     [JsonProperty("hitease")]
     public List<HitObjectEaseEvent> HitObjectEaseEvents { get; private set; } = new();
+
+    [JsonProperty("layerfade")]
+    public List<LayerFadeEvent> LayerFadeEvents { get; private set; } = new();
 
     [JsonProperty("shake")]
     public List<ShakeEvent> ShakeEvents { get; private set; } = new();
@@ -57,6 +58,13 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("notes")]
     public List<NoteEvent> NoteEvents { get; private set; } = new();
 
+    #region Old Prop Names
+
+    [Obsolete($"Use {nameof(LayerFadeEvents)} instead."), JsonProperty("hitfade")]
+    public List<LayerFadeEvent> LegacyHitObjectFade { set => LayerFadeEvents = LayerFadeEvents.Concat(value).ToList(); }
+
+    #endregion
+
     [JsonIgnore]
     public bool Empty => LaneSwitchEvents.Count == 0
                          && FlashEvents.Count == 0
@@ -65,7 +73,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && PlayfieldScaleEvents.Count == 0
                          && PlayfieldRotateEvents.Count == 0
                          && PlayfieldFadeEvents.Count == 0
-                         && HitObjectFadeEvents.Count == 0
+                         && LayerFadeEvents.Count == 0
                          && HitObjectEaseEvents.Count == 0
                          && ShakeEvents.Count == 0
                          && ShaderEvents.Count == 0
@@ -233,7 +241,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         PlayfieldMoveEvents.Sort(compare);
         PlayfieldScaleEvents.Sort(compare);
         PlayfieldFadeEvents.Sort(compare);
-        HitObjectFadeEvents.Sort(compare);
+        LayerFadeEvents.Sort(compare);
         HitObjectEaseEvents.Sort(compare);
         ShakeEvents.Sort(compare);
         ShaderEvents.Sort(compare);
@@ -266,7 +274,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
         clone.PlayfieldScaleEvents = new List<PlayfieldScaleEvent>(PlayfieldScaleEvents);
         clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
         clone.PlayfieldFadeEvents = new List<PlayfieldFadeEvent>(PlayfieldFadeEvents);
-        clone.HitObjectFadeEvents = new List<HitObjectFadeEvent>(HitObjectFadeEvents);
+        clone.LayerFadeEvents = new List<LayerFadeEvent>(LayerFadeEvents);
         clone.HitObjectEaseEvents = new List<HitObjectEaseEvent>(HitObjectEaseEvents);
         clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);
         clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);

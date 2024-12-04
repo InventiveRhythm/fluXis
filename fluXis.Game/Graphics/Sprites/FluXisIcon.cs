@@ -45,7 +45,7 @@ public enum FluXisIconType
     Shake,
     Shader,
     BeatPulse,
-    HitObjectFade,
+    LayerFade,
     HitObjectEase,
     ScrollMultiply,
     TimeOffset
