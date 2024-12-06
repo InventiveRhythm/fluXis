@@ -1,17 +1,22 @@
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Localization;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Game.Mods.Drawables;
 
-public partial class ModIcon : Container
+public partial class ModIcon : Container, IHasTooltip
 {
+    public LocalisableString TooltipText => LocalizationStrings.Mods.GetName(Mod);
+
     public IMod Mod { get; set; }
 
     private FillFlowContainer flow;
