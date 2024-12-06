@@ -16,6 +16,13 @@ public class Storyboard
     [JsonIgnore]
     public bool Empty => Elements.Count == 0;
 
+    #region Server-Side Stuff
+
+    [JsonIgnore]
+    public string RawContent { get; set; } = "";
+
+    #endregion
+
     public event Action<StoryboardElement> ElementAdded;
     public event Action<StoryboardElement> ElementRemoved;
 
