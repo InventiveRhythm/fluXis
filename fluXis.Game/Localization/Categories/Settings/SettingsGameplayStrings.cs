@@ -82,6 +82,9 @@ public class SettingsGameplayStrings : LocalizationCategory
     public TranslatableString LaneSwitchAlerts => Get("lane-switch-alerts", "Lane Switch Alerts");
     public TranslatableString LaneSwitchAlertsDescription => Get("lane-switch-alerts-description", "Shows arrows next to the playfield before a lane switch.");
 
+    public TranslatableString DisableBloom => Get("disable-bloom", "Disable Bloom Blur");
+    public TranslatableString DisableBloomDescription => Get("disable-bloom-description", "Fully disables blur of the bloom shader, leaving only the glow. This option might change later.");
+
     #endregion
 
     #region HUD

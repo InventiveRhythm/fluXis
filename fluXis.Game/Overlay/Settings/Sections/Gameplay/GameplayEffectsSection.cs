@@ -27,6 +27,12 @@ public partial class GameplayEffectsSection : SettingsSubSection
                 Label = strings.LaneSwitchAlerts,
                 Description = strings.LaneSwitchAlertsDescription,
                 Bindable = Config.GetBindable<bool>(FluXisSetting.LaneSwitchAlerts)
+            },
+            new SettingsToggle
+            {
+                Label = strings.DisableBloom,
+                Description = strings.DisableBloomDescription,
+                Bindable = Config.GetBindable<bool>(FluXisSetting.DisableBloom)
             }
         });
     }

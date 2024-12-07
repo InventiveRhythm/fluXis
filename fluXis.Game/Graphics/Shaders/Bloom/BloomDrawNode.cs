@@ -39,7 +39,7 @@ public partial class BloomContainer
         {
             base.PopulateContents(renderer);
 
-            if (strength <= 0)
+            if (strength <= 0 || Source.disable.Value)
                 return;
 
             renderer.PushScissorState(false);

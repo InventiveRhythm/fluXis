@@ -85,6 +85,7 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
 
         // Graphics
         SetDefault(FluXisSetting.ShowFps, false);
+        SetDefault(FluXisSetting.DisableBloom, false);
 
         // Account
         SetDefault(FluXisSetting.Username, string.Empty);
@@ -172,6 +173,7 @@ public enum FluXisSetting
 
     // Graphics
     ShowFps,
+    DisableBloom,
 
     // Account
     Username,
