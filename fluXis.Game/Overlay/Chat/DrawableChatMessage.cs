@@ -9,7 +9,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Graphics.UserInterface.Text;
 using fluXis.Game.Online.API.Models.Chat;
-using fluXis.Game.Online.API.Packets.Chat;
+using fluXis.Game.Online.API.Requests.Chat;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
@@ -115,6 +115,9 @@ public partial class DrawableChatMessage : Container
     {
         flow.Remove(flow.FirstOrDefault(m => m.Message.ID == id), true);
         Messages.Remove(Messages.FirstOrDefault(m => m.ID == id));
+
+        if (!Messages.Any())
+            Expire();
     }
 
     private Drawable createIcon()
@@ -171,7 +174,7 @@ public partial class DrawableChatMessage : Container
         if (date.Day == today.Day - 1 && date.Month == today.Month && date.Year == today.Year)
             return $"Yesterday at {date.Hour:00}:{date.Minute:00}";
 
-        return $"{date.Hour:00}:{date.Minute:00} {StringUtils.NumberWithOrderSuffix(date.Day)} {date.GetMonth()[..3]}";
+        return $"{date.Hour:00}:{date.Minute:00} {date.Day.NumberWithOrderSuffix()} {date.GetMonth()[..3]}";
     }
 
     private string getTooltip()
@@ -232,9 +235,7 @@ public partial class DrawableChatMessage : Container
         }
 
         private async void delete()
-        {
-            await API.SendPacket(ChatDeletePacket.Create(Message.ID));
-        }
+            => await API.PerformRequestAsync(new ChatMessageDeleteRequest(Message.Channel, Message.ID));
 
         private void report()
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Game.Online.API.Models.Chat;
 using fluXis.Game.Online.API.Requests.Chat;
 using fluXis.Game.Online.Fluxel;
@@ -12,6 +13,7 @@ public class ChatChannel
     private IAPIClient api { get; }
 
     public event Action<IChatMessage> OnMessage;
+    public event Action<IChatMessage> OnMessageRemoved;
 
     public IReadOnlyList<IChatMessage> Messages => messages;
 
@@ -40,6 +42,17 @@ public class ChatChannel
     {
         messages.Add(message);
         OnMessage?.Invoke(message);
+    }
+
+    public void DeleteMessage(string id)
+    {
+        var msg = messages.FirstOrDefault(m => m.ID == id);
+
+        if (msg is null)
+            return;
+
+        messages.Remove(msg);
+        OnMessageRemoved?.Invoke(msg);
     }
 
     public void SendMessage(string content)

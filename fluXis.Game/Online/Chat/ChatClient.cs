@@ -29,6 +29,7 @@ public partial class ChatClient : Component
     private void load()
     {
         api.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, onMessage);
+        api.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, onMessageDelete);
         api.RegisterListener<ChatChannelJoinPacket>(EventType.ChatJoin, pk => addChannel(pk.Data!.Channel));
         api.RegisterListener<ChatChannelLeavePacket>(EventType.ChatLeave, pk => removeChannel(pk.Data!.Channel));
     }
@@ -98,6 +99,14 @@ public partial class ChatClient : Component
             return;
 
         channel.AddMessage(packet.Data.ChatMessage);
+    }
+
+    private void onMessageDelete(FluxelReply<ChatDeletePacket> packet)
+    {
+        if (packet.Data?.Channel is null || !channels.TryGetValue(packet.Data.Channel, out var channel))
+            return;
+
+        channel.DeleteMessage(packet.Data.MessageID);
     }
 
     protected override void Dispose(bool isDisposing)

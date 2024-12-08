@@ -247,6 +247,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         channel.Messages.ForEach(addMessage);
         channel.OnMessage += addMessage;
+        channel.OnMessageRemoved += removeMessage;
     }
 
     private void removeChannel(ChatChannel channel)
@@ -257,6 +258,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             return;
 
         channel.OnMessage -= addMessage;
+        channel.OnMessageRemoved -= removeMessage;
         channels.Remove(button, true);
     }
 
@@ -275,6 +277,15 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         if (atEnd)
             ScheduleAfterChildren(() => scroll.ScrollToEnd());
+    });
+
+    private void removeMessage(IChatMessage message) => Schedule(() =>
+    {
+        if (message.Channel != Channel.Value)
+            return;
+
+        var draw = flow.FirstOrDefault(d => d.Messages.Any(m => m.ID == message.ID));
+        draw?.RemoveMessage(message.ID);
     });
 
     protected override void PopIn()
