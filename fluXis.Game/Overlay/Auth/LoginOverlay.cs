@@ -159,7 +159,7 @@ public partial class LoginOverlay : CompositeDrawable
     {
         Schedule(() =>
         {
-            if (e.NewValue == ConnectionStatus.Failing)
+            if (e.NewValue == ConnectionStatus.Failed)
                 setError(api.LastException?.Message ?? "Failed to connect to the server.");
 
             switch (e.NewValue)
@@ -169,7 +169,7 @@ public partial class LoginOverlay : CompositeDrawable
                     break;
 
                 case ConnectionStatus.Offline:
-                case ConnectionStatus.Failing:
+                case ConnectionStatus.Failed:
                     loadingLayer.FadeOut(200);
                     break;
 

@@ -59,7 +59,7 @@ public class TestAPIClient : IAPIClient
         }
         else
         {
-            Status.Value = ConnectionStatus.Failing;
+            Status.Value = ConnectionStatus.Failed;
             LastException = new APIException("Invalid credentials");
             User.Value = null;
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -32,43 +33,21 @@ namespace fluXis.Game.Online.Fluxel;
 
 public partial class FluxelClient : Component, IAPIClient
 {
-    private const int chunk_out = 4096; // 4KB
-    private const int chunk_in = 1024; // 1KB (its actually 1016 bytes server-side, but we'll round up)
-
-    public APIEndpointConfig Endpoint { get; }
-
     [Resolved]
     private NotificationManager notifications { get; set; } = null!;
-
-    public string AccessToken => tokenBindable.Value;
-    public string MultifactorToken { get; set; } = "";
-    private Bindable<string> tokenBindable = null!;
 
     private Bindable<bool> logResponses = null!;
     public bool LogResponses => logResponses.Value;
 
-    private Bindable<string> username = null!;
-    private string password = null!;
-    private string email = null!;
-    private double waitTime;
-    private bool registering;
-
-    private bool hasValidCredentials => !string.IsNullOrEmpty(AccessToken) || (!string.IsNullOrEmpty(username.Value) && !string.IsNullOrEmpty(password));
-
-    private readonly List<string> packetQueue = new();
-    private readonly ConcurrentDictionary<EventType, List<Action<object>>> responseListeners = new();
-    private readonly Dictionary<Guid, Action<object>> waitingForResponse = new();
-    private ClientWebSocket connection = null!;
+    public APIEndpointConfig Endpoint { get; }
 
     public Bindable<APIUser?> User { get; } = new();
     public Bindable<ConnectionStatus> Status { get; } = new();
-    public Exception? LastException { get; private set; } = null!;
+    public Exception? LastException { get; private set; }
 
     public Bindable<UserActivity> Activity { get; } = new();
 
     public long MaintenanceTime { get; set; }
-
-    public bool IsLoggedIn => User.Value != null;
 
     public FluxelClient(APIEndpointConfig endpoint)
     {
@@ -105,6 +84,15 @@ public partial class FluxelClient : Component, IAPIClient
         }, true);
     }
 
+    internal new void Schedule(Action action) => base.Schedule(action);
+
+    #region Socket Connect/Recieve
+
+    private const int chunk_out = 4096; // 4KB
+    private const int chunk_in = 1024; // 1KB (its actually 1016 bytes server-side, but we'll round up)
+
+    private ClientWebSocket connection = null!;
+
     private async void loop()
     {
         while (true)
@@ -112,8 +100,11 @@ public partial class FluxelClient : Component, IAPIClient
             if (Status.Value == ConnectionStatus.Closed)
                 break;
 
-            if (Status.Value == ConnectionStatus.Failing)
-                Thread.Sleep(5000);
+            if (Status.Value is ConnectionStatus.Failed or ConnectionStatus.Authenticating)
+            {
+                Thread.Sleep(100);
+                continue;
+            }
 
             if (!hasValidCredentials)
             {
@@ -126,14 +117,14 @@ public partial class FluxelClient : Component, IAPIClient
                 await tryConnect();
 
             // if we're not online, we can't do anything
-            if (Status.Value is ConnectionStatus.Failing
+            if (Status.Value is ConnectionStatus.Failed
                 or ConnectionStatus.Closed
                 or ConnectionStatus.Offline)
                 continue;
 
             await receive();
 
-            if (waitTime <= 0)
+            if (Status.Value == ConnectionStatus.Online)
                 await processQueue();
 
             Thread.Sleep(50);
@@ -142,80 +133,46 @@ public partial class FluxelClient : Component, IAPIClient
 
     private async Task tryConnect()
     {
-        Status.Value = ConnectionStatus.Connecting;
-
-        if (registering)
-        {
-            Logger.Log("Registering account...", LoggingTarget.Network);
-
-            var req = new RegisterRequest(username.Value, password, email);
-            await PerformRequestAsync(req);
-
-            if (!req.IsSuccessful)
-            {
-                Logger.Log($"Failed to register account! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
-                LastException = req.FailReason;
-                Status.Value = ConnectionStatus.Failing;
-                registering = false;
-                password = "";
-                return;
-            }
-
-            registering = false;
-            tokenBindable.Value = req.Response.Data!.AccessToken;
-        }
-
-        if (string.IsNullOrEmpty(AccessToken))
-        {
-            Logger.Log("Getting access token...", LoggingTarget.Network);
-
-            var req = new LoginRequest(username.Value, password);
-            await PerformRequestAsync(req);
-
-            if (!req.IsSuccessful)
-            {
-                Logger.Log($"Failed to get access token! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
-                LastException = req.FailReason;
-                Status.Value = ConnectionStatus.Failing;
-                password = ""; // clear password to prevent further attempts
-                return;
-            }
-
-            tokenBindable.Value = req.Response.Data!.AccessToken;
-        }
-
         Logger.Log("Connecting to server...", LoggingTarget.Network);
+        Status.Value = ConnectionStatus.Connecting;
 
         try
         {
             connection = new ClientWebSocket();
+            connection.Options.SetRequestHeader("Authorization", AccessToken);
             await connection.ConnectAsync(new Uri(Endpoint.WebsocketUrl), CancellationToken.None);
-            Logger.Log("Connected to server! Authenticating...", LoggingTarget.Network);
+            Logger.Log("Connected to server! Waiting for authentication...", LoggingTarget.Network);
 
             // this is needed when using a local server
             // else it will fail to connect most of the time
             if (DebugUtils.IsDebugBuild)
                 Thread.Sleep(500);
 
-            waitTime = 5;
-            await SendPacket(LoginPacket.CreateC2S(AccessToken));
+            var waitTime = 5d;
 
             // ReSharper disable once AsyncVoidLambda
             var task = new Task(async () =>
             {
                 while (Status.Value == ConnectionStatus.Connecting && waitTime > 0)
                 {
+                    if (connection.State is WebSocketState.Closed or WebSocketState.CloseReceived)
+                    {
+                        LastException = new APIException(connection.CloseStatusDescription);
+                        Status.Value = ConnectionStatus.Failed;
+                        break;
+                    }
+
                     waitTime -= 0.1;
                     await Task.Delay(100);
                 }
 
-                if (Status.Value != ConnectionStatus.Connecting) return;
+                if (Status.Value == ConnectionStatus.Online) return;
 
                 Logger.Log("Authentication timed out!", LoggingTarget.Network);
                 Logout();
 
                 LastException = new TimeoutException("Authentication timed out!");
-                Status.Value = ConnectionStatus.Failing;
+                Status.Value = ConnectionStatus.Failed;
             });
 
             task.Start();
@@ -225,18 +182,15 @@ public partial class FluxelClient : Component, IAPIClient
             Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
 
             LastException = ex;
-            Status.Value = ConnectionStatus.Failing;
+
+            if (ex is WebSocketException { InnerException: HttpRequestException { HttpRequestError: HttpRequestError.ConnectionError } })
+            {
+                Status.Value = ConnectionStatus.Reconnecting;
+                return;
+            }
+
+            Status.Value = ConnectionStatus.Failed;
         }
-    }
-
-    private async Task processQueue()
-    {
-        if (packetQueue.Count == 0) return;
-
-        var packet = packetQueue[0];
-        packetQueue.RemoveAt(0);
-
-        await send(packet);
     }
 
     private async Task receive()
@@ -270,9 +224,19 @@ public partial class FluxelClient : Component, IAPIClient
         }
         else
         {
+            Logger.Log($"Disconnected from server! Reason: {connection.CloseStatusDescription ?? "unknown"}", LoggingTarget.Network, LogLevel.Error);
+
             Status.Value = ConnectionStatus.Reconnecting;
             Logger.Log("Reconnecting to server...", LoggingTarget.Network);
         }
+    }
+
+    public void Disconnect()
+    {
+        if (connection is { State: WebSocketState.Open })
+            connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
+
+        Status.Value = ConnectionStatus.Closed;
     }
 
     private void handleMessage(string message)
@@ -351,19 +315,62 @@ public partial class FluxelClient : Component, IAPIClient
         handler(message);
     }
 
-    public void Login(string username, string password)
+    #endregion
+
+    #region Authentication
+
+    public bool IsLoggedIn => User.Value != null;
+
+    public string AccessToken => tokenBindable.Value;
+    public string MultifactorToken { get; set; } = "";
+    private Bindable<string> tokenBindable = null!;
+
+    private Bindable<string> username = null!;
+
+    private bool hasValidCredentials => !string.IsNullOrEmpty(AccessToken);
+
+    public async void Login(string username, string password)
     {
         Logger.Log("Logging in...", LoggingTarget.Network);
         this.username.Value = username;
-        this.password = password;
+
+        Status.Value = ConnectionStatus.Authenticating;
+
+        var req = new LoginRequest(username, password);
+        await PerformRequestAsync(req);
+
+        if (!req.IsSuccessful)
+        {
+            Logger.Log($"Failed to get access token! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+            LastException = req.FailReason;
+            Status.Value = ConnectionStatus.Failed;
+            return;
+        }
+
+        tokenBindable.Value = req.Response.Data!.AccessToken;
+        Status.Value = ConnectionStatus.Connecting;
     }
 
-    public void Register(string username, string password, string email)
+    public async void Register(string username, string password, string email)
     {
+        Logger.Log("Registering account...", LoggingTarget.Network);
         this.username.Value = username;
-        this.password = password;
-        this.email = email;
-        registering = true;
+
+        Status.Value = ConnectionStatus.Authenticating;
+
+        var req = new RegisterRequest(username, password, email);
+        await PerformRequestAsync(req);
+
+        if (!req.IsSuccessful)
+        {
+            Logger.Log($"Failed to register account! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+            LastException = req.FailReason;
+            Status.Value = ConnectionStatus.Failed;
+            return;
+        }
+
+        tokenBindable.Value = req.Response.Data!.AccessToken;
+        Status.Value = ConnectionStatus.Connecting;
     }
 
     public async void Logout()
@@ -371,9 +378,79 @@ public partial class FluxelClient : Component, IAPIClient
         await connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Logout Requested", CancellationToken.None);
         User.Value = null;
         tokenBindable.Value = "";
-        password = "";
 
         Status.Value = ConnectionStatus.Offline;
+    }
+
+    private void onLoginResponse(FluxelReply<LoginPacket> reply)
+    {
+        if (!reply.Success)
+        {
+            Logout();
+            LastException = new APIException(reply.Message);
+            Status.Value = ConnectionStatus.Failed;
+            return;
+        }
+
+        User.Value = reply.Data!.User;
+        Status.Value = ConnectionStatus.Online;
+    }
+
+    private void onLogout(FluxelReply<LogoutPacket> reply)
+    {
+        Logout();
+        notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome6.Solid.TriangleExclamation);
+    }
+
+    #endregion
+
+    #region Sending
+
+    private readonly List<string> packetQueue = new();
+    private readonly Dictionary<Guid, Action<object>> waitingForResponse = new();
+
+    /// <summary>
+    /// Sends a packet and waits for a response. Throws a <see cref="TimeoutException"/> if the time set in <paramref name="timeout"/> is exceeded.
+    /// </summary>
+    /// <param name="packet">The packet to send.</param>
+    /// <param name="timeout">The time to wait for a response in milliseconds.</param>
+    /// <typeparam name="T">The type of the packet.</typeparam>
+    /// <returns>The response packet.</returns>
+    public async Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000)
+        where T : IPacket
+    {
+        var request = new FluxelRequest<T>(packet.ID, packet);
+
+        var task = new TaskCompletionSource<FluxelReply<T>>();
+        waitingForResponse.Add(request.Token, response => task.SetResult((FluxelReply<T>)response));
+
+        await send(request.Serialize());
+        await Task.WhenAny(task.Task, Task.Delay((int)timeout));
+
+        if (!task.Task.IsCompleted)
+            throw new TimeoutException("The request timed out!");
+
+        return await task.Task;
+    }
+
+    public async void SendPacketAsync<T>(T packet)
+        where T : IPacket => await SendPacket(packet);
+
+    public async Task SendPacket<T>(T packet)
+        where T : IPacket
+    {
+        var request = new FluxelRequest<T>(packet.ID, packet);
+        await send(request.Serialize());
+    }
+
+    private async Task processQueue()
+    {
+        if (packetQueue.Count == 0) return;
+
+        var packet = packetQueue[0];
+        packetQueue.RemoveAt(0);
+
+        await send(packet);
     }
 
     private async Task send(string message)
@@ -410,39 +487,11 @@ public partial class FluxelClient : Component, IAPIClient
         }
     }
 
-    /// <summary>
-    /// Sends a packet and waits for a response. Throws a <see cref="TimeoutException"/> if the time set in <paramref name="timeout"/> is exceeded.
-    /// </summary>
-    /// <param name="packet">The packet to send.</param>
-    /// <param name="timeout">The time to wait for a response in milliseconds.</param>
-    /// <typeparam name="T">The type of the packet.</typeparam>
-    /// <returns>The response packet.</returns>
-    public async Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000)
-        where T : IPacket
-    {
-        var request = new FluxelRequest<T>(packet.ID, packet);
+    #endregion
 
-        var task = new TaskCompletionSource<FluxelReply<T>>();
-        waitingForResponse.Add(request.Token, response => task.SetResult((FluxelReply<T>)response));
+    #region Listeners
 
-        await send(request.Serialize());
-        await Task.WhenAny(task.Task, Task.Delay((int)timeout));
-
-        if (!task.Task.IsCompleted)
-            throw new TimeoutException("The request timed out!");
-
-        return await task.Task;
-    }
-
-    public async void SendPacketAsync<T>(T packet)
-        where T : IPacket => await SendPacket(packet);
-
-    public async Task SendPacket<T>(T packet)
-        where T : IPacket
-    {
-        var request = new FluxelRequest<T>(packet.ID, packet);
-        await send(request.Serialize());
-    }
+    private readonly ConcurrentDictionary<EventType, List<Action<object>>> responseListeners = new();
 
     public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener)
         where T : IPacket
@@ -457,13 +506,9 @@ public partial class FluxelClient : Component, IAPIClient
             listeners.Remove(response => listener((FluxelReply<T>)response));
     }
 
-    public void Disconnect()
-    {
-        if (connection is { State: WebSocketState.Open })
-            connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", CancellationToken.None);
+    #endregion
 
-        Status.Value = ConnectionStatus.Closed;
-    }
+    #region Requests
 
     public void PerformRequest(APIRequest request)
     {
@@ -480,27 +525,7 @@ public partial class FluxelClient : Component, IAPIClient
     public Task PerformRequestAsync(APIRequest request)
         => Task.Factory.StartNew(() => PerformRequest(request));
 
-    internal new void Schedule(Action action) => base.Schedule(action);
-
-    private void onLoginResponse(FluxelReply<LoginPacket> reply)
-    {
-        if (!reply.Success)
-        {
-            Logout();
-            LastException = new APIException(reply.Message);
-            Status.Value = ConnectionStatus.Failing;
-            return;
-        }
-
-        User.Value = reply.Data!.User;
-        Status.Value = ConnectionStatus.Online;
-    }
-
-    private void onLogout(FluxelReply<LogoutPacket> reply)
-    {
-        Logout();
-        notifications.SendText("You have been logged out!", "Another device logged in with your account.", FontAwesome6.Solid.TriangleExclamation);
-    }
+    #endregion
 
     private void onMaintenance(FluxelReply<MaintenancePacket> e)
     {
@@ -549,10 +574,11 @@ public partial class FluxelClient : Component, IAPIClient
 public enum ConnectionStatus
 {
     Offline,
+    Failed,
+    Authenticating,
     Connecting,
     Online,
     Reconnecting,
-    Failing,
     Closed
 }
 

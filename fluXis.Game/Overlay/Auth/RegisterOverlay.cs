@@ -127,7 +127,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                                 Text = "error message",
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
-                                MaxWidth = 300,
+                                MaxWidth = 400,
                                 Colour = FluXisColors.Red,
                                 WebFontSize = 14,
                                 Alpha = 0
@@ -246,7 +246,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
     {
         Schedule(() =>
         {
-            if (e.NewValue == ConnectionStatus.Failing)
+            if (e.NewValue == ConnectionStatus.Failed)
                 setError(api.LastException?.Message ?? "Failed to connect to the server.");
 
             switch (e.NewValue)
@@ -256,7 +256,7 @@ public partial class RegisterOverlay : Container, IKeyBindingHandler<FluXisGloba
                     break;
 
                 case ConnectionStatus.Offline:
-                case ConnectionStatus.Failing:
+                case ConnectionStatus.Failed:
                     loadingLayer.FadeOut(200);
                     break;
 

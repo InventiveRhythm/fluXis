@@ -172,7 +172,6 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
 
                 case ConnectionStatus.Reconnecting:
                 case ConnectionStatus.Connecting:
-                case ConnectionStatus.Failing:
                     loadingContainer.FadeIn(200);
                     break;
             }
