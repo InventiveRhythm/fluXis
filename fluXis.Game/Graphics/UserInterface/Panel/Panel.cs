@@ -1,6 +1,7 @@
 using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -85,8 +86,9 @@ public partial class Panel : Container
         state = Visibility.Hidden;
         samples.PanelClose(IsDangerous);
 
-        this.ScaleTo(.9f, 400, Easing.OutQuint)
-            .FadeOut(400, Easing.OutQuint);
+        this.ScaleTo(.9f, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+            .RotateTo(-5, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+            .FadeOut(FluXisScreen.FADE_DURATION, Easing.OutQuint);
     }
 
     public override void Show()
@@ -97,8 +99,9 @@ public partial class Panel : Container
         state = Visibility.Visible;
         samples.PanelOpen(IsDangerous);
 
-        this.RotateTo(0).ScaleTo(.75f)
-            .FadeInFromZero(400, Easing.OutQuint)
+        this.RotateTo(15).ScaleTo(1.25f)
+            .RotateTo(0f, 800, Easing.OutElasticHalf)
+            .FadeInFromZero(FluXisScreen.FADE_DURATION, Easing.OutQuint)
             .ScaleTo(1f, 800, Easing.OutElasticHalf);
     }
 
