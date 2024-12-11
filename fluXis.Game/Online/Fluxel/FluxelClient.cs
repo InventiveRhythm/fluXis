@@ -133,6 +133,9 @@ public partial class FluxelClient : Component, IAPIClient
 
     private async Task tryConnect()
     {
+        if (Status.Value == ConnectionStatus.Reconnecting)
+            Thread.Sleep(500);
+
         Logger.Log("Connecting to server...", LoggingTarget.Network);
         Status.Value = ConnectionStatus.Connecting;
 
@@ -155,7 +158,7 @@ public partial class FluxelClient : Component, IAPIClient
             {
                 while (Status.Value == ConnectionStatus.Connecting && waitTime > 0)
                 {
-                    if (connection.State is WebSocketState.Closed or WebSocketState.CloseReceived)
+                    if (connection.State is WebSocketState.CloseReceived)
                     {
                         LastException = new APIException(connection.CloseStatusDescription);
                         Status.Value = ConnectionStatus.Failed;
@@ -172,7 +175,7 @@ public partial class FluxelClient : Component, IAPIClient
                 Logout();
 
                 LastException = new TimeoutException("Authentication timed out!");
-                Status.Value = ConnectionStatus.Failed;
+                Status.Value = ConnectionStatus.Reconnecting;
             });
 
             task.Start();
@@ -180,10 +183,9 @@ public partial class FluxelClient : Component, IAPIClient
         catch (Exception ex)
         {
             Logger.Error(ex, "Failed to connect to server!", LoggingTarget.Network);
-
             LastException = ex;
 
-            if (ex is WebSocketException { InnerException: HttpRequestException { HttpRequestError: HttpRequestError.ConnectionError } })
+            if (ex is WebSocketException ws && (ws.WebSocketErrorCode == WebSocketError.NotAWebSocket || ws.InnerException is HttpRequestException { HttpRequestError: HttpRequestError.ConnectionError }))
             {
                 Status.Value = ConnectionStatus.Reconnecting;
                 return;
