@@ -224,7 +224,10 @@ public abstract partial class PointListEntry : Container, IHasContextMenu
 
         valueFlow.Clear();
         valueFlow.AddRange(CreateValueContent());
+        OnValueUpdate();
     }
+
+    protected virtual void OnValueUpdate() { }
 
     protected override bool OnHover(HoverEvent e)
     {

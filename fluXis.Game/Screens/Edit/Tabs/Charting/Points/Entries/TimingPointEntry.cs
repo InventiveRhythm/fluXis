@@ -7,8 +7,11 @@ using fluXis.Game.Map.Structures;
 using fluXis.Game.Map.Structures.Bases;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Points.Settings.Waveform;
 using fluXis.Game.Utils;
+using JetBrains.Annotations;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Screens.Edit.Tabs.Charting.Points.Entries;
@@ -19,6 +22,12 @@ public partial class TimingPointEntry : PointListEntry
     protected override Colour4 Color => FluXisColors.TimingPoint;
 
     private TimingPoint timing => Object as TimingPoint;
+
+    [CanBeNull]
+    private PointSettingsTime timeBox;
+
+    [CanBeNull]
+    private PointSettingsTextBox bpmBox;
 
     public TimingPointEntry(TimingPoint timing)
         : base(timing)
@@ -33,28 +42,35 @@ public partial class TimingPointEntry : PointListEntry
         HideLines = timing.HideLines
     };
 
-    protected override Drawable[] CreateValueContent()
+    protected override Drawable[] CreateValueContent() => new Drawable[]
     {
-        return new Drawable[]
+        new FluXisSpriteText
         {
-            new FluXisSpriteText
-            {
-                Text = $"{timing.BPM.ToStringInvariant("0.0")}bpm {timing.Signature}/4",
-                Colour = Color
-            }
-        };
+            Text = $"{timing.BPM.ToStringInvariant("0.0")}bpm {timing.Signature}/4",
+            Colour = Color
+        }
+    };
+
+    protected override void OnValueUpdate()
+    {
+        if (timeBox is not null)
+            timeBox.TextBox.Text = timing.Time.ToStringInvariant("0");
+        if (bpmBox is not null)
+            bpmBox.TextBox.Text = timing.BPM.ToStringInvariant("0.##");
     }
 
     protected override IEnumerable<Drawable> CreateSettings()
     {
-        return base.CreateSettings().Concat(new Drawable[]
+        return base.CreateSettings().Take(1).Concat(new Drawable[]
         {
+            timeBox = new PointSettingsTime(Map, Object),
             new WaveformDisplay(timing),
-            new PointSettingsTextBox
+            new PointSettingsIncrements(Map, timing),
+            bpmBox = new PointSettingsTextBox
             {
                 Text = "BPM",
                 TooltipText = "The beats per minute of the timing point.",
-                DefaultText = timing.BPM.ToStringInvariant("0.00"),
+                DefaultText = timing.BPM.ToStringInvariant("0.##"),
                 OnTextChanged = box =>
                 {
                     if (float.TryParse(box.Text, CultureInfo.InvariantCulture, out var result) && result > 0)
@@ -79,6 +95,17 @@ public partial class TimingPointEntry : PointListEntry
                     else
                         box.NotifyError();
 
+                    Map.Update(timing);
+                }
+            },
+            new PointSettingsToggle
+            {
+                Text = "Hide Lines",
+                TooltipText = "Hides the lines that appear every 4 beats during gameplay.",
+                Bindable = new Bindable<bool>(timing.HideLines),
+                OnStateChanged = enabled =>
+                {
+                    timing.HideLines = enabled;
                     Map.Update(timing);
                 }
             }
