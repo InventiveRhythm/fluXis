@@ -63,13 +63,17 @@ public partial class TabControl : CompositeDrawable
 
     private void currentChanged(ValueChangedEvent<TabContainer> e)
     {
+        var newIdx = Array.IndexOf(Tabs, e.NewValue);
+
         foreach (var tab in Tabs)
         {
+            var idx = Array.IndexOf(Tabs, tab);
+
             if (tab != e.NewValue)
-                tab.FadeOut(150);
+                tab.FadeOut(150).MoveToX(idx > newIdx ? 20 : -20, 300, Easing.OutQuint);
         }
 
-        e.NewValue.Delay(100).FadeIn(150);
+        e.NewValue.Delay(100).FadeIn(150).MoveToX(0, 300, Easing.OutQuint);
     }
 
     private partial class TabControlItem : FillFlowContainer

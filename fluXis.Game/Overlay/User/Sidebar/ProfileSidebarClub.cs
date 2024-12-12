@@ -13,7 +13,7 @@ using osuTK;
 
 namespace fluXis.Game.Overlay.User.Sidebar;
 
-public partial class ProfileSidebarClub : FillFlowContainer
+public partial class ProfileSidebarClub : ClickableContainer
 {
     private APIClub club { get; }
 
@@ -32,78 +32,56 @@ public partial class ProfileSidebarClub : FillFlowContainer
         }
 
         RelativeSizeAxes = Axes.X;
-        AutoSizeAxes = Axes.Y;
-        Direction = FillDirection.Vertical;
-        Spacing = new Vector2(0, 10);
-
-        InternalChildren = new Drawable[]
+        Height = 80;
+        CornerRadius = 12;
+        Masking = true;
+        Action = () => clubOverlay?.ShowClub(club.ID);
+        Children = new Drawable[]
         {
-            new Container
+            new LoadWrapper<DrawableClubBanner>
             {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding { Horizontal = 10 },
-                Child = new FluXisSpriteText
+                RelativeSizeAxes = Axes.Both,
+                OnComplete = d => d.FadeInFromZero(400),
+                LoadContent = () => new DrawableClubBanner(club)
                 {
-                    Text = "Club",
-                    WebFontSize = 24
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
                 }
             },
-            new ClickableContainer
+            new Box
             {
-                RelativeSizeAxes = Axes.X,
-                Height = 80,
-                CornerRadius = 10,
-                Masking = true,
-                Action = () => clubOverlay?.ShowClub(club.ID),
+                RelativeSizeAxes = Axes.Both,
+                Colour = FluXisColors.Background2.Opacity(.5f)
+            },
+            new FillFlowContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Direction = FillDirection.Horizontal,
+                Spacing = new Vector2(12),
                 Children = new Drawable[]
                 {
-                    new LoadWrapper<DrawableClubBanner>
+                    new LoadWrapper<DrawableClubIcon>
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        LoadContent = () => new DrawableClubBanner(club)
+                        Size = new Vector2(80),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        CornerRadius = 12,
+                        Masking = true,
+                        OnComplete = d => d.FadeInFromZero(400),
+                        LoadContent = () => new DrawableClubIcon(club)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
                         },
-                        OnComplete = d => d.FadeInFromZero(400)
                     },
-                    new Box
+                    new FluXisSpriteText
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2.Opacity(.5f)
-                    },
-                    new FillFlowContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(10),
-                        Children = new Drawable[]
-                        {
-                            new LoadWrapper<DrawableClubIcon>
-                            {
-                                Size = new Vector2(80),
-                                CornerRadius = 10,
-                                Masking = true,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                LoadContent = () => new DrawableClubIcon(club)
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre
-                                },
-                                OnComplete = d => d.FadeInFromZero(400)
-                            },
-                            new FluXisSpriteText
-                            {
-                                Text = club.Name,
-                                WebFontSize = 20,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft
-                            }
-                        }
+                        Text = club.Name,
+                        WebFontSize = 20,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft
                     }
                 }
             }

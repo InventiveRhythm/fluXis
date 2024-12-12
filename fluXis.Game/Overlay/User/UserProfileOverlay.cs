@@ -2,14 +2,14 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Graphics.UserInterface.Tabs;
 using fluXis.Game.Input;
 using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
-using fluXis.Game.Online.API.Requests.Users;
 using fluXis.Game.Online.Drawables;
-using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.User.Sections;
 using fluXis.Game.Overlay.User.Sidebar;
+using fluXis.Game.Overlay.User.Tabs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -22,9 +22,6 @@ namespace fluXis.Game.Overlay.User;
 
 public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    [Resolved]
-    private IAPIClient api { get; set; }
-
     [Resolved]
     private UserCache users { get; set; }
 
@@ -144,17 +141,14 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
             return;
         }
 
-        var mapsReq = new UserMapsRequest(id);
-        await api.PerformRequestAsync(mapsReq);
-
         Schedule(() =>
         {
             loading.Hide();
-            displayData(user, mapsReq.Response.Data);
+            displayData(user);
         });
     }
 
-    private void displayData(APIUser user, APIUserMaps maps)
+    private void displayData(APIUser user)
     {
         flow.Show();
         flow.Children = new Drawable[]
@@ -201,15 +195,13 @@ public partial class UserProfileOverlay : OverlayContainer, IKeyBindingHandler<F
                                     }
                                 },
                                 Empty(),
-                                new FillFlowContainer
+                                new TabControl
                                 {
                                     RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Direction = FillDirection.Vertical,
-                                    Spacing = new Vector2(20),
-                                    Children = new Drawable[]
+                                    Tabs = new TabContainer[]
                                     {
-                                        new ProfileMapsSection(maps)
+                                        new ProfileScoresTab(user),
+                                        new ProfileMapsTab(user)
                                     }
                                 }
                             }

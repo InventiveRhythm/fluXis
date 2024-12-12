@@ -35,8 +35,8 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     [Resolved]
     private UISamples samples { get; set; }
 
-    [Resolved]
     [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
     [Resolved]

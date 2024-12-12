@@ -8,23 +8,34 @@ namespace fluXis.Game.Map.Drawables.Online;
 
 public partial class DrawableOnlineBackground : Sprite
 {
-    private APIMapSet mapSet { get; }
+    private long id { get; }
     private OnlineTextureStore.AssetSize size { get; }
 
-    public DrawableOnlineBackground(APIMapSet mapSet, OnlineTextureStore.AssetSize size = OnlineTextureStore.AssetSize.Small)
+    public DrawableOnlineBackground(APIMapSet set, OnlineTextureStore.AssetSize size = OnlineTextureStore.AssetSize.Small)
+        : this(size)
     {
-        this.mapSet = mapSet;
+        id = set.ID;
+    }
+
+    public DrawableOnlineBackground(APIMap map, OnlineTextureStore.AssetSize size = OnlineTextureStore.AssetSize.Small)
+        : this(size)
+    {
+        id = map.MapSetID;
+    }
+
+    private DrawableOnlineBackground(OnlineTextureStore.AssetSize size = OnlineTextureStore.AssetSize.Small)
+    {
         this.size = size;
     }
 
     [BackgroundDependencyLoader]
     private void load(OnlineTextureStore textures)
     {
+        RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        RelativeSizeAxes = Axes.Both;
         FillMode = FillMode.Fill;
-        Texture = textures.GetBackground(mapSet.ID, size);
+        Texture = textures.GetBackground(id, size);
     }
 }
 

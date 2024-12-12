@@ -50,7 +50,6 @@ public partial class ProfileFollowerList : FillFlowContainer
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Horizontal,
-                Padding = new MarginPadding { Horizontal = 10 },
                 Children = new[]
                 {
                     new FluXisSpriteText
@@ -58,14 +57,14 @@ public partial class ProfileFollowerList : FillFlowContainer
                         Text = "Followers ", // yes, this space is intentional
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        WebFontSize = 24
+                        WebFontSize = 20
                     },
                     countText = new FluXisSpriteText
                     {
                         Alpha = .8f,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        WebFontSize = 16
+                        WebFontSize = 14
                     }
                 }
             },
@@ -98,7 +97,7 @@ public partial class ProfileFollowerList : FillFlowContainer
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
-                Spacing = new Vector2(0, 10)
+                Spacing = new Vector2(0, 8)
             }
         };
     }
@@ -162,7 +161,7 @@ public partial class ProfileFollowerList : FillFlowContainer
                     Size = new Vector2(40),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    CornerRadius = 5,
+                    CornerRadius = 8,
                     Masking = true,
                     LoadContent = () => new DrawableAvatar(user)
                     {
@@ -260,7 +259,7 @@ public partial class ProfileFollowerList : FillFlowContainer
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    CornerRadius = 15,
+                    CornerRadius = Width / 2,
                     Masking = true,
                     LoadContent = () => new DrawableAvatar(user)
                     {

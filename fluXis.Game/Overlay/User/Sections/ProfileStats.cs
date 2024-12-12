@@ -68,7 +68,7 @@ public partial class ProfileStats : Container
                         new ProfileStat
                         {
                             Title = "Ranked Score",
-                            Value = "---,---"
+                            Value = stats.RankedScore.ToString("n0")
                         },
                         new ProfileStat
                         {

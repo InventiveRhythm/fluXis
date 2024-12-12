@@ -3,31 +3,36 @@ using System.Linq;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Map.Drawables.Card;
 using fluXis.Game.Online.API.Models.Maps;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace fluXis.Game.Overlay.User.Sections.Maps;
+namespace fluXis.Game.Overlay.User.Tabs.Maps;
 
-public partial class ProfileMapsSubsection : FillFlowContainer
+public partial class ProfileMapsSection : FillFlowContainer
 {
-    private string title { get; }
-    private List<APIMapSet> maps { get; }
-
-    public ProfileMapsSubsection(string title, List<APIMapSet> maps)
+    public List<APIMapSet> Maps
     {
-        this.title = title;
-        this.maps = maps;
+        set
+        {
+            var empty = value.Count <= 0;
+
+            noMaps.Alpha = empty ? .8f : 0;
+            flow.Alpha = empty ? 0 : 1;
+
+            flow.ChildrenEnumerable = value.Select(map => new MapCard(map) { CardWidth = 454 });
+        }
     }
 
-    [BackgroundDependencyLoader]
-    private void load()
+    private FluXisSpriteText noMaps { get; }
+    private FillFlowContainer flow { get; }
+
+    public ProfileMapsSection(string title)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
-        Spacing = new Vector2(10);
+        Spacing = new Vector2(8);
 
         InternalChildren = new Drawable[]
         {
@@ -36,7 +41,7 @@ public partial class ProfileMapsSubsection : FillFlowContainer
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
-                Padding = new MarginPadding { Horizontal = 10 },
+                Padding = new MarginPadding { Horizontal = 8 },
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText
@@ -44,22 +49,19 @@ public partial class ProfileMapsSubsection : FillFlowContainer
                         Text = title,
                         WebFontSize = 20
                     },
-                    new FluXisSpriteText
+                    noMaps = new FluXisSpriteText
                     {
                         Text = $"This user has no {title.ToLower()} maps.",
-                        Alpha = maps.Any() ? 0 : .6f,
-                        WebFontSize = 16
+                        WebFontSize = 12
                     }
                 }
             },
-            new FillFlowContainer
+            flow = new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Full,
-                Spacing = new Vector2(20),
-                Alpha = maps.Any() ? 1 : 0,
-                ChildrenEnumerable = maps.Select(map => new MapCard(map) { CardWidth = 448 })
+                Spacing = new Vector2(16)
             }
         };
     }
