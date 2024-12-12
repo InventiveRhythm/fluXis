@@ -27,6 +27,7 @@ public class OsuMap
     public string Tags { get; set; }
 
     // [Difficulty]
+    public float HealthDrainRate { get; set; }
     public float CircleSize { get; set; }
     public float OverallDifficulty { get; set; }
 
@@ -82,7 +83,8 @@ public class OsuMap
             TimingPoints = new List<TimingPoint>(),
             ScrollVelocities = new List<ScrollVelocity>(),
             InitialKeyCount = (int)CircleSize,
-            AccuracyDifficulty = OverallDifficulty
+            AccuracyDifficulty = OverallDifficulty,
+            HealthDifficulty = HealthDrainRate
         };
 
         foreach (var timingPoint in TimingPoints)

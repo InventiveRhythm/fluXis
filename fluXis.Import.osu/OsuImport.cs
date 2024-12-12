@@ -217,6 +217,14 @@ public class OsuImport : MapImporter
                     var realmMap = new OsuRealmMap
                     {
                         Difficulty = map.Version,
+                        MapSet = realmMapSet,
+                        StatusInt = ID,
+                        FileName = map.BeatmapFileName,
+                        HealthDifficulty = map.HPDrainRate,
+                        AccuracyDifficulty = map.OveralDifficulty,
+                        KeyCount = (int)map.CircleSize,
+                        Hash = map.BeatmapChecksum,
+                        OnlineID = -1,
                         Metadata = new RealmMapMetadata
                         {
                             Title = map.Title,
@@ -228,22 +236,13 @@ public class OsuImport : MapImporter
                             Audio = map.AudioFileName,
                             PreviewTime = map.AudioPreviewTime
                         },
-                        MapSet = realmMapSet,
-                        StatusInt = ID,
-                        FileName = map.BeatmapFileName,
-                        OnlineID = 0,
-                        Hash = null,
                         Filters = new RealmMapFilters
                         {
                             Length = map.TotalTime,
-                            BPMMin = 0,
-                            BPMMax = 0,
                             NoteCount = map.CountHitCircles,
                             LongNoteCount = map.CountSliders,
                             NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (map.TotalTime / 1000f)
-                        },
-                        KeyCount = (int)map.CircleSize,
-                        Rating = 0
+                        }
                     };
 
                     if (map.TimingPoints != null)

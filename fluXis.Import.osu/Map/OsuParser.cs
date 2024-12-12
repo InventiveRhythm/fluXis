@@ -139,6 +139,10 @@ public class OsuParser
 
             switch (key)
             {
+                case "HPDrainRate":
+                    map.HealthDrainRate = float.Parse(value, CultureInfo.InvariantCulture);
+                    break;
+
                 case "CircleSize":
                     map.CircleSize = float.Parse(value, CultureInfo.InvariantCulture);
                     break;
