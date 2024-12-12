@@ -18,8 +18,6 @@ public partial class ShakeEventTag : EditorTag
     [Resolved]
     private EditorClock clock { get; set; }
 
-    public override int TagWidth => 120;
-
     public ShakeEvent Shake => (ShakeEvent)TimedObject;
 
     public ShakeEventTag(EditorTagContainer parent, ITimedObject timedObject)
