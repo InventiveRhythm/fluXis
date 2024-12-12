@@ -96,6 +96,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public void PlayHitSound(HitObject info)
     {
+        if (!clock.IsRunning)
+            return;
+
         var sound = info.HitSound;
 
         if (sound == ":normal" && info.Type == 1)
