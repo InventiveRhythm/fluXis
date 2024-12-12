@@ -31,7 +31,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public override bool IsRunning => underlying.IsRunning;
     double IClock.Rate => underlying.Rate;
 
-    private double currentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
+    public double CurrentTimeAccurate => Transforms.OfType<TimeTransform>().FirstOrDefault()?.EndValue ?? CurrentTime;
 
     private readonly FramedMapClock underlying;
     private readonly Bindable<DrawableTrack> track = new();
@@ -113,7 +113,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     {
         if (amount <= 0) return;
 
-        double time = currentTimeAccurate;
+        double time = CurrentTimeAccurate;
         var tp = MapInfo.GetTimingPoint((float)time);
 
         if (direction < 0 && tp.Time == time)

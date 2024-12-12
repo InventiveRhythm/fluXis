@@ -552,9 +552,29 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             case EditorKeybinding.OpenHelp:
                 openHelp();
                 return true;
+
+            case EditorKeybinding.PreviousNote:
+                seekToNote(-1);
+                return true;
+
+            case EditorKeybinding.NextNote:
+                seekToNote(1);
+                return true;
         }
 
         return false;
+
+        void seekToNote(int direction)
+        {
+            var accurate = clock.CurrentTimeAccurate;
+
+            var note = direction > 0
+                ? editorMap.MapEvents.NoteEvents.FirstOrDefault(n => n.Time > accurate)
+                : editorMap.MapEvents.NoteEvents.LastOrDefault(n => n.Time < accurate);
+
+            if (note is not null)
+                clock.SeekSmoothly(note.Time);
+        }
     }
 
     public void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e) { }
