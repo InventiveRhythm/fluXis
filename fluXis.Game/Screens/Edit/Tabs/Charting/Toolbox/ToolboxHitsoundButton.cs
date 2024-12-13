@@ -106,7 +106,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 
     protected override bool OnClick(ClickEvent e)
     {
-        playfield.PlayHitSound(new HitObject { HitSound = sampleFormatted });
+        playfield.PlayHitSound(new HitObject { HitSound = sampleFormatted }, true);
         return base.OnClick(e);
     }
 

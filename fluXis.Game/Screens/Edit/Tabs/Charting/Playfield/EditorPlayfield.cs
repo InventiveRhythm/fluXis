@@ -94,9 +94,9 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             hitSound.Volume.Value = config.Get<double>(FluXisSetting.HitSoundVolume);
     }
 
-    public void PlayHitSound(HitObject info)
+    public void PlayHitSound(HitObject info, bool force = false)
     {
-        if (!clock.IsRunning)
+        if (!clock.IsRunning && !force)
             return;
 
         var sound = info.HitSound;

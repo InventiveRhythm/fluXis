@@ -1,4 +1,3 @@
-using System.Linq;
 using fluXis.Game.Graphics.Background;
 using fluXis.Game.Graphics.UserInterface.Panel;
 using fluXis.Game.Map;
@@ -42,9 +41,7 @@ public partial class TestEditor : FluXisTestScene
 
         AddStep("Push existing map", () =>
         {
-            var map = maps.GetFromGuid("262a7734-95a5-4115-85cf-87c898e55db6")?
-                .Maps.FirstOrDefault();
-
+            var map = GetTestMap(maps);
             var loader = map is not null ? new EditorLoader(map, map.GetMapInfo()) : new EditorLoader();
             loader.StartTabIndex = 3;
             screenStack.Push(loader);
