@@ -27,6 +27,6 @@ public class SkinKeymode
     [JsonProperty("colors")]
     public List<string> Colors { get; set; } = new();
 
-    [JsonProperty("receptors-first")]
+    [JsonProperty("receptors_first")]
     public bool ReceptorsFirst { get; set; }
 }
