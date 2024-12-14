@@ -850,8 +850,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             return;
 
         var item = currentItem;
+        var title = item.Metadata.Title;
 
-        var current = getLetter(item.Metadata.Title[0]);
+        var current = title.Length < 1 ? '#' : getLetter(title[0]);
 
         if (current == letter)
         {
