@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using fluXis.Game.Audio;
 using fluXis.Game.Configuration;
@@ -518,12 +519,8 @@ public partial class MenuScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         clock.VolumeTo(0).VolumeTo(1, 500);
+        clock.Seek(Math.Max(maps.CurrentMap?.Metadata.PreviewTime ?? 0, 0));
         clock.Start();
-
-        if (config.Get<bool>(FluXisSetting.IntroTheme))
-            clock.Seek(0);
-        else
-            clock.Seek(maps.CurrentMapSet?.Metadata?.PreviewTime ?? 0);
 
         pressAnyKeyText.FadeInFromZero(1400).Then().FadeOut(1400).Loop();
         inactivityTime = 0;

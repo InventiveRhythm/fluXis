@@ -412,11 +412,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     private void sortItems() => Items.Sort();
 
-    private void mapSetBindableChanged(ValueChangedEvent<RealmMapSet> e) => selectMapSet(e.NewValue);
-    private void mapBindableChanged(ValueChangedEvent<RealmMap> e) => selectMap(e.NewValue);
-
-    private void selectMapSet(RealmMapSet set)
+    private void mapSetBindableChanged(ValueChangedEvent<RealmMapSet> e)
     {
+        var set = e.NewValue;
+
         if (set == null)
             return;
 
@@ -425,11 +424,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         if (storyboardContainer.Count > 0)
             storyboardContainer.ForEach(d => d.FadeOut(FADE_DURATION).Expire());
-
-        var previous = MapStore.CurrentMapSet;
-
-        if (!Equals(previous, set) || !clock.IsRunning)
-            clock.Seek(set.Metadata.PreviewTime);
 
         if (!backgroundVideo.Value)
             return;
@@ -480,8 +474,10 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         });
     }
 
-    private void selectMap(RealmMap map)
+    private void mapBindableChanged(ValueChangedEvent<RealmMap> e)
     {
+        var map = e.NewValue;
+
         if (map == null)
             return;
 
@@ -489,6 +485,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         backgrounds.AddBackgroundFromMap(map);
         lightController.FadeColour(FluXisColors.GetKeyColor(map.KeyCount), 400);
         clock.AllowLimitedLoop = true;
+
+        if (e.OldValue.FullAudioPath != e.NewValue.FullAudioPath)
+            clock.Seek(Math.Max(0, map.Metadata.PreviewTime));
 
         var item = Items.FirstOrDefault(i => i.Matches(map));
 

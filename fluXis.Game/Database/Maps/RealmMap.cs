@@ -52,6 +52,9 @@ public class RealmMap : RealmObject
     [Ignored]
     public bool UpToDate => string.IsNullOrEmpty(OnlineHash) || Hash == OnlineHash;
 
+    [Ignored]
+    public string FullAudioPath => MapSet.GetPathForFile(Metadata.Audio);
+
     public float AccuracyDifficulty { get; set; } = 8;
     public float HealthDifficulty { get; set; } = 8;
 

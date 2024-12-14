@@ -6,7 +6,6 @@ using fluXis.Game.Configuration;
 using fluXis.Game.Database.Maps;
 using fluXis.Game.Map;
 using fluXis.Game.Screens;
-using fluXis.Game.Screens.Select;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -128,8 +127,7 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
         var watch = new Stopwatch();
         watch.Start();
 
-        var newPath = e.NewValue?.MapSet.GetPathForFile(e.NewValue.Metadata.Audio);
-
+        var newPath = e.NewValue?.FullAudioPath;
         if (newPath == trackPath) return;
 
         LoadMap(e.NewValue);
@@ -137,8 +135,6 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
 
         watch.Stop();
         Logger.Log($"Song load took {watch.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);
-
-        if (screens.CurrentScreen is SelectScreen) Seek(e.NewValue?.Metadata.PreviewTime ?? 0);
     }
 
     public void LoadMap(RealmMap info)

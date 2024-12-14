@@ -166,7 +166,7 @@ public partial class MapStore : Component
         clock.Looping = loop;
 
         if (loop)
-            clock.RestartPoint = preview ? map?.Metadata.PreviewTime ?? 0 : 0;
+            clock.RestartPoint = preview ? Math.Max(map.Metadata.PreviewTime, 0) : 0;
     }
 
     public void Present(RealmMapSet map)
