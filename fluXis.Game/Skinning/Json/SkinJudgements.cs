@@ -1,9 +1,8 @@
 using Newtonsoft.Json;
-using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Skinning.Json;
 
-public class SkinJudgements : IDeepCloneable<SkinJudgements>
+public class SkinJudgements
 {
     [JsonProperty("flawless")]
     public string Flawless { get; set; } = "#00C3FF";
@@ -22,14 +21,4 @@ public class SkinJudgements : IDeepCloneable<SkinJudgements>
 
     [JsonProperty("miss")]
     public string Miss { get; set; } = "#FF5555";
-
-    public SkinJudgements DeepClone() => new()
-    {
-        Flawless = Flawless,
-        Perfect = Perfect,
-        Great = Great,
-        Alright = Alright,
-        Okay = Okay,
-        Miss = Miss
-    };
 }

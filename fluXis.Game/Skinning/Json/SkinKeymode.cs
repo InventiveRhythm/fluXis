@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
-using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Skinning.Json;
 
-public class SkinKeymode : IDeepCloneable<SkinKeymode>
+public class SkinKeymode
 {
     [JsonProperty("column_width")]
     public int ColumnWidth { get; set; } = 114;
@@ -29,12 +27,6 @@ public class SkinKeymode : IDeepCloneable<SkinKeymode>
     [JsonProperty("colors")]
     public List<string> Colors { get; set; } = new();
 
-    public SkinKeymode DeepClone() => new()
-    {
-        ColumnWidth = ColumnWidth,
-        HitPosition = HitPosition,
-        TintNotes = TintNotes,
-        TintLongNotes = TintNotes,
-        Colors = Colors.ToList()
-    };
+    [JsonProperty("receptors-first")]
+    public bool ReceptorsFirst { get; set; }
 }

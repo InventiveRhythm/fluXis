@@ -56,19 +56,23 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
 
     private PointSettingsTextBox hitPositionTextBox;
     private PointSettingsTextBox columnWidthTextBox;
+    private PointSettingsToggle receptorsFirstToggle;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        skinJson = skinManager.SkinJson.DeepClone();
+        skinJson = skinManager.SkinJson.JsonCopy();
 
         keyMode.BindValueChanged(e =>
         {
             playfield.KeyMode = e.NewValue;
             playfield.Reload();
 
-            hitPositionTextBox.TextBox.Text = skinJson.GetKeymode(keyMode.Value).HitPosition.ToString();
-            columnWidthTextBox.TextBox.Text = skinJson.GetKeymode(keyMode.Value).ColumnWidth.ToString();
+            var mode = skinJson.GetKeymode(keyMode.Value);
+
+            hitPositionTextBox.TextBox.Text = mode.HitPosition.ToString();
+            columnWidthTextBox.TextBox.Text = mode.ColumnWidth.ToString();
+            receptorsFirstToggle.Bindable.Value = mode.ReceptorsFirst;
         });
 
         InternalChild = new EditorKeybindingContainer(this, realm)
@@ -117,6 +121,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                             {
                                                 RelativeSizeAxes = Axes.Both,
                                                 Padding = new MarginPadding(20),
+                                                ScrollbarVisible = false,
                                                 Child = new FillFlowContainer
                                                 {
                                                     RelativeSizeAxes = Axes.X,
@@ -153,6 +158,13 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                                 else
                                                                     box.NotifyError();
                                                             }
+                                                        },
+                                                        receptorsFirstToggle = new PointSettingsToggle
+                                                        {
+                                                            Text = "Receptors First",
+                                                            TooltipText = "Layers the receptors first. (Behind the notes)",
+                                                            CurrentValue = skinJson.GetKeymode(keyMode.Value).ReceptorsFirst,
+                                                            OnStateChanged = v => skinJson.GetKeymode(keyMode.Value).ReceptorsFirst = v
                                                         },
                                                         new FluXisSpriteText
                                                         {

@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using fluXis.Game.Scoring.Enums;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
-using SixLabors.ImageSharp;
 
 namespace fluXis.Game.Skinning.Json;
 
-public class SkinJson : IDeepCloneable<SkinJson>
+public class SkinJson
 {
     [JsonProperty("1k")]
     public SkinKeymode OneKey { get; set; } = new() { ColumnWidth = 132 };
@@ -105,21 +103,4 @@ public class SkinJson : IDeepCloneable<SkinJson>
     }
 
     public string GetOverrideOrDefault(string key) => GetOverride(key) ?? key;
-
-    public SkinJson DeepClone() => new()
-    {
-        OneKey = OneKey.DeepClone(),
-        TwoKey = TwoKey.DeepClone(),
-        ThreeKey = ThreeKey.DeepClone(),
-        FourKey = FourKey.DeepClone(),
-        FiveKey = FiveKey.DeepClone(),
-        SixKey = SixKey.DeepClone(),
-        SevenKey = SevenKey.DeepClone(),
-        EightKey = EightKey.DeepClone(),
-        NineKey = NineKey.DeepClone(),
-        TenKey = TenKey.DeepClone(),
-        Judgements = Judgements.DeepClone(),
-        SnapColors = SnapColors.DeepClone(),
-        Overrides = Overrides.ToDictionary(x => x.Key, x => x.Value)
-    };
 }

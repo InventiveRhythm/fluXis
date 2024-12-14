@@ -92,6 +92,16 @@ public partial class Playfield : Container
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
         hitsoundPanStrength = config.GetBindable<double>(FluXisSetting.HitsoundPanning);
 
+        Receptors = new FillFlowContainer<Receptor>
+        {
+            AutoSizeAxes = Axes.X,
+            RelativeSizeAxes = Axes.Y,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Direction = FillDirection.Horizontal,
+            ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i))
+        };
+
         JudgementProcessor.AddDependants(new JudgementDependant[]
         {
             HealthProcessor = screen.CreateHealthProcessor(),
@@ -112,22 +122,16 @@ public partial class Playfield : Container
             Masking = true
         });
 
+        var receptorsFirst = skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorsFirst;
+
         InternalChildren = new[]
         {
             new LaneSwitchAlert(),
             new PulseEffect(),
             stage = new Stage(),
             new TimingLineManager(),
-            Manager,
-            Receptors = new FillFlowContainer<Receptor>
-            {
-                AutoSizeAxes = Axes.X,
-                RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Direction = FillDirection.Horizontal,
-                ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i))
-            },
+            receptorsFirst ? Receptors : Manager,
+            receptorsFirst ? Manager : Receptors,
             hitline = skinManager.GetHitLine().With(d =>
             {
                 d.Width = 1;
