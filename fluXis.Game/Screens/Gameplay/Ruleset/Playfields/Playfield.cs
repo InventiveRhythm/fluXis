@@ -152,12 +152,12 @@ public partial class Playfield : Container
         screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.HitObjects).ForEach(e => e.Apply(Manager));
         screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Stage).ForEach(e => e.Apply(stage));
         screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Receptors).ForEach(e => e.Apply(Receptors));
+        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Playfield).ForEach(e => e.Apply(this));
 
         if (canSeek)
         {
             screen.MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
             screen.MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
-            screen.MapEvents.PlayfieldFadeEvents.ForEach(e => e.Apply(this));
             screen.MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
             screen.MapEvents.ScrollMultiplyEvents.ForEach(e => e.Apply(Manager));
             screen.MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(Manager));
@@ -168,7 +168,6 @@ public partial class Playfield : Container
             {
                 new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents),
                 new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents),
-                new EventHandler<PlayfieldFadeEvent>(screen.MapEvents.PlayfieldFadeEvents),
                 new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents),
                 new EventHandler<ScrollMultiplierEvent>(screen.MapEvents.ScrollMultiplyEvents),
                 new EventHandler<TimeOffsetEvent>(screen.MapEvents.TimeOffsetEvents),

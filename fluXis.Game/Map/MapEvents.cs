@@ -28,9 +28,6 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("playfieldscale")]
     public List<PlayfieldScaleEvent> PlayfieldScaleEvents { get; private set; } = new();
 
-    [JsonProperty("playfieldfade")]
-    public List<PlayfieldFadeEvent> PlayfieldFadeEvents { get; private set; } = new();
-
     [JsonProperty("playfieldrotate")]
     public List<PlayfieldRotateEvent> PlayfieldRotateEvents { get; private set; } = new();
 
@@ -63,6 +60,16 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [Obsolete($"Use {nameof(LayerFadeEvents)} instead."), JsonProperty("hitfade")]
     public List<LayerFadeEvent> LegacyHitObjectFade { set => LayerFadeEvents = LayerFadeEvents.Concat(value).ToList(); }
 
+    [Obsolete($"Use {nameof(LayerFadeEvents)} instead."), JsonProperty("playfieldfade")]
+    public List<LayerFadeEvent> LegacyPlayfieldFade
+    {
+        set
+        {
+            value.ForEach(v => v.Layer = LayerFadeEvent.FadeLayer.Playfield);
+            LayerFadeEvents = LayerFadeEvents.Concat(value).ToList();
+        }
+    }
+
     #endregion
 
     [JsonIgnore]
@@ -72,7 +79,6 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && PlayfieldMoveEvents.Count == 0
                          && PlayfieldScaleEvents.Count == 0
                          && PlayfieldRotateEvents.Count == 0
-                         && PlayfieldFadeEvents.Count == 0
                          && LayerFadeEvents.Count == 0
                          && HitObjectEaseEvents.Count == 0
                          && ShakeEvents.Count == 0
@@ -207,11 +213,12 @@ public class MapEvents : IDeepCloneable<MapEvents>
                     if (args.Length < 3)
                         continue;
 
-                    PlayfieldFadeEvents.Add(new PlayfieldFadeEvent
+                    LayerFadeEvents.Add(new LayerFadeEvent()
                     {
                         Time = float.Parse(args[0], CultureInfo.InvariantCulture),
                         Duration = float.Parse(args[1], CultureInfo.InvariantCulture),
-                        Alpha = float.Parse(args[2], CultureInfo.InvariantCulture)
+                        Alpha = float.Parse(args[2], CultureInfo.InvariantCulture),
+                        Layer = LayerFadeEvent.FadeLayer.Playfield
                     });
                     break;
 
@@ -248,7 +255,6 @@ public class MapEvents : IDeepCloneable<MapEvents>
         PulseEvents.Sort(compare);
         PlayfieldMoveEvents.Sort(compare);
         PlayfieldScaleEvents.Sort(compare);
-        PlayfieldFadeEvents.Sort(compare);
         LayerFadeEvents.Sort(compare);
         HitObjectEaseEvents.Sort(compare);
         ShakeEvents.Sort(compare);
@@ -281,7 +287,6 @@ public class MapEvents : IDeepCloneable<MapEvents>
         clone.PlayfieldMoveEvents = new List<PlayfieldMoveEvent>(PlayfieldMoveEvents);
         clone.PlayfieldScaleEvents = new List<PlayfieldScaleEvent>(PlayfieldScaleEvents);
         clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
-        clone.PlayfieldFadeEvents = new List<PlayfieldFadeEvent>(PlayfieldFadeEvents);
         clone.LayerFadeEvents = new List<LayerFadeEvent>(LayerFadeEvents);
         clone.HitObjectEaseEvents = new List<HitObjectEaseEvent>(HitObjectEaseEvents);
         clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);

@@ -1,10 +1,11 @@
 ﻿using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Structures.Events;
 
-public class LayerFadeEvent : IMapEvent, IHasDuration, IHasEasing
+public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, IHasEasing
 {
     [JsonProperty("time")]
     public double Time { get; set; }
@@ -21,6 +22,9 @@ public class LayerFadeEvent : IMapEvent, IHasDuration, IHasEasing
     [JsonProperty("layer")]
     public FadeLayer Layer { get; set; } = FadeLayer.HitObjects;
 
+    [JsonProperty("playfield")]
+    public int PlayfieldIndex { get; set; }
+
     public void Apply(Drawable drawable)
     {
         // make sure this is set, just in case it's missing
@@ -35,6 +39,9 @@ public class LayerFadeEvent : IMapEvent, IHasDuration, IHasEasing
     {
         HitObjects,
         Stage,
-        Receptors
+        Receptors,
+        Playfield
     }
+
+    void IApplicableToPlayfield.Apply(Playfield playfield) => Apply(playfield);
 }

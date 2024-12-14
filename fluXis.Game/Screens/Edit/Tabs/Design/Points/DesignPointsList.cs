@@ -21,11 +21,6 @@ public partial class DesignPointsList : PointsList
         Map.ShakeEventRemoved += RemovePoint;
         Map.MapEvents.ShakeEvents.ForEach(AddPoint);
 
-        Map.PlayfieldFadeEventAdded += AddPoint;
-        Map.PlayfieldFadeEventUpdated += UpdatePoint;
-        Map.PlayfieldFadeEventRemoved += RemovePoint;
-        Map.MapEvents.PlayfieldFadeEvents.ForEach(AddPoint);
-
         Map.PlayfieldMoveEventAdded += AddPoint;
         Map.PlayfieldMoveEventUpdated += UpdatePoint;
         Map.PlayfieldMoveEventRemoved += RemovePoint;
@@ -84,7 +79,6 @@ public partial class DesignPointsList : PointsList
             FlashEvent flash => new FlashEntry(flash),
             ShakeEvent shake => new ShakeEntry(shake),
             PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
-            PlayfieldFadeEvent fade => new PlayfieldFadeEntry(fade),
             PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
             LayerFadeEvent fade => new LayerFadeEntry(fade),
             HitObjectEaseEvent ease => new HitObjectEaseEntry(ease),
@@ -107,7 +101,6 @@ public partial class DesignPointsList : PointsList
             new("Playfield Move", FluXisColors.PlayfieldMove, () => Create(new PlayfieldMoveEvent())),
             new("Playfield Scale", FluXisColors.PlayfieldScale, () => Create(new PlayfieldScaleEvent())),
             new("Playfield Rotate", FluXisColors.PlayfieldRotate, () => Create(new PlayfieldRotateEvent())),
-            new("Playfield Fade", FluXisColors.PlayfieldFade, () => Create(new PlayfieldFadeEvent())),
             new("HitObject Ease", FluXisColors.HitObjectEase, () => Create(new HitObjectEaseEvent())),
             new("Layer Fade", FluXisColors.LayerFade, () => Create(new LayerFadeEvent())),
             new("Beat Pulse", FluXisColors.BeatPulse, () => Create(new BeatPulseEvent())),

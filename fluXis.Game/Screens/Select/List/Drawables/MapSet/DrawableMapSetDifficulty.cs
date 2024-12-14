@@ -324,9 +324,6 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
         if (effects.HasFlag(MapEffectType.PlayfieldRotate))
             icons.Add(new GimmickIcon(FluXisIconType.PlayfieldRotate, "Contains playfield rotates"));
 
-        if (effects.HasFlag(MapEffectType.PlayfieldFade))
-            icons.Add(new GimmickIcon(FluXisIconType.PlayfieldFade, "Contains playfield fades"));
-
         if (effects.HasFlag(MapEffectType.Shake))
             icons.Add(new GimmickIcon(FluXisIconType.Shake, "Contains shakes"));
 

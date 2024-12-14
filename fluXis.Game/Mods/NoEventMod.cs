@@ -22,7 +22,6 @@ public class NoEventMod : IMod, IApplicableToEvents
         events.PulseEvents.Clear();
         events.PlayfieldMoveEvents.Clear();
         events.PlayfieldScaleEvents.Clear();
-        events.PlayfieldFadeEvents.Clear();
         events.PlayfieldRotateEvents.Clear();
         events.LayerFadeEvents.Clear();
         events.HitObjectEaseEvents.Clear();

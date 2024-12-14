@@ -182,8 +182,8 @@ public static class MapUtils
         if (events.PlayfieldRotateEvents.Count > 0)
             effects |= MapEffectType.PlayfieldRotate;
 
-        if (events.PlayfieldFadeEvents.Count > 0)
-            effects |= MapEffectType.PlayfieldFade;
+        /*if (events.PlayfieldFadeEvents.Count > 0)
+            effects |= MapEffectType.PlayfieldFade;*/
 
         if (events.ShakeEvents.Count > 0)
             effects |= MapEffectType.Shake;

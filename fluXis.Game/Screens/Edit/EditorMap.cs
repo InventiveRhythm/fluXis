@@ -70,10 +70,6 @@ public class EditorMap
     public event Action<ShakeEvent> ShakeEventRemoved;
     public event Action<ShakeEvent> ShakeEventUpdated;
 
-    public event Action<PlayfieldFadeEvent> PlayfieldFadeEventAdded;
-    public event Action<PlayfieldFadeEvent> PlayfieldFadeEventRemoved;
-    public event Action<PlayfieldFadeEvent> PlayfieldFadeEventUpdated;
-
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventAdded;
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventRemoved;
     public event Action<PlayfieldMoveEvent> PlayfieldMoveEventUpdated;
@@ -127,7 +123,6 @@ public class EditorMap
             new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents, obj => FlashEventAdded?.Invoke(obj), obj => FlashEventRemoved?.Invoke(obj), obj => FlashEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj), obj => PlayfieldMoveEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents, obj => PlayfieldScaleEventAdded?.Invoke(obj), obj => PlayfieldScaleEventRemoved?.Invoke(obj), obj => PlayfieldScaleEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldFadeEvent>(MapEvents.PlayfieldFadeEvents, obj => PlayfieldFadeEventAdded?.Invoke(obj), obj => PlayfieldFadeEventRemoved?.Invoke(obj), obj => PlayfieldFadeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents, obj => PlayfieldRotateEventAdded?.Invoke(obj), obj => PlayfieldRotateEventRemoved?.Invoke(obj), obj => PlayfieldRotateEventUpdated?.Invoke(obj)),
             new ChangeNotifier<LayerFadeEvent>(MapEvents.LayerFadeEvents, obj => LayerFadeEventAdded?.Invoke(obj), obj => LayerFadeEventRemoved?.Invoke(obj), obj => LayerFadeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents, obj => HitObjectEaseEventAdded?.Invoke(obj), obj => HitObjectEaseEventRemoved?.Invoke(obj), obj => HitObjectEaseEventUpdated?.Invoke(obj)),

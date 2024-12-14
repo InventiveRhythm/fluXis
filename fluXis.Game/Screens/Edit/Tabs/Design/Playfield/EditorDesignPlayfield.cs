@@ -1,5 +1,6 @@
 using System.Linq;
 using fluXis.Game.Map.Structures.Bases;
+using fluXis.Game.Map.Structures.Events;
 using fluXis.Game.Screens.Edit.Tabs.Shared.Lines;
 using fluXis.Game.Screens.Gameplay.Ruleset;
 using fluXis.Game.Skinning;
@@ -127,7 +128,8 @@ public partial class EditorDesignPlayfield : CompositeDrawable
 
     private void updateAlpha()
     {
-        var current = map.MapEvents.PlayfieldFadeEvents.Where(applies).LastOrDefault(e => e.Time <= clock.CurrentTime);
+        var events = map.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Playfield).Where(applies).ToList();
+        var current = events.LastOrDefault(e => e.Time <= clock.CurrentTime);
 
         if (current == null)
         {
@@ -144,7 +146,7 @@ public partial class EditorDesignPlayfield : CompositeDrawable
             return;
         }
 
-        var previous = map.MapEvents.PlayfieldFadeEvents.Where(applies).LastOrDefault(e => e.Time < current.Time);
+        var previous = events.LastOrDefault(e => e.Time < current.Time);
         var start = previous?.Alpha ?? 1;
 
         if (progress < 0)

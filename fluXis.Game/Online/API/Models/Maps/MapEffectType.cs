@@ -12,7 +12,10 @@ public enum MapEffectType : ulong
     PlayfieldMove = 1 << 4,
     PlayfieldScale = 1 << 5,
     PlayfieldRotate = 1 << 6,
+
+    // UNUSED //
     PlayfieldFade = 1 << 7,
+
     Shake = 1 << 8,
     Shader = 1 << 9,
     BeatPulse = 1 << 10,
