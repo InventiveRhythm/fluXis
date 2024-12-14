@@ -372,6 +372,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/RenogareSoft/RenogareSoft");
         AddFont(Resources, "Fonts/YoureGone/YoureGone");
 
+        AddFont(Resources, "Fonts/MOBO/MOBO");
+
         AddFont(Resources, "Fonts/Noto/Noto-Basic");
         AddFont(Resources, "Fonts/Noto/Noto-Hangul");
         AddFont(Resources, "Fonts/Noto/Noto-CJK-Basic");
