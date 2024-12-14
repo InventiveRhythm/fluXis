@@ -488,7 +488,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
 
         toolbar.Hide();
-        globalClock.VolumeOut(1500);
+        globalClock.RateTo(0, 1500, Easing.Out);
+        globalClock.VolumeOut(1300);
         exitAnimation.Show(buffer.Hide, () => base.Exit(false));
         isExiting = true;
     }

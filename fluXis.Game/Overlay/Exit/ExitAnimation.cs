@@ -20,7 +20,7 @@ public partial class ExitAnimation : FullInputBlockingContainer
     private const int bars_delay = 200;
 
     private const string goodbye = "Goodbye!";
-    private const string scramble_chars = "!@#$%^&*()_+-=[]{};':\",./<>?\\|`~";
+    private const string scramble_chars = "ABCDEFGHIJKMNOPQRSTUVWXYZ@#$%&*()+=[]{}~";
 
     private Sample sample;
 
@@ -83,10 +83,10 @@ public partial class ExitAnimation : FullInputBlockingContainer
 
         barsContainer.Delay(bars_duration + bars_delay).Schedule(onBarCompletion);
 
-        text.ScaleTo(1.1f).Delay(bars_duration)
+        text.ScaleTo(1.4f).Delay(bars_duration)
             .Schedule(() => Scheduler.AddDelayed(unscrambleOneRandomChar, 50, true))
             .FadeIn(400).ScaleTo(1, 800, Easing.OutQuint)
-            .Then(600).FadeOut(600).Schedule(onCompletion);
+            .Then(600).FadeOut(600).OnComplete(_ => onCompletion());
     }
 
     private void unscrambleOneRandomChar()
