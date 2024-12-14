@@ -1,6 +1,10 @@
+using System;
 using fluXis.Game.Input;
 using fluXis.Game.Map.Structures;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 
@@ -9,6 +13,7 @@ public partial class DrawableTickNote : DrawableHitObject
     public override bool CanBeRemoved => Judged || Time.Current - Data.Time > HitWindows.TimingFor(HitWindows.LowestHitable);
 
     private bool isBeingHeld;
+    private Circle followLine;
 
     public DrawableTickNote(HitObject data)
         : base(data)
@@ -18,7 +23,18 @@ public partial class DrawableTickNote : DrawableHitObject
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = SkinManager.GetTickNote(Data.Lane, ObjectManager.KeyCount, Data.HoldTime > 0);
+        InternalChildren = new[]
+        {
+            followLine = new Circle()
+            {
+                BypassAutoSizeAxes = Axes.Both,
+                Colour = Colour4.FromHex("#F2C979").Opacity(.4f),
+                Size = new Vector2(8),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
+            SkinManager.GetTickNote(Data.Lane, ObjectManager.KeyCount, Data.HoldTime > 0)
+        };
     }
 
     protected override void Update()
@@ -30,6 +46,23 @@ public partial class DrawableTickNote : DrawableHitObject
 
         if (isBeingHeld)
             UpdateJudgement(true);
+
+        var next = Data.NextObject;
+
+        if (next?.Type == 1 && next.Lane == Data.Lane && (Data.VisualLane != 0 || next.VisualLane != 0))
+        {
+            var l = next.VisualLane == 0 ? next.Lane : next.VisualLane;
+            var pos = Column.FullPositionAt(next.Time, l, next.StartEasing);
+            var delta = pos - Position;
+            var distance = delta.Length;
+
+            followLine.Alpha = 1;
+            followLine.Position = delta / 2;
+            followLine.Height = distance;
+            followLine.Rotation = -(float)(Math.Atan2(delta.X, delta.Y) * (180 / Math.PI));
+        }
+        else
+            followLine.Alpha = 0;
     }
 
     protected override void CheckJudgement(bool byUser, double offset)

@@ -3,6 +3,7 @@ using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Edit.Tabs.Charting.Playfield;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using osu.Framework.Graphics;
 
 namespace fluXis.Game.Map.Structures;
 
@@ -55,25 +56,26 @@ public class HitObject : ITimedObject
     [JsonIgnore]
     public HitResult HoldEndResult { get; set; }
 
+    /// <summary>
+    /// The next HitObject in the same lane.
+    /// </summary>
+    [CanBeNull]
+    [JsonIgnore]
+    public HitObject NextObject { get; set; }
+
+    /// <summary>
+    /// The ease type the start of this note has.
+    /// </summary>
+    [JsonIgnore]
+    public Easing StartEasing { get; set; } = Easing.None;
+
+    /// <summary>
+    /// The ease type the end of this note has.
+    /// </summary>
+    [JsonIgnore]
+    public Easing EndEasing { get; set; } = Easing.None;
+
     [CanBeNull]
     [JsonIgnore]
     public EditorHitObject EditorDrawable { get; set; }
-
-    public HitObject Copy()
-    {
-        return new HitObject
-        {
-            Time = Time,
-            Lane = Lane,
-            VisualLane = VisualLane,
-            HoldTime = HoldTime,
-            HitSound = HitSound,
-            Type = Type
-        };
-    }
-
-    public override string ToString()
-    {
-        return $"Time: {Time}, Lane: {Lane}, HoldTime: {HoldTime}, HitSound: {HitSound}";
-    }
 }

@@ -28,8 +28,6 @@ public partial class DrawableLongNote : DrawableHitObject
     private DrawableLongNoteTail tailPiece;
     private DrawableLongNoteHead headPiece;
 
-    private Easing endEasing = Easing.None;
-
     private bool missed;
 
     private readonly Colour4 missTint = new(.4f, .4f, .4f, 1);
@@ -52,8 +50,6 @@ public partial class DrawableLongNote : DrawableHitObject
             tailPiece = new DrawableLongNoteTail(Data),
             headPiece = new DrawableLongNoteHead(Data)
         };
-
-        endEasing = ObjectManager.EasingAtTime(Data.EndTime);
 
         if (ObjectManager.UseSnapColors)
         {
@@ -106,7 +102,7 @@ public partial class DrawableLongNote : DrawableHitObject
         if (IsBeingHeld.Value)
             Y = ObjectManager.HitPosition;
 
-        var endY = Column.PositionAtTime(ScrollVelocityEndTime, endEasing);
+        var endY = Column.PositionAtTime(ScrollVelocityEndTime, Data.EndEasing);
         var height = Y - endY;
 
         bodyPiece.Height = height;

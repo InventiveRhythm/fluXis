@@ -334,7 +334,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     public void Copy(bool deleteAfter = false)
     {
-        var hits = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().Select(h => h.Copy()).ToList();
+        var hits = BlueprintContainer.SelectionHandler.SelectedObjects.OfType<HitObject>().Select(h => h.JsonCopy()).ToList();
 
         if (!hits.Any())
         {

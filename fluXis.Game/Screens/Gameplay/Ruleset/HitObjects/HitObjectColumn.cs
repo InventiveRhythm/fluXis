@@ -9,10 +9,10 @@ using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Screens.Gameplay.Ruleset.Playfields;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Utils;
+using osuTK;
 
 namespace fluXis.Game.Screens.Gameplay.Ruleset.HitObjects;
 
@@ -62,7 +62,21 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         Lane = lane;
         HitManager = hitManager;
 
-        Map.HitObjects.Where(h => h.Lane == Lane).ForEach(FutureHitObjects.Add);
+        var objects = Map.HitObjects.Where(h => h.Lane == Lane).ToList();
+        objects.Sort((a, b) => a.Time.CompareTo(b.Time));
+        objects.ForEach(FutureHitObjects.Add);
+
+        HitObject last = null;
+
+        foreach (var hit in FutureHitObjects)
+        {
+            if (last != null)
+                last.NextObject = hit;
+
+            hit.StartEasing = HitManager.EasingAtTime(hit.Time);
+            hit.EndEasing = HitManager.EasingAtTime(hit.EndTime);
+            last = hit;
+        }
 
         initScrollVelocityMarks();
         initSnapIndices();
@@ -128,6 +142,9 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         var y = PositionAtTime(svTime);
         return y >= 0;
     }
+
+    public Vector2 FullPositionAt(double time, float lane, Easing ease = Easing.None)
+        => new(HitManager.PositionAtLane(lane), PositionAtTime(time, ease));
 
     public float PositionAtTime(double time, Easing ease = Easing.None)
     {
