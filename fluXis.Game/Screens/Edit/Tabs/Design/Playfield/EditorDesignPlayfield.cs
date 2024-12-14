@@ -52,7 +52,8 @@ public partial class EditorDesignPlayfield : CompositeDrawable
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Direction = FillDirection.Horizontal
+                Direction = FillDirection.Horizontal,
+                Padding = new MarginPadding { Bottom = skinManager.SkinJson.GetKeymode(map.RealmMap.KeyCount).ReceptorOffset }
             },
             hitline = skinManager.GetHitLine().With(l =>
             {

@@ -29,4 +29,7 @@ public class SkinKeymode
 
     [JsonProperty("receptors_first")]
     public bool ReceptorsFirst { get; set; }
+
+    [JsonProperty("receptor_offset")]
+    public int ReceptorOffset { get; set; }
 }

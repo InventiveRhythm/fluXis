@@ -73,9 +73,12 @@ public partial class SkinEditorPlayfield : Container
 
     protected override void Update()
     {
-        Width = SkinJson.GetKeymode(KeyMode).ColumnWidth * KeyMode;
+        var mode = SkinJson.GetKeymode(KeyMode);
 
-        var hitpos = SkinJson.GetKeymode(KeyMode).HitPosition;
+        Width = mode.ColumnWidth * KeyMode;
+        receptorContainer.Y = -mode.ReceptorOffset;
+
+        var hitpos = mode.HitPosition;
         hitline.Y = -hitpos;
 
         foreach (var drawable in hitObjectContainer)
@@ -83,9 +86,9 @@ public partial class SkinEditorPlayfield : Container
             int index = hitObjectContainer.IndexOf(drawable);
 
             drawable.Width = 1f / KeyMode;
-            drawable.X = index * SkinJson.GetKeymode(KeyMode).ColumnWidth;
+            drawable.X = index * mode.ColumnWidth;
 
-            float time = index * 100;
+            float time = index * 50;
             drawable.Y = -hitpos - .5f * (time * 3);
         }
     }

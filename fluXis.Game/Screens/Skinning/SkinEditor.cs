@@ -57,6 +57,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
     private PointSettingsTextBox hitPositionTextBox;
     private PointSettingsTextBox columnWidthTextBox;
     private PointSettingsToggle receptorsFirstToggle;
+    private PointSettingsTextBox receptorsPositionTextBox;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -73,6 +74,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
             hitPositionTextBox.TextBox.Text = mode.HitPosition.ToString();
             columnWidthTextBox.TextBox.Text = mode.ColumnWidth.ToString();
             receptorsFirstToggle.Bindable.Value = mode.ReceptorsFirst;
+            receptorsPositionTextBox.TextBox.Text = mode.ReceptorOffset.ToString();
         });
 
         InternalChild = new EditorKeybindingContainer(this, realm)
@@ -165,6 +167,18 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                                             TooltipText = "Layers the receptors first. (Behind the notes)",
                                                             CurrentValue = skinJson.GetKeymode(keyMode.Value).ReceptorsFirst,
                                                             OnStateChanged = v => skinJson.GetKeymode(keyMode.Value).ReceptorsFirst = v
+                                                        },
+                                                        receptorsPositionTextBox = new PointSettingsTextBox
+                                                        {
+                                                            Text = "Receptor Offset",
+                                                            DefaultText = skinJson.GetKeymode(keyMode.Value).ReceptorOffset.ToString(),
+                                                            OnTextChanged = box =>
+                                                            {
+                                                                if (box.Text.TryParseIntInvariant(out var w))
+                                                                    skinJson.GetKeymode(keyMode.Value).ReceptorOffset = w;
+                                                                else
+                                                                    box.NotifyError();
+                                                            }
                                                         },
                                                         new FluXisSpriteText
                                                         {

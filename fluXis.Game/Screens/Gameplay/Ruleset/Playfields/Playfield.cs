@@ -99,7 +99,8 @@ public partial class Playfield : Container
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Direction = FillDirection.Horizontal,
-            ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i))
+            ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i)),
+            Padding = new MarginPadding { Bottom = skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
 
         JudgementProcessor.AddDependants(new JudgementDependant[]
