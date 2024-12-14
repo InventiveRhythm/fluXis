@@ -27,6 +27,7 @@ public partial class EditorHitObject : Container
     private Drawable longNoteBody { get; set; }
     public Drawable LongNoteEnd { get; private set; }
     private Drawable tickNotePiece { get; set; }
+    private Drawable tickNoteGhost { get; set; }
 
     private FluXisSpriteText text { get; set; }
 
@@ -43,6 +44,7 @@ public partial class EditorHitObject : Container
         Children = new[]
         {
             HitObjectPiece = new DefaultHitObjectPiece(null),
+            tickNoteGhost = new DefaultTickNote(false).With(d => d.Alpha = .2f),
             tickNotePiece = new DefaultTickNote(false),
             longNoteBody = new DefaultHitObjectBody(null).With(b =>
             {
@@ -85,6 +87,7 @@ public partial class EditorHitObject : Container
 
             default:
                 tickNotePiece.Hide();
+                tickNoteGhost.Hide();
 
                 if (Data.LongNote)
                 {
@@ -121,6 +124,12 @@ public partial class EditorHitObject : Container
             longNoteBody.Height = Y - endY - LongNoteEnd.Height + 4;
             longNoteBody.Y = -LongNoteEnd.Height + 2;
             LongNoteEnd.Y = endY - Y;
+        }
+
+        if (Data.Type == 1)
+        {
+            var l = Data.VisualLane == 0 ? Data.Lane : Data.VisualLane;
+            tickNoteGhost.X = playfield.HitObjectContainer.PositionFromLane(l) - X;
         }
 
         if (Data.Time <= clock.CurrentTime && clock.CurrentTime - Data.Time <= max_distance && overZero) playfield.PlayHitSound(Data);
