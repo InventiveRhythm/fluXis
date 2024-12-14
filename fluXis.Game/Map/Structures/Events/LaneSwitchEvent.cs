@@ -1,3 +1,4 @@
+using System.Linq;
 using fluXis.Game.Map.Structures.Bases;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -173,6 +174,9 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
 
     public static bool[] GetRow(int count, int keycount, bool newLayout)
     {
+        if (count == keycount)
+            return Enumerable.Repeat(true, keycount).ToArray();
+
         var layout = newLayout ? SWITCH_VISIBILITY_V2 : SWITCH_VISIBILITY;
 
         var m = layout[keycount - 2];

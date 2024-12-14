@@ -99,10 +99,6 @@ public partial class LaneSwitchManager : CompositeComponent
     private IEnumerable<int> getWidths(LaneSwitchEvent ev)
     {
         var w = skin.SkinJson.GetKeymode(ev.Count).ColumnWidth;
-
-        if (ev.Count == keycount)
-            return Enumerable.Repeat(0, keycount).Select(_ => w);
-
         return LaneSwitchEvent.GetRow(ev.Count, keycount, newLayout).Select(l => l ? w : 0);
     }
 }

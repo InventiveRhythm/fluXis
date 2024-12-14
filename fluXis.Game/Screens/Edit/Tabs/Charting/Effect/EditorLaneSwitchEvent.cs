@@ -82,20 +82,14 @@ public partial class EditorLaneSwitchEvent : FillFlowContainer
         else
             length = clock.TrackLength - Event.Time;
 
-        var visibility = LaneSwitchEvent.GetRow(Event.Count, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout);
+        var current = LaneSwitchEvent.GetRow(Event.Count, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout);
         StateChange[] states = new StateChange[map.RealmMap.KeyCount];
-
-        var current = Event.Count == map.RealmMap.KeyCount
-            ? Enumerable.Repeat(true, map.RealmMap.KeyCount).ToArray()
-            : visibility;
 
         var previousEvent = map.MapEvents.LaneSwitchEvents.LastOrDefault(e => e.Time < Event.Time);
 
         if (previousEvent != null)
         {
-            var prev = previousEvent.Count == map.RealmMap.KeyCount
-                ? Enumerable.Repeat(true, map.RealmMap.KeyCount).ToArray()
-                : visibility;
+            var prev = LaneSwitchEvent.GetRow(previousEvent.Count, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout);
 
             for (int i = 0; i < map.RealmMap.KeyCount; i++)
             {
