@@ -7,6 +7,7 @@ using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using Vector2 = osuTK.Vector2;
 
@@ -22,7 +23,6 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     private float pad => ShowArrowButtons ? 20 : 0;
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
-    private BasicSliderBar<T> sliderBar;
     private ClickableSpriteIcon leftIcon;
     private ClickableSpriteIcon rightIcon;
 
@@ -55,18 +55,11 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Left = pad, Right = pad },
-                Child = new CircularContainer
+                Child = new FluXisSliderBar(Height)
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    Child = sliderBar = new BasicSliderBar<T>
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Current = Bindable,
-                        BackgroundColour = FluXisColors.Primary.Opacity(.2f),
-                        SelectionColour = FluXisColors.Primary,
-                        KeyboardStep = Step
-                    }
+                    Current = Bindable,
+                    KeyboardStep = Step
                 }
             },
             rightIcon = new ClickableSpriteIcon
@@ -99,9 +92,6 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
     private void updateValue(ValueChangedEvent<T> e)
     {
         var percent = bindableNumber.NormalizedValue;
-        Colour4 colour = FluXisColors.AccentGradient.Interpolate(new Vector2(percent, 1));
-        sliderBar.SelectionColour = colour;
-        sliderBar.BackgroundColour = colour.Opacity(.2f);
 
         leftIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MinValue) > 0;
         rightIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MaxValue) < 0;
@@ -110,7 +100,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
         {
             if (Time.Current - lastSampleTime < 50) return;
 
-            valueChangePitch.Value = 1f + percent * .4f;
+            valueChangePitch.Value = .7f + percent * .6f;
             valueChange.Play();
 
             lastSampleTime = Time.Current;
@@ -126,6 +116,40 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                 bindableNumber.Add(Step);
             else
                 bindableNumber.Add(-Step);
+        }
+    }
+
+    private partial class FluXisSliderBar : SliderBar<T>
+    {
+        private Box background { get; }
+        private Box bar { get; }
+
+        public FluXisSliderBar(float height)
+        {
+            CornerRadius = height / 2;
+            Masking = true;
+
+            Children = new Drawable[]
+            {
+                background = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Primary,
+                    Alpha = .2f
+                },
+                bar = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Primary
+                }
+            };
+        }
+
+        protected override void UpdateValue(float value)
+        {
+            Colour4 colour = FluXisColors.AccentGradient.Interpolate(new Vector2(value, 1));
+            bar.FadeColour(colour, 400, Easing.OutQuint).ResizeWidthTo(value, 400, Easing.OutQuint);
+            background.FadeColour(colour, 400, Easing.OutQuint);
         }
     }
 }
