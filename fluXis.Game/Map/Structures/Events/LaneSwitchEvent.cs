@@ -34,7 +34,7 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
         {
             new[] { false, true, false, false }, // 1k
             new[] { false, true, true, false }, // 2k
-            new[] { true, true, true, false } // 3k
+            new[] { true, true, false, true } // 3k
         },
         new[] // 5k
         {
@@ -47,7 +47,7 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
         {
             new[] { false, false, true, false, false, false }, // 1k
             new[] { false, false, true, true, false, false }, // 2k
-            new[] { false, true, true, true, false, false }, // 3k
+            new[] { false, true, true, false, true, false }, // 3k
             new[] { false, true, true, true, true, false }, // 4k
             new[] { true, true, true, false, true, true } // 5k
         },
@@ -64,7 +64,7 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
         {
             new[] { false, false, false, true, false, false, false, false }, // 1k
             new[] { false, false, true, false, false, true, false, false }, // 2k
-            new[] { false, false, true, true, true, false, false, false }, // 3k
+            new[] { false, false, true, true, false, true, false, false }, // 3k
             new[] { false, true, true, false, false, true, true, false }, // 4k
             new[] { false, true, true, true, false, true, true, false }, // 5k
             new[] { true, true, true, false, false, true, true, true }, // 6k
@@ -170,4 +170,12 @@ public class LaneSwitchEvent : IMapEvent, IHasDuration, IHasEasing
             new[] { true, true, true, true, true, false, true, true, true, true } // 9k
         }
     };
+
+    public static bool[] GetRow(int count, int keycount, bool newLayout)
+    {
+        var layout = newLayout ? SWITCH_VISIBILITY_V2 : SWITCH_VISIBILITY;
+
+        var m = layout[keycount - 2];
+        return m[count - 1];
+    }
 }

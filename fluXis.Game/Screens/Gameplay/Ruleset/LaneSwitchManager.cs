@@ -103,9 +103,6 @@ public partial class LaneSwitchManager : CompositeComponent
         if (ev.Count == keycount)
             return Enumerable.Repeat(0, keycount).Select(_ => w);
 
-        var layout = newLayout ? LaneSwitchEvent.SWITCH_VISIBILITY_V2 : LaneSwitchEvent.SWITCH_VISIBILITY;
-
-        var mode = layout[keycount - 2];
-        return mode[ev.Count - 1].Select(l => l ? w : 0);
+        return LaneSwitchEvent.GetRow(ev.Count, keycount, newLayout).Select(l => l ? w : 0);
     }
 }
