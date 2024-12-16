@@ -16,6 +16,9 @@ namespace fluXis.Game.Map;
 
 public class MapInfo
 {
+    public static int MinKeymode { get; set; } = 1;
+    public static int MaxKeymode { get; set; } = -1; // allow anything
+
     public string AudioFile { get; set; } = string.Empty;
     public string BackgroundFile { get; set; } = string.Empty;
     public string CoverFile { get; set; } = string.Empty;
@@ -121,13 +124,13 @@ public class MapInfo
     {
         if (HitObjects.Count == 0)
         {
-            issue = "Map has no hit objects";
+            issue = "Map has no hit objects.";
             return false;
         }
 
         if (TimingPoints.Count == 0)
         {
-            issue = "Map has no timing points";
+            issue = "Map has no timing points.";
             return false;
         }
 
@@ -135,20 +138,29 @@ public class MapInfo
         {
             if (timingPoint.BPM <= 0)
             {
-                issue = "A timing point has an invalid BPM";
+                issue = "A timing point has an invalid BPM.";
                 return false;
             }
 
             if (timingPoint.Signature <= 0)
             {
-                issue = "A timing point has an invalid signature";
+                issue = "A timing point has an invalid signature.";
                 return false;
             }
         }
 
         if (HitObjects.Any(hitObject => hitObject.Lane < 1))
         {
-            issue = "Map has an invalid key count";
+            issue = "A hit object in this map is in a lane below 1.";
+            return false;
+        }
+
+        var min = HitObjects.MinBy(x => x.Lane).Lane;
+        var max = HitObjects.MaxBy(x => x.Lane).Lane;
+
+        if (min < MinKeymode || (MaxKeymode > 0 && max > MaxKeymode))
+        {
+            issue = "Map has an invalid keymode.";
             return false;
         }
 
