@@ -60,9 +60,8 @@ public partial class MapStore : Component
     [Resolved]
     private FluXisGameBase game { get; set; }
 
-    private bool initialLoad;
     private Storage files;
-    private MapResourceProvider resources;
+    private MapSetResources resources;
 
     public Bindable<RealmMap> MapBindable { get; } = new();
     public Bindable<RealmMapSet> MapSetBindable { get; } = new();
@@ -87,25 +86,16 @@ public partial class MapStore : Component
         }
     }
 
-    public List<RealmMapSet> MapSets { get; } = new();
-
-    public Action<RealmMapSet> MapSetAdded;
-    public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
-    public Action CollectionUpdated;
-
-    public List<DownloadStatus> DownloadQueue { get; } = new();
-    public Action<DownloadStatus> DownloadStarted { get; set; }
-    public Action<DownloadStatus> DownloadFinished { get; set; }
+    #region Loading
 
     [BackgroundDependencyLoader]
     private void load(BackgroundTextureStore backgroundStore, CroppedBackgroundStore croppedBackgroundStore)
     {
-        initialLoad = true;
         files = storage.GetStorageForDirectory("maps");
 
-        Logger.Log("Loading maps...");
+        Logger.Log("Loading mapsets...");
 
-        resources = new MapResourceProvider
+        resources = new MapSetResources
         {
             BackgroundStore = backgroundStore,
             CroppedBackgroundStore = croppedBackgroundStore,
@@ -115,28 +105,14 @@ public partial class MapStore : Component
 
         realm.RunWrite(r =>
         {
-            var mapSets = r.All<RealmMapSet>();
+            var sets = r.All<RealmMapSet>();
 
-            // migration stuffs
-            foreach (var set in mapSets)
-            {
-                foreach (var map in set.Maps)
-                {
-                    if (map.StatusInt == -3)
-                    {
-                        var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == "Quaver");
-                        if (info != null) map.StatusInt = info.Id;
-                    }
+            fixSetData(sets);
 
-                    if (map.StatusInt == -4)
-                    {
-                        var info = r.All<ImporterInfo>().FirstOrDefault(i => i.Name == "osu!mania");
-                        if (info != null) map.StatusInt = info.Id;
-                    }
-                }
-            }
+            foreach (var set in sets)
+                AddMapSet(set.Detach());
 
-            loadMapSets(mapSets);
+            Logger.Log($"Loaded {MapSets.Count} mapsets.");
         });
     }
 
@@ -144,18 +120,7 @@ public partial class MapStore : Component
     {
         base.LoadComplete();
 
-        MapSetBindable.BindValueChanged(e => Logger.Log($"Changed mapset to {e.NewValue?.Metadata.Title} - {e.NewValue?.Metadata.Artist}", LoggingTarget.Runtime, LogLevel.Debug), true);
-    }
-
-    private void loadMapSets(IQueryable<RealmMapSet> sets)
-    {
-        fixSetData(sets);
-
-        Logger.Log($"Found {sets.Count()} maps");
-
-        foreach (var set in sets) AddMapSet(set.Detach());
-
-        initialLoad = false;
+        MapSetBindable.BindValueChanged(e => Logger.Log($"Changed selected mapset to {e.NewValue?.Metadata.Title} - {e.NewValue?.Metadata.Artist}", LoggingTarget.Runtime, LogLevel.Debug), true);
     }
 
     /// <summary>
@@ -175,95 +140,28 @@ public partial class MapStore : Component
         }
     }
 
-    public void Select(RealmMap map, bool loop = false, bool preview = true)
+    internal void AssignResources(RealmMapSet mapSet) => mapSet.Resources ??= resources;
+
+    #endregion
+
+    #region Collection Management
+
+    public List<RealmMapSet> MapSets { get; } = new();
+
+    public Action<RealmMapSet> MapSetAdded;
+    public Action<RealmMapSet, RealmMapSet> MapSetUpdated;
+    public Action CollectionUpdated;
+
+    public void AddMapSet(RealmMapSet set, bool notify = true)
     {
-        CurrentMap = map;
+        AssignResources(set);
 
-        if (clock == null)
-            return;
-
-        clock.Looping = loop;
-
-        if (loop)
-            clock.RestartPoint = preview ? Math.Max(map.Metadata.PreviewTime, 0) : 0;
-    }
-
-    public void Present(RealmMapSet map)
-    {
-        game.ShowMap(map);
-    }
-
-    public void Save(RealmMap map, MapInfo info, MapEvents events, Storyboard storyboard, bool setStatus)
-    {
-        if (map == null || info == null)
-            throw new ArgumentNullException();
-
-        var set = map.MapSet;
-
-        if (setStatus)
-        {
-            map.LastLocalUpdate = DateTimeOffset.Now;
-            map.Status = MapStatus.Local;
-            map.ResetOnlineInfo();
-        }
-
-        var directory = MapFiles.GetFullPath(set.GetPathForFile(""));
-
-        if (!Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
-
-        if (events is { Empty: false })
-        {
-            var effectFilename = string.IsNullOrWhiteSpace(info.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : info.EffectFile;
-            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(effectFilename)), events.Save());
-            info.EffectFile = effectFilename;
-        }
-        else
-            info.EffectFile = "";
-
-        if (storyboard is { Empty: false })
-        {
-            var filename = string.IsNullOrWhiteSpace(info.StoryboardFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb" : info.StoryboardFile;
-            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(filename)), storyboard.Serialize());
-            info.StoryboardFile = filename;
-        }
-        else
-            info.StoryboardFile = "";
-
-        realm.RunWrite(r =>
-        {
-            var stream = new MemoryStream();
-            stream.Write(Encoding.UTF8.GetBytes(info.Serialize()));
-            stream.Seek(0, SeekOrigin.Begin);
-
-            var mapFilename = string.IsNullOrWhiteSpace(map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : map.FileName;
-            File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(mapFilename)), stream.ToArray());
-
-            var hash = MapUtils.GetHash(stream);
-            map.Hash = hash;
-            map.FileName = mapFilename;
-            map.Filters.UpdateFilters(info, events);
-
-            var existing = r.Find<RealmMap>(map.ID)!;
-            set.CopyChanges(existing.MapSet);
-        });
-    }
-
-    internal void AssignResources(RealmMapSet mapSet)
-    {
-        mapSet.Resources ??= resources;
-    }
-
-    public void AddMapSet(RealmMapSet mapSet, bool notify = true)
-    {
-        AssignResources(mapSet);
-
-        MapSets.Add(mapSet);
+        MapSets.Add(set);
 
         if (!notify) return;
 
-        MapSetAdded?.Invoke(mapSet);
-        if (!initialLoad) CollectionUpdated?.Invoke();
+        MapSetAdded?.Invoke(set);
+        if (!IsLoaded) CollectionUpdated?.Invoke();
     }
 
     public void UpdateMapSet(RealmMapSet oldMapSet, RealmMapSet newMapSet)
@@ -280,17 +178,18 @@ public partial class MapStore : Component
         });
     }
 
-    public void DeleteMapSet(RealmMapSet mapSet)
+    /// <summary>
+    /// Completely deletes a mapset from the database and notifies of the removal.
+    /// </summary>
+    /// <param name="set">The set to delete.</param>
+    public void DeleteMapSet(RealmMapSet set)
     {
-        if (mapSet.AutoImported)
-        {
-            // notifications.Post("Cannot delete a managed mapset!");
+        if (set.AutoImported)
             return;
-        }
 
         realm.RunWrite(r =>
         {
-            RealmMapSet mapSetToDelete = r.Find<RealmMapSet>(mapSet.ID);
+            RealmMapSet mapSetToDelete = r.Find<RealmMapSet>(set.ID);
             if (mapSetToDelete == null) return;
 
             foreach (var map in mapSetToDelete.Maps)
@@ -302,11 +201,36 @@ public partial class MapStore : Component
 
             r.Remove(mapSetToDelete);
 
-            MapSets.Remove(mapSet);
+            MapSets.Remove(set);
         });
 
         CollectionUpdated?.Invoke();
     }
+
+    /// <summary>
+    /// Removed a mapset from the list in memory. Notifies of the removal.
+    /// </summary>
+    /// <param name="set"></param>
+    public void RemoveMapSet(RealmMapSet set)
+    {
+        MapSets.Remove(set);
+        CollectionUpdated?.Invoke();
+    }
+
+    #endregion
+
+    #region Queries
+
+    public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
+    public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
+
+    [CanBeNull]
+    public RealmMap GetMapFromGuid(Guid guid)
+        => MapSets.FirstOrDefault(set => set.Maps.Any(m => m.ID == guid))?
+            .Maps.FirstOrDefault(m => m.ID == guid);
+
+    public RealmMapSet QuerySet(Guid id) => realm.Run(r => QuerySetFromRealm(r, id)).Detach();
+    public RealmMapSet QuerySetFromRealm(Realm realm, Guid id) => realm.Find<RealmMapSet>(id);
 
     [CanBeNull]
     public RealmMapSet GetRandom()
@@ -317,187 +241,13 @@ public partial class MapStore : Component
         return MapSets[rnd.Next(MapSets.Count)];
     }
 
-    public RealmMapSet QuerySet(Guid id) => realm.Run(r => QuerySetFromRealm(r, id)).Detach();
-    public RealmMapSet QuerySetFromRealm(Realm realm, Guid id) => realm.Find<RealmMapSet>(id);
+    #endregion
 
-    public RealmMapSet GetFromGuid(Guid guid) => MapSets.FirstOrDefault(set => set.ID == guid);
-    public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
+    #region Downloads/Lookup
 
-    [CanBeNull]
-    public RealmMap GetMapFromGuid(Guid guid)
-        => MapSets.FirstOrDefault(set => set.Maps.Any(m => m.ID == guid))?
-            .Maps.FirstOrDefault(m => m.ID == guid);
-
-    public string Export(RealmMapSet set, TaskNotificationData notification, bool openFolder = true)
-    {
-        try
-        {
-            var fileName = $"{set.Metadata.Title} - {set.Metadata.Artist} [{set.Metadata.Mapper}].fms";
-            fileName = PathUtils.RemoveAllInvalidPathCharacters(fileName);
-
-            string path = game.ExportStorage.GetFullPath(fileName);
-            if (File.Exists(path)) File.Delete(path);
-            ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
-
-            var setFolder = MapFiles.GetFullPath(set.ID.ToString());
-            var setFiles = Directory.GetFiles(setFolder);
-
-            int max = setFiles.Length;
-            int current = 0;
-
-            foreach (var fullFilePath in setFiles)
-            {
-                var file = Path.GetFileName(fullFilePath);
-                Logger.Log($"Exporting {file}");
-
-                var entry = archive.CreateEntry(file);
-                using var stream = entry.Open();
-                using var fileStream = File.OpenRead(fullFilePath);
-                fileStream.CopyTo(stream);
-                current++;
-                notification.Progress = (float)current / max;
-            }
-
-            archive.Dispose();
-            notification.State = LoadingState.Complete;
-            if (openFolder) game.ExportStorage.PresentFileExternally(fileName);
-            return path;
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, "Could not export map");
-            notification.State = LoadingState.Failed;
-            return "";
-        }
-    }
-
-    [CanBeNull]
-    public APIMapLookup LookUpHash(string hash)
-    {
-        var req = new MapLookupRequest
-        {
-            Hash = hash
-        };
-
-        api.PerformRequest(req);
-        return req.IsSuccessful ? req.Response!.Data : null;
-    }
-
-    public RealmMap CreateNew()
-    {
-        var map = RealmMap.CreateNew();
-        map.Metadata.Mapper = api.User.Value?.Username ?? "Me";
-        map.MapSet.Resources = resources;
-        return realm.RunWrite(r =>
-        {
-            var set = r.Add(map.MapSet);
-            set = set.Detach();
-            AddMapSet(set);
-            return set.Maps.FirstOrDefault(m => m.ID == map.ID);
-        });
-    }
-
-    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, MapInfo refInfo, CreateNewMapParameters param)
-    {
-        var id = Guid.NewGuid();
-        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
-        var effectName = "";
-        var refEffect = refInfo.GetMapEvents();
-
-        if (param.LinkEffects)
-            effectName = refInfo.EffectFile;
-        else if (!refEffect.Empty)
-        {
-            effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx";
-            string effectPath = MapFiles.GetFullPath(set.GetPathForFile(effectName));
-            File.WriteAllText(effectPath, refEffect.Save());
-        }
-
-        var info = refInfo.JsonCopy();
-        info.Metadata.Difficulty = param.DifficultyName;
-        info.EffectFile = effectName;
-
-        if (!param.CopyNotes)
-            info.HitObjects = new List<HitObject>();
-
-        var realmMap = new RealmMap
-        {
-            ID = id,
-            Difficulty = param.DifficultyName,
-            Metadata = new RealmMapMetadata
-            {
-                Title = map.Metadata.Title,
-                Artist = map.Metadata.Artist,
-                Mapper = map.Metadata.Mapper,
-                Source = map.Metadata.Source,
-                Tags = map.Metadata.Tags,
-                Background = map.Metadata.Background,
-                Audio = map.Metadata.Audio,
-                PreviewTime = map.Metadata.PreviewTime,
-                ColorHex = map.Metadata.ColorHex
-            },
-            FileName = fileName,
-            Hash = MapUtils.GetHash(info.Serialize()),
-            Filters = MapUtils.GetMapFilters(info, refEffect),
-            KeyCount = map.KeyCount,
-            MapSet = set,
-            AccuracyDifficulty = map.AccuracyDifficulty,
-            HealthDifficulty = map.HealthDifficulty
-        };
-
-        save(realmMap, info);
-        return addDifficultyToSet(set, realmMap);
-    }
-
-    private RealmMap addDifficultyToSet(RealmMapSet set, RealmMap map)
-    {
-        return realm.RunWrite(r =>
-        {
-            var rSet = QuerySetFromRealm(r, set.ID);
-            map.MapSet = rSet;
-            rSet.Maps.Add(map);
-
-            var detached = rSet.Detach();
-            UpdateMapSet(set, detached);
-            set = detached;
-
-            return set.Maps.FirstOrDefault(m => m.ID == map.ID);
-        });
-    }
-
-    private void save(RealmMap map, MapInfo info)
-    {
-        string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(map.FileName));
-        File.WriteAllText(path, info.Serialize());
-    }
-
-    public void DeleteDifficultyFromMapSet(RealmMapSet set, RealmMap map)
-    {
-        realm.RunWrite(r =>
-        {
-            var rSet = QuerySetFromRealm(r, set.ID);
-            var rMap = rSet.Maps.FirstOrDefault(m => m.ID == map.ID);
-            if (rMap == null) return;
-
-            r.Remove(rMap);
-
-            try
-            {
-                var path = rSet.GetPathForFile(map.FileName);
-                var fullPath = MapFiles.GetFullPath(path);
-                if (File.Exists(fullPath)) File.Delete(fullPath);
-            }
-            catch (Exception e)
-            {
-                notifications.SendError($"Could not delete difficulty file: {e.Message}");
-                Logger.Error(e, "Could not delete difficulty");
-            }
-
-            var oldSet = GetFromGuid(set.ID);
-            var detached = rSet.Detach();
-            UpdateMapSet(oldSet, detached);
-        });
-    }
+    public List<DownloadStatus> DownloadQueue { get; } = new();
+    public Action<DownloadStatus> DownloadStarted { get; set; }
+    public Action<DownloadStatus> DownloadFinished { get; set; }
 
     private void startDownload(DownloadStatus status)
     {
@@ -710,53 +460,6 @@ public partial class MapStore : Component
         notifications.AddTask(notification);
     }
 
-    public void Remove(RealmMapSet map)
-    {
-        MapSets.Remove(map);
-        CollectionUpdated?.Invoke();
-    }
-
-    public static RealmMap CreateDummyMap()
-    {
-        var set = new RealmMapSet(new List<RealmMap>
-        {
-            new()
-            {
-                ID = default,
-                Hash = "dummy",
-                Metadata = new RealmMapMetadata
-                {
-                    Title = "please load a map!",
-                    Artist = "no maps available!"
-                },
-                Filters = new RealmMapFilters()
-            }
-        });
-
-        return set.Maps.FirstOrDefault();
-    }
-
-    public RealmMapSet CreateBuiltinMap(BuiltinMap map)
-    {
-        RealmMapSet set = map switch
-        {
-            BuiltinMap.Roundhouse => new RoundhouseMapSet(),
-            BuiltinMap.Spoophouse => new SpoophouseMapSet(),
-            BuiltinMap.Christmashouse => new ChristmashouseMapSet(),
-            _ => throw new ArgumentOutOfRangeException(nameof(map), map, null)
-        };
-
-        set.Resources = new MapResourceProvider { TrackStore = audio.Tracks };
-        return set;
-    }
-
-    public enum BuiltinMap
-    {
-        Roundhouse,
-        Spoophouse,
-        Christmashouse,
-    }
-
     public class DownloadStatus
     {
         public long OnlineID { get; }
@@ -800,4 +503,301 @@ public partial class MapStore : Component
         Finished,
         Failed
     }
+
+    [CanBeNull]
+    public APIMapLookup LookUpHash(string hash)
+    {
+        var req = new MapLookupRequest
+        {
+            Hash = hash
+        };
+
+        api.PerformRequest(req);
+        return req.IsSuccessful ? req.Response!.Data : null;
+    }
+
+    #endregion
+
+    #region Editing
+
+    public RealmMap CreateNew()
+    {
+        var map = RealmMap.CreateNew();
+        map.Metadata.Mapper = api.User.Value?.Username ?? "Me";
+        map.MapSet.Resources = resources;
+        return realm.RunWrite(r =>
+        {
+            var set = r.Add(map.MapSet);
+            set = set.Detach();
+            AddMapSet(set);
+            return set.Maps.FirstOrDefault(m => m.ID == map.ID);
+        });
+    }
+
+    public void Save(RealmMap map, MapInfo info, MapEvents events, Storyboard storyboard, bool setStatus)
+    {
+        if (map == null || info == null)
+            throw new ArgumentNullException();
+
+        var set = map.MapSet;
+
+        if (setStatus)
+        {
+            map.LastLocalUpdate = DateTimeOffset.Now;
+            map.Status = MapStatus.Local;
+            map.ResetOnlineInfo();
+        }
+
+        var directory = MapFiles.GetFullPath(set.GetPathForFile(""));
+
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        if (events is { Empty: false })
+        {
+            var effectFilename = string.IsNullOrWhiteSpace(info.EffectFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx" : info.EffectFile;
+            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(effectFilename)), events.Save());
+            info.EffectFile = effectFilename;
+        }
+        else
+            info.EffectFile = "";
+
+        if (storyboard is { Empty: false })
+        {
+            var filename = string.IsNullOrWhiteSpace(info.StoryboardFile) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsb" : info.StoryboardFile;
+            File.WriteAllText(MapFiles.GetFullPath(set.GetPathForFile(filename)), storyboard.Serialize());
+            info.StoryboardFile = filename;
+        }
+        else
+            info.StoryboardFile = "";
+
+        realm.RunWrite(r =>
+        {
+            var stream = new MemoryStream();
+            stream.Write(Encoding.UTF8.GetBytes(info.Serialize()));
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var filename = string.IsNullOrWhiteSpace(map.FileName) ? $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc" : map.FileName;
+            File.WriteAllBytes(MapFiles.GetFullPath(set.GetPathForFile(filename)), stream.ToArray());
+
+            var hash = MapUtils.GetHash(stream);
+            map.Hash = hash;
+            map.FileName = filename;
+
+            map.Filters ??= new RealmMapFilters();
+            map.Filters.UpdateFilters(info, events);
+
+            var existing = r.Find<RealmMap>(map.ID)!;
+            set.CopyChanges(existing.MapSet);
+        });
+    }
+
+    public RealmMap CreateNewDifficulty(RealmMapSet set, RealmMap map, MapInfo refInfo, CreateNewMapParameters param)
+    {
+        var id = Guid.NewGuid();
+        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.fsc";
+        var effectName = "";
+        var refEffect = refInfo.GetMapEvents();
+
+        if (param.LinkEffects)
+            effectName = refInfo.EffectFile;
+        else if (!refEffect.Empty)
+        {
+            effectName = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.ffx";
+            string effectPath = MapFiles.GetFullPath(set.GetPathForFile(effectName));
+            File.WriteAllText(effectPath, refEffect.Save());
+        }
+
+        var info = refInfo.JsonCopy();
+        info.Metadata.Difficulty = param.DifficultyName;
+        info.EffectFile = effectName;
+
+        if (!param.CopyNotes)
+            info.HitObjects = new List<HitObject>();
+
+        var realmMap = new RealmMap
+        {
+            ID = id,
+            Difficulty = param.DifficultyName,
+            Metadata = new RealmMapMetadata
+            {
+                Title = map.Metadata.Title,
+                Artist = map.Metadata.Artist,
+                Mapper = map.Metadata.Mapper,
+                Source = map.Metadata.Source,
+                Tags = map.Metadata.Tags,
+                Background = map.Metadata.Background,
+                Audio = map.Metadata.Audio,
+                PreviewTime = map.Metadata.PreviewTime,
+                ColorHex = map.Metadata.ColorHex
+            },
+            FileName = fileName,
+            Hash = MapUtils.GetHash(info.Serialize()),
+            Filters = MapUtils.GetMapFilters(info, refEffect),
+            KeyCount = map.KeyCount,
+            MapSet = set,
+            AccuracyDifficulty = map.AccuracyDifficulty,
+            HealthDifficulty = map.HealthDifficulty
+        };
+
+        string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(map.FileName));
+        File.WriteAllText(path, info.Serialize());
+        return addDifficultyToSet(set, realmMap);
+    }
+
+    public void DeleteDifficulty(RealmMapSet set, RealmMap map)
+    {
+        realm.RunWrite(r =>
+        {
+            var rSet = QuerySetFromRealm(r, set.ID);
+            var rMap = rSet.Maps.FirstOrDefault(m => m.ID == map.ID);
+            if (rMap == null) return;
+
+            r.Remove(rMap);
+
+            try
+            {
+                var path = rSet.GetPathForFile(map.FileName);
+                var fullPath = MapFiles.GetFullPath(path);
+                if (File.Exists(fullPath)) File.Delete(fullPath);
+            }
+            catch (Exception e)
+            {
+                notifications.SendError($"Could not delete difficulty file: {e.Message}");
+                Logger.Error(e, "Could not delete difficulty");
+            }
+
+            var oldSet = GetFromGuid(set.ID);
+            var detached = rSet.Detach();
+            UpdateMapSet(oldSet, detached);
+        });
+    }
+
+    private RealmMap addDifficultyToSet(RealmMapSet set, RealmMap map)
+    {
+        return realm.RunWrite(r =>
+        {
+            var rSet = QuerySetFromRealm(r, set.ID);
+            map.MapSet = rSet;
+            rSet.Maps.Add(map);
+
+            var detached = rSet.Detach();
+            UpdateMapSet(set, detached);
+            set = detached;
+
+            return set.Maps.FirstOrDefault(m => m.ID == map.ID);
+        });
+    }
+
+    #endregion
+
+    #region Builtin/Dummy
+
+    public RealmMapSet CreateBuiltinMap(BuiltinMap map)
+    {
+        RealmMapSet set = map switch
+        {
+            BuiltinMap.Roundhouse => new RoundhouseMapSet(),
+            BuiltinMap.Spoophouse => new SpoophouseMapSet(),
+            BuiltinMap.Christmashouse => new ChristmashouseMapSet(),
+            _ => throw new ArgumentOutOfRangeException(nameof(map), map, null)
+        };
+
+        set.Resources = new MapSetResources { TrackStore = audio.Tracks };
+        return set;
+    }
+
+    public enum BuiltinMap
+    {
+        Roundhouse,
+        Spoophouse,
+        Christmashouse,
+    }
+
+    public static RealmMap CreateDummyMap()
+    {
+        var set = new RealmMapSet(new List<RealmMap>
+        {
+            new()
+            {
+                ID = Guid.Empty,
+                Hash = "dummy",
+                Metadata = new RealmMapMetadata
+                {
+                    Title = "please load a map!",
+                    Artist = "no maps available!"
+                },
+                Filters = new RealmMapFilters()
+            }
+        });
+
+        return set.Maps.FirstOrDefault();
+    }
+
+    #endregion
+
+    #region Misc
+
+    public void Select(RealmMap map, bool loop = false, bool preview = true)
+    {
+        CurrentMap = map;
+
+        if (clock == null)
+            return;
+
+        clock.Looping = loop;
+
+        if (loop)
+            clock.RestartPoint = preview ? Math.Max(map.Metadata.PreviewTime, 0) : 0;
+    }
+
+    public void Present(RealmMapSet map)
+    {
+        game.ShowMap(map);
+    }
+
+    public string Export(RealmMapSet set, TaskNotificationData notification, bool openFolder = true)
+    {
+        try
+        {
+            var fileName = $"{set.Metadata.Title} - {set.Metadata.Artist} [{set.Metadata.Mapper}].fms";
+            fileName = PathUtils.RemoveAllInvalidPathCharacters(fileName);
+
+            string path = game.ExportStorage.GetFullPath(fileName);
+            if (File.Exists(path)) File.Delete(path);
+            ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Create);
+
+            var setFolder = MapFiles.GetFullPath(set.ID.ToString());
+            var setFiles = Directory.GetFiles(setFolder);
+
+            int max = setFiles.Length;
+            int current = 0;
+
+            foreach (var fullFilePath in setFiles)
+            {
+                var file = Path.GetFileName(fullFilePath);
+                Logger.Log($"Exporting {file}");
+
+                var entry = archive.CreateEntry(file);
+                using var stream = entry.Open();
+                using var fileStream = File.OpenRead(fullFilePath);
+                fileStream.CopyTo(stream);
+                current++;
+                notification.Progress = (float)current / max;
+            }
+
+            archive.Dispose();
+            notification.State = LoadingState.Complete;
+            if (openFolder) game.ExportStorage.PresentFileExternally(fileName);
+            return path;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Could not export map");
+            notification.State = LoadingState.Failed;
+            return "";
+        }
+    }
+
+    #endregion
 }

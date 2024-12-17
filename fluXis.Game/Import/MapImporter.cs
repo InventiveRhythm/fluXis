@@ -25,7 +25,7 @@ public class MapImporter
     /// </summary>
     public int ID { get; internal set; }
 
-    internal Func<string, MapResourceProvider> ResourceRequest { get; set; }
+    internal Func<string, MapSetResources> ResourceRequest { get; set; }
     internal Storage Storage { get; set; }
     internal FluXisRealm Realm { get; set; }
     internal MapStore MapStore { get; set; }
@@ -44,7 +44,7 @@ public class MapImporter
     /// <returns>
     /// The requested resource provider.
     /// </returns>
-    protected MapResourceProvider GetResourceProvider(string folder) => ResourceRequest(folder);
+    protected MapSetResources GetResourceProvider(string folder) => ResourceRequest(folder);
 
     /// <summary>
     /// Used to pass the mapset to FluXisImport to add it to the database.

@@ -95,7 +95,7 @@ public partial class ImportManager : Component
                 var storageFor = new NativeStorage(path);
                 var resourceStore = new StorageBackedResourceStore(storageFor);
 
-                var resource = new MapResourceProvider
+                var resource = new MapSetResources
                 {
                     TrackStore = audio.GetTrackStore(resourceStore),
                     SampleStore = audio.GetSampleStore(resourceStore),
@@ -191,7 +191,7 @@ public partial class ImportManager : Component
             return;
 
         foreach (var map in maps)
-            mapStore.Remove(map);
+            mapStore.RemoveMapSet(map);
 
         importedMaps.Remove(importer);
     }

@@ -42,7 +42,7 @@ public class RealmMapSet : RealmObject
 
     [Ignored]
     [CanBeNull]
-    public MapResourceProvider Resources { get; set; }
+    public MapSetResources Resources { get; set; }
 
     [Ignored]
     public Action StatusChanged { get; set; } = null!;

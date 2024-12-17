@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Textures;
 
 namespace fluXis.Game.Map;
 
-public class MapResourceProvider
+public class MapSetResources
 {
     public TextureStore BackgroundStore { get; init; }
     public TextureStore CroppedBackgroundStore { get; init; }

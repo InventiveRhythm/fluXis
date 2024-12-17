@@ -264,7 +264,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                 panels.Content = new ConfirmDeletionPanel(() =>
                                                 {
                                                     // delete diff
-                                                    mapStore.DeleteDifficultyFromMapSet(editorMap.MapSet, editorMap.RealmMap);
+                                                    mapStore.DeleteDifficulty(editorMap.MapSet, editorMap.RealmMap);
 
                                                     // requery mapset
                                                     var set = mapStore.GetFromGuid(editorMap.MapSet.ID);
