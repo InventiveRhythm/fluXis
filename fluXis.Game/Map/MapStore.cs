@@ -149,11 +149,30 @@ public partial class MapStore : Component
 
     private void loadMapSets(IQueryable<RealmMapSet> sets)
     {
+        fixSetData(sets);
+
         Logger.Log($"Found {sets.Count()} maps");
 
         foreach (var set in sets) AddMapSet(set.Detach());
 
         initialLoad = false;
+    }
+
+    /// <summary>
+    /// tries to fix potentially broken
+    /// database items with null data
+    /// </summary>
+    /// <param name="sets">the sets to fix</param>
+    private void fixSetData(IQueryable<RealmMapSet> sets)
+    {
+        foreach (var set in sets)
+        {
+            foreach (var map in set.Maps)
+            {
+                map.Filters ??= new RealmMapFilters();
+                map.Metadata ??= new RealmMapMetadata();
+            }
+        }
     }
 
     public void Select(RealmMap map, bool loop = false, bool preview = true)
