@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Sprites;
@@ -5,6 +6,7 @@ using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Scoring.Processing;
+using fluXis.Game.Scoring.Structs;
 using fluXis.Game.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -24,6 +26,16 @@ public partial class JudgementCounter : GameplayHUDComponent
         Masking = true;
         EdgeEffect = FluXisStyles.ShadowSmall;
 
+        var dict = new Dictionary<Judgement, string>
+        {
+            { Judgement.Flawless, "FL" },
+            { Judgement.Perfect, "PF" },
+            { Judgement.Great, "GR" },
+            { Judgement.Alright, "AL" },
+            { Judgement.Okay, "OK" },
+            { Judgement.Miss, "MS" },
+        };
+
         Children = new Drawable[]
         {
             new Box
@@ -36,25 +48,27 @@ public partial class JudgementCounter : GameplayHUDComponent
                 Direction = FillDirection.Vertical,
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Children = Screen.HitWindows.GetTimings().Select(t => new CounterItem(ScoreProcessor, t)).ToArray()
+                Children = Screen.HitWindows.GetTimings().Select(t => new CounterItem(JudgementProcessor, t, dict[t.Judgement])).ToArray()
             }
         };
     }
 
     private partial class CounterItem : Container
     {
-        private readonly ScoreProcessor scoreProcessor;
-        private readonly Timing timing;
+        private JudgementProcessor processor { get; }
+        private Timing timing { get; }
+        private string defaultText { get; }
 
         private int count;
 
         private Box background;
         private FluXisSpriteText text;
 
-        public CounterItem(ScoreProcessor scoreProcessor, Timing timing)
+        public CounterItem(JudgementProcessor processor, Timing timing, string defaultText)
         {
-            this.scoreProcessor = scoreProcessor;
+            this.processor = processor;
             this.timing = timing;
+            this.defaultText = defaultText;
         }
 
         [BackgroundDependencyLoader]
@@ -73,6 +87,7 @@ public partial class JudgementCounter : GameplayHUDComponent
                 },
                 text = new FluXisSpriteText
                 {
+                    Text = defaultText,
                     Font = FluXisFont.YoureGone,
                     FontSize = 24,
                     Anchor = Anchor.Centre,
@@ -82,69 +97,56 @@ public partial class JudgementCounter : GameplayHUDComponent
             };
         }
 
-        private int getCount()
+        protected override void LoadComplete()
         {
-            switch (timing.Judgement)
-            {
-                case Judgement.Miss:
-                    return scoreProcessor.Miss;
+            base.LoadComplete();
 
-                case Judgement.Okay:
-                    return scoreProcessor.Okay;
-
-                case Judgement.Alright:
-                    return scoreProcessor.Alright;
-
-                case Judgement.Great:
-                    return scoreProcessor.Great;
-
-                case Judgement.Perfect:
-                    return scoreProcessor.Perfect;
-
-                case Judgement.Flawless:
-                    return scoreProcessor.Flawless;
-
-                default:
-                    return 0;
-            }
+            processor.ResultAdded += addResult;
+            processor.ResultReverted += revertResult;
         }
 
-        protected override void Update()
+        protected override void Dispose(bool isDisposing)
         {
-            var actualCount = getCount();
+            processor.ResultAdded -= addResult;
+            processor.ResultReverted -= revertResult;
 
-            if (actualCount != 0)
+            base.Dispose(isDisposing);
+        }
+
+        private void addResult(HitResult result)
+        {
+            if (result.Judgement != timing.Judgement)
+                return;
+
+            count++;
+            updateText();
+            lightUp();
+        }
+
+        private void revertResult(HitResult result)
+        {
+            if (result.Judgement != timing.Judgement)
+                return;
+
+            count--;
+            updateText();
+        }
+
+        private void updateText()
+        {
+            if (count > 0)
             {
-                if (actualCount != count)
+                text.FontSize = count switch
                 {
-                    count = actualCount;
-                    lightUp();
-                    text.FontSize = count switch
-                    {
-                        > 0 and < 100 => 24,
-                        < 1000 => 20,
-                        < 10000 => 16,
-                        _ => 12 // > 9999
-                    };
-                }
-
+                    > 0 and < 100 => 24,
+                    < 1000 => 20,
+                    < 10000 => 16,
+                    _ => 12 // > 9999
+                };
                 text.Text = count.ToString();
             }
             else
-            {
-                text.Text = timing.Judgement switch
-                {
-                    Judgement.Flawless => "FL",
-                    Judgement.Perfect => "PF",
-                    Judgement.Great => "GR",
-                    Judgement.Alright => "AL",
-                    Judgement.Okay => "OK",
-                    Judgement.Miss => "MS",
-                    _ => "??"
-                };
-            }
-
-            base.Update();
+                text.Text = defaultText;
         }
 
         private void lightUp()
