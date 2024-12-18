@@ -155,10 +155,9 @@ public class MapInfo
             return false;
         }
 
-        var min = HitObjects.MinBy(x => x.Lane).Lane;
-        var max = HitObjects.MaxBy(x => x.Lane).Lane;
+        var mode = HitObjects.MaxBy(x => x.Lane).Lane;
 
-        if (min < MinKeymode || (MaxKeymode > 0 && max > MaxKeymode))
+        if (mode < MinKeymode || (MaxKeymode > 0 && mode > MaxKeymode))
         {
             issue = "Map has an invalid keymode.";
             return false;
