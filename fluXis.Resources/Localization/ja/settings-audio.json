@@ -1,0 +1,23 @@
+{
+  "title": "音声",
+  "device-title": "デバイス",
+  "output-device": "出力デバイス",
+  "volume-title": "音量",
+  "master-volume": "全体音量",
+  "master-volume-inactive": "全体音量（非アクティブ時）",
+  "master-volume-inactive-description": "非アクティブ時の音量（全体音量を100%とします）",
+  "music-volume": "音楽音量",
+  "effect-volume": "エフェクト音量",
+  "hit-sound-volume": "ヒットサウンド音量",
+  "offset-title": "オフセット",
+  "audio-offset": "音声オフセット",
+  "audio-offset-description": "すべての曲の音声オフセットを変更します。高いほどノーツの出現が遅くなります。",
+  "disable-offset-in-replay": "リプレイのオフセットを無効",
+  "disable-offset-in-replay-description": "リプレイ再生時の音声オフセットを無効にします。リプレイをビデオ録画する時に便利です。",
+  "open-offset-wizard": "オフセットウィザードを開く",
+  "panning-title": "パンニング",
+  "ui-panning": "ユーザーインターフェース",
+  "ui-panning-description": "クリック音などの左右の位置を、マウスの位置に応じて変更します。",
+  "hitsound-panning": "ヒットサウンド",
+  "hitsound-panning-description": "ノーツの場所に基づいて、ヒットサウンドの位置を変更します。"
+}
