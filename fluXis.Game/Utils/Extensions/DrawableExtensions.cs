@@ -22,23 +22,25 @@ public static class DrawableExtensions
         return draw;
     }
 
-    public static void Shake(this Drawable target, double shakeDuration, float shakeMagnitude)
+    public static void Shake(this Drawable target, double shakeDuration, float shakeMagnitude, int bounces = 4)
     {
         var rngPositions = new List<Vector2>();
 
-        for (var i = 0; i < 4; i++)
+        for (var i = 0; i < Math.Max(1, bounces); i++)
         {
             var x = RNG.NextSingle(-shakeMagnitude, shakeMagnitude);
             var y = RNG.NextSingle(-shakeMagnitude, shakeMagnitude);
             rngPositions.Add(new Vector2(x, y));
         }
 
-        var sequence = target.MoveTo(rngPositions[0], shakeDuration / 5, Easing.OutSine).Then();
+        var divider = rngPositions.Count + 1;
 
-        for (var i = 0; i < 3; i++)
-            sequence = sequence.MoveTo(rngPositions[i + 1], shakeDuration / 5, Easing.InOutSine).Then();
+        var sequence = target.MoveTo(rngPositions[0], shakeDuration / divider, Easing.OutSine).Then();
 
-        sequence.MoveTo(Vector2.Zero, shakeDuration / 5, Easing.InSine);
+        for (var i = 0; i < rngPositions.Count - 1; i++)
+            sequence = sequence.MoveTo(rngPositions[i + 1], shakeDuration / divider, Easing.InOutSine).Then();
+
+        sequence.MoveTo(Vector2.Zero, shakeDuration / divider, Easing.InSine);
     }
 
     public static void Vibrate(this Drawable target, double duration, float magnitude)

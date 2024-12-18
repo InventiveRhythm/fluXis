@@ -2,6 +2,7 @@ using fluXis.Game.Audio;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Screens;
+using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,7 +21,6 @@ public partial class Panel : Container
     public new Container Content { get; }
 
     private Container loadingOverlay { get; }
-    private FlashLayer flashBox { get; }
 
     protected bool Loading { get; private set; }
 
@@ -34,11 +34,11 @@ public partial class Panel : Container
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         EdgeEffect = FluXisStyles.ShadowMedium;
+        BorderColour = FluXisColors.Red;
 
         Children = new Drawable[]
         {
             new PanelBackground(),
-            flashBox = new FlashLayer(),
             Content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -76,7 +76,12 @@ public partial class Panel : Container
         initial = true;
     }
 
-    public void Flash() => flashBox.Show();
+    public void Flash()
+    {
+        this.BorderTo(12).BorderTo(0, 800, Easing.OutQuint);
+        this.Shake(100, 20, 2);
+        samples.PanelOpen(true);
+    }
 
     public override void Hide()
     {
