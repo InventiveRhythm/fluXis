@@ -1,0 +1,14 @@
+{
+  "general": "一般",
+  "back": "戻る",
+  "play": "再生",
+  "edit": "編集",
+  "select": "選択",
+  "delete": "削除",
+  "export": "書き出し",
+  "panel-generic-confirm": "はい",
+  "panel-generic-cancel": "ちょっと待って！",
+  "panel-confirm-exit": "本当に退出しますか？",
+  "can-not-be-undone": "この操作は取り消せません。",
+  "login-to-use": "この機能を使用するにはログインが必要です。"
+}
