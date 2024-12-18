@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "ap-name": "AutoPlay",
   "ap-description": "完璧なプレイを鑑賞しよう！",
@@ -22,29 +21,4 @@
   "pa-description": "プレイを中断します。", 
   "rate-name": "再生速度",
   "rate-description": "譜面の再生速度を変更します。"
-=======
-{
-  "ap-name": "AutoPlay",
-  "ap-description": "完璧なプレイを鑑賞しよう！",
-  "ez-name": "Easy",
-  "ez-description": "HPが0%から始まり、80%以上でクリアできます。",
-  "fl-name": "Flawless",
-  "fl-description": "完璧か、それ以外か。",
-  "fr-name": "Fragile",
-  "fr-description": "ミスをした瞬間に即死します。",
-  "hd-name": "Hard",
-  "hd-description": "HPが消耗していきます。ミスをすればするほど死が近づいてきます。",
-  "mr-name": "Mirror",
-  "mr-description": "ノーツを左右反転させます。",
-  "nf-name": "No Fail",
-  "nf-description": "何をやっても死にません。",
-  "nln-name": "No LN",
-  "nln-description": "全てのロングノーツを普通のノーツに変更します。",
-  "nsv-name": "No SV",
-  "nsv-description": "全てのSV(スクロール速度の変更)を無くします。",
-  "pa-name": "Paused",
-  "pa-description": "プレイを中断します。", 
-  "rate-name": "再生速度",
-  "rate-description": "譜面の再生速度を変更します。"
->>>>>>> 4e0bb993215883de484c0d4c67f2beba0686249a
 }

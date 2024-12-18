@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "title": "外観",
   "skin-title": "スキン",
@@ -25,32 +24,4 @@
   "layout-show-in-explorer-description": "エクスプローラーでレイアウトが含まれるフォルダを開きます。（これはレイアウトエディタが完成するまでの一時的な機能です）",
   "layout-open-editor": "レイアウトエディタを開く",
   "layout-open-editor-description": "ゲーム内エディタでレイアウトを開きます。"
-=======
-{
-  "title": "外観",
-  "skin-title": "スキン",
-  "skin-current": "現在のスキン",
-  "skin-current-description": "使用したいスキンを選択してください。",
-  "skin-refresh": "スキンリストの更新",
-  "skin-refresh-description": "利用可能なスキンのリストを更新します。",
-  "skin-open-editor": "スキンエディタを開く",
-  "skin-open-editor-description": "ゲーム内エディタでスキンを開きます。",
-  "skin-open-folder": "スキンフォルダを開く",
-  "skin-open-folder-description": "エクスプローラーでスキンが含まれるフォルダを開きます",
-  "skin-export": "スキンの書き出し",
-  "skin-export-description": "現在のスキンを.fskファイルとして保存します",
-  "skin-delete": "スキンの削除",
-  "skin-delete-description": "現在のスキンを削除します",
-  "layout-title": "HUDレイアウト",
-  "layout-current": "現在のレイアウト",
-  "layout-current-description": "使用したいレイアウトを選択してください。",
-  "layout-reload": "レイアウトリストの再読み込み",
-  "layout-reload-description": "利用可能なレイアウトリストを再読み込みします。",
-  "layout-create": "新しいレイアウトを作成",
-  "layout-create-description": "新しいレイアウトを作成できます。",
-  "layout-show-in-explorer": "レイアウトファイルを開く",
-  "layout-show-in-explorer-description": "エクスプローラーでレイアウトが含まれるフォルダを開きます。（これはレイアウトエディタが完成するまでの一時的な機能です）",
-  "layout-open-editor": "レイアウトエディタを開く",
-  "layout-open-editor-description": "ゲーム内エディタでレイアウトを開きます。"
->>>>>>> 4e0bb993215883de484c0d4c67f2beba0686249a
 }

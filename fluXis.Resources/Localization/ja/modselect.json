@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "title": "Gameplay Modifiers",
   "description": "自分のために譜面の難易度を操作しちゃおう！",
@@ -9,16 +8,4 @@
   "section-automation": "自動",
   "max-score": "最高スコア: {0:0}%",
   "incompatible-mods": "互換性のないMod:"
-=======
-{
-  "title": "Gameplay Modifiers",
-  "description": "自分のために譜面の難易度を操作しちゃおう！",
-  "section-rate": "再生速度",
-  "section-difficulty-increase": "難易度上昇",
-  "section-difficulty-decrease": "難易度低下",
-  "section-misc": "その他",
-  "section-automation": "自動",
-  "max-score": "最高スコア: {0:0}%",
-  "incompatible-mods": "互換性のないMod:"
->>>>>>> 4e0bb993215883de484c0d4c67f2beba0686249a
 }
