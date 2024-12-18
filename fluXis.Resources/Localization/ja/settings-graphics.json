@@ -1,0 +1,12 @@
+{
+  "title": "Graphics",
+  "layout-title": "Layout",
+  "window-mode": "Window Mode",
+  "rendering-title": "Rendering",
+  "renderer": "Renderer",
+  "renderer-description": "Requires a restart to take effect.",
+  "frame-limiter": "Frame Limiter",
+  "threading-mode": "Threading Mode",
+  "show-fps": "Show FPS",
+  "show-fps-description": "Shows the current DrawsPerSecond and UpdatesPerSecond in the bottom right corner."
+}

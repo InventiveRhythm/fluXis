@@ -1,0 +1,9 @@
+{
+  "title": "デバッグ",
+  "show-log-overlay": "ログのオーバーレイを表示",
+  "import-file": "ファイルの読み込み",
+  "log-api": "APIレスポンスをログへ記録",
+  "log-api-description": "すべてのAPIリクエスト及びレスポンスをコンソールとログファイルに記録します。これにはメールやトークンなどの機密情報が含まれる場合があります。",
+  "show-missing-localizations": "欠落しているローカライズの表示",
+  "show-missing-localizations-description": "ローカライズが定義されていない文字列のIDを表示します。（言語を切り替えて更新）"
+}
