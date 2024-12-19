@@ -11,7 +11,7 @@ using osuTK.Graphics;
 
 namespace fluXis.Game.Graphics.Shaders;
 
-public abstract partial class ShaderContainer : Container, IBufferedDrawable
+public abstract partial class ShaderContainer : Container, IBufferedDrawable, IHasStrength
 {
     protected virtual string VertexShader => VertexShaderDescriptor.TEXTURE_2;
     protected abstract string FragmentShader { get; }

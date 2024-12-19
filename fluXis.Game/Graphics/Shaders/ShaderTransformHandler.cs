@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Game.Graphics.Shaders;
 
-public partial class ShaderTransformHandler : CompositeComponent
+public partial class ShaderTransformHandler : CompositeComponent, IHasStrength
 {
     public override bool RemoveCompletedTransforms => false;
 
