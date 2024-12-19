@@ -199,7 +199,7 @@ public partial class FluxelClient : Component, IAPIClient
     {
         Logger.Log("Waiting for data...", LoggingTarget.Network, LogLevel.Debug);
 
-        if (connection.State == WebSocketState.Open)
+        if (connection?.State == WebSocketState.Open)
         {
             try
             {
@@ -226,7 +226,7 @@ public partial class FluxelClient : Component, IAPIClient
         }
         else
         {
-            Logger.Log($"Disconnected from server! Reason: {connection.CloseStatusDescription ?? "unknown"}", LoggingTarget.Network, LogLevel.Error);
+            Logger.Log($"Disconnected from server! Reason: {connection?.CloseStatusDescription ?? "unknown"}", LoggingTarget.Network, LogLevel.Error);
 
             Status.Value = ConnectionStatus.Reconnecting;
             Logger.Log("Reconnecting to server...", LoggingTarget.Network);

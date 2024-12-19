@@ -202,21 +202,21 @@ public partial class MultiModeButton : VisibilityContainer
         samples.Hover();
 
         var x = RightSide ? x_offset_hover : -x_offset_hover;
-        this.MoveToX(x, 100, Easing.OutQuint);
+        this.MoveToX(x, FluXisScreen.MOVE_DURATION / 4, Easing.OutQuint);
 
-        border.FadeIn(50);
-        dim.FadeTo(.8f, 50);
+        border.FadeIn(FluXisScreen.FADE_DURATION / 4);
+        dim.FadeTo(.8f, FluXisScreen.FADE_DURATION / 4);
     }
 
     public void Deselect()
     {
         var x = RightSide ? x_offset : -x_offset;
-        this.MoveToX(x, 400, Easing.OutQuint);
+        this.MoveToX(x, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
-        border.FadeOut(200);
-        dim.FadeIn(200);
+        border.FadeOut(FluXisScreen.FADE_DURATION);
+        dim.FadeIn(FluXisScreen.FADE_DURATION);
     }
 
-    protected override void PopIn() => this.MoveToX(RightSide ? x_offset : -x_offset, 400, Easing.OutQuint);
-    protected override void PopOut() => this.MoveToX(RightSide ? x_offset_exit : -x_offset_exit, 400, Easing.OutQuint);
+    protected override void PopIn() => this.MoveToX(RightSide ? x_offset : -x_offset, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+    protected override void PopOut() => this.MoveToX(RightSide ? x_offset_exit : -x_offset_exit, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 }

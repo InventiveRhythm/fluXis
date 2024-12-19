@@ -1,11 +1,14 @@
+using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
+using fluXis.Game.Map.Drawables.Online;
 using fluXis.Game.Online.API.Models.Multi;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Game.Screens.Multiplayer.SubScreens.Open.List.UI;
 
@@ -29,6 +32,18 @@ public partial class LobbySlot : Container
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background4
             },
+            new LoadWrapper<DrawableOnlineBackground>
+            {
+                RelativeSizeAxes = Axes.Both,
+                LoadContent = () => new DrawableOnlineBackground(Room.Map),
+                OnComplete = d => d.FadeInFromZero(400)
+            },
+            new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = FluXisColors.Background2,
+                Alpha = .5f
+            },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -40,19 +55,20 @@ public partial class LobbySlot : Container
                     Direction = FillDirection.Vertical,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
+                    Spacing = new Vector2(-2),
                     Children = new Drawable[]
                     {
                         new TruncatingText
                         {
                             Text = Room.Settings.Name,
                             RelativeSizeAxes = Axes.X,
-                            FontSize = 30
+                            WebFontSize = 24
                         },
                         new TruncatingText
                         {
                             Text = $"hosted by {Room.Host.Username}",
                             RelativeSizeAxes = Axes.X,
-                            FontSize = 20
+                            WebFontSize = 14
                         }
                     }
                 }

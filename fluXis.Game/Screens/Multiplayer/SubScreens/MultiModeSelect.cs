@@ -1,3 +1,6 @@
+using fluXis.Game.Graphics.Shaders.Bloom;
+using fluXis.Game.Graphics.Shaders.Chromatic;
+using fluXis.Game.Graphics.Shaders.Glitch;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Buttons;
 using fluXis.Game.Graphics.UserInterface.Color;
@@ -36,6 +39,9 @@ public partial class MultiModeSelect : MultiSubScreen
     private int clickCount;
     private FluXisTextFlow hiddenText;
 
+    private GlitchContainer glitch;
+    private ChromaticContainer chroma;
+
     private Box redBox;
     private Container buttons;
     private MultiModeButton rankedButton;
@@ -45,84 +51,98 @@ public partial class MultiModeSelect : MultiSubScreen
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChildren = new Drawable[]
+        InternalChild = glitch = new GlitchContainer
         {
-            redBox = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Scale = new Vector2(1.1f),
-                Alpha = 0,
-                Colour = FluXisColors.Red
-            },
-            buttons = new Container
+            RelativeSizeAxes = Axes.Both,
+            Child = chroma = new ChromaticContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    hiddenText = new FluXisTextFlow
+                    redBox = new Box
                     {
-                        AutoSizeAxes = Axes.X,
-                        TextAnchor = Anchor.TopCentre,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        X = 200,
-                        FontSize = 48,
-                        Alpha = 0
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Scale = new Vector2(2f),
+                        Alpha = 0,
+                        Colour = FluXisColors.Red
                     },
-                    rankedButton = new MultiModeButton
+                    buttons = new BloomContainer
                     {
-                        /*Title = "Ranked",
-                        Description = "Compete with other players in 1v1\nmatches to climb the leaderboard.",*/
-                        Title = "???",
-                        Description = "???",
-                        Background = "ranked",
-                        RightSide = false,
-                        Locked = true,
-                        // Action = () => this.Push(new MultiRankedMain()),
-                        Action = () =>
+                        RelativeSizeAxes = Axes.Both,
+                        Children = new Drawable[]
                         {
-                            this.Shake(200, 15);
-                            redBox.FadeTo(.5f).FadeOut(600);
+                            hiddenText = new FluXisTextFlow
+                            {
+                                AutoSizeAxes = Axes.X,
+                                TextAnchor = Anchor.TopCentre,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft,
+                                X = 200,
+                                FontSize = 48,
+                                Alpha = 0
+                            },
+                            rankedButton = new MultiModeButton
+                            {
+                                /*Title = "Ranked",
+                                Description = "Compete with other players in 1v1\nmatches to climb the leaderboard.",*/
+                                Title = "???",
+                                Description = "???",
+                                Background = "ranked",
+                                RightSide = false,
+                                Locked = true,
+                                // Action = () => this.Push(new MultiRankedMain()),
+                                Action = () =>
+                                {
+                                    this.Shake(200, 15);
+                                    redBox.FadeTo(.5f).FadeOut(600);
 
-                            if (++clickCount < max_clicks)
-                                return;
+                                    chroma.StrengthTo(16).StrengthTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+                                    glitch.StrengthTo(1).Strength2To(1).Strength3To(.04f)
+                                          .StrengthTo(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+                                          .Strength2To(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+                                          .Strength3To(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
-                            rankedButton.FadeOut();
-                            hiddenText.FadeIn();
-                        },
-                        HoverAction = () => mode.Value = Mode.Ranked,
-                        HoverLostAction = () => mode.Value = Mode.None
+                                    if (++clickCount < max_clicks)
+                                        return;
+
+                                    rankedButton.FadeOut();
+                                    hiddenText.FadeIn();
+                                },
+                                HoverAction = () => mode.Value = Mode.Ranked,
+                                HoverLostAction = () => mode.Value = Mode.None
+                            },
+                            openLobbyButton = new MultiModeButton
+                            {
+                                Title = "Open Lobby",
+                                Description = "Play freely against your\nfriends with no restrictions.",
+                                Background = "lobby",
+                                RightSide = true,
+                                Action = () => OpenList(),
+                                HoverAction = () => mode.Value = Mode.OpenLobby,
+                                HoverLostAction = () => mode.Value = Mode.None
+                            }
+                        }
                     },
-                    openLobbyButton = new MultiModeButton
+                    backButton = new CornerButton
                     {
-                        Title = "Open Lobby",
-                        Description = "Play freely against your\nfriends with no restrictions.",
-                        Background = "lobby",
-                        RightSide = true,
-                        Action = () => OpenList(),
-                        HoverAction = () => mode.Value = Mode.OpenLobby,
-                        HoverLostAction = () => mode.Value = Mode.None
+                        Corner = Corner.BottomLeft,
+                        ButtonText = LocalizationStrings.General.Back,
+                        Icon = FontAwesome6.Solid.AngleLeft,
+                        Action = this.Exit
+                    },
+                    new FluXisSpriteText
+                    {
+                        Text = "Multiplayer is very much a work in progress. Expect issues.",
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Shadow = true,
+                        WebFontSize = 24,
+                        Y = -100
                     }
                 }
             },
-            backButton = new CornerButton
-            {
-                Corner = Corner.BottomLeft,
-                ButtonText = LocalizationStrings.General.Back,
-                Icon = FontAwesome6.Solid.AngleLeft,
-                Action = this.Exit
-            },
-            new FluXisSpriteText
-            {
-                Text = "Multiplayer is very much a work in progress. Expect issues.",
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Shadow = true,
-                WebFontSize = 24,
-                Y = -100
-            }
         };
     }
 
@@ -153,13 +173,13 @@ public partial class MultiModeSelect : MultiSubScreen
     }
 
     public void OpenList(long id = -1, string password = "")
-    {
-        Schedule(() => this.Push(new MultiLobbyList(id, password)));
-    }
+        => Schedule(() => this.Push(new MultiLobbyList(id, password)));
 
-    public override void OnEntering(ScreenTransitionEvent e)
+    protected override void FadeIn()
     {
-        base.OnEntering(e);
+        base.FadeIn();
+
+        buttons.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         menuMusic.GoToLayer(0, -1);
 
@@ -168,36 +188,16 @@ public partial class MultiModeSelect : MultiSubScreen
         backButton.Show();
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
+    protected override void FadeOut(IScreen next)
     {
-        rankedButton.Hide();
-        openLobbyButton.Hide();
-        backButton.Hide();
-        return base.OnExiting(e);
-    }
+        base.FadeOut(next);
 
-    public override void OnSuspending(ScreenTransitionEvent e)
-    {
-        base.OnSuspending(e);
-
-        var up = e.Next is MultiRankedMain;
-        buttons.MoveToY(up ? -100 : 100, 400, Easing.OutQuint);
+        var up = next is MultiRankedMain;
+        buttons.MoveToY(up ? -100 : 100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         rankedButton.Hide();
         openLobbyButton.Hide();
         backButton.Hide();
-    }
-
-    public override void OnResuming(ScreenTransitionEvent e)
-    {
-        base.OnResuming(e);
-
-        menuMusic.GoToLayer(0, -1);
-        buttons.MoveToY(0, 400, Easing.OutQuint);
-
-        rankedButton.Show();
-        openLobbyButton.Show();
-        backButton.Show();
     }
 
     public override bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

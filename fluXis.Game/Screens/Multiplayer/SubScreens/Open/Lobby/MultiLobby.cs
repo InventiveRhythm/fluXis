@@ -269,9 +269,14 @@ public partial class MultiLobby : MultiSubScreen
         }
 
         var localMap = mapSet.Maps.FirstOrDefault(m => m.OnlineID == map.ID);
-        mapStore.CurrentMap = localMap;
+        var change = localMap?.ID != mapStore.CurrentMap.ID;
 
-        clock.VolumeOut(); // because it sets itself to 1
+        if (change)
+        {
+            mapStore.CurrentMap = localMap;
+            clock.VolumeOut(); // because it sets itself to 1
+        }
+
         clock.RestartPoint = 0;
         backgrounds.AddBackgroundFromMap(localMap);
         startClockMusic();
@@ -311,6 +316,48 @@ public partial class MultiLobby : MultiSubScreen
         MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room.Scores }));
     }
 
+    private void stopClockMusic() => clock.VolumeOut(FluXisScreen.MOVE_DURATION).OnComplete(_ => clock.Stop());
+
+    private void startClockMusic()
+    {
+        clock.Start();
+        clock.VolumeIn(FluXisScreen.MOVE_DURATION);
+    }
+
+    protected override void FadeIn()
+    {
+        base.FadeIn();
+        footer.Show();
+    }
+
+    protected override void FadeOut(IScreen next)
+    {
+        base.FadeOut(next);
+        footer.Hide();
+    }
+
+    public override void OnEntering(ScreenTransitionEvent e)
+    {
+        menuMusic.StopAll();
+
+        onMapChange(Room.Map);
+        base.OnEntering(e);
+    }
+
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        if (Room is null)
+        {
+            confirmExit = true;
+            this.Exit();
+            return;
+        }
+
+        base.OnResuming(e);
+        onMapChange(Room.Map);
+        api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+    }
+
     public override bool OnExiting(ScreenExitEvent e)
     {
         if (confirmExit)
@@ -321,7 +368,6 @@ public partial class MultiLobby : MultiSubScreen
             clock.Looping = false;
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
-            footer.Hide();
             return base.OnExiting(e);
         }
 
@@ -341,50 +387,5 @@ public partial class MultiLobby : MultiSubScreen
         };
 
         return true;
-    }
-
-    private void stopClockMusic() => clock.VolumeOut(600).OnComplete(_ => clock.Stop());
-
-    private void startClockMusic()
-    {
-        clock.Start();
-        clock.VolumeIn(600);
-    }
-
-    public override void OnResuming(ScreenTransitionEvent e)
-    {
-        if (Room is null)
-        {
-            confirmExit = true;
-            this.Exit();
-            return;
-        }
-
-        base.OnResuming(e);
-        onMapChange(Room.Map);
-        api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
-    }
-
-    public override void OnEntering(ScreenTransitionEvent e)
-    {
-        menuMusic.StopAll();
-
-        var map = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == Room.Map.ID));
-
-        if (map != null)
-        {
-            mapStore.CurrentMapSet = map;
-
-            var mapInfo = map.Maps.FirstOrDefault(m => m.OnlineID == Room.Map.ID);
-            if (mapInfo == null) return; // what
-
-            clock.VolumeOut(); // because it sets itself to 1
-            clock.RestartPoint = 0;
-            backgrounds.AddBackgroundFromMap(mapInfo);
-            startClockMusic();
-        }
-
-        footer.Show();
-        base.OnEntering(e);
     }
 }

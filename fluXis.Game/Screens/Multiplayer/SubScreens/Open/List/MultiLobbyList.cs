@@ -114,7 +114,7 @@ public partial class MultiLobbyList : MultiSubScreen
         loadingIcon.Show();
         textFlow.Text = "";
 
-        lobbyList.FadeOut(200).OnComplete(_ =>
+        lobbyList.FadeOut(FluXisScreen.FADE_DURATION).OnComplete(_ =>
         {
             lobbyList.Clear();
 
@@ -131,7 +131,7 @@ public partial class MultiLobbyList : MultiSubScreen
                     lobbyList.Add(new EmptyLobbySlot());
 
                 loadingIcon.Hide();
-                lobbyList.FadeIn(200);
+                lobbyList.FadeIn(FluXisScreen.FADE_DURATION);
             };
 
             request.Failure += ex =>
@@ -168,35 +168,29 @@ public partial class MultiLobbyList : MultiSubScreen
         ScheduleAfterChildren(() => panels.Content.Hide());
     }
 
-    public override void OnEntering(ScreenTransitionEvent e)
+    protected override void FadeIn()
     {
+        base.FadeIn();
+
+        clock.VolumeOut(600).OnComplete(_ => clock.Stop());
+
         menuMusic.GoToLayer(0, 1);
-        lobbyList.MoveToY(-100).MoveToY(0, 400, Easing.OutQuint);
+        lobbyList.MoveToY(-100).MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         footer.Show();
-        base.OnEntering(e);
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
+    protected override void FadeOut(IScreen next)
     {
-        lobbyList.MoveToY(-100, 400, Easing.OutQuint);
+        base.FadeOut(next);
+
+        lobbyList.MoveToY(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
         footer.Hide();
-        return base.OnExiting(e);
     }
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        menuMusic.GoToLayer(0, 1);
-        clock.VolumeOut(600).OnComplete(_ => clock.Stop());
-        footer.Show();
         loadLobbies();
         base.OnResuming(e);
-    }
-
-    public override void OnSuspending(ScreenTransitionEvent e)
-    {
-        footer.Hide();
-        menuMusic.StopAll();
-        base.OnSuspending(e);
     }
 
     private void startCreate() => this.Push(new MultiSongSelect(create));

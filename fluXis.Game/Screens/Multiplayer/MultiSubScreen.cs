@@ -2,6 +2,7 @@ using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Input;
 using fluXis.Game.Online.Activity;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -29,7 +30,7 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
     public virtual bool AllowMusicPausing => false;
 
     private Container titleContainer;
-    private Box titleLine;
+    private Circle titleLine;
     private FluXisSpriteText titleText;
     private FluXisSpriteText titleSubText;
 
@@ -45,12 +46,12 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
                 {
                     new Container
                     {
-                        Width = 5,
+                        Size = new Vector2(6, 3),
                         RelativeSizeAxes = Axes.Y,
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Scale = new Vector2(1, 3),
-                        Child = titleLine = new Box
+                        Colour = FluXisColors.Text,
+                        Child = titleLine = new Circle
                         {
                             RelativeSizeAxes = Axes.Both
                         }
@@ -58,15 +59,15 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
                     titleText = new FluXisSpriteText
                     {
                         Text = Title,
-                        Margin = new MarginPadding { Left = 10 },
-                        FontSize = 40
+                        Margin = new MarginPadding { Left = 12 },
+                        WebFontSize = 28
                     },
                     titleSubText = new FluXisSpriteText
                     {
                         Text = SubTitle,
-                        FontSize = 28,
-                        Margin = new MarginPadding { Top = 30, Left = 10 },
-                        Colour = FluXisColors.Text2
+                        WebFontSize = 14,
+                        Margin = new MarginPadding { Top = 32, Left = 12 },
+                        Alpha = .8f
                     }
                 }
             }
@@ -75,40 +76,43 @@ public partial class MultiSubScreen : Screen, IKeyBindingHandler<FluXisGlobalKey
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        fadeIn();
+        this.FadeOut();
+
+        using (BeginDelayedSequence(FluXisScreen.ENTER_DELAY))
+            FadeIn();
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
-    {
-        fadeOut();
-        return false;
-    }
-
-    public override void OnSuspending(ScreenTransitionEvent e)
-    {
-        fadeOut();
-    }
+    public override void OnSuspending([CanBeNull] ScreenTransitionEvent e) => FadeOut(e?.Next);
 
     public override void OnResuming(ScreenTransitionEvent e)
     {
-        fadeIn();
+        this.FadeOut();
+
+        using (BeginDelayedSequence(FluXisScreen.ENTER_DELAY))
+            FadeIn();
     }
 
-    private void fadeIn()
+    public override bool OnExiting([CanBeNull] ScreenExitEvent e)
+    {
+        FadeOut(e?.Next);
+        return false;
+    }
+
+    protected virtual void FadeIn()
     {
         RefreshActivity();
 
         titleContainer.MoveToX(0);
-        titleLine.ResizeHeightTo(0).ResizeHeightTo(1, 500, Easing.OutQuint);
-        titleText.MoveToX(-10).MoveToX(0, 300, Easing.OutQuint);
-        titleSubText.MoveToX(-10).MoveToX(0, 300, Easing.OutQuint);
-        this.FadeInFromZero(200);
+        titleLine.ResizeHeightTo(0).ResizeHeightTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        titleText.MoveToX(-10).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        titleSubText.MoveToX(-10).MoveToX(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        this.FadeInFromZero(FluXisScreen.FADE_DURATION);
     }
 
-    private void fadeOut()
+    protected virtual void FadeOut(IScreen next)
     {
-        titleContainer.MoveToX(50, 400);
-        this.FadeOut(200);
+        titleContainer.MoveToX(50, FluXisScreen.MOVE_DURATION);
+        this.FadeOut(FluXisScreen.FADE_DURATION);
     }
 
     protected void RefreshActivity() => Activity.Value = InitialActivity;

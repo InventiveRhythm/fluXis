@@ -46,51 +46,53 @@ public partial class MultiplayerMenuMusic : Container<DrawableTrack>
 
     public void GoToLayer(int layer, int mode, int alt = 0)
     {
-        baseTrack.VolumeTo(1, 200);
+        const float duration = FluXisScreen.FADE_DURATION;
+
+        baseTrack.VolumeTo(1, duration);
 
         switch (mode)
         {
             case -1:
-                rankedMain.VolumeTo(0, 200);
-                rankedPrepare.VolumeTo(0, 200);
+                rankedMain.VolumeTo(0, duration);
+                rankedPrepare.VolumeTo(0, duration);
 
-                lobbyList.VolumeTo(0, 200);
-                lobbyPrepare.VolumeTo(0, 200);
+                lobbyList.VolumeTo(0, duration);
+                lobbyPrepare.VolumeTo(0, duration);
 
-                win.VolumeTo(0, 200);
-                lose.VolumeTo(0, 200);
+                win.VolumeTo(0, duration);
+                lose.VolumeTo(0, duration);
                 break;
 
             case 0: // Ranked
-                rankedMain.VolumeTo(layer >= 0 ? 1 : 0, 200);
-                rankedPrepare.VolumeTo(layer == 1 ? 1 : 0, 200);
+                rankedMain.VolumeTo(layer >= 0 ? 1 : 0, duration);
+                rankedPrepare.VolumeTo(layer == 1 ? 1 : 0, duration);
 
                 if (layer == 2)
                 {
-                    win.VolumeTo(alt == 0 ? 1 : 0, 200);
-                    lose.VolumeTo(alt == 1 ? 1 : 0, 200);
+                    win.VolumeTo(alt == 0 ? 1 : 0, duration);
+                    lose.VolumeTo(alt == 1 ? 1 : 0, duration);
                 }
                 else
                 {
-                    win.VolumeTo(0, 200);
-                    lose.VolumeTo(0, 200);
+                    win.VolumeTo(0, duration);
+                    lose.VolumeTo(0, duration);
                 }
 
                 break;
 
             case 1: // OpenLobby
-                lobbyList.VolumeTo(layer >= 0 ? 1 : 0, 200);
-                lobbyPrepare.VolumeTo(layer == 1 ? 1 : 0, 200);
+                lobbyList.VolumeTo(layer >= 0 ? 1 : 0, duration);
+                lobbyPrepare.VolumeTo(layer == 1 ? 1 : 0, duration);
 
                 if (layer == 2)
                 {
-                    win.VolumeTo(alt == 0 ? 1 : 0, 200);
-                    lose.VolumeTo(alt == 1 ? 1 : 0, 200);
+                    win.VolumeTo(alt == 0 ? 1 : 0, duration);
+                    lose.VolumeTo(alt == 1 ? 1 : 0, duration);
                 }
                 else
                 {
-                    win.VolumeTo(0, 200);
-                    lose.VolumeTo(0, 200);
+                    win.VolumeTo(0, duration);
+                    lose.VolumeTo(0, duration);
                 }
 
                 break;
@@ -100,6 +102,6 @@ public partial class MultiplayerMenuMusic : Container<DrawableTrack>
     public void StopAll()
     {
         foreach (var track in Children)
-            track.VolumeTo(0, 200);
+            track.VolumeTo(0, FluXisScreen.FADE_DURATION);
     }
 }

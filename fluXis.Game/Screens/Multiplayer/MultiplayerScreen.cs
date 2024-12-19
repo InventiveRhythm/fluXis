@@ -90,6 +90,20 @@ public partial class MultiplayerScreen : FluXisScreen
         backgrounds.AddBackgroundFromMap(null);
     }
 
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        var screen = screenStack.CurrentScreen as MultiSubScreen;
+        screen?.OnResuming(null);
+        this.FadeIn();
+    }
+
+    public override void OnSuspending(ScreenTransitionEvent e)
+    {
+        var screen = screenStack.CurrentScreen as MultiSubScreen;
+        screen?.OnSuspending(null);
+        this.Delay(800).FadeOut();
+    }
+
     public override bool OnExiting(ScreenExitEvent e)
     {
         if (!canExit()) return true;
@@ -101,11 +115,5 @@ public partial class MultiplayerScreen : FluXisScreen
         globalClock.VolumeIn(FADE_DURATION);
         backgrounds.AddBackgroundFromMap(mapStore.CurrentMapSet?.Maps[0]);
         return false;
-    }
-
-    public override void OnResuming(ScreenTransitionEvent e)
-    {
-        var screen = screenStack.CurrentScreen as MultiSubScreen;
-        screen?.OnResuming(null);
     }
 }
