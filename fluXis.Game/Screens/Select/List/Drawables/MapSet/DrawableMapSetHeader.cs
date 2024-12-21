@@ -6,6 +6,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
+using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Localization;
@@ -290,67 +291,32 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             }
         };
 
-        var groups = mapset.Maps.GroupBy(x => x.KeyCount).ToList();
+        var modes = mapset.Maps.GroupBy(x => x.KeyCount)
+                          .OrderBy(x => x.Key).ToList();
 
-        if (groups.Count > 1)
+        foreach (var mode in modes)
         {
-            groups = groups.OrderBy(x => x.Key).ToList();
+            var color = FluXisColors.GetKeyColor(mode.Key);
 
-            foreach (var group in groups)
+            diffsContainer.Add(new RoundedChip
             {
-                diffsContainer.Add(new CircularContainer
-                {
-                    Width = 24,
-                    Height = 18,
-                    Masking = true,
-                    Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Margin = new MarginPadding { Left = 4, Right = 2 },
-                    EdgeEffect = FluXisStyles.ShadowSmall,
-                    Children = new Drawable[]
-                    {
-                        new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.GetKeyColor(group.Key)
-                        },
-                        new FluXisSpriteText
-                        {
-                            Text = $"{group.Key}K",
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Colour = Colour4.Black,
-                            Alpha = .75f,
-                            FontSize = 14
-                        }
-                    }
-                });
+                Text = $"{mode.Key}K",
+                BackgroundColour = color,
+                TextColour = (FluXisColors.IsBright(color) ? FluXisColors.Background2 : FluXisColors.Text).Opacity(.75f),
+                Margin = new MarginPadding { Left = 6, Right = 2 },
+                EdgeEffect = FluXisStyles.ShadowSmall,
+                SidePadding = 8
+            });
 
-                var sorted = group.OrderBy(x => x.Filters.NotesPerSecond).ToList();
+            var difficulties = mode.OrderBy(x => x.Filters.NotesPerSecond).ToList();
 
-                foreach (var map in sorted)
-                {
-                    diffsContainer.Add(new TicTac(20)
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Colour = FluXisColors.GetDifficultyColor(map.Filters.NotesPerSecond),
-                        EdgeEffect = FluXisStyles.ShadowSmall
-                    });
-                }
-            }
-        }
-        else
-        {
-            var sorted = mapset.Maps.OrderBy(x => x.Filters.NotesPerSecond).ToList();
-
-            foreach (var map in sorted)
+            foreach (var diff in difficulties)
             {
                 diffsContainer.Add(new TicTac(20)
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    Colour = FluXisColors.GetDifficultyColor(map.Filters.NotesPerSecond),
+                    Colour = FluXisColors.GetDifficultyColor(diff.Filters.NotesPerSecond),
                     EdgeEffect = FluXisStyles.ShadowSmall
                 });
             }
