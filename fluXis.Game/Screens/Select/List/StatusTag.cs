@@ -23,7 +23,7 @@ public partial class StatusTag : CircularContainer
 
     public float WebFontSize { set => FontSize = FluXisSpriteText.GetWebFontSize(value); }
     public float FontSize { get; set; } = 20;
-    public float WidthStep { get; set; } = 50;
+    public float WidthStep { get; set; } = 35;
 
     private Box box;
     private FluXisSpriteText text;

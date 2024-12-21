@@ -5,6 +5,7 @@ using fluXis.Game.Graphics;
 using fluXis.Game.Graphics.Containers;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
+using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Graphics.UserInterface.Menus;
 using fluXis.Game.Localization;
 using fluXis.Game.Map;
@@ -196,6 +197,8 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
 
     private Drawable createContent()
     {
+        var modeColor = FluXisColors.GetKeyColor(map.KeyCount);
+
         return new Container
         {
             RelativeSizeAxes = Axes.Both,
@@ -207,7 +210,9 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                 {
                     new Dimension(GridSizeMode.Absolute, 80),
                     new Dimension(GridSizeMode.Absolute, 10),
-                    new Dimension()
+                    new Dimension(),
+                    new Dimension(GridSizeMode.Absolute, 10),
+                    new Dimension(GridSizeMode.AutoSize)
                 },
                 Content = new[]
                 {
@@ -258,19 +263,15 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                     Spacing = new Vector2(6),
                                     Children = new Drawable[]
                                     {
-                                        new StatusTag(map)
+                                        new RoundedChip
                                         {
-                                            Size = new Vector2(50, 16),
+                                            Height = 16,
+                                            Text = $"{map.KeyCount}K",
+                                            BackgroundColour = modeColor,
+                                            TextColour = (FluXisColors.IsBright(modeColor) ? FluXisColors.Background2 : FluXisColors.Text).Opacity(.75f),
+                                            EdgeEffect = FluXisStyles.ShadowSmall,
                                             WebFontSize = 10,
-                                            WidthStep = 20,
-                                            EdgeEffect = FluXisStyles.ShadowSmall
-                                        },
-                                        new DifficultyChip
-                                        {
-                                            Size = new Vector2(50, 16),
-                                            WebFontSize = 10,
-                                            Rating = map.Filters.NotesPerSecond,
-                                            EdgeEffect = FluXisStyles.ShadowSmall
+                                            SidePadding = 8
                                         },
                                         new TruncatingText
                                         {
@@ -280,6 +281,36 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                         }
                                     }
                                 }
+                            }
+                        },
+                        Empty(),
+                        new FillFlowContainer
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Direction = FillDirection.Vertical,
+                            Anchor = Anchor.CentreRight,
+                            Origin = Anchor.CentreRight,
+                            Spacing = new Vector2(6),
+                            Children = new Drawable[]
+                            {
+                                new StatusTag(map)
+                                {
+                                    Size = new Vector2(0, 20),
+                                    WebFontSize = 12,
+                                    WidthStep = 20,
+                                    EdgeEffect = FluXisStyles.ShadowSmall,
+                                    Anchor = Anchor.CentreRight,
+                                    Origin = Anchor.CentreRight
+                                },
+                                new DifficultyChip
+                                {
+                                    Size = new Vector2(64, 20),
+                                    WebFontSize = 12,
+                                    Rating = map.Filters.NotesPerSecond,
+                                    EdgeEffect = FluXisStyles.ShadowSmall,
+                                    Anchor = Anchor.CentreRight,
+                                    Origin = Anchor.CentreRight
+                                },
                             }
                         }
                     }

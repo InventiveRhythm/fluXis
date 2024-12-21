@@ -272,7 +272,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                                     new StatusTag(mapset)
                                     {
                                         Anchor = Anchor.TopRight,
-                                        Origin = Anchor.TopRight
+                                        Origin = Anchor.TopRight,
+                                        WebFontSize = 12
                                     },
                                     diffsContainer = new FillFlowContainer
                                     {
