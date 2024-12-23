@@ -1,8 +1,8 @@
 ﻿using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface.Color;
 using fluXis.Game.Online.API.Models.Maps;
+using fluXis.Game.Online.Drawables;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

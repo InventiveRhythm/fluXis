@@ -1,5 +1,6 @@
 using System;
-using fluXis.Game.Online;
+using System.Threading;
+using fluXis.Game.Graphics;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
@@ -9,10 +10,11 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 
-namespace fluXis.Game.Graphics.Drawables;
+namespace fluXis.Game.Online.Drawables;
 
 #nullable enable
 
+[LongRunningLoad]
 public partial class DrawableAvatar : Sprite
 {
     [Resolved]
@@ -43,6 +45,7 @@ public partial class DrawableAvatar : Sprite
 
     private void setTexture()
     {
+        Thread.Sleep(999999);
         if (user is { ID: >= 0 }) // the texture from the online store could still be null
             Texture = store.GetAvatar(user.AvatarHash) ?? textures.Get("Online/default-avatar");
         else

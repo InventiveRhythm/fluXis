@@ -1,10 +1,12 @@
+using fluXis.Game.Graphics;
 using fluXis.Game.Online.API.Models.Clubs;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Game.Graphics.Drawables;
+namespace fluXis.Game.Online.Drawables;
 
+[LongRunningLoad]
 public partial class DrawableClubIcon : Sprite
 {
     [Resolved]

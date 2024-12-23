@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Graphics.UserInterface;
 using fluXis.Game.Graphics.UserInterface.Buttons;
@@ -12,6 +11,7 @@ using fluXis.Game.Online;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Online.API.Payloads.Users;
 using fluXis.Game.Online.API.Requests.Users;
+using fluXis.Game.Online.Drawables;
 using fluXis.Game.Online.Fluxel;
 using fluXis.Game.Overlay.Network.Tabs.Account;
 using fluXis.Game.Overlay.Notifications;

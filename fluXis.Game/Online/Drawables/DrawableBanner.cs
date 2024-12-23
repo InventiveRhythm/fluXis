@@ -1,4 +1,4 @@
-using fluXis.Game.Online;
+using fluXis.Game.Graphics;
 using fluXis.Game.Online.API.Models.Users;
 using fluXis.Game.Utils.Extensions;
 using osu.Framework.Allocation;
@@ -6,10 +6,11 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Game.Graphics.Drawables;
+namespace fluXis.Game.Online.Drawables;
 
 #nullable enable
 
+[LongRunningLoad]
 public partial class DrawableBanner : Sprite
 {
     [Resolved]

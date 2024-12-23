@@ -1,6 +1,6 @@
-using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.Drawables;
 using fluXis.Game.Scoring;
 using fluXis.Game.Scoring.Enums;
 using fluXis.Game.Skinning;

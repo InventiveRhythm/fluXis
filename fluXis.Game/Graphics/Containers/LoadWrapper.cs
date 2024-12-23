@@ -13,11 +13,8 @@ public partial class LoadWrapper<T> : Container
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        LoadComponentAsync(LoadContent(), drawable =>
-        {
-            Add(drawable);
-            OnComplete?.Invoke(drawable);
-        });
+
+        Reload();
     }
 
     public void Reload()

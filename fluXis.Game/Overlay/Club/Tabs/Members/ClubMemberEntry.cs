@@ -1,8 +1,8 @@
 ﻿using fluXis.Game.Graphics.Containers;
-using fluXis.Game.Graphics.Drawables;
 using fluXis.Game.Graphics.Sprites;
 using fluXis.Game.Online.API.Models.Clubs;
 using fluXis.Game.Online.API.Models.Users;
+using fluXis.Game.Online.Drawables;
 using fluXis.Game.Overlay.User;
 using fluXis.Game.Utils;
 using JetBrains.Annotations;
