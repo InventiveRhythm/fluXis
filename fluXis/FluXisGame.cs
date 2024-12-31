@@ -146,17 +146,8 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(panelContainer = new PanelContainer { BlurContainer = buffer }, Add, true);
         loadComponent(new VolumeOverlay(), Add);
 
-        loadComponent(notificationContainer = new FloatingNotificationContainer(), drawable =>
-        {
-            Add(drawable);
-            NotificationManager.Floating = drawable;
-        });
-
-        loadComponent(new TaskNotificationContainer(), drawable =>
-        {
-            Add(drawable);
-            NotificationManager.Tasks = drawable;
-        });
+        NotificationManager.Floating = loadComponent(notificationContainer = new FloatingNotificationContainer(), Add);
+        NotificationManager.Tasks = loadComponent(new TaskNotificationContainer(), Add);
 
         loadComponent(new FpsOverlay(), Add);
         loadComponent(exitAnimation = new ExitAnimation(), Add);
@@ -261,10 +252,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         APIClient.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
         {
             var achievement = res.Data!.Achievement;
-            Schedule(() =>
-            {
-                LoadComponentAsync(new AchievementOverlay(achievement), ov => Schedule(() => panelContainer.Content = ov));
-            });
+            Schedule(() => LoadComponentAsync(new AchievementOverlay(achievement), ov => Schedule(() => panelContainer.Content = ov)));
         });
 
         APIClient.RegisterListener<FriendOnlinePacket>(EventType.FriendOnline, res =>
@@ -357,10 +345,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         if (map == null || score == null)
             throw new ArgumentNullException();
 
-        screenStack.Push(new Results(map, score, player)
-        {
-            ViewReplay = replayAction
-        });
+        screenStack.Push(new Results(map, score, player) { ViewReplay = replayAction });
     }
 
     public void PresentUser(long id)
