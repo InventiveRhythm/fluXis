@@ -1,12 +1,12 @@
 using fluXis.Audio;
 using fluXis.Configuration;
-using fluXis.Graphics;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
+using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
@@ -28,53 +28,49 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
 
     private readonly BindableBool visible = new();
 
-    private Container content;
     private FillFlowContainer<VolumeCategory> categories;
-
-    public VolumeOverlay()
-    {
-        RelativeSizeAxes = Axes.Both;
-        Padding = new MarginPadding(20);
-        AlwaysPresent = true;
-    }
 
     [BackgroundDependencyLoader]
     private void load(AudioManager manager, FluXisConfig config)
     {
         audioManager = manager;
 
-        Add(content = new Container
+        RelativeSizeAxes = Axes.Both;
+        AlwaysPresent = true;
+        Alpha = 0;
+
+        InternalChildren = new Drawable[]
         {
-            AutoSizeAxes = Axes.Y,
-            Width = 300,
-            X = -400,
-            CornerRadius = 10,
-            Masking = true,
-            EdgeEffect = FluXisStyles.ShadowMedium,
-            Children = new Drawable[]
+            new Box
             {
-                new Box
+                RelativeSizeAxes = Axes.Both,
+                Height = .6f,
+                Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(0), Colour4.Black.Opacity(.6f)),
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre
+            },
+            categories = new FillFlowContainer<VolumeCategory>
+            {
+                AutoSizeAxes = Axes.Both,
+                Spacing = new Vector2(32),
+                Direction = FillDirection.Horizontal,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Y = -100,
+                Children = new[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = FluXisColors.Background2
-                },
-                categories = new FillFlowContainer<VolumeCategory>
-                {
-                    AutoSizeAxes = Axes.Y,
-                    RelativeSizeAxes = Axes.X,
-                    Padding = new MarginPadding(10),
-                    Spacing = new Vector2(0, 10),
-                    Direction = FillDirection.Vertical,
-                    Children = new[]
-                    {
-                        new VolumeCategory("Master", audioManager.Volume, this),
-                        new VolumeCategory("Music", audioManager.VolumeTrack, this),
-                        new VolumeCategory("Effects", audioManager.VolumeSample, this),
-                        new VolumeCategory("Hitsounds", config.GetBindable<double>(FluXisSetting.HitSoundVolume), this),
-                    }
+                    new VolumeCategory("Master", audioManager.Volume, this),
+                    new VolumeCategory("Music", audioManager.VolumeTrack, this),
+                    new VolumeCategory("Effects", audioManager.VolumeSample, this),
+                    new VolumeCategory("Hitsounds", config.GetBindable<double>(FluXisSetting.HitSoundVolume), this),
                 }
             }
-        });
+        };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
 
         visible.BindValueChanged(updateVisibility, true);
     }
@@ -83,7 +79,7 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
     {
         if (e.AltPressed)
         {
-            changeVolume(e.ScrollDelta.Y * .01f);
+            changeVolume(e.ScrollDelta.Y * .02f);
             return true;
         }
 
@@ -134,11 +130,15 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
 
         if (e.NewValue)
         {
-            content.MoveToX(0, 500, Easing.OutQuint);
+            this.FadeIn(FluXisScreen.FADE_DURATION);
+            categories.MoveToY(-60).MoveToY(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
             changeCategory(-index);
         }
         else
-            content.MoveToX(-400, 500, Easing.InQuint);
+        {
+            this.FadeOut(FluXisScreen.FADE_DURATION);
+            categories.MoveToY(200, FluXisScreen.MOVE_DURATION, Easing.InQuint);
+        }
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
@@ -146,11 +146,11 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
         switch (e.Action)
         {
             case FluXisGlobalKeybind.VolumeDecrease:
-                changeVolume(-.01f);
+                changeVolume(-.02f);
                 return true;
 
             case FluXisGlobalKeybind.VolumeIncrease:
-                changeVolume(.01f);
+                changeVolume(.02f);
                 return true;
 
             case FluXisGlobalKeybind.VolumePreviousCategory:

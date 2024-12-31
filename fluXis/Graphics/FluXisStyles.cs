@@ -25,10 +25,10 @@ public static class FluXisStyles
         Radius = 10
     };
 
-    private static EdgeEffectParameters createShadow(int radius, float offset) => new()
+    private static EdgeEffectParameters createShadow(int radius, float offset, float opacity = SHADOW_OPACITY) => new()
     {
         Type = EdgeEffectType.Shadow,
-        Colour = Colour4.Black.Opacity(SHADOW_OPACITY),
+        Colour = Colour4.Black.Opacity(opacity),
         Radius = radius,
         Offset = new Vector2(0, offset)
     };

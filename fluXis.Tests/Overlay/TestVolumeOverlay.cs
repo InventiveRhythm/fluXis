@@ -1,12 +1,15 @@
 using fluXis.Overlay.Volume;
+using osu.Framework.Allocation;
 
 namespace fluXis.Tests.Overlay;
 
 public partial class TestVolumeOverlay : FluXisTestScene
 {
-    public TestVolumeOverlay()
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        var volumeOverlay = new VolumeOverlay();
-        Add(volumeOverlay);
+        CreateDummyBeatSync();
+
+        Add(new VolumeOverlay());
     }
 }

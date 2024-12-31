@@ -96,7 +96,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
         leftIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MinValue) > 0;
         rightIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MaxValue) < 0;
 
-        if (valueChange != null && PlaySample && !firstPlay)
+        if (valueChange != null && PlaySample && !firstPlay && IsPresent)
         {
             if (Time.Current - lastSampleTime < 50) return;
 

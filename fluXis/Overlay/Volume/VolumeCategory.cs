@@ -1,22 +1,30 @@
+using fluXis.Audio;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Color;
+using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Overlay.Volume;
 
 public partial class VolumeCategory : CompositeDrawable
 {
+    [Resolved]
+    private IBeatSyncProvider beatSync { get; set; }
+
     private string text { get; }
     public Bindable<double> Bindable { get; }
     private VolumeOverlay volumeOverlay { get; }
 
+    private double smoothProgress;
+    private CircularProgress progressBackground;
+    private CircularProgress progress;
     private FluXisSpriteText percentText;
-    private Box background;
 
     public VolumeCategory(string text, Bindable<double> bindable, VolumeOverlay volumeOverlay)
     {
@@ -28,63 +36,77 @@ public partial class VolumeCategory : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        AutoSizeAxes = Axes.Y;
-        RelativeSizeAxes = Axes.X;
-        CornerRadius = 5;
-        Masking = true;
+        Anchor = Anchor.BottomCentre;
+        Origin = Anchor.BottomCentre;
+        Size = new Vector2(196);
 
-        AddRangeInternal(new Drawable[]
+        InternalChildren = new Drawable[]
         {
-            background = new Box
+            progressBackground = new CircularProgress
             {
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0
+                Colour = FluXisColors.Text,
+                RoundedCaps = true,
+                Progress = .8f,
+                InnerRadius = .1f,
+                Rotation = 180 + 360 * .1f,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Alpha = .2f,
+                Scale = new Vector2(.95f)
+            },
+            progress = new CircularProgress
+            {
+                RelativeSizeAxes = Axes.Both,
+                Colour = FluXisColors.Text,
+                RoundedCaps = true,
+                Progress = Bindable.Value,
+                InnerRadius = .2f,
+                Rotation = 180 + 360 * .1f,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
             },
             new FillFlowContainer
             {
-                AutoSizeAxes = Axes.Y,
-                RelativeSizeAxes = Axes.X,
-                Padding = new MarginPadding(5),
+                AutoSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(-4),
                 Children = new Drawable[]
                 {
-                    new Container
+                    percentText = new FluXisSpriteText
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Children = new Drawable[]
-                        {
-                            new FluXisSpriteText
-                            {
-                                Text = text,
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft
-                            },
-                            percentText = new FluXisSpriteText
-                            {
-                                Anchor = Anchor.CentreRight,
-                                Origin = Anchor.CentreRight
-                            },
-                        }
+                        WebFontSize = 24,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
                     },
-                    new FluXisSlider<double>
+                    new FluXisSpriteText
                     {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 10,
-                        Bindable = Bindable,
-                        Step = 0.01f,
-                        PlaySample = false,
-                        ShowArrowButtons = false
-                    },
+                        WebFontSize = 16,
+                        Text = text,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Alpha = .6f
+                    }
                 }
             }
-        });
+        };
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
+        smoothProgress = Bindable.Value;
         Bindable.BindValueChanged(updateProgress, true);
+
+        beatSync.OnBeat += _ =>
+        {
+            progressBackground.ScaleTo(.96f).FadeTo(.25f).TransformTo(nameof(CircularProgress.InnerRadius), 0.12f)
+                              .ScaleTo(.95f, beatSync.BeatTime).FadeTo(.2f, beatSync.BeatTime)
+                              .TransformTo(nameof(CircularProgress.InnerRadius), 0.1f, beatSync.BeatTime);
+        };
     }
 
     protected override void Dispose(bool isDisposing)
@@ -94,18 +116,30 @@ public partial class VolumeCategory : CompositeDrawable
         Bindable.ValueChanged -= updateProgress;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        percentText.Text = $"{smoothProgress:P0}";
+        progress.Progress = smoothProgress * 0.8f;
+    }
+
     private void updateProgress(ValueChangedEvent<double> e)
     {
-        percentText.Text = $"{e.NewValue:P0}";
+        this.TransformTo(nameof(smoothProgress), e.NewValue, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 
     public void UpdateSelected(bool newValue)
     {
-        background.FadeTo(newValue ? 0.1f : 0, 100);
+        this.ScaleTo(newValue ? 1f : .75f, FluXisScreen.MOVE_DURATION, Easing.OutQuint)
+            .FadeTo(newValue ? 1f : .8f, FluXisScreen.FADE_DURATION);
     }
 
     protected override bool OnHover(HoverEvent e)
     {
+        if (volumeOverlay.Alpha < 0.001f)
+            return false;
+
         volumeOverlay.SelectCategory(this);
         return true;
     }
