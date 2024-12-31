@@ -1,5 +1,5 @@
-using fluXis.Game.Database.Maps;
-using fluXis.Game.Map;
+using fluXis.Database.Maps;
+using fluXis.Map;
 
 namespace fluXis.Import.Stepmania.AutoImport;
 

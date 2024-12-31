@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
+    <ProjectReference Include="..\fluXis\fluXis.csproj" />
   </ItemGroup>
 
 

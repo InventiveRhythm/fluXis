@@ -1,6 +1,6 @@
 using System.IO;
 using System.Text.Json.Serialization;
-using fluXis.Game.Map;
+using fluXis.Map;
 
 namespace fluXis.Import.osu.AutoImport;
 

@@ -1,8 +1,7 @@
-using fluXis.Game;
-using fluXis.Game.Graphics.Sprites;
-using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Overlay.Notifications.Tasks;
-using fluXis.Game.Updater;
+using fluXis.Graphics.Sprites;
+using fluXis.Overlay.Notifications;
+using fluXis.Overlay.Notifications.Tasks;
+using fluXis.Updater;
 using osu.Framework.Logging;
 using Velopack;
 using Velopack.Sources;

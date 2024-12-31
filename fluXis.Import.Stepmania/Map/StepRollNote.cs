@@ -1,4 +1,4 @@
-using fluXis.Game.Map.Structures;
+using fluXis.Map.Structures;
 
 namespace fluXis.Import.Stepmania.Map;
 

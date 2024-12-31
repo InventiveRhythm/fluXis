@@ -1,4 +1,4 @@
-using fluXis.Game.Map;
+using fluXis.Map;
 using Newtonsoft.Json;
 
 namespace fluXis.Import.Quaver.Map;

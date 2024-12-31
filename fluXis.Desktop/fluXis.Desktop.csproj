@@ -13,7 +13,7 @@
 <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
+    <ProjectReference Include="..\fluXis\fluXis.csproj" />
     <ProjectReference Include="..\fluXis.Import.Quaver\fluXis.Import.Quaver.csproj" />
     <ProjectReference Include="..\fluXis.Import.osu\fluXis.Import.osu.csproj" />
     <ProjectReference Include="..\fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj" />

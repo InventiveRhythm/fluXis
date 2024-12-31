@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using fluXis.Game.Import;
-using fluXis.Game.Overlay.Settings.UI;
-using fluXis.Game.Plugins;
+using fluXis.Overlay.Settings.UI;
+using fluXis.Plugins;
 using osu.Framework.Platform;
 
 namespace fluXis.Import.osu;

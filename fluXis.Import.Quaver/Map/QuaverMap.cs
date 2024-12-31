@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using fluXis.Game.Map;
-using fluXis.Game.Map.Structures;
 using fluXis.Import.Quaver.Map.Structs;
+using fluXis.Map;
+using fluXis.Map.Structures;
 using JetBrains.Annotations;
 using osu.Framework.Logging;
 

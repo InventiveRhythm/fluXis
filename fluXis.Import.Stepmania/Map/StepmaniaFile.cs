@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using fluXis.Game.Map;
-using fluXis.Game.Map.Structures;
 using fluXis.Import.Stepmania.Map.Components;
+using fluXis.Map;
+using fluXis.Map.Structures;
 
 namespace fluXis.Import.Stepmania.Map;
 

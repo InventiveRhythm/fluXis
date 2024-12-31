@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using fluXis.Game.Database.Maps;
-using fluXis.Game.Import;
-using fluXis.Game.Overlay.Notifications;
-using fluXis.Game.Utils;
+using fluXis.Database.Maps;
 using fluXis.Import.Stepmania.AutoImport;
 using fluXis.Import.Stepmania.Map;
+using fluXis.Overlay.Notifications;
+using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
