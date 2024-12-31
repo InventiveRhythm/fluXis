@@ -16,4 +16,7 @@ public class BeatPulseEvent : IMapEvent
     /// </summary>
     [JsonProperty("zoom")]
     public float ZoomIn { get; set; } = .25f;
+
+    [JsonProperty("interval")]
+    public float Interval { get; set; } = 1;
 }

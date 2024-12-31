@@ -1,22 +1,28 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using fluXis.Audio;
+using fluXis.Map;
 using fluXis.Map.Structures.Events;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace fluXis.Screens.Gameplay.Ruleset;
 
 public partial class BeatPulseContainer : CompositeDrawable
 {
-    private IBeatSyncProvider beatSync { get; set; }
-
+    private MapInfo map { get; }
     private List<BeatPulseEvent> events { get; }
     private Drawable target { get; }
 
-    public BeatPulseContainer(List<BeatPulseEvent> events, Drawable target)
+    private float targetScale
     {
+        get => target.Scale.X;
+        set => target.Scale = new Vector2(value);
+    }
+
+    public BeatPulseContainer(MapInfo map, List<BeatPulseEvent> events, Drawable target)
+    {
+        this.map = map;
         this.events = events;
         this.target = target;
     }
@@ -24,34 +30,38 @@ public partial class BeatPulseContainer : CompositeDrawable
     protected override void LoadComplete()
     {
         base.LoadComplete();
-
-        // yes this is stupid,
-        // but for some reason its GlobalClock instead of GameplayClock in the load thread
-        beatSync = Dependencies.Get<IBeatSyncProvider>();
-        beatSync.OnBeat += onBeat;
+        generate();
     }
 
-    protected override void Dispose(bool isDisposing)
+    private void generate()
     {
-        base.Dispose(isDisposing);
+        for (int i = 0; i < events.Count; i++)
+        {
+            var ev = events[i];
 
-        if (beatSync is not null)
-            beatSync.OnBeat -= onBeat;
-    }
+            if (Math.Abs(ev.Strength - 1) < 0.0001f || ev.Interval < 0.01f)
+                continue;
 
-    private void onBeat(int idx)
-    {
-        var time = Time.Current;
+            var end = i + 1 < events.Count ? events[i + 1].Time : map.EndTime;
 
-        var e = events.LastOrDefault(x => x.Time <= time + 10); // 10ms buffer to prevent missing beats
+            var t = ev.Time;
 
-        if (e == null)
-            return;
+            while (t < end)
+            {
+                var timing = map.GetTimingPoint(t);
+                var ms = timing.MsPerBeat * Math.Clamp(ev.Interval, 0.01f, 4);
 
-        var inDuration = beatSync.BeatTime * e.ZoomIn;
-        var outDuration = beatSync.BeatTime * (1 - e.ZoomIn);
+                var inDuration = ms * ev.ZoomIn;
+                var outDuration = ms * (1 - ev.ZoomIn);
 
-        target.ScaleTo(e.Strength, inDuration, Easing.OutQuint)
-              .Then().ScaleTo(1, outDuration, Easing.OutQuint);
+                using (BeginAbsoluteSequence(t))
+                {
+                    this.TransformTo(nameof(targetScale), ev.Strength, inDuration, Easing.OutQuint)
+                        .Then().TransformTo(nameof(targetScale), 1f, outDuration, Easing.OutQuint);
+                }
+
+                t += ms;
+            }
+        }
     }
 }

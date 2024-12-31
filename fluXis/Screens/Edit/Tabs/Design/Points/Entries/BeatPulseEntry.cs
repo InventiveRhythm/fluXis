@@ -27,7 +27,8 @@ public partial class BeatPulseEntry : PointListEntry
     {
         Time = Object.Time,
         Strength = pulse.Strength,
-        ZoomIn = pulse.ZoomIn
+        ZoomIn = pulse.ZoomIn,
+        Interval = pulse.Interval
     };
 
     protected override Drawable[] CreateValueContent()
@@ -36,7 +37,7 @@ public partial class BeatPulseEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{pulse.Strength.ToStringInvariant("0.00")}x",
+                Text = $"{pulse.Strength.ToStringInvariant("0.00")}x {(pulse.Interval * 4).ToStringInvariant("0.##")}/4",
                 Colour = Color
             }
         };
@@ -72,6 +73,21 @@ public partial class BeatPulseEntry : PointListEntry
                 OnValueChanged = v =>
                 {
                     pulse.ZoomIn = v;
+                    Map.Update(pulse);
+                }
+            },
+            new PointSettingsTextBox
+            {
+                Text = "Interval",
+                TooltipText = "How many beats pass until the next pulse.",
+                DefaultText = pulse.Interval.ToStringInvariant("0.#####"),
+                OnTextChanged = box =>
+                {
+                    if (box.Text.TryParseFloatInvariant(out var result))
+                        pulse.Interval = result;
+                    else
+                        box.NotifyError();
+
                     Map.Update(pulse);
                 }
             }
