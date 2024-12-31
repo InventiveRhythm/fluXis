@@ -44,35 +44,38 @@ public partial class DesignContainer : EditorTabContainer
 
     protected override IEnumerable<Drawable> CreateContent()
     {
+        drawSizePreserve = new DrawSizePreservingFillContainer
+        {
+            RelativeSizeAxes = Axes.Both,
+            TargetDrawSize = new Vector2(1920, 1080),
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+        };
+
         return new Drawable[]
         {
             handler = new DesignShaderHandler(),
-            drawSizePreserve = new DrawSizePreservingFillContainer
+            drawSizePreserve.WithChild(createShaderStack().AddContent(new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                TargetDrawSize = new Vector2(1920, 1080),
-                Child = createShaderStack().AddContent(new Drawable[]
+                backgroundStack = new SpriteStack<BlurableBackground> { AutoFill = false },
+                backgroundVideo = new BackgroundVideo
                 {
-                    backgroundStack = new SpriteStack<BlurableBackground> { AutoFill = false },
-                    backgroundVideo = new BackgroundVideo
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        VideoClock = EditorClock,
-                        ShowDim = false
-                    },
-                    backgroundDim = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = Editor.BindableBackgroundDim.Value
-                    },
-                    new EditorFlashLayer { InBackground = true },
-                    new EditorDesignPlayfieldManager(Map.MapInfo.DualMode),
-                    new EditorFlashLayer()
-                })
-            }
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    VideoClock = EditorClock,
+                    ShowDim = false
+                },
+                backgroundDim = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.Black,
+                    Alpha = Editor.BindableBackgroundDim.Value
+                },
+                new EditorFlashLayer { InBackground = true },
+                new EditorDesignPlayfieldManager(Map.MapInfo.DualMode, drawSizePreserve),
+                new EditorFlashLayer()
+            }))
         };
     }
 

@@ -17,12 +17,17 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
     private EditorClock clock { get; set; }
 
     private LaneSwitchManager laneSwitchManager;
+    private BeatPulseManager beatPulseManager;
     private DependencyContainer dependencies;
+
+    private Drawable pulseDrawable { get; }
 
     public int Count { get; }
 
-    public EditorDesignPlayfieldManager(DualMode mode)
+    public EditorDesignPlayfieldManager(DualMode mode, Drawable pulseDrawable)
     {
+        this.pulseDrawable = pulseDrawable;
+
         Count = mode > DualMode.Disabled ? 2 : 1;
     }
 
@@ -30,6 +35,8 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
 
         dependencies.CacheAs(laneSwitchManager = new LaneSwitchManager(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout)
         {
@@ -39,6 +46,7 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
+            beatPulseManager = new BeatPulseManager(map.MapInfo, map.MapEvents.BeatPulseEvents, pulseDrawable) { Clock = clock },
             laneSwitchManager,
             new GridContainer
             {
@@ -61,7 +69,12 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
         map.LaneSwitchEventUpdated += reloadLaneSwitches;
         map.LaneSwitchEventRemoved += reloadLaneSwitches;
 
+        map.BeatPulseEventAdded += reloadBeatPulses;
+        map.BeatPulseEventUpdated += reloadBeatPulses;
+        map.BeatPulseEventRemoved += reloadBeatPulses;
+
         reloadLaneSwitches(null);
+        reloadBeatPulses(null);
     }
 
     protected override void Dispose(bool isDisposing)
@@ -71,12 +84,17 @@ public partial class EditorDesignPlayfieldManager : CompositeDrawable
         map.LaneSwitchEventAdded -= reloadLaneSwitches;
         map.LaneSwitchEventUpdated -= reloadLaneSwitches;
         map.LaneSwitchEventRemoved -= reloadLaneSwitches;
+
+        map.BeatPulseEventAdded -= reloadBeatPulses;
+        map.BeatPulseEventUpdated -= reloadBeatPulses;
+        map.BeatPulseEventRemoved -= reloadBeatPulses;
     }
 
     private void reloadLaneSwitches(LaneSwitchEvent _)
-    {
-        laneSwitchManager.Rebuild(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout);
-    }
+        => laneSwitchManager.Rebuild(map.MapEvents.LaneSwitchEvents, map.RealmMap.KeyCount, map.MapInfo.NewLaneSwitchLayout);
+
+    private void reloadBeatPulses(BeatPulseEvent _)
+        => beatPulseManager.Rebuild(map.MapEvents.BeatPulseEvents);
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));

@@ -306,7 +306,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             Debug = new DebugText()
         };
 
-        clockContainer.Add(new BeatPulseContainer(Map, MapEvents.BeatPulseEvents, keybindContainer));
+        clockContainer.Add(new BeatPulseManager(Map, MapEvents.BeatPulseEvents, keybindContainer));
 
         backgroundVideo.LoadVideo();
 

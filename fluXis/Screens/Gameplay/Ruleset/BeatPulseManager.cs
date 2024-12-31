@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics;
@@ -8,8 +9,10 @@ using osuTK;
 
 namespace fluXis.Screens.Gameplay.Ruleset;
 
-public partial class BeatPulseContainer : CompositeDrawable
+public partial class BeatPulseManager : CompositeDrawable
 {
+    public override bool RemoveCompletedTransforms => false;
+
     private MapInfo map { get; }
     private List<BeatPulseEvent> events { get; }
     private Drawable target { get; }
@@ -20,16 +23,24 @@ public partial class BeatPulseContainer : CompositeDrawable
         set => target.Scale = new Vector2(value);
     }
 
-    public BeatPulseContainer(MapInfo map, List<BeatPulseEvent> events, Drawable target)
+    public BeatPulseManager(MapInfo map, List<BeatPulseEvent> events, Drawable target)
     {
         this.map = map;
-        this.events = events;
+        this.events = events.ToList();
         this.target = target;
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+        generate();
+    }
+
+    public void Rebuild(List<BeatPulseEvent> ev)
+    {
+        ClearTransforms();
+        events.Clear();
+        events.AddRange(ev);
         generate();
     }
 
