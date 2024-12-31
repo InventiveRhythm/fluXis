@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using fluXis.Graphics;
 using fluXis.Online.API.Models.Users;
 using fluXis.Utils.Extensions;
@@ -45,7 +44,6 @@ public partial class DrawableAvatar : Sprite
 
     private void setTexture()
     {
-        Thread.Sleep(999999);
         if (user is { ID: >= 0 }) // the texture from the online store could still be null
             Texture = store.GetAvatar(user.AvatarHash) ?? textures.Get("Online/default-avatar");
         else
