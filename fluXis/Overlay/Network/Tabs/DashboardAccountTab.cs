@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Buttons;
@@ -166,12 +167,16 @@ public partial class DashboardAccountTab : DashboardTab
                             Size = new Vector2(250),
                             CornerRadius = 30,
                             Masking = true,
-                            Child = new DrawableAvatar(user)
+                            Child = new LoadWrapper<DrawableAvatar>
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                FillMode = FillMode.Fill
+                                LoadContent = () => new DrawableAvatar(user)
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    FillMode = FillMode.Fill
+                                }
                             },
                             Action = () =>
                             {
@@ -189,12 +194,16 @@ public partial class DashboardAccountTab : DashboardTab
                             Masking = true,
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
-                            Child = new DrawableBanner(user)
+                            Child = new LoadWrapper<DrawableBanner>
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                FillMode = FillMode.Fill
+                                LoadContent = () => new DrawableBanner(user)
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    FillMode = FillMode.Fill
+                                }
                             },
                             Action = () =>
                             {
