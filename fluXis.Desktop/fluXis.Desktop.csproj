@@ -2,7 +2,6 @@
   <PropertyGroup Label="Project">
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AssemblyName>fluXis</AssemblyName>
     <description>A free and open-source vertical scrolling rhythm game. </description>
     <ApplicationIcon>game.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -11,6 +10,7 @@
     <Authors>TeamFluXis</Authors>
     <LangVersion>11</LangVersion>
     <PackageId>fluXis.Desktop</PackageId>
+    <AssemblyName>fluXis</AssemblyName>
 <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup Label="Project References">
