@@ -13,6 +13,8 @@ public partial class LaneSwitchManager : CompositeComponent
     [Resolved]
     private ISkin skin { get; set; }
 
+    public bool Mirror { get; init; }
+
     public bool KeepTransforms { get; init; }
     public override bool RemoveCompletedTransforms => !KeepTransforms;
 
@@ -64,6 +66,9 @@ public partial class LaneSwitchManager : CompositeComponent
         foreach (var ls in events)
         {
             var widths = getWidths(ls).ToList();
+
+            if (Mirror)
+                widths.Reverse();
 
             using (BeginAbsoluteSequence(ls.Time))
             {
