@@ -10,6 +10,7 @@
     <FileVersion>0.0.0</FileVersion>
     <Authors>TeamFluXis</Authors>
     <LangVersion>11</LangVersion>
+    <PackageId>fluXis.Desktop</PackageId>
 <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup Label="Project References">
