@@ -16,7 +16,7 @@ public partial class TimingLineManager : CompositeDrawable
     [Resolved]
     private Playfield playfield { get; set; }
 
-    private HitObjectColumn column => playfield.Manager[0];
+    private HitObjectColumn column => playfield.HitManager[0];
 
     private Bindable<bool> showTimingLines;
 

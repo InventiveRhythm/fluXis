@@ -25,8 +25,14 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
     [JsonProperty("playfield")]
     public int PlayfieldIndex { get; set; }
 
+    [JsonProperty("subfield")]
+    public int PlayfieldSubIndex { get; set; }
+
     public void Apply(Drawable drawable)
     {
+        if (drawable is Playfield playfield && !this.AppliesTo(playfield))
+            return;
+
         // make sure this is set, just in case it's missing
         if (Alpha <= 0.0001f)
             drawable.AlwaysPresent = true;

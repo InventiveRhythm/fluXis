@@ -55,9 +55,7 @@ public partial class GameplayHUD : Container
                 RelativeSizeAxes = Axes.Both,
                 Content = new[]
                 {
-                    playfields = Enumerable.Range(0, playfieldManager.Count)
-                                           .Select(i => new PlayfieldHUD(playfieldManager.Playfields[i]))
-                                           .ToArray()
+                    playfields = playfieldManager.Players.Select(x => new PlayfieldHUD(x)).ToArray()
                 }
             }
         };
@@ -117,10 +115,10 @@ public partial class GameplayHUD : Container
                     if (component == null)
                         throw new Exception($"Failed to create instance of {type}.");
 
-                    var field = playfields[i].Playfield;
-                    component.JudgementProcessor = field.JudgementProcessor;
-                    component.ScoreProcessor = field.ScoreProcessor;
-                    component.HealthProcessor = field.HealthProcessor;
+                    var manager = playfields[i].Player;
+                    component.JudgementProcessor = manager.JudgementProcessor;
+                    component.ScoreProcessor = manager.ScoreProcessor;
+                    component.HealthProcessor = manager.HealthProcessor;
 
                     component.Settings = value;
                     LoadComponent(component);
@@ -141,11 +139,12 @@ public partial class GameplayHUD : Container
 
     private partial class PlayfieldHUD : Container
     {
-        public Playfield Playfield { get; }
+        public PlayfieldPlayer Player { get; }
+        public Playfield Playfield => Player.MainPlayfield;
 
-        public PlayfieldHUD(Playfield playfield)
+        public PlayfieldHUD(PlayfieldPlayer player)
         {
-            Playfield = playfield;
+            Player = player;
 
             AlwaysPresent = true;
             RelativeSizeAxes = Axes.Y;

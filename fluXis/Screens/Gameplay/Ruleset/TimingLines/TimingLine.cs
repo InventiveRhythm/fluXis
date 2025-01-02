@@ -11,7 +11,7 @@ public partial class TimingLine : Box
     [Resolved]
     private Playfield playfield { get; set; }
 
-    private HitObjectColumn column => playfield.Manager[0];
+    private HitObjectColumn column => playfield.HitManager[0];
 
     public double OriginalTime { get; }
     private double scrollVelocityTime;
@@ -30,7 +30,7 @@ public partial class TimingLine : Box
         Origin = Anchor.BottomLeft;
 
         scrollVelocityTime = column.ScrollVelocityPositionFromTime(OriginalTime);
-        easing = playfield.Manager.EasingAtTime(OriginalTime);
+        easing = playfield.HitManager.EasingAtTime(OriginalTime);
     }
 
     protected override void Update()

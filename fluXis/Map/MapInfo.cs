@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,6 +49,16 @@ public class MapInfo
 
     [JsonProperty("editor-time")]
     public long TimeInEditor { get; set; }
+
+    [JsonProperty("extra-playfields")]
+    public int ExtraPlayfields
+    {
+        get => extraPlayfields;
+        set => extraPlayfields = Math.Clamp(value, 0, 5);
+    }
+
+    [JsonIgnore]
+    private int extraPlayfields;
 
     [JsonIgnore]
     public bool IsDual => DualMode > DualMode.Disabled;

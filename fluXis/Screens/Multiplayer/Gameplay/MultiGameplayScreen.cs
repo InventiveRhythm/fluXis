@@ -20,7 +20,7 @@ public partial class MultiGameplayScreen : GameplayScreen
     protected override bool AllowRestart => false;
     public override bool SubmitScore => false;
 
-    private Playfield field => PlayfieldManager.Playfields[0];
+    private PlayfieldPlayer player => PlayfieldManager.FirstPlayer;
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -47,8 +47,8 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         base.LoadComplete();
 
-        field.HealthProcessor.CanFail = false;
-        field.JudgementProcessor.ResultAdded += sendScore;
+        player.HealthProcessor.CanFail = false;
+        player.JudgementProcessor.ResultAdded += sendScore;
 
         client.OnScore += onScoreUpdate;
         client.OnResultsReady += onOnResultsReady;
@@ -59,7 +59,7 @@ public partial class MultiGameplayScreen : GameplayScreen
     {
         base.Dispose(isDisposing);
 
-        field.JudgementProcessor.ResultAdded -= sendScore;
+        player.JudgementProcessor.ResultAdded -= sendScore;
 
         client.OnScore -= onScoreUpdate;
         client.OnResultsReady -= onOnResultsReady;
@@ -68,10 +68,10 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     protected override void End()
     {
-        client.Finish(field.ScoreProcessor.ToScoreInfo());
+        client.Finish(player.ScoreProcessor.ToScoreInfo());
     }
 
-    private void sendScore(HitResult _) => client.UpdateScore(field.ScoreProcessor.Score);
+    private void sendScore(HitResult _) => client.UpdateScore(player.ScoreProcessor.Score);
 
     private void onScoreUpdate(long user, int score)
     {

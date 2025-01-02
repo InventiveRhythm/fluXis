@@ -26,8 +26,14 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
     [JsonProperty("playfield")]
     public int PlayfieldIndex { get; set; }
 
+    [JsonProperty("subfield")]
+    public int PlayfieldSubIndex { get; set; }
+
     public void Apply(Playfield playfield)
     {
+        if (!this.AppliesTo(playfield))
+            return;
+
         var yScale = ScaleY;
 
         // invert if upscroll

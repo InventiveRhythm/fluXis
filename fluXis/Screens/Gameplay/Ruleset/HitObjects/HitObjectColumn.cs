@@ -24,6 +24,9 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     private Playfield playfield { get; set; }
 
     [Resolved]
+    private PlayfieldPlayer player { get; set; }
+
+    [Resolved]
     private GameplayScreen screen { get; set; }
 
     public Stack<HitObject> PastHitObjects { get; } = new();
@@ -53,7 +56,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     private static int[] snaps { get; } = { 48, 24, 16, 12, 8, 6, 4, 3 };
     private Dictionary<int, int> snapIndices { get; } = new();
 
-    private JudgementProcessor judgementProcessor => playfield.JudgementProcessor;
+    private JudgementProcessor judgementProcessor => player.JudgementProcessor;
     private DependencyContainer dependencies;
 
     public HitObjectColumn(MapInfo map, HitObjectManager hitManager, int lane)
@@ -197,10 +200,13 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
     private void revertHitObject(HitObject hit)
     {
-        if (hit.HoldEndResult is not null)
-            judgementProcessor.RevertResult(hit.HoldEndResult);
+        if (!playfield.IsSubPlayfield)
+        {
+            if (hit.HoldEndResult is not null)
+                judgementProcessor.RevertResult(hit.HoldEndResult);
 
-        judgementProcessor.RevertResult(hit.Result);
+            judgementProcessor.RevertResult(hit.Result);
+        }
 
         var draw = createHitObject(hit);
         HitObjects.Insert(0, draw);
@@ -233,13 +239,16 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
 
     private void hit(DrawableHitObject hitObject, double difference)
     {
+        if (playfield.IsSubPlayfield)
+            return;
+
         // since judged is only set after hitting the tail this works
         var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
 
         var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
         var judgement = hitWindows.JudgementFor(difference);
 
-        if (playfield.HealthProcessor.Failed)
+        if (player.HealthProcessor.Failed)
             return;
 
         var result = new HitResult(Time.Current, difference, judgement);

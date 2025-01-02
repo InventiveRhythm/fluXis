@@ -44,7 +44,7 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
         InternalChildrenEnumerable = scores.Take(10).Select(s => new LeaderboardEntry(this, s)).OrderDescending();
 
-        playfields.Playfields.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
+        playfields.Players.ForEach(p => AddInternal(new SelfLeaderboardEntry(this, p.ScoreProcessor)));
     }
 
     public void PerformSort() => SortInternal();
@@ -68,7 +68,7 @@ public partial class GameplayLeaderboard : Container<LeaderboardEntry>
 
     private void updateOpacity()
     {
-        var playfield = playfields.Playfields[0];
+        var playfield = playfields.FirstPlayer.MainPlayfield;
 
         // lowers the opacity of the list when the playfield gets close to it
         var alpha = visible.Value ? 1f : 0f;

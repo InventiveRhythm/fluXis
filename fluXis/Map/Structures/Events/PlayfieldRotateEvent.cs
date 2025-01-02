@@ -31,8 +31,14 @@ public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplic
     [JsonProperty("playfield")]
     public int PlayfieldIndex { get; set; }
 
+    [JsonProperty("subfield")]
+    public int PlayfieldSubIndex { get; set; }
+
     public void Apply(Playfield playfield)
     {
+        if (!this.AppliesTo(playfield))
+            return;
+
         using (playfield.BeginAbsoluteSequence(Time))
             playfield.RotateTo(Roll, Duration, Easing);
     }

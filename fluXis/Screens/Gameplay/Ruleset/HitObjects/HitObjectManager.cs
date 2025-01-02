@@ -73,21 +73,24 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     {
         base.LoadComplete();
 
-        input.OnPress += key =>
+        if (!playfield.IsSubPlayfield)
         {
-            var lane = input.Keys.IndexOf(key) + 1;
-            lane -= KeyCount * playfield.Index;
+            input.OnPress += key =>
+            {
+                var lane = input.Keys.IndexOf(key) + 1;
+                lane -= KeyCount * playfield.Index;
 
-            if (lane > KeyCount || lane <= 0)
-                return;
+                if (lane > KeyCount || lane <= 0)
+                    return;
 
-            var hit = this[lane - 1].NextUp;
+                var hit = this[lane - 1].NextUp;
 
-            if (hit == null)
-                return;
+                if (hit == null)
+                    return;
 
-            PlayHitSound(hit);
-        };
+                PlayHitSound(hit);
+            };
+        }
     }
 
     protected override void Update()

@@ -20,7 +20,7 @@ public partial class DangerHealthOverlay : Container
     [Resolved]
     private PlayfieldManager playfieldManager { get; set; }
 
-    private Playfield playfield => playfieldManager.Playfields[0];
+    private PlayfieldPlayer player => playfieldManager.FirstPlayer;
 
     private Bindable<bool> dimOnLowHealth;
 
@@ -66,7 +66,7 @@ public partial class DangerHealthOverlay : Container
     {
         base.LoadComplete();
 
-        playfield.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
+        player.HealthProcessor.Health.BindValueChanged(e => this.TransformTo(nameof(health), e.NewValue, 300, Easing.OutQuint), true);
         screen.OnExit += () =>
         {
             lowPass.CutoffTo(AudioFilter.MAX, FluXisScreen.MOVE_DURATION);
@@ -93,10 +93,10 @@ public partial class DangerHealthOverlay : Container
         base.Update();
 
         // on easy health, this effect can only be seen at the very end of the song
-        if (playfield.HealthProcessor is RequirementHeathProcessor || !playfield.HealthProcessor.CanFail)
+        if (player.HealthProcessor is RequirementHeathProcessor || !player.HealthProcessor.CanFail)
             return;
 
-        if (playfield.HealthProcessor.Failed || exited)
+        if (player.HealthProcessor.Failed || exited)
             return;
 
         if (health < threshold && dimOnLowHealth.Value)

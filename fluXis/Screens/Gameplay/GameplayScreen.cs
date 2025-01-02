@@ -74,7 +74,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override float BackgroundDim => backgroundDim?.Value ?? .4f;
     public override bool ShowToolbar => false;
     public override bool AllowMusicControl => false;
-    public override bool ShowCursor => PlayfieldManager.Playfields[0].HealthProcessor.Failed || IsPaused.Value || CursorVisible;
+    public override bool ShowCursor => PlayfieldManager.AnyFailed || IsPaused.Value || CursorVisible;
     public override bool ApplyValuesAfterLoad => true;
     public override bool AllowExit => false;
 
@@ -443,7 +443,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (failed)
             return;
 
-        PlayfieldManager.Playfields.ForEach(p => p.HealthProcessor.Kill());
+        PlayfieldManager.Players.ForEach(p => p.HealthProcessor.Kill());
         failed = true;
         failMenu.Show();
         GameplayClock.RateTo(Rate * .75f, 2000, Easing.OutQuart);
@@ -451,7 +451,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     protected virtual void End()
     {
-        var field = PlayfieldManager.Playfields[0];
+        var field = PlayfieldManager.FirstPlayer;
 
         // no fail was enabled, but the player never actually failed
         // so, we just remove the mod to make the score count normally
