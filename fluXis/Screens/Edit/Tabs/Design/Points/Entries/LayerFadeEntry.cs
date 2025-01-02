@@ -25,14 +25,7 @@ public partial class LayerFadeEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new LayerFadeEvent
-    {
-        Time = Object.Time,
-        Duration = fade.Duration,
-        Alpha = fade.Alpha,
-        Easing = fade.Easing,
-        Layer = fade.Layer
-    };
+    public override ITimedObject CreateClone() => fade.JsonCopy();
 
     protected override Drawable[] CreateValueContent() => new Drawable[]
     {

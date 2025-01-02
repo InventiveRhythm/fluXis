@@ -24,14 +24,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new PlayfieldMoveEvent
-    {
-        Time = Object.Time,
-        OffsetX = move.OffsetX,
-        OffsetY = move.OffsetY,
-        Duration = move.Duration,
-        Easing = move.Easing
-    };
+    public override ITimedObject CreateClone() => move.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {
@@ -39,7 +32,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.Duration}ms",
+                Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.Duration}ms P{move.PlayfieldIndex}S{move.PlayfieldSubIndex}",
                 Colour = Color
             }
         };
@@ -80,7 +73,35 @@ public partial class PlayfieldMoveEntry : PointListEntry
                     Map.Update(move);
                 }
             },
-            new PointSettingsEasing<PlayfieldMoveEvent>(Map, move)
+            new PointSettingsEasing<PlayfieldMoveEvent>(Map, move),
+            new PointSettingsSlider<int>
+            {
+                Text = "Player Index",
+                TooltipText = "The player to apply this to.",
+                CurrentValue = move.PlayfieldIndex,
+                Min = 0,
+                Max = Map.MapInfo.IsDual ? 2 : 0,
+                Step = 1,
+                OnValueChanged = value =>
+                {
+                    move.PlayfieldIndex = value;
+                    Map.Update(move);
+                }
+            },
+            new PointSettingsSlider<int>
+            {
+                Text = "Subfield Index",
+                TooltipText = "The subfield to apply this to.",
+                CurrentValue = move.PlayfieldSubIndex,
+                Min = 0,
+                Max = Map.MapInfo.ExtraPlayfields + 1,
+                Step = 1,
+                OnValueChanged = value =>
+                {
+                    move.PlayfieldSubIndex = value;
+                    Map.Update(move);
+                }
+            }
         });
     }
 }

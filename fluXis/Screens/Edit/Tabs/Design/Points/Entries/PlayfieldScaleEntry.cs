@@ -24,14 +24,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new PlayfieldScaleEvent
-    {
-        Time = Object.Time,
-        ScaleX = scale.ScaleX,
-        ScaleY = scale.ScaleY,
-        Duration = scale.Duration,
-        Easing = scale.Easing
-    };
+    public override ITimedObject CreateClone() => scale.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {
@@ -39,7 +32,7 @@ public partial class PlayfieldScaleEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{scale.ScaleX.ToStringInvariant("0.00")}x{scale.ScaleY.ToStringInvariant("0.00")} {(int)scale.Duration}ms",
+                Text = $"{scale.ScaleX.ToStringInvariant("0.00")}x{scale.ScaleY.ToStringInvariant("0.00")} {(int)scale.Duration}ms P{scale.PlayfieldIndex}S{scale.PlayfieldSubIndex}",
                 Colour = Color
             }
         };
@@ -80,7 +73,35 @@ public partial class PlayfieldScaleEntry : PointListEntry
                     Map.Update(scale);
                 }
             },
-            new PointSettingsEasing<PlayfieldScaleEvent>(Map, scale)
+            new PointSettingsEasing<PlayfieldScaleEvent>(Map, scale),
+            new PointSettingsSlider<int>
+            {
+                Text = "Player Index",
+                TooltipText = "The player to apply this to.",
+                CurrentValue = scale.PlayfieldIndex,
+                Min = 0,
+                Max = Map.MapInfo.IsDual ? 2 : 0,
+                Step = 1,
+                OnValueChanged = value =>
+                {
+                    scale.PlayfieldIndex = value;
+                    Map.Update(scale);
+                }
+            },
+            new PointSettingsSlider<int>
+            {
+                Text = "Subfield Index",
+                TooltipText = "The subfield to apply this to.",
+                CurrentValue = scale.PlayfieldSubIndex,
+                Min = 0,
+                Max = Map.MapInfo.ExtraPlayfields + 1,
+                Step = 1,
+                OnValueChanged = value =>
+                {
+                    scale.PlayfieldSubIndex = value;
+                    Map.Update(scale);
+                }
+            }
         });
     }
 }

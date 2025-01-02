@@ -39,9 +39,9 @@ public partial class ChartingPointsList : PointsList
         };
     }
 
-    protected override IEnumerable<AddButtonEntry> CreateAddEntries() => new AddButtonEntry[]
+    protected override IEnumerable<DropdownEntry> CreateDropdownEntries() => new DropdownEntry[]
     {
-        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint())),
-        new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()))
+        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint()), x => x is TimingPoint),
+        new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity)
     };
 }

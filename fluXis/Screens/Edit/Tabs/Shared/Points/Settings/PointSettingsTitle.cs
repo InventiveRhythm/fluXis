@@ -45,11 +45,10 @@ public partial class PointSettingsTitle : CompositeDrawable
 
     private partial class DeleteButton : PointsList.PointsListIconButton
     {
-        protected override IconUsage ButtonIcon => FontAwesome.Solid.Trash;
-
         public DeleteButton(Action action)
             : base(action)
         {
+            ButtonIcon = FontAwesome.Solid.Trash;
         }
 
         protected override void UpdateColors(bool hovered)

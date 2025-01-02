@@ -24,13 +24,7 @@ public partial class PlayfieldRotateEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new PlayfieldRotateEvent
-    {
-        Time = Object.Time,
-        Roll = rotate.Roll,
-        Duration = rotate.Duration,
-        Easing = rotate.Easing
-    };
+    public override ITimedObject CreateClone() => rotate.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {
@@ -38,7 +32,7 @@ public partial class PlayfieldRotateEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{(int)rotate.Roll}deg {(int)rotate.Duration}ms",
+                Text = $"{(int)rotate.Roll}deg {(int)rotate.Duration}ms P{rotate.PlayfieldIndex}S{rotate.PlayfieldSubIndex}",
                 Colour = Color
             }
         };
@@ -64,7 +58,35 @@ public partial class PlayfieldRotateEntry : PointListEntry
                     Map.Update(rotate);
                 }
             },
-            new PointSettingsEasing<PlayfieldRotateEvent>(Map, rotate)
+            new PointSettingsEasing<PlayfieldRotateEvent>(Map, rotate),
+            new PointSettingsSlider<int>
+            {
+                Text = "Player Index",
+                TooltipText = "The player to apply this to.",
+                CurrentValue = rotate.PlayfieldIndex,
+                Min = 0,
+                Max = Map.MapInfo.IsDual ? 2 : 0,
+                Step = 1,
+                OnValueChanged = value =>
+                {
+                    rotate.PlayfieldIndex = value;
+                    Map.Update(rotate);
+                }
+            },
+            new PointSettingsSlider<int>
+            {
+                Text = "Subfield Index",
+                TooltipText = "The subfield to apply this to.",
+                CurrentValue = rotate.PlayfieldSubIndex,
+                Min = 0,
+                Max = Map.MapInfo.ExtraPlayfields + 1,
+                Step = 1,
+                OnValueChanged = value =>
+                {
+                    rotate.PlayfieldSubIndex = value;
+                    Map.Update(rotate);
+                }
+            }
         });
     }
 }

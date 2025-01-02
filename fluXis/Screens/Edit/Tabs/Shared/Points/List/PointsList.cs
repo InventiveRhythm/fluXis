@@ -6,9 +6,11 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Events;
+using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -60,6 +62,9 @@ public abstract partial class PointsList : Container
         Origin = Anchor.Centre;
         Padding = new MarginPadding(20);
 
+        var entries = CreateDropdownEntries().ToList();
+        var bind = new Bindable<DropdownEntry>();
+
         InternalChild = new GridContainer
         {
             RelativeSizeAxes = Axes.Both,
@@ -76,20 +81,40 @@ public abstract partial class PointsList : Container
                     new Container
                     {
                         RelativeSizeAxes = Axes.X,
-                        Height = 32,
+                        AutoSizeAxes = Axes.Y,
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            new ForcedHeightText()
                             {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
+                                Anchor = Anchor.TopLeft,
+                                Origin = Anchor.TopLeft,
                                 WebFontSize = 20,
-                                Text = "Points"
+                                Text = "Points",
+                                Height = 32
                             },
-                            new AddButton(CreateAddEntries())
+                            new FillFlowContainer
                             {
-                                Anchor = Anchor.CentreRight,
-                                Origin = Anchor.CentreRight
+                                AutoSizeAxes = Axes.Both,
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight,
+                                Spacing = new Vector2(8),
+                                Children = new Drawable[]
+                                {
+                                    new DesignPointListDropdown
+                                    {
+                                        Current = bind,
+                                        Items = new DropdownEntry[]
+                                        {
+                                            new("All", FluXisColors.Text, () => { }, _ => true)
+                                        }.Concat(entries)
+                                    },
+                                    new AddButton(entries),
+                                    new PointsListIconButton(() =>
+                                    {
+                                        var i = currentEvent.Value;
+                                        if (i is not null) scroll.ScrollIntoView(i);
+                                    }) { ButtonIcon = FontAwesome6.Solid.MagnifyingGlass }
+                                }
                             }
                         }
                     }
@@ -134,6 +159,19 @@ public abstract partial class PointsList : Container
                         }
                     }
                 }
+            }
+        };
+
+        bind.ValueChanged += e =>
+        {
+            var func = e.NewValue.MatchFunc;
+
+            foreach (var entry in flow)
+            {
+                if (func(entry.Object))
+                    entry.Show();
+                else
+                    entry.Hide();
             }
         };
     }
@@ -195,23 +233,20 @@ public abstract partial class PointsList : Container
         else
             ActionStack.Add(new EventBulkCloneAction(objects));
 
-        ScheduleAfterChildren(() =>
+        ScheduleAfterChildren(() => objects.ForEach(o =>
         {
-            objects.ForEach(o =>
-            {
-                var entry = flow.FirstOrDefault(e => e.Object == o);
+            var entry = flow.FirstOrDefault(e => e.Object == o);
 
-                if (entry is null)
-                    return;
+            if (entry is null)
+                return;
 
-                entry.State = SelectedState.Selected;
-            });
-        });
+            entry.State = SelectedState.Selected;
+        }));
     }
 
     protected abstract void RegisterEvents();
     protected abstract PointListEntry CreateEntryFor(ITimedObject obj);
-    protected abstract IEnumerable<AddButtonEntry> CreateAddEntries();
+    protected abstract IEnumerable<DropdownEntry> CreateDropdownEntries();
 
     protected void Create(ITimedObject obj, bool overrideTime = true, bool openSettings = true)
     {
@@ -316,9 +351,9 @@ public abstract partial class PointsList : Container
 
     private partial class AddButton : PointsListIconButton, IHasPopover
     {
-        private IEnumerable<AddButtonEntry> entries { get; }
+        private IEnumerable<DropdownEntry> entries { get; }
 
-        public AddButton(IEnumerable<AddButtonEntry> entries)
+        public AddButton(IEnumerable<DropdownEntry> entries)
             : base(null)
         {
             this.entries = entries;
@@ -404,17 +439,19 @@ public abstract partial class PointsList : Container
         }
     }
 
-    protected class AddButtonEntry
+    public class DropdownEntry
     {
         public string Text { get; }
         public Colour4 Color { get; }
         public Action CreateAction { get; }
+        public Func<ITimedObject, bool> MatchFunc { get; }
 
-        public AddButtonEntry(string text, Colour4 color, Action create)
+        public DropdownEntry(string text, Colour4 color, Action create, Func<ITimedObject, bool> matchFunc)
         {
             Text = text;
             Color = color;
             CreateAction = create;
+            MatchFunc = matchFunc;
         }
     }
 
@@ -423,7 +460,7 @@ public abstract partial class PointsList : Container
         [Resolved]
         private UISamples samples { get; set; }
 
-        protected virtual IconUsage ButtonIcon => FontAwesome.Solid.Plus;
+        public IconUsage ButtonIcon { get; init; } = FontAwesome.Solid.Plus;
         protected Action Action { get; init; }
 
         protected Box Background { get; private set; }
