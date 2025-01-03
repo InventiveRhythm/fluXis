@@ -160,6 +160,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             CurrentLanguage.BindValueChanged(val => frameworkLocale.Value = val.NewValue.ToCultureCode());
 
             Resources.AddExtension("json");
+            Resources.AddExtension("ogg");
             Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
             initFonts();
 
