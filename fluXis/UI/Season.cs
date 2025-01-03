@@ -5,5 +5,6 @@ public enum Season
     Normal,
     Summer,
     Halloween,
-    Winter
+    Winter,
+    Christmas,
 }

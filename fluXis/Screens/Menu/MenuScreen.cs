@@ -91,7 +91,7 @@ public partial class MenuScreen : FluXisScreen
     private MenuVisualizer visualizer;
     private ParallaxContainer snowContainer;
 
-    private bool shouldSnow => Game.CurrentSeason == Season.Winter || forceSnow.Value;
+    private bool shouldSnow => Game.CurrentSeason is Season.Winter or Season.Christmas || forceSnow.Value;
 
     private Bindable<bool> forceSnow;
 
@@ -502,7 +502,7 @@ public partial class MenuScreen : FluXisScreen
             maps.CurrentMap = maps.CreateBuiltinMap(Game.CurrentSeason switch
             {
                 Season.Halloween => MapStore.BuiltinMap.Spoophouse,
-                Season.Winter => MapStore.BuiltinMap.Christmashouse,
+                Season.Christmas => MapStore.BuiltinMap.Christmashouse,
                 _ => MapStore.BuiltinMap.Roundhouse
             }).LowestDifficulty;
             clock.Seek(0);
