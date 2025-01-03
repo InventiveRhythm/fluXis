@@ -14,9 +14,15 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
 
     protected override void InitialiseDefaults()
     {
+#if CLOSED_TESTING
+        SetDefault(ExperimentConfig.DesignTab, true);
+        SetDefault(ExperimentConfig.StoryboardTab, true);
+        SetDefault(ExperimentConfig.Seeking, true);
+#else
         SetDefault(ExperimentConfig.DesignTab, false);
         SetDefault(ExperimentConfig.StoryboardTab, false);
         SetDefault(ExperimentConfig.Seeking, false);
+#endif
     }
 }
 
