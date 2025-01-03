@@ -45,6 +45,7 @@ using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Screens.Gameplay.UI;
 using fluXis.Screens.Gameplay.UI.Menus;
+using fluXis.Screens.Intro;
 using fluXis.Screens.Result;
 using fluXis.Skinning.Default;
 using fluXis.Storyboards;
@@ -596,7 +597,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         IsPaused.BindValueChanged(_ => UpdatePausedState(), true);
 
-        this.ScaleTo(1.2f).FadeOut();
+        if (e.Last is not IntroAnimation)
+            this.ScaleTo(1.2f).FadeOut();
 
         using (BeginDelayedSequence(ENTER_DELAY))
             this.ScaleTo(1f, MOVE_DURATION, Easing.OutQuint).FadeIn(FADE_DURATION);

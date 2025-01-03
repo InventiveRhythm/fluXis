@@ -8,6 +8,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Logging;
 using osu.Framework.Timing;
 
@@ -25,7 +26,7 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
     public IClock Source => underlying.Source;
 
     private MapInfo mapInfo { get; }
-    private Track track;
+    public DrawableTrack Track { get; private set; }
 
     private FramedMapClock underlying { get; }
     private Bindable<float> offset;
@@ -89,10 +90,12 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     public void ChangeSource(IClock source)
     {
-        track?.Dispose();
-        track = source as Track;
-        track?.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
+        Track?.Expire();
+        Track = new DrawableTrack(source as Track);
+        Track?.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
+
+        AddInternal(Track);
     }
 
     protected override void Update()
@@ -106,7 +109,7 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
     {
         base.Dispose(isDisposing);
 
-        track?.Dispose();
+        Track?.Dispose();
     }
 
     #region Timing Stuff

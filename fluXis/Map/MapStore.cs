@@ -225,6 +225,9 @@ public partial class MapStore : Component
     public RealmMapSet GetFromGuid(string guid) => GetFromGuid(Guid.Parse(guid));
 
     [CanBeNull]
+    public RealmMap GetMapFromGuid(string guid) => GetMapFromGuid(Guid.Parse(guid));
+
+    [CanBeNull]
     public RealmMap GetMapFromGuid(Guid guid)
         => MapSets.FirstOrDefault(set => set.Maps.Any(m => m.ID == guid))?
             .Maps.FirstOrDefault(m => m.ID == guid);

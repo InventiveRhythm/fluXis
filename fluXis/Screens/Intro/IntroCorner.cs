@@ -47,9 +47,9 @@ public partial class IntroCorner : Container
 
     public void Show(int delay, int duration)
     {
-        this.Delay(delay).FadeIn();
-        vertical.Delay(delay).ResizeHeightTo(60, duration * 2, Easing.OutElastic);
-        horizontal.Delay(delay).ResizeWidthTo(60, duration * 2, Easing.OutElastic);
+        this.ResizeTo(300).Delay(delay).FadeIn();
+        vertical.ResizeTo(15).Delay(delay).ResizeHeightTo(60, duration * 2, Easing.OutElastic);
+        horizontal.ResizeTo(15).Delay(delay).ResizeWidthTo(60, duration * 2, Easing.OutElastic);
     }
 
     public void Hide(int duration)
