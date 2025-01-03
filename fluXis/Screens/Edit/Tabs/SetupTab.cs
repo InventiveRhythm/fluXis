@@ -149,6 +149,12 @@ public partial class SetupTab : EditorTab
                                                                 map.MapInfo.NewLaneSwitchLayout = value;
                                                                 map.MapEvents.LaneSwitchEvents.ForEach(map.Update);
                                                             }
+                                                        },
+                                                        new SetupSlider<int>("Extra Playfields", 0, 5, 1)
+                                                        {
+                                                            Default = map.MapInfo.ExtraPlayfields,
+                                                            Format = "0",
+                                                            OnChange = value => map.MapInfo.ExtraPlayfields = value
                                                         }
                                                     }
                                                 }
@@ -225,12 +231,12 @@ public partial class SetupTab : EditorTab
                                                 {
                                                     Entries = new Drawable[]
                                                     {
-                                                        new SetupSlider("Accuracy")
+                                                        new SetupSlider<float>("Accuracy", 1, 10, 0.1f)
                                                         {
                                                             Default = map.MapInfo.AccuracyDifficulty,
                                                             OnChange = value => map.MapInfo.AccuracyDifficulty = map.RealmMap.AccuracyDifficulty = value
                                                         },
-                                                        new SetupSlider("Health")
+                                                        new SetupSlider<float>("Health", 1, 10, 0.1f)
                                                         {
                                                             Default = map.MapInfo.HealthDifficulty,
                                                             OnChange = value => map.MapInfo.HealthDifficulty = map.RealmMap.HealthDifficulty = value

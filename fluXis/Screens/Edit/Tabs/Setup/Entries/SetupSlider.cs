@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Utils;
@@ -7,17 +8,27 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Setup.Entries;
 
-public partial class SetupSlider : SetupEntry
+public partial class SetupSlider<T> : SetupEntry
+    where T : struct, INumber<T>, IMinMaxValue<T>
 {
-    public float Default { get; init; } = 8;
-    public Action<float> OnChange { get; init; } = _ => { };
+    public T Default { get; init; }
+    public string Format { get; init; } = "0.0";
 
-    private Bindable<float> bindable;
+    public T MinValue { get; init; }
+    public T MaxValue { get; init; }
+    public T Precision { get; init; }
+
+    public Action<T> OnChange { get; init; } = _ => { };
+
+    private Bindable<T> bindable;
     private FluXisSpriteText valueText;
 
-    public SetupSlider(string title)
+    public SetupSlider(string title, T minValue, T maxValue, T precision)
         : base(title)
     {
+        MinValue = minValue;
+        MaxValue = maxValue;
+        Precision = precision;
     }
 
     protected override void LoadComplete()
@@ -27,17 +38,19 @@ public partial class SetupSlider : SetupEntry
         bindable.BindValueChanged(onChange);
     }
 
-    private void onChange(ValueChangedEvent<float> e)
+    private void onChange(ValueChangedEvent<T> e)
     {
-        valueText.Text = e.NewValue.ToStringInvariant("0.0");
-        OnChange.Invoke((float)Math.Round(e.NewValue, 1));
+        var num = Convert.ToDouble(e.NewValue);
+
+        valueText.Text = num.ToStringInvariant(Format);
+        OnChange.Invoke(e.NewValue);
     }
 
     protected override Drawable CreateRightTitle()
     {
         return valueText = new FluXisSpriteText
         {
-            Text = $"{Default.ToStringInvariant("0.0")}",
+            Text = $"{Convert.ToDouble(Default).ToStringInvariant(Format)}",
             WebFontSize = 16,
             Alpha = .8f
         };
@@ -45,14 +58,14 @@ public partial class SetupSlider : SetupEntry
 
     protected override Drawable CreateContent()
     {
-        bindable = new BindableFloat(Default)
+        bindable = new BindableNumber<T>(Default)
         {
-            MinValue = 1,
-            Precision = 0.1f,
-            MaxValue = 10
+            MinValue = MinValue,
+            Precision = Precision,
+            MaxValue = MaxValue
         };
 
-        return new FluXisSlider<float>
+        return new FluXisSlider<T>
         {
             RelativeSizeAxes = Axes.X,
             Height = 15,
