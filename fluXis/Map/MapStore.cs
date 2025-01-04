@@ -643,7 +643,7 @@ public partial class MapStore : Component
             HealthDifficulty = map.HealthDifficulty
         };
 
-        string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(map.FileName));
+        string path = MapFiles.GetFullPath(map.MapSet.GetPathForFile(realmMap.FileName));
         File.WriteAllText(path, info.Serialize());
         return addDifficultyToSet(set, realmMap);
     }
