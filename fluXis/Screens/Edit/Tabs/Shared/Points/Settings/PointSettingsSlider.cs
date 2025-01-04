@@ -31,6 +31,7 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
     public Bindable<T> Bindable { get; set; }
 
     public Bindable<bool> Enabled { get; init; } = new(true);
+    public bool HideWhenDisabled { get; init; } = false;
 
     private FluXisSpriteText valText;
 
@@ -83,7 +84,8 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
 
         Bindable.BindValueChanged(valueChanged);
 
-        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : .4f, 200), true);
+        Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
+        FinishTransforms();
     }
 
     protected override void Dispose(bool isDisposing)
