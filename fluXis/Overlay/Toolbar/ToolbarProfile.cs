@@ -7,6 +7,7 @@ using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables;
@@ -22,6 +23,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
@@ -29,7 +31,7 @@ using osuTK.Input;
 
 namespace fluXis.Overlay.Toolbar;
 
-public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
+public partial class ToolbarProfile : VisibilityContainer, IHasTooltip, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public LocalisableString TooltipText => loadingContainer.Alpha > 0 ? "Connecting..." : "";
 
@@ -234,4 +236,21 @@ public partial class ToolbarProfile : VisibilityContainer, IHasTooltip
         container.ResizeHeightTo(70, 400, Easing.OutQuint);
         arrow.FadeOut(200).MoveToY(40, 400, Easing.OutQuint);
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        if (e.Repeat)
+            return false;
+
+        switch (e.Action)
+        {
+            case FluXisGlobalKeybind.ToggleProfile:
+                TriggerClick();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }

@@ -43,8 +43,12 @@ public partial class GlobalKeybindContainer : RealmKeyBindingContainer<FluXisGlo
         new KeyBinding(InputKey.F7, FluXisGlobalKeybind.MusicNext),
         new KeyBinding(InputKey.F8, FluXisGlobalKeybind.ToggleMusicPlayer),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.T), FluXisGlobalKeybind.ToggleToolbar),
+        new KeyBinding(new KeyCombination(InputKey.Control, InputKey.P), FluXisGlobalKeybind.ToggleProfile),
+        new KeyBinding(InputKey.F9, FluXisGlobalKeybind.ToggleChat),
+
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.Minus), FluXisGlobalKeybind.DecreaseRate),
         new KeyBinding(new KeyCombination(InputKey.Control, InputKey.Plus), FluXisGlobalKeybind.IncreaseRate),
+
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Down), FluXisGlobalKeybind.VolumeDecrease),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Up), FluXisGlobalKeybind.VolumeIncrease),
         new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Left), FluXisGlobalKeybind.VolumePreviousCategory),
@@ -95,6 +99,8 @@ public enum FluXisGlobalKeybind
     MusicNext,
     ToggleMusicPlayer,
     ToggleToolbar,
+    ToggleProfile,
+    ToggleChat,
 
     // SongSelect Keybinds
     DecreaseRate,

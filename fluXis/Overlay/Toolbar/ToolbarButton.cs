@@ -127,7 +127,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
-        if (e.Action != Keybind) return false;
+        if (e.Action != Keybind || e.Repeat) return false;
 
         TriggerClick();
         return true;

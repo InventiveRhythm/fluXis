@@ -170,6 +170,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipSub = "Talk to other players.",
                                 Icon = FontAwesome6.Solid.Message,
                                 Overlay = chat,
+                                Keybind = FluXisGlobalKeybind.ToggleChat,
                                 RequireLogin = true
                             },
                             new ToolbarOverlayButton
