@@ -15,7 +15,6 @@ namespace fluXis.Screens;
 public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override float Zoom => 2f;
-    public override bool ShowToolbar => false;
     public override float BackgroundDim => .7f;
     public override float BackgroundBlur => .4f;
 
@@ -61,16 +60,21 @@ public partial class WorkInProgressScreen : FluXisScreen, IKeyBindingHandler<Flu
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
-        this.FadeInFromZero(200);
-        flowContainer.ScaleTo(.8f).ScaleTo(1, 1000, Easing.OutElastic);
-        lowPass.CutoffTo(AudioFilter.MIN, 200);
+        this.FadeOut();
+
+        using (BeginDelayedSequence(ENTER_DELAY))
+        {
+            this.FadeInFromZero(FADE_DURATION);
+            flowContainer.ScaleTo(1.4f).ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
+            lowPass.CutoffTo(AudioFilter.MIN, FADE_DURATION);
+        }
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        this.FadeOutFromOne(400);
-        flowContainer.ScaleTo(.8f, 600);
-        lowPass.CutoffTo(AudioFilter.MAX, 200);
+        this.FadeOutFromOne(FADE_DURATION);
+        flowContainer.ScaleTo(.8f, MOVE_DURATION, Easing.OutQuint);
+        lowPass.CutoffTo(AudioFilter.MAX, FADE_DURATION);
 
         return base.OnExiting(e);
     }
