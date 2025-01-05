@@ -3,7 +3,6 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
-using fluXis.Screens.Edit.Tabs.Charting.Points.Entries;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
