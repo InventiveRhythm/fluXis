@@ -1,4 +1,3 @@
-using System;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Events;
@@ -17,13 +16,12 @@ public partial class LaneSwitchAlert : Container
     private FluXisConfig config { get; set; }
 
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     [Resolved]
     private Playfield playfield { get; set; }
 
-    [Resolved]
-    private LaneSwitchManager laneSwitchManager { get; set; }
+    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
 
     private LaneSwitchEvent currentEvent;
 
@@ -79,7 +77,6 @@ public partial class LaneSwitchAlert : Container
     protected override void Update()
     {
         if (playfield.Clock is not GameplayClock clock) return;
-        if (screen.IsPaused.Value) return;
 
         if (!config.Get<bool>(FluXisSetting.LaneSwitchAlerts)) return;
 
@@ -90,9 +87,7 @@ public partial class LaneSwitchAlert : Container
             var time = clock.BeatTime;
             var fadeTime = time / 2;
 
-            if (Math.Abs(clock.Rate - screen.Rate) >= .1f) return;
-
-            var nextEvent = screen.MapEvents.LaneSwitchEvents.Find(e => e.Time > clock.CurrentTime);
+            var nextEvent = ruleset.MapEvents.LaneSwitchEvents.Find(e => e.Time > clock.CurrentTime);
 
             if (nextEvent == null || nextEvent.Time - clock.CurrentTime > time)
                 return;

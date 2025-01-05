@@ -237,7 +237,7 @@ public class FluXisImport : MapImporter
                     FileName = filename
                 };
 
-                mapInfo.Map = map;
+                mapInfo.RealmEntry = map;
 
                 if (string.IsNullOrEmpty(map.Metadata.ColorHex))
                 {

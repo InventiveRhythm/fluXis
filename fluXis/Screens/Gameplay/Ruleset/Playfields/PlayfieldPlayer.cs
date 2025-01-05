@@ -2,6 +2,7 @@
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,11 +11,12 @@ namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 
 public partial class PlayfieldPlayer : CompositeDrawable
 {
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private GameplaySamples samples { get; set; }
 
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     public Playfield MainPlayfield { get; }
     public Playfield[] SubPlayfields { get; }
@@ -40,14 +42,13 @@ public partial class PlayfieldPlayer : CompositeDrawable
 
         JudgementProcessor.AddDependants(new JudgementDependant[]
         {
-            HealthProcessor = screen.CreateHealthProcessor(),
+            HealthProcessor = ruleset.CreateHealthProcessor(),
             ScoreProcessor = new ScoreProcessor
             {
-                Player = screen.CurrentPlayer ?? APIUser.Default,
-                HitWindows = screen.HitWindows,
-                Map = screen.RealmMap,
-                MapInfo = screen.Map,
-                Mods = screen.Mods
+                Player = /*screen.CurrentPlayer ?? */APIUser.Default,
+                HitWindows = ruleset.HitWindows,
+                MapInfo = ruleset.MapInfo,
+                Mods = ruleset.Mods
             }
         });
 
@@ -59,8 +60,14 @@ public partial class PlayfieldPlayer : CompositeDrawable
     {
         base.LoadComplete();
 
-        JudgementProcessor.ApplyMap(screen.Map);
-        ScoreProcessor.OnComboBreak += samples.Miss;
+        JudgementProcessor.ApplyMap(ruleset.MapInfo);
+        ScoreProcessor.OnComboBreak += () =>
+        {
+            if (ruleset.CatchingUp)
+                return;
+
+            samples?.Miss();
+        };
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

@@ -35,7 +35,7 @@ public partial class TimingLineManager : CompositeDrawable
     private void load(FluXisConfig config)
     {
         showTimingLines = config.GetBindable<bool>(FluXisSetting.TimingLines);
-        createLines(playfield.Map);
+        createLines(playfield.MapInfo);
     }
 
     protected override void LoadComplete()

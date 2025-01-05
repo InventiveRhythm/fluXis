@@ -29,7 +29,8 @@ public partial class AccuracyDisplay : GameplayHUDComponent
                 drawableScoreRank = new DrawableScoreRank
                 {
                     Size = new Vector2(32),
-                    FontSize = 32
+                    FontSize = 32,
+                    Rainbow = true
                 },
                 accuracyText = new FluXisSpriteText
                 {

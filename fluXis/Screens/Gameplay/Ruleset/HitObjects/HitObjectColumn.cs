@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -27,7 +28,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     private PlayfieldPlayer player { get; set; }
 
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     public Stack<HitObject> PastHitObjects { get; } = new();
     public List<HitObject> FutureHitObjects { get; } = new();
@@ -117,7 +118,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         foreach (var hitObject in HitObjects.Where(h => h.CanBeRemoved).ToList())
             removeHitObject(hitObject);
 
-        while (screen.AllowReverting && PastHitObjects.Count > 0)
+        while (ruleset.AllowReverting && PastHitObjects.Count > 0)
         {
             var result = PastHitObjects.Peek().Result;
 
@@ -223,7 +224,9 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
     private void removeHitObject(DrawableHitObject hitObject, bool addToFuture = false)
     {
         if (!addToFuture)
+        {
             hitObject.OnKill();
+        }
 
         hitObject.OnHit -= hit;
 
@@ -233,6 +236,9 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
             FutureHitObjects.Insert(0, hitObject.Data);
         else
             PastHitObjects.Push(hitObject.Data);
+
+        if (hitObject.Data.Result is null && !addToFuture)
+            Logger.Log($"{hitObject.Data.Time}");
 
         RemoveInternal(hitObject, true);
     }
@@ -245,7 +251,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         // since judged is only set after hitting the tail this works
         var isHoldEnd = hitObject is DrawableLongNote { Judged: true };
 
-        var hitWindows = isHoldEnd ? screen.ReleaseWindows : screen.HitWindows;
+        var hitWindows = isHoldEnd ? ruleset.ReleaseWindows : ruleset.HitWindows;
         var judgement = hitWindows.JudgementFor(difference);
 
         if (player.HealthProcessor.Failed)

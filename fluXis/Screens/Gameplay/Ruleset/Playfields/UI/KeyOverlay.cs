@@ -14,7 +14,7 @@ namespace fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
 public partial class KeyOverlay : Container
 {
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     [Resolved]
     private Playfield playfield { get; set; }
@@ -23,20 +23,17 @@ public partial class KeyOverlay : Container
     private FluXisRealm realm { get; set; }
 
     [Resolved]
-    private LaneSwitchManager laneSwitchManager { get; set; }
-
-    [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
     public List<FluXisGameplayKeybind> Keybinds
     {
         get
         {
-            var binds = screen.Input.Keys;
+            var binds = ruleset.Input.Keys;
 
-            if (screen.Input.Dual)
+            if (ruleset.Input.Dual)
             {
-                var half = screen.Input.Keys.Count / 2;
+                var half = ruleset.Input.Keys.Count / 2;
                 var start = half * playfield.Index;
                 return binds.GetRange(start, half);
             }
@@ -44,6 +41,8 @@ public partial class KeyOverlay : Container
             return binds;
         }
     }
+
+    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
 
     private FillFlowContainer flow;
     private int keyCount;

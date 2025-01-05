@@ -29,16 +29,18 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     private EditorClock clock { get; set; }
 
     [Resolved]
+    private Hitsounding hitsounding { get; set; }
+
+    [Resolved]
     private FluXisConfig config { get; set; }
 
     public event Action<string> HitSoundPlayed;
 
-    public EditorHitObjectContainer HitObjectContainer { get; private set; } = new();
+    public EditorHitObjectContainer HitObjectContainer { get; } = new();
     public EditorEffectContainer Effects { get; private set; }
     private WaveformGraph waveform;
 
     private Sample hitSound;
-    private Hitsounding hitsounding;
 
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
@@ -51,11 +53,6 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
         InternalChildren = new Drawable[]
         {
-            hitsounding = new Hitsounding(map.RealmMap.MapSet, map.MapInfo.HitSoundFades, clock.RateBindable)
-            {
-                DirectVolume = true,
-                Clock = clock
-            },
             new Stage(),
             waveform = new WaveformGraph
             {
@@ -110,6 +107,10 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         }
 
         var channel = hitsounding.GetSample(sound);
+
+        if (channel is null)
+            return;
+
         channel.Play();
         HitSoundPlayed?.Invoke(channel.SampleName);
     }

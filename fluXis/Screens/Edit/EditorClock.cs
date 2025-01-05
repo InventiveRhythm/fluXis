@@ -23,8 +23,8 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
     public MapInfo MapInfo { get; set; }
     public BindableInt SnapDivisor { get; init; }
 
-    public double ElapsedFrameTime => underlying.ElapsedFrameTime;
-    public double FramesPerSecond => underlying.FramesPerSecond;
+    public override double ElapsedFrameTime => underlying.ElapsedFrameTime;
+    public override double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => underlying.TimeInfo;
     public override double CurrentTime => underlying.CurrentTime;
     public IClock Source => underlying.Source;
@@ -169,7 +169,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
 
     public override void ResetSpeedAdjustments() => underlying.ResetSpeedAdjustments();
 
-    public void ProcessFrame() { }
+    public override void ProcessFrame() { }
 
     public void ChangeSource(IClock source)
     {

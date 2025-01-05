@@ -33,7 +33,6 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.Notifications;
 using fluXis.Replays;
 using fluXis.Scoring;
-using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.Audio;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.HUD;
@@ -82,7 +81,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected virtual double GameplayStartTime => 0;
     protected virtual bool InstantlyExitOnPause => false;
     protected virtual bool AllowRestart => true;
-    public virtual bool AllowReverting => false;
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
@@ -128,10 +126,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public GameplayClock GameplayClock { get; private set; }
     public Action<double, double> OnSeek { get; set; }
 
-    public GameplayInput Input { get; private set; }
-    public HitWindows HitWindows { get; private set; }
-    public ReleaseWindows ReleaseWindows { get; private set; }
-
     public Action OnRestart { get; set; }
     private ReplayRecorder replayRecorder;
 
@@ -148,9 +142,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private GlobalBackground background;
     private BackgroundVideo backgroundVideo;
     private GameplayClockContainer clockContainer;
-    public PlayfieldManager PlayfieldManager { get; private set; }
     private Container hud { get; set; }
     private ScoreSubmissionOverlay scoreSubmissionOverlay;
+
+    public RulesetContainer RulesetContainer { get; private set; }
+    public PlayfieldManager PlayfieldManager { get; private set; }
 
     private FailMenu failMenu;
     private FullComboOverlay fcOverlay;
@@ -202,38 +198,36 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             return;
         }
 
-        MapEvents = Map.GetMapEvents(Mods);
         Map.Sort();
+        MapEvents = Map.GetMapEvents(Mods);
         getKeyCountFromEvents();
 
         dependencies.CacheAs(Samples);
         dependencies.CacheAs<ICustomColorProvider>(Map.Colors);
-
-        var difficulty = Math.Clamp(Map.AccuracyDifficulty == 0 ? 8 : Map.AccuracyDifficulty, 1, 10);
-        difficulty *= Mods.Any(m => m is HardMod) ? 1.5f : 1;
-
-        HitWindows = new HitWindows(difficulty, Rate);
-        ReleaseWindows = new ReleaseWindows(difficulty, Rate);
-
-        dependencies.CacheAs(Input = GetInput());
 
         var shaders = buildShaders();
         var transforms = shaders.TransformHandlers.ToList();
 
         clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
         {
-            dependencies.CacheAsAndReturn(new LaneSwitchManager(MapEvents.LaneSwitchEvents, RealmMap.KeyCount, Map.NewLaneSwitchLayout) { Mirror = Mods.Any(m => m is MirrorMod) }),
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
-            dependencies.CacheAsAndReturn(PlayfieldManager = new PlayfieldManager(Map.DualMode)),
+            RulesetContainer = CreateRuleset(),
             replayRecorder = new ReplayRecorder()
         }.Concat(transforms), UseGlobalOffset);
 
-        var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
+        RulesetContainer.ParentClock = clockContainer.GameplayClock;
+        RulesetContainer.IsPaused.BindTo(IsPaused);
+        RulesetContainer.ShakeTarget = this;
+        RulesetContainer.OnDeath += OnDeath;
+
+        dependencies.Cache(RulesetContainer.LaneSwitchManager);
+        dependencies.Cache(PlayfieldManager = RulesetContainer.PlayfieldManager);
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);
         dependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
-
         LoadComponent(GameplayClock);
+
+        var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
         LoadComponent(storyboard);
 
         InternalChildren = new Drawable[]
@@ -244,9 +238,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
-                    Input,
                     Samples,
-                    Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock },
+                    dependencies.CacheAsAndReturn(Hitsounding = new Hitsounding(RealmMap.MapSet, Map.HitSoundFades, GameplayClock.RateBindable) { Clock = GameplayClock }),
                     shaders.AddContent(new[]
                     {
                         new DrawSizePreservingFillContainer
@@ -285,7 +278,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                             RelativeSizeAxes = Axes.Both,
                             Children = new Drawable[]
                             {
-                                new GameplayHUD(),
+                                new GameplayHUD(RulesetContainer),
                                 new ModsDisplay()
                             }
                         },
@@ -299,7 +292,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     failMenu = new FailMenu(),
                     fcOverlay = new FullComboOverlay(),
                     quickActionOverlay = new QuickActionOverlay(),
-                    new GameplayTouchInput(),
+                    new GameplayTouchInput(RulesetContainer.Input),
                     new PauseMenu()
                 },
             },
@@ -311,8 +304,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         backgroundVideo.LoadVideo();
 
-        Input.OnPress += replayRecorder.PressKey;
-        Input.OnRelease += replayRecorder.ReleaseKey;
+        RulesetContainer.Input.OnPress += replayRecorder.PressKey;
+        RulesetContainer.Input.OnRelease += replayRecorder.ReleaseKey;
     }
 
     private ShaderStackContainer buildShaders()
@@ -386,30 +379,10 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         AllowOverlays.Value = IsPaused.Value;
     }
 
+    protected virtual RulesetContainer CreateRuleset() => new(Map, MapEvents, Mods);
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
-    protected virtual GameplayInput GetInput() => new(this, RealmMap.KeyCount, Map.IsDual);
     protected virtual Drawable CreateTextOverlay() => Empty();
     protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(this, RealmMap);
-
-    public HealthProcessor CreateHealthProcessor()
-    {
-        var processor = null as HealthProcessor;
-
-        var difficulty = Math.Clamp(Map.HealthDifficulty == 0 ? 8 : Map.HealthDifficulty, 1, 10);
-        difficulty *= Mods.Any(m => m is HardMod) ? 1.2f : 1f;
-
-        if (Mods.Any(m => m is HardMod)) processor = new DrainHealthProcessor(difficulty);
-        else if (Mods.Any(m => m is EasyMod)) processor = new RequirementHeathProcessor(difficulty) { HealthRequirement = EasyMod.HEALTH_REQUIREMENT };
-
-        processor ??= new HealthProcessor(difficulty);
-        processor.Screen = this;
-        processor.OnFail = OnDeath;
-
-        foreach (var mod in Mods.OfType<IApplicableToHealthProcessor>())
-            mod.Apply(processor);
-
-        return processor;
-    }
 
     protected override void Update()
     {
@@ -426,8 +399,8 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         hudVisible = hudVisibility.Value switch
         {
             HudVisibility.Hidden => false,
-            HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak,
-            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak,
+            HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak.Value,
+            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak.Value,
             _ => true
         };
 

@@ -92,7 +92,7 @@ public class MapInfo
 
     [CanBeNull]
     [JsonIgnore]
-    public RealmMap Map { get; set; }
+    public RealmMap RealmEntry { get; set; }
 
     [JsonIgnore]
     public string Hash { get; set; }
@@ -203,10 +203,10 @@ public class MapInfo
     {
         var events = new T();
 
-        if (Map == null)
+        if (RealmEntry == null)
             return events;
 
-        var effectFile = Map.MapSet.GetPathForFile(EffectFile);
+        var effectFile = RealmEntry.MapSet.GetPathForFile(EffectFile);
 
         if (string.IsNullOrEmpty(effectFile))
             return events;
@@ -222,7 +222,7 @@ public class MapInfo
     [CanBeNull]
     public virtual Storyboard GetStoryboard()
     {
-        var file = Map?.MapSet.GetPathForFile(StoryboardFile);
+        var file = RealmEntry?.MapSet.GetPathForFile(StoryboardFile);
 
         if (string.IsNullOrEmpty(file))
             return null;
@@ -245,7 +245,7 @@ public class MapInfo
         if (sb == null)
             return null;
 
-        var folderName = Map?.MapSet.ID.ToString();
+        var folderName = RealmEntry?.MapSet.ID.ToString();
 
         if (string.IsNullOrEmpty(folderName))
             return null;
@@ -255,12 +255,12 @@ public class MapInfo
         if (!Directory.Exists(path))
             return null;
 
-        return new DrawableStoryboard(sb, MapFiles.GetFullPath(Map!.MapSet.ID.ToString()));
+        return new DrawableStoryboard(sb, MapFiles.GetFullPath(RealmEntry!.MapSet.ID.ToString()));
     }
 
     public virtual Stream GetVideoStream()
     {
-        var file = Map?.MapSet.GetPathForFile(VideoFile);
+        var file = RealmEntry?.MapSet.GetPathForFile(VideoFile);
 
         if (string.IsNullOrEmpty(file))
             return null;

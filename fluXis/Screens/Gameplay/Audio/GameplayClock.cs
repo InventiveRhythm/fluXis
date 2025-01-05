@@ -21,8 +21,8 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     public override double CurrentTime => underlying.CurrentTime - Offset;
     public override bool IsRunning => underlying.IsRunning;
-    public double ElapsedFrameTime => underlying.ElapsedFrameTime;
-    public double FramesPerSecond => underlying.FramesPerSecond;
+    public override double ElapsedFrameTime => underlying.ElapsedFrameTime;
+    public override double FramesPerSecond => underlying.FramesPerSecond;
     public IClock Source => underlying.Source;
 
     private MapInfo mapInfo { get; }
@@ -86,7 +86,7 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
         return underlying.Seek(position);
     }
 
-    public void ProcessFrame() { }
+    public override void ProcessFrame() { }
 
     public void ChangeSource(IClock source)
     {

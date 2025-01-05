@@ -19,7 +19,7 @@ public class MirrorMod : IMod, IApplicableToMap
 
     public void Apply(MapInfo map)
     {
-        var keycount = map.Map?.KeyCount ?? map.HitObjects.MaxBy(x => x.Lane).Lane;
+        var keycount = map.RealmEntry?.KeyCount ?? map.HitObjects.MaxBy(x => x.Lane).Lane;
 
         foreach (var hit in map.HitObjects)
             hit.Lane = keycount - hit.Lane + 1;

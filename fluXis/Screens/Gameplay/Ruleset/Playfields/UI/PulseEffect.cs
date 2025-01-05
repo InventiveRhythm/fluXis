@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Audio;
 using fluXis.Map.Structures.Events;
-using fluXis.Screens.Gameplay.Audio;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,10 +12,10 @@ namespace fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
 public partial class PulseEffect : Container
 {
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     [Resolved]
-    private GameplayClock clock { get; set; }
+    private IBeatSyncProvider beatSync { get; set; }
 
     private List<PulseEvent> pulses = new();
 
@@ -26,7 +26,7 @@ public partial class PulseEffect : Container
 
     protected override void LoadComplete()
     {
-        pulses = screen.MapEvents.PulseEvents.ToList();
+        pulses = ruleset.MapEvents.PulseEvents.ToList();
         pulses.Sort((x, y) => x.Time.CompareTo(y.Time));
     }
 
@@ -59,8 +59,8 @@ public partial class PulseEffect : Container
             Add(left);
             Add(right);
 
-            left.MoveToX(-400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
-            right.MoveToX(400, clock.BeatTime, Easing.OutQuint).FadeOut(clock.BeatTime).Expire();
+            left.MoveToX(-400, beatSync.BeatTime, Easing.OutQuint).FadeOut(beatSync.BeatTime).Expire();
+            right.MoveToX(400, beatSync.BeatTime, Easing.OutQuint).FadeOut(beatSync.BeatTime).Expire();
         }
     }
 }

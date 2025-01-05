@@ -14,13 +14,16 @@ using fluXis.Graphics.Shaders.Retro;
 using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures.Events;
+using fluXis.Mods;
+using fluXis.Replays;
 using fluXis.Screens.Edit.Tabs.Design.Effects;
-using fluXis.Screens.Edit.Tabs.Design.Playfield;
 using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.Screens.Edit.Tabs.Design.Toolbox;
 using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
+using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Gameplay.Ruleset;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -38,6 +41,7 @@ public partial class DesignContainer : EditorTabContainer
 
     private SpriteStack<BlurableBackground> backgroundStack;
     private Box backgroundDim;
+    private Container rulesetWrapper;
 
     private BackgroundVideo backgroundVideo;
     private bool showingVideo;
@@ -73,7 +77,11 @@ public partial class DesignContainer : EditorTabContainer
                     Alpha = Editor.BindableBackgroundDim.Value
                 },
                 new EditorFlashLayer { InBackground = true },
-                new EditorDesignPlayfieldManager(Map.MapInfo.DualMode, drawSizePreserve),
+                rulesetWrapper = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Child = createRuleset(),
+                },
                 new EditorFlashLayer()
             }))
         };
@@ -87,12 +95,21 @@ public partial class DesignContainer : EditorTabContainer
         backgroundVideo.Info = Map.MapInfo;
         backgroundVideo.LoadVideo();
 
+        Map.AnyChange += () => Scheduler.AddOnce(rebuildRuleset);
         Map.ShaderEventAdded += _ => checkForRebuild();
         Map.ShaderEventUpdated += _ => checkForRebuild();
         Map.ShaderEventRemoved += _ => checkForRebuild();
 
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300));
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);
+    }
+
+    private RulesetContainer createRuleset()
+    {
+        var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap!.KeyCount);
+        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod>());
+        container.ParentClock = EditorClock;
+        return container;
     }
 
     private ShaderStackContainer createShaderStack()
@@ -138,6 +155,12 @@ public partial class DesignContainer : EditorTabContainer
             rebuildShaderStack();
     }
 
+    private void rebuildRuleset()
+    {
+        rulesetWrapper.Clear();
+        rulesetWrapper.Child = createRuleset();
+    }
+
     private void rebuildShaderStack()
     {
         var content = shaders.RemoveContent();
@@ -162,6 +185,7 @@ public partial class DesignContainer : EditorTabContainer
             }
 
             case Key.R when e.ShiftPressed:
+                rebuildRuleset();
                 rebuildShaderStack();
                 return true;
 

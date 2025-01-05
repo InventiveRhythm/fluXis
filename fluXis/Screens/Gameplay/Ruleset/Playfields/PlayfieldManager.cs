@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
-using fluXis.Online.API.Models.Maps;
+using fluXis.Map;
+using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,10 +13,12 @@ namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 public partial class PlayfieldManager : CompositeDrawable
 {
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private Hitsounding hitsounding { get; set; }
 
-    public bool InBreak => Playfields.All(p => p.HitManager.Break);
+    public Bindable<bool> InBreak { get; } = new();
     public bool AnyFailed => Players.Any(p => p.HealthProcessor.Failed);
+
+    public MapInfo MapInfo { get; }
 
     public event Action OnFinish;
     public bool Finished { get; private set; }
@@ -26,16 +30,17 @@ public partial class PlayfieldManager : CompositeDrawable
 
     public PlayfieldPlayer FirstPlayer => Players[0];
 
-    public PlayfieldManager(DualMode mode)
+    public PlayfieldManager(MapInfo map)
     {
-        Count = mode > DualMode.Disabled ? 2 : 1;
+        MapInfo = map;
+        Count = map.IsDual ? 2 : 1;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
-        screen.Hitsounding.PlayfieldCount = Count;
+        hitsounding.PlayfieldCount = Count;
 
         InternalChild = new GridContainer
         {
@@ -43,7 +48,7 @@ public partial class PlayfieldManager : CompositeDrawable
             Content = new[]
             {
                 Players = Enumerable.Range(0, Count)
-                                    .Select(i => new PlayfieldPlayer(i, screen.Map.ExtraPlayfields))
+                                    .Select(i => new PlayfieldPlayer(i, MapInfo.ExtraPlayfields))
                                     .ToArray()
             }
         };
@@ -57,7 +62,9 @@ public partial class PlayfieldManager : CompositeDrawable
     {
         base.Update();
 
-        Players.ForEach(p => p.HealthProcessor.Update());
+        InBreak.Value = Playfields.All(p => p.HitManager.Break);
+
+        Players.ForEach(p => p.HealthProcessor.Update(Time.Elapsed));
 
         if (!Finished && Playfields.All(p => p.HitManager.Finished))
         {

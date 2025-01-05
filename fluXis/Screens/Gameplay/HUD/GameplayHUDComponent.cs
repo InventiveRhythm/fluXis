@@ -1,3 +1,4 @@
+using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
 using osu.Framework.Allocation;
@@ -10,9 +11,20 @@ public partial class GameplayHUDComponent : Container
     [Resolved]
     protected GameplayScreen Screen { get; private set; }
 
-    public JudgementProcessor JudgementProcessor { get; set; }
-    public HealthProcessor HealthProcessor { get; set; }
-    public ScoreProcessor ScoreProcessor { get; set; }
+    protected HUDComponentSettings Settings { get; private set; }
 
-    public HUDComponentSettings Settings { get; set; } = new();
+    protected JudgementProcessor JudgementProcessor { get; private set; }
+    protected HealthProcessor HealthProcessor { get; private set; }
+    protected ScoreProcessor ScoreProcessor { get; private set; }
+
+    public HitWindows HitWindows { get; private set; }
+
+    public void Populate(HUDComponentSettings settings, JudgementProcessor judgement, HealthProcessor health, ScoreProcessor score, HitWindows windows)
+    {
+        Settings = settings;
+        JudgementProcessor = judgement;
+        HealthProcessor = health;
+        ScoreProcessor = score;
+        HitWindows = windows;
+    }
 }

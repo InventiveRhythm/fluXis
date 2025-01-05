@@ -1,7 +1,9 @@
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Enums;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -27,6 +29,7 @@ public partial class DrawableScoreRank : CompositeDrawable
     public float FontSize { get; init; } = 64;
     public bool Shadow { get; init; } = true;
     public bool AlternateColor { get; init; }
+    public bool Rainbow { get; init; }
 
     private ScoreRank rank = ScoreRank.X;
 
@@ -49,6 +52,9 @@ public partial class DrawableScoreRank : CompositeDrawable
                 drawDoubleLetter(str[0].ToString(), color);
                 break;
         }
+
+        if (Rank == ScoreRank.X && Rainbow)
+            InternalChildren.ForEach(d => d.Rainbow());
     }
 
     private void drawSingleLetter(string letter, Colour4 color)

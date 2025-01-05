@@ -17,9 +17,14 @@ public partial class GameplayTouchInput : Container
     [Resolved]
     private GameplayScreen screen { get; set; }
 
-    private GameplayInput input => screen.Input;
+    private GameplayInput input { get; }
 
     private Container mainContainer;
+
+    public GameplayTouchInput(GameplayInput input)
+    {
+        this.input = input;
+    }
 
     [BackgroundDependencyLoader]
     private void load()

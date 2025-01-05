@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using fluXis.Configuration;
-using fluXis.Configuration.Experiments;
 using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
+using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using fluXis.Screens.Gameplay.Ruleset.Playfields.UI;
 using fluXis.Screens.Gameplay.Ruleset.TimingLines;
@@ -25,17 +25,18 @@ public partial class Playfield : Container
     private SkinManager skinManager { get; set; }
 
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     [Resolved]
-    private LaneSwitchManager laneSwitchManager { get; set; }
+    private Hitsounding hitsounding { get; set; }
+
+    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
 
     public int Index { get; }
     public int SubIndex { get; }
     public bool IsSubPlayfield => SubIndex > 0;
 
-    private bool canSeek { get; set; }
-    public override bool RemoveCompletedTransforms => !canSeek;
+    public override bool RemoveCompletedTransforms => false;
 
     public float RelativePosition
     {
@@ -49,8 +50,9 @@ public partial class Playfield : Container
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
 
-    public MapInfo Map => screen.Map;
-    public RealmMap RealmMap => screen.RealmMap;
+    public MapInfo MapInfo => ruleset.MapInfo;
+    public MapEvents MapEvents => ruleset.MapEvents;
+    public RealmMap RealmMap => MapInfo.RealmEntry!;
 
     private DependencyContainer dependencies;
 
@@ -73,7 +75,7 @@ public partial class Playfield : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config, ExperimentConfigManager experiments)
+    private void load(FluXisConfig config)
     {
         AutoSizeAxes = Axes.X;
         RelativeSizeAxes = Axes.Y;
@@ -86,8 +88,6 @@ public partial class Playfield : Container
         bottomCoverHeight = config.GetBindable<float>(FluXisSetting.LaneCoverBottom);
         scrollDirection = config.GetBindable<ScrollDirection>(FluXisSetting.ScrollDirection);
         hitsoundPanStrength = config.GetBindable<double>(FluXisSetting.HitsoundPanning);
-
-        canSeek = experiments.Get<bool>(ExperimentConfig.Seeking);
 
         Receptors = new FillFlowContainer<Receptor>
         {
@@ -135,33 +135,19 @@ public partial class Playfield : Container
                 }
             },
             new KeyOverlay(),
-            new EventHandler<ShakeEvent>(screen.MapEvents.ShakeEvents, shake => screen.Shake(shake.Duration, shake.Magnitude))
+            new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(shake.Duration, shake.Magnitude))
         };
 
-        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.HitObjects).ForEach(e => e.Apply(HitManager));
-        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Stage).ForEach(e => e.Apply(stage));
-        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Receptors).ForEach(e => e.Apply(Receptors));
-        screen.MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Playfield).ForEach(e => e.Apply(this));
+        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.HitObjects).ForEach(e => e.Apply(HitManager));
+        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Stage).ForEach(e => e.Apply(stage));
+        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Receptors).ForEach(e => e.Apply(Receptors));
+        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Playfield).ForEach(e => e.Apply(this));
 
-        if (canSeek)
-        {
-            screen.MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
-            screen.MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
-            screen.MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
-            screen.MapEvents.ScrollMultiplyEvents.ForEach(e => e.Apply(HitManager));
-            screen.MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
-        }
-        else
-        {
-            AddRangeInternal(new Drawable[]
-            {
-                new EventHandler<PlayfieldMoveEvent>(screen.MapEvents.PlayfieldMoveEvents),
-                new EventHandler<PlayfieldScaleEvent>(screen.MapEvents.PlayfieldScaleEvents),
-                new EventHandler<PlayfieldRotateEvent>(screen.MapEvents.PlayfieldRotateEvents),
-                new EventHandler<ScrollMultiplierEvent>(screen.MapEvents.ScrollMultiplyEvents),
-                new EventHandler<TimeOffsetEvent>(screen.MapEvents.TimeOffsetEvents),
-            });
-        }
+        MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
+        MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
+        MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
+        MapEvents.ScrollMultiplyEvents.ForEach(e => e.Apply(HitManager));
+        MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
     }
 
     protected override void LoadComplete()
@@ -183,7 +169,7 @@ public partial class Playfield : Container
         bottomCover.Y = (1f - bottomCoverHeight.Value) / 2f;
 
         if (!IsSubPlayfield)
-            screen.Hitsounding.PlayfieldPanning.Value = Math.Clamp(RelativePosition * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
+            hitsounding.PlayfieldPanning.Value = Math.Clamp(RelativePosition * 2 - 1, -1, 1) * hitsoundPanStrength.Value;
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

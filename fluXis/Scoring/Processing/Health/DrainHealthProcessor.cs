@@ -21,30 +21,30 @@ public class DrainHealthProcessor : HealthProcessor
             TriggerFailure();
     }
 
-    public override void Update()
+    public override void Update(double delta)
     {
-        base.Update();
+        base.Update(delta);
 
         if (lastTime == 0)
         {
-            lastTime = GameplayClock.CurrentTime;
+            lastTime = Clock.CurrentTime;
             return;
         }
 
-        if (Screen.PlayfieldManager.InBreak)
+        if (InBreak.Value)
         {
             // assign the time so that it doesn't jump when the break ends
-            lastTime = GameplayClock.CurrentTime;
+            lastTime = Clock.CurrentTime;
             return;
         }
 
-        var delta = GameplayClock.CurrentTime - lastTime;
+        var d = Clock.CurrentTime - lastTime;
 
         HealthDrainRate = Math.Clamp(HealthDrainRate, -1f, 2f);
-        Health.Value -= HealthDrainRate * (delta / 1000f);
-        HealthDrainRate += 0.00016f * Difficulty * delta;
+        Health.Value -= HealthDrainRate * (d / 1000f);
+        HealthDrainRate += 0.00016f * Difficulty * d;
 
-        lastTime = GameplayClock.CurrentTime;
+        lastTime = Clock.CurrentTime;
 
         if (Health.Value == 0)
             TriggerFailure();

@@ -70,7 +70,7 @@ public partial class DrawableLongNote : DrawableHitObject
         headPiece.OnMiss += () => tailPiece.UpdateJudgement(false);
         tailPiece.OnJudgement += diff =>
         {
-            var judgement = Screen.ReleaseWindows.JudgementFor(diff);
+            var judgement = Ruleset.ReleaseWindows.JudgementFor(diff);
 
             if (judgement == Judgement.Alright)
                 miss();

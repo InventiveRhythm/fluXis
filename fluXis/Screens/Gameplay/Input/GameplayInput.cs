@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Input;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -20,12 +21,12 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
     public event Action<FluXisGameplayKeybind> OnRelease;
 
     public readonly bool Dual;
-    private readonly GameplayScreen screen;
+    private readonly Bindable<bool> paused;
 
-    public GameplayInput(GameplayScreen screen, int mode = 4, bool dual = false)
+    public GameplayInput(Bindable<bool> paused, int mode = 4, bool dual = false)
     {
+        this.paused = paused;
         Dual = dual;
-        this.screen = screen;
 
         Keys = GetKeys(mode, dual).ToList();
 
@@ -69,7 +70,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
 
     public bool PressKey(FluXisGameplayKeybind key)
     {
-        if (screen.IsPaused.Value)
+        if (paused.Value)
             return false;
 
         var idx = Keys.IndexOf(key);
@@ -82,7 +83,7 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
 
     public void ReleaseKey(FluXisGameplayKeybind key)
     {
-        if (screen.IsPaused.Value)
+        if (paused.Value)
             return;
 
         var idx = Keys.IndexOf(key);

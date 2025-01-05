@@ -48,7 +48,7 @@ public partial class JudgementCounter : GameplayHUDComponent
                 Direction = FillDirection.Vertical,
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Children = Screen.HitWindows.GetTimings().Select(t => new CounterItem(JudgementProcessor, t, dict[t.Judgement])).ToArray()
+                Children = HitWindows.GetTimings().Select(t => new CounterItem(JudgementProcessor, t, dict[t.Judgement])).ToArray()
             }
         };
     }

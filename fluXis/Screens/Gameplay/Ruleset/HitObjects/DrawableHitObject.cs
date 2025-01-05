@@ -13,7 +13,7 @@ namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
 public partial class DrawableHitObject : CompositeDrawable
 {
     [Resolved]
-    protected GameplayScreen Screen { get; private set; }
+    protected RulesetContainer Ruleset { get; private set; }
 
     [Resolved]
     protected HitObjectManager ObjectManager { get; private set; }
@@ -34,7 +34,7 @@ public partial class DrawableHitObject : CompositeDrawable
     public FluXisGameplayKeybind Keybind { get; set; }
 
     public virtual bool CanBeRemoved => false;
-    public virtual HitWindows HitWindows => Screen.HitWindows;
+    public virtual HitWindows HitWindows => Ruleset.HitWindows;
 
     public bool Judged { get; private set; }
     public Action<DrawableHitObject, double> OnHit { get; set; }
@@ -85,6 +85,7 @@ public partial class DrawableHitObject : CompositeDrawable
             return;
 
         var offset = Data.Time - Time.Current;
+
         CheckJudgement(byUser, offset);
     }
 

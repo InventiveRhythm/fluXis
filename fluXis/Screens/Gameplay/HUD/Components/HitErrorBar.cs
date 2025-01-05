@@ -25,7 +25,7 @@ public partial class HitErrorBar : GameplayHUDComponent
     private void load()
     {
         AutoSizeAxes = Axes.Y;
-        Width = Screen.HitWindows.TimingFor(Screen.HitWindows.LowestHitable) * 2f / Screen.Rate;
+        Width = HitWindows.TimingFor(HitWindows.LowestHitable) * 2f / Screen.Rate;
 
         Container colors;
 
@@ -77,9 +77,9 @@ public partial class HitErrorBar : GameplayHUDComponent
             }
         };
 
-        foreach (var timing in Screen.HitWindows.GetTimings().Reverse())
+        foreach (var timing in HitWindows.GetTimings().Reverse())
         {
-            if (timing.Judgement < Screen.HitWindows.LowestHitable)
+            if (timing.Judgement < HitWindows.LowestHitable)
                 continue;
 
             colors.Add(new Container
@@ -116,7 +116,7 @@ public partial class HitErrorBar : GameplayHUDComponent
     private void addHit(HitResult result)
     {
         var time = -result.Difference;
-        var judgement = Screen.HitWindows.JudgementFor(time);
+        var judgement = HitWindows.JudgementFor(time);
         time /= Screen.Rate;
 
         icon.MoveToX((float)time, 300, Easing.OutQuint);
@@ -148,7 +148,7 @@ public partial class HitErrorBar : GameplayHUDComponent
     private void updateAverage()
     {
         var avg = JudgementProcessor.Results.Average(h => h.Difference);
-        var judgement = Screen.HitWindows.JudgementFor(avg);
+        var judgement = HitWindows.JudgementFor(avg);
         avg /= Screen.Rate;
 
         average.MoveToX((float)-avg, 100, Easing.OutQuint);

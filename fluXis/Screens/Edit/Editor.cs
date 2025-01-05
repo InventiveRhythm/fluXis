@@ -36,6 +36,7 @@ using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.TabSwitcher;
+using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
@@ -212,6 +213,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 lowPass = new AudioFilter(audioManager.TrackMixer),
                 highPass = new AudioFilter(audioManager.TrackMixer, BQFType.HighPass),
                 clock,
+                dependencies.CacheAsAndReturn(new Hitsounding(editorMap.RealmMap.MapSet, editorMap.MapInfo.HitSoundFades, clock.RateBindable)
+                {
+                    DirectVolume = true,
+                    Clock = clock
+                }),
                 new FluXisContextMenuContainer
                 {
                     RelativeSizeAxes = Axes.Both,

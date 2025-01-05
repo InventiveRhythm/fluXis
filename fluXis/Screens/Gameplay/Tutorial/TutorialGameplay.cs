@@ -16,7 +16,6 @@ public partial class TutorialGameplay : GameplayScreen
     protected override double GameplayStartTime => -4000;
     public override bool FadeBackToGlobalClock => false;
     protected override bool AllowRestart => false;
-    public override bool AllowReverting => false;
     public override bool SubmitScore => false;
 
     private Box blackOverlay;

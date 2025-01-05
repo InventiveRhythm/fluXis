@@ -45,6 +45,8 @@ public class EditorMap
     public event Action BackgroundChanged;
     public event Action CoverChanged;
 
+    public event Action AnyChange;
+
     public event Action<HitObject> HitObjectAdded;
     public event Action<HitObject> HitObjectRemoved;
     public event Action<HitObject> HitObjectUpdated;
@@ -133,6 +135,13 @@ public class EditorMap
             new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj), obj => TimeOffsetEventUpdated?.Invoke(obj)),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj))
         };
+
+        foreach (var notifier in notifiers)
+        {
+            notifier.OnAdd += _ => AnyChange?.Invoke();
+            notifier.OnRemove += _ => AnyChange?.Invoke();
+            notifier.OnUpdate += _ => AnyChange?.Invoke();
+        }
     }
 
     public bool SetKeyMode(int mode)
@@ -312,6 +321,10 @@ public class EditorMap
 
     private interface IChangeNotifier
     {
+        event Action<ITimedObject> OnAdd;
+        event Action<ITimedObject> OnRemove;
+        event Action<ITimedObject> OnUpdate;
+
         void Add(ITimedObject obj);
         void Remove(ITimedObject obj);
         void Update(ITimedObject obj);
@@ -325,9 +338,14 @@ public class EditorMap
         where T : class, ITimedObject
     {
         private List<T> list { get; }
+
         private Action<T> add { get; }
         private Action<T> remove { get; }
         private Action<T> update { get; }
+
+        public event Action<ITimedObject> OnAdd;
+        public event Action<ITimedObject> OnRemove;
+        public event Action<ITimedObject> OnUpdate;
 
         public ChangeNotifier(List<T> list, Action<T> add, Action<T> remove, Action<T> update)
         {
@@ -341,15 +359,21 @@ public class EditorMap
         {
             list.Add((T)obj);
             add?.Invoke((T)obj);
+            OnAdd?.Invoke(obj);
         }
 
         public void Remove(ITimedObject obj)
         {
             list.Remove((T)obj);
             remove?.Invoke((T)obj);
+            OnRemove?.Invoke(obj);
         }
 
-        public void Update(ITimedObject obj) => update?.Invoke((T)obj);
+        public void Update(ITimedObject obj)
+        {
+            update?.Invoke((T)obj);
+            OnUpdate?.Invoke(obj);
+        }
 
         public void ApplyOffset(float offset)
         {

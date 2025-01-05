@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
@@ -18,7 +17,6 @@ public class ScoreProcessor : JudgementDependant
     public APIUser Player { get; set; } = APIUser.Default;
 
     public HitWindows HitWindows { get; init; }
-    public RealmMap Map { get; init; }
     public MapInfo MapInfo { get; init; }
     public List<IMod> Mods { get; init; }
 
@@ -39,7 +37,7 @@ public class ScoreProcessor : JudgementDependant
     public bool FullFlawless => Flawless == totalNotes && Miss == 0;
     public bool FullCombo => Combo.Value == totalNotes;
 
-    private float mapRating => Map.Filters.NotesPerSecond;
+    private float mapRating => MapInfo.RealmEntry!.Filters.NotesPerSecond;
 
     private int totalNotes => Flawless + Perfect + Great + Alright + Okay + Miss;
     private float ratedNotes => Flawless + Perfect * 0.98f + Great * 0.65f + Alright * 0.25f + Okay * 0.1f;
@@ -98,7 +96,7 @@ public class ScoreProcessor : JudgementDependant
         Okay = Okay,
         Miss = Miss,
         HitResults = JudgementProcessor.Results,
-        MapID = Map.OnlineID,
+        MapID = MapInfo.RealmEntry!.OnlineID,
         PlayerID = Player.ID,
         MapHash = MapInfo.Hash,
         EffectHash = MapInfo.EffectHash,

@@ -12,13 +12,12 @@ public partial class Receptor : CompositeDrawable
     private SkinManager skinManager { get; set; }
 
     [Resolved]
-    private GameplayScreen screen { get; set; }
+    private RulesetContainer ruleset { get; set; }
 
     [Resolved]
     private Playfield playfield { get; set; }
 
-    [Resolved]
-    private LaneSwitchManager laneSwitchManager { get; set; }
+    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
 
     public override bool RemoveCompletedTransforms => true;
 
@@ -61,7 +60,7 @@ public partial class Receptor : CompositeDrawable
         if (playfield.Index > 0)
             i += playfield.RealmMap.KeyCount;
 
-        IsDown = screen.Input.Pressed[i];
+        IsDown = ruleset.Input.Pressed[i];
 
         up.Alpha = IsDown ? 0 : 1;
         down.Alpha = IsDown ? 1 : 0;

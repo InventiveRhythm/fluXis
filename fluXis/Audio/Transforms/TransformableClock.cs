@@ -6,7 +6,7 @@ using osu.Framework.Timing;
 
 namespace fluXis.Audio.Transforms;
 
-public abstract partial class TransformableClock : CompositeComponent, IAdjustableClock
+public abstract partial class TransformableClock : CompositeComponent, IAdjustableClock, IFrameBasedClock
 {
     public abstract double CurrentTime { get; }
     public abstract void Reset();
@@ -18,6 +18,8 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
     double IAdjustableClock.Rate { get; set; }
     double IClock.Rate => Rate;
     public abstract bool IsRunning { get; }
+    public abstract double ElapsedFrameTime { get; }
+    public abstract double FramesPerSecond { get; }
 
     public double Rate
     {
@@ -29,4 +31,6 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
 
     public TransformSequence<TransformableClock> TimeTo(double newTime, double duration = 0, Easing easing = Easing.None)
         => this.TransformTo(this.PopulateTransform(new TimeTransform(), newTime, duration, easing));
+
+    public abstract void ProcessFrame();
 }

@@ -18,7 +18,7 @@ public partial class DrawableLongNotePart : CompositeDrawable
 
     protected bool Missed => Time.Current > HitTime + HitWindows.TimingFor(HitWindows.Lowest);
     protected virtual double HitTime => Data.Time;
-    protected virtual HitWindows HitWindows => Screen.HitWindows;
+    protected virtual HitWindows HitWindows => Ruleset.HitWindows;
 
     public bool Judged { get; private set; }
 
@@ -29,7 +29,7 @@ public partial class DrawableLongNotePart : CompositeDrawable
     protected SkinManager SkinManager { get; private set; }
 
     [Resolved]
-    protected GameplayScreen Screen { get; private set; }
+    protected RulesetContainer Ruleset { get; private set; }
 
     protected DrawableLongNotePart(HitObject data)
     {

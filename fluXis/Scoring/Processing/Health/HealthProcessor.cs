@@ -1,9 +1,8 @@
 using System;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
-using fluXis.Screens.Gameplay;
-using fluXis.Screens.Gameplay.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Timing;
 using osu.Framework.Utils;
 
 namespace fluXis.Scoring.Processing.Health;
@@ -14,8 +13,8 @@ public class HealthProcessor : JudgementDependant
     protected virtual bool DefaultFailCondition => Health.Value <= Health.MinValue;
     protected virtual bool ClearHealthOnFail => true;
 
-    public GameplayScreen Screen { get; set; }
-    protected GameplayClock GameplayClock => Screen.GameplayClock;
+    public IFrameBasedClock Clock { get; set; }
+    public Bindable<bool> InBreak { get; set; }
 
     public bool CanFail { get; set; } = true;
     public Func<HitResult, bool> ExtraFailCondition { get; set; }
@@ -49,7 +48,7 @@ public class HealthProcessor : JudgementDependant
             return;
 
         Failed = true;
-        FailTime = GameplayClock.CurrentTime;
+        FailTime = Clock?.CurrentTime ?? 0;
         OnFail?.Invoke();
 
         if (ClearHealthOnFail)
@@ -83,9 +82,9 @@ public class HealthProcessor : JudgementDependant
         TriggerFailure();
     }
 
-    public virtual void Update()
+    public virtual void Update(double delta)
     {
-        SmoothHealth = (float)Interpolation.Lerp(Health.Value, SmoothHealth, Math.Exp(-0.012 * Screen.Clock.ElapsedFrameTime));
+        SmoothHealth = (float)Interpolation.Lerp(Health.Value, SmoothHealth, Math.Exp(-0.012 * delta));
     }
 
     protected virtual float GetHealthIncreaseFor(HitResult result, float difficulty) => result.Judgement switch
