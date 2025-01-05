@@ -16,6 +16,7 @@ namespace fluXis.Screens.Gameplay.Audio;
 
 public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISourceChangeableClock, IBeatSyncProvider
 {
+
     public float Offset => useOffset ? offset.Value : 0;
     private bool useOffset { get; }
 
@@ -26,6 +27,8 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
     public IClock Source => underlying.Source;
 
     private MapInfo mapInfo { get; }
+    private ITrackStore tracks { get; }
+
     public DrawableTrack Track { get; private set; }
 
     private FramedMapClock underlying { get; }
@@ -33,8 +36,9 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
 
     public event Action<double, double> OnSeek;
 
-    public GameplayClock(MapInfo info, Track track, bool useOffset)
+    public GameplayClock(ITrackStore tracks, MapInfo info, Track track, bool useOffset)
     {
+        this.tracks = tracks;
         this.useOffset = useOffset;
 
         underlying = new FramedMapClock();
@@ -91,7 +95,7 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
     public void ChangeSource(IClock source)
     {
         Track?.Expire();
-        Track = new DrawableTrack(source as Track);
+        Track = new DrawableTrack(source as Track ?? tracks.GetVirtual(10000));
         Track?.AddAdjustment(AdjustableProperty.Frequency, RateBindable);
         underlying.ChangeSource(source);
 

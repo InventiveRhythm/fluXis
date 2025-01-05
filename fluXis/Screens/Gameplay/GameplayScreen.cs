@@ -52,6 +52,7 @@ using fluXis.Storyboards.Drawables;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
@@ -173,7 +174,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ITrackStore tracks)
     {
         dependencies.CacheAs(this);
 
@@ -208,7 +209,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         var shaders = buildShaders();
         var transforms = shaders.TransformHandlers.ToList();
 
-        clockContainer = new GameplayClockContainer(RealmMap, Map, new Drawable[]
+        clockContainer = new GameplayClockContainer(tracks, RealmMap, Map, new Drawable[]
         {
             new FlashOverlay(MapEvents.FlashEvents.Where(e => e.InBackground).ToList()),
             RulesetContainer = CreateRuleset(),

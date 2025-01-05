@@ -3,6 +3,7 @@ using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Map;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -15,12 +16,12 @@ public partial class GameplayClockContainer : Container
 
     private DependencyContainer dependencies;
 
-    public GameplayClockContainer(RealmMap realmMap, MapInfo info, IEnumerable<Drawable> drawables, bool useOffset = true)
+    public GameplayClockContainer(ITrackStore tracks, RealmMap realmMap, MapInfo info, IEnumerable<Drawable> drawables, bool useOffset = true)
     {
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
 
-        GameplayClock = new GameplayClock(info, realmMap.GetTrack(), useOffset);
+        GameplayClock = new GameplayClock(tracks, info, realmMap.GetTrack(), useOffset);
 
         InternalChildren = new Drawable[]
         {
