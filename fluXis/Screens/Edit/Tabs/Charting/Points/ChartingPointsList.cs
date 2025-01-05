@@ -17,11 +17,6 @@ public partial class ChartingPointsList : PointsList
         Map.TimingPointRemoved += RemovePoint;
         Map.MapInfo.TimingPoints.ForEach(AddPoint);
 
-        Map.ScrollVelocityAdded += AddPoint;
-        Map.ScrollVelocityUpdated += UpdatePoint;
-        Map.ScrollVelocityRemoved += RemovePoint;
-        Map.MapInfo.ScrollVelocities.ForEach(AddPoint);
-
         Map.LaneSwitchEventAdded += AddPoint;
         Map.LaneSwitchEventUpdated += UpdatePoint;
         Map.LaneSwitchEventRemoved += RemovePoint;
@@ -33,7 +28,6 @@ public partial class ChartingPointsList : PointsList
         return obj switch
         {
             TimingPoint timing => new TimingPointEntry(timing),
-            ScrollVelocity scroll => new ScrollVelocityEntry(scroll),
             LaneSwitchEvent lane => new LaneSwitchEntry(lane),
             _ => null
         };
@@ -41,7 +35,6 @@ public partial class ChartingPointsList : PointsList
 
     protected override IEnumerable<DropdownEntry> CreateDropdownEntries() => new DropdownEntry[]
     {
-        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint()), x => x is TimingPoint),
-        new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity)
+        new("Timing Point", FluXisColors.TimingPoint, () => Create(new TimingPoint()), x => x is TimingPoint)
     };
 }

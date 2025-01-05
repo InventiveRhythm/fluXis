@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Screens.Edit.Tabs.Charting.Points.Entries;
 using fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 
@@ -11,6 +13,11 @@ public partial class DesignPointsList : PointsList
 {
     protected override void RegisterEvents()
     {
+        Map.ScrollVelocityAdded += AddPoint;
+        Map.ScrollVelocityUpdated += UpdatePoint;
+        Map.ScrollVelocityRemoved += RemovePoint;
+        Map.MapInfo.ScrollVelocities.ForEach(AddPoint);
+
         Map.FlashEventAdded += AddPoint;
         Map.FlashEventUpdated += UpdatePoint;
         Map.FlashEventRemoved += RemovePoint;
@@ -76,6 +83,7 @@ public partial class DesignPointsList : PointsList
     {
         return obj switch
         {
+            ScrollVelocity scroll => new ScrollVelocityEntry(scroll),
             FlashEvent flash => new FlashEntry(flash),
             ShakeEvent shake => new ShakeEntry(shake),
             PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
@@ -96,6 +104,7 @@ public partial class DesignPointsList : PointsList
     {
         var entries = new List<DropdownEntry>
         {
+            new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity),
             new("Flash", FluXisColors.Flash, () => Create(new FlashEvent()), x => x is FlashEvent),
             new("Shake", FluXisColors.Shake, () => Create(new ShakeEvent()), x => x is ShakeEvent),
             new("Playfield Move", FluXisColors.PlayfieldMove, () => Create(new PlayfieldMoveEvent()), x => x is PlayfieldMoveEvent),
