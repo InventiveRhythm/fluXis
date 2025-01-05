@@ -13,6 +13,7 @@ using fluXis.Graphics.Shaders.Noise;
 using fluXis.Graphics.Shaders.Retro;
 using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface;
 using fluXis.Map.Structures.Events;
 using fluXis.Mods;
 using fluXis.Replays;
@@ -24,6 +25,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -42,6 +44,9 @@ public partial class DesignContainer : EditorTabContainer
     private SpriteStack<BlurableBackground> backgroundStack;
     private Box backgroundDim;
     private Container rulesetWrapper;
+    private LoadingIcon loadingIcon;
+
+    private IdleTracker rulesetIdleTracker;
 
     private BackgroundVideo backgroundVideo;
     private bool showingVideo;
@@ -59,6 +64,11 @@ public partial class DesignContainer : EditorTabContainer
         return new Drawable[]
         {
             handler = new DesignShaderHandler(),
+            rulesetIdleTracker = new IdleTracker(400, rebuildRuleset, () =>
+            {
+                loadingIcon.Show();
+                rulesetWrapper.FirstOrDefault()?.FadeOut(100);
+            }),
             drawSizePreserve.WithChild(createShaderStack().AddContent(new Drawable[]
             {
                 backgroundStack = new SpriteStack<BlurableBackground> { AutoFill = false },
@@ -77,10 +87,12 @@ public partial class DesignContainer : EditorTabContainer
                     Alpha = Editor.BindableBackgroundDim.Value
                 },
                 new EditorFlashLayer { InBackground = true },
-                rulesetWrapper = new Container
+                rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
+                loadingIcon = new LoadingIcon
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Child = createRuleset(),
+                    Size = new Vector2(32),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
                 },
                 new EditorFlashLayer()
             }))
@@ -95,7 +107,9 @@ public partial class DesignContainer : EditorTabContainer
         backgroundVideo.Info = Map.MapInfo;
         backgroundVideo.LoadVideo();
 
-        Map.AnyChange += () => Scheduler.AddOnce(rebuildRuleset);
+        Map.AnyChange += () => Scheduler.AddOnce(rulesetIdleTracker.Reset);
+        Scheduler.AddOnce(rulesetIdleTracker.Reset);
+
         Map.ShaderEventAdded += _ => checkForRebuild();
         Map.ShaderEventUpdated += _ => checkForRebuild();
         Map.ShaderEventRemoved += _ => checkForRebuild();
@@ -155,17 +169,22 @@ public partial class DesignContainer : EditorTabContainer
             rebuildShaderStack();
     }
 
-    private void rebuildRuleset()
-    {
-        rulesetWrapper.Clear();
-        rulesetWrapper.Child = createRuleset();
-    }
-
     private void rebuildShaderStack()
     {
         var content = shaders.RemoveContent();
         drawSizePreserve.Clear();
         drawSizePreserve.Add(createShaderStack().AddContent(content.ToArray()));
+    }
+
+    private void rebuildRuleset()
+    {
+        rulesetWrapper.Clear();
+
+        var ruleset = createRuleset();
+        rulesetWrapper.Child = ruleset;
+        ruleset.FadeInFromZero(100);
+
+        loadingIcon.Hide();
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
