@@ -45,7 +45,7 @@ public partial class ReplayRulesetContainer : RulesetContainer, IFrameBasedClock
         CurrentTime = -4000;
     }
 
-    protected override GameplayInput CreateInput() => new ReplayInput(IsPaused.GetBoundCopy(), MapInfo.KeyCount, MapInfo.IsDual);
+    protected override GameplayInput CreateInput() => new ReplayInput(IsPaused.GetBoundCopy(), MapInfo.RealmEntry!.KeyCount, MapInfo.IsDual);
 
     public override bool UpdateSubTree()
     {
