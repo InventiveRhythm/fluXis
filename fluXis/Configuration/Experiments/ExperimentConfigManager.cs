@@ -15,10 +15,8 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
     protected override void InitialiseDefaults()
     {
 #if CLOSED_TESTING
-        SetDefault(ExperimentConfig.DesignTab, true);
         SetDefault(ExperimentConfig.StoryboardTab, true);
 #else
-        SetDefault(ExperimentConfig.DesignTab, false);
         SetDefault(ExperimentConfig.StoryboardTab, false);
 #endif
     }
@@ -26,6 +24,5 @@ public class ExperimentConfigManager : IniConfigManager<ExperimentConfig>
 
 public enum ExperimentConfig
 {
-    DesignTab,
     StoryboardTab
 }

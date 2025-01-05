@@ -20,11 +20,6 @@ public partial class ExperimentsSection : SettingsSection
         {
             new SettingsToggle
             {
-                Label = "Enable Design Tab",
-                Bindable = experiments.GetBindable<bool>(ExperimentConfig.DesignTab)
-            },
-            new SettingsToggle
-            {
                 Label = "Enable Storyboarding Tab",
                 Bindable = experiments.GetBindable<bool>(ExperimentConfig.StoryboardTab)
             }
