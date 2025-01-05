@@ -67,7 +67,7 @@ public class MapInfo
     public double StartTime => HitObjects[0].Time;
 
     [JsonIgnore]
-    public double EndTime => HitObjects[^1].EndTime;
+    public double EndTime => HitObjects.Count == 0 ? 1000 : HitObjects[^1].EndTime;
 
     [JsonIgnore]
     public int MaxCombo
