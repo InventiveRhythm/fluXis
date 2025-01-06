@@ -15,6 +15,8 @@ namespace fluXis.Screens.Gameplay.Replays;
 
 public partial class ReplayGameplayScreen : GameplayScreen
 {
+    public override bool ShowCursor => true;
+
     protected override bool InstantlyExitOnPause => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
@@ -33,6 +35,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
         base.LoadComplete();
 
         RulesetContainer.AllowReverting = true;
+        OnSeek += (_, now) => GameplayClock.Seek(now);
     }
 
     protected override RulesetContainer CreateRuleset() => new ReplayRulesetContainer(replay, Map, MapEvents, Mods);
