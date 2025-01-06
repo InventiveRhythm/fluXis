@@ -129,7 +129,7 @@ public class AutoGenerator
         {
             var diff = nextObject.Time - currentObject.Time;
 
-            if (diff < 80)
+            if (diff < 200)
                 return null;
         }
 
