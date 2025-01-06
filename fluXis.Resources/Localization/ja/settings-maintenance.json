@@ -1,0 +1,11 @@
+{
+  "title": "メンテナンス",
+  "files-title": "ファイル",
+  "files-clean-up": "ファイルのクリーンアップ",
+  "files-clean-up-description": "どのマップにも使用されていない全てのファイルを削除します",
+  "maps-title": "マップ",
+  "maps-recalculate-filters": "フィルターの再計算",
+  "maps-recalculate-filters-description": "全てのマップの全てのフィルターを再計算します。",
+  "maps-scores-clean-up": "スコアのクリーンアップ",
+  "maps-scores-clean-up-description": "もう持っていないマップのスコアを削除します。"
+}

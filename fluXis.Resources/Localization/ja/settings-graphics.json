@@ -1,0 +1,12 @@
+{
+  "title": "グラフィック",
+  "layout-title": "レイアウト",
+  "window-mode": "ウィンドウモード",
+  "rendering-title": "レンダリング",
+  "renderer": "レンダラー",
+  "renderer-description": "変更を有効にするには再起動が必要です。",
+  "frame-limiter": "フレームレート制限",
+  "threading-mode": "スレッドモード",
+  "show-fps": "FPSの表示",
+  "show-fps-description": "右下に現在の描画頻度（DrawsPerSecond）と更新頻度（UpdatesPerSecond）を表示します。"
+}
