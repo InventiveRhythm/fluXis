@@ -124,6 +124,7 @@ public class StepmaniaImport : MapImporter
                     }
                 };
 
+                info.RealmEntry = map;
                 maps.Add(map);
             }
 

@@ -19,7 +19,7 @@ public class OsuRealmMap : RealmMap
         if (info is null)
             return null;
 
-        info.Map = this;
+        info.RealmEntry = this;
         return info;
     }
 }
