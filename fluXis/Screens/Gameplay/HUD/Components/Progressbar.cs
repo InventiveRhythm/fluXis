@@ -59,21 +59,23 @@ public partial class Progressbar : GameplayHUDComponent
 
     protected override void Update()
     {
-        int currentTime = (int)((clock.CurrentTime - Screen.Map.StartTime) / Screen.Rate);
+        base.Update();
+
         int timeLeft = (int)((Screen.Map.EndTime - clock.CurrentTime) / Screen.Rate);
         int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / Screen.Rate);
+
+        int currentTime = (int)((clock.CurrentTime - Screen.Map.StartTime) / Screen.Rate);
+        int catchupTime = (int)((Screen.RulesetContainer.Time.Current - Screen.Map.StartTime) / Screen.Rate);
+
         float percent = (float)currentTime / totalTime;
-        if (percent < 0) percent = 0;
+        float catchupPercent = (float)catchupTime / totalTime;
 
-        if (Screen.Map.StartTime == Screen.Map.EndTime)
-            percent = 1;
+        bar.Progress = Math.Clamp(percent, 0, 1);
+        bar.CatchUpProgress = Math.Clamp(catchupPercent, 0, 1);
 
-        bar.Progress = percent;
         percentText.Text = $"{(int)Math.Clamp(percent * 100, 0, 100)}%";
         currentTimeText.Text = TimeUtils.Format(currentTime, false);
         timeLeftText.Text = TimeUtils.Format(timeLeft, false);
-
-        base.Update();
     }
 
     private partial class Bar : CircularContainer
@@ -89,12 +91,27 @@ public partial class Progressbar : GameplayHUDComponent
             }
         }
 
+        public float CatchUpProgress
+        {
+            set
+            {
+                if (value < 0) value = 0;
+                if (value > 1) value = 1;
+
+                catchup.ResizeWidthTo(value, 200);
+
+                var delta = Math.Abs(bar.Width - value);
+                catchup.FadeTo(delta > 0.004f ? .4f : 0, 200);
+            }
+        }
+
         [Resolved]
         private GameplayClock clock { get; set; }
 
         public Progressbar Progressbar { get; init; }
 
         private Circle bar;
+        private Circle catchup;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -115,6 +132,11 @@ public partial class Progressbar : GameplayHUDComponent
                 bar = new Circle
                 {
                     RelativeSizeAxes = Axes.Both
+                },
+                catchup = new Circle
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Highlight
                 }
             };
         }
