@@ -30,7 +30,8 @@ public partial class Playfield : Container
     [Resolved]
     private Hitsounding hitsounding { get; set; }
 
-    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
 
     public int Index { get; }
     public int SubIndex { get; }

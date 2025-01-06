@@ -21,7 +21,8 @@ public partial class LaneSwitchAlert : Container
     [Resolved]
     private Playfield playfield { get; set; }
 
-    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
 
     private LaneSwitchEvent currentEvent;
 

@@ -25,7 +25,6 @@ public partial class RulesetContainer : CompositeDrawable
     public float Rate { get; }
 
     public GameplayInput Input { get; }
-    public LaneSwitchManager LaneSwitchManager { get; }
     public PlayfieldManager PlayfieldManager { get; }
 
     public HitWindows HitWindows { get; private set; }
@@ -52,7 +51,6 @@ public partial class RulesetContainer : CompositeDrawable
         Rate = Mods.OfType<RateMod>().FirstOrDefault()?.Rate ?? 1;
 
         Input = CreateInput();
-        LaneSwitchManager = new LaneSwitchManager(MapEvents.LaneSwitchEvents, MapInfo.RealmEntry!.KeyCount, MapInfo.NewLaneSwitchLayout);
         PlayfieldManager = new PlayfieldManager(MapInfo);
         DebugText = new DebugText();
 
@@ -71,7 +69,6 @@ public partial class RulesetContainer : CompositeDrawable
         InternalChildren = new Drawable[]
         {
             dependencies.CacheAsAndReturn(Input),
-            LaneSwitchManager,
             PlayfieldManager,
             DebugText
         };

@@ -221,7 +221,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         RulesetContainer.ShakeTarget = this;
         RulesetContainer.OnDeath += OnDeath;
 
-        dependencies.Cache(RulesetContainer.LaneSwitchManager);
         dependencies.Cache(PlayfieldManager = RulesetContainer.PlayfieldManager);
 
         dependencies.Cache(GameplayClock = clockContainer.GameplayClock);

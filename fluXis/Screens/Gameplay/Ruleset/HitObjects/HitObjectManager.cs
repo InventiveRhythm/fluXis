@@ -26,7 +26,9 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     [Resolved]
     private Hitsounding hitsounding { get; set; }
 
-    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
     private GameplayInput input => ruleset.Input;
 
     private Bindable<bool> useSnapColors;

@@ -23,6 +23,9 @@ public partial class KeyOverlay : Container
     private FluXisRealm realm { get; set; }
 
     [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
+
+    [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
     public List<FluXisGameplayKeybind> Keybinds
@@ -41,8 +44,6 @@ public partial class KeyOverlay : Container
             return binds;
         }
     }
-
-    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
 
     private FillFlowContainer flow;
     private int keyCount;

@@ -2,6 +2,7 @@
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -52,8 +53,12 @@ public partial class PlayfieldPlayer : CompositeDrawable
             }
         });
 
-        InternalChild = MainPlayfield;
-        AddRangeInternal(SubPlayfields);
+        AddInternal(dependencies.CacheAsAndReturn(new LaneSwitchManager(ruleset.MapEvents.LaneSwitchEvents, ruleset.MapInfo.RealmEntry!.KeyCount, ruleset.MapInfo.NewLaneSwitchLayout)));
+
+        var content = new Container { RelativeSizeAxes = Axes.Both };
+        content.Child = MainPlayfield;
+        content.AddRange(SubPlayfields);
+        AddInternal(content);
     }
 
     protected override void LoadComplete()

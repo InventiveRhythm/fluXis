@@ -17,7 +17,8 @@ public partial class Receptor : CompositeDrawable
     [Resolved]
     private Playfield playfield { get; set; }
 
-    private LaneSwitchManager laneSwitchManager => ruleset.LaneSwitchManager;
+    [Resolved]
+    private LaneSwitchManager laneSwitchManager { get; set; }
 
     public override bool RemoveCompletedTransforms => true;
 
