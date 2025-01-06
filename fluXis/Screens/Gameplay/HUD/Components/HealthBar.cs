@@ -1,3 +1,4 @@
+using System;
 using fluXis.Graphics.Sprites;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
@@ -45,7 +46,12 @@ public partial class HealthBar : GameplayHUDComponent
             icon.FadeIn(600).Then(400).FadeOut(600).Loop();
         }
 
-        bar.Height = HealthProcessor.SmoothHealth / 100;
+        var percent = HealthProcessor.SmoothHealth / 100;
+
+        if (!float.IsFinite(percent))
+            percent = 0;
+
+        bar.Height = Math.Clamp(percent, 0, 1);
 
         base.Update();
     }
