@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Configuration;
 using fluXis.Desktop.Integration;
-using fluXis.Game;
-using fluXis.Game.Configuration;
-using fluXis.Game.Integration;
-using fluXis.Game.IPC;
-using fluXis.Game.Updater;
-using fluXis.Game.Utils;
+using fluXis.Integration;
+using fluXis.IPC;
+using fluXis.Updater;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 

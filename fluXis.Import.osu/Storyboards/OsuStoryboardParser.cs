@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Game.Storyboards;
-using fluXis.Game.Utils;
+using fluXis.Storyboards;
+using fluXis.Utils;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;

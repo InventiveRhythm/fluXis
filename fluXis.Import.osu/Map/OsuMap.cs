@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Import.osu.Map.Components;
-using fluXis.Game.Map;
-using fluXis.Game.Map.Structures;
 using fluXis.Import.osu.AutoImport;
+using fluXis.Map;
+using fluXis.Map.Structures;
 using JetBrains.Annotations;
 
 namespace fluXis.Import.osu.Map;

@@ -1,6 +1,6 @@
 using System.IO;
-using fluXis.Game.Database.Maps;
-using fluXis.Game.Map;
+using fluXis.Database.Maps;
+using fluXis.Map;
 
 namespace fluXis.Import.osu.AutoImport;
 
@@ -19,7 +19,7 @@ public class OsuRealmMap : RealmMap
         if (info is null)
             return null;
 
-        info.Map = this;
+        info.RealmEntry = this;
         return info;
     }
 }

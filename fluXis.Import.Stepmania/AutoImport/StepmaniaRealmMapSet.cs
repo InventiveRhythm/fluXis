@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using fluXis.Game.Database.Maps;
+using fluXis.Database.Maps;
 
 namespace fluXis.Import.Stepmania.AutoImport;
 

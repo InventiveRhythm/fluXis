@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using fluXis.Game.Plugins;
+using fluXis.Plugins;
 using osu.Framework.Platform;
 
 namespace fluXis.Import.Quaver;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using fluXis.Game.Storyboards;
+using fluXis.Storyboards;
 
 namespace fluXis.Import.osu.Storyboards;
 

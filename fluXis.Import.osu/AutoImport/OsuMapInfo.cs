@@ -1,17 +1,13 @@
 using System.IO;
-using System.Text.Json.Serialization;
-using fluXis.Game.Map;
+using fluXis.Map;
 
 namespace fluXis.Import.osu.AutoImport;
 
 public class OsuMapInfo : MapInfo
 {
-    [JsonIgnore]
-    public new OsuRealmMap Map { get; set; }
-
     public override Stream GetVideoStream()
     {
-        var path = Map.MapSet.GetPathForFile(VideoFile);
+        var path = RealmEntry!.MapSet.GetPathForFile(VideoFile);
 
         if (string.IsNullOrEmpty(path) || !File.Exists(path))
             return null;

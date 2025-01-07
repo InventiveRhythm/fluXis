@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Desktop", "fluXis.Desktop\fluXis.Desktop.csproj", "{AEB3FC89-DC3E-4BC9-9EC7-03B72FC5D849}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Game", "fluXis.Game\fluXis.Game.csproj", "{1ADACD09-7BE3-46A1-AEAB-C41E78E8700F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis", "fluXis\fluXis.csproj", "{1ADACD09-7BE3-46A1-AEAB-C41E78E8700F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Resources", "fluXis.Resources\fluXis.Resources.csproj", "{31D3872C-3A4F-437E-9655-3EF58DD62F46}"
 EndProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		fluXis.sln.DotSettings = fluXis.sln.DotSettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Game.Tests", "fluXis.Game.Tests\fluXis.Game.Tests.csproj", "{6D6FB17E-4D5B-4248-A135-8EFE0A4BDAAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Tests", "fluXis.Tests\fluXis.Tests.csproj", "{6D6FB17E-4D5B-4248-A135-8EFE0A4BDAAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Android", "fluXis.Android\fluXis.Android.csproj", "{4B7EBE2F-EC30-4E39-A979-A7B6F06DF8D3}"
 EndProject

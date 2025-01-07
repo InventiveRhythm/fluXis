@@ -1,5 +1,5 @@
 using System;
-using fluXis.Game.Integration;
+using fluXis.Integration;
 using OpenRGB.NET;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;

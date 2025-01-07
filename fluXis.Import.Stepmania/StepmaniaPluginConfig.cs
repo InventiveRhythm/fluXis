@@ -1,4 +1,4 @@
-using fluXis.Game.Plugins;
+using fluXis.Plugins;
 using osu.Framework.Platform;
 
 namespace fluXis.Import.Stepmania;

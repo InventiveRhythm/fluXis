@@ -1,6 +1,6 @@
 using System.IO;
-using fluXis.Game.Database.Maps;
-using fluXis.Game.Map;
+using fluXis.Database.Maps;
+using fluXis.Map;
 
 namespace fluXis.Import.Quaver.Map;
 
@@ -14,6 +14,8 @@ public class QuaverRealmMap : RealmMap
             return null;
 
         string yaml = File.ReadAllText(path);
-        return QuaverImport.ParseFromYaml(yaml).ToMapInfo();
+        var map = QuaverImport.ParseFromYaml(yaml).ToMapInfo();
+        map.RealmEntry = this;
+        return map;
     }
 }
