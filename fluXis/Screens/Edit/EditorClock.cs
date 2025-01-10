@@ -43,6 +43,7 @@ public partial class EditorClock : TransformableClock, IFrameBasedClock, ISource
         MapInfo = mapInfo;
         underlying = new FramedMapClock();
         AddInternal(underlying);
+        RateBindable.MinValue = .2f;
     }
 
     public bool SeekSnapped(float position)

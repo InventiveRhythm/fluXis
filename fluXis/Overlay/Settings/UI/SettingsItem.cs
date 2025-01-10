@@ -22,6 +22,8 @@ public abstract partial class SettingsItem : Container
 
     protected virtual bool IsDefault => true;
 
+    public bool Padded { get; init; }
+
     public bool Enabled
     {
         get => EnabledBindable.Value;
@@ -53,6 +55,7 @@ public abstract partial class SettingsItem : Container
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Direction = FillDirection.Vertical,
+                Padding = new MarginPadding { Left = Padded ? 20 : 0 },
                 Children = new Drawable[]
                 {
                     new FluXisSpriteText

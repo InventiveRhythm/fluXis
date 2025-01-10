@@ -5,7 +5,7 @@ namespace fluXis.Screens.Edit;
 
 public class EditorSettings
 {
-    public float Zoom
+    public double Zoom
     {
         get => ZoomBindable.Value;
         set => ZoomBindable.Value = value;
@@ -23,7 +23,7 @@ public class EditorSettings
     public Bindable<bool> ShowSamples { get; init; }
     public Bindable<bool> InvertedScroll { get; init; }
 
-    public BindableFloat ZoomBindable { get; } = new(2f)
+    public BindableDouble ZoomBindable { get; } = new(2f)
     {
         MinValue = 1f,
         MaxValue = 5f,

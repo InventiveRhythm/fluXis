@@ -32,12 +32,15 @@ public partial class SettingsKeybind : SettingsItem
 
     private int index = -1;
 
+    public SettingsKeybind()
+    {
+        Padded = true;
+    }
+
     [BackgroundDependencyLoader]
     private void load(FluXisRealm realm)
     {
         this.realm = realm;
-
-        TextFlow.Padding = new MarginPadding { Left = 20 };
 
         Add(flow = new FillFlowContainer<KeybindContainer>
         {

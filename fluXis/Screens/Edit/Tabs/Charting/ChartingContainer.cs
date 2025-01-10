@@ -191,35 +191,6 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         }
     }
 
-    protected override bool OnScroll(ScrollEvent e)
-    {
-        var scroll = e.ShiftPressed ? e.ScrollDelta.X : e.ScrollDelta.Y;
-        int delta = scroll > 0 ? 1 : -1;
-
-        if (e.ControlPressed)
-        {
-            settings.Zoom += delta * .1f;
-            settings.Zoom = Math.Clamp(settings.Zoom, .5f, 5f);
-        }
-        else if (e.ShiftPressed)
-        {
-            var snaps = SNAP_DIVISORS;
-            var index = Array.IndexOf(snaps, settings.SnapDivisor);
-            index += delta;
-
-            if (index < 0)
-                index = snaps.Length - 1;
-            else if (index >= snaps.Length)
-                index = 0;
-
-            settings.SnapDivisor = snaps[index];
-        }
-        else
-            base.OnScroll(e);
-
-        return true;
-    }
-
     private void placeNote(int lane)
     {
         if (lane > Map.RealmMap.KeyCount)

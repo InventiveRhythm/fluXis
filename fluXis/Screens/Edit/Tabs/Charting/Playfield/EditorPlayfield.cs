@@ -81,10 +81,10 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
     {
         base.Update();
 
-        float songLengthInPixels = .5f * (clock.TrackLength * settings.Zoom);
-        float songTimeInPixels = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * (-(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * settings.Zoom));
+        var songLengthInPixels = .5f * (clock.TrackLength * settings.Zoom);
+        var songTimeInPixels = (float)(-EditorHitObjectContainer.HITPOSITION - .5f * (-(clock.CurrentTime + ChartingContainer.WAVEFORM_OFFSET) * settings.Zoom));
 
-        waveform.Width = songLengthInPixels;
+        waveform.Width = (float)songLengthInPixels;
         waveform.Y = songTimeInPixels;
 
         if (hitSound != null)

@@ -20,8 +20,6 @@ public partial class VariableControl : FillFlowContainer
     [Resolved]
     private EditorSettings settings { get; set; }
 
-    private BindableFloat rateBindable;
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -34,14 +32,7 @@ public partial class VariableControl : FillFlowContainer
             new VariableControlContainer
             {
                 Title = "Playback Speed",
-                Bindable = rateBindable = new BindableFloat
-                {
-                    MinValue = .2f,
-                    MaxValue = 2f,
-                    Default = 1f,
-                    Value = 1f,
-                    Precision = .05f
-                }
+                Bindable = clock.RateBindable
             },
             new VariableControlContainer
             {
@@ -55,25 +46,23 @@ public partial class VariableControl : FillFlowContainer
     {
         base.LoadComplete();
 
-        rateBindable.BindValueChanged(e => clock.Rate = e.NewValue, true);
+        clock.RateBindable.BindValueChanged(e => clock.Rate = e.NewValue, true);
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         if (e.Repeat) return false;
+        if (!e.ControlPressed) return false;
 
-        if (e.ControlPressed)
+        switch (e.Key)
         {
-            switch (e.Key)
-            {
-                case Key.Minus or Key.KeypadMinus:
-                    rateBindable.Value -= rateBindable.Precision;
-                    return true;
+            case Key.Minus or Key.KeypadMinus:
+                clock.Rate -= .05f;
+                return true;
 
-                case Key.Plus or Key.KeypadPlus:
-                    rateBindable.Value += rateBindable.Precision;
-                    return true;
-            }
+            case Key.Plus or Key.KeypadPlus:
+                clock.Rate += .05f;
+                return true;
         }
 
         return false;
@@ -82,7 +71,7 @@ public partial class VariableControl : FillFlowContainer
     private partial class VariableControlContainer : Container
     {
         public string Title { get; init; }
-        public BindableFloat Bindable { get; init; }
+        public BindableNumber<double> Bindable { get; init; }
 
         private FluXisSpriteText valueText;
 
