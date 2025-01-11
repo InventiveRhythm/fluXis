@@ -1,3 +1,4 @@
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
@@ -34,14 +35,14 @@ public partial class PlayerListEntryContent : CompositeDrawable
 
         InternalChildren = new Drawable[]
         {
-            new Container
+            new LoadWrapper<DrawableAvatar>
             {
                 Size = new Vector2(80),
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 CornerRadius = 10,
                 Masking = true,
-                Child = new DrawableAvatar(participant.User)
+                LoadContent = () => new DrawableAvatar(participant.User)
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
