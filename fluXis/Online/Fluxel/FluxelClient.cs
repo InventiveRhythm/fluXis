@@ -17,6 +17,7 @@ using fluXis.Online.API.Requests.Auth;
 using fluXis.Online.Notifications;
 using fluXis.Overlay.Notifications;
 using fluXis.Utils;
+using Midori.Networking.WebSockets;
 using Midori.Networking.WebSockets.Frame;
 using Midori.Networking.WebSockets.Typed;
 using Newtonsoft.Json.Linq;
@@ -25,7 +26,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
-using WebSocketState = Midori.Networking.WebSockets.WebSocketState;
 
 namespace fluXis.Online.Fluxel;
 
