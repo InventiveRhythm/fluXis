@@ -8,7 +8,6 @@ using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Logging;
 
 namespace fluXis.Online.Multiplayer;
 
@@ -21,7 +20,6 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     // public event Action RoomUpdated;
 
     public event Action<APIMap> OnMapChange;
-    public event Action<string> MapChangeFailed;
 
     public event Action OnStart;
     public event Action<long, int> OnScore;
@@ -48,7 +46,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Room = await JoinRoom(id, password);
     }
 
-    protected Task UserJoined(MultiplayerParticipant participant)
+    Task IMultiplayerClient.UserJoined(MultiplayerParticipant participant)
     {
         Schedule(() =>
         {
@@ -59,14 +57,16 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
                 return;
 
             Room.Participants.Add(participant);
-
             OnUserJoin?.Invoke(participant);
         });
 
         return Task.CompletedTask;
     }
 
-    protected Task UserLeft(long id) => handleLeave(id, OnUserLeave);
+    async Task IMultiplayerClient.UserLeft(long id)
+    {
+        await handleLeave(id, OnUserLeave);
+    }
 
     public Task UserStateChanged(long id, MultiplayerUserState state)
     {
@@ -82,21 +82,12 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    protected Task SettingsChanged(MultiplayerRoom room) => Task.CompletedTask;
-
-    protected Task MapChanged(bool success, APIMap map, string error)
+    public Task MapUpdated(APIMap map)
     {
         Schedule(() =>
         {
             if (Room == null)
                 return;
-
-            if (!success)
-            {
-                MapChangeFailed?.Invoke(error);
-                OnMapChange?.Invoke(Room.Map);
-                return;
-            }
 
             Room.Map = map;
             OnMapChange?.Invoke(map);
@@ -105,7 +96,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    protected Task Starting()
+    public Task LoadRequested()
     {
         Schedule(() =>
         {
@@ -118,16 +109,25 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    protected Task ScoreUpdated(long id, int score)
+    public Task ScoreUpdated(long user, int score)
     {
         Schedule(() =>
         {
-            if (id == Player.ID)
+            if (user == Player.ID)
                 return;
 
-            OnScore?.Invoke(id, score);
+            OnScore?.Invoke(user, score);
         });
 
+        return Task.CompletedTask;
+    }
+
+    public Task EveryoneFinished(List<ScoreInfo> scores)
+    {
+        // dangerous but when this gets called the
+        // client is unable to execute schedules
+        // might need a better fix someday
+        OnResultsReady?.Invoke(scores);
         return Task.CompletedTask;
     }
 
@@ -146,13 +146,6 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    protected Task ResultsReady(List<ScoreInfo> scores)
-    {
-        Logger.Log($"Received results for {scores.Count} players", LoggingTarget.Network, LogLevel.Debug);
-        Schedule(() => OnResultsReady?.Invoke(scores));
-        return Task.CompletedTask;
-    }
-
     protected void TriggerDisconnect()
     {
         Room = null;
@@ -167,6 +160,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public abstract Task ChangeMap(long map, string hash);
     public abstract Task UpdateScore(int score);
     public abstract Task Finish(ScoreInfo score);
+    public abstract Task SetReadyState(bool ready);
 
     #endregion
 }

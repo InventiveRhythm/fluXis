@@ -148,7 +148,12 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         try
         {
             connection = GetWebSocket<INotificationServer, INotificationClient>(this, "/notifications");
-            connection.OnClose += () => Status.Value = Status.Value == ConnectionStatus.Online ? ConnectionStatus.Reconnecting : ConnectionStatus.Failed;
+            connection.OnClose += () =>
+            {
+                Status.Value = Status.Value == ConnectionStatus.Online ? ConnectionStatus.Reconnecting : ConnectionStatus.Failed;
+                connection = null;
+            };
+
             Logger.Log("Connected to server! Waiting for authentication...", LoggingTarget.Network);
 
             // this is needed when using a local server

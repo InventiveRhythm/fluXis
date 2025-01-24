@@ -16,7 +16,7 @@ public interface IMultiplayerServer
 
     Task TransferHost(long id);
 
-    Task UpdateMap(long map, string hash);
+    Task<bool> UpdateMap(long map, string hash);
 
     Task UpdateScore(int score);
     Task FinishPlay(ScoreInfo score);

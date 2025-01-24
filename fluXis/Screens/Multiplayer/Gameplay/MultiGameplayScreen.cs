@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database.Maps;
-using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.Multiplayer;
@@ -9,7 +8,7 @@ using fluXis.Scoring;
 using fluXis.Scoring.Structs;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
-using osu.Framework.Allocation;
+using fluXis.Utils.Extensions;
 using osu.Framework.Screens;
 
 namespace fluXis.Screens.Multiplayer.Gameplay;
@@ -21,9 +20,6 @@ public partial class MultiGameplayScreen : GameplayScreen
     public override bool SubmitScore => false;
 
     private PlayfieldPlayer player => PlayfieldManager.FirstPlayer;
-
-    [Resolved]
-    private PanelContainer panels { get; set; }
 
     private MultiplayerClient client { get; }
 
@@ -85,14 +81,16 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     private void onOnResultsReady(List<ScoreInfo> scores)
     {
-        if (this.IsCurrentScreen())
-            this.Push(new MultiResults(RealmMap, scores));
+        Scheduler.ScheduleOnceIfNeeded(() =>
+        {
+            if (this.IsCurrentScreen())
+                this.Push(new MultiResults(RealmMap, scores));
+        });
     }
 
     private void onDisconnect()
     {
         CursorVisible = true;
         GameplayClock.Stop();
-        panels.Content = new DisconnectedPanel(this.Exit);
     }
 }

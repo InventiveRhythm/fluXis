@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
@@ -14,7 +15,6 @@ using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Multi;
-using fluXis.Online.API.Packets.Multiplayer;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Notifications;
@@ -147,7 +147,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         if (hasMapDownloaded)
         {
-            api.SendPacketAsync(MultiReadyPacket.CreateC2S(!ready));
+            client.SetReadyState(!ready);
             return;
         }
 
@@ -192,7 +192,6 @@ public partial class MultiLobby : MultiSubScreen
         client.OnUserLeave += onOnUserLeave;
         client.OnUserStateChange += updateOnUserState;
         client.OnMapChange += onMapChange;
-        client.MapChangeFailed += mapChangeFailed;
         client.OnStart += startLoading;
 
         mapStore.MapSetAdded += mapAdded;
@@ -209,7 +208,6 @@ public partial class MultiLobby : MultiSubScreen
         client.OnUserLeave -= onOnUserLeave;
         client.OnUserStateChange -= updateOnUserState;
         client.OnMapChange -= onMapChange;
-        client.MapChangeFailed -= mapChangeFailed;
         client.OnStart -= startLoading;
 
         mapStore.MapSetAdded -= mapAdded;
@@ -217,15 +215,10 @@ public partial class MultiLobby : MultiSubScreen
 
     private void onDisconnect()
     {
+        confirmExit = true;
+
         if (IsCurrentScreen)
-        {
             clock.Stop();
-            panels.Content = new DisconnectedPanel(() =>
-            {
-                confirmExit = true;
-                this.Exit();
-            });
-        }
     }
 
     private void onOnUserJoin(MultiplayerParticipant user)
@@ -252,8 +245,17 @@ public partial class MultiLobby : MultiSubScreen
         playerList.RemovePlayer(user.ID);
     }
 
-    private void changeMap() => MultiScreen.Push(new MultiSongSelect(map => client.ChangeMap(map.OnlineID, map.Hash)));
-    private void mapChangeFailed(string error) => notifications.SendError("Map change failed", error, FontAwesome6.Solid.Bomb);
+    private void changeMap() => MultiScreen.Push(new MultiSongSelect(async void (map) =>
+    {
+        try
+        {
+            await client.ChangeMap(map.OnlineID, map.Hash);
+        }
+        catch (Exception ex)
+        {
+            notifications.SendError("Map change failed", ex.Message, FontAwesome6.Solid.Bomb);
+        }
+    }));
 
     private void onMapChange(APIMap map)
     {
@@ -307,7 +309,7 @@ public partial class MultiLobby : MultiSubScreen
         if (map == null)
         {
             notifications.SendError("Failed to find map locally.");
-            api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+            client.SetReadyState(false);
             return;
         }
 
@@ -355,7 +357,7 @@ public partial class MultiLobby : MultiSubScreen
 
         base.OnResuming(e);
         onMapChange(Room.Map);
-        api.SendPacketAsync(MultiReadyPacket.CreateC2S(false));
+        client.SetReadyState(false);
     }
 
     public override bool OnExiting(ScreenExitEvent e)

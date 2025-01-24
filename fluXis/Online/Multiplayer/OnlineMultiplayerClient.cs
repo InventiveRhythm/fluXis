@@ -1,8 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Packets.Multiplayer;
 using fluXis.Online.Fluxel;
 using fluXis.Scoring;
 using Midori.Networking.WebSockets.Frame;
@@ -36,19 +36,16 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     }
 
     protected override async Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash)
-    {
-        var room = await connection.Server.CreateRoom(name, "", mapid, hash);
-        return room;
-    }
+        => await connection.Server.CreateRoom(name, "", mapid, hash);
 
     protected override async Task<MultiplayerRoom> JoinRoom(long id, string password)
     {
-        var res = await api.SendAndWait(MultiJoinPacket.CreateC2SInitialJoin(id, password));
+        var lobby = await connection.Server.JoinRoom(id, password);
 
-        if (!res.Success)
-            throw new APIException(res.Message);
+        if (lobby is null)
+            throw new APIException("failed to join room");
 
-        return res.Success ? res.Data.Room : null;
+        return lobby;
     }
 
     public override async Task LeaveRoom()
@@ -58,17 +55,16 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     }
 
     public override async Task ChangeMap(long map, string hash)
-        => await connection.Server.UpdateMap(map, hash);
-
-    public override Task UpdateScore(int score)
     {
-        api.SendPacketAsync(MultiScorePacket.CreateC2S(score));
-        return Task.CompletedTask;
+        var result = await connection.Server.UpdateMap(map, hash);
+
+        if (!result)
+            throw new Exception("Failed to update map.");
     }
 
-    public override Task Finish(ScoreInfo score)
-    {
-        api.SendPacketAsync(MultiCompletePacket.CreateC2S(score));
-        return Task.CompletedTask;
-    }
+    public override async Task UpdateScore(int score) => await connection.Server.UpdateScore(score);
+    public override async Task Finish(ScoreInfo score) => await connection.Server.FinishPlay(score);
+    public override async Task SetReadyState(bool ready) => await connection.Server.UpdateReadyState(ready);
+
+    public override string ToString() => $"{connection.State}";
 }

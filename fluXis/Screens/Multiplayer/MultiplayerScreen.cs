@@ -2,6 +2,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Map;
 using fluXis.Online.Multiplayer;
 using fluXis.Screens.Multiplayer.SubScreens;
@@ -32,6 +33,9 @@ public partial class MultiplayerScreen : FluXisScreen
 
     [Resolved]
     private GlobalBackground backgrounds { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
 
     [Cached]
     private MultiplayerMenuMusic menuMusic = new();
@@ -98,6 +102,17 @@ public partial class MultiplayerScreen : FluXisScreen
 
             AddInternal(client);
             connectingContainer.FadeOut(FADE_DURATION);
+
+            client.OnDisconnect += () =>
+            {
+                panels.Content = new DisconnectedPanel(() =>
+                {
+                    if (!this.IsCurrentScreen())
+                        this.MakeCurrent();
+
+                    this.Exit();
+                });
+            };
 
             var modes = new MultiModeSelect();
             screenStack.Push(modes);

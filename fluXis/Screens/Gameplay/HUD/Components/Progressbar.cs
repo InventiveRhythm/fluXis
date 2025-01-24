@@ -84,7 +84,7 @@ public partial class Progressbar : GameplayHUDComponent
         {
             set
             {
-                if (value < 0) value = 0;
+                if (value < 0 || !float.IsFinite(value)) value = 0;
                 if (value > 1) value = 1;
 
                 bar.ResizeWidthTo(value, 200);
@@ -95,7 +95,7 @@ public partial class Progressbar : GameplayHUDComponent
         {
             set
             {
-                if (value < 0) value = 0;
+                if (value < 0 || !float.IsFinite(value)) value = 0;
                 if (value > 1) value = 1;
 
                 catchup.ResizeWidthTo(value, 200);

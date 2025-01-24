@@ -1,3 +1,4 @@
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables;
@@ -54,7 +55,7 @@ public partial class MultiResultsScore : CompositeDrawable
                             Origin = Anchor.Centre
                         }
                     },
-                    new Container
+                    new LoadWrapper<DrawableAvatar>
                     {
                         Size = new Vector2(60),
                         Anchor = Anchor.CentreLeft,
@@ -62,7 +63,8 @@ public partial class MultiResultsScore : CompositeDrawable
                         CornerRadius = 10,
                         Masking = true,
                         Margin = new MarginPadding { Right = 7 },
-                        Child = new DrawableAvatar(user)
+                        OnComplete = a => a.FadeInFromZero(400),
+                        LoadContent = () => new DrawableAvatar(user)
                         {
                             RelativeSizeAxes = Axes.Both,
                             FillMode = FillMode.Fill,
