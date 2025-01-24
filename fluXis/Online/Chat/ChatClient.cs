@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using fluXis.Online.API.Packets.Chat;
+using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
 using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
@@ -28,10 +28,10 @@ public partial class ChatClient : Component
     [BackgroundDependencyLoader]
     private void load()
     {
-        api.RegisterListener<ChatMessagePacket>(EventType.ChatMessage, onMessage);
-        api.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, onMessageDelete);
-        api.RegisterListener<ChatChannelJoinPacket>(EventType.ChatJoin, pk => addChannel(pk.Data!.Channel));
-        api.RegisterListener<ChatChannelLeavePacket>(EventType.ChatLeave, pk => removeChannel(pk.Data!.Channel));
+        api.ChatChannelAdded += addChannel;
+        api.ChatChannelRemoved += removeChannel;
+        api.ChatMessageReceived += onMessage;
+        api.ChatMessageRemoved += onMessageDelete;
     }
 
     protected override void LoadComplete()
@@ -93,20 +93,20 @@ public partial class ChatClient : Component
         ChannelParted?.Invoke(channel);
     });
 
-    private void onMessage(FluxelReply<ChatMessagePacket> packet)
+    private void onMessage(APIChatMessage message)
     {
-        if (packet.Data?.ChatMessage is null || !channels.TryGetValue(packet.Data.ChatMessage.Channel, out var channel))
+        if (!channels.TryGetValue(message.Channel, out var channel))
             return;
 
-        channel.AddMessage(packet.Data.ChatMessage);
+        channel.AddMessage(message);
     }
 
-    private void onMessageDelete(FluxelReply<ChatDeletePacket> packet)
+    private void onMessageDelete(string channel, string id)
     {
-        if (packet.Data?.Channel is null || !channels.TryGetValue(packet.Data.Channel, out var channel))
+        if (!channels.TryGetValue(channel, out var c))
             return;
 
-        channel.DeleteMessage(packet.Data.MessageID);
+        c.DeleteMessage(id);
     }
 
     protected override void Dispose(bool isDisposing)

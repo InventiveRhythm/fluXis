@@ -12,9 +12,9 @@ namespace fluXis.Overlay.User.Header;
 
 public partial class HeaderGroupChip : CircularContainer
 {
-    private IAPIGroup group { get; }
+    private APIGroup group { get; }
 
-    public HeaderGroupChip(IAPIGroup group)
+    public HeaderGroupChip(APIGroup group)
     {
         this.group = group;
     }

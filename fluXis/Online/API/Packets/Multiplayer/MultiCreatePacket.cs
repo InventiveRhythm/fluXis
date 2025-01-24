@@ -18,12 +18,12 @@ public class MultiCreatePacket : IPacket
 
     #region Server2Client
 
-    public IMultiplayerRoom Room { get; init; } = null!;
+    public MultiplayerRoom Room { get; init; } = null!;
 
     #endregion
 
     public static MultiCreatePacket CreateC2S(string name, string password, long mapID, string mapHash)
         => new() { Name = name, Password = password, MapID = mapID, MapHash = mapHash };
 
-    public static MultiCreatePacket CreateS2C(IMultiplayerRoom room) => new() { Room = room };
+    public static MultiCreatePacket CreateS2C(MultiplayerRoom room) => new() { Room = room };
 }

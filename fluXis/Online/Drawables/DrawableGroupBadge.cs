@@ -11,9 +11,9 @@ namespace fluXis.Online.Drawables;
 
 public partial class DrawableGroupBadge : CircularContainer
 {
-    private IAPIGroup group { get; }
+    private APIGroup group { get; }
 
-    public DrawableGroupBadge(IAPIGroup group)
+    public DrawableGroupBadge(APIGroup group)
     {
         this.group = group;
     }

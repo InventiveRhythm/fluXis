@@ -2,8 +2,11 @@ using System;
 using System.Threading.Tasks;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
+using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Packets;
+using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
 
 namespace fluXis.Online.Fluxel;
@@ -25,6 +28,16 @@ public interface IAPIClient
     APIEndpointConfig Endpoint { get; }
     Exception? LastException { get; }
 
+    event Action<APIUser>? FriendOnline;
+    event Action<APIUser>? FriendOffline;
+    event Action<Achievement> AchievementEarned;
+    event Action<ServerMessage> MessageReceived;
+
+    event Action<string> ChatChannelAdded;
+    event Action<string> ChatChannelRemoved;
+    event Action<APIChatMessage> ChatMessageReceived;
+    event Action<string, string> ChatMessageRemoved;
+
     void PerformRequest(APIRequest request);
     Task PerformRequestAsync(APIRequest request);
 
@@ -32,13 +45,13 @@ public interface IAPIClient
     void Register(string username, string password, string email);
     void Logout();
 
+    TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
+        where S : class where C : class;
+
     // websocket stuff
     public Task SendPacket<T>(T packet) where T : IPacket;
     public void SendPacketAsync<T>(T packet) where T : IPacket;
     public Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000) where T : IPacket;
-
-    public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket;
-    public void UnregisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket;
 
     public void Disconnect();
 }

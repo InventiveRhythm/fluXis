@@ -1,10 +1,9 @@
-﻿using MessagePack;
+﻿using Newtonsoft.Json;
 
 namespace fluXis.Online.Spectator;
 
-[MessagePackObject]
 public class SpectatorState
 {
-    [Key(0)]
+    [JsonProperty("map")]
     public long? MapID { get; set; }
 }

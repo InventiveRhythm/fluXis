@@ -16,6 +16,7 @@ using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -207,9 +208,10 @@ public partial class MultiLobbyList : MultiSubScreen
             if (client.Room != null)
                 Schedule(() => this.Push(new MultiLobby()));
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            notifications.SendError("Failed to join lobby", e.Message);
+            Logger.Error(ex, "Failed to create lobby!");
+            notifications.SendError("Failed to join lobby", ex.Message);
         }
 
         Schedule(() => panel.Hide());

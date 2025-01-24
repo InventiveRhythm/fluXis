@@ -6,7 +6,7 @@ using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Chat;
 
-public class ChatMessageRequest : APIRequest<IChatMessage>
+public class ChatMessageRequest : APIRequest<APIChatMessage>
 {
     protected override string Path => $"/chat/channels/{channel}/messages";
     protected override HttpMethod Method => HttpMethod.Post;

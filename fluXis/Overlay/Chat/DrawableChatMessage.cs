@@ -32,8 +32,8 @@ public partial class DrawableChatMessage : Container
     [Resolved]
     private IAPIClient api { get; set; }
 
-    public IChatMessage InitialMessage { get; set; }
-    public List<IChatMessage> Messages { get; } = new();
+    public APIChatMessage InitialMessage { get; set; }
+    public List<APIChatMessage> Messages { get; } = new();
 
     private FillFlowContainer<MessageText> flow;
 
@@ -101,7 +101,7 @@ public partial class DrawableChatMessage : Container
         AddMessage(InitialMessage);
     }
 
-    public void AddMessage(IChatMessage message)
+    public void AddMessage(APIChatMessage message)
     {
         Messages.Add(message);
         flow.Add(new MessageText
@@ -185,7 +185,7 @@ public partial class DrawableChatMessage : Container
 
     private partial class MessageText : FluXisTextFlow, IHasContextMenu
     {
-        public IChatMessage Message { get; init; }
+        public APIChatMessage Message { get; init; }
         public IAPIClient API { get; init; }
 
         private const string link_regex = @"(http|https)://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?";

@@ -12,7 +12,7 @@ using osu.Framework.Logging;
 
 namespace fluXis.Online.Multiplayer;
 
-public abstract partial class MultiplayerClient : Component
+public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 {
     public event Action<MultiplayerParticipant> OnUserJoin;
     public event Action<MultiplayerParticipant> OnUserLeave;
@@ -68,16 +68,14 @@ public abstract partial class MultiplayerClient : Component
 
     protected Task UserLeft(long id) => handleLeave(id, OnUserLeave);
 
-    protected Task UserStateChanged(long id, MultiplayerUserState state)
+    public Task UserStateChanged(long id, MultiplayerUserState state)
     {
         Schedule(() =>
         {
             if (Room?.Participants.FirstOrDefault(u => u.ID == id) is not { } participant)
                 return;
 
-            var user = participant as MultiplayerParticipant;
-            user!.State = state;
-
+            participant.State = state;
             OnUserStateChange?.Invoke(id, state);
         });
 
@@ -142,7 +140,7 @@ public abstract partial class MultiplayerClient : Component
 
             Room.Participants.Remove(participant);
 
-            callback?.Invoke(participant as MultiplayerParticipant);
+            callback?.Invoke(participant);
         }, false);
 
         return Task.CompletedTask;
@@ -155,7 +153,7 @@ public abstract partial class MultiplayerClient : Component
         return Task.CompletedTask;
     }
 
-    protected void Disconnect()
+    protected void TriggerDisconnect()
     {
         Room = null;
         Scheduler.ScheduleIfNeeded(() => OnDisconnect?.Invoke());

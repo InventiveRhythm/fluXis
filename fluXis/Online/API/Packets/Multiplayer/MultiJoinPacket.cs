@@ -23,10 +23,10 @@ public class MultiJoinPacket : IPacket
     #region Server2Client
 
     [JsonProperty("lobby")]
-    public IMultiplayerRoom? Room { get; init; }
+    public MultiplayerRoom? Room { get; init; }
 
     [JsonProperty("participant")]
-    public IMultiplayerParticipant? Participant { get; init; }
+    public MultiplayerParticipant? Participant { get; init; }
 
     [JsonIgnore]
     public bool JoinRequest => Room != null;
@@ -39,6 +39,6 @@ public class MultiJoinPacket : IPacket
     public static MultiJoinPacket CreateC2SInitialJoin(long lobbyID, string? password = null)
         => new() { LobbyID = lobbyID, Password = password };
 
-    public static MultiJoinPacket CreateS2CInitialJoin(IMultiplayerRoom room) => new() { Room = room };
-    public static MultiJoinPacket CreateS2CUserJoin(IMultiplayerParticipant participant) => new() { Participant = participant };
+    public static MultiJoinPacket CreateS2CInitialJoin(MultiplayerRoom room) => new() { Room = room };
+    public static MultiJoinPacket CreateS2CUserJoin(MultiplayerParticipant participant) => new() { Participant = participant };
 }

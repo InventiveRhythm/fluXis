@@ -9,7 +9,6 @@ using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Input;
 using fluXis.Online.API.Models.Chat;
-using fluXis.Online.API.Packets.Chat;
 using fluXis.Online.Chat;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Chat.UI;
@@ -208,9 +207,9 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             chan?.Messages.ForEach(addMessage);
         });
 
-        api.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, res =>
+        /*api.RegisterListener<ChatDeletePacket>(EventType.ChatMessageDelete, res =>
         {
-            /*if (!res.Success)
+            if (!res.Success)
             {
                 notifications.SendError(res.Message);
                 return;
@@ -222,8 +221,8 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                 message?.RemoveMessage(res.Data!.MessageID);
                 if (message?.Messages.Count == 0)
                     flow.Remove(message, true);
-            });*/
-        });
+            });
+        });*/
     }
 
     private void updateStatus(ValueChangedEvent<ConnectionStatus> e) => Schedule(() =>
@@ -262,7 +261,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
         channels.Remove(button, true);
     }
 
-    private void addMessage(IChatMessage message) => Schedule(() =>
+    private void addMessage(APIChatMessage message) => Schedule(() =>
     {
         if (message.Channel != Channel.Value)
             return;
@@ -279,7 +278,7 @@ public partial class ChatOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
             ScheduleAfterChildren(() => scroll.ScrollToEnd());
     });
 
-    private void removeMessage(IChatMessage message) => Schedule(() =>
+    private void removeMessage(APIChatMessage message) => Schedule(() =>
     {
         if (message.Channel != Channel.Value)
             return;

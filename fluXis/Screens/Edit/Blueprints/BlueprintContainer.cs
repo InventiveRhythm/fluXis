@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Map.Structures.Bases;
 using fluXis.Overlay.Mouse;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.UI;
@@ -15,6 +16,7 @@ using osuTK.Input;
 namespace fluXis.Screens.Edit.Blueprints;
 
 public partial class BlueprintContainer<T> : Container, ICursorDrag
+    where T : ITimedObject
 {
     protected virtual bool HorizontalSelection => false;
     protected virtual bool InArea => false;

@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using fluXis.Online;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
+using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Packets;
 using fluXis.Online.Fluxel;
+using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 
@@ -29,6 +32,16 @@ public class TestAPIClient : IAPIClient
     public string MultifactorToken { get; set; } = "mfa-token";
     public APIEndpointConfig Endpoint => new();
     public Exception? LastException { get; private set; }
+
+    public event Action<APIUser>? FriendOnline;
+    public event Action<APIUser>? FriendOffline;
+    public event Action<Achievement>? AchievementEarned;
+    public event Action<ServerMessage>? MessageReceived;
+    public event Action<string>? ChatChannelAdded;
+    public event Action<string>? ChatChannelRemoved;
+    public event Action<APIChatMessage>? ChatMessageReceived;
+    public event Action<string, string>? ChatMessageRemoved;
+
     public bool IsLoggedIn => Status.Value == ConnectionStatus.Online;
 
     public Action<APIRequest>? HandleRequest { get; set; }
@@ -83,6 +96,11 @@ public class TestAPIClient : IAPIClient
         User.Value = null;
 
         Logger.Log($"status: {Status.Value}");
+    }
+
+    public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path) where S : class where C : class
+    {
+        throw new NotImplementedException();
     }
 
     public Task SendPacket<T>(T packet) where T : IPacket => Task.CompletedTask;

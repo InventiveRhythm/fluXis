@@ -116,7 +116,7 @@ public partial class SentryClient : Component
                 return true;
 
             case WebException web:
-                if (web.Response is HttpWebResponse { StatusCode: HttpStatusCode.BadGateway or HttpStatusCode.ServiceUnavailable })
+                if (web.Response is HttpWebResponse { StatusCode: System.Net.HttpStatusCode.BadGateway or System.Net.HttpStatusCode.ServiceUnavailable })
                     return true;
 
                 return web.Status is WebExceptionStatus.Timeout or WebExceptionStatus.UnknownError;

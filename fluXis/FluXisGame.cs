@@ -13,9 +13,6 @@ using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Localization.Stores;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Packets.Other;
-using fluXis.Online.API.Packets.User;
-using fluXis.Online.Fluxel;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.Chat;
@@ -249,48 +246,32 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(loadInfo)));
 
-        APIClient.RegisterListener<AchievementPacket>(EventType.Achievement, res =>
-        {
-            var achievement = res.Data!.Achievement;
-            Schedule(() => LoadComponentAsync(new AchievementOverlay(achievement), ov => Schedule(() => panelContainer.Content = ov)));
-        });
+        APIClient.FriendOnline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
+        APIClient.FriendOffline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now offline!", FontAwesome6.Solid.UserMinus));
+        APIClient.AchievementEarned += a => Schedule(() => LoadComponentAsync(new AchievementOverlay(a), ov => Schedule(() => panelContainer.Content = ov)));
 
-        APIClient.RegisterListener<FriendOnlinePacket>(EventType.FriendOnline, res =>
+        APIClient.MessageReceived += message =>
         {
-            var user = res.Data!.User!;
-            Schedule(() => NotificationManager.SendSmallText($"{user.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
-        });
-
-        APIClient.RegisterListener<FriendOnlinePacket>(EventType.FriendOffline, res =>
-        {
-            var user = res.Data!.User!;
-            Schedule(() => NotificationManager.SendSmallText($"{user.PreferredName} is now offline.", FontAwesome6.Solid.UserMinus));
-        });
-
-        APIClient.RegisterListener<ServerMessagePacket>(EventType.ServerMessage, res =>
-        {
-            var data = res.Data!.Message;
-
-            switch (data.Type)
+            switch (message.Type)
             {
                 case "normal":
-                    NotificationManager.SendText(data.Text, data.SubText);
+                    NotificationManager.SendText(message.Text, message.SubText);
                     break;
 
                 case "small":
-                    NotificationManager.SendSmallText(data.Text);
+                    NotificationManager.SendSmallText(message.Text);
                     break;
 
                 case "image":
                     NotificationManager.Add(new ImageNotificationData
                     {
-                        Text = data.Text,
-                        Path = data.Path,
+                        Text = message.Text,
+                        Path = message.Path,
                         Location = ImageNotificationData.ImageLocation.Online
                     });
                     break;
             }
-        });
+        };
     }
 
     public override void SelectMapSet(RealmMapSet set)

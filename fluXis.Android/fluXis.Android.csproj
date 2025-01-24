@@ -11,7 +11,7 @@
     <NullabilityInfoContextSupport>true</NullabilityInfoContextSupport>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\fluXis.Game\fluXis.Game.csproj" />
+    <ProjectReference Include="..\fluXis\fluXis.csproj" />
     <PackageReference Include="ppy.osu.Framework.Android" Version="2024.927.0" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.7" />
   </ItemGroup>

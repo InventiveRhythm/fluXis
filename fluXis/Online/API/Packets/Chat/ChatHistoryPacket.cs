@@ -17,13 +17,13 @@ public class ChatHistoryPacket : IPacket
     #region Server2Client
 
     [JsonProperty("messages")]
-    public List<IChatMessage>? Messages { get; set; }
+    public List<APIChatMessage>? Messages { get; set; }
 
     #endregion
 
     public static ChatHistoryPacket CreateC2S(string channel)
         => new() { Channel = channel };
 
-    public static ChatHistoryPacket CreateS2C(string channel, List<IChatMessage> messages)
+    public static ChatHistoryPacket CreateS2C(string channel, List<APIChatMessage> messages)
         => new() { Channel = channel, Messages = messages };
 }

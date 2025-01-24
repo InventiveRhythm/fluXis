@@ -93,7 +93,7 @@ public abstract class UserActivity
         private GameplayScreen screen { get; }
         private RealmMap map { get; }
 
-        public IMultiplayerRoom Room { get; set; }
+        public MultiplayerRoom Room { get; set; }
 
         [JsonProperty("id")]
         public long MapID => map.OnlineID;
@@ -213,12 +213,12 @@ public abstract class UserActivity
 
     public class MultiLobby : UserActivity
     {
-        private IMultiplayerRoom room { get; }
+        private MultiplayerRoom room { get; }
 
         [JsonProperty("id")]
         public long RoomID => room.RoomID;
 
-        public MultiLobby(IMultiplayerRoom room)
+        public MultiLobby(MultiplayerRoom room)
         {
             this.room = room;
         }

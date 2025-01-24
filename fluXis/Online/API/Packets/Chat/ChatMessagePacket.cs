@@ -23,10 +23,10 @@ public class ChatMessagePacket : IPacket
     #region Server2Client
 
     [JsonProperty("message")]
-    public IChatMessage ChatMessage { get; set; } = null!;
+    public APIChatMessage ChatMessage { get; set; } = null!;
 
     #endregion
 
     public static ChatMessagePacket CreateC2S(string content, string channel) => new() { Content = content, Channel = channel };
-    public static ChatMessagePacket CreateS2C(IChatMessage message) => new() { ChatMessage = message };
+    public static ChatMessagePacket CreateS2C(APIChatMessage message) => new() { ChatMessage = message };
 }

@@ -22,13 +22,9 @@ using fluXis.IO;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Online;
-using fluXis.Online.API.Models.Chat;
-using fluXis.Online.API.Models.Groups;
-using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Chat;
 using fluXis.Online.Fluxel;
-using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Mouse;
 using fluXis.Overlay.Notifications;
 using fluXis.Plugins;
@@ -128,11 +124,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
-        JsonUtils.RegisterTypeConversion<IMultiplayerParticipant, MultiplayerParticipant>();
-        JsonUtils.RegisterTypeConversion<IAPIGroup, APIGroup>();
-        JsonUtils.RegisterTypeConversion<IMultiplayerRoom, MultiplayerRoom>();
-        JsonUtils.RegisterTypeConversion<IMultiplayerRoomSettings, MultiplayerRoomSettings>();
-        JsonUtils.RegisterTypeConversion<IChatMessage, ChatMessage>();
+        Midori.Logging.Logger.LogToFiles = false;
     }
 
     [BackgroundDependencyLoader]
@@ -184,7 +176,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
             cacheComponent(APIClient as FluxelClient);
-            cacheComponent<MultiplayerClient>(new OnlineMultiplayerClient(), true, true);
             cacheComponent(new ChatClient(), true, true);
 
             var users = new UserCache();

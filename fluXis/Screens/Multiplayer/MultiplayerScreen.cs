@@ -1,10 +1,15 @@
 using fluXis.Audio;
 using fluXis.Graphics.Background;
+using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface;
 using fluXis.Map;
+using fluXis.Online.Multiplayer;
 using fluXis.Screens.Multiplayer.SubScreens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace fluXis.Screens.Multiplayer;
 
@@ -35,10 +40,17 @@ public partial class MultiplayerScreen : FluXisScreen
     public string LobbyPassword { get; init; }
 
     private ScreenStack screenStack;
+    private DependencyContainer dependencies;
+    private MultiplayerClient client;
+
+    private FillFlowContainer connectingContainer;
 
     [BackgroundDependencyLoader]
     private void load()
     {
+        client = new OnlineMultiplayerClient();
+        dependencies.CacheAs(client);
+
         InternalChildren = new Drawable[]
         {
             menuMusic,
@@ -46,6 +58,31 @@ public partial class MultiplayerScreen : FluXisScreen
             {
                 RelativeSizeAxes = Axes.Both,
                 Alpha = 0
+            },
+            connectingContainer = new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(8),
+                Alpha = 0,
+                Children = new Drawable[]
+                {
+                    new LoadingIcon
+                    {
+                        Size = new Vector2(48),
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
+                    },
+                    new FluXisSpriteText
+                    {
+                        Text = "Connecting to Server...",
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        WebFontSize = 16
+                    }
+                }
             }
         };
     }
@@ -54,11 +91,20 @@ public partial class MultiplayerScreen : FluXisScreen
     {
         base.LoadComplete();
 
-        var modes = new MultiModeSelect();
-        screenStack.Push(modes);
+        LoadComponentAsync(client, _ =>
+        {
+            if (!IsPresent)
+                client.Dispose();
 
-        if (TargetLobby > 0)
-            modes.OpenList(TargetLobby, LobbyPassword);
+            AddInternal(client);
+            connectingContainer.FadeOut(FADE_DURATION);
+
+            var modes = new MultiModeSelect();
+            screenStack.Push(modes);
+
+            if (TargetLobby > 0)
+                modes.OpenList(TargetLobby, LobbyPassword);
+        });
 
         screenStack.ScreenExited += (_, _) =>
         {
@@ -66,6 +112,9 @@ public partial class MultiplayerScreen : FluXisScreen
                 this.Exit();
         };
     }
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     private bool canExit()
     {
@@ -84,7 +133,10 @@ public partial class MultiplayerScreen : FluXisScreen
     public override void OnEntering(ScreenTransitionEvent e)
     {
         using (BeginDelayedSequence(ENTER_DELAY))
+        {
             screenStack.FadeIn(FADE_DURATION);
+            connectingContainer.FadeIn(FADE_DURATION);
+        }
 
         globalClock.VolumeOut(400).OnComplete(c => c.Stop());
         backgrounds.AddBackgroundFromMap(null);

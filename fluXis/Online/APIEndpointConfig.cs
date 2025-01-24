@@ -11,9 +11,6 @@ public class APIEndpointConfig
     [JsonProperty("assets")]
     public string AssetUrl { get; private set; }
 
-    [JsonProperty("websocket")]
-    public string WebsocketUrl { get; private set; }
-
     [JsonProperty("website")]
     public string WebsiteRootUrl { get; private set; }
 
@@ -26,8 +23,6 @@ public class APIEndpointConfig
             APIUrl = "https://fluxis.flux.moe/api";
         if (string.IsNullOrWhiteSpace(AssetUrl))
             AssetUrl = "https://assets.flux.moe";
-        if (string.IsNullOrWhiteSpace(WebsocketUrl) || APIUrl.EqualsLower("wss://fluxel.flux.moe"))
-            WebsocketUrl = "wss://fluxis.flux.moe/socket";
         if (string.IsNullOrWhiteSpace(WebsiteRootUrl))
             WebsiteRootUrl = "https://fluxis.flux.moe";
         if (string.IsNullOrWhiteSpace(WikiRootUrl))
@@ -40,7 +35,6 @@ public class APIEndpointConfig
     {
         APIUrl = "http://localhost:2434";
         AssetUrl = "http://localhost:2434/assets";
-        WebsocketUrl = "http://localhost:2435";
         WebsiteRootUrl = "http://localhost:2432";
         WikiRootUrl = "http://localhost:2432/wiki";
         return this;

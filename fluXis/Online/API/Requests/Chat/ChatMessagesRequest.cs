@@ -3,7 +3,7 @@ using fluXis.Online.API.Models.Chat;
 
 namespace fluXis.Online.API.Requests.Chat;
 
-public class ChatMessagesRequest : APIRequest<List<IChatMessage>>
+public class ChatMessagesRequest : APIRequest<List<APIChatMessage>>
 {
     protected override string Path => $"/chat/channels/{channel}/messages";
 

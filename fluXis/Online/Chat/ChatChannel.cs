@@ -12,12 +12,12 @@ public class ChatChannel
     public string Name { get; }
     private IAPIClient api { get; }
 
-    public event Action<IChatMessage> OnMessage;
-    public event Action<IChatMessage> OnMessageRemoved;
+    public event Action<APIChatMessage> OnMessage;
+    public event Action<APIChatMessage> OnMessageRemoved;
 
-    public IReadOnlyList<IChatMessage> Messages => messages;
+    public IReadOnlyList<APIChatMessage> Messages => messages;
 
-    private List<IChatMessage> messages { get; } = new();
+    private List<APIChatMessage> messages { get; } = new();
 
     public ChatChannel(string name, IAPIClient api)
     {
@@ -38,7 +38,7 @@ public class ChatChannel
         api.PerformRequestAsync(req);
     }
 
-    public void AddMessage(IChatMessage message)
+    public void AddMessage(APIChatMessage message)
     {
         messages.Add(message);
         OnMessage?.Invoke(message);

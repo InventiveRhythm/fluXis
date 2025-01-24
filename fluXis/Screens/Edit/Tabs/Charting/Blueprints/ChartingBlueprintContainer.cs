@@ -185,7 +185,9 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.Time;
         int laneDelta = 0;
 
+#pragma warning disable CA2021 // Rethrow to preserve stack details
         var hitBlueprints = DraggedBlueprints.OfType<NoteSelectionBlueprint>().ToArray();
+#pragma warning restore CA2021
 
         if (hitBlueprints.Length != 0)
         {
