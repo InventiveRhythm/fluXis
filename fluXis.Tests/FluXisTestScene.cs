@@ -6,6 +6,7 @@ using fluXis.Map;
 using fluXis.Online.Fluxel;
 using osu.Framework.Allocation;
 using osu.Framework.Testing;
+using osu.Framework.Utils;
 
 namespace fluXis.Tests;
 
@@ -27,6 +28,23 @@ public partial class FluXisTestScene : TestScene
 
     protected void CreateDummyBeatSync() => TestDependencies.CacheAs<IBeatSyncProvider>(new DummyBeatSyncProvider());
     protected void CreateDummyAmplitude() => TestDependencies.CacheAs<IAmplitudeProvider>(new DummyAmplitudeProvider());
+
+    protected RealmMapSet CreateDummySet()
+    {
+        var map = RealmMap.CreateNew();
+        var set = map.MapSet;
+
+        set.ID = Guid.NewGuid();
+        map.ID = Guid.NewGuid();
+
+        set.Metadata.Title = set.ID.ToString();
+        set.Metadata.Artist = "some artist";
+        set.Metadata.Mapper = "some mapper";
+        map.Difficulty = map.ID.ToString();
+        map.Filters = new RealmMapFilters { NotesPerSecond = RNG.NextSingle(1, 30) };
+
+        return set;
+    }
 
     protected virtual RealmMap GetTestMap(MapStore maps)
     {

@@ -20,6 +20,7 @@ public class MapDifficultyItem : IListItem
 
     public float Size => 80;
     public float Position { get; set; }
+    public bool Displayed { get; set; }
 
     public Drawable Drawable { get; set; }
 

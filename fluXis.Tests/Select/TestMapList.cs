@@ -1,59 +1,82 @@
-﻿using System.Linq;
-using fluXis.Database.Maps;
-using fluXis.Graphics.Background;
+﻿using fluXis.Graphics.Background;
 using fluXis.Graphics.UserInterface.Panel;
-using fluXis.Map;
 using fluXis.Overlay.Settings;
 using fluXis.Screens.Select;
 using fluXis.Screens.Select.List;
 using fluXis.Screens.Select.List.Items;
 using fluXis.Utils;
-using osu.Framework.Allocation;
+using NUnit.Framework;
 using osu.Framework.Bindables;
 
 namespace fluXis.Tests.Select;
 
 public partial class TestMapList : FluXisTestScene
 {
-    [BackgroundDependencyLoader]
-    private void load(MapStore store)
+    private bool cached = false;
+    private MapList list;
+
+    [SetUp]
+    public void Setup()
     {
-        CreateClock();
+        Clear();
 
-        var background = new GlobalBackground();
-        TestDependencies.Cache(background);
+        if (!cached)
+        {
+            CreateClock();
 
-        var panels = new PanelContainer();
-        TestDependencies.Cache(panels);
+            TestDependencies.Cache(new GlobalBackground());
+            TestDependencies.Cache(new PanelContainer());
+            TestDependencies.Cache(new SettingsMenu());
 
-        var settings = new SettingsMenu();
-        TestDependencies.Cache(settings);
+            var screen = new SelectScreen();
+            TestDependencies.Cache(screen);
+            LoadComponent(screen);
+        }
 
-        var screen = new SelectScreen();
-        LoadComponent(screen);
-        TestDependencies.Cache(screen);
+        cached = true;
 
-        var list = new MapList(new Bindable<MapUtils.SortingMode>());
+        list = new MapList(new Bindable<MapUtils.SortingMode>());
         Add(list);
         list.Show();
+    }
 
+    [Test]
+    public void TestSingleSet()
+    {
         AddStep("Add Item", () =>
         {
-            var map = RealmMap.CreateNew();
-            list.Insert(new MapSetItem(map.MapSet));
+            var set = CreateDummySet();
+            list.Insert(new MapSetItem(set));
         });
+    }
 
-        AddStep("Add All Loaded", () =>
+    [Test]
+    public void TestManyMaps()
+    {
+        createMapsCount(80000);
+    }
+
+    [Test]
+    public void TestSorting()
+    {
+        createMapsCount(25);
+        AddStep("Change Sorting to Title", () => list.SetSorting(MapUtils.SortingMode.Title));
+        AddStep("Change Sorting to Difficulty", () => list.SetSorting(MapUtils.SortingMode.Difficulty));
+    }
+
+    private void createMapsCount(int count)
+    {
+        AddStep($"Add {count} maps", () =>
         {
-            foreach (var set in store.MapSets)
+            list.StartBulkInsert();
+
+            for (int i = 0; i < count; i++)
+            {
+                var set = CreateDummySet();
                 list.Insert(new MapSetItem(set));
-        });
+            }
 
-        AddStep("Clear", () =>
-        {
-            var items = list.Items.ToList();
-
-            foreach (var item in items) list.Remove(item);
+            list.EndBulkInsert();
         });
     }
 }

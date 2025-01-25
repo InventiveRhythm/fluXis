@@ -34,6 +34,7 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     }
 
     public float Position { get; set; }
+    public bool Displayed { get; set; }
 
     public Drawable Drawable { get; set; }
 

@@ -103,11 +103,18 @@ public partial class MapList : FluXisScrollContainer
             pos += size + 10;
 
             if (item.Position + size < Current - 250 || item.Position > Current + DrawHeight + 250)
+            {
+                if (!item.Displayed)
+                    continue;
+
+                item.Displayed = false;
                 Content.Remove(item.Drawable, false);
+            }
             else if (item.Drawable.Parent == null)
             {
                 Content.Add(item.Drawable);
                 item.Drawable.Y = item.Position;
+                item.Displayed = true;
             }
         }
 
@@ -117,6 +124,13 @@ public partial class MapList : FluXisScrollContainer
     public void Sort()
     {
         items.Sort((a, b) => a.CompareTo(b));
+    }
+
+    // used for testing
+    public void SetSorting(MapUtils.SortingMode mode)
+    {
+        sorting.Value = mode;
+        Sort();
     }
 
     public void ScrollToSelected()

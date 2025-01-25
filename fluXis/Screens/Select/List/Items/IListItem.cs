@@ -20,6 +20,7 @@ public interface IListItem : IComparable<IListItem>
 
     float Size { get; }
     float Position { get; set; }
+    bool Displayed { get; set; }
 
     Drawable Drawable { get; set; }
     Drawable CreateDrawable();

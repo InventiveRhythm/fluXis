@@ -68,8 +68,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
     [Resolved]
     private MapStore maps { get; set; }
 
-    [Resolved]
     [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
     private readonly DrawableMapSetItem parent;
