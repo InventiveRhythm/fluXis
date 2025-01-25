@@ -83,6 +83,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public PluginManager Plugins { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
+    public SteamManager Steam { get; init; }
 
     private KeybindStore keybindStore;
     private ImportManager importManager;
@@ -125,6 +126,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected FluXisGameBase()
     {
         Midori.Logging.Logger.LogToFiles = false;
+        Steam = new SteamManager(); // steam needs to load before the graphics
     }
 
     [BackgroundDependencyLoader]
@@ -198,6 +200,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(new UISamples(), true, true);
             cacheComponent(CreateLightController(), true, true);
+            cacheComponent(Steam, true, true);
             cacheComponent(CursorOverlay = new GlobalCursorOverlay());
 
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
@@ -277,7 +280,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         GameDependencies.CacheAs(component);
 
-        if (!load)
+        if (!load || drawable.IsLoaded)
             return;
 
         if (LoadComponentsLazy)

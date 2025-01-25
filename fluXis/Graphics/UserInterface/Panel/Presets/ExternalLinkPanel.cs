@@ -2,6 +2,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Panel.Types;
+using fluXis.Integration;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 
@@ -15,6 +16,9 @@ public partial class ExternalLinkPanel : ButtonPanel
     [Resolved]
     private Clipboard clipboard { get; set; }
 
+    [Resolved]
+    private SteamManager steam { get; set; }
+
     public ExternalLinkPanel(string link)
     {
         Icon = FontAwesome6.Solid.Link;
@@ -22,7 +26,13 @@ public partial class ExternalLinkPanel : ButtonPanel
         SubText = $"You're about to open the following link in your browser:\n{link}";
         Buttons = new ButtonData[]
         {
-            new PrimaryButtonData(() => host.OpenUrlExternally(link)),
+            new PrimaryButtonData(() =>
+            {
+                if (steam.Initialized)
+                    steam.OpenLink(link);
+                else
+                    host.OpenUrlExternally(link);
+            }),
             new SecondaryButtonData("Copy it instead.", () => clipboard.SetText(link)),
             new CancelButtonData()
         };

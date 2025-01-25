@@ -329,19 +329,19 @@ public partial class MenuScreen : FluXisScreen
                             new MenuLinkButton
                             {
                                 Icon = FontAwesome6.Brands.Discord,
-                                Action = () => host.OpenUrlExternally("https://discord.gg/29hMftpNq9"),
+                                Action = () => Game.OpenLink("https://discord.gg/29hMftpNq9"),
                                 Text = "Discord"
                             },
                             new MenuLinkButton
                             {
                                 Icon = FontAwesome6.Brands.GitHub,
-                                Action = () => host.OpenUrlExternally("https://github.com/InventiveRhythm/fluXis"),
+                                Action = () => Game.OpenLink("https://github.com/InventiveRhythm/fluXis"),
                                 Text = "GitHub"
                             },
                             new MenuLinkButton
                             {
                                 Icon = FontAwesome6.Solid.EarthAmericas,
-                                Action = () => host.OpenUrlExternally(api.Endpoint.WebsiteRootUrl),
+                                Action = () => Game.OpenLink(api.Endpoint.WebsiteRootUrl),
                                 Text = "Website"
                             }
                         }

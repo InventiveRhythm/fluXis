@@ -29,7 +29,7 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
             var list = new List<MenuItem>
             {
                 new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
-                new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => host.OpenUrlExternally($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
+                new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
 
             if (FluXisGameBase.IsDebug)
@@ -46,8 +46,9 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
     [Resolved(CanBeNull = true)]
     private UserProfileOverlay profile { get; set; }
 
-    [Resolved]
-    private GameHost host { get; set; }
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGame game { get; set; }
 
     [Resolved]
     private Clipboard clipboard { get; set; }

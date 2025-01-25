@@ -59,7 +59,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
             else if (!downloading)
                 list.Add(new FluXisMenuItem("Download", FontAwesome6.Solid.Download, download));
 
-            list.Add(new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, () => host.OpenUrlExternally($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
+            list.Add(new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/set/{MapSet.ID}")));
 
             if (RequestDelete != null && canDelete)
                 list.Add(new FluXisMenuItem("Delete", FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => RequestDelete?.Invoke(MapSet.ID)));
