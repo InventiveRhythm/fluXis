@@ -1,4 +1,3 @@
-using fluXis.Graphics;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using osu.Framework.Allocation;
@@ -22,7 +21,6 @@ public partial class EditorMenuBar : FluXisMenu
     private void load()
     {
         MaskingContainer.CornerRadius = 0;
-        MaskingContainer.EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
     }
 
     protected override void UpdateSize(Vector2 newSize)

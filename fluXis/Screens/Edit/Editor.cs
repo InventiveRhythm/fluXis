@@ -369,7 +369,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                 { IsActive = () => settings.ShowSamples.Value },
                                             new FluXisMenuSpacer(),
                                             new("Invert scroll direction", FontAwesome6.Solid.UpDown, () => settings.InvertedScroll.Value = !settings.InvertedScroll.Value)
-                                                { IsActive = () => settings.InvertedScroll.Value }
+                                                { IsActive = () => settings.InvertedScroll.Value },
+                                            new FluXisMenuSpacer(),
+                                            new("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, () => settings.ForceAspectRatio.Toggle())
+                                                { IsActive = () => settings.ForceAspectRatio.Value },
                                         }
                                     },
                                     new("Timing", FontAwesome6.Solid.Clock)

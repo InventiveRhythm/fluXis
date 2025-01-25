@@ -1,5 +1,4 @@
 using System;
-using fluXis.Graphics;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
@@ -28,7 +27,6 @@ public partial class EditorToolbox : ExpandingContainer
     {
         RelativeSizeAxes = Axes.Y;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowMediumNoOffset;
 
         InternalChildren = new Drawable[]
         {

@@ -19,13 +19,12 @@ using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Screens.Edit.Tabs.Design.Effects;
 using fluXis.Screens.Edit.Tabs.Design.Points;
-using fluXis.Screens.Edit.Tabs.Design.Toolbox;
 using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
-using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -37,6 +36,8 @@ namespace fluXis.Screens.Edit.Tabs.Design;
 
 public partial class DesignContainer : EditorTabContainer
 {
+    protected override MarginPadding ContentPadding => new(16) { Right = 0 };
+
     private DrawSizePreservingFillContainer drawSizePreserve;
     private ShaderStackContainer shaders;
     private DesignShaderHandler handler;
@@ -213,6 +214,55 @@ public partial class DesignContainer : EditorTabContainer
         }
     }
 
-    protected override EditorToolbox CreateToolbox() => new DesignToolbox();
+    protected override Container CreateContentContainer() => new ContentContainer(Settings.ForceAspectRatio);
+    protected override Drawable CreateLeftSide() => Empty();
     protected override PointsSidebar CreatePointsSidebar() => new DesignSidebar();
+
+    private partial class ContentContainer : Container
+    {
+        private readonly Bindable<bool> forceAspect;
+
+        public ContentContainer(Bindable<bool> forceAspect)
+        {
+            this.forceAspect = forceAspect;
+
+            RelativeSizeAxes = Axes.None;
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (Parent is null)
+                return;
+
+            var p = Parent.Padding;
+            var vPad = p.Top + p.Bottom;
+            var hPad = p.Left + p.Right;
+            var pW = Parent.DrawWidth - hPad;
+            var pH = Parent.DrawHeight - vPad;
+
+            Size = new Vector2(pW, pH);
+
+            if (forceAspect.Value)
+            {
+                const float target_aspect = 1920 / 1080f;
+
+                var currentAspect = pW / pH;
+
+                if (currentAspect < target_aspect)
+                {
+                    Width = pW;
+                    Height = DrawWidth / target_aspect;
+                }
+                else
+                {
+                    Width = DrawHeight * target_aspect;
+                    Height = pH;
+                }
+            }
+        }
+    }
 }

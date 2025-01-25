@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures;
 using fluXis.Overlay.Notifications;
@@ -21,6 +22,7 @@ using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -72,6 +74,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private ToolboxHitsoundCategory toolboxHitsounds;
     private PointsSidebar sidebar;
 
+    private SpriteStack<BlurableBackground> backgrounds;
+    private Box backgroundDim;
+
     public EditorPlayfield Playfield { get; private set; }
     public ChartingBlueprintContainer BlueprintContainer { get; private set; }
     public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
@@ -91,16 +96,31 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
         dependencies.CacheAs(sidebar = new ChartingSidebar());
     }
 
-    protected override IEnumerable<Drawable> CreateContent()
+    protected override void LoadComplete()
     {
-        return new Drawable[]
-        {
-            Playfield,
-            BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
-        };
+        base.LoadComplete();
+
+        inputManager = GetContainingInputManager();
+
+        Map.BackgroundChanged += updateBackground;
+        Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300), true);
+        Editor.BindableBackgroundBlur.BindValueChanged(_ => updateBackground(), true);
     }
 
-    protected override EditorToolbox CreateToolbox() => new()
+    protected override IEnumerable<Drawable> CreateContent() => new Drawable[]
+    {
+        backgrounds = new SpriteStack<BlurableBackground> { AutoFill = false },
+        backgroundDim = new Box
+        {
+            RelativeSizeAxes = Axes.Both,
+            Colour = Colour4.Black,
+            Alpha = 0
+        },
+        Playfield,
+        BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
+    };
+
+    protected override Drawable CreateLeftSide() => new EditorToolbox()
     {
         Categories = new ToolboxCategory[]
         {
@@ -123,11 +143,9 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
 
     protected override PointsSidebar CreatePointsSidebar() => sidebar;
 
-    protected override void LoadComplete()
+    private void updateBackground()
     {
-        base.LoadComplete();
-
-        inputManager = GetContainingInputManager();
+        backgrounds.Add(new BlurableBackground(Map.RealmMap, Editor.BackgroundBlur));
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

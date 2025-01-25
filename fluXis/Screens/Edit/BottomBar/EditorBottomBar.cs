@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
@@ -44,16 +43,10 @@ public partial class EditorBottomBar : Container
             RelativeSizeAxes = Axes.Both,
             Children = new Drawable[]
             {
-                new Container
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    EdgeEffect = FluXisStyles.ShadowMediumNoOffset,
-                    Masking = true,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background2
-                    },
+                    Colour = FluXisColors.Background2
                 },
                 new GridContainer
                 {

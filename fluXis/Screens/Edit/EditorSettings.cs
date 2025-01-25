@@ -22,6 +22,7 @@ public class EditorSettings
     public BindableColour4 FlashUnderlayColor { get; } = new(FluXisColors.Background1);
     public Bindable<bool> ShowSamples { get; init; }
     public Bindable<bool> InvertedScroll { get; init; }
+    public BindableBool ForceAspectRatio { get; } = new();
 
     public BindableDouble ZoomBindable { get; } = new(2f)
     {

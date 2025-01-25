@@ -30,7 +30,8 @@ public abstract partial class TransformableClock : CompositeComponent, IAdjustab
     public BindableNumber<double> RateBindable { get; } = new(1)
     {
         MinValue = 0f,
-        MaxValue = 2f
+        MaxValue = 2f,
+        Precision = .05f
     };
 
     public TransformSequence<TransformableClock> TimeTo(double newTime, double duration = 0, Easing easing = Easing.None)
