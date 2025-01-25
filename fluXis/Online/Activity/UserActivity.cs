@@ -29,6 +29,8 @@ public abstract class UserActivity
         return rpc;
     }
 
+    public virtual void CreateSteam(SteamManager steam) { }
+
     #region Menus
 
     public class MenuGeneral : UserActivity
@@ -38,6 +40,11 @@ public abstract class UserActivity
             var rpc = base.CreateDiscord();
             rpc.Details = "In the menus";
             return rpc;
+        }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "In the menus");
         }
     }
 
@@ -50,6 +57,11 @@ public abstract class UserActivity
             rpc.LargeImage = "songselect";
             return rpc;
         }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "Selecting a song");
+        }
     }
 
     public class Results : UserActivity
@@ -61,6 +73,11 @@ public abstract class UserActivity
             rpc.LargeImage = "results";
             return rpc;
         }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "Viewing results");
+        }
     }
 
     public class BrowsingMaps : UserActivity
@@ -70,6 +87,11 @@ public abstract class UserActivity
             var rpc = base.CreateDiscord();
             rpc.Details = "Browsing online maps";
             return rpc;
+        }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "Browsing for new maps");
         }
     }
 
@@ -85,6 +107,11 @@ public abstract class UserActivity
             rpc.Details = "Loading...";
             rpc.LargeImage = "playing";
             return rpc;
+        }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "Loading...");
         }
     }
 
@@ -131,6 +158,11 @@ public abstract class UserActivity
 
             return rpc;
         }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, $"Playing {map.Metadata.Title} - {map.Metadata.Artist} [{map.Difficulty}]");
+        }
     }
 
     public class Paused : Playing
@@ -143,9 +175,15 @@ public abstract class UserActivity
         public override DiscordRichPresence CreateDiscord()
         {
             var rpc = base.CreateDiscord();
-            rpc.State = $"Paused";
+            rpc.State = "Paused";
             rpc.EndTime = 0;
             return rpc;
+        }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            base.CreateSteam(steam);
+            steam.SetRichPresence(SteamRichPresenceKey.Details, "Paused");
         }
     }
 
@@ -190,6 +228,11 @@ public abstract class UserActivity
             rpc.StartTime = Convert.ToUInt64(OpenTime);
             return rpc;
         }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "Editing");
+        }
     }
 
     public class Modding : Editing
@@ -204,6 +247,11 @@ public abstract class UserActivity
             var rpc = base.CreateDiscord();
             rpc.Details = "Modding a map";
             return rpc;
+        }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "Modding a map");
         }
     }
 
@@ -232,6 +280,11 @@ public abstract class UserActivity
             rpc.PartySize = room.Participants.Count;
             rpc.PartyMax = Math.Max(8, room.Participants.Count * 2);
             return rpc;
+        }
+
+        public override void CreateSteam(SteamManager steam)
+        {
+            steam.SetRichPresence(SteamRichPresenceKey.Status, "In a multiplayer lobby");
         }
     }
 
