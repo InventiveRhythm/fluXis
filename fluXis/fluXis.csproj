@@ -24,6 +24,7 @@
     <PackageReference Include="Realm" Version="20.0.0" />
     <PackageReference Include="Sentry" Version="5.0.0" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    <PackageReference Include="Steamworks.NET" Version="2024.8.0" IncludeAssets="all" />
 
     <!-- Required for building specific platforms with TeamCity -->
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
@@ -33,6 +34,17 @@
   <ItemGroup Label="Code Analysis">
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
     <AdditionalFiles Include="..\CodeAnalysis\BannedSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="steam_api64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libsteam_api.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="steam_appid.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Stores\" />

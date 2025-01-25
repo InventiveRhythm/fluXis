@@ -13,6 +13,7 @@ using osu.Framework.Platform;
 using osu.Framework;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
+using Steamworks;
 using Velopack;
 
 namespace fluXis.Desktop;
@@ -24,6 +25,11 @@ public static class Program
     public static void Main(string[] args)
     {
         VelopackApp.Build().Run();
+
+        var steam = SteamAPI.Init();
+
+        if (!steam)
+            Logger.Log("Failed to init steam API!", LoggingTarget.Runtime, LogLevel.Error);
 
         if (args.Contains("--generate-langfiles"))
         {
