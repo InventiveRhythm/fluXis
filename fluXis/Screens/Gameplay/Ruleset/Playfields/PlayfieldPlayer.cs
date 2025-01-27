@@ -46,7 +46,7 @@ public partial class PlayfieldPlayer : CompositeDrawable
             HealthProcessor = ruleset.CreateHealthProcessor(),
             ScoreProcessor = new ScoreProcessor
             {
-                Player = /*screen.CurrentPlayer ?? */APIUser.Default,
+                Player = ruleset.CurrentPlayer ?? APIUser.Default,
                 HitWindows = ruleset.HitWindows,
                 MapInfo = ruleset.MapInfo,
                 Mods = ruleset.Mods

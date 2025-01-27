@@ -85,7 +85,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public virtual bool FadeBackToGlobalClock => true;
     public virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
-    public virtual APIUser CurrentPlayer => api.User.Value;
 
     protected bool CursorVisible { get; set; }
 
@@ -379,7 +378,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         AllowOverlays.Value = IsPaused.Value;
     }
 
-    protected virtual RulesetContainer CreateRuleset() => new(Map, MapEvents, Mods);
+    protected virtual RulesetContainer CreateRuleset() => new(Map, MapEvents, Mods) { CurrentPlayer = api.User.Value ?? APIUser.Default };
     protected virtual MapInfo LoadMap() => RealmMap.GetMapInfo(Mods);
     protected virtual Drawable CreateTextOverlay() => Empty();
     protected virtual UserActivity GetPlayingActivity() => new UserActivity.Playing(this, RealmMap);
@@ -459,7 +458,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             var score = field.ScoreProcessor.ToScoreInfo();
             score.ScrollSpeed = Config.Get<float>(FluXisSetting.ScrollSpeed);
 
-            var screen = new SoloResults(RealmMap, score, CurrentPlayer);
+            var screen = new SoloResults(RealmMap, score, api.User.Value ?? APIUser.Default);
             screen.OnRestart = OnRestart;
             if (bestScore != null) screen.ComparisonScore = bestScore.ToScoreInfo();
 

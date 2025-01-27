@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Audio.Transforms;
 using fluXis.Map;
 using fluXis.Mods;
+using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.Input;
@@ -21,6 +22,7 @@ public partial class RulesetContainer : CompositeDrawable
     public MapInfo MapInfo { get; }
     public MapEvents MapEvents { get; }
     public List<IMod> Mods { get; }
+    public APIUser CurrentPlayer { get; init; }
 
     public float Rate { get; }
 

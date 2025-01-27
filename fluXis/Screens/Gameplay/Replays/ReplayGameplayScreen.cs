@@ -4,7 +4,6 @@ using fluXis.Database.Maps;
 using fluXis.Input;
 using fluXis.Mods;
 using fluXis.Online.Activity;
-using fluXis.Online.API.Models.Users;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils.Extensions;
@@ -20,7 +19,6 @@ public partial class ReplayGameplayScreen : GameplayScreen
     protected override bool InstantlyExitOnPause => true;
     public override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
-    public override APIUser CurrentPlayer => replay.GetPlayer(Users);
 
     private Replay replay { get; }
 
@@ -38,7 +36,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
         OnSeek += (_, now) => GameplayClock.Seek(now);
     }
 
-    protected override RulesetContainer CreateRuleset() => new ReplayRulesetContainer(replay, Map, MapEvents, Mods);
+    protected override RulesetContainer CreateRuleset() => new ReplayRulesetContainer(replay, Map, MapEvents, Mods) { CurrentPlayer = replay.GetPlayer(Users) };
     protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
     protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(Users));
 
