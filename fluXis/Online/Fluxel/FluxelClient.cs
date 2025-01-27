@@ -1,8 +1,6 @@
 #nullable enable
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Configuration;
@@ -12,11 +10,9 @@ using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Packets;
 using fluXis.Online.API.Requests.Auth;
 using fluXis.Online.Notifications;
 using fluXis.Overlay.Notifications;
-using fluXis.Utils;
 using Midori.Networking.WebSockets;
 using Midori.Networking.WebSockets.Frame;
 using Midori.Networking.WebSockets.Typed;
@@ -97,7 +93,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     private TypedWebSocketClient<INotificationServer, INotificationClient>? connection;
 
-    private async void loop()
+    private void loop()
     {
         while (true)
         {
@@ -127,10 +123,6 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                     or ConnectionStatus.Closed
                     or ConnectionStatus.Offline:
                     continue;
-
-                case ConnectionStatus.Online:
-                    await processQueue();
-                    break;
             }
 
             Thread.Sleep(50);
@@ -143,7 +135,6 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             Thread.Sleep(5000);
 
         Logger.Log("Connecting to server...", LoggingTarget.Network);
-        Status.Value = ConnectionStatus.Connecting;
 
         try
         {
@@ -210,6 +201,15 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         connection = null;
         Status.Value = ConnectionStatus.Closed;
+    }
+
+    public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
+        where S : class where C : class
+    {
+        var socket = new TypedWebSocketClient<S, C>(target) { PingInterval = 30000 };
+        socket.RequestHeaders["Authorization"] = AccessToken;
+        socket.Connect((Endpoint.APIUrl + path).Replace("http", "ws")); // this MIGHT be janky
+        return socket;
     }
 
     #endregion
@@ -279,108 +279,6 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         tokenBindable.Value = "";
 
         Status.Value = ConnectionStatus.Offline;
-    }
-
-    public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
-        where S : class where C : class
-    {
-        var socket = new TypedWebSocketClient<S, C>(target);
-        socket.RequestHeaders["Authorization"] = AccessToken;
-        socket.Connect((Endpoint.APIUrl + path).Replace("http", "ws")); // this MIGHT be janky
-        return socket;
-    }
-
-    #endregion
-
-    #region Sending
-
-    private readonly List<string> packetQueue = new();
-    private readonly Dictionary<Guid, Action<object>> waitingForResponse = new();
-
-    /// <summary>
-    /// Sends a packet and waits for a response. Throws a <see cref="TimeoutException"/> if the time set in <paramref name="timeout"/> is exceeded.
-    /// </summary>
-    /// <param name="packet">The packet to send.</param>
-    /// <param name="timeout">The time to wait for a response in milliseconds.</param>
-    /// <typeparam name="T">The type of the packet.</typeparam>
-    /// <returns>The response packet.</returns>
-    public async Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000)
-        where T : IPacket
-    {
-        var request = new FluxelRequest<T>(packet.ID, packet);
-
-        var task = new TaskCompletionSource<FluxelReply<T>>();
-        waitingForResponse.Add(request.Token, response => task.SetResult((FluxelReply<T>)response));
-
-        await send(request.Serialize());
-        await Task.WhenAny(task.Task, Task.Delay((int)timeout));
-
-        if (!task.Task.IsCompleted)
-            throw new TimeoutException("The request timed out!");
-
-        return await task.Task;
-    }
-
-    public async void SendPacketAsync<T>(T packet)
-        where T : IPacket => await SendPacket(packet);
-
-    public async Task SendPacket<T>(T packet)
-        where T : IPacket
-    {
-        var request = new FluxelRequest<T>(packet.ID, packet);
-        await send(request.Serialize());
-    }
-
-    private async Task processQueue()
-    {
-        if (packetQueue.Count == 0) return;
-
-        var packet = packetQueue[0];
-        packetQueue.RemoveAt(0);
-
-        await send(packet);
-    }
-
-    private async Task send(string message)
-    {
-        if (connection is not { State: WebSocketState.Open })
-        {
-            Logger.Log("not online, queueing packet");
-            packetQueue.Add(message);
-            return;
-        }
-
-        Logger.Log($"Sending packet {message}", LoggingTarget.Network, LogLevel.Debug);
-
-        try
-        {
-            await connection.SendTextAsync(message);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, "Failed to send packet!", LoggingTarget.Network);
-        }
-    }
-
-    #endregion
-
-    #region Listeners
-
-    private readonly ConcurrentDictionary<EventType, List<Action<object>>> responseListeners = new();
-
-    [Obsolete]
-    public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener)
-        where T : IPacket
-    {
-        responseListeners.GetOrAdd(id, _ => new List<Action<object>>()).Add(response => listener((FluxelReply<T>)response));
-    }
-
-    [Obsolete]
-    public void UnregisterListener<T>(EventType id, Action<FluxelReply<T>> listener)
-        where T : IPacket
-    {
-        if (responseListeners.TryGetValue(id, out var listeners))
-            listeners.Remove(response => listener((FluxelReply<T>)response));
     }
 
     #endregion

@@ -5,7 +5,6 @@ using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Packets;
 using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
 
@@ -47,11 +46,6 @@ public interface IAPIClient
 
     TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
         where S : class where C : class;
-
-    // websocket stuff
-    public Task SendPacket<T>(T packet) where T : IPacket;
-    public void SendPacketAsync<T>(T packet) where T : IPacket;
-    public Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000) where T : IPacket;
 
     public void Disconnect();
 }
