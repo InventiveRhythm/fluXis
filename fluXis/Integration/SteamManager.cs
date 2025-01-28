@@ -34,6 +34,9 @@ public partial class SteamManager : Component
     {
         base.LoadComplete();
 
+        if (!Initialized)
+            return;
+
         api.Activity.BindValueChanged(v =>
         {
             var activity = v.NewValue;
