@@ -38,6 +38,7 @@ public static class FluXisColors
     public static Colour4 PreviewPoint => Colour4.FromHex("FDD27F");
     public static Colour4 LaneSwitch => Colour4.FromHex("#FF6666");
     public static Colour4 Flash => Colour4.FromHex("#FFCC66");
+    public static Colour4 Pulse => Colour4.FromHex("#FFFFFF");
     public static Colour4 Shake => Colour4.FromHex("#01FEFE");
     public static Colour4 PlayfieldMove => Colour4.FromHex("#01FE55");
     public static Colour4 PlayfieldScale => Colour4.FromHex("#D279C4");

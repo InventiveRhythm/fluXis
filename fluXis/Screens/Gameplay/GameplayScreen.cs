@@ -286,6 +286,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         new DangerHealthOverlay(),
                         new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Overlay),
                         new FlashOverlay(MapEvents.FlashEvents.Where(e => !e.InBackground).ToList()) { Clock = GameplayClock },
+                        new PulseEffect(MapEvents.PulseEvents) { Clock = GameplayClock },
                         new SkipOverlay(),
                     }),
                     failMenu = new FailMenu(),

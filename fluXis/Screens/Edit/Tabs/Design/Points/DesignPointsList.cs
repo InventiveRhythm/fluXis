@@ -22,6 +22,11 @@ public partial class DesignPointsList : PointsList
         Map.FlashEventRemoved += RemovePoint;
         Map.MapEvents.FlashEvents.ForEach(AddPoint);
 
+        Map.PulseEventAdded += AddPoint;
+        Map.PulseEventUpdated += UpdatePoint;
+        Map.PulseEventRemoved += RemovePoint;
+        Map.MapEvents.PulseEvents.ForEach(AddPoint);
+
         Map.ShakeEventAdded += AddPoint;
         Map.ShakeEventUpdated += UpdatePoint;
         Map.ShakeEventRemoved += RemovePoint;
@@ -78,26 +83,24 @@ public partial class DesignPointsList : PointsList
         Map.MapEvents.NoteEvents.ForEach(AddPoint);
     }
 
-    protected override PointListEntry CreateEntryFor(ITimedObject obj)
+    protected override PointListEntry CreateEntryFor(ITimedObject obj) => obj switch
     {
-        return obj switch
-        {
-            ScrollVelocity scroll => new ScrollVelocityEntry(scroll),
-            FlashEvent flash => new FlashEntry(flash),
-            ShakeEvent shake => new ShakeEntry(shake),
-            PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
-            PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
-            LayerFadeEvent fade => new LayerFadeEntry(fade),
-            HitObjectEaseEvent ease => new HitObjectEaseEntry(ease),
-            BeatPulseEvent pulse => new BeatPulseEntry(pulse),
-            PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
-            ShaderEvent shader => new ShaderEntry(shader),
-            ScrollMultiplierEvent scroll => new ScrollMultiplierEntry(scroll),
-            TimeOffsetEvent offset => new TimeOffsetEntry(offset),
-            NoteEvent note => new NoteEntry(note),
-            _ => null
-        };
-    }
+        ScrollVelocity scroll => new ScrollVelocityEntry(scroll),
+        FlashEvent flash => new FlashEntry(flash),
+        PulseEvent pulse => new PulseEntry(pulse),
+        ShakeEvent shake => new ShakeEntry(shake),
+        PlayfieldMoveEvent move => new PlayfieldMoveEntry(move),
+        PlayfieldScaleEvent scale => new PlayfieldScaleEntry(scale),
+        LayerFadeEvent fade => new LayerFadeEntry(fade),
+        HitObjectEaseEvent ease => new HitObjectEaseEntry(ease),
+        BeatPulseEvent pulse => new BeatPulseEntry(pulse),
+        PlayfieldRotateEvent rotate => new PlayfieldRotateEntry(rotate),
+        ShaderEvent shader => new ShaderEntry(shader),
+        ScrollMultiplierEvent scroll => new ScrollMultiplierEntry(scroll),
+        TimeOffsetEvent offset => new TimeOffsetEntry(offset),
+        NoteEvent note => new NoteEntry(note),
+        _ => null
+    };
 
     protected override IEnumerable<DropdownEntry> CreateDropdownEntries()
     {
@@ -105,6 +108,7 @@ public partial class DesignPointsList : PointsList
         {
             new("Scroll Velocity", FluXisColors.ScrollVelocity, () => Create(new ScrollVelocity()), x => x is ScrollVelocity),
             new("Flash", FluXisColors.Flash, () => Create(new FlashEvent()), x => x is FlashEvent),
+            new("Pulse", FluXisColors.Pulse, () => Create(new PulseEvent()), x => x is PulseEvent),
             new("Shake", FluXisColors.Shake, () => Create(new ShakeEvent()), x => x is ShakeEvent),
             new("Playfield Move", FluXisColors.PlayfieldMove, () => Create(new PlayfieldMoveEvent()), x => x is PlayfieldMoveEvent),
             new("Playfield Scale", FluXisColors.PlayfieldScale, () => Create(new PlayfieldScaleEvent()), x => x is PlayfieldScaleEvent),

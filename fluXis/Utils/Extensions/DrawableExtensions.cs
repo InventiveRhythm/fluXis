@@ -133,11 +133,11 @@ public static class DrawableExtensions
         where T : Transformable, IHasStrength
         => seq.Append(d => d.TransformTo(nameof(d.Strength3), str, dur, ease));
 
-    public static TransformSequence<T> BorderTo<T>(this T drawable, float newBorder, float duration = 0f, Easing ease = Easing.None)
+    public static TransformSequence<T> BorderTo<T>(this T drawable, float newBorder, double duration = 0f, Easing ease = Easing.None)
         where T : class, ITransformable
         => drawable.TransformTo(nameof(Container.BorderThickness), newBorder, duration, ease);
 
-    public static TransformSequence<T> BorderTo<T>(this TransformSequence<T> seq, float newBorder, float duration = 0f, Easing ease = Easing.None)
+    public static TransformSequence<T> BorderTo<T>(this TransformSequence<T> seq, float newBorder, double duration = 0f, Easing ease = Easing.None)
         where T : class, ITransformable
         => seq.Append(s => s.TransformTo(nameof(Container.BorderThickness), newBorder, duration, ease));
 

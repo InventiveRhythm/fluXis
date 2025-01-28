@@ -113,7 +113,6 @@ public partial class Playfield : Container
         InternalChildren = new[]
         {
             new LaneSwitchAlert(),
-            new PulseEffect(),
             stage = new Stage(),
             new TimingLineManager(),
             receptorsFirst ? Receptors : HitManager,

@@ -68,6 +68,10 @@ public class EditorMap
     public event Action<FlashEvent> FlashEventRemoved;
     public event Action<FlashEvent> FlashEventUpdated;
 
+    public event Action<PulseEvent> PulseEventAdded;
+    public event Action<PulseEvent> PulseEventRemoved;
+    public event Action<PulseEvent> PulseEventUpdated;
+
     public event Action<ShakeEvent> ShakeEventAdded;
     public event Action<ShakeEvent> ShakeEventRemoved;
     public event Action<ShakeEvent> ShakeEventUpdated;
@@ -121,18 +125,28 @@ public class EditorMap
             new ChangeNotifier<HitObject>(MapInfo.HitObjects, obj => HitObjectAdded?.Invoke(obj), obj => HitObjectRemoved?.Invoke(obj), obj => HitObjectUpdated?.Invoke(obj)),
             new ChangeNotifier<TimingPoint>(MapInfo.TimingPoints, obj => TimingPointAdded?.Invoke(obj), obj => TimingPointRemoved?.Invoke(obj), obj => TimingPointUpdated?.Invoke(obj)),
             new ChangeNotifier<ScrollVelocity>(MapInfo.ScrollVelocities, obj => ScrollVelocityAdded?.Invoke(obj), obj => ScrollVelocityRemoved?.Invoke(obj), obj => ScrollVelocityUpdated?.Invoke(obj)),
-            new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents, obj => LaneSwitchEventAdded?.Invoke(obj), obj => LaneSwitchEventRemoved?.Invoke(obj), obj => LaneSwitchEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<LaneSwitchEvent>(MapEvents.LaneSwitchEvents, obj => LaneSwitchEventAdded?.Invoke(obj), obj => LaneSwitchEventRemoved?.Invoke(obj),
+                obj => LaneSwitchEventUpdated?.Invoke(obj)),
             new ChangeNotifier<FlashEvent>(MapEvents.FlashEvents, obj => FlashEventAdded?.Invoke(obj), obj => FlashEventRemoved?.Invoke(obj), obj => FlashEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj), obj => PlayfieldMoveEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents, obj => PlayfieldScaleEventAdded?.Invoke(obj), obj => PlayfieldScaleEventRemoved?.Invoke(obj), obj => PlayfieldScaleEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents, obj => PlayfieldRotateEventAdded?.Invoke(obj), obj => PlayfieldRotateEventRemoved?.Invoke(obj), obj => PlayfieldRotateEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<LayerFadeEvent>(MapEvents.LayerFadeEvents, obj => LayerFadeEventAdded?.Invoke(obj), obj => LayerFadeEventRemoved?.Invoke(obj), obj => LayerFadeEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents, obj => HitObjectEaseEventAdded?.Invoke(obj), obj => HitObjectEaseEventRemoved?.Invoke(obj), obj => HitObjectEaseEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PulseEvent>(MapEvents.PulseEvents, obj => PulseEventAdded?.Invoke(obj), obj => PulseEventRemoved?.Invoke(obj), obj => PulseEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldMoveEvent>(MapEvents.PlayfieldMoveEvents, obj => PlayfieldMoveEventAdded?.Invoke(obj), obj => PlayfieldMoveEventRemoved?.Invoke(obj),
+                obj => PlayfieldMoveEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldScaleEvent>(MapEvents.PlayfieldScaleEvents, obj => PlayfieldScaleEventAdded?.Invoke(obj), obj => PlayfieldScaleEventRemoved?.Invoke(obj),
+                obj => PlayfieldScaleEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<PlayfieldRotateEvent>(MapEvents.PlayfieldRotateEvents, obj => PlayfieldRotateEventAdded?.Invoke(obj), obj => PlayfieldRotateEventRemoved?.Invoke(obj),
+                obj => PlayfieldRotateEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<LayerFadeEvent>(MapEvents.LayerFadeEvents, obj => LayerFadeEventAdded?.Invoke(obj), obj => LayerFadeEventRemoved?.Invoke(obj),
+                obj => LayerFadeEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<HitObjectEaseEvent>(MapEvents.HitObjectEaseEvents, obj => HitObjectEaseEventAdded?.Invoke(obj), obj => HitObjectEaseEventRemoved?.Invoke(obj),
+                obj => HitObjectEaseEventUpdated?.Invoke(obj)),
             new ChangeNotifier<ShakeEvent>(MapEvents.ShakeEvents, obj => ShakeEventAdded?.Invoke(obj), obj => ShakeEventRemoved?.Invoke(obj), obj => ShakeEventUpdated?.Invoke(obj)),
             new ChangeNotifier<ShaderEvent>(MapEvents.ShaderEvents, obj => ShaderEventAdded?.Invoke(obj), obj => ShaderEventRemoved?.Invoke(obj), obj => ShaderEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents, obj => BeatPulseEventAdded?.Invoke(obj), obj => BeatPulseEventRemoved?.Invoke(obj), obj => BeatPulseEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents, obj => ScrollMultiplierEventAdded?.Invoke(obj), obj => ScrollMultiplierEventRemoved?.Invoke(obj), obj => ScrollMultiplierEventUpdated?.Invoke(obj)),
-            new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj), obj => TimeOffsetEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<BeatPulseEvent>(MapEvents.BeatPulseEvents, obj => BeatPulseEventAdded?.Invoke(obj), obj => BeatPulseEventRemoved?.Invoke(obj),
+                obj => BeatPulseEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ScrollMultiplierEvent>(MapEvents.ScrollMultiplyEvents, obj => ScrollMultiplierEventAdded?.Invoke(obj), obj => ScrollMultiplierEventRemoved?.Invoke(obj),
+                obj => ScrollMultiplierEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj),
+                obj => TimeOffsetEventUpdated?.Invoke(obj)),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj))
         };
 
