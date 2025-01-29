@@ -3,24 +3,31 @@ using System.Linq;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Text;
+using fluXis.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Panel.Types;
 
-public partial class ButtonPanel : Panel, ICloseable
+public partial class ButtonPanel : Panel, IKeyBindingHandler<FluXisGlobalKeybind>, ICloseable
 {
     public IconUsage Icon { get; init; } = FontAwesome.Solid.QuestionCircle;
     public LocalisableString Text { get; init; }
     public LocalisableString SubText { get; init; }
     public ButtonData[] Buttons { get; init; } = Array.Empty<ButtonData>();
+    public int AcceptIndex { get; init; }
 
     public Action<FluXisTextFlow> CreateSubText { get; set; }
+
+    private FillFlowContainer<FluXisButton> buttons;
+    private InputManager inputManager;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -74,7 +81,7 @@ public partial class ButtonPanel : Panel, ICloseable
                         Alpha = string.IsNullOrEmpty(SubText.ToString()) && CreateSubText == null ? 0 : .8f,
                         Shadow = false
                     },
-                    new FillFlowContainer
+                    buttons = new FillFlowContainer<FluXisButton>
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
@@ -102,6 +109,12 @@ public partial class ButtonPanel : Panel, ICloseable
         CreateSubText.Invoke(subTextFlow);
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        inputManager = GetContainingInputManager();
+    }
+
     protected override bool OnClick(ClickEvent e) => true;
 
     public void Close()
@@ -113,4 +126,29 @@ public partial class ButtonPanel : Panel, ICloseable
         last.Action?.Invoke();
         Hide();
     }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        if (e.Repeat)
+            return false;
+
+        switch (e.Action)
+        {
+            case FluXisGlobalKeybind.Select:
+                if (Buttons.Length < AcceptIndex + 1)
+                    return false;
+
+                var button = buttons[AcceptIndex];
+
+                button.HoldToConfirm = false;
+                button.TriggerClick();
+
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 }
