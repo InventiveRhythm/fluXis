@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Audio;
 using fluXis.Map.Structures.Events;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,9 +9,6 @@ namespace fluXis.Screens.Gameplay.Overlay.Effect;
 public partial class PulseEffect : Container
 {
     public override bool RemoveCompletedTransforms => false;
-
-    [Resolved]
-    private IBeatSyncProvider beatSync { get; set; }
 
     private List<PulseEvent> pulses { get; }
 
