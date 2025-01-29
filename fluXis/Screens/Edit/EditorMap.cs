@@ -45,7 +45,7 @@ public class EditorMap
     public event Action BackgroundChanged;
     public event Action CoverChanged;
 
-    public event Action AnyChange;
+    public event Action<ITimedObject> AnyChange;
 
     public event Action<HitObject> HitObjectAdded;
     public event Action<HitObject> HitObjectRemoved;
@@ -152,9 +152,9 @@ public class EditorMap
 
         foreach (var notifier in notifiers)
         {
-            notifier.OnAdd += _ => AnyChange?.Invoke();
-            notifier.OnRemove += _ => AnyChange?.Invoke();
-            notifier.OnUpdate += _ => AnyChange?.Invoke();
+            notifier.OnAdd += t => AnyChange?.Invoke(t);
+            notifier.OnRemove += t => AnyChange?.Invoke(t);
+            notifier.OnUpdate += t => AnyChange?.Invoke(t);
         }
     }
 

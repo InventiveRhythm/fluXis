@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Background;
@@ -38,6 +39,8 @@ namespace fluXis.Screens.Edit.Tabs.Design;
 public partial class DesignContainer : EditorTabContainer
 {
     protected override MarginPadding ContentPadding => new(16) { Right = 0 };
+
+    private static Type[] ignoredForRebuild { get; } = { typeof(FlashEvent), typeof(PulseEvent), typeof(ShaderEvent) };
 
     private DrawSizePreservingFillContainer drawSizePreserve;
     private ShaderStackContainer shaders;
@@ -110,8 +113,14 @@ public partial class DesignContainer : EditorTabContainer
         backgroundVideo.Info = Map.MapInfo;
         backgroundVideo.LoadVideo();
 
-        Map.AnyChange += () => Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
+        Map.AnyChange += t =>
+        {
+            if (ignoredForRebuild.Contains(t.GetType()))
+                return;
+
+            Scheduler.AddOnce(rulesetIdleTracker.Reset);
+        };
 
         Map.ShaderEventAdded += _ => checkForRebuild();
         Map.ShaderEventUpdated += _ => checkForRebuild();
