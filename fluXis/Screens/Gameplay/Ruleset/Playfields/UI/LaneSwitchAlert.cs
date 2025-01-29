@@ -83,10 +83,9 @@ public partial class LaneSwitchAlert : Container
         var last = events.First();
 
         for (int i = 1; i < events.Count; i++)
+        {
             var current = events[i];
 
-            if (nextEvent == null || nextEvent.Time - clock.CurrentTime > time)
-                return;
             if (current.Count != last.Count)
             {
                 var timing = ruleset.MapInfo.GetTimingPoint(current.Time);
