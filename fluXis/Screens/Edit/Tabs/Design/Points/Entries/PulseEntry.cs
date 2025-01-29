@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
@@ -15,7 +16,7 @@ namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
 public partial class PulseEntry : PointListEntry
 {
     protected override string Text => "Pulse";
-    protected override Colour4 Color => Colour4.White;
+    protected override Colour4 Color => FluXisColors.Pulse;
 
     private PulseEvent pulse => Object as PulseEvent;
 

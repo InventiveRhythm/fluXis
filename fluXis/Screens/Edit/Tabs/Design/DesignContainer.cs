@@ -21,6 +21,7 @@ using fluXis.Screens.Edit.Tabs.Design.Effects;
 using fluXis.Screens.Edit.Tabs.Design.Points;
 using fluXis.Screens.Edit.Tabs.Shared;
 using fluXis.Screens.Edit.Tabs.Shared.Points;
+using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
@@ -46,6 +47,7 @@ public partial class DesignContainer : EditorTabContainer
     private Box backgroundDim;
     private Container rulesetWrapper;
     private LoadingIcon loadingIcon;
+    private PulseEffect pulseEffect;
 
     private IdleTracker rulesetIdleTracker;
 
@@ -61,7 +63,6 @@ public partial class DesignContainer : EditorTabContainer
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
         };
-
         return new Drawable[]
         {
             handler = new DesignShaderHandler(),
@@ -89,6 +90,7 @@ public partial class DesignContainer : EditorTabContainer
                 },
                 new EditorFlashLayer { InBackground = true },
                 rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
+                pulseEffect = new PulseEffect(Map.MapEvents.PulseEvents) { Clock = EditorClock },
                 loadingIcon = new LoadingIcon
                 {
                     Size = new Vector2(32),
@@ -114,6 +116,10 @@ public partial class DesignContainer : EditorTabContainer
         Map.ShaderEventAdded += _ => checkForRebuild();
         Map.ShaderEventUpdated += _ => checkForRebuild();
         Map.ShaderEventRemoved += _ => checkForRebuild();
+
+        Map.PulseEventAdded += _ => pulseEffect.Rebuild();
+        Map.PulseEventUpdated += _ => pulseEffect.Rebuild();
+        Map.PulseEventRemoved += _ => pulseEffect.Rebuild();
 
         Editor.BindableBackgroundDim.BindValueChanged(e => backgroundDim.FadeTo(e.NewValue, 300));
         Editor.BindableBackgroundBlur.BindValueChanged(e => backgroundStack.Add(new BlurableBackground(Map.RealmMap, e.NewValue)), true);

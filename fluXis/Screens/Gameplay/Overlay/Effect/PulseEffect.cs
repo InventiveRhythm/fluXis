@@ -34,9 +34,9 @@ public partial class PulseEffect : Container
         };
     }
 
-    protected override void LoadComplete() => Regenerate();
+    protected override void LoadComplete() => Rebuild();
 
-    public void Regenerate()
+    public void Rebuild()
     {
         ClearTransforms();
         pulses.ForEach(p => p.Apply(this));
