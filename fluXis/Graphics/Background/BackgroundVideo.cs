@@ -21,6 +21,7 @@ public partial class BackgroundVideo : CompositeDrawable
     public RealmMap Map { get; set; }
     public MapInfo Info { get; set; }
 
+    public Action PlaybackStarted { get; set; }
     public bool IsPlaying { get; private set; }
     private bool waitingForLoad;
 
@@ -161,7 +162,7 @@ public partial class BackgroundVideo : CompositeDrawable
         if (video == null)
         {
             if (waitingForLoad)
-                Schedule(Start);
+                Scheduler.AddOnce(Start);
 
             return;
         }
@@ -174,6 +175,7 @@ public partial class BackgroundVideo : CompositeDrawable
         }
 
         IsPlaying = true;
+        PlaybackStarted?.Invoke();
         Logger.Log("Starting video.", LoggingTarget.Runtime, LogLevel.Debug);
         this.FadeIn(500);
     }

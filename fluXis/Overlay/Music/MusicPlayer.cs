@@ -42,6 +42,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private Container content;
     private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
+    private Container metadataContainer;
     private SpriteStack<MapCover> covers;
     private FluXisSpriteText title;
     private FluXisSpriteText artist;
@@ -75,14 +76,16 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 150, Bottom = 200, Top = 20 },
-                Child = content = new ClickableContainer
+                Padding = new MarginPadding { Horizontal = 150, Bottom = 150, Top = 20 },
+                Child = content = new HoverClickContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
                     CornerRadius = rounding,
                     Y = -50,
                     EdgeEffect = FluXisStyles.ShadowLarge,
+                    HoverAction = showMetadata,
+                    HoverLostAction = hideMetadata,
                     Children = new Drawable[]
                     {
                         new Box
@@ -97,7 +100,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             ShowDim = false,
-                            Clock = globalClock
+                            Clock = globalClock,
+                            PlaybackStarted = hideMetadata
                         },
                         new Container
                         {
@@ -122,10 +126,11 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             }
                         },
                         new MusicVisualiser(),
-                        new Container
+                        metadataContainer = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding { Horizontal = inner_padding, Bottom = inner_padding, Top = rounding + inner_padding },
+                            AlwaysPresent = true,
                             Children = new Drawable[]
                             {
                                 new FillFlowContainer
@@ -249,10 +254,12 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         title.Text = next.Metadata.Title;
         artist.Text = next.Metadata.Artist;
 
+        showMetadata();
+
         LoadComponentAsync(new MapBackground(next) { RelativeSizeAxes = Axes.Both }, background =>
         {
-            background.FadeInFromZero(400);
             backgrounds.Add(background, 400);
+            background.Show();
         });
 
         LoadComponentAsync(new MapCover(next.MapSet)
@@ -262,8 +269,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             Origin = Anchor.Centre
         }, cover =>
         {
-            cover.FadeInFromZero(400);
             covers.Add(cover, 400);
+            cover.Show();
         });
 
         Task.Run(() =>
@@ -274,6 +281,19 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
             video.LoadVideo();
             ScheduleAfterChildren(video.Start);
         });
+    }
+
+    private void showMetadata()
+    {
+        metadataContainer.ClearTransforms();
+        metadataContainer.FadeIn(200);
+    }
+
+    private void hideMetadata()
+    {
+        if (!video.IsPlaying) return;
+
+        metadataContainer.Delay(1000).FadeOut(800);
     }
 
     protected override void Update()
@@ -287,6 +307,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         this.FadeIn(200);
         content.MoveToY(0, 400, Easing.OutQuint);
+        showMetadata();
     }
 
     protected override void PopOut()
