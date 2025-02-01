@@ -42,11 +42,13 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     private Container content;
     private SpriteStack<MapBackground> backgrounds;
     private BackgroundVideo video;
-    private Container metadataContainer;
     private SpriteStack<MapCover> covers;
     private FluXisSpriteText title;
     private FluXisSpriteText artist;
     private MusicPlayerButton pausePlay;
+
+    private Container gradient;
+    private Container metadataContainer;
 
     protected override bool StartHidden => true;
 
@@ -103,7 +105,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             Clock = globalClock,
                             PlaybackStarted = hideMetadata
                         },
-                        new Container
+                        gradient = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Alpha = .5f,
@@ -287,6 +289,9 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
     {
         metadataContainer.ClearTransforms();
         metadataContainer.FadeIn(200);
+
+        gradient.ClearTransforms();
+        gradient.FadeTo(.5f, 200);
     }
 
     private void hideMetadata()
@@ -294,6 +299,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
         if (!video.IsPlaying) return;
 
         metadataContainer.Delay(1000).FadeOut(800);
+        gradient.Delay(1000).FadeOut(800);
     }
 
     protected override void Update()
