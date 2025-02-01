@@ -19,7 +19,6 @@ public partial class PulseEffect : Container
         RelativeSizeAxes = Axes.Both;
         BorderColour = Colour4.White;
         Masking = true;
-        Blending = BlendingParameters.Additive;
 
         InternalChild = new Box
         {
