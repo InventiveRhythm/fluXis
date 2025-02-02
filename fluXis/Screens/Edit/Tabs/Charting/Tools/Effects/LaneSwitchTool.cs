@@ -1,6 +1,5 @@
 using fluXis.Graphics.Sprites;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
-using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement.Effect;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Tools.Effects;

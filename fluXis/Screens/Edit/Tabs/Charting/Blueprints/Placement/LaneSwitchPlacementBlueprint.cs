@@ -6,9 +6,9 @@ using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement.Effect;
+namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 
-public partial class ShakePlacementBlueprint : PlacementBlueprint
+public partial class LaneSwitchPlacementBlueprint : PlacementBlueprint
 {
     private readonly BlueprintLongNoteBody body;
     private readonly BlueprintNotePiece head;
@@ -16,8 +16,8 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
 
     private double originalStartTime;
 
-    public ShakePlacementBlueprint()
-        : base(new ShakeEvent())
+    public LaneSwitchPlacementBlueprint()
+        : base(new LaneSwitchEvent())
     {
         RelativeSizeAxes = Axes.Both;
 
@@ -47,16 +47,22 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
 
         if (Parent == null) return;
 
-        head.Width = Playfield.DrawWidth;
-        body.Width = Playfield.DrawWidth;
-        end.Width = Playfield.DrawWidth;
+        if (Object is not LaneSwitchEvent ls) return;
 
-        if (Object is not ShakeEvent shake) return;
+        ls.Count = Math.Clamp(ls.Count, 1, Map.RealmMap.KeyCount);
 
-        head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(shake.Time, 1));
-        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(shake.Time + shake.Duration, 1));
+        head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time, 1));
+        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(ls.Time + ls.Duration, ls.Count + 1));
         body.Height = Math.Abs(head.Y - end.Y);
         body.Position = new Vector2(head.X, head.Y - head.DrawHeight / 2);
+
+        var endPos = end.Position;
+        var width = endPos.X - head.X;
+
+        head.Width = width;
+        body.Width = width;
+        end.Width = width;
+        end.X = head.X;
     }
 
     protected override void OnMouseUp(MouseUpEvent e)
@@ -70,14 +76,16 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
     public override void UpdatePlacement(double time, int lane)
     {
         base.UpdatePlacement(time, lane);
-        if (Object is not ShakeEvent shake) return;
+        if (Object is not LaneSwitchEvent ls) return;
+
+        ls.Count = lane;
 
         if (State == PlacementState.Placing)
         {
-            shake.Time = time < originalStartTime ? time : originalStartTime;
-            shake.Duration = Math.Abs(time - originalStartTime);
+            ls.Time = time < originalStartTime ? time : originalStartTime;
+            ls.Duration = Math.Abs(time - originalStartTime);
         }
-        else originalStartTime = shake.Time = time;
+        else originalStartTime = ls.Time = time;
     }
 
     protected override void OnPlacementFinished(bool commit)
@@ -86,4 +94,3 @@ public partial class ShakePlacementBlueprint : PlacementBlueprint
             Actions.Add(new EventPlaceAction(Object));
     }
 }
-

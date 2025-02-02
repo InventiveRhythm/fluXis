@@ -2,14 +2,12 @@
 using System.Linq;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
-using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Blueprints;
 using fluXis.Screens.Edit.Blueprints.Selection;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
-using fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection.Effect;
 using fluXis.Screens.Edit.Tabs.Charting.Tools;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -68,16 +66,10 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         map.HitObjectAdded += AddBlueprint;
         map.HitObjectRemoved += RemoveBlueprint;
 
-        map.FlashEventAdded += AddBlueprint;
-        map.FlashEventRemoved += RemoveBlueprint;
-
         SelectionBlueprints.StartBulk();
 
         foreach (var hitObject in ChartingContainer.HitObjects)
             AddBlueprint(hitObject.Data);
-
-        foreach (var flash in ChartingContainer.Playfield.Effects.Flashes)
-            AddBlueprint(flash.FlashEvent);
 
         SelectionBlueprints.EndBulk();
     }
@@ -149,14 +141,6 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
                 blueprint = hit.LongNote ? new LongNoteSelectionBlueprint(hit) : new SingleNoteSelectionBlueprint(hit);
                 blueprint.Drawable = hitDrawable;
-                break;
-
-            case FlashEvent flash:
-                var flashDrawable = ChartingContainer.Playfield.Effects.Flashes.FirstOrDefault(d => d.FlashEvent == obj);
-                if (flashDrawable == null) return null;
-
-                blueprint = new FlashSelectionBlueprint(flash);
-                blueprint.Drawable = flashDrawable;
                 break;
         }
 

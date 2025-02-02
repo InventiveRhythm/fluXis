@@ -19,7 +19,6 @@ public partial class EditorEffectContainer : Container
 
     private Box underlay;
 
-    public Container<EditorFlashEvent> Flashes { get; private set; }
     public Container<EditorLaneSwitchEvent> LaneSwitches { get; private set; }
 
     [BackgroundDependencyLoader]
@@ -38,15 +37,6 @@ public partial class EditorEffectContainer : Container
                 Anchor = Anchor.BottomRight,
                 Origin = Anchor.BottomLeft,
                 Margin = new MarginPadding { Left = 8 }
-            },
-            Flashes = new Container<EditorFlashEvent>
-            {
-                AutoSizeAxes = Axes.X,
-                RelativeSizeAxes = Axes.Y,
-                Y = -EditorHitObjectContainer.HITPOSITION,
-                Anchor = Anchor.BottomRight,
-                Origin = Anchor.BottomLeft,
-                Margin = new MarginPadding { Left = 10 }
             },
             LaneSwitches = new Container<EditorLaneSwitchEvent>
             {
@@ -71,15 +61,7 @@ public partial class EditorEffectContainer : Container
     {
         base.LoadComplete();
 
-        map.FlashEventAdded += AddFlash;
         map.LaneSwitchEventAdded += AddLaneSwitch;
-
-        map.FlashEventRemoved += flash =>
-        {
-            var editorFlash = Flashes.FirstOrDefault(f => f.FlashEvent == flash);
-            if (editorFlash != null)
-                Flashes.Remove(editorFlash, true);
-        };
 
         map.LaneSwitchEventRemoved += ls =>
         {
@@ -91,16 +73,8 @@ public partial class EditorEffectContainer : Container
 
     private void loadEvents()
     {
-        foreach (var flashEvent in map.MapEvents.FlashEvents)
-            AddFlash(flashEvent);
-
         foreach (var laneSwitch in map.MapEvents.LaneSwitchEvents)
             AddLaneSwitch(laneSwitch);
-    }
-
-    public void AddFlash(FlashEvent flash)
-    {
-        Flashes.Add(new EditorFlashEvent { FlashEvent = flash });
     }
 
     public void AddLaneSwitch(LaneSwitchEvent ls)
@@ -110,7 +84,6 @@ public partial class EditorEffectContainer : Container
 
     public void ClearAll()
     {
-        Flashes.Clear();
         LaneSwitches.Clear();
     }
 }
