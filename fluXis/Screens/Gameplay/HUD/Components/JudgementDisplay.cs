@@ -42,6 +42,8 @@ public partial class JudgementDisplay : GameplayHUDComponent
         showEarlyLate = config.GetBindable<bool>(FluXisSetting.ShowEarlyLate);
         judgementSplash = config.GetBindable<bool>(FluXisSetting.JudgementSplash);
 
+        Height = 40;
+
         InternalChildren = new Drawable[]
         {
             splash = new Splash(),

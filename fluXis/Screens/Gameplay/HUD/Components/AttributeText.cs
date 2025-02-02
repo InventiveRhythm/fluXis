@@ -33,10 +33,10 @@ public partial class AttributeText : GameplayHUDComponent
     {
         return type switch
         {
-            AttributeType.Title => Screen.RealmMap.Metadata.Title,
-            AttributeType.Artist => Screen.RealmMap.Metadata.Artist,
-            AttributeType.Difficulty => Screen.RealmMap.Difficulty,
-            AttributeType.Mapper => Screen.RealmMap.Metadata.Mapper,
+            AttributeType.Title => Deps.RealmMap.Metadata.Title,
+            AttributeType.Artist => Deps.RealmMap.Metadata.Artist,
+            AttributeType.Difficulty => Deps.RealmMap.Difficulty,
+            AttributeType.Mapper => Deps.RealmMap.Metadata.Mapper,
             _ => ""
         };
     }

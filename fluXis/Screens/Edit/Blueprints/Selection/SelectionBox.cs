@@ -1,6 +1,7 @@
 using System;
 using fluXis.Audio;
 using fluXis.Graphics.UserInterface.Color;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,7 +16,8 @@ public partial class SelectionBox : Container
     [Resolved]
     private IBeatSyncProvider beatSync { get; set; }
 
-    [Resolved]
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private ITimePositionProvider positionProvider { get; set; }
 
     private Visibility state;
@@ -79,6 +81,9 @@ public partial class SelectionBox : Container
     {
         Box.Position = Vector2.ComponentMin(e.MouseDownPosition, e.MousePosition);
         Box.Size = Vector2.ComponentMax(e.MouseDownPosition, e.MousePosition) - Box.Position;
+
+        if (positionProvider is null)
+            return;
 
         startTime ??= positionProvider.TimeAtScreenSpacePosition(e.ScreenSpaceMouseDownPosition);
         var end = positionProvider.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);

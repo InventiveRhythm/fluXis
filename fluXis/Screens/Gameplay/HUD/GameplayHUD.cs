@@ -19,12 +19,18 @@ public partial class GameplayHUD : Container
     [Resolved]
     private LayoutManager layouts { get; set; }
 
-    private Container components;
+    public GameplayHUDComponent[] Components => components.Concat(playfields.SelectMany(p => p.Children)).ToArray();
+
+    public bool AutoRefresh { get; init; } = true;
+    private HUDLayout layout;
+
+    private Container<GameplayHUDComponent> components;
     private PlayfieldHUD[] playfields;
 
-    public GameplayHUD(RulesetContainer ruleset)
+    public GameplayHUD(RulesetContainer ruleset, HUDLayout layout = null)
     {
         this.ruleset = ruleset;
+        this.layout = layout;
     }
 
     [BackgroundDependencyLoader]
@@ -34,7 +40,7 @@ public partial class GameplayHUD : Container
 
         InternalChildren = new Drawable[]
         {
-            components = new Container
+            components = new Container<GameplayHUDComponent>
             {
                 RelativeSizeAxes = Axes.Both
             },
@@ -48,12 +54,15 @@ public partial class GameplayHUD : Container
             }
         };
 
+        layout ??= layouts.Layout.Value;
         loadLayout();
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        if (!AutoRefresh) return;
 
         layouts.Reloaded += refreshLayout;
         layouts.Layout.ValueChanged += bindableRefreshLayout;
@@ -67,25 +76,23 @@ public partial class GameplayHUD : Container
         layouts.Layout.ValueChanged -= bindableRefreshLayout;
     }
 
-    private void bindableRefreshLayout(ValueChangedEvent<HUDLayout> _)
-    {
-        refreshLayout();
-    }
+    private void bindableRefreshLayout(ValueChangedEvent<HUDLayout> _) => refreshLayout();
 
     private void refreshLayout()
     {
         components.Clear();
         playfields.ForEach(hud => hud.Clear());
 
+        layout = layouts.Layout.Value;
         loadLayout();
     }
 
     private void loadLayout()
     {
-        if (layouts.Layout.Value?.Gameplay == null)
+        if (layout?.Gameplay == null)
             return;
 
-        foreach (var (key, settings) in layouts.Layout.Value.Gameplay)
+        foreach (var (key, settings) in layout.Gameplay)
         {
             try
             {
@@ -94,7 +101,7 @@ public partial class GameplayHUD : Container
                 for (int i = 0; i < loop; i++)
                 {
                     var manager = playfields[i].Player;
-                    var component = layouts.CreateComponent(key.Split('#')[0], settings, manager.JudgementProcessor, manager.HealthProcessor, manager.ScoreProcessor, ruleset.HitWindows);
+                    var component = layouts.CreateComponent(key.Split('#')[0], settings, manager);
 
                     if (settings.AnchorToPlayfield)
                         playfields[i].Add(component);
@@ -109,7 +116,7 @@ public partial class GameplayHUD : Container
         }
     }
 
-    private partial class PlayfieldHUD : Container
+    private partial class PlayfieldHUD : Container<GameplayHUDComponent>
     {
         public PlayfieldPlayer Player { get; }
         public Playfield Playfield => Player.MainPlayfield;

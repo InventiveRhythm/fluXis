@@ -1,10 +1,14 @@
 ﻿using System;
+using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Screens.Gameplay.HUD;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
+using osuTK;
 
 namespace fluXis.Screens.Layout.Components;
 
@@ -19,6 +23,9 @@ public partial class LayoutListComponent : CompositeDrawable
     private string key { get; }
     private Type type { get; }
 
+    private HoverLayer hover;
+    private FlashLayer flash;
+
     public LayoutListComponent(string key, Type type)
     {
         this.key = key;
@@ -30,9 +37,11 @@ public partial class LayoutListComponent : CompositeDrawable
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
+        CornerRadius = 12;
+        Masking = true;
 
         var settings = new HUDComponentSettings();
-        var comp = layouts.CreateComponent(key, settings, editor.JudgementProcessor, editor.HealthProcessor, editor.ScoreProcessor, editor.HitWindows);
+        var comp = layouts.CreateComponent(key, settings, editor);
 
         InternalChildren = new Drawable[]
         {
@@ -41,12 +50,45 @@ public partial class LayoutListComponent : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background3
             },
-            new Container
+            hover = new HoverLayer(),
+            flash = new FlashLayer(),
+            new FillFlowContainer()
             {
-                RelativeSizeAxes = Axes.Both,
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Vertical,
                 Padding = new MarginPadding(12),
-                Child = comp
+                Spacing = new Vector2(8),
+                Children = new Drawable[]
+                {
+                    comp.With(d => d.Anchor = d.Origin = Anchor.TopCentre),
+                    new FluXisSpriteText
+                    {
+                        Text = type.Name,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        WebFontSize = 14
+                    }
+                }
             }
         };
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        hover.Show();
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        hover.Hide();
+        base.OnHoverLost(e);
+    }
+
+    protected override bool OnClick(ClickEvent e)
+    {
+        flash.Show();
+        return true;
     }
 }

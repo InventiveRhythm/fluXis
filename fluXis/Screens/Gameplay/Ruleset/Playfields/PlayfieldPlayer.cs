@@ -1,7 +1,11 @@
 ﻿using System.Linq;
+using fluXis.Database.Maps;
+using fluXis.Map;
 using fluXis.Online.API.Models.Users;
+using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
+using fluXis.Screens.Gameplay.HUD;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -10,7 +14,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 
-public partial class PlayfieldPlayer : CompositeDrawable
+public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
 {
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -77,4 +81,14 @@ public partial class PlayfieldPlayer : CompositeDrawable
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    #region IHUDDependencyProvider
+
+    HitWindows IHUDDependencyProvider.HitWindows => ruleset.HitWindows;
+    RealmMap IHUDDependencyProvider.RealmMap => ruleset.MapInfo.RealmEntry;
+    MapInfo IHUDDependencyProvider.MapInfo => ruleset.MapInfo;
+    float IHUDDependencyProvider.PlaybackRate => ruleset.Rate;
+    double IHUDDependencyProvider.CurrentTime => ruleset.Time.Current;
+
+    #endregion
 }

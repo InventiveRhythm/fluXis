@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Audio;
+using fluXis.Database.Maps;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
@@ -19,11 +20,13 @@ using fluXis.Screens.Edit.MenuBar;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Replays;
+using fluXis.Screens.Layout.Blueprints;
 using fluXis.Screens.Layout.Components;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -36,7 +39,7 @@ using osuTK;
 
 namespace fluXis.Screens.Layout;
 
-public partial class LayoutEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public override bool AllowMusicControl => false;
     public override bool AllowMusicPausing => true;
@@ -56,11 +59,6 @@ public partial class LayoutEditor : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     public event Action RulesetLoaded;
     public bool RulesetIsLoaded => ruleset is not null;
-
-    public JudgementProcessor JudgementProcessor => ruleset.PlayfieldManager.Players[0].JudgementProcessor;
-    public HealthProcessor HealthProcessor => ruleset.PlayfieldManager.Players[0].HealthProcessor;
-    public ScoreProcessor ScoreProcessor => ruleset.PlayfieldManager.Players[0].ScoreProcessor;
-    public HitWindows HitWindows => ruleset.HitWindows;
 
     private HUDLayout layout { get; }
 
@@ -140,7 +138,8 @@ public partial class LayoutEditor : FluXisScreen, IKeyBindingHandler<FluXisGloba
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             TargetDrawSize = new Vector2(1920, 1080)
-                                        }
+                                        },
+                                        new LayoutBlueprintContainer()
                                     }
                                 }
                             },
@@ -207,6 +206,12 @@ public partial class LayoutEditor : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 {
                     rulesetWrapper.Add(c);
                     RulesetLoaded?.Invoke();
+
+                    LoadComponentAsync(new GameplayHUD(c, layout), hud =>
+                    {
+                        rulesetWrapper.Add(hud);
+                        hud.Components.ForEach(ComponentAdded);
+                    });
                 }));
             }
             catch (Exception e)
@@ -219,6 +224,25 @@ public partial class LayoutEditor : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private void save()
     {
     }
+
+    #region Events
+
+    public event Action<GameplayHUDComponent> ComponentAdded;
+
+    #endregion
+
+    #region IHUDDependencyProvider Implementation
+
+    JudgementProcessor IHUDDependencyProvider.JudgementProcessor => ruleset.PlayfieldManager.Players[0].JudgementProcessor;
+    HealthProcessor IHUDDependencyProvider.HealthProcessor => ruleset.PlayfieldManager.Players[0].HealthProcessor;
+    ScoreProcessor IHUDDependencyProvider.ScoreProcessor => ruleset.PlayfieldManager.Players[0].ScoreProcessor;
+    HitWindows IHUDDependencyProvider.HitWindows => ruleset.HitWindows;
+    RealmMap IHUDDependencyProvider.RealmMap => ruleset.MapInfo.RealmEntry;
+    MapInfo IHUDDependencyProvider.MapInfo => ruleset.MapInfo;
+    float IHUDDependencyProvider.PlaybackRate => ruleset.Rate;
+    double IHUDDependencyProvider.CurrentTime => ruleset.CurrentTime;
+
+    #endregion
 
     #region Overrides
 

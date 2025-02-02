@@ -1,7 +1,6 @@
 using System;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
-using fluXis.Screens.Gameplay.Audio;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,9 +12,6 @@ namespace fluXis.Screens.Gameplay.HUD.Components;
 
 public partial class Progressbar : GameplayHUDComponent
 {
-    [Resolved]
-    private GameplayClock clock { get; set; }
-
     private Bar bar;
     private FluXisSpriteText currentTimeText;
     private FluXisSpriteText percentText;
@@ -61,11 +57,11 @@ public partial class Progressbar : GameplayHUDComponent
     {
         base.Update();
 
-        int timeLeft = (int)((Screen.Map.EndTime - clock.CurrentTime) / Screen.Rate);
-        int totalTime = (int)((Screen.Map.EndTime - Screen.Map.StartTime) / Screen.Rate);
+        int timeLeft = (int)((Deps.MapInfo.EndTime - Deps.CurrentTime) / Deps.PlaybackRate);
+        int totalTime = (int)((Deps.MapInfo.EndTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
 
-        int currentTime = (int)((clock.CurrentTime - Screen.Map.StartTime) / Screen.Rate);
-        int catchupTime = (int)((Screen.RulesetContainer.Time.Current - Screen.Map.StartTime) / Screen.Rate);
+        int currentTime = (int)((Deps.CurrentTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
+        int catchupTime = (int)((Deps.CurrentTime - Deps.MapInfo.StartTime) / Deps.PlaybackRate);
 
         float percent = (float)currentTime / totalTime;
         float catchupPercent = (float)catchupTime / totalTime;
@@ -104,9 +100,6 @@ public partial class Progressbar : GameplayHUDComponent
                 catchup.FadeTo(delta > 0.004f ? .4f : 0, 200);
             }
         }
-
-        [Resolved]
-        private GameplayClock clock { get; set; }
 
         public Progressbar Progressbar { get; init; }
 
@@ -147,12 +140,13 @@ public partial class Progressbar : GameplayHUDComponent
             if (progress < 0) progress = 0;
             if (progress > 1) progress = 1;
 
-            var startTime = Progressbar.Screen.Map.StartTime;
-            var endTime = Progressbar.Screen.Map.EndTime;
-            double previousTime = clock.CurrentTime;
+            var startTime = Progressbar.Deps.MapInfo.StartTime;
+            var endTime = Progressbar.Deps.MapInfo.EndTime;
+            double previousTime = Progressbar.Deps.CurrentTime;
             double newTime = startTime + (endTime - startTime) * progress;
 
-            Progressbar.Screen.OnSeek?.Invoke(previousTime, newTime);
+            // TODO: fix thsinsaegdskdjsgghshughgs
+            // Progressbar.Screen.OnSeek?.Invoke(previousTime, newTime);
 
             return true;
         }

@@ -99,7 +99,13 @@ public class AutoGenerator
             if (!down[currentObject.Lane - 1])
             {
                 down[currentObject.Lane - 1] = true;
-                yield return new PressAction { Time = currentObject.Time, Lane = currentObject.Lane };
+
+                var time = currentObject.Time;
+
+                if (currentObject.Type == 1)
+                    time += 2; // this is dumb
+
+                yield return new PressAction { Time = time, Lane = currentObject.Lane };
             }
 
             if (releaseTime is not null)

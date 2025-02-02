@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
-using fluXis.Scoring;
-using fluXis.Scoring.Processing;
-using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.HUD.Components;
 using fluXis.Utils;
 using Newtonsoft.Json;
@@ -108,7 +105,7 @@ public partial class LayoutManager : Component
         storage.PresentFileExternally(path);
     }
 
-    public GameplayHUDComponent CreateComponent(string key, HUDComponentSettings settings, JudgementProcessor judgement, HealthProcessor health, ScoreProcessor score, HitWindows windows)
+    public GameplayHUDComponent CreateComponent(string key, HUDComponentSettings settings, IHUDDependencyProvider provider)
     {
         if (!componentLookup.TryGetValue(key, out var type))
             throw new ArgumentOutOfRangeException($"'{nameof(key)}' is not a valid component key.");
@@ -118,7 +115,7 @@ public partial class LayoutManager : Component
         if (component == null)
             throw new Exception($"Failed to create instance of {type}.");
 
-        component.Populate(settings, judgement, health, score, windows);
+        component.Populate(settings, provider);
         settings.ApplyTo(component);
         return component;
     }
