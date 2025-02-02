@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using fluXis.Screens.Gameplay.HUD.Components;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using osu.Framework.Allocation;
@@ -21,24 +19,12 @@ public partial class GameplayHUD : Container
     [Resolved]
     private LayoutManager layouts { get; set; }
 
-    private readonly Dictionary<string, Type> componentLookup = new();
-
     private Container components;
     private PlayfieldHUD[] playfields;
 
     public GameplayHUD(RulesetContainer ruleset)
     {
         this.ruleset = ruleset;
-
-        componentLookup.Add("Accuracy", typeof(AccuracyDisplay));
-        componentLookup.Add("AttributeText", typeof(AttributeText));
-        componentLookup.Add("Combo", typeof(ComboCounter));
-        componentLookup.Add("Health", typeof(HealthBar));
-        componentLookup.Add("HitError", typeof(HitErrorBar));
-        componentLookup.Add("Judgement", typeof(JudgementDisplay));
-        componentLookup.Add("JudgementCounter", typeof(JudgementCounter));
-        componentLookup.Add("PerformanceRating", typeof(PerformanceRatingDisplay));
-        componentLookup.Add("Progress", typeof(Progressbar));
     }
 
     [BackgroundDependencyLoader]
@@ -101,27 +87,14 @@ public partial class GameplayHUD : Container
 
         foreach (var (key, settings) in layouts.Layout.Value.Gameplay)
         {
-            var typeName = key.Split('#')[0];
-
-            if (!componentLookup.TryGetValue(typeName, out var type))
-                continue;
-
             try
             {
                 var loop = settings.AnchorToPlayfield ? playfields.Length : 1;
 
                 for (int i = 0; i < loop; i++)
                 {
-                    var component = (GameplayHUDComponent)Activator.CreateInstance(type);
-
-                    if (component == null)
-                        throw new Exception($"Failed to create instance of {type}.");
-
                     var manager = playfields[i].Player;
-                    component.Populate(settings, manager.JudgementProcessor, manager.HealthProcessor, manager.ScoreProcessor, ruleset.HitWindows);
-                    LoadComponent(component);
-
-                    settings.ApplyTo(component);
+                    var component = layouts.CreateComponent(key.Split('#')[0], settings, manager.JudgementProcessor, manager.HealthProcessor, manager.ScoreProcessor, ruleset.HitWindows);
 
                     if (settings.AnchorToPlayfield)
                         playfields[i].Add(component);

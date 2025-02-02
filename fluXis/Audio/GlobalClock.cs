@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Map;
@@ -13,14 +14,13 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
 using osu.Framework.Logging;
 using osu.Framework.Timing;
 
 namespace fluXis.Audio;
 
-public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameBasedClock, ISourceChangeableClock, IBeatSyncProvider, IAmplitudeProvider
+public partial class GlobalClock : TransformableClock, IAdjustableClock, IFrameBasedClock, ISourceChangeableClock, IBeatSyncProvider, IAmplitudeProvider
 {
     [Resolved]
     private FluXisScreenStack screens { get; set; }
@@ -34,22 +34,14 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
     [CanBeNull]
     public DrawableTrack CurrentTrack => track.Value;
 
-    public double ElapsedFrameTime => underlying.ElapsedFrameTime;
-    public double FramesPerSecond => underlying.FramesPerSecond;
+    public override double ElapsedFrameTime => underlying.ElapsedFrameTime;
+    public override double FramesPerSecond => underlying.FramesPerSecond;
     public FrameTimeInfo TimeInfo => new() { Elapsed = ElapsedFrameTime, Current = CurrentTime };
 
-    public double CurrentTime => underlying.CurrentTime - (offset?.Value ?? 0);
-    public bool IsRunning => underlying.IsRunning;
+    public override double CurrentTime => underlying.CurrentTime - (offset?.Value ?? 0);
+    public override bool IsRunning => underlying.IsRunning;
     public bool Finished => CurrentTrack?.CurrentTime >= trackLength;
     public IClock Source => underlying.Source;
-
-    public Bindable<double> RateBindable { get; } = new(1);
-
-    public double Rate
-    {
-        get => RateBindable.Value;
-        set => RateBindable.Value = value;
-    }
 
     public bool Looping
     {
@@ -150,39 +142,41 @@ public partial class GlobalClock : CompositeComponent, IAdjustableClock, IFrameB
         Task.Run(() => mapInfo = info.GetMapInfo());
     }
 
-    public void Reset()
+    public override void Reset()
     {
         ClearTransforms();
         underlying.Reset();
         CurrentTrack?.Reset();
     }
 
-    public void Start()
+    public override void Start()
     {
         underlying.Start();
         CurrentTrack?.Start();
     }
 
-    public void Stop()
+    public override void Stop()
     {
         underlying.Stop();
         CurrentTrack?.Stop();
     }
 
-    public bool Seek(double position)
+    public override bool Seek(double position)
     {
         position = Math.Min(position, trackLength);
         return underlying.Seek(position);
     }
 
-    public void ResetSpeedAdjustments()
+    public override bool SeekForce(double position) => Seek(position);
+
+    public override void ResetSpeedAdjustments()
     {
         Schedule(() => ClearTransforms());
         underlying.ResetSpeedAdjustments();
         CurrentTrack?.ResetSpeedAdjustments();
     }
 
-    public void ProcessFrame() { }
+    public override void ProcessFrame() { }
 
     public void ChangeSource(IClock source)
     {
@@ -311,7 +305,4 @@ public static class GlobalClockExtensions
 
     public static TransformSequence<DrawableTrack> VolumeOut(this GlobalClock clock, double duration = 0, Easing easing = Easing.None)
         => clock.VolumeTo(0f, duration, easing);
-
-    public static TransformSequence<GlobalClock> RateTo(this GlobalClock clock, double newRate, double duration = 0, Easing easing = Easing.None)
-        => clock.TransformBindableTo(clock.RateBindable, newRate, duration, easing);
 }

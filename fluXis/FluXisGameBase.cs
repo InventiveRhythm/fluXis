@@ -79,6 +79,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected IAPIClient APIClient { get; private set; }
     protected MapStore MapStore { get; private set; }
     protected SkinManager SkinManager { get; private set; }
+    protected LayoutManager LayoutManager { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
 
     public PluginManager Plugins { get; private set; }
@@ -195,7 +196,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             cacheComponent(importManager = new ImportManager(), true, true);
             cacheComponent(SkinManager = new SkinManager(), true, true);
             cacheComponent<ISkin>(SkinManager);
-            cacheComponent(new LayoutManager(), true);
+            cacheComponent(LayoutManager = new LayoutManager(), true);
             cacheComponent(new PreviewManager(), true);
 
             cacheComponent(new UISamples(), true, true);

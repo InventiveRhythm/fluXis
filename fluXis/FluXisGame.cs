@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
@@ -32,6 +33,7 @@ using fluXis.Overlay.Volume;
 using fluXis.Scoring;
 using fluXis.Screens;
 using fluXis.Screens.Intro;
+using fluXis.Screens.Layout;
 using fluXis.Screens.Loading;
 using fluXis.Screens.Menu;
 using fluXis.Screens.Multiplayer;
@@ -321,6 +323,18 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         CloseOverlays();
         screenStack.Push(new SkinEditor());
+    }
+
+    public void OpenLayoutEditor()
+    {
+        if (screenStack.CurrentScreen is LayoutEditor)
+            return;
+
+        if (LayoutManager.IsDefault)
+            return;
+
+        CloseOverlays();
+        screenStack.Push(new LayoutEditor(LayoutManager.Layout.Value));
     }
 
     public override void CloseOverlays() => overlayContainer.Children.ForEach(c => c.Hide());

@@ -40,7 +40,7 @@ public partial class Hitsounding : CompositeDrawable
     /// Does calculations to get the volume of
     /// the hitsound instead of transforms.
     /// </summary>
-    public bool DirectVolume { get; init; } = false;
+    public bool DirectVolume { get; init; }
 
     private Bindable<double> userVolume;
     private Bindable<double> volume;

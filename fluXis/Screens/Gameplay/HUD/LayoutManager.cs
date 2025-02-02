@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using fluXis.Configuration;
+using fluXis.Scoring;
+using fluXis.Scoring.Processing;
+using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Gameplay.HUD.Components;
 using fluXis.Utils;
 using Newtonsoft.Json;
@@ -20,10 +23,15 @@ public partial class LayoutManager : Component
     public Bindable<HUDLayout> Layout { get; } = new(new DefaultLayout());
     public List<HUDLayout> Layouts { get; } = new();
 
+    public bool IsDefault => Layout.Value is DefaultLayout;
+
     public event Action Reloaded;
 
     [Resolved]
     private FluXisConfig config { get; set; }
+
+    private readonly Dictionary<string, Type> componentLookup = new();
+    public IDictionary<string, Type> ComponentTypes => componentLookup;
 
     private Storage storage;
     private Bindable<string> layoutName;
@@ -31,6 +39,16 @@ public partial class LayoutManager : Component
     [BackgroundDependencyLoader]
     private void load(Storage baseStorage)
     {
+        componentLookup.Add("Accuracy", typeof(AccuracyDisplay));
+        componentLookup.Add("AttributeText", typeof(AttributeText));
+        componentLookup.Add("Combo", typeof(ComboCounter));
+        componentLookup.Add("Health", typeof(HealthBar));
+        componentLookup.Add("HitError", typeof(HitErrorBar));
+        componentLookup.Add("Judgement", typeof(JudgementDisplay));
+        componentLookup.Add("JudgementCounter", typeof(JudgementCounter));
+        componentLookup.Add("PerformanceRating", typeof(PerformanceRatingDisplay));
+        componentLookup.Add("Progress", typeof(Progressbar));
+
         storage = baseStorage.GetStorageForDirectory("layouts");
         layoutName = config.GetBindable<string>(FluXisSetting.LayoutName);
         Reload();
@@ -45,7 +63,7 @@ public partial class LayoutManager : Component
     public void Reload()
     {
         Layouts.Clear();
-        Layouts.Add(new DefaultLayout());
+        Layouts.Add(Layout.Default);
 
         loadLayouts();
         Layout.Value = Layouts.FirstOrDefault(x => x.ID == layoutName.Value) ?? Layouts.First();
@@ -53,14 +71,15 @@ public partial class LayoutManager : Component
         Reloaded?.Invoke();
     }
 
-    public void CreateNewLayout()
+    public void CreateNewLayout(bool open = true)
     {
+        var def = new DefaultLayout();
         var id = Guid.NewGuid().ToString();
 
         var layout = new HUDLayout
         {
             Name = "New Layout",
-            Gameplay = new DefaultLayout().Gameplay,
+            Gameplay = def.Gameplay,
             ID = id
         };
 
@@ -71,7 +90,8 @@ public partial class LayoutManager : Component
         Layout.Value = layout;
         Reloaded?.Invoke();
 
-        storage.PresentFileExternally(path);
+        if (open)
+            storage.PresentFileExternally(path);
     }
 
     public void PresentExternally()
@@ -86,6 +106,21 @@ public partial class LayoutManager : Component
 
         var path = storage.GetFullPath($"{Layout.Value.ID}.json");
         storage.PresentFileExternally(path);
+    }
+
+    public GameplayHUDComponent CreateComponent(string key, HUDComponentSettings settings, JudgementProcessor judgement, HealthProcessor health, ScoreProcessor score, HitWindows windows)
+    {
+        if (!componentLookup.TryGetValue(key, out var type))
+            throw new ArgumentOutOfRangeException($"'{nameof(key)}' is not a valid component key.");
+
+        var component = (GameplayHUDComponent)Activator.CreateInstance(type);
+
+        if (component == null)
+            throw new Exception($"Failed to create instance of {type}.");
+
+        component.Populate(settings, judgement, health, score, windows);
+        settings.ApplyTo(component);
+        return component;
     }
 
     private void loadLayouts()

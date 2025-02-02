@@ -3,6 +3,7 @@ using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Overlay.Settings.UI;
 using fluXis.Screens.Gameplay.HUD;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -18,7 +19,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
     private SettingsAppearanceStrings strings => LocalizationStrings.Settings.Appearance;
 
     [BackgroundDependencyLoader]
-    private void load(LayoutManager layouts)
+    private void load(LayoutManager layouts, [CanBeNull] FluXisGame game)
     {
         SettingsDropdown<HUDLayout> layoutDropdown;
 
@@ -45,7 +46,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
                 Description = strings.LayoutCreateDescription,
                 Enabled = true,
                 ButtonText = "Create",
-                Action = layouts.CreateNewLayout
+                Action = () => layouts.CreateNewLayout()
             },
             new SettingsButton
             {
@@ -59,8 +60,8 @@ public partial class AppearanceLayoutSection : SettingsSubSection
             {
                 Label = strings.LayoutOpenEditor,
                 Description = strings.LayoutOpenEditorDescription,
-                Enabled = false,
-                ButtonText = "Open"
+                ButtonText = "Open",
+                Action = () => game?.OpenLayoutEditor()
             }
         });
 

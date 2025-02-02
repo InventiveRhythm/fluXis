@@ -1,5 +1,6 @@
 using System;
 using fluXis.Audio;
+using fluXis.Audio.Transforms;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;

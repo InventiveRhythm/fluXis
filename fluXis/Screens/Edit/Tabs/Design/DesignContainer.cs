@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Background;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Shaders;
 using fluXis.Graphics.Shaders.Bloom;
 using fluXis.Graphics.Shaders.Chromatic;
@@ -26,7 +27,6 @@ using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -229,55 +229,7 @@ public partial class DesignContainer : EditorTabContainer
         }
     }
 
-    protected override Container CreateContentContainer() => new ContentContainer(Settings.ForceAspectRatio);
+    protected override Container CreateContentContainer() => new AspectRatioContainer(Settings.ForceAspectRatio);
     protected override Drawable CreateLeftSide() => Empty();
     protected override PointsSidebar CreatePointsSidebar() => new DesignSidebar();
-
-    private partial class ContentContainer : Container
-    {
-        private readonly Bindable<bool> forceAspect;
-
-        public ContentContainer(Bindable<bool> forceAspect)
-        {
-            this.forceAspect = forceAspect;
-
-            RelativeSizeAxes = Axes.None;
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            if (Parent is null)
-                return;
-
-            var p = Parent.Padding;
-            var vPad = p.Top + p.Bottom;
-            var hPad = p.Left + p.Right;
-            var pW = Parent.DrawWidth - hPad;
-            var pH = Parent.DrawHeight - vPad;
-
-            Size = new Vector2(pW, pH);
-
-            if (forceAspect.Value)
-            {
-                const float target_aspect = 1920 / 1080f;
-
-                var currentAspect = pW / pH;
-
-                if (currentAspect < target_aspect)
-                {
-                    Width = pW;
-                    Height = DrawWidth / target_aspect;
-                }
-                else
-                {
-                    Width = DrawHeight * target_aspect;
-                    Height = pH;
-                }
-            }
-        }
-    }
 }

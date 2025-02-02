@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Audio;
+using fluXis.Audio.Transforms;
 using fluXis.Configuration;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
