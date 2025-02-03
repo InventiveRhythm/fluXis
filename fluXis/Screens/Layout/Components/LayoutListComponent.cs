@@ -89,6 +89,11 @@ public partial class LayoutListComponent : CompositeDrawable
     protected override bool OnClick(ClickEvent e)
     {
         flash.Show();
+        editor.AddComponent(key, new HUDComponentSettings
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
+        });
         return true;
     }
 }

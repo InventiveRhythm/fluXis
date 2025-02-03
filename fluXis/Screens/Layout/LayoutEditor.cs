@@ -25,6 +25,7 @@ using fluXis.Screens.Layout.Components;
 using fluXis.Screens.Layout.Settings;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using MongoDB.Bson;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -58,6 +59,9 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     [Resolved]
     private MapStore maps { get; set; }
 
+    [Resolved]
+    private LayoutManager manager { get; set; }
+
     public event Action RulesetLoaded;
     public bool RulesetIsLoaded => ruleset is not null;
 
@@ -69,6 +73,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     private AspectRatioContainer content;
     private Container rulesetWrapper;
     private ReplayRulesetContainer ruleset;
+    private GameplayHUD hud;
 
     private DependencyContainer dependencies;
 
@@ -83,7 +88,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     {
         dependencies.CacheAs(this);
 
-        var blueprints = new LayoutBlueprintContainer();
+        LayoutBlueprintContainer blueprints;
 
         InternalChildren = new Drawable[]
         {
@@ -210,7 +215,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                     rulesetWrapper.Add(c);
                     RulesetLoaded?.Invoke();
 
-                    LoadComponentAsync(new GameplayHUD(c, layout), hud =>
+                    LoadComponentAsync(hud = new GameplayHUD(c, layout), hud =>
                     {
                         rulesetWrapper.Add(hud);
                         hud.Components.ForEach(ComponentAdded);
@@ -226,6 +231,16 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
     private void save()
     {
+    }
+
+    public void AddComponent(string type, HUDComponentSettings settings)
+    {
+        var key = ObjectId.GenerateNewId().ToString();
+        layout.Gameplay[$"{type}#{key}"] = settings;
+
+        var comp = manager.CreateComponent(type, settings, this);
+        // hud.AddComponent(comp);
+        ComponentAdded?.Invoke(comp);
     }
 
     #region Events
