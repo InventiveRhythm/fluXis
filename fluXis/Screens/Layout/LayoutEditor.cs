@@ -22,6 +22,7 @@ using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Layout.Blueprints;
 using fluXis.Screens.Layout.Components;
+using fluXis.Screens.Layout.Settings;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
@@ -82,6 +83,8 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     {
         dependencies.CacheAs(this);
 
+        var blueprints = new LayoutBlueprintContainer();
+
         InternalChildren = new Drawable[]
         {
             dependencies.CacheAsAndReturn(new Hitsounding(maps.CurrentMapSet, new List<HitSoundFade>(), clock.RateBindable.GetBoundCopy())),
@@ -139,15 +142,15 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                                             RelativeSizeAxes = Axes.Both,
                                             TargetDrawSize = new Vector2(1920, 1080)
                                         },
-                                        new LayoutBlueprintContainer()
+                                        blueprints = new LayoutBlueprintContainer()
                                     }
                                 }
                             },
-                            new Container
+                            new ComponentsSettings(blueprints)
                             {
                                 Width = sidebar_width,
                                 RelativeSizeAxes = Axes.Y
-                            },
+                            }
                         }
                     }
                 },

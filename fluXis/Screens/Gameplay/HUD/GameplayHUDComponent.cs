@@ -7,8 +7,8 @@ namespace fluXis.Screens.Gameplay.HUD;
 
 public partial class GameplayHUDComponent : Container
 {
-    protected HUDComponentSettings Settings { get; private set; }
     protected IHUDDependencyProvider Deps { get; private set; }
+    public HUDComponentSettings Settings { get; private set; }
 
     protected JudgementProcessor JudgementProcessor => Deps.JudgementProcessor;
     protected HealthProcessor HealthProcessor => Deps.HealthProcessor;
@@ -20,4 +20,6 @@ public partial class GameplayHUDComponent : Container
         Settings = settings;
         Deps = deps;
     }
+
+    public void OnSettingsApplied() { }
 }

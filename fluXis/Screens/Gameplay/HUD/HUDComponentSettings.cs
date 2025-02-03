@@ -20,6 +20,9 @@ public class HUDComponentSettings
         drawable.Origin = Origin;
         drawable.Position = Position;
         drawable.Scale = new Vector2(Scale);
+
+        if (drawable is GameplayHUDComponent comp)
+            comp.OnSettingsApplied();
     }
 
     public T GetSetting<T>(string key, T defaultValue = default)
