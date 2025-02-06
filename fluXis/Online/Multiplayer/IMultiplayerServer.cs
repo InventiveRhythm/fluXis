@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Scoring;
+using JetBrains.Annotations;
 
 namespace fluXis.Online.Multiplayer;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public interface IMultiplayerServer
 {
     Task<MultiplayerRoom> CreateRoom(string name, string password, long map, string hash);

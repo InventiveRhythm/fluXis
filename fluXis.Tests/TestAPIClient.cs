@@ -7,7 +7,6 @@ using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Packets;
 using fluXis.Online.Fluxel;
 using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Bindables;
@@ -103,10 +102,5 @@ public class TestAPIClient : IAPIClient
         throw new NotImplementedException();
     }
 
-    public Task SendPacket<T>(T packet) where T : IPacket => Task.CompletedTask;
-    public void SendPacketAsync<T>(T packet) where T : IPacket { }
-    public Task<FluxelReply<T>> SendAndWait<T>(T packet, long timeout = 10000) where T : IPacket => Task.FromResult(new FluxelReply<T>());
-    public void RegisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket { }
-    public void UnregisterListener<T>(EventType id, Action<FluxelReply<T>> listener) where T : IPacket { }
     public void Disconnect() { }
 }

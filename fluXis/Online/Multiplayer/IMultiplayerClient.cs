@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Scoring;
+using JetBrains.Annotations;
 
 namespace fluXis.Online.Multiplayer;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public interface IMultiplayerClient
 {
     Task UserJoined(MultiplayerParticipant participant);

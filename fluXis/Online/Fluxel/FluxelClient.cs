@@ -133,6 +133,8 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     {
         if (Status.Value == ConnectionStatus.Reconnecting)
             Thread.Sleep(5000);
+        else
+            Status.Value = ConnectionStatus.Connecting;
 
         Logger.Log("Connecting to server...", LoggingTarget.Network);
 
@@ -159,7 +161,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             {
                 while (Status.Value == ConnectionStatus.Connecting && waitTime > 0)
                 {
-                    if (connection.State is WebSocketState.Closing or WebSocketState.Closed)
+                    if (connection.State >= WebSocketState.Closing)
                     {
                         LastException = new APIException("" /*connection.CloseStatusDescription*/);
                         Status.Value = ConnectionStatus.Failed;
@@ -173,6 +175,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                 if (Status.Value == ConnectionStatus.Online) return;
 
                 Logger.Log("Authentication timed out!", LoggingTarget.Network);
+                Logger.Log($"Connection status is {Status.Value}.", LoggingTarget.Network, LogLevel.Debug);
                 Logout();
 
                 LastException = new TimeoutException("Authentication timed out!");
@@ -272,6 +275,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
     public void Logout()
     {
+        Logger.Log("Logging out...");
         connection?.Close(WebSocketCloseCode.NormalClosure, "Logout");
         connection = null;
 
@@ -384,34 +388,4 @@ public enum ConnectionStatus
     Online,
     Reconnecting,
     Closed
-}
-
-public enum EventType
-{
-    Login,
-    Logout, // Logged out by the server, because the same account logged in somewhere else.
-
-    FriendOnline,
-    FriendOffline,
-
-    Achievement,
-    ServerMessage,
-    Maintenance,
-
-    ChatMessage,
-    ChatHistory,
-    ChatMessageDelete,
-    ChatJoin,
-    ChatLeave,
-
-    MultiplayerCreateLobby,
-    MultiplayerJoin,
-    MultiplayerLeave,
-    MultiplayerState,
-    MultiplayerMap,
-    MultiplayerRoomUpdate,
-    MultiplayerReady,
-    MultiplayerStartGame,
-    MultiplayerScore,
-    MultiplayerFinish
 }

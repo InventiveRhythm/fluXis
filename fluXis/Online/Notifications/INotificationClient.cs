@@ -2,9 +2,11 @@
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using JetBrains.Annotations;
 
 namespace fluXis.Online.Notifications;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public interface INotificationClient
 {
     Task Login(APIUser user);
