@@ -253,8 +253,8 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         video.Stop();
 
-        title.Text = next.Metadata.Title;
-        artist.Text = next.Metadata.Artist;
+        title.Text = next.Metadata.LocalizedTitle;
+        artist.Text = next.Metadata.LocalizedArtist;
 
         showMetadata();
 

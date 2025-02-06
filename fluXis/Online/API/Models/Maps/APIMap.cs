@@ -1,5 +1,6 @@
 ﻿using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
+using osu.Framework.Localisation;
 
 namespace fluXis.Online.API.Models.Maps;
 
@@ -23,10 +24,16 @@ public class APIMap
     public string Difficulty { get; init; } = null!;
 
     [JsonProperty("title")]
-    public string Title { get; init; } = null!;
+    public string Title { get; set; } = string.Empty;
+
+    [JsonProperty("title-rm")]
+    public string TitleRomanized { get; set; } = string.Empty;
 
     [JsonProperty("artist")]
-    public string Artist { get; init; } = null!;
+    public string Artist { get; set; } = string.Empty;
+
+    [JsonProperty("artist-rm")]
+    public string ArtistRomanized { get; set; } = string.Empty;
 
     [JsonProperty("source")]
     public string Source { get; init; } = null!;
@@ -74,6 +81,16 @@ public class APIMap
 
     [JsonProperty("file")]
     public string? FileName { get; set; }
+
+    #endregion
+
+    #region Localization
+
+    [JsonIgnore]
+    public RomanisableString LocalizedTitle => new(Title, TitleRomanized);
+
+    [JsonIgnore]
+    public RomanisableString LocalizedArtist => new(Artist, ArtistRomanized);
 
     #endregion
 

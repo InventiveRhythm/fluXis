@@ -628,7 +628,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         var notification = new TaskNotificationData
         {
-            Text = $"{set.Metadata.Title} - {set.Metadata.Artist}",
+            Text = $"{set.Metadata.SortingTitle} - {set.Metadata.SortingArtist}",
             TextWorking = "Exporting..."
         };
 
@@ -850,7 +850,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             return;
 
         var item = currentItem;
-        var title = item.Metadata.Title;
+        var title = item.Metadata.SortingTitle;
 
         var current = title.Length < 1 ? '#' : getLetter(title[0]);
 
@@ -860,7 +860,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        var first = Items.FirstOrDefault(i => getLetter(i.Metadata.Title.FirstOrDefault(' ')) == letter);
+        var first = Items.FirstOrDefault(i => getLetter(i.Metadata.SortingTitle.FirstOrDefault(' ')) == letter);
         first?.Select();
 
         letterContainer.SetLetter(letter);
@@ -873,7 +873,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         var item = currentItem;
 
-        var startingWith = Items.Where(i => getLetter(i.Metadata.Title.FirstOrDefault(' ')) == letter).ToList();
+        var startingWith = Items.Where(i => getLetter(i.Metadata.SortingTitle.FirstOrDefault(' ')) == letter).ToList();
         var idx = startingWith.IndexOf(item);
 
         if (idx == -1)

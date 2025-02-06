@@ -194,7 +194,7 @@ public partial class FooterOptions : FocusedOverlayContainer
     {
         var map = e.NewValue;
 
-        setSection.SubTitle = $"{map.Metadata.Artist} - {map.Metadata.Title}";
+        setSection.SubTitle = $"{map.Metadata.LocalizedArtist} - {map.Metadata.LocalizedTitle}";
         mapSection.SubTitle = map.Difficulty;
     }
 

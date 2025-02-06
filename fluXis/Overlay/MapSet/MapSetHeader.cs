@@ -113,7 +113,7 @@ public partial class MapSetHeader : CompositeDrawable
                                     new TruncatingText
                                     {
                                         RelativeSizeAxes = Axes.X,
-                                        Text = set.Title,
+                                        Text = set.LocalizedTitle,
                                         WebFontSize = 36,
                                         Shadow = true,
                                         Anchor = Anchor.CentreLeft,
@@ -122,7 +122,7 @@ public partial class MapSetHeader : CompositeDrawable
                                     new TruncatingText
                                     {
                                         RelativeSizeAxes = Axes.X,
-                                        Text = set.Artist,
+                                        Text = set.LocalizedArtist,
                                         WebFontSize = 24,
                                         Shadow = true,
                                         Anchor = Anchor.CentreLeft,

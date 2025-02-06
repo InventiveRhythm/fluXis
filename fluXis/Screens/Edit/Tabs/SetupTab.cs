@@ -85,11 +85,23 @@ public partial class SetupTab : EditorTab
                                                             Placeholder = "...",
                                                             OnChange = value => map.MapInfo.Metadata.Title = map.RealmMap.Metadata.Title = value
                                                         },
+                                                        new SetupTextBox("Title (Romanized)")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.TitleRomanized ?? map.MapInfo.Metadata.Title,
+                                                            Placeholder = "...",
+                                                            OnChange = value => map.MapInfo.Metadata.TitleRomanized = map.RealmMap.Metadata.TitleRomanized = value
+                                                        },
                                                         new SetupTextBox("Artist")
                                                         {
                                                             Default = map.MapInfo.Metadata.Artist,
                                                             Placeholder = "...",
                                                             OnChange = value => map.MapInfo.Metadata.Artist = map.RealmMap.Metadata.Artist = value
+                                                        },
+                                                        new SetupTextBox("Artist (Romanized)")
+                                                        {
+                                                            Default = map.MapInfo.Metadata.ArtistRomanized ?? map.MapInfo.Metadata.Artist,
+                                                            Placeholder = "...",
+                                                            OnChange = value => map.MapInfo.Metadata.ArtistRomanized = map.RealmMap.Metadata.ArtistRomanized = value
                                                         },
                                                         new SetupTextBox("Mapper")
                                                         {

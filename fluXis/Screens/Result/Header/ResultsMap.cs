@@ -52,13 +52,13 @@ public partial class ResultsMap : CompositeDrawable
                     {
                         new FluXisSpriteText
                         {
-                            Text = map.Metadata.Title,
+                            Text = map.Metadata.LocalizedTitle,
                             WebFontSize = 20,
                             Shadow = true
                         },
                         new FluXisSpriteText
                         {
-                            Text = map.Metadata.Artist,
+                            Text = map.Metadata.LocalizedArtist,
                             WebFontSize = 14,
                             Shadow = true,
                             Alpha = .8f

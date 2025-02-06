@@ -122,14 +122,14 @@ public partial class MultiResultsHeader : CompositeDrawable
                             {
                                 new FluXisSpriteText
                                 {
-                                    Text = map.Metadata.Title,
+                                    Text = map.Metadata.LocalizedTitle,
                                     WebFontSize = 36,
                                     Shadow = true,
                                     Margin = new MarginPadding { Bottom = -10 }
                                 },
                                 new FluXisSpriteText
                                 {
-                                    Text = map.Metadata.Artist,
+                                    Text = map.Metadata.LocalizedArtist,
                                     WebFontSize = 24,
                                     Shadow = true
                                 },

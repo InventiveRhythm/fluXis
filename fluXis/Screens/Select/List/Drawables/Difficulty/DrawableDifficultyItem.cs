@@ -245,14 +245,14 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     WebFontSize = 20,
-                                    Text = map.Metadata.Title,
+                                    Text = map.Metadata.LocalizedTitle,
                                     Shadow = true
                                 },
                                 new TruncatingText
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     WebFontSize = 14,
-                                    Text = map.Metadata.Artist,
+                                    Text = map.Metadata.LocalizedArtist,
                                     Shadow = true
                                 },
                                 new FillFlowContainer

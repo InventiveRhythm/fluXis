@@ -184,7 +184,7 @@ public class OsuImport : MapImporter
         var resources = GetResourceProvider(songsPath);
 
         var maps = db.Beatmaps.Where(b => b.GameMode == GameMode.Mania);
-        var sets = maps.GroupBy(b => b.FolderName);
+        var sets = maps.GroupBy(b => b.FolderName).ToArray();
 
         var mapSets = new List<RealmMapSet>();
 

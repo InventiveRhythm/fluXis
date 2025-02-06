@@ -218,7 +218,9 @@ public class FluXisImport : MapImporter
                     Metadata = new RealmMapMetadata
                     {
                         Title = mapInfo.Metadata.Title ?? "",
+                        TitleRomanized = mapInfo.Metadata.TitleRomanized ?? mapInfo.Metadata.Title ?? "",
                         Artist = mapInfo.Metadata.Artist ?? "",
+                        ArtistRomanized = mapInfo.Metadata.ArtistRomanized ?? mapInfo.Metadata.Artist ?? "",
                         Mapper = mapInfo.Metadata.Mapper ?? "",
                         Source = mapInfo.Metadata.AudioSource ?? "",
                         Tags = mapInfo.Metadata.Tags ?? "",

@@ -102,12 +102,20 @@ public class OsuParser
 
             switch (key)
             {
-                case "Title":
+                case "TitleUnicode":
                     map.Title = value;
                     break;
 
-                case "Artist":
+                case "Title":
+                    map.TitleRoman = value;
+                    break;
+
+                case "ArtistUnicode":
                     map.Artist = value;
+                    break;
+
+                case "Artist":
+                    map.ArtistRoman = value;
                     break;
 
                 case "Creator":

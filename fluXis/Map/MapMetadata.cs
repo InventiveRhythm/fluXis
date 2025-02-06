@@ -7,8 +7,14 @@ public class MapMetadata
     [JsonProperty("title")]
     public string Title { get; set; } = string.Empty;
 
+    [JsonProperty("title-rm")]
+    public string TitleRomanized { get; set; }
+
     [JsonProperty("artist")]
     public string Artist { get; set; } = string.Empty;
+
+    [JsonProperty("artist-rm")]
+    public string ArtistRomanized { get; set; }
 
     [JsonProperty("mapper")]
     public string Mapper { get; set; } = string.Empty;

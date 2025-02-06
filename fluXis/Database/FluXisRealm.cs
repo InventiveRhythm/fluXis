@@ -35,8 +35,9 @@ public class FluXisRealm : IDisposable
     /// 14 - Replaced RealmMapFilters effects with a bitfield
     /// 15 - Add `PerformanceRating` and `ScrollSpeed` to `RealmScore` and change OnlineID to long
     /// 16 - Add `Version` to `RealmScore`
+    /// 17 - Romanizable Title and Artist
     /// </summary>
-    private const int schema_version = 16;
+    private const int schema_version = 17;
 
     private Realm updateRealm;
 
@@ -253,6 +254,20 @@ public class FluXisRealm : IDisposable
             {
                 var scores = migration.NewRealm.All<RealmScore>().ToList();
                 scores.ForEach(s => s.Version = 1);
+                break;
+            }
+
+            case 17:
+            {
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+                maps.ForEach(m =>
+                {
+                    if (m.Metadata is null)
+                        return;
+
+                    m.Metadata.TitleRomanized = m.Metadata.Title;
+                    m.Metadata.ArtistRomanized = m.Metadata.Artist;
+                });
                 break;
             }
         }

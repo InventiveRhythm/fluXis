@@ -246,14 +246,14 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                                     new TruncatingText
                                     {
                                         WebFontSize = 20,
-                                        Text = mapset.Metadata.Title,
+                                        Text = mapset.Metadata.LocalizedTitle,
                                         RelativeSizeAxes = Axes.X,
                                         Shadow = true
                                     },
                                     new TruncatingText
                                     {
                                         WebFontSize = 14,
-                                        Text = mapset.Metadata.Artist,
+                                        Text = mapset.Metadata.LocalizedArtist,
                                         RelativeSizeAxes = Axes.X,
                                         Shadow = true
                                     }

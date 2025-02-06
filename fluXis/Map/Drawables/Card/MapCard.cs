@@ -221,7 +221,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                             new TruncatingText
                                                             {
                                                                 RelativeSizeAxes = Axes.X,
-                                                                Text = MapSet.Title,
+                                                                Text = MapSet.LocalizedTitle,
                                                                 WebFontSize = 18,
                                                                 Shadow = true
                                                             },
@@ -243,7 +243,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                 new TruncatingText
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    Text = $"by {MapSet.Artist}",
+                                                    Text = $"by {MapSet.LocalizedArtist}",
                                                     WebFontSize = 14,
                                                     Shadow = true
                                                 },

@@ -161,7 +161,7 @@ public abstract class UserActivity
 
         public override void CreateSteam(SteamManager steam)
         {
-            steam.SetRichPresence(SteamRichPresenceKey.Status, $"Playing {map.Metadata.Title} - {map.Metadata.Artist} [{map.Difficulty}]");
+            steam.SetRichPresence(SteamRichPresenceKey.Status, $"Playing {map.Metadata.SortingTitle} - {map.Metadata.SortingArtist} [{map.Difficulty}]");
         }
     }
 

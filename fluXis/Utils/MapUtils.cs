@@ -62,7 +62,7 @@ public static class MapUtils
         if (first?.Metadata is null) return 1;
         if (second?.Metadata is null) return -1;
 
-        var result = string.Compare(first.Metadata.Title, second.Metadata.Title, StringComparison.OrdinalIgnoreCase);
+        var result = string.Compare(first.Metadata.SortingTitle, second.Metadata.SortingTitle, StringComparison.OrdinalIgnoreCase);
 
         if (result != 0)
             return result;
@@ -78,7 +78,7 @@ public static class MapUtils
         if (first.Metadata is null) return 1;
         if (second.Metadata is null) return -1;
 
-        var result = string.Compare(first.Metadata.Artist, second.Metadata.Artist, StringComparison.OrdinalIgnoreCase);
+        var result = string.Compare(first.Metadata.SortingArtist, second.Metadata.SortingArtist, StringComparison.OrdinalIgnoreCase);
 
         if (result != 0)
             return result;

@@ -80,13 +80,13 @@ public partial class SetupHeader : CompositeDrawable
                         {
                             title = new FluXisSpriteText
                             {
-                                Text = map.RealmMap.Metadata.Title,
+                                Text = map.RealmMap.Metadata.LocalizedTitle,
                                 WebFontSize = 32,
                                 Shadow = true
                             },
                             artist = new FluXisSpriteText
                             {
-                                Text = map.RealmMap.Metadata.Artist,
+                                Text = map.RealmMap.Metadata.LocalizedArtist,
                                 WebFontSize = 24,
                                 Shadow = true
                             }
@@ -109,8 +109,8 @@ public partial class SetupHeader : CompositeDrawable
     {
         base.Update();
 
-        title.Text = map.RealmMap.Metadata.Title;
-        artist.Text = map.RealmMap.Metadata.Artist;
+        title.Text = map.RealmMap.Metadata.LocalizedTitle;
+        artist.Text = map.RealmMap.Metadata.LocalizedArtist;
     }
 
     protected override void Dispose(bool isDisposing)

@@ -37,8 +37,9 @@ public partial class ProfileScore : Container
         var rank = Enum.Parse<ScoreRank>(score.Rank);
 
         var topLine = new FluXisTextFlow { RelativeSizeAxes = Axes.X, AutoSizeAxes = Axes.Y, WebFontSize = 14 };
-        topLine.AddText($"{score.Map?.Title} ");
-        topLine.AddText<FluXisSpriteText>(score.Map?.Artist, t =>
+        topLine.AddText(score.Map?.LocalizedTitle);
+        topLine.AddText(" ");
+        topLine.AddText<FluXisSpriteText>(score.Map?.LocalizedArtist, t =>
         {
             t.Alpha = .8f;
             t.WebFontSize = 12;

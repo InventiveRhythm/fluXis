@@ -99,19 +99,14 @@ public class SearchFilters
         {
             bool termMatches = false;
 
-            string title = map.Metadata.Title.ToLower();
-            string artist = map.Metadata.Artist.ToLower();
-            string mapper = map.Metadata.Mapper.ToLower();
-            string source = map.Metadata.Source.ToLower();
-            string tags = map.Metadata.Tags.ToLower();
-            string difficulty = map.Difficulty.ToLower();
-
-            termMatches |= title.Contains(Query.ToLower());
-            termMatches |= artist.Contains(Query.ToLower());
-            termMatches |= mapper.Contains(Query.ToLower());
-            termMatches |= source.Contains(Query.ToLower());
-            termMatches |= tags.Contains(Query.ToLower());
-            termMatches |= difficulty.Contains(Query.ToLower());
+            termMatches |= map.Metadata.Title.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+            termMatches |= map.Metadata.TitleRomanized?.Contains(Query, StringComparison.CurrentCultureIgnoreCase) ?? false;
+            termMatches |= map.Metadata.Artist.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+            termMatches |= map.Metadata.ArtistRomanized?.Contains(Query, StringComparison.CurrentCultureIgnoreCase) ?? false;
+            termMatches |= map.Metadata.Mapper.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+            termMatches |= map.Metadata.Source.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+            termMatches |= map.Metadata.Tags.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
+            termMatches |= map.Difficulty.Contains(Query, StringComparison.CurrentCultureIgnoreCase);
 
             if (!termMatches)
                 matches = false;

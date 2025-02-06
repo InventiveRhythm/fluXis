@@ -20,7 +20,9 @@ public class OsuMap
 
     // [Metadata]
     public string Title { get; set; }
+    public string TitleRoman { get; set; }
     public string Artist { get; set; }
+    public string ArtistRoman { get; set; }
     public string Creator { get; set; }
     public string Version { get; set; }
     public string Source { get; set; }
@@ -70,7 +72,9 @@ public class OsuMap
             Metadata = new MapMetadata
             {
                 Title = Title?.Trim() ?? "",
+                TitleRomanized = TitleRoman?.Trim() ?? Title?.Trim() ?? "",
                 Artist = Artist?.Trim() ?? "",
+                ArtistRomanized = ArtistRoman?.Trim() ?? Artist?.Trim() ?? "",
                 Mapper = Creator?.Trim() ?? "",
                 Difficulty = Version?.Trim() ?? "",
                 AudioSource = Source?.Trim() ?? "",

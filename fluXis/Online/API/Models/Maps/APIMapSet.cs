@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using fluXis.Online.API.Models.Users;
 using Newtonsoft.Json;
+using osu.Framework.Localisation;
 
 namespace fluXis.Online.API.Models.Maps;
 
@@ -17,10 +18,16 @@ public class APIMapSet
     public List<APIMap> Maps { get; set; } = new();
 
     [JsonProperty("title")]
-    public string Title { get; set; } = "";
+    public string Title { get; set; } = string.Empty;
+
+    [JsonProperty("title-rm")]
+    public string TitleRomanized { get; set; } = string.Empty;
 
     [JsonProperty("artist")]
-    public string Artist { get; set; } = "";
+    public string Artist { get; set; } = string.Empty;
+
+    [JsonProperty("artist-rm")]
+    public string ArtistRomanized { get; set; } = string.Empty;
 
     [JsonProperty("source")]
     public string Source { get; set; } = "";
@@ -39,4 +46,14 @@ public class APIMapSet
 
     [JsonProperty("updated")]
     public long LastUpdated { get; set; }
+
+    #region Localization
+
+    [JsonIgnore]
+    public RomanisableString LocalizedTitle => new(Title, TitleRomanized);
+
+    [JsonIgnore]
+    public RomanisableString LocalizedArtist => new(Artist, ArtistRomanized);
+
+    #endregion
 }

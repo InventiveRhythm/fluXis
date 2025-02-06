@@ -107,8 +107,8 @@ public partial class MenuNowPlaying : Container
     private void onSongChanged(ValueChangedEvent<RealmMapSet> e)
     {
         cover.MapSet = mapStore.CurrentMapSet;
-        title.Text = mapStore.CurrentMapSet?.Metadata.Title ?? "Unknown Title";
-        artist.Text = mapStore.CurrentMapSet?.Metadata.Artist ?? "Unknown Artist";
+        title.Text = mapStore.CurrentMapSet?.Metadata.LocalizedTitle;
+        artist.Text = mapStore.CurrentMapSet?.Metadata.LocalizedArtist;
 
         const int delay = 4000;
 

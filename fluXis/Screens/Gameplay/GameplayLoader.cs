@@ -116,7 +116,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     },
                     new FluXisSpriteText
                     {
-                        Text = map.Metadata.Title,
+                        Text = map.Metadata.LocalizedTitle,
                         Margin = new MarginPadding { Bottom = -5 },
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
@@ -125,7 +125,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
                     },
                     new FluXisSpriteText
                     {
-                        Text = map.Metadata.Artist,
+                        Text = map.Metadata.LocalizedArtist,
                         Margin = new MarginPadding { Bottom = 10 },
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,

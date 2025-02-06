@@ -232,8 +232,8 @@ public partial class SelectMapInfoHeader : CompositeDrawable
 
         var map = e.NewValue;
 
-        title.Text = map.Metadata.Title;
-        artist.Text = map.Metadata.Artist;
+        title.Text = map.Metadata.LocalizedTitle;
+        artist.Text = map.Metadata.LocalizedArtist;
         gradient.FadeColour(map.Metadata.Color, 400, Easing.OutQuint);
         difficulty.Rating = map.Filters.NotesPerSecond;
         difficultyText.Text = map.Difficulty;
