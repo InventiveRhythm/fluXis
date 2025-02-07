@@ -26,9 +26,9 @@ public partial class PulseEffect : Container
             AlwaysPresent = true,
             Alpha = 0
         };
-    }
 
-    protected override void LoadComplete() => Rebuild();
+        Rebuild();
+    }
 
     public void Rebuild()
     {

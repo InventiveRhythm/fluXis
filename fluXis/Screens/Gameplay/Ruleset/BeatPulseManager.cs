@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -30,11 +31,8 @@ public partial class BeatPulseManager : CompositeDrawable
         this.target = target;
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        generate();
-    }
+    [BackgroundDependencyLoader]
+    private void load() => generate();
 
     public void Rebuild(List<BeatPulseEvent> ev)
     {
