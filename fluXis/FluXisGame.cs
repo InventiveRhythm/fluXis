@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
@@ -483,7 +482,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             {
                 return new LocaleMapping(code, new ResourceLocaleStore(code, localeStore, missingBindable));
             }
-            catch (FileNotFoundException)
+            catch
             {
                 return null;
             }
