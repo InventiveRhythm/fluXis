@@ -80,11 +80,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override bool AllowExit => false;
 
     protected virtual double GameplayStartTime => 0;
-    protected virtual bool InstantlyExitOnPause => false;
     protected virtual bool AllowRestart => true;
-    public virtual bool FadeBackToGlobalClock => true;
-    public virtual bool SubmitScore => true;
+    protected virtual bool AllowPausing => true;
+    protected virtual bool DisplayHUD => true;
+    protected virtual bool InstantlyExitOnPause => false;
+    protected virtual bool SubmitScore => true;
     protected virtual bool UseGlobalOffset => true;
+    public virtual bool FadeBackToGlobalClock => true;
 
     protected bool CursorVisible { get; set; }
 
@@ -275,6 +277,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                         hud = new Container
                         {
                             RelativeSizeAxes = Axes.Both,
+                            Alpha = DisplayHUD ? 1 : 0,
                             Children = new Drawable[]
                             {
                                 new GameplayHUD(RulesetContainer),
@@ -394,18 +397,21 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 backgroundVideo.Start();
         }
 
-        var hudWasVisible = hudVisible;
-
-        hudVisible = hudVisibility.Value switch
+        if (DisplayHUD)
         {
-            HudVisibility.Hidden => false,
-            HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak.Value,
-            HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak.Value,
-            _ => true
-        };
+            var hudWasVisible = hudVisible;
 
-        if (hudVisible != hudWasVisible)
-            hud.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
+            hudVisible = hudVisibility.Value switch
+            {
+                HudVisibility.Hidden => false,
+                HudVisibility.ShowDuringBreaks => PlayfieldManager.InBreak.Value,
+                HudVisibility.ShowDuringGameplay => !IsPaused.Value && !PlayfieldManager.InBreak.Value,
+                _ => true
+            };
+
+            if (hudVisible != hudWasVisible)
+                hud.FadeTo(hudVisible ? 1 : 0, 500, Easing.OutQuint);
+        }
 
         base.Update();
     }
@@ -595,7 +601,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 quickActionOverlay.IsHolding = true;
                 return true;
 
-            case FluXisGlobalKeybind.GameplayPause:
+            case FluXisGlobalKeybind.GameplayPause when AllowPausing:
                 if (PlayfieldManager.AnyFailed) return false;
 
                 if (InstantlyExitOnPause)

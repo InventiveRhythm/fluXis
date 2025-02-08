@@ -159,7 +159,7 @@ public partial class IntroAnimation : FluXisScreen
             tutorial = false;
 
             var store = Dependencies.Get<MapStore>();
-            LoadComponentAsync(new TutorialGameplay(store.GetMapFromGuid("425da057-b66e-4d56-9eb6-f4edbd3ad599")), this.Push);
+            LoadComponentAsync(new TutorialGameplay(store.GetMapFromGuid("5cc4737e-ec31-48a8-9eec-5b089cb8f4f3")), this.Push);
         }
         else
             this.Push(game.MenuScreen);

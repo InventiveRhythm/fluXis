@@ -35,6 +35,7 @@ public partial class RulesetContainer : CompositeDrawable
     public event Action OnDeath;
 
     public bool AllowReverting { get; set; }
+    public bool AlwaysShowKeys { get; set; }
     public BindableBool IsPaused { get; } = new();
 
     public bool CatchingUp { get; protected set; }

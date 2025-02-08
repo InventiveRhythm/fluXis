@@ -17,7 +17,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
     public override bool ShowCursor => true;
 
     protected override bool InstantlyExitOnPause => true;
-    public override bool SubmitScore => false;
+    protected override bool SubmitScore => false;
     protected override bool UseGlobalOffset => !Config.Get<bool>(FluXisSetting.DisableOffsetInReplay);
 
     private Replay replay { get; }

@@ -17,7 +17,7 @@ public partial class MultiGameplayScreen : GameplayScreen
 {
     protected override bool InstantlyExitOnPause => true;
     protected override bool AllowRestart => false;
-    public override bool SubmitScore => false;
+    protected override bool SubmitScore => false;
 
     private PlayfieldPlayer player => PlayfieldManager.FirstPlayer;
 
