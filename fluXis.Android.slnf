@@ -3,8 +3,8 @@
     "path": "fluXis.sln",
     "projects": [
       "fluXis.Android\\fluXis.Android.csproj",
-      "fluXis.Game\\fluXis.Game.csproj",
-      "fluXis.Game.Tests\\fluXis.Game.Tests.csproj",
+      "fluXis\\fluXis.csproj",
+      "fluXis.Tests\\fluXis.Tests.csproj",
       "fluXis.Resources\\fluXis.Resources.csproj"
     ]
   }
