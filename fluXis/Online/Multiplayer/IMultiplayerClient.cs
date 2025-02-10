@@ -14,6 +14,7 @@ public interface IMultiplayerClient
     Task UserLeft(long id);
 
     Task UserStateChanged(long id, MultiplayerUserState state);
+    Task HostChanged(long id);
 
     Task MapUpdated(APIMap map);
 

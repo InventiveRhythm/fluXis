@@ -1,16 +1,19 @@
 using System.Linq;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.UserInterface.Context;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 
-public partial class MultiLobbyPlayerList : MultiLobbyContainer
+public partial class MultiLobbyPlayerList : FluXisContextMenuContainer
 {
     public MultiplayerRoom Room { get; set; }
 
@@ -19,18 +22,33 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
     [BackgroundDependencyLoader]
     private void load()
     {
-        Content.Children = new Drawable[]
+        RelativeSizeAxes = Axes.Both;
+
+        Children = new Drawable[]
         {
-            new FluXisScrollContainer
+            new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Child = playerList = new FillFlowContainer<PlayerListEntry>
+                Colour = ColourInfo.GradientHorizontal(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
+            },
+            new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Horizontal = 48, Top = 136, Bottom = 24 },
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Direction = FillDirection.Vertical,
-                    Padding = new MarginPadding(20),
-                    Spacing = new Vector2(20)
+                    new FluXisScrollContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Child = playerList = new FillFlowContainer<PlayerListEntry>
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Direction = FillDirection.Vertical,
+                            Padding = new MarginPadding(20),
+                            Spacing = new Vector2(20)
+                        }
+                    }
                 }
             }
         };
@@ -38,10 +56,11 @@ public partial class MultiLobbyPlayerList : MultiLobbyContainer
 
     protected override void LoadComplete()
     {
+        base.LoadComplete();
+
         foreach (var participant in Room.Participants)
         {
-            var impl = participant as MultiplayerParticipant;
-            playerList.Add(new PlayerListEntry(impl));
+            playerList.Add(new PlayerListEntry(participant));
         }
     }
 

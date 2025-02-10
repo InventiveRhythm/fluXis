@@ -14,7 +14,7 @@ public partial class MultiSongSelect : SelectScreen
         this.selected = selected;
     }
 
-    protected override bool ShouldAdd(RealmMapSet set) => set.OnlineID > 0;
+    protected override bool ShouldAdd(RealmMapSet set) => set.OnlineID > 0 && set.Maps[0].StatusInt > (int)MapStatus.Local;
 
     public override void Accept()
     {
@@ -22,7 +22,7 @@ public partial class MultiSongSelect : SelectScreen
             return;
 
         // just in case, who knows
-        if (MapStore.CurrentMap.OnlineID == -1)
+        if (MapStore.CurrentMap.OnlineID < 1)
             return;
 
         var map = MapStore.CurrentMap;

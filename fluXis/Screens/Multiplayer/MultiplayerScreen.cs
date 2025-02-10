@@ -18,7 +18,7 @@ namespace fluXis.Screens.Multiplayer;
 public partial class MultiplayerScreen : FluXisScreen
 {
     public override float Zoom => 1.1f;
-    public override float ParallaxStrength => .05f;
+    public override float ParallaxStrength => 0;
     public override float BackgroundDim => .5f;
     public override float BackgroundBlur => .2f;
     public override bool AllowMusicControl => false;

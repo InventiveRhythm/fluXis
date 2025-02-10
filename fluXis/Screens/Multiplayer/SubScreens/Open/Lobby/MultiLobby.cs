@@ -21,11 +21,13 @@ using fluXis.Overlay.Notifications;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Multiplayer.Gameplay;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
+using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.Disc;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
 
@@ -68,7 +70,9 @@ public partial class MultiLobby : MultiSubScreen
     private bool ready;
     private bool confirmExit;
 
+    private FluXisSpriteText hostText;
     private MultiLobbyPlayerList playerList;
+    private MultiLobbyDisc disc;
     private MultiLobbyFooter footer;
 
     [BackgroundDependencyLoader]
@@ -101,7 +105,7 @@ public partial class MultiLobby : MultiSubScreen
                         Origin = Anchor.TopRight,
                         FontSize = 30
                     },
-                    new FluXisSpriteText
+                    hostText = new FluXisSpriteText
                     {
                         Text = $"hosted by {Room.Host.Username}",
                         Anchor = Anchor.TopRight,
@@ -113,14 +117,12 @@ public partial class MultiLobby : MultiSubScreen
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Vertical = 100, Horizontal = 80 },
                 Child = new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     ColumnDimensions = new[]
                     {
-                        new Dimension(GridSizeMode.Absolute, 600),
-                        new Dimension(GridSizeMode.Absolute, 20),
+                        new Dimension(),
                         new Dimension()
                     },
                     Content = new[]
@@ -128,8 +130,18 @@ public partial class MultiLobby : MultiSubScreen
                         new[]
                         {
                             playerList = new MultiLobbyPlayerList { Room = Room },
-                            Empty(),
-                            new MultiLobbyContainer()
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Child = new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Size = new Vector2(1.5f),
+                                    Anchor = Anchor.CentreLeft,
+                                    Origin = Anchor.CentreLeft,
+                                    Child = disc = new MultiLobbyDisc()
+                                }
+                            }
                         }
                     }
                 }
@@ -141,6 +153,28 @@ public partial class MultiLobby : MultiSubScreen
                 ChangeMapAction = changeMap
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        if (!ValidForPush)
+            return;
+
+        footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
+
+        client.OnDisconnect += onDisconnect;
+        client.OnUserJoin += onOnUserJoin;
+        client.OnUserLeave += onOnUserLeave;
+        client.OnHostChange += hostChanged;
+        client.OnUserStateChange += updateOnUserState;
+        client.OnMapChange += onMapChange;
+        client.OnStart += startLoading;
+
+        mapStore.MapSetAdded += mapAdded;
+
+        updateRightButton();
     }
 
     private void rightButtonPress()
@@ -178,27 +212,6 @@ public partial class MultiLobby : MultiSubScreen
         Schedule(() => onMapChange(Room.Map));
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        if (!ValidForPush)
-            return;
-
-        footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
-
-        client.OnDisconnect += onDisconnect;
-        client.OnUserJoin += onOnUserJoin;
-        client.OnUserLeave += onOnUserLeave;
-        client.OnUserStateChange += updateOnUserState;
-        client.OnMapChange += onMapChange;
-        client.OnStart += startLoading;
-
-        mapStore.MapSetAdded += mapAdded;
-
-        updateRightButton();
-    }
-
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
@@ -206,6 +219,7 @@ public partial class MultiLobby : MultiSubScreen
         client.OnDisconnect -= onDisconnect;
         client.OnUserJoin -= onOnUserJoin;
         client.OnUserLeave -= onOnUserLeave;
+        client.OnHostChange -= hostChanged;
         client.OnUserStateChange -= updateOnUserState;
         client.OnMapChange -= onMapChange;
         client.OnStart -= startLoading;
@@ -267,6 +281,19 @@ public partial class MultiLobby : MultiSubScreen
         {
             stopClockMusic();
             backgrounds.AddBackgroundFromMap(null);
+
+            var dummy = RealmMap.CreateNew();
+            dummy.Metadata.Title = map.Title;
+            dummy.Metadata.TitleRomanized = map.TitleRomanized;
+            dummy.Metadata.Artist = map.Artist;
+            dummy.Metadata.ArtistRomanized = map.ArtistRomanized;
+            dummy.Difficulty = map.Difficulty;
+            dummy.Filters.NotesPerSecond = (float)map.NotesPerSecond;
+            dummy.KeyCount = map.Mode;
+            dummy.Rating = (float)map.Rating;
+            dummy.Hash = "dummy";
+            mapStore.CurrentMap = dummy;
+
             return;
         }
 
@@ -282,6 +309,19 @@ public partial class MultiLobby : MultiSubScreen
         clock.RestartPoint = 0;
         backgrounds.AddBackgroundFromMap(localMap);
         startClockMusic();
+        clock.Seek(Math.Max(localMap?.Metadata.PreviewTime ?? 0, 0));
+        clock.RestartPoint = 0;
+        clock.AllowLimitedLoop = false;
+    }
+
+    private void hostChanged(long newHost)
+    {
+        var isHost = newHost == client.Player.ID;
+        footer.CanChangeMap.Value = isHost;
+        hostText.Text = $"hosted by {Room.Host.Username}";
+
+        if (isHost)
+            notifications.SendText("You are now the lobby host.");
     }
 
     private void updateOnUserState(long id, MultiplayerUserState state)
@@ -330,12 +370,14 @@ public partial class MultiLobby : MultiSubScreen
     {
         base.FadeIn();
         footer.Show();
+        disc.Show();
     }
 
     protected override void FadeOut(IScreen next)
     {
         base.FadeOut(next);
         footer.Hide();
+        disc.Hide();
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -366,6 +408,9 @@ public partial class MultiLobby : MultiSubScreen
         {
             if (Room is not null)
                 client.LeaveRoom();
+
+            if (mapStore.CurrentMap.Hash == "dummy")
+                mapStore.CurrentMapSet = mapStore.GetRandom();
 
             clock.Looping = false;
             stopClockMusic();

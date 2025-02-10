@@ -62,6 +62,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
             throw new Exception("Failed to update map.");
     }
 
+    public override async Task TransferHost(long target) => await connection.Server.TransferHost(target);
     public override async Task UpdateScore(int score) => await connection.Server.UpdateScore(score);
     public override async Task Finish(ScoreInfo score) => await connection.Server.FinishPlay(score);
     public override async Task SetReadyState(bool ready) => await connection.Server.UpdateReadyState(ready);

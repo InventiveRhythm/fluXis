@@ -1,16 +1,40 @@
+using System.Collections.Generic;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Online.API.Models.Multi;
+using fluXis.Online.Multiplayer;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.PlayerList;
 
-public partial class PlayerListEntry : Container
+public partial class PlayerListEntry : Container, IHasContextMenu
 {
+    public MenuItem[] ContextMenuItems
+    {
+        get
+        {
+            var list = new List<MenuItem>();
+
+            if (client.Room.Host.ID == client.Player.ID && Participant.ID != client.Player.ID)
+            {
+                list.Add(new FluXisMenuItem("Promote to Host", FontAwesome6.Solid.Crown, MenuItemType.Normal, () => client.TransferHost(Participant.ID)));
+            }
+
+            return list.ToArray();
+        }
+    }
+
     public MultiplayerParticipant Participant { get; }
+
+    [Resolved]
+    private MultiplayerClient client { get; set; }
 
     private PlayerListEntryContent content;
     private LoadingIcon loadingIcon;

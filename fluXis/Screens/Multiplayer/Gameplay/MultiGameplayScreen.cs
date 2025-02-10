@@ -71,12 +71,15 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     private void onScoreUpdate(long user, int score)
     {
-        var si = client.Room?.Scores?.FirstOrDefault(s => s.PlayerID == user);
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            var si = client.Room?.Scores?.FirstOrDefault(s => s.PlayerID == user);
 
-        if (si is null)
-            return;
+            if (si is null)
+                return;
 
-        si.Score = score;
+            si.Score = score;
+        });
     }
 
     private void onOnResultsReady(List<ScoreInfo> scores)

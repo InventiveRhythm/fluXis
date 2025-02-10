@@ -17,11 +17,10 @@ public partial class DifficultyChip : CircularContainer
         {
             rating = value;
 
-            if (IsLoaded)
-            {
-                box.Colour = FluXisColors.GetDifficultyColor((float)Rating);
-                text.Text = Rating.ToStringInvariant("00.00");
-            }
+            if (box == null || text == null)
+                return;
+
+            updateRating();
         }
     }
 
@@ -55,5 +54,17 @@ public partial class DifficultyChip : CircularContainer
                 Origin = Anchor.Centre
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        updateRating();
+    }
+
+    private void updateRating()
+    {
+        box.Colour = FluXisColors.GetDifficultyColor((float)Rating);
+        text.Text = Rating.ToStringInvariant("00.00");
     }
 }

@@ -31,6 +31,9 @@ public partial class PlayerListEntryContent : CompositeDrawable
     {
         participant.User = users.Get(participant.ID);
 
+        if (participant.User is null)
+            return;
+
         RelativeSizeAxes = Axes.Both;
 
         InternalChildren = new Drawable[]

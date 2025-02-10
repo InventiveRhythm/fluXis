@@ -16,6 +16,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action<MultiplayerParticipant> OnUserJoin;
     public event Action<MultiplayerParticipant> OnUserLeave;
     public event Action<long, MultiplayerUserState> OnUserStateChange;
+    public event Action<long> OnHostChange;
 
     // public event Action RoomUpdated;
 
@@ -82,6 +83,21 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
+    public Task HostChanged(long id)
+    {
+        if (Room is null)
+            return Task.CompletedTask;
+
+        Schedule(() =>
+        {
+            var part = Room.Participants.FirstOrDefault(x => x.ID == id);
+            Room.Host = part?.User ?? APIUser.CreateUnknown(id);
+            OnHostChange?.Invoke(id);
+        });
+
+        return Task.CompletedTask;
+    }
+
     public Task MapUpdated(APIMap map)
     {
         Schedule(() =>
@@ -111,13 +127,10 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     public Task ScoreUpdated(long user, int score)
     {
-        Schedule(() =>
-        {
-            if (user == Player.ID)
-                return;
+        if (user == Player.ID)
+            return Task.CompletedTask;
 
-            OnScore?.Invoke(user, score);
-        });
+        OnScore?.Invoke(user, score);
 
         return Task.CompletedTask;
     }
@@ -158,6 +171,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
     public abstract Task LeaveRoom();
     public abstract Task ChangeMap(long map, string hash);
+    public abstract Task TransferHost(long target);
     public abstract Task UpdateScore(int score);
     public abstract Task Finish(ScoreInfo score);
     public abstract Task SetReadyState(bool ready);
