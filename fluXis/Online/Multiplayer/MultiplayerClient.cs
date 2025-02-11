@@ -20,7 +20,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     // public event Action RoomUpdated;
 
-    public event Action<APIMap> OnMapChange;
+    public event Action<APIMap, List<string>> OnMapChange;
 
     public event Action OnStart;
     public event Action<long, int> OnScore;
@@ -98,7 +98,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         return Task.CompletedTask;
     }
 
-    public Task MapUpdated(APIMap map)
+    public Task MapUpdated(APIMap map, List<string> mods)
     {
         Schedule(() =>
         {
@@ -106,7 +106,8 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
                 return;
 
             Room.Map = map;
-            OnMapChange?.Invoke(map);
+            Room.Mods = mods.ToList();
+            OnMapChange?.Invoke(map, mods);
         });
 
         return Task.CompletedTask;
@@ -170,7 +171,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
     protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
     public abstract Task LeaveRoom();
-    public abstract Task ChangeMap(long map, string hash);
+    public abstract Task ChangeMap(long map, string hash, List<string> mods);
     public abstract Task TransferHost(long target);
     public abstract Task UpdateScore(int score);
     public abstract Task Finish(ScoreInfo score);

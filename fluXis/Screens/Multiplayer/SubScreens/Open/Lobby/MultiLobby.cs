@@ -15,13 +15,13 @@ using fluXis.Mods;
 using fluXis.Online.Activity;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Multi;
-using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Gameplay;
 using fluXis.Screens.Multiplayer.Gameplay;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.Disc;
+using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -55,9 +55,6 @@ public partial class MultiLobby : MultiSubScreen
     private MultiplayerMenuMusic menuMusic { get; set; }
 
     [Resolved]
-    private IAPIClient api { get; set; }
-
-    [Resolved]
     private MultiplayerClient client { get; set; }
 
     [Resolved]
@@ -69,6 +66,8 @@ public partial class MultiLobby : MultiSubScreen
 
     private bool ready;
     private bool confirmExit;
+
+    private List<IMod> mods = new();
 
     private FluXisSpriteText hostText;
     private MultiLobbyPlayerList playerList;
@@ -209,7 +208,7 @@ public partial class MultiLobby : MultiSubScreen
         if (set.OnlineID != Room.Map.MapSetID)
             return;
 
-        Schedule(() => onMapChange(Room.Map));
+        Schedule(() => onMapChange(Room.Map, Room.Mods));
     }
 
     protected override void Dispose(bool isDisposing)
@@ -259,11 +258,11 @@ public partial class MultiLobby : MultiSubScreen
         playerList.RemovePlayer(user.ID);
     }
 
-    private void changeMap() => MultiScreen.Push(new MultiSongSelect(async void (map) =>
+    private void changeMap() => MultiScreen.Push(new MultiSongSelect(async void (map, mods) =>
     {
         try
         {
-            await client.ChangeMap(map.OnlineID, map.Hash);
+            await client.ChangeMap(map.OnlineID, map.Hash, mods);
         }
         catch (Exception ex)
         {
@@ -271,9 +270,12 @@ public partial class MultiLobby : MultiSubScreen
         }
     }));
 
-    private void onMapChange(APIMap map)
+    private void onMapChange(APIMap map, List<string> modsString)
     {
         updateRightButton();
+
+        mods = modsString.Select(ModUtils.GetFromAcronym).Where(m => m != null).ToList();
+        disc.UpdateMods(mods);
 
         var mapSet = mapStore.MapSets.FirstOrDefault(s => s.Maps.Any(m => m.OnlineID == map.ID));
 
@@ -312,6 +314,9 @@ public partial class MultiLobby : MultiSubScreen
         clock.Seek(Math.Max(localMap?.Metadata.PreviewTime ?? 0, 0));
         clock.RestartPoint = 0;
         clock.AllowLimitedLoop = false;
+
+        var rateMod = mods.OfType<RateMod>().FirstOrDefault();
+        clock.RateTo(rateMod?.Rate ?? 1, 400);
     }
 
     private void hostChanged(long newHost)
@@ -353,8 +358,6 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
-        var mods = new List<IMod>();
-
         MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room.Scores }));
     }
 
@@ -384,7 +387,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         menuMusic.StopAll();
 
-        onMapChange(Room.Map);
+        onMapChange(Room.Map, Room.Mods);
         base.OnEntering(e);
     }
 
@@ -398,7 +401,7 @@ public partial class MultiLobby : MultiSubScreen
         }
 
         base.OnResuming(e);
-        onMapChange(Room.Map);
+        onMapChange(Room.Map, Room.Mods);
         client.SetReadyState(false);
     }
 

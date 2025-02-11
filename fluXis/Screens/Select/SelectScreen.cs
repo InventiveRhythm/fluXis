@@ -92,6 +92,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
     protected List<IListItem> Items { get; } = new();
     protected MapList MapList { get; private set; }
+    protected ModSelector ModSelector { get; private set; }
     protected SearchFilters Filters { get; private set; }
 
     private IListItem currentItem => Items.FirstOrDefault(i => i.State.Value == SelectedState.Selected);
@@ -112,7 +113,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     private SearchBar searchBar;
     private SearchFilterControls filterControl;
     private SelectFooter footer;
-    private ModSelector modSelector;
 
     private Sample menuScroll;
     private Sample randomClick;
@@ -147,7 +147,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(Filters = new SearchFilters());
-        dependencies.CacheAs(modSelector = new ModSelector());
+        dependencies.CacheAs(ModSelector = new ModSelector());
 
         InternalChildren = new Drawable[]
         {
@@ -240,7 +240,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
             footer = new SelectFooter
             {
                 BackAction = this.Exit,
-                ModsAction = modSelector.IsOpen.Toggle,
+                ModsAction = ModSelector.IsOpen.Toggle,
                 RewindAction = RewindRandom,
                 RandomAction = RandomMap,
                 PlayAction = Accept,
@@ -248,7 +248,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 EditAction = EditMap,
                 ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
             },
-            modSelector
+            ModSelector
         };
 
         Filters.OnChange += searchTracker.Reset;
@@ -504,7 +504,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         backgrounds.AddBackgroundFromMap(MapStore.CurrentMap);
         backgrounds.SwipeAnimation();
 
-        var mods = modSelector.SelectedMods.ToList();
+        var mods = ModSelector.SelectedMods.ToList();
 
         if (inputManager.CurrentState.Keyboard.ControlPressed && !mods.Any(m => m is AutoPlayMod))
             mods.Add(new AutoPlayMod());
@@ -746,9 +746,9 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
                 return true;
 
             case FluXisGlobalKeybind.Back:
-                if (modSelector.IsOpen.Value)
+                if (ModSelector.IsOpen.Value)
                 {
-                    modSelector.IsOpen.Value = false;
+                    ModSelector.IsOpen.Value = false;
                     return true;
                 }
 
@@ -767,7 +767,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
         return false;
     }
 
-    private void changeRate(float by) => modSelector.RateMod.RateBindable.Value += by;
+    private void changeRate(float by) => ModSelector.RateMod.RateBindable.Value += by;
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }
 

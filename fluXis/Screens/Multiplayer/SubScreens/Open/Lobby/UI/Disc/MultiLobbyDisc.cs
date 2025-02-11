@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics;
@@ -8,6 +9,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Map;
 using fluXis.Map.Drawables;
+using fluXis.Mods;
+using fluXis.Mods.Drawables;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -35,6 +38,7 @@ public partial class MultiLobbyDisc : CircularContainer
     private ForcedHeightText difficulty;
     private RoundedChip modeChip;
     private DifficultyChip difficultyChip;
+    private ModList modsList;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -135,6 +139,12 @@ public partial class MultiLobbyDisc : CircularContainer
                                     Height = 20
                                 }
                             }
+                        },
+                        modsList = new ModList
+                        {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Margin = new MarginPadding { Top = 16 }
                         }
                     }
                 }
@@ -180,6 +190,8 @@ public partial class MultiLobbyDisc : CircularContainer
         var amp = amplitudes.Amplitudes[..3].Average();
         spinning.Scale = new Vector2(1 + amp * 0.02f);
     }
+
+    public void UpdateMods(List<IMod> mods) => modsList.Mods = mods;
 
     public override void Show()
     {

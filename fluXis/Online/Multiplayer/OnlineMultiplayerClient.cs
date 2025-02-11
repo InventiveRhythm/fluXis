@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Multi;
@@ -54,9 +55,9 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         Room = null;
     }
 
-    public override async Task ChangeMap(long map, string hash)
+    public override async Task ChangeMap(long map, string hash, List<string> mods)
     {
-        var result = await connection.Server.UpdateMap(map, hash);
+        var result = await connection.Server.UpdateMap(map, hash, mods);
 
         if (!result)
             throw new Exception("Failed to update map.");

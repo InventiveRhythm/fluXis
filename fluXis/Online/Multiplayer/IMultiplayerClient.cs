@@ -16,7 +16,7 @@ public interface IMultiplayerClient
     Task UserStateChanged(long id, MultiplayerUserState state);
     Task HostChanged(long id);
 
-    Task MapUpdated(APIMap map);
+    Task MapUpdated(APIMap map, List<string> mods);
 
     Task LoadRequested();
     Task ScoreUpdated(long user, int score);

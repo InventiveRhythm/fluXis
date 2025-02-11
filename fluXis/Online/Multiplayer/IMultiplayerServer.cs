@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Scoring;
 using JetBrains.Annotations;
@@ -18,7 +19,7 @@ public interface IMultiplayerServer
 
     Task TransferHost(long id);
 
-    Task<bool> UpdateMap(long map, string hash);
+    Task<bool> UpdateMap(long map, string hash, List<string> mods);
 
     Task UpdateScore(int score);
     Task FinishPlay(ScoreInfo score);
