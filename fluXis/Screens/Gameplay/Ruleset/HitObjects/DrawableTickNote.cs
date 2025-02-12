@@ -5,7 +5,6 @@ using fluXis.Scoring.Enums;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Screens.Gameplay.Ruleset.HitObjects;
@@ -102,12 +101,9 @@ public partial class DrawableTickNote : DrawableHitObject
         {
             Judgement judge;
 
-            Logger.Log($"wah start is {holdStartTime} and is holding {isBeingHeld}");
-
             if (isBeingHeld && holdStartTime != null)
             {
                 var delta = holdStartTime.Value - Data.Time;
-                Logger.Log($"del {delta}");
                 judge = delta < HitWindows.TimingFor(Judgement.Flawless) ? Judgement.Flawless : HitWindows.JudgementFor(delta);
             }
             else
