@@ -138,8 +138,8 @@ public class AutoGenerator
         if (currentObject.LongNote)
             return endTime;
 
-        var canDelayKeyUpFully = nextObject == null || nextObject.Time > endTime + key_down_time;
-        return endTime + (canDelayKeyUpFully ? key_down_time : (nextObject.Time - endTime) * 0.9f);
+        var enoughTimeToRelease = nextObject == null || nextObject.Time > endTime + key_down_time;
+        return endTime + (enoughTimeToRelease ? key_down_time : (nextObject.Time - endTime) * 0.9f);
     }
 
     private interface IAction

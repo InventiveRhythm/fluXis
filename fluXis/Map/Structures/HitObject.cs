@@ -35,7 +35,7 @@ public class HitObject : ITimedObject
     public int Type { get; set; }
 
     [JsonIgnore]
-    public bool LongNote => HoldTime > 0;
+    public bool LongNote => HoldTime > 0 && Type == 0;
 
     [JsonIgnore]
     public double EndTime
