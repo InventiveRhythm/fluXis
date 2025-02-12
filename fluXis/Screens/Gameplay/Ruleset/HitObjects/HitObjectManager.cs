@@ -180,7 +180,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
 
     public void PlayHitSound(HitObject hitObject, bool userTriggered = true)
     {
-        if (ruleset.CatchingUp)
+        if (ruleset.CatchingUp || playfield.IsSubPlayfield)
             return;
 
         // ignore hitsounds when the next is a
