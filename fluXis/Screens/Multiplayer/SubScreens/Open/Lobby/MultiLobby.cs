@@ -60,6 +60,9 @@ public partial class MultiLobby : MultiSubScreen
     [Resolved]
     private PanelContainer panels { get; set; }
 
+    [Resolved]
+    private FluXisGame game { get; set; }
+
     public MultiplayerRoom Room => client.Room;
 
     private bool hasMapDownloaded => mapStore.MapSets.Any(s => s.Maps.Any(m => m.OnlineID == Room.Map.ID));
@@ -149,7 +152,8 @@ public partial class MultiLobby : MultiSubScreen
             {
                 LeaveAction = this.Exit,
                 RightButtonAction = rightButtonPress,
-                ChangeMapAction = changeMap
+                ChangeMapAction = changeMap,
+                ViewMapAction = () => game.PresentMapSet(Room.Map.MapSetID)
             }
         };
     }

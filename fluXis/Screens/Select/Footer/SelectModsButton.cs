@@ -29,7 +29,7 @@ public partial class SelectModsButton : FooterButton
     {
         Text = LocalizationStrings.SongSelect.FooterMods;
         Icon = FontAwesome6.Solid.LayerGroup;
-        AccentColor = Colour4.FromHex("#edbb98");
+        AccentColor = FluXisColors.Footer1;
         Action = action;
     }
 

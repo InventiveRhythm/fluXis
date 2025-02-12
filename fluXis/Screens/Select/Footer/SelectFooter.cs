@@ -83,7 +83,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
             {
                 Text = LocalizationStrings.SongSelect.FooterRandom,
                 Icon = FontAwesome6.Solid.Shuffle,
-                AccentColor = Colour4.FromHex("#ed98a7"),
+                AccentColor = FluXisColors.Footer2,
                 Action = randomMap,
                 Index = 1
             },
@@ -91,7 +91,7 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
             {
                 Text = LocalizationStrings.SongSelect.FooterOptions,
                 Icon = FontAwesome6.Solid.Gear,
-                AccentColor = Colour4.FromHex("#98cbed"),
+                AccentColor = FluXisColors.Footer3,
                 Action = OpenSettings,
                 Index = 2
             }

@@ -33,6 +33,15 @@ public static class FluXisColors
     public static Colour4 ButtonGreen => Colour4.FromHSL(120 / 360f, .5f, .3f);
     public static Colour4 Green => Colour4.FromHSL(120 / 360f, 1f, .67f);
 
+    public static Colour4 Footer1 => Colour4.FromHex("#EDBB98"); // ORANGE
+    public static Colour4 Footer2 => Colour4.FromHex("#ED98A7"); // RED
+    public static Colour4 Footer3 => Colour4.FromHex("#98CBED"); // CYAN
+    public static Colour4 Footer4 => Colour4.FromHex("#B4ED98"); // GREEN
+    public static Colour4 Footer5 => Colour4.FromHex("#9898ED"); // BLUE
+    public static Colour4 Footer6 => Colour4.FromHex("#EDED98"); // YELLOW
+    public static Colour4 Footer7 => Colour4.FromHex("#ED98D1"); // PINK
+    public static Colour4 Footer8 => Colour4.FromHex("#98EDD1"); // MINT
+
     public static Colour4 TimingPoint => Colour4.FromHex("#00FF80");
     public static Colour4 ScrollVelocity => Colour4.FromHex("#00D4FF");
     public static Colour4 PreviewPoint => Colour4.FromHex("FDD27F");
