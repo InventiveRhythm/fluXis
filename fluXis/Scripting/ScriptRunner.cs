@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using fluXis.Scripting.Models;
 using JetBrains.Annotations;
 using NLua;
 using osu.Framework.Logging;
@@ -12,13 +12,17 @@ public class ScriptRunner
     protected static Logger Logger { get; } = Logger.GetLogger("scripting");
 
     protected Lua Lua { get; }
-    private Dictionary<string, ILuaModel> context { get; } = new();
 
     protected ScriptRunner()
     {
         Lua = new Lua();
+
+        AddField("mathf", new LuaMath());
+
         AddFunction("print", (string text) => Logger.Add($"[Script] {text}"));
-        AddFunction("RandomRange", (int from, int to) => RNG.Next(from, to));
+        AddFunction("RandomRange", (int from, int to) => RNG.Next(from, to + 1));
+        AddFunction("Vector2", (float x, float y) => new LuaVector(x, y));
+
         Lua.DoString("import = function() end"); // disable importing
     }
 
@@ -40,11 +44,7 @@ public class ScriptRunner
         }
     }
 
-    protected void AddContext(string name, ILuaModel value)
-    {
-        context[name] = value;
-        Lua["ctx"] = context;
-    }
+    protected void AddField(string name, ILuaModel value) => Lua[name] = value;
 
     public void Run(string code)
     {

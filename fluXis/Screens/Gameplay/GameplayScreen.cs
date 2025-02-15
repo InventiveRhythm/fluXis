@@ -228,7 +228,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         dependencies.CacheAs<IBeatSyncProvider>(GameplayClock);
         LoadComponent(GameplayClock);
 
-        var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(new Storyboard(), ".");
+        var storyboard = Map.CreateDrawableStoryboard() ?? new DrawableStoryboard(Map, new Storyboard(), ".");
         LoadComponent(storyboard);
 
         InternalChildren = new Drawable[]
