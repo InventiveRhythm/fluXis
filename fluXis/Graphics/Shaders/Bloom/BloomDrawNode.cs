@@ -28,11 +28,11 @@ public partial class BloomContainer
 
         public override void ApplyState()
         {
-            base.ApplyState();
-
-            strength = 40 * Source.Strength;
             Source.EffectColour = Color4.White.Opacity(Source.Strength);
+            strength = 20 * Source.Strength;
             radius = Blur.KernelSize(strength);
+
+            base.ApplyState();
         }
 
         protected override void PopulateContents(IRenderer renderer)
