@@ -61,8 +61,9 @@ public partial class MultiLobbyDisc : CircularContainer
                     new BufferedContainer(cachedFrameBuffer: true)
                     {
                         RelativeSizeAxes = Axes.Both,
-                        BlurSigma = new Vector2(24),
+                        BlurSigma = new Vector2(12),
                         RedrawOnScale = false,
+                        FrameBufferScale = new Vector2(.25f),
                         Child = covers = new SpriteStack<MapCover>
                         {
                             RelativeSizeAxes = Axes.Both,
