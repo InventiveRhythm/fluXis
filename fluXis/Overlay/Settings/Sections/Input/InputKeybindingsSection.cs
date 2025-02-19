@@ -152,6 +152,11 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = strings.ToggleSettings,
                 Keybinds = new object[] { FluXisGlobalKeybind.ToggleSettings }
             },
+            new SettingsKeybind
+            {
+                Label = strings.ToggleDashboard,
+                Keybinds = new object[] { FluXisGlobalKeybind.ToggleDashboard }
+            },
             new KeybindSectionTitle { Text = strings.Audio },
             new SettingsKeybind
             {

@@ -35,6 +35,7 @@ public class SettingsInputStrings : LocalizationCategory
     public TranslatableString Overlays => Get("keybindings-overlays", "Overlays");
 
     public TranslatableString ToggleSettings => Get("keybindings-toggle-settings", "Toggle Settings");
+    public TranslatableString ToggleDashboard => Get("keybindings-toggle-dashboard", "Toggle Dashboard");
 
     public TranslatableString Audio => Get("keybindings-audio", "Audio");
 
