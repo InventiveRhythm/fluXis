@@ -53,14 +53,14 @@ public partial class DashboardAccountTab : DashboardTab
     private Container unsavedContent = null!;
     private LoadingIcon loadingIcon = null!;
 
-    private DashboardAccountEntry twitterEntry = null!;
-    private DashboardAccountEntry youtubeEntry = null!;
-    private DashboardAccountEntry twitchEntry = null!;
-    private DashboardAccountEntry discordEntry = null!;
+    private DashboardAccountTextBox twitterEntry = null!;
+    private DashboardAccountTextBox youtubeEntry = null!;
+    private DashboardAccountTextBox twitchEntry = null!;
+    private DashboardAccountTextBox discordEntry = null!;
 
-    private DashboardAccountEntry displayNameEntry = null!;
-    private DashboardAccountEntry aboutmeEntry = null!;
-    private DashboardAccountEntry pronounsEntry = null!;
+    private DashboardAccountTextBox displayNameEntry = null!;
+    private DashboardAccountTextBox aboutmeEntry = null!;
+    private DashboardAccountTextBox pronounsEntry = null!;
 
     private bool hasUnsavedChanges;
     private bool saving;
@@ -226,13 +226,13 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                new DashboardAccountEntry
+                                new DashboardAccountTextBox
                                 {
                                     Title = "Username",
                                     Default = user.Username,
                                     ReadOnly = true
                                 },
-                                new DashboardAccountEntry
+                                new DashboardAccountTextBox
                                 {
                                     Title = "E-Mail",
                                     Default = StringUtils.CensorEmail(user.Email),
@@ -240,23 +240,21 @@ public partial class DashboardAccountTab : DashboardTab
                                 }
                             }
                         },
-                        new DashboardAccountCategory("Password")
+                        new DashboardAccountCategory("Auth")
                         {
                             Children = new Drawable[]
                             {
-                                new DashboardAccountEntry
+                                new DashboardAccountButton
                                 {
-                                    Title = "New Password",
-                                    Default = "",
-                                    Placeholder = "...",
-                                    ReadOnly = true
+                                    LabelText = "Change Password",
+                                    ButtonText = "Change",
+                                    Alpha = .5f
                                 },
-                                new DashboardAccountEntry
+                                new DashboardAccountButton
                                 {
-                                    Title = "Confirm Password",
-                                    Default = "",
-                                    Placeholder = "...",
-                                    ReadOnly = true
+                                    LabelText = "Setup 2FA",
+                                    ButtonText = "Setup",
+                                    Alpha = .5f
                                 }
                             }
                         },
@@ -264,25 +262,25 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                twitterEntry = new DashboardAccountEntry
+                                twitterEntry = new DashboardAccountTextBox
                                 {
                                     Title = "Twitter",
                                     Default = user.Socials.Twitter,
                                     OnChange = updateUnsavedStatus
                                 },
-                                youtubeEntry = new DashboardAccountEntry
+                                youtubeEntry = new DashboardAccountTextBox
                                 {
                                     Title = "YouTube",
                                     Default = user.Socials.YouTube,
                                     OnChange = updateUnsavedStatus
                                 },
-                                twitchEntry = new DashboardAccountEntry
+                                twitchEntry = new DashboardAccountTextBox
                                 {
                                     Title = "Twitch",
                                     Default = user.Socials.Twitch,
                                     OnChange = updateUnsavedStatus
                                 },
-                                discordEntry = new DashboardAccountEntry
+                                discordEntry = new DashboardAccountTextBox
                                 {
                                     Title = "Discord",
                                     Default = user.Socials.Discord,
@@ -294,21 +292,21 @@ public partial class DashboardAccountTab : DashboardTab
                         {
                             Children = new Drawable[]
                             {
-                                displayNameEntry = new DashboardAccountEntry
+                                displayNameEntry = new DashboardAccountTextBox
                                 {
                                     Title = "Display Name",
                                     Placeholder = "...",
                                     Default = user.DisplayName,
                                     OnChange = updateUnsavedStatus
                                 },
-                                aboutmeEntry = new DashboardAccountEntry
+                                aboutmeEntry = new DashboardAccountTextBox
                                 {
                                     Title = "About Me",
                                     Placeholder = "...",
                                     Default = user.AboutMe,
                                     OnChange = updateUnsavedStatus
                                 },
-                                pronounsEntry = new DashboardAccountEntry
+                                pronounsEntry = new DashboardAccountTextBox
                                 {
                                     Title = "Pronouns",
                                     Placeholder = "../..",
