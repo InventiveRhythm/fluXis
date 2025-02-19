@@ -61,12 +61,14 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
     public DrawableUserCard(APIUser user)
     {
         this.user = user;
+
+        Width = 300;
+        Height = 80;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(300, 80);
         CornerRadius = 12;
         Masking = true;
 

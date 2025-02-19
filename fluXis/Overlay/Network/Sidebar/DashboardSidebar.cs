@@ -12,13 +12,13 @@ namespace fluXis.Overlay.Network.Sidebar;
 
 public partial class DashboardSidebar : ExpandingContainer
 {
+    public const int SIZE_CLOSED = 64 + padding * 2;
     private const int padding = 5;
-    private const int size_closed = 64 + padding * 2;
     private const int size_open = 200 + padding * 2;
 
-    protected override double HoverDelay => 500;
+    protected override double HoverDelay => 200;
 
-    public Action<DashboardTab> SelectAction { get; set; }
+    public Action<DashboardTab> SelectAction { get; init; }
 
     private FillFlowContainer<DashboardSidebarButton> content;
 
@@ -27,8 +27,6 @@ public partial class DashboardSidebar : ExpandingContainer
     {
         Width = 64;
         RelativeSizeAxes = Axes.Y;
-        CornerRadius = 20;
-        Masking = true;
 
         InternalChildren = new Drawable[]
         {
@@ -73,7 +71,7 @@ public partial class DashboardSidebar : ExpandingContainer
 
         Expanded.BindValueChanged(expanded =>
         {
-            this.ResizeWidthTo(expanded.NewValue ? size_open : size_closed, 600, Easing.OutQuint);
+            this.ResizeWidthTo(expanded.NewValue ? size_open : SIZE_CLOSED, 600, Easing.OutQuint);
         }, true);
     }
 }

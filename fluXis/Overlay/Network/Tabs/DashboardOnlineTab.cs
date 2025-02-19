@@ -74,6 +74,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
                     {
                         flow.Add(new DrawableUserCard(user)
                         {
+                            Width = 346,
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre
                         });

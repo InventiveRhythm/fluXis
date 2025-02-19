@@ -16,6 +16,8 @@ public partial class DashboardAccountCategory : FillFlowContainer
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(10);
+        Anchor = Anchor.TopCentre;
+        Origin = Anchor.TopCentre;
 
         InternalChild = new Container
         {
