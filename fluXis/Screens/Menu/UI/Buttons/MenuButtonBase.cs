@@ -140,17 +140,12 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
         if (Keys is null || !Keys.Contains(e.Key))
             return false;
 
-        TriggerClick();
-        return true;
+        return TriggerClick();
     }
 
     protected override bool OnJoystickPress(JoystickPressEvent e)
     {
-        if (e.Button != GamepadButton)
-            return false;
-
-        TriggerClick();
-        return true;
+        return e.Button == GamepadButton && TriggerClick();
     }
 
     public override void Show()
