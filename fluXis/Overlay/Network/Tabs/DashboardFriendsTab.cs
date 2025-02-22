@@ -148,7 +148,7 @@ public partial class DashboardFriendsTab : DashboardTab
                     Alpha = users.Any() ? 1f : 0f,
                     ChildrenEnumerable = users.Select(x => new DrawableUserCard(x)
                     {
-                        Width = 338
+                        Width = 348
                     })
                 }
             };
