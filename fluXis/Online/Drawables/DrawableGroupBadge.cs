@@ -21,7 +21,7 @@ public partial class DrawableGroupBadge : CircularContainer
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(40, 16);
+        Size = new Vector2(48, 16);
         Masking = true;
 
         InternalChildren = new Drawable[]

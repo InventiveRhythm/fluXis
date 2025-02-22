@@ -4,9 +4,11 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -122,19 +124,37 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                         Direction = FillDirection.Vertical,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
+                        Spacing = new Vector2(2),
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            new FillFlowContainer
                             {
-                                Text = user.PreferredName,
-                                WebFontSize = 20,
-                                Shadow = true
+                                AutoSizeAxes = Axes.X,
+                                Height = 16,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(4),
+                                Children = new Drawable[]
+                                {
+                                    new ClubTag(user.Club)
+                                    {
+                                        WebFontSize = 12,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Shadow = true,
+                                        Alpha = user.Club is null ? 0 : 1
+                                    },
+                                    createName().With(d =>
+                                    {
+                                        d.Anchor = Anchor.CentreLeft;
+                                        d.Origin = Anchor.CentreLeft;
+                                    })
+                                }
                             },
-                            new FluXisSpriteText
+                            new ForcedHeightText
                             {
                                 Text = user.Username,
+                                Height = 12,
                                 Alpha = string.IsNullOrWhiteSpace(user.DisplayName) ? 0 : .8f,
-                                Margin = new MarginPadding { Top = -5 },
                                 WebFontSize = 12,
                                 Shadow = true
                             },
@@ -150,6 +170,29 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                     }
                 }
             }
+        };
+    }
+
+    private Drawable createName()
+    {
+        var paint = user.NamePaint;
+
+        if (paint is not null)
+        {
+            return new GradientText
+            {
+                Colour = paint.Colors.CreateColorInfo(),
+                Text = user.PreferredName,
+                WebFontSize = 16,
+                Shadow = true
+            };
+        }
+
+        return new FluXisSpriteText
+        {
+            Text = user.PreferredName,
+            WebFontSize = 16,
+            Shadow = true
         };
     }
 
