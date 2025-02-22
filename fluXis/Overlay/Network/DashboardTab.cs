@@ -97,6 +97,7 @@ public enum DashboardTabType
     Notifications,
     News,
     Friends,
+    Club,
     Online,
     Account
 }

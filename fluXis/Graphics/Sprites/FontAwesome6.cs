@@ -35,6 +35,7 @@ public class FontAwesome6
         public static IconUsage ChartLine => GetSolid(0xf201);
         public static IconUsage Check => GetSolid(0xf00c);
         public static IconUsage Circle => GetSolid(0xf111);
+        public static IconUsage CircleNodes => GetSolid(0xe4e2);
         public static IconUsage Clock => GetSolid(0xf017);
         public static IconUsage Clone => GetSolid(0xf24d);
         public static IconUsage ComputerMouse => GetSolid(0xf8cc);
