@@ -3,8 +3,9 @@ using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Online.API.Models.Social;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.API.Requests;
+using fluXis.Online.API.Requests.Social;
 using fluXis.Online.Drawables;
 using fluXis.Online.Fluxel;
 using osu.Framework.Allocation;
@@ -74,7 +75,7 @@ public partial class DashboardFriendsTab : DashboardTab
         api.PerformRequestAsync(req);
     }
 
-    private Drawable createContent(List<APIUser> users) => new FillFlowContainer
+    private Drawable createContent(APIFriends friends) => new FillFlowContainer
     {
         RelativeSizeAxes = Axes.X,
         AutoSizeAxes = Axes.Y,
@@ -82,8 +83,8 @@ public partial class DashboardFriendsTab : DashboardTab
         Spacing = new Vector2(24),
         Children = new Drawable[]
         {
-            new UserList("Online", users.Where(x => x.IsOnline).ToList()),
-            new UserList("Offline", users.Where(x => !x.IsOnline).ToList()),
+            new UserList("Online", friends.Users.Where(x => x.IsOnline).ToList()),
+            new UserList("Offline", friends.Users.Where(x => !x.IsOnline).ToList()),
         }
     };
 
