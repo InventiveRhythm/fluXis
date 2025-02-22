@@ -14,16 +14,16 @@
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="NLua" Version="1.7.3" />
-    <PackageReference Include="flustix.Midori" Version="2025.129.0" />
-    <PackageReference Include="ppy.osu.Framework" Version="2024.1224.0" />
+    <PackageReference Include="NLua" Version="1.7.4" />
+    <PackageReference Include="flustix.Midori" Version="2025.212.0" />
+    <PackageReference Include="ppy.osu.Framework" Version="2025.220.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
-    <PackageReference Include="Realm" Version="20.0.0" />
-    <PackageReference Include="Sentry" Version="5.0.0" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    <PackageReference Include="Realm" Version="20.1.0" />
+    <PackageReference Include="Sentry" Version="5.1.1" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     <PackageReference Include="Steamworks.NET" Version="2024.8.0" IncludeAssets="all" />
 
     <!-- Required for building specific platforms with TeamCity -->
