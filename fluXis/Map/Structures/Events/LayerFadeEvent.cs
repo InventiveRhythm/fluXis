@@ -1,4 +1,5 @@
-﻿using fluXis.Map.Structures.Bases;
+﻿using System;
+using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -28,10 +29,19 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
     [JsonProperty("subfield")]
     public int PlayfieldSubIndex { get; set; }
 
-    public void Apply(Drawable drawable)
+    public void Apply(Playfield playfield)
     {
-        if (drawable is Playfield playfield && !this.AppliesTo(playfield))
+        if (!this.AppliesTo(playfield))
             return;
+
+        Drawable drawable = Layer switch
+        {
+            FadeLayer.HitObjects => playfield.HitManager,
+            FadeLayer.Stage => playfield.Stage,
+            FadeLayer.Receptors => playfield.Receptors,
+            FadeLayer.Playfield => playfield,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         // make sure this is set, just in case it's missing
         if (Alpha <= 0.0001f)
@@ -48,6 +58,4 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
         Receptors,
         Playfield
     }
-
-    void IApplicableToPlayfield.Apply(Playfield playfield) => Apply(playfield);
 }

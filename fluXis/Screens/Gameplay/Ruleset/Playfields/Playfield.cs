@@ -12,7 +12,6 @@ using fluXis.Skinning;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -48,6 +47,7 @@ public partial class Playfield : Container
         }
     }
 
+    public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
 
@@ -57,7 +57,6 @@ public partial class Playfield : Container
 
     private DependencyContainer dependencies;
 
-    private Stage stage;
     private Drawable hitline;
     private Drawable topCover;
     private Drawable bottomCover;
@@ -113,7 +112,7 @@ public partial class Playfield : Container
         InternalChildren = new[]
         {
             new LaneSwitchAlert(),
-            stage = new Stage(),
+            Stage = new Stage(),
             new TimingLineManager(),
             receptorsFirst ? Receptors : HitManager,
             receptorsFirst ? HitManager : Receptors,
@@ -138,11 +137,7 @@ public partial class Playfield : Container
             new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(shake.Duration, shake.Magnitude))
         };
 
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.HitObjects).ForEach(e => e.Apply(HitManager));
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Stage).ForEach(e => e.Apply(stage));
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Receptors).ForEach(e => e.Apply(Receptors));
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Playfield).ForEach(e => e.Apply(this));
-
+        MapEvents.LayerFadeEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
