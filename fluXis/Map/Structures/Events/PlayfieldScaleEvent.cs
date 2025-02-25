@@ -41,6 +41,6 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
             yScale *= -1;
 
         using (playfield.BeginAbsoluteSequence(Time))
-            playfield.ScaleTo(new Vector2(ScaleX, yScale), Duration, Easing);
+            playfield.TransformTo(nameof(playfield.AnimationScale), new Vector2(ScaleX, yScale), Duration, Easing);
     }
 }

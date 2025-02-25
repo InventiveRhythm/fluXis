@@ -158,6 +158,8 @@ public partial class Playfield : Container
 
     protected override void Update()
     {
+        updatePositionScale();
+
         hitline.Y = -laneSwitchManager.HitPosition;
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
@@ -169,4 +171,29 @@ public partial class Playfield : Container
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    #region Position
+
+    public float AnimationX { get; set; }
+    public float AnimationY { get; set; }
+    public float AnimationZ { get; set; }
+    public Vector2 AnimationScale { get; set; } = Vector2.One;
+
+    private readonly Vector3 camera = new(0, 0, -100);
+
+    private void updatePositionScale()
+    {
+        var scale = scaleForZ(AnimationZ);
+
+        if (!float.IsFinite(scale))
+            scale = 1;
+
+        var result = (new Vector2(AnimationX, AnimationY) - camera.Xy) * scale + camera.Xy;
+        Position = result;
+        Scale = new Vector2(scale) * AnimationScale;
+    }
+
+    private float scaleForZ(float z) => -camera.Z / Math.Max(1f, z - camera.Z);
+
+    #endregion
 }

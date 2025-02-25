@@ -16,6 +16,9 @@ public class PlayfieldMoveEvent : IMapEvent, IHasDuration, IHasEasing, IApplicab
     [JsonProperty("y")]
     public float OffsetY { get; set; }
 
+    [JsonProperty("z")]
+    public float OffsetZ { get; set; }
+
     [JsonProperty("duration")]
     public double Duration { get; set; }
 
@@ -35,8 +38,9 @@ public class PlayfieldMoveEvent : IMapEvent, IHasDuration, IHasEasing, IApplicab
 
         using (playfield.BeginAbsoluteSequence(Time))
         {
-            playfield.MoveToX(OffsetX, Duration, Easing);
-            playfield.MoveToY(OffsetY, Duration, Easing);
+            playfield.TransformTo(nameof(playfield.AnimationX), OffsetX, Duration, Easing);
+            playfield.TransformTo(nameof(playfield.AnimationY), OffsetY, Duration, Easing);
+            playfield.TransformTo(nameof(playfield.AnimationZ), OffsetZ, Duration, Easing);
         }
     }
 }
