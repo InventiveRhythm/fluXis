@@ -26,6 +26,9 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action<long, int> OnScore;
     public event Action<List<ScoreInfo>> OnResultsReady;
 
+    public abstract bool Connected { get; }
+
+    public event Action<Exception> OnConnectionError;
     public event Action OnDisconnect;
 
     public virtual APIUser Player => APIUser.Dummy;
@@ -165,6 +168,8 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Room = null;
         Scheduler.ScheduleIfNeeded(() => OnDisconnect?.Invoke());
     }
+
+    protected void TriggerConnectionError(Exception ex) => OnConnectionError?.Invoke(ex);
 
     #region Abstract Methods
 

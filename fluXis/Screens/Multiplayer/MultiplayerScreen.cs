@@ -3,6 +3,7 @@ using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Map;
 using fluXis.Online.Multiplayer;
 using fluXis.Screens.Multiplayer.SubScreens;
@@ -95,24 +96,30 @@ public partial class MultiplayerScreen : FluXisScreen
     {
         base.LoadComplete();
 
+        client.OnConnectionError += ex => Schedule(() =>
+        {
+            panels.Content = new SingleButtonPanel(FontAwesome6.Solid.TriangleExclamation, "Failed to connect to multiplayer server.", ex.Message, action: this.Exit);
+            connectingContainer.FadeOut(FADE_DURATION);
+        });
+
         LoadComponentAsync(client, _ =>
         {
-            if (!IsPresent)
+            if (!IsPresent || !client.Connected)
+            {
                 client.Dispose();
+                return;
+            }
 
             AddInternal(client);
             connectingContainer.FadeOut(FADE_DURATION);
 
-            client.OnDisconnect += () =>
+            client.OnDisconnect += () => panels.Content = new DisconnectedPanel(() =>
             {
-                panels.Content = new DisconnectedPanel(() =>
-                {
-                    if (!this.IsCurrentScreen())
-                        this.MakeCurrent();
+                if (!this.IsCurrentScreen())
+                    this.MakeCurrent();
 
-                    this.Exit();
-                });
-            };
+                this.Exit();
+            });
 
             var modes = new MultiModeSelect();
             screenStack.Push(modes);

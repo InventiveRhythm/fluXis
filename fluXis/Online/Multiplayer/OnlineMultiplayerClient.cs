@@ -6,9 +6,11 @@ using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Scoring;
+using Midori.Networking.WebSockets;
 using Midori.Networking.WebSockets.Frame;
 using Midori.Networking.WebSockets.Typed;
 using osu.Framework.Allocation;
+using osu.Framework.Logging;
 
 namespace fluXis.Online.Multiplayer;
 
@@ -17,6 +19,7 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     [Resolved]
     private IAPIClient api { get; set; }
 
+    public override bool Connected => connection?.State == WebSocketState.Open;
     public override APIUser Player => api.User.Value;
 
     private TypedWebSocketClient<IMultiplayerServer, IMultiplayerClient> connection = null!;
@@ -24,8 +27,16 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
     [BackgroundDependencyLoader]
     private void load()
     {
-        connection = api.GetWebSocket<IMultiplayerServer, IMultiplayerClient>(this, "/multiplayer");
-        connection.OnClose += TriggerDisconnect;
+        try
+        {
+            connection = api.GetWebSocket<IMultiplayerServer, IMultiplayerClient>(this, "/multiplayer");
+            connection.OnClose += TriggerDisconnect;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Failed to connect to multiplayer server!");
+            TriggerConnectionError(ex);
+        }
     }
 
     protected override void Dispose(bool isDisposing)
