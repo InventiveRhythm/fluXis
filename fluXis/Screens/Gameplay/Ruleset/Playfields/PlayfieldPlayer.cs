@@ -55,7 +55,7 @@ public partial class PlayfieldPlayer : CompositeDrawable
 
         AddInternal(dependencies.CacheAsAndReturn(new LaneSwitchManager(ruleset.MapEvents.LaneSwitchEvents, ruleset.MapInfo.RealmEntry!.KeyCount, ruleset.MapInfo.NewLaneSwitchLayout)));
 
-        var content = new Container { RelativeSizeAxes = Axes.Both };
+        var content = new SortingContainer { RelativeSizeAxes = Axes.Both };
         content.Child = MainPlayfield;
         content.AddRange(SubPlayfields);
         AddInternal(content);
@@ -77,4 +77,26 @@ public partial class PlayfieldPlayer : CompositeDrawable
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    private partial class SortingContainer : Container<Playfield>
+    {
+        protected override int Compare(Drawable x, Drawable y)
+        {
+            var a = (Playfield)x;
+            var b = (Playfield)y;
+
+            var result = -a.AnimationZ.CompareTo(b.AnimationZ);
+
+            if (result != 0)
+                return result;
+
+            return -a.SubIndex.CompareTo(b.SubIndex);
+        }
+
+        protected override void UpdateAfterChildren()
+        {
+            base.UpdateAfterChildren();
+            SortInternal();
+        }
+    }
 }
