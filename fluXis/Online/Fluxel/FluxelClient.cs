@@ -211,8 +211,17 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     {
         var socket = new TypedWebSocketClient<S, C>(target) { PingInterval = 30000 };
         socket.RequestHeaders["Authorization"] = AccessToken;
-        socket.Connect((Endpoint.APIUrl + path).Replace("http", "ws")); // this MIGHT be janky
-        return socket;
+        socket.RequestHeaders["X-Version"] = FluXisGameBase.VersionString;
+
+        try
+        {
+            socket.Connect((Endpoint.APIUrl + path).Replace("http", "ws")); // this MIGHT be janky
+            return socket;
+        }
+        catch (Exception ex)
+        {
+            throw new AggregateException(socket.CloseReason, ex);
+        }
     }
 
     #endregion
