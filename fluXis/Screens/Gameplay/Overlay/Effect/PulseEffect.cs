@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using fluXis.Map.Structures.Events;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -26,7 +27,11 @@ public partial class PulseEffect : Container
             AlwaysPresent = true,
             Alpha = 0
         };
+    }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
         Rebuild();
     }
 
