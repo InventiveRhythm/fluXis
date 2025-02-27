@@ -122,21 +122,33 @@ public partial class EditorBottomBar : Container
                                         var clone = map.MapInfo.DeepClone();
                                         clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
 
-                                        var shouldAutoPlay = GetContainingInputManager().CurrentState.Keyboard.ControlPressed;
-
                                         var mods = new List<IMod>();
+                                        var input = GetContainingInputManager()?.CurrentState.Keyboard;
+                                        var shouldAutoPlay = false;
 
-                                        if (shouldAutoPlay)
-                                            mods.Add(new AutoPlayMod());
-                                        else
-                                            mods.Add(new NoFailMod());
+                                        if (input is not null)
+                                        {
+                                            shouldAutoPlay = input.ControlPressed;
+                                            var shouldApplyRate = input.ShiftPressed;
+
+                                            if (shouldAutoPlay)
+                                                mods.Add(new AutoPlayMod());
+                                            else
+                                                mods.Add(new NoFailMod());
+
+                                            if (shouldApplyRate)
+                                            {
+                                                var rate = clock.Rate;
+                                                mods.Add(new RateMod { Rate = (float)rate });
+                                            }
+                                        }
 
                                         editor.Push(new GameplayLoader(map.RealmMap, mods, () =>
                                         {
                                             if (shouldAutoPlay)
-                                                return new EditorAutoPlaytestScreen(map.RealmMap, clone, startTime);
+                                                return new EditorAutoPlaytestScreen(map.RealmMap, clone, startTime, mods);
 
-                                            return new EditorPlaytestScreen(map.RealmMap, clone, startTime);
+                                            return new EditorPlaytestScreen(map.RealmMap, clone, startTime, mods);
                                         }));
                                     }
                                 }
