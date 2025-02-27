@@ -145,17 +145,6 @@ public partial class Playfield : Container
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        scrollDirection.BindValueChanged(_ =>
-        {
-            if (IsUpScroll)
-                Scale *= new Vector2(1, -1);
-        }, true);
-    }
-
     protected override void Update()
     {
         updatePositionScale();
@@ -190,7 +179,7 @@ public partial class Playfield : Container
 
         var result = (new Vector2(AnimationX, AnimationY) - camera.Xy) * scale + camera.Xy;
         Position = result;
-        Scale = new Vector2(scale) * AnimationScale;
+        Scale = new Vector2(scale) * AnimationScale * new Vector2(1, IsUpScroll ? -1 : 1);
     }
 
     private float scaleForZ(float z) => -camera.Z / Math.Max(1f, z - camera.Z);
