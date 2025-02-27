@@ -137,7 +137,7 @@ public partial class DesignContainer : EditorTabContainer
     private RulesetContainer createRuleset()
     {
         var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap!.KeyCount);
-        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod>());
+        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod> { new NoFailMod() });
         container.ParentClock = EditorClock;
         return container;
     }
