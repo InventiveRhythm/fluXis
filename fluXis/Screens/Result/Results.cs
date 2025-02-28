@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Database.Maps;
 using fluXis.Input;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
+using fluXis.Screens.Result.Sides.Types;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
@@ -50,7 +52,7 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
 
         InternalChildren = new Drawable[]
         {
-            content = new ResultsContent(CreateRightContent()),
+            content = new ResultsContent(CreateLeftContent(), CreateRightContent()),
             footer = new ResultsFooter
             {
                 BackAction = this.Exit,
@@ -58,6 +60,16 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
                 RestartAction = OnRestart
             }
         };
+    }
+
+    protected virtual Drawable[] CreateLeftContent()
+    {
+        var list = new List<Drawable>();
+
+        if (Score.HitResults is not null)
+            list.Add(new ResultsSideGraph(Score, Map));
+
+        return list.ToArray();
     }
 
     protected virtual Drawable[] CreateRightContent() => Array.Empty<Drawable>();

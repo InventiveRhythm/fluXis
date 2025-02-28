@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using fluXis.Scoring;
 using fluXis.Screens.Result.Center;
 using fluXis.Screens.Result.Sides;
@@ -16,6 +17,7 @@ public partial class ResultsContent : CompositeDrawable
     [Resolved]
     private ScoreInfo score { get; set; }
 
+    private Drawable[] leftContent { get; }
     private Drawable[] rightContent { get; }
 
     private bool rankMoveSmoothly;
@@ -27,8 +29,9 @@ public partial class ResultsContent : CompositeDrawable
     private ResultsCenter center;
     private ResultsSideList right;
 
-    public ResultsContent(Drawable[] rightContent)
+    public ResultsContent(Drawable[] leftContent, Drawable[] rightContent)
     {
+        this.leftContent = leftContent;
         this.rightContent = rightContent;
     }
 
@@ -78,11 +81,11 @@ public partial class ResultsContent : CompositeDrawable
                                 {
                                     left = new ResultsSideList
                                     {
-                                        Children = new Drawable[]
+                                        ChildrenEnumerable = new Drawable[]
                                         {
                                             new ResultsSideJudgements(skins, score),
                                             new ResultsSideMore(score)
-                                        }
+                                        }.Concat(leftContent)
                                     },
                                     center = new ResultsCenter(),
                                     right = new ResultsSideList
