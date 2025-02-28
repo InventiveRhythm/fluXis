@@ -42,7 +42,7 @@ public partial class ResultsSideMore : ResultsSideContainer
         {
             var nonMiss = score.HitResults.Where(r => r.Judgement > Judgement.Miss);
             var avg = nonMiss.Average(x => x.Difference);
-            flow.Add(new ResultsSideDoubleText("Mean", $"{(int)avg}ms"));
+            flow.Add(new ResultsSideDoubleText("Mean", $"{(int)-avg}ms"));
         }
 
         flow.Add(new ResultsSideDoubleText("Scroll Speed", $"{score.ScrollSpeed.ToStringInvariant()}"));
