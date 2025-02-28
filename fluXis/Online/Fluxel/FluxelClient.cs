@@ -154,7 +154,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
             if (DebugUtils.IsDebugBuild)
                 Thread.Sleep(500);
 
-            var waitTime = 5d;
+            var waitTime = 10d;
 
             // ReSharper disable once AsyncVoidLambda
             var task = new Task(async () =>
@@ -163,13 +163,13 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
                 {
                     if (connection.State >= WebSocketState.Closing)
                     {
-                        LastException = new APIException("" /*connection.CloseStatusDescription*/);
+                        LastException = new APIException(connection.CloseReason);
                         Status.Value = ConnectionStatus.Failed;
                         break;
                     }
 
-                    waitTime -= 0.1;
-                    await Task.Delay(100);
+                    waitTime -= 1;
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
 
                 if (Status.Value == ConnectionStatus.Online) return;
