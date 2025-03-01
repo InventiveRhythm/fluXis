@@ -27,10 +27,12 @@ public class OsuImport : MapImporter
     public override string Color => "#e7659f";
 
     private Bindable<string> osuPath { get; }
+    private Bindable<bool> skipBackgrounds { get; }
 
     public OsuImport(OsuPluginConfig config)
     {
         osuPath = config.GetBindable<string>(OsuPluginSetting.GameLocation);
+        skipBackgrounds = config.GetBindable<bool>(OsuPluginSetting.SkipBackgrounds);
     }
 
     public override void Import(string path)
@@ -202,17 +204,6 @@ public class OsuImport : MapImporter
 
                 foreach (var map in set)
                 {
-                    // an extremely stupid thing we need to do...
-                    // to get the map background, we have to load the map,
-                    // because for some reason the background is not in the .db file
-                    // this increases the loading time by a lot, but there is no other way
-                    var mapPath = Path.Combine(songsPath, map.FolderName, map.BeatmapFileName);
-
-                    if (!File.Exists(mapPath))
-                        continue;
-
-                    var osuMap = ParseOsuMap(File.ReadAllText(mapPath), true);
-
                     var realmMap = new OsuRealmMap
                     {
                         Difficulty = map.Version,
@@ -231,7 +222,6 @@ public class OsuImport : MapImporter
                             Mapper = map.Creator,
                             Source = map.SongSource,
                             Tags = map.SongTags,
-                            Background = osuMap.GetBackground(),
                             Audio = map.AudioFileName,
                             PreviewTime = map.AudioPreviewTime
                         },
@@ -243,6 +233,21 @@ public class OsuImport : MapImporter
                             NotesPerSecond = (map.CountHitCircles + map.CountSliders) / (map.TotalTime / 1000f)
                         }
                     };
+
+                    if (!skipBackgrounds.Value)
+                    {
+                        // an extremely stupid thing we need to do...
+                        // to get the map background, we have to load the map,
+                        // because for some reason the background is not in the .db file
+                        // this increases the loading time by a lot, but there is no other way
+                        var mapPath = Path.Combine(songsPath, map.FolderName, map.BeatmapFileName);
+
+                        if (!File.Exists(mapPath))
+                            continue;
+
+                        var osuMap = ParseOsuMap(File.ReadAllText(mapPath), true);
+                        realmMap.Metadata.Background = osuMap.GetBackground();
+                    }
 
                     if (map.TimingPoints != null)
                     {

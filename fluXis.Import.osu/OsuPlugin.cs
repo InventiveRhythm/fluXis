@@ -19,6 +19,12 @@ public class OsuPlugin : Plugin
 
     public override List<SettingsItem> CreateSettings() => new()
     {
+        new SettingsToggle
+        {
+            Label = "Skip Backgrounds",
+            Description = "Skips fetching the background from the map file, speeding up importing by a lot.",
+            Bindable = config.GetBindable<bool>(OsuPluginSetting.SkipBackgrounds)
+        },
         new SettingsTextBox
         {
             Label = "osu! Directory",

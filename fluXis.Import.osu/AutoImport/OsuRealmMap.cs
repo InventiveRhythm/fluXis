@@ -19,6 +19,7 @@ public class OsuRealmMap : RealmMap
         if (info is null)
             return null;
 
+        Metadata.Background = info.BackgroundFile;
         info.RealmEntry = this;
         return info;
     }

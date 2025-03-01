@@ -19,10 +19,12 @@ public class OsuPluginConfig : PluginConfigManager<OsuPluginSetting>
         base.InitialiseDefaults();
 
         SetDefault(OsuPluginSetting.GameLocation, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "osu!"));
+        SetDefault(OsuPluginSetting.SkipBackgrounds, false);
     }
 }
 
 public enum OsuPluginSetting
 {
-    GameLocation
+    GameLocation,
+    SkipBackgrounds
 }
