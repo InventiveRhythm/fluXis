@@ -187,6 +187,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipTitle = "Browse",
                                 TooltipSub = "Download community-made maps.",
                                 Icon = FontAwesome6.Solid.EarthAmericas,
+                                Keybind = FluXisGlobalKeybind.ToggleBrowse,
                                 Overlay = browse,
                                 RequireLogin = true
                             },
