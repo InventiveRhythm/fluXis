@@ -134,7 +134,7 @@ public partial class Playfield : Container
                 }
             },
             new KeyOverlay(),
-            new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(shake.Duration, shake.Magnitude))
+            new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(Math.Max(shake.Duration, 0), shake.Magnitude))
         };
 
         MapEvents.LayerFadeEvents.ForEach(e => e.Apply(this));

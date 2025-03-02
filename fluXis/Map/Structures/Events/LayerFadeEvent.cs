@@ -48,7 +48,7 @@ public class LayerFadeEvent : IMapEvent, IApplicableToPlayfield, IHasDuration, I
             drawable.AlwaysPresent = true;
 
         using (drawable.BeginAbsoluteSequence(Time))
-            drawable.FadeTo(Alpha, Duration, Easing);
+            drawable.FadeTo(Alpha, Math.Max(Duration, 0), Easing);
     }
 
     public enum FadeLayer

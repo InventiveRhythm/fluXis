@@ -1,3 +1,4 @@
+using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Utils.Extensions;
@@ -27,8 +28,10 @@ public class PulseEvent : IMapEvent, IHasDuration, IHasEasing
     {
         using (effect.BeginAbsoluteSequence(Time))
         {
-            effect.BorderTo(Width, InPercent * Duration, Easing).Then()
-                  .BorderTo(0, (float)Duration * (1 - InPercent), Easing);
+            var dur = Math.Max(Duration, 0);
+
+            effect.BorderTo(Width, InPercent * dur, Easing).Then()
+                  .BorderTo(0, (float)dur * (1 - InPercent), Easing);
         }
     }
 }

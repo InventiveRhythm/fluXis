@@ -1,3 +1,4 @@
+using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
@@ -38,9 +39,9 @@ public class PlayfieldMoveEvent : IMapEvent, IHasDuration, IHasEasing, IApplicab
 
         using (playfield.BeginAbsoluteSequence(Time))
         {
-            playfield.TransformTo(nameof(playfield.AnimationX), OffsetX, Duration, Easing);
-            playfield.TransformTo(nameof(playfield.AnimationY), OffsetY, Duration, Easing);
-            playfield.TransformTo(nameof(playfield.AnimationZ), OffsetZ, Duration, Easing);
+            playfield.TransformTo(nameof(playfield.AnimationX), OffsetX, Math.Max(Duration, 0), Easing);
+            playfield.TransformTo(nameof(playfield.AnimationY), OffsetY, Math.Max(Duration, 0), Easing);
+            playfield.TransformTo(nameof(playfield.AnimationZ), OffsetZ, Math.Max(Duration, 0), Easing);
         }
     }
 }

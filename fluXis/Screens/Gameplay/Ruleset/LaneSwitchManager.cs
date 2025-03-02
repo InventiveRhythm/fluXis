@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures.Events;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 
 namespace fluXis.Screens.Gameplay.Ruleset;
 
@@ -53,6 +55,7 @@ public partial class LaneSwitchManager : CompositeComponent
 
         CurrentCount = keycount;
         HitPosition = skin.SkinJson.GetKeymode(keycount).HitPosition;
+        Logger.Log($"count is {keycount}");
 
         for (int i = 0; i < keycount; i++)
         {
@@ -72,13 +75,16 @@ public partial class LaneSwitchManager : CompositeComponent
 
             using (BeginAbsoluteSequence(ls.Time))
             {
-                var pos = (float)skin.SkinJson.GetKeymode(ls.Count).HitPosition;
+                var count = Math.Max(1, ls.Count);
+                var pos = (float)skin.SkinJson.GetKeymode(count).HitPosition;
 
                 if (first)
                 {
-                    CurrentCount = ls.Count;
+                    CurrentCount = count;
                     HitPosition = pos;
                 }
+
+                var dur = Math.Max(ls.Duration, 0);
 
                 for (int i = 0; i < keycount; i++)
                 {
@@ -88,11 +94,11 @@ public partial class LaneSwitchManager : CompositeComponent
                     if (first)
                         lane.Width = w;
 
-                    lane.ResizeWidthTo(w, ls.Duration, ls.Easing);
+                    lane.ResizeWidthTo(w, dur, ls.Easing);
                 }
 
-                this.TransformTo(nameof(HitPosition), pos, ls.Duration, ls.Easing);
-                this.TransformTo(nameof(CurrentCount), ls.Count).OnComplete(_ => Current = ls);
+                this.TransformTo(nameof(HitPosition), pos, dur, ls.Easing);
+                this.TransformTo(nameof(CurrentCount), count).OnComplete(_ => Current = ls);
             }
 
             first = false;
@@ -103,7 +109,8 @@ public partial class LaneSwitchManager : CompositeComponent
 
     private IEnumerable<int> getWidths(LaneSwitchEvent ev)
     {
-        var w = skin.SkinJson.GetKeymode(ev.Count).ColumnWidth;
-        return LaneSwitchEvent.GetRow(ev.Count, keycount, newLayout).Select(l => l ? w : 0);
+        var count = Math.Max(1, ev.Count);
+        var w = skin.SkinJson.GetKeymode(count).ColumnWidth;
+        return LaneSwitchEvent.GetRow(count, keycount, newLayout).Select(l => l ? w : 0);
     }
 }

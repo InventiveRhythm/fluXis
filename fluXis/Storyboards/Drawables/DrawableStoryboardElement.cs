@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -29,47 +30,48 @@ public partial class DrawableStoryboardElement : CompositeDrawable
         {
             using (BeginAbsoluteSequence(animation.StartTime))
             {
+                var duration = Math.Max(animation.Duration, 0);
+
                 switch (animation.Type)
                 {
                     case StoryboardAnimationType.MoveX:
                         this.MoveToX(animation.StartFloat).Then()
-                            .MoveToX(animation.EndFloat, animation.Duration, animation.Easing);
+                            .MoveToX(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.MoveY:
                         this.MoveToY(animation.StartFloat).Then()
-                            .MoveToY(animation.EndFloat, animation.Duration, animation.Easing);
+                            .MoveToY(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Scale:
                         this.ScaleTo(animation.StartFloat).Then()
-                            .ScaleTo(animation.EndFloat, animation.Duration, animation.Easing);
+                            .ScaleTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.ScaleVector:
                         this.ScaleTo(animation.StartVector).Then()
-                            .ScaleTo(animation.EndVector, animation.Duration, animation.Easing);
+                            .ScaleTo(animation.EndVector, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Width:
                         this.ResizeWidthTo(animation.StartFloat).Then()
-                            .ResizeWidthTo(animation.EndFloat, animation.Duration, animation.Easing);
+                            .ResizeWidthTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Height:
                         this.ResizeHeightTo(animation.StartFloat).Then()
-                            .ResizeHeightTo(animation.EndFloat, animation.Duration, animation.Easing);
+                            .ResizeHeightTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Rotate:
                         this.RotateTo(animation.StartFloat).Then()
-                            .RotateTo(animation.EndFloat, animation.Duration, animation.Easing);
+                            .RotateTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Fade:
                         this.FadeTo(animation.StartFloat).Then()
-                            .FadeTo(animation.EndFloat, animation.Duration, animation.Easing);
-
+                            .FadeTo(animation.EndFloat, duration, animation.Easing);
                         break;
 
                     case StoryboardAnimationType.Color:
@@ -77,7 +79,7 @@ public partial class DrawableStoryboardElement : CompositeDrawable
                         var endColour = Colour4.FromHex(animation.ValueEnd);
 
                         this.FadeColour(startColour).Then()
-                            .FadeColour(endColour, animation.Duration, animation.Easing);
+                            .FadeColour(endColour, duration, animation.Easing);
                         break;
                 }
             }

@@ -1,4 +1,5 @@
-﻿using fluXis.Map.Structures.Bases;
+﻿using System;
+using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -32,7 +33,7 @@ public class TimeOffsetEvent : IMapEvent, IHasDuration, IHasEasing, IApplicableT
             if (UseStartValue)
                 manager.TransformTo(nameof(manager.VisualTimeOffset), StartOffset);
 
-            manager.TransformTo(nameof(manager.VisualTimeOffset), TargetOffset, Duration, Easing);
+            manager.TransformTo(nameof(manager.VisualTimeOffset), TargetOffset, Math.Max(Duration, 0), Easing);
         }
     }
 }

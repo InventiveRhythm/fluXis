@@ -1,3 +1,4 @@
+using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
@@ -41,6 +42,6 @@ public class PlayfieldScaleEvent : IMapEvent, IHasDuration, IHasEasing, IApplica
             yScale *= -1;
 
         using (playfield.BeginAbsoluteSequence(Time))
-            playfield.TransformTo(nameof(playfield.AnimationScale), new Vector2(ScaleX, yScale), Duration, Easing);
+            playfield.TransformTo(nameof(playfield.AnimationScale), new Vector2(ScaleX, yScale), Math.Max(Duration, 0), Easing);
     }
 }
