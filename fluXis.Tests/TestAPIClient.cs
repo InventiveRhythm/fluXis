@@ -93,8 +93,6 @@ public class TestAPIClient : IAPIClient
         Logger.Log("Logging out");
         Status.Value = ConnectionStatus.Offline;
         User.Value = null;
-
-        Logger.Log($"status: {Status.Value}");
     }
 
     public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path) where S : class where C : class

@@ -437,7 +437,6 @@ public partial class FileSelect : CompositeDrawable, ICloseable, IKeyBindingHand
     public void SelectFile(FileInfo file)
     {
         previewContainer.Clear();
-        Logger.Log($"Selected file {file?.FullName}", LoggingTarget.Runtime, LogLevel.Debug);
 
         CurrentFile = file;
         fileText.Text = file?.Name ?? "";

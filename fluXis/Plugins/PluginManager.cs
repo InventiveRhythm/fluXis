@@ -32,7 +32,7 @@ public partial class PluginManager : Component
         loadFromRunFolder();
         loadFromPlugins();
 
-        Logger.Log($"Loaded {plugins.Count} plugins");
+        Logger.Log($"Loaded {plugins.Count} plugins.");
     }
 
     private void loadSingle(Assembly assembly)

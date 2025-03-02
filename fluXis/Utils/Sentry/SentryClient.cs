@@ -25,8 +25,6 @@ public partial class SentryClient : Component
     {
         this.game = game;
 
-        Logger.Log("Initializing sentry client...");
-
         Logger.NewEntry += onEntry;
 
         if (FluXisGameBase.IsDebug || !RuntimeInfo.IsDesktop)
@@ -40,8 +38,6 @@ public partial class SentryClient : Component
             opt.IsGlobalModeEnabled = true;
             opt.Release = FluXisGameBase.VersionString.TrimStart('v');
         });
-
-        Logger.Log("Initialized sentry client.");
     }
 
     public void BindUser(IBindable<APIUser> bind)

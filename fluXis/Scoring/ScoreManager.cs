@@ -71,7 +71,7 @@ public partial class ScoreManager : CompositeComponent
             }
 
             if (failed > 0)
-                Logger.Log($"Failed to update ${failed} scores!");
+                Logger.Log($"Failed to update {failed} scores!");
         });
     }
 

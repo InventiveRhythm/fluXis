@@ -266,8 +266,6 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
         Task.Run(() =>
         {
-            Logger.Log("Loading sets...", LoggingTarget.Runtime, LogLevel.Debug);
-
             loadMapSets();
 
             Schedule(() =>
@@ -546,7 +544,7 @@ public partial class SelectScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
 
             if (replay == null)
             {
-                Logger.Log($"Replay for score {score.ID} not found", LoggingTarget.Runtime, LogLevel.Error);
+                Logger.Log($"Replay for score {score.ID} not found!", LoggingTarget.Runtime, LogLevel.Error);
                 return null;
             }
 

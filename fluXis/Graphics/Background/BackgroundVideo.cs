@@ -76,13 +76,11 @@ public partial class BackgroundVideo : CompositeDrawable
                 if (!video.IsLoaded)
                 {
                     video.OnLoadComplete += v => v.Expire();
-                    Logger.Log("[LoadVideo] Video is not loaded, waiting for load to complete.", LoggingTarget.Runtime, LogLevel.Debug);
                     return;
                 }
 
                 this.FadeOut(500);
                 video.Delay(500).Expire();
-                Logger.Log("Video is loaded, fading out.", LoggingTarget.Runtime, LogLevel.Debug);
                 video = null;
             });
             return;
@@ -107,7 +105,6 @@ public partial class BackgroundVideo : CompositeDrawable
                     Origin = Anchor.Centre
                 }, loadedVideo =>
                 {
-                    Logger.Log("Video loaded, adding to scene tree.", LoggingTarget.Runtime, LogLevel.Debug);
                     videoContainer.Child = loadedVideo;
                     waitingForLoad = false;
                 });
@@ -148,12 +145,10 @@ public partial class BackgroundVideo : CompositeDrawable
         if (!video.IsLoaded)
         {
             video.OnLoadComplete += _ => Stop();
-            Logger.Log("[Stop] Video is not loaded, waiting for load to complete.", LoggingTarget.Runtime, LogLevel.Debug);
             return;
         }
 
         IsPlaying = false;
-        Logger.Log("Stopping video.", LoggingTarget.Runtime, LogLevel.Debug);
         this.FadeOut(500);
     }
 
@@ -170,13 +165,11 @@ public partial class BackgroundVideo : CompositeDrawable
         if (!video.IsLoaded)
         {
             video.OnLoadComplete += _ => Start();
-            Logger.Log("[Start] Video is not loaded, waiting for load to complete.", LoggingTarget.Runtime, LogLevel.Debug);
             return;
         }
 
         IsPlaying = true;
         PlaybackStarted?.Invoke();
-        Logger.Log("Starting video.", LoggingTarget.Runtime, LogLevel.Debug);
         this.FadeIn(500);
     }
 }

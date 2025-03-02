@@ -93,8 +93,6 @@ public partial class MapStore : Component
     {
         files = storage.GetStorageForDirectory("maps");
 
-        Logger.Log("Loading mapsets...");
-
         resources = new MapSetResources
         {
             BackgroundStore = backgroundStore,
@@ -111,8 +109,6 @@ public partial class MapStore : Component
 
             foreach (var set in sets)
                 AddMapSet(set.Detach());
-
-            Logger.Log($"Loaded {MapSets.Count} mapsets.");
         });
     }
 

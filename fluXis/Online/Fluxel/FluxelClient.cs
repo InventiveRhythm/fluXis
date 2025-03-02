@@ -250,7 +250,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         if (!req.IsSuccessful)
         {
-            Logger.Log($"Failed to get access token! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+            Logger.Error(req.FailReason, "Failed to get access token!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
             return;
@@ -272,7 +272,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         if (!req.IsSuccessful)
         {
-            Logger.Log($"Failed to register account! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+            Logger.Error(req.FailReason, "Failed to register account!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
             return;

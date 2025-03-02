@@ -17,10 +17,7 @@ public static class MenuSplashes
     {
         "Literally 1984.",
         "We do a little bit of trolling",
-        "Nice pfc",
         "The tiebreaker is undeniably the essence of all tournaments. It is the fruit of hard work, the culmination of a valiant effort to fight and the manifestation of absolute determination. It is the desperation that creates friendship, the flood of adrenaline that replenishes life and the myriad of emotions that make one feel ever so momentarily blissful, that they could relish in the very moment where everyone belongs in the game. I really love the tiebreaker.",
-        "assblaster371 strikes again",
-        "pudding deez nuts in your mouth",
         "What do you mean the chart is unreadable?",
         "*metal pipe sfx*",
         "Hey you wanna make a guest difficulty for my map?",
@@ -43,13 +40,9 @@ public static class MenuSplashes
             if (!storage.Exists(splash_file))
                 return;
 
-            Logger.Log("Loading splashes from local storage...", LoggingTarget.Runtime, LogLevel.Debug);
-
             var stream = storage.GetStream(splash_file);
             using var sr = new StreamReader(stream);
             splashes = sr.ReadToEnd().Deserialize<string[]>();
-
-            Logger.Log("Splashes loaded from local storage!", LoggingTarget.Runtime, LogLevel.Debug);
         }
         catch (Exception e)
         {
@@ -61,18 +54,13 @@ public static class MenuSplashes
     {
         try
         {
-            Logger.Log("Downloading splashes from web...", LoggingTarget.Network, LogLevel.Debug);
             var req = new WebRequest(online_path);
             await req.PerformAsync();
             var json = req.GetResponseString();
             splashes = json.Deserialize<string[]>();
 
-            Logger.Log("Saving splashes to local storage...", LoggingTarget.Network, LogLevel.Debug);
-
             var path = storage.GetFullPath(splash_file);
             await File.WriteAllTextAsync(path, json);
-
-            Logger.Log("Splashes saved to local storage!", LoggingTarget.Network, LogLevel.Debug);
         }
         catch (Exception e)
         {

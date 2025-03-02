@@ -38,7 +38,6 @@ public partial class LayoutManager : Component
         Layout.BindValueChanged(e =>
         {
             layoutName.Value = e.NewValue != null ? e.NewValue.ID : "Default";
-            Logger.Log($"Switched to layout {layoutName.Value}", LoggingTarget.Runtime, LogLevel.Debug);
         }, true);
     }
 
@@ -101,8 +100,6 @@ public partial class LayoutManager : Component
 
                 layout.ID = Path.GetFileNameWithoutExtension(path);
                 Layouts.Add(layout);
-
-                Logger.Log($"Loaded layout {layout.ID}", LoggingTarget.Runtime, LogLevel.Debug);
             }
             catch (Exception ex)
             {

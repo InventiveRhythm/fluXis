@@ -509,7 +509,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 Directory.CreateDirectory(folder);
 
             var path = Path.Combine(folder, $"{scoreID}.frp");
-            Logger.Log($"Saving replay to {path}", LoggingTarget.Runtime, LogLevel.Debug);
             File.WriteAllText(path, replay.Serialize());
 
             return replay;

@@ -237,8 +237,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         allowOverlays.ValueChanged += e =>
         {
-            Logger.Log($"Overlays {(e.NewValue ? "enabled" : "disabled")}", LoggingTarget.Runtime, LogLevel.Debug);
-
             if (!e.NewValue)
                 CloseOverlays();
         };
@@ -293,7 +291,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         if (panelContainer.Content != null)
         {
-            Logger.Log("Blocking link open due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);
             var panel = panelContainer.Content as Panel;
             panel?.Flash();
             return;

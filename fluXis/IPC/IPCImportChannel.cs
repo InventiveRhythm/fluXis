@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 
 namespace fluXis.IPC;
@@ -11,18 +10,12 @@ public class IPCImportChannel : IpcChannel<IPCImportRequest>
     {
         MessageReceived += msg =>
         {
-            Logger.Log($"IPCImportChannel: {msg.Path}", LoggingTarget.Runtime, LogLevel.Important);
-
             game?.WaitForReady(() => game.HandleDragDrop(new[] { msg.Path }));
             return null;
         };
     }
 
-    public async Task Import(string path)
-    {
-        Logger.Log($"IPCImportChannel: Import({path})", LoggingTarget.Runtime, LogLevel.Important);
-        await SendMessageAsync(new IPCImportRequest { Path = path });
-    }
+    public async Task Import(string path) => await SendMessageAsync(new IPCImportRequest { Path = path });
 }
 
 public class IPCImportRequest

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using fluXis.Utils;
 using osu.Framework.IO.Network;
@@ -29,17 +30,13 @@ public static class LoadingTips
             if (!storage.Exists(tip_file))
                 return;
 
-            Logger.Log("Loading tips from local storage", LoggingTarget.Runtime, LogLevel.Debug);
-
             var stream = storage.GetStream(tip_file);
             using var sr = new StreamReader(stream);
             tips = sr.ReadToEnd().Deserialize<string[]>();
-
-            Logger.Log("Tips loaded from local storage", LoggingTarget.Runtime, LogLevel.Debug);
         }
-        catch
+        catch (Exception ex)
         {
-            Logger.Log("Failed to load tips from local storage", LoggingTarget.Runtime, LogLevel.Error);
+            Logger.Error(ex, "Failed to load tips from local storage!", LoggingTarget.Network);
         }
     }
 
@@ -47,22 +44,17 @@ public static class LoadingTips
     {
         try
         {
-            Logger.Log("Downloading tips from web...", LoggingTarget.Network, LogLevel.Debug);
             var req = new WebRequest(online_path);
             await req.PerformAsync();
             var json = req.GetResponseString();
             tips = json.Deserialize<string[]>();
 
-            Logger.Log("Saving tips to local storage...", LoggingTarget.Network, LogLevel.Debug);
-
             var path = storage.GetFullPath(tip_file);
             await File.WriteAllTextAsync(path, json);
-
-            Logger.Log("Tips saved to local storage", LoggingTarget.Network, LogLevel.Debug);
         }
-        catch
+        catch (Exception ex)
         {
-            Logger.Log("Failed to download tips from web", LoggingTarget.Network, LogLevel.Error);
+            Logger.Error(ex, "Failed to download tips from web!", LoggingTarget.Network);
         }
     }
 }

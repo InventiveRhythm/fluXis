@@ -6,7 +6,6 @@ using fluXis.Skinning;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Gameplay.Ruleset;
 
@@ -55,7 +54,6 @@ public partial class LaneSwitchManager : CompositeComponent
 
         CurrentCount = keycount;
         HitPosition = skin.SkinJson.GetKeymode(keycount).HitPosition;
-        Logger.Log($"count is {keycount}");
 
         for (int i = 0; i < keycount; i++)
         {

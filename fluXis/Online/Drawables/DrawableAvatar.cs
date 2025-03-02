@@ -7,7 +7,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 
 namespace fluXis.Online.Drawables;
 
@@ -66,7 +65,6 @@ public partial class DrawableAvatar : Sprite
 
     private void reload(string hash)
     {
-        Logger.Log($"updating to {hash}");
         user!.AvatarHash = hash;
         Scheduler.ScheduleOnceIfNeeded(setTexture);
     }

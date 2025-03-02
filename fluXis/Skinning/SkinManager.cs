@@ -112,7 +112,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
             SkinFolder = e.NewValue;
             currentSkin = loadSkin(SkinFolder);
-            Logger.Log($"Switched skin to '{SkinFolder}'", LoggingTarget.Information);
 
             SkinChanged?.Invoke();
         }, true);
@@ -155,8 +154,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             entry.ExtractToFile(filePath, true);
         }
 
-        Logger.Log($"Imported skin '{folder}'", LoggingTarget.Information);
-
         zip.Dispose();
         File.Delete(file);
 
@@ -194,7 +191,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             zip.CreateEntryFromFile(file, relativePath[1..]);
         }
 
-        Logger.Log($"Exported skin '{SkinFolder}' to '{zipPath}'", LoggingTarget.Information);
         game.ExportStorage.PresentFileExternally(zipPath);
     }
 
@@ -204,7 +200,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
         var path = skinStorage.GetFullPath(folder);
         Directory.Delete(path, true);
-        Logger.Log($"Deleted skin '{folder}'", LoggingTarget.Information);
 
         if (folder == SkinFolder)
             skinName.Value = default_skin_name;
@@ -241,7 +236,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             {
                 var path = skinStorage.GetFullPath($"{folder}/skin.json");
                 skinJson = File.ReadAllText(path).Deserialize<SkinJson>();
-                Logger.Log($"Loaded skin.json from '{folder}'", LoggingTarget.Information);
             }
             else
                 Logger.Log($"No skin.json in folder '{folder}' found, using default skin.json", LoggingTarget.Information);
