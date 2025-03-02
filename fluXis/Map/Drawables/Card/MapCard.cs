@@ -9,6 +9,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Online.Drawables;
 using fluXis.Online.Fluxel;
@@ -22,7 +23,6 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Framework.Platform;
 using osuTK;
 
 namespace fluXis.Map.Drawables.Card;
@@ -38,9 +38,6 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     [CanBeNull]
     [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
-
-    [Resolved]
-    private GameHost host { get; set; }
 
     [Resolved]
     private IAPIClient api { get; set; }
@@ -107,13 +104,13 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
     public MapCard(APIMapSet mapSet)
     {
         MapSet = mapSet;
+        Height = 112;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         Width = CardWidth;
-        Height = 112;
         CornerRadius = 16;
         Masking = true;
 
@@ -175,7 +172,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                         RelativeSizeAxes = Axes.Both,
                         ColumnDimensions = new[]
                         {
-                            new Dimension(GridSizeMode.Absolute, 112),
+                            new Dimension(GridSizeMode.Absolute, Height),
                             new Dimension()
                         },
                         Content = new[]
@@ -184,7 +181,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                             {
                                 new LoadWrapper<DrawableOnlineCover>
                                 {
-                                    Size = new Vector2(112),
+                                    Size = new Vector2(Height),
                                     CornerRadius = 16,
                                     Masking = true,
                                     LoadContent = () => new DrawableOnlineCover(MapSet),
@@ -201,14 +198,13 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(-3),
+                                            Spacing = new Vector2(4),
                                             Children = new Drawable[]
                                             {
                                                 new GridContainer
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    AutoSizeAxes = Axes.Y,
-                                                    RowDimensions = new Dimension[] { new(GridSizeMode.AutoSize) },
+                                                    Height = 16,
                                                     ColumnDimensions = new Dimension[]
                                                     {
                                                         new(),
@@ -222,6 +218,8 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                             {
                                                                 RelativeSizeAxes = Axes.X,
                                                                 Text = MapSet.LocalizedTitle,
+                                                                Anchor = Anchor.CentreLeft,
+                                                                Origin = Anchor.CentreLeft,
                                                                 WebFontSize = 18,
                                                                 Shadow = true
                                                             },
@@ -240,17 +238,19 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                         }
                                                     }
                                                 },
-                                                new TruncatingText
+                                                new ForcedHeightText(true)
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     Text = $"by {MapSet.LocalizedArtist}",
+                                                    Height = 16,
                                                     WebFontSize = 14,
                                                     Shadow = true
                                                 },
-                                                new TruncatingText
+                                                new ForcedHeightText(true)
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     Text = $"mapped by {MapSet.Creator?.PreferredName}",
+                                                    Height = 10,
                                                     WebFontSize = 12,
                                                     Shadow = true,
                                                     Alpha = .8f
@@ -278,7 +278,7 @@ public partial class MapCard : Container, IHasCustomTooltip<APIMapSet>, IHasCont
                                                     },
                                                     TextColour = Colour4.Black.Opacity(.75f),
                                                     BackgroundColour = FluXisColors.GetStatusColor(MapSet.Status),
-                                                    EdgeEffect = FluXisStyles.ShadowSmallNoOffset,
+                                                    EdgeEffect = FluXisStyles.ShadowSmallNoOffset
                                                 },
                                                 new RoundedChip
                                                 {

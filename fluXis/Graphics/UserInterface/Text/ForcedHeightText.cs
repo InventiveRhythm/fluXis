@@ -44,10 +44,11 @@ public partial class ForcedHeightText : CompositeDrawable
 
     public ForcedHeightText(bool truncate = false)
     {
-        AutoSizeAxes = Axes.X;
+        if (!truncate)
+            AutoSizeAxes = Axes.X;
 
-        InternalChild = text = truncate ? new TruncatingText() : new FluXisSpriteText();
-        text.Anchor = Anchor.Centre;
-        text.Origin = Anchor.Centre;
+        InternalChild = text = truncate ? new TruncatingText { RelativeSizeAxes = Axes.X } : new FluXisSpriteText();
+        text.Anchor = Anchor.CentreLeft;
+        text.Origin = Anchor.CentreLeft;
     }
 }
