@@ -66,7 +66,7 @@ public partial class Results : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeyb
     {
         var list = new List<Drawable>();
 
-        if (Score.HitResults is not null)
+        if (Score.HitResults is not null && Score.HitResults.Count > 0)
             list.Add(new ResultsSideGraph(Score, Map));
 
         return list.ToArray();
