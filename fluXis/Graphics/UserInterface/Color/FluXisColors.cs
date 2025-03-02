@@ -88,52 +88,43 @@ public static class FluXisColors
     public static Colour4 Difficulty25 => Colour4.FromHex("#FEFF33");
     public static Colour4 Difficulty30 => Colour4.FromHex("#FF3333");
 
-    public static Colour4 GetDifficultyColor(float difficulty)
+    public static Colour4 GetDifficultyColor(float difficulty) => difficulty switch
     {
-        return difficulty switch
-        {
-            <= 0 => DifficultyZero,
-            <= 5 => ColourInfo.GradientHorizontal(Difficulty0, Difficulty5).Interpolate(new Vector2(difficulty / 5, 0)),
-            <= 10 => ColourInfo.GradientHorizontal(Difficulty5, Difficulty10).Interpolate(new Vector2((difficulty - 5) / 5, 0)),
-            <= 15 => ColourInfo.GradientHorizontal(Difficulty10, Difficulty15).Interpolate(new Vector2((difficulty - 10) / 5, 0)),
-            <= 20 => ColourInfo.GradientHorizontal(Difficulty15, Difficulty20).Interpolate(new Vector2((difficulty - 15) / 5, 0)),
-            <= 25 => ColourInfo.GradientHorizontal(Difficulty20, Difficulty25).Interpolate(new Vector2((difficulty - 20) / 5, 0)),
-            <= 30 => ColourInfo.GradientHorizontal(Difficulty25, Difficulty30).Interpolate(new Vector2((difficulty - 25) / 5, 0)),
-            _ => Difficulty30
-        };
-    }
+        <= 0 => DifficultyZero,
+        <= 5 => ColourInfo.GradientHorizontal(Difficulty0, Difficulty5).Interpolate(new Vector2(difficulty / 5, 0)),
+        <= 10 => ColourInfo.GradientHorizontal(Difficulty5, Difficulty10).Interpolate(new Vector2((difficulty - 5) / 5, 0)),
+        <= 15 => ColourInfo.GradientHorizontal(Difficulty10, Difficulty15).Interpolate(new Vector2((difficulty - 10) / 5, 0)),
+        <= 20 => ColourInfo.GradientHorizontal(Difficulty15, Difficulty20).Interpolate(new Vector2((difficulty - 15) / 5, 0)),
+        <= 25 => ColourInfo.GradientHorizontal(Difficulty20, Difficulty25).Interpolate(new Vector2((difficulty - 20) / 5, 0)),
+        <= 30 => ColourInfo.GradientHorizontal(Difficulty25, Difficulty30).Interpolate(new Vector2((difficulty - 25) / 5, 0)),
+        _ => Difficulty30
+    };
 
-    public static Colour4 GetStatusColor(int status)
+    public static Colour4 GetStatusColor(int status) => status switch
     {
-        return status switch
-        {
-            -2 => Colour4.FromHex("#8fffc8"),
-            -1 => Colour4.FromHex("#888888"),
-            0 => Colour4.FromHex("#888888"),
-            1 => Colour4.FromHex("#f7b373"),
-            2 => Colour4.FromHex("#ff7b74"),
-            3 => Colour4.FromHex("#55b2ff"),
-            _ => Colour4.Black
-        };
-    }
+        -2 => Colour4.FromHex("#8fffc8"),
+        -1 => Colour4.FromHex("#888888"),
+        0 => Colour4.FromHex("#888888"),
+        1 => Colour4.FromHex("#f7b373"),
+        2 => Colour4.FromHex("#ff7b74"),
+        3 => Colour4.FromHex("#55b2ff"),
+        _ => Colour4.Black
+    };
 
-    public static Colour4 GetKeyColor(int keyCount)
+    public static Colour4 GetKeyColor(int keyCount) => keyCount switch
     {
-        return keyCount switch
-        {
-            1 => Colour4.FromHex("#333346"),
-            2 => Colour4.FromHex("#a53541"),
-            3 => Colour4.FromHex("#ff7a5a"),
-            4 => Colour4.FromHex("#62bafe"),
-            5 => Colour4.FromHex("#61f984"),
-            6 => Colour4.FromHex("#e3bb45"),
-            7 => Colour4.FromHex("#ec3b8d"),
-            8 => Colour4.FromHex("#7ae9e9"),
-            9 => Colour4.FromHex("#f7c5bb"),
-            10 => Colour4.FromHex("#8c4451"),
-            _ => Colour4.White
-        };
-    }
+        1 => Colour4.FromHex("#333346"),
+        2 => Colour4.FromHex("#a53541"),
+        3 => Colour4.FromHex("#ff7a5a"),
+        4 => Colour4.FromHex("#62bafe"),
+        5 => Colour4.FromHex("#61f984"),
+        6 => Colour4.FromHex("#e3bb45"),
+        7 => Colour4.FromHex("#ec3b8d"),
+        8 => Colour4.FromHex("#7ae9e9"),
+        9 => Colour4.FromHex("#f7c5bb"),
+        10 => Colour4.FromHex("#8c4451"),
+        _ => Colour4.White
+    };
 
     public static Colour4 GetLaneColor(int lane, int keyCount)
         => GetLaneColor(GetLaneColorIndex(lane, keyCount));
@@ -151,59 +142,57 @@ public static class FluXisColors
         return colors[index];
     }
 
-    public static int GetLaneColorIndex(int lane, int keyCount)
+    public static int GetLaneColorIndex(int lane, int keyCount) => keyCount switch
     {
-        return keyCount switch
+        1 => 3,
+        2 => 2,
+        3 => lane switch
         {
-            1 => 3,
-            2 => 2,
-            3 => lane switch
-            {
-                1 or 3 => 2,
-                _ => 3
-            },
-            4 => lane switch
-            {
-                1 or 4 => 1,
-                _ => 2
-            },
-            5 => lane switch
-            {
-                1 or 5 => 1,
-                2 or 4 => 2,
-                _ => 3
-            },
-            6 => lane switch
-            {
-                1 or 3 or 4 or 6 => 2,
-                _ => 1
-            },
-            7 => lane switch
-            {
-                1 or 3 or 5 or 7 => 2,
-                2 or 6 => 1,
-                _ => 3
-            },
-            8 => lane switch
-            {
-                1 or 3 or 6 or 8 => 1,
-                _ => 2
-            },
-            9 => lane switch
-            {
-                1 or 3 or 7 or 9 => 1,
-                2 or 4 or 6 or 8 => 2,
-                _ => 3
-            },
-            10 => lane switch
-            {
-                1 or 10 => 3,
-                3 or 5 or 6 or 8 => 2,
-                _ => 1
-            },
-            _ => 0
-        };
-    }
+            1 or 3 => 2,
+            _ => 3
+        },
+        4 => lane switch
+        {
+            1 or 4 => 1,
+            _ => 2
+        },
+        5 => lane switch
+        {
+            1 or 5 => 1,
+            2 or 4 => 2,
+            _ => 3
+        },
+        6 => lane switch
+        {
+            1 or 3 or 4 or 6 => 2,
+            _ => 1
+        },
+        7 => lane switch
+        {
+            2 or 6 => 1,
+            1 or 3 or 5 or 7 => 2,
+            _ => 3
+        },
+        8 => lane switch
+        {
+            2 or 7 => 1,
+            1 or 3 or 6 or 8 => 2,
+            _ => 3
+        },
+        9 => lane switch
+        {
+            1 or 3 or 7 or 9 => 1,
+            2 or 4 or 6 or 8 => 2,
+            _ => 3
+        },
+        10 => lane switch
+        {
+            1 or 3 or 8 or 10 => 1,
+            2 or 4 or 7 or 9 => 2,
+            _ => 3
+        },
+        _ => 0
+    };
 
     public static Colour4 GetEditorSnapColor(int divisor) => divisor switch
     {
@@ -218,27 +207,13 @@ public static class FluXisColors
         _ => Colour4.White
     };
 
-    public static Colour4 GetModTypeColor(ModType modType)
+    public static Colour4 GetModTypeColor(ModType modType) => modType switch
     {
-        switch (modType)
-        {
-            case ModType.Rate:
-                return Colour4.FromHex("#ffdb69");
-
-            case ModType.DifficultyDecrease:
-                return Colour4.FromHex("#b2ff66");
-
-            case ModType.DifficultyIncrease:
-                return Colour4.FromHex("#ff6666");
-
-            case ModType.Automation:
-                return Colour4.FromHex("#66b3ff");
-
-            case ModType.Misc:
-                return Colour4.FromHex("#8866ff");
-
-            default:
-                return Colour4.FromHex("#cccccc");
-        }
-    }
+        ModType.Rate => Colour4.FromHex("#ffdb69"),
+        ModType.DifficultyDecrease => Colour4.FromHex("#b2ff66"),
+        ModType.DifficultyIncrease => Colour4.FromHex("#ff6666"),
+        ModType.Automation => Colour4.FromHex("#66b3ff"),
+        ModType.Misc => Colour4.FromHex("#8866ff"),
+        _ => Colour4.FromHex("#cccccc")
+    };
 }
