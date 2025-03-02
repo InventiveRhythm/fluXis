@@ -12,6 +12,7 @@ using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar.Buttons;
 using fluXis.Screens;
 using fluXis.Screens.Menu;
+using fluXis.Screens.Multiplayer;
 using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
 using fluXis.Screens.Wiki;
@@ -126,6 +127,14 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Icon = FontAwesome6.Solid.Map,
                                 Screen = typeof(SelectScreen),
                                 Action = () => goToScreen(new SelectScreen())
+                            },
+                            new ToolbarScreenButton
+                            {
+                                TooltipTitle = "Multiplayer",
+                                TooltipSub = "Play with others.",
+                                Icon = FontAwesome6.Solid.Users,
+                                Screen = typeof(MultiplayerScreen),
+                                Action = () => goToScreen(new MultiplayerScreen())
                             },
                             new ToolbarScreenButton
                             {
