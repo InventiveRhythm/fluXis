@@ -1,4 +1,4 @@
-using fluXis.Graphics;
+using System;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
@@ -8,11 +8,11 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Screens.Browse.Search;
+namespace fluXis.Overlay.Browse;
 
 public partial class BrowserSearchBar : Container
 {
-    public MapBrowser MapBrowser { get; init; }
+    public Action<string> OnSearch { get; set; }
 
     private FluXisTextBox textBox;
 
@@ -23,7 +23,7 @@ public partial class BrowserSearchBar : Container
         Height = 60;
         CornerRadius = 10;
         Masking = true;
-        EdgeEffect = FluXisStyles.ShadowSmall;
+        // EdgeEffect = FluXisStyles.ShadowSmall;
 
         InternalChildren = new Drawable[]
         {
@@ -56,6 +56,7 @@ public partial class BrowserSearchBar : Container
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 PlaceholderText = "Search...",
+                                FontSize = FluXisSpriteText.GetWebFontSize(20),
                                 BackgroundInactive = FluXisColors.Background3,
                                 BackgroundActive = FluXisColors.Background3
                             }
@@ -91,6 +92,6 @@ public partial class BrowserSearchBar : Container
 
     private void search()
     {
-        MapBrowser.Search(textBox.Text);
+        OnSearch?.Invoke(textBox.Text);
     }
 }

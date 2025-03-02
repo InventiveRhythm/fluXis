@@ -4,13 +4,13 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Browse;
 using fluXis.Overlay.Chat;
 using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar.Buttons;
 using fluXis.Screens;
-using fluXis.Screens.Browse;
 using fluXis.Screens.Menu;
 using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
@@ -66,7 +66,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
     private double lastTime;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(BrowseOverlay browse)
     {
         RelativeSizeAxes = Axes.X;
         Height = 50;
@@ -129,15 +129,6 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             new ToolbarScreenButton
                             {
-                                TooltipTitle = "Download Maps",
-                                TooltipSub = "Download new maps.",
-                                Icon = FontAwesome6.Solid.Download,
-                                Screen = typeof(MapBrowser),
-                                Action = () => goToScreen(new MapBrowser()),
-                                RequireLogin = true
-                            },
-                            new ToolbarScreenButton
-                            {
                                 TooltipTitle = "Ranking",
                                 TooltipSub = "See the top players.",
                                 Icon = FontAwesome6.Solid.Trophy,
@@ -180,6 +171,14 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Icon = FontAwesome6.Solid.ChartLine,
                                 Overlay = dashboard,
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
+                                RequireLogin = true
+                            },
+                            new ToolbarOverlayButton
+                            {
+                                TooltipTitle = "Browse",
+                                TooltipSub = "Download community-made maps.",
+                                Icon = FontAwesome6.Solid.EarthAmericas,
+                                Overlay = browse,
                                 RequireLogin = true
                             },
                             new ToolbarScreenButton

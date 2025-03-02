@@ -14,10 +14,10 @@ using fluXis.Map;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
+using fluXis.Overlay.Browse;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
-using fluXis.Screens.Browse;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Menu.UI;
 using fluXis.Screens.Menu.UI.Buttons;
@@ -26,7 +26,6 @@ using fluXis.Screens.Menu.UI.Snow;
 using fluXis.Screens.Menu.UI.Updates;
 using fluXis.Screens.Menu.UI.Visualizer;
 using fluXis.Screens.Multiplayer;
-using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
 using fluXis.UI;
 using fluXis.Utils.Extensions;
@@ -80,6 +79,9 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private Dashboard dashboard { get; set; }
+
+    [Resolved]
+    private BrowseOverlay browse { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -387,9 +389,8 @@ public partial class MenuScreen : FluXisScreen
 
     private void continueToPlay() => this.Push(new SelectScreen());
     private void continueToMultiplayer() => this.Push(new MultiplayerScreen());
-    private void continueToRankings() => this.Push(new Rankings());
     private void openDashboard() => dashboard.Show();
-    private void continueToBrowse() => this.Push(new MapBrowser());
+    private void continueToBrowse() => browse.Show();
 
     public bool CanPlayAnimation()
     {
