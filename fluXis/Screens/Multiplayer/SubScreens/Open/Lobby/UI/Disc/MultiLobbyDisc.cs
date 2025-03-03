@@ -95,28 +95,25 @@ public partial class MultiLobbyDisc : CircularContainer
                     Spacing = new Vector2(8),
                     Children = new Drawable[]
                     {
-                        title = new ForcedHeightText(true)
+                        title = new ForcedHeightText(true, 800)
                         {
                             WebFontSize = 32,
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
-                            MaxWidth = 800,
                             Shadow = true
                         },
-                        artist = new ForcedHeightText(true)
+                        artist = new ForcedHeightText(true, 800)
                         {
                             WebFontSize = 24,
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
-                            MaxWidth = 800,
                             Shadow = true
                         },
-                        difficulty = new ForcedHeightText(true)
+                        difficulty = new ForcedHeightText(true, 800)
                         {
                             WebFontSize = 16,
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
-                            MaxWidth = 800,
                             Shadow = true,
                             Alpha = .8f
                         },

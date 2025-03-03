@@ -19,12 +19,6 @@ public partial class ForcedHeightText : CompositeDrawable
         set => text.FontSize = value;
     }
 
-    public float MaxWidth
-    {
-        get => text.MaxWidth;
-        set => text.MaxWidth = value;
-    }
-
     public float WebFontSize
     {
         set
@@ -42,13 +36,16 @@ public partial class ForcedHeightText : CompositeDrawable
 
     private FluXisSpriteText text { get; }
 
-    public ForcedHeightText(bool truncate = false)
+    public ForcedHeightText(bool truncate = false, float max = 0)
     {
-        if (!truncate)
+        if (!truncate || max > 0)
             AutoSizeAxes = Axes.X;
 
-        InternalChild = text = truncate ? new TruncatingText { RelativeSizeAxes = Axes.X } : new FluXisSpriteText();
+        InternalChild = text = truncate ? new TruncatingText() : new FluXisSpriteText();
         text.Anchor = Anchor.CentreLeft;
         text.Origin = Anchor.CentreLeft;
+
+        if (max <= 0)
+            text.RelativeSizeAxes = Axes.X;
     }
 }
