@@ -1,15 +1,19 @@
 using System.Collections.Generic;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Multi;
+using fluXis.Online.Drawables;
 using fluXis.Online.Multiplayer;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
@@ -42,8 +46,8 @@ public partial class PlayerListEntry : Container, IHasContextMenu
     [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
-    private PlayerListEntryContent content;
-    private LoadingIcon loadingIcon;
+    private Box stateBackground;
+    private FluXisSpriteText stateText;
 
     public PlayerListEntry(MultiplayerParticipant participant)
     {
@@ -58,39 +62,99 @@ public partial class PlayerListEntry : Container, IHasContextMenu
 
         Children = new Drawable[]
         {
-            new LoadWrapper<PlayerListEntryContent>
+            new LoadWrapper<DrawableAvatar>
             {
-                RelativeSizeAxes = Axes.Both,
-                LoadContent = () => content = new PlayerListEntryContent(Participant),
-                OnComplete = d =>
+                Size = new Vector2(80),
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                CornerRadius = 10,
+                Masking = true,
+                LoadContent = () => new DrawableAvatar(Participant.Player)
                 {
-                    d.FadeInFromZero(400);
-                    loadingIcon.FadeOut(400);
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
                 }
             },
-            loadingIcon = new LoadingIcon
+            new FillFlowContainer
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = new Vector2(30)
+                AutoSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Left = 90 },
+                Direction = FillDirection.Vertical,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Children = new Drawable[]
+                {
+                    Participant.Player.NamePaint is not null
+                        ? new GradientText
+                        {
+                            Text = Participant.Player.Username,
+                            WebFontSize = 20,
+                            Colour = Participant.Player.NamePaint.Colors.CreateColorInfo()
+                        }
+                        : new FluXisSpriteText
+                        {
+                            Text = Participant.Player.Username,
+                            WebFontSize = 20
+                        },
+                    new CircularContainer
+                    {
+                        Size = new Vector2(100, 20),
+                        Masking = true,
+                        Children = new Drawable[]
+                        {
+                            stateBackground = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background1
+                            },
+                            stateText = new FluXisSpriteText
+                            {
+                                Text = "Not Ready",
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                WebFontSize = 12,
+                                Alpha = .75f
+                            }
+                        }
+                    }
+                }
             }
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        SetState(Participant.State);
+    }
+
     public void SetState(MultiplayerUserState state)
     {
-        if (content is null)
+        if (!IsLoaded)
         {
             Schedule(() => SetState(state));
             return;
         }
 
-        if (!content.IsLoaded)
+        stateBackground.Colour = state switch
         {
-            content.OnLoadComplete += _ => content.SetState(state);
-            return;
-        }
+            MultiplayerUserState.Ready => Colour4.FromHex("#57FF57"),
+            MultiplayerUserState.Playing => Colour4.FromHex("#FFC657"),
+            MultiplayerUserState.Finished => Colour4.FromHex("#FFC657"),
+            MultiplayerUserState.Results => Colour4.FromHex("#57C7FF"),
+            _ => FluXisColors.Background1
+        };
 
-        content.SetState(state);
+        stateText.Text = state switch
+        {
+            MultiplayerUserState.Ready => "Ready",
+            MultiplayerUserState.Playing => "Playing",
+            MultiplayerUserState.Finished => "Playing", // they are just waiting for the results
+            MultiplayerUserState.Results => "Results",
+            _ => "Not Ready"
+        };
+
+        stateText.Colour = FluXisColors.IsBright(stateBackground.Colour) ? Colour4.Black : FluXisColors.Text;
     }
 }

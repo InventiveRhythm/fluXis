@@ -94,7 +94,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Schedule(() =>
         {
             var part = Room.Participants.FirstOrDefault(x => x.ID == id);
-            Room.Host = part?.User ?? APIUser.CreateUnknown(id);
+            Room.Host = part?.Player ?? APIUser.CreateUnknown(id);
             OnHostChange?.Invoke(id);
         });
 
