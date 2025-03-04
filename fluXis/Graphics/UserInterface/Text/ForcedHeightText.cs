@@ -45,7 +45,10 @@ public partial class ForcedHeightText : CompositeDrawable
         text.Anchor = Anchor.CentreLeft;
         text.Origin = Anchor.CentreLeft;
 
-        if (max <= 0)
+        if (max > 0)
+            text.MaxWidth = max;
+
+        if (truncate && max <= 0)
             text.RelativeSizeAxes = Axes.X;
     }
 }
