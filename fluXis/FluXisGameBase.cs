@@ -38,6 +38,7 @@ using fluXis.UI;
 using fluXis.UI.Tips;
 using fluXis.Updater;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Configuration;
@@ -88,8 +89,12 @@ public partial class FluXisGameBase : osu.Framework.Game
     private KeybindStore keybindStore;
     private ImportManager importManager;
 
-    private Storage exportStorage;
+    [CanBeNull]
+    protected IUpdatePerformer UpdatePerformer { get; private set; }
 
+    public bool CanUpdate => UpdatePerformer is not null;
+
+    private Storage exportStorage;
     public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
 
     public Season CurrentSeason { get; private set; }
@@ -175,6 +180,8 @@ public partial class FluXisGameBase : osu.Framework.Game
             uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
 
             cacheComponent(NotificationManager = new NotificationManager());
+
+            UpdatePerformer = CreateUpdatePerformer();
 
             cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
             cacheComponent(APIClient as FluxelClient);
@@ -319,12 +326,10 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public void PerformUpdateCheck(bool silent) => Task.Run(() =>
     {
-        var performer = CreateUpdatePerformer();
-
-        if (performer is null)
+        if (UpdatePerformer is null)
             return;
 
-        performer.Perform(silent, Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel) == ReleaseChannel.Beta);
+        UpdatePerformer.Perform(silent, Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel) == ReleaseChannel.Beta);
     });
 
     private Season getSeason()

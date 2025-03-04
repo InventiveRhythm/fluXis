@@ -15,7 +15,6 @@ namespace fluXis.Desktop;
 public partial class FluXisGameDesktop : FluXisGame
 {
     private IPCImportChannel ipc;
-    private VelopackUpdatePerformer updatePerformer;
 
     public override void SetHost(GameHost host)
     {
@@ -23,7 +22,6 @@ public partial class FluXisGameDesktop : FluXisGame
 
         var window = host.Window;
         window.Title = "fluXis " + VersionString;
-        // window.ConfineMouseMode.Value = ConfineMouseMode.Never;
         window.CursorState = CursorState.Hidden;
         window.DragDrop += f => Task.Run(() => HandleDragDrop(f));
     }
@@ -52,7 +50,7 @@ public partial class FluXisGameDesktop : FluXisGame
         WaitForReady(() => HandleDragDrop(args.ToArray()));
     }
 
-    protected override bool RestartOnClose() => updatePerformer?.RestartOnClose() ?? false;
+    protected override bool RestartOnClose() => (UpdatePerformer as VelopackUpdatePerformer)?.RestartOnClose() ?? false;
 
     protected override void Dispose(bool isDisposing)
     {
@@ -61,5 +59,12 @@ public partial class FluXisGameDesktop : FluXisGame
     }
 
     public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
-    public override IUpdatePerformer CreateUpdatePerformer() => OperatingSystem.IsWindows() ? updatePerformer ??= new VelopackUpdatePerformer(NotificationManager) : null;
+
+    public override IUpdatePerformer CreateUpdatePerformer()
+    {
+        if (Steam.Initialized || !OperatingSystem.IsWindows())
+            return null;
+
+        return new VelopackUpdatePerformer(NotificationManager);
+    }
 }
