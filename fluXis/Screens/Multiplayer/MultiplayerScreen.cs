@@ -182,6 +182,9 @@ public partial class MultiplayerScreen : FluXisScreen
     {
         if (!canExit()) return true;
 
+        var screen = screenStack.CurrentScreen as MultiSubScreen;
+        screen?.OnSuspending(null);
+
         menuMusic.StopAll();
         this.Delay(FADE_DURATION).FadeOut();
 
