@@ -1,3 +1,4 @@
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,14 +10,20 @@ namespace fluXis.Graphics.UserInterface.Color;
 
 public partial class FluXisHexColorPicker : HexColourPicker
 {
-    protected override TextBox CreateHexCodeTextBox() => new FluXisTextBox { Height = 40 };
+    protected override TextBox CreateHexCodeTextBox() => new FluXisTextBox
+    {
+        FontSize = FluXisSpriteText.GetWebFontSize(14),
+        FixedWidth = true,
+        Height = 32
+    };
+
     protected override ColourPreview CreateColourPreview() => new FluXisColorPreview();
 
     public FluXisHexColorPicker()
     {
-        Padding = new MarginPadding(20);
-        Spacing = 20;
-        Background.Colour = FluXisColors.Background4;
+        Padding = new MarginPadding(16) { Top = 8 };
+        Spacing = 16;
+        Background.Colour = Colour4.Transparent;
     }
 
     private partial class FluXisColorPreview : ColourPreview

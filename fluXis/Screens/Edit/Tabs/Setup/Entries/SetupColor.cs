@@ -86,6 +86,7 @@ public partial class SetupColor : SetupEntry, IHasPopover
 
     public Popover GetPopover() => new FluXisPopover
     {
+        ContentPadding = 0,
         Child = new FluXisColorPicker { Current = { BindTarget = bindableColor } }
     };
 }
