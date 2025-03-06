@@ -148,5 +148,6 @@ public class FontAwesome6
 
         public static IconUsage Discord => getBrands(0xf392);
         public static IconUsage GitHub => getBrands(0xf09b);
+        public static IconUsage Steam => getBrands(0xf1b6);
     }
 }

@@ -8,6 +8,7 @@ using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
+using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -33,6 +34,9 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                 new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
                 new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
+
+            if (user.SteamID is not null)
+                list.Add(new FluXisMenuItem("View Steam Profile", FontAwesome6.Brands.Steam, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
 
             if (FluXisGameBase.IsDebug)
             {
