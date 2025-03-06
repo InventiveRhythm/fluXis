@@ -74,6 +74,9 @@ public partial class SteamManager : Component
     {
         base.Update();
 
+        if (!Initialized)
+            return;
+
         var delta = Time.Current - lastUpdate;
 
         if (delta < 50)
