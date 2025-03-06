@@ -13,6 +13,9 @@ public class APIUser
     [JsonProperty("id")]
     public long ID { get; init; }
 
+    [JsonProperty("steam")]
+    public ulong? SteamID { get; set; }
+
     [JsonProperty("username")]
     public string Username { get; set; } = null!;
 
