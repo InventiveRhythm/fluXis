@@ -28,7 +28,7 @@ public partial class TestMapList : FluXisTestScene
             TestDependencies.Cache(new PanelContainer());
             TestDependencies.Cache(new SettingsMenu());
 
-            var screen = new SelectScreen();
+            var screen = new SoloSelectScreen();
             TestDependencies.Cache(screen);
             LoadComponent(screen);
         }

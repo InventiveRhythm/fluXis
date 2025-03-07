@@ -387,7 +387,7 @@ public partial class MenuScreen : FluXisScreen
         });
     }
 
-    private void continueToPlay() => this.Push(new SelectScreen());
+    private void continueToPlay() => this.Push(new SoloSelectScreen());
     private void continueToMultiplayer() => this.Push(new MultiplayerScreen());
     private void openDashboard() => dashboard.Show();
     private void continueToBrowse() => browse.Show();

@@ -262,7 +262,7 @@ public partial class MultiLobby : MultiSubScreen
         playerList.RemovePlayer(user.ID);
     }
 
-    private void changeMap() => this.Push(new MultiSongSelect(async void (map, mods) =>
+    private void changeMap() => this.Push(new MultiSelectScreen(async void (map, mods) =>
     {
         try
         {

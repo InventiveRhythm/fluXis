@@ -9,7 +9,7 @@ using osu.Framework.Graphics;
 
 namespace fluXis.Tests.Multiplayer;
 
-public partial class TestMultiSongSelect : FluXisTestScene
+public partial class TestMultiSelectScreen : FluXisTestScene
 {
     [BackgroundDependencyLoader]
     private void load(MapStore store)
@@ -38,6 +38,6 @@ public partial class TestMultiSongSelect : FluXisTestScene
 
         store.CurrentMap = store.GetRandom()?.LowestDifficulty;
 
-        AddStep("Push SongSelect", () => stack.Push(new MultiSongSelect(null)));
+        AddStep("Push SongSelect", () => stack.Push(new MultiSelectScreen(null)));
     }
 }

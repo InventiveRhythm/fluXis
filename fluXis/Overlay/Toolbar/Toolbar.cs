@@ -126,7 +126,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipSub = "Browse your maps.",
                                 Icon = FontAwesome6.Solid.Map,
                                 Screen = typeof(SelectScreen),
-                                Action = () => goToScreen(new SelectScreen())
+                                Action = () => goToScreen(new SoloSelectScreen())
                             },
                             new ToolbarScreenButton
                             {

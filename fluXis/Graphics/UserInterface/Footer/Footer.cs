@@ -17,11 +17,11 @@ namespace fluXis.Graphics.UserInterface.Footer;
 
 public abstract partial class Footer : CompositeDrawable
 {
-    public Container<FooterButton> ButtonContainer { get; private set; } = null!;
+    public CornerButton? LeftButton { get; private set; }
+    protected Container<FooterButton> Buttons { get; private set; } = null!;
+    public CornerButton? RightButton { get; private set; }
 
     private Container background = null!;
-    public CornerButton? LeftButton { get; private set; }
-    public CornerButton? RightButton { get; private set; }
     private Container content = null!;
     private GamepadTooltipBar? gamepadTooltips;
 
@@ -65,7 +65,7 @@ public abstract partial class Footer : CompositeDrawable
         if (LeftButton != null)
             content.Add(LeftButton);
 
-        content.Add(ButtonContainer = new Container<FooterButton>
+        content.Add(Buttons = new Container<FooterButton>
         {
             RelativeSizeAxes = Axes.Y,
             AutoSizeAxes = Axes.X,
@@ -105,7 +105,7 @@ public abstract partial class Footer : CompositeDrawable
 
         var x = 0f;
 
-        foreach (var button in ButtonContainer)
+        foreach (var button in Buttons)
         {
             button.X = x;
             x += button.DrawWidth + 10;
@@ -135,8 +135,8 @@ public abstract partial class Footer : CompositeDrawable
         LeftButton?.Show();
         RightButton?.Show();
         background.MoveToY(0, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        ButtonContainer.MoveToY(0);
-        ButtonContainer.ForEach(b => b.Show());
+        Buttons.MoveToY(0);
+        Buttons.ForEach(b => b.Show());
     }
 
     public override void Hide()
@@ -144,7 +144,7 @@ public abstract partial class Footer : CompositeDrawable
         LeftButton?.Hide();
         RightButton?.Hide();
         background.MoveToY(80, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-        ButtonContainer.MoveToY(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        Buttons.MoveToY(100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
     }
 
     protected abstract CornerButton? CreateLeftButton();

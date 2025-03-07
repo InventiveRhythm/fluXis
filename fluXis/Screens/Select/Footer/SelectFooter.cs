@@ -12,6 +12,8 @@ using fluXis.Screens.Select.Footer.Options;
 using fluXis.UI;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Input.Events;
+using osuTK.Input;
 
 namespace fluXis.Screens.Select.Footer;
 
@@ -146,6 +148,24 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
     };
 
     #endregion
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        switch (e.Key)
+        {
+            case >= Key.F1 and <= Key.F12:
+            {
+                var index = (int)e.Key - (int)Key.F1;
+
+                if (index < Buttons.Count)
+                    Buttons[index].TriggerClick();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void OpenSettings()
     {

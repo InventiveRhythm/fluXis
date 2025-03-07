@@ -350,7 +350,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             MenuScreen.MakeCurrent();
 
             if (MenuScreen.IsCurrentScreen())
-                MenuScreen.Push(new SelectScreen());
+                MenuScreen.Push(new SoloSelectScreen());
         }
     }
 

@@ -195,7 +195,7 @@ public partial class MultiLobbyList : MultiSubScreen
         base.OnResuming(e);
     }
 
-    private void startCreate() => this.Push(new MultiSongSelect(create));
+    private void startCreate() => this.Push(new MultiSelectScreen(create));
 
     private async void create(RealmMap map, List<string> mods)
     {
