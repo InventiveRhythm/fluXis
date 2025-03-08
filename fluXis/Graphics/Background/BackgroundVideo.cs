@@ -50,7 +50,7 @@ public partial class BackgroundVideo : CompositeDrawable
 
                 if (!old.IsLoaded)
                 {
-                    video.OnLoadComplete += v => v.Expire();
+                    old.OnLoadComplete += v => v.Expire();
                     return;
                 }
 
