@@ -258,10 +258,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                                 },
                                 backgroundVideo = new BackgroundVideo
                                 {
-                                    ShowDim = false,
-                                    Clock = GameplayClock,
-                                    Map = RealmMap,
-                                    Info = Map
+                                    Clock = GameplayClock
                                 },
                                 new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
                                 new Box
@@ -305,7 +302,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         clockContainer.Add(new BeatPulseManager(Map, MapEvents.BeatPulseEvents, keybindContainer));
 
-        backgroundVideo.LoadVideo();
+        backgroundVideo.LoadVideo(Map);
 
         RulesetContainer.Input.OnPress += replayRecorder.PressKey;
         RulesetContainer.Input.OnRelease += replayRecorder.ReleaseKey;

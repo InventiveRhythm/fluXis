@@ -1,12 +1,9 @@
 using System;
-using fluXis.Configuration;
-using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Video;
 using osu.Framework.Logging;
 using osu.Framework.Timing;
@@ -15,30 +12,20 @@ namespace fluXis.Graphics.Background;
 
 public partial class BackgroundVideo : CompositeDrawable
 {
-    public IFrameBasedClock VideoClock { get; set; }
-    public bool ShowDim { get; init; } = true;
-
-    public RealmMap Map { get; set; }
-    public MapInfo Info { get; set; }
+    public IFrameBasedClock VideoClock { get; init; }
 
     public Action PlaybackStarted { get; set; }
     public bool IsPlaying { get; private set; }
-    private bool waitingForLoad;
 
     private Container videoContainer;
     private Video video;
-    private Box dim;
-
-    private Bindable<float> backgroundDim;
 
     [BackgroundDependencyLoader]
-    private void load(FluXisConfig config)
+    private void load()
     {
         RelativeSizeAxes = Axes.Both;
         AlwaysPresent = true;
         Alpha = 0;
-
-        backgroundDim = config.GetBindable<float>(FluXisSetting.BackgroundDim);
 
         InternalChildren = new Drawable[]
         {
@@ -47,73 +34,57 @@ public partial class BackgroundVideo : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
-            },
-            dim = new Box
-            {
-                Colour = Colour4.Black,
-                RelativeSizeAxes = Axes.Both,
-                Alpha = 0
             }
         };
     }
 
-    protected override void LoadComplete()
+    public void LoadVideo(MapInfo map)
     {
-        base.LoadComplete();
-
-        if (ShowDim)
-            backgroundDim.BindValueChanged(v => dim.FadeTo(v.NewValue, 400, Easing.OutQuint), true);
-    }
-
-    public void LoadVideo()
-    {
-        if (string.IsNullOrWhiteSpace(Info?.VideoFile))
+        if (video != null)
         {
-            Schedule(() =>
-            {
-                if (video == null) return;
+            var old = video;
 
-                if (!video.IsLoaded)
+            Scheduler.ScheduleIfNeeded(() =>
+            {
+                if (old == null) return;
+
+                if (!old.IsLoaded)
                 {
                     video.OnLoadComplete += v => v.Expire();
                     return;
                 }
 
-                this.FadeOut(500);
-                video.Delay(500).Expire();
-                video = null;
+                this.FadeOut(400);
+                old.Delay(400).Expire();
+                old = null;
             });
-            return;
+
+            video = null;
         }
+
+        if (string.IsNullOrWhiteSpace(map?.VideoFile))
+            return;
 
         try
         {
-            var stream = Info?.GetVideoStream();
+            var stream = map?.GetVideoStream();
 
             if (stream == null)
                 return;
 
-            waitingForLoad = true;
-
-            Schedule(() =>
+            video = new Video(stream, false)
             {
-                LoadComponentAsync(video = new Video(stream, false)
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    FillMode = FillMode.Fill,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
-                }, loadedVideo =>
-                {
-                    videoContainer.Child = loadedVideo;
-                    waitingForLoad = false;
-                });
-            });
+                RelativeSizeAxes = Axes.Both,
+                FillMode = FillMode.Fill,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            };
+
+            Scheduler.ScheduleIfNeeded(() => LoadComponentAsync(video, videoContainer.Add));
         }
         catch (Exception e)
         {
             Logger.Error(e, "Failed to load video!");
-            waitingForLoad = false;
         }
     }
 
@@ -126,11 +97,11 @@ public partial class BackgroundVideo : CompositeDrawable
         var clock = VideoClock ?? Clock;
 
         if (clock.CurrentTime > 2000 && Alpha == 0 && IsPlaying)
-            this.FadeIn(500); // workaround for editor playtesting
+            this.FadeIn(400); // workaround for editor playtesting
 
         if (clock.CurrentTime > video.Duration)
         {
-            this.FadeOut(500);
+            this.FadeOut(400);
             return;
         }
 
@@ -149,18 +120,13 @@ public partial class BackgroundVideo : CompositeDrawable
         }
 
         IsPlaying = false;
-        this.FadeOut(500);
+        this.FadeOut(400);
     }
 
     public void Start()
     {
         if (video == null)
-        {
-            if (waitingForLoad)
-                Scheduler.AddOnce(Start);
-
             return;
-        }
 
         if (!video.IsLoaded)
         {
@@ -170,6 +136,6 @@ public partial class BackgroundVideo : CompositeDrawable
 
         IsPlaying = true;
         PlaybackStarted?.Invoke();
-        this.FadeIn(500);
+        this.FadeIn(400);
     }
 }

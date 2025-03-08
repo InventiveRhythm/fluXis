@@ -82,8 +82,7 @@ public partial class DesignContainer : EditorTabContainer
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    VideoClock = EditorClock,
-                    ShowDim = false
+                    VideoClock = EditorClock
                 },
                 backgroundDim = new Box
                 {
@@ -109,9 +108,7 @@ public partial class DesignContainer : EditorTabContainer
     {
         base.LoadComplete();
 
-        backgroundVideo.Map = Map.RealmMap;
-        backgroundVideo.Info = Map.MapInfo;
-        backgroundVideo.LoadVideo();
+        backgroundVideo.LoadVideo(Map.MapInfo);
 
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Map.AnyChange += t =>

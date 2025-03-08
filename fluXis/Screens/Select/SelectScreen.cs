@@ -152,8 +152,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                                 FillMode = FillMode.Fill,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                VideoClock = clock,
-                                ShowDim = false
+                                VideoClock = clock
                             },
                             storyboardContainer = new Container
                             {
@@ -512,10 +511,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             var map = set.LowestDifficulty!;
             var info = map.GetMapInfo();
 
-            video.Map = map;
-            video.Info = info;
-
-            video.LoadVideo();
+            video.LoadVideo(info);
             ScheduleAfterChildren(video.Start);
 
             try
