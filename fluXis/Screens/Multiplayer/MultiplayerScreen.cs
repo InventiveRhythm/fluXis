@@ -140,16 +140,18 @@ public partial class MultiplayerScreen : FluXisScreen
 
     private bool canExit()
     {
-        while (screenStack.CurrentScreen != null && screenStack.CurrentScreen is not MultiModeSelect)
+        while (true)
         {
-            var subScreen = (MultiSubScreen)screenStack.CurrentScreen;
-            if (subScreen.IsLoaded && subScreen.OnExiting(null))
+            var screen = screenStack.CurrentScreen as Screen;
+
+            if (screen is null or MultiModeSelect)
+                return true;
+
+            if (screen.IsLoaded && screen.OnExiting(null))
                 return false;
 
-            subScreen.Exit();
+            screen.Exit();
         }
-
-        return true;
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
