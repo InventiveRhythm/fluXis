@@ -164,8 +164,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
         var req = new MapSetsRequest(offset, 48, currentQuery);
         req.Success += response =>
         {
-            if (response.Data.Count == 0)
-                loadedAll = true;
+            loadedAll = response.Data.Count == 0;
 
             foreach (var mapSet in response.Data)
             {
