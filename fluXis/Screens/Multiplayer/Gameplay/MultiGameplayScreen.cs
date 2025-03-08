@@ -87,7 +87,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         Scheduler.ScheduleOnceIfNeeded(() =>
         {
             if (this.IsCurrentScreen())
-                this.Push(new MultiResults(RealmMap, scores));
+                this.Push(new MultiplayerResults(RealmMap, scores, client));
         });
     }
 
