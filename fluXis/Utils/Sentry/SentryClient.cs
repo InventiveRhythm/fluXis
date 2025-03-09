@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
 using fluXis.Configuration;
+using fluXis.Map;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Users;
 using osu.Framework;
@@ -17,6 +18,9 @@ namespace fluXis.Utils.Sentry;
 
 public partial class SentryClient : Component
 {
+    [Resolved]
+    private MapStore maps { get; set; }
+
     private FluXisGame game { get; }
     private IDisposable session { get; }
     private IBindable<APIUser> user { get; set; }
@@ -96,9 +100,17 @@ public partial class SentryClient : Component
                 Framework = game.Dependencies.Get<FrameworkConfigManager>()?.GetCurrentConfigurationForLogging(),
             };
 
+            if (maps is not null)
+            {
+                scope.Contexts["selected"] = new
+                {
+                    map = maps.CurrentMap
+                };
+            }
+
             scope.Contexts["hashes"] = new
             {
-                Game = game.ClientHash,
+                game = game.ClientHash,
                 plugins = game.Plugins?.Plugins.ToDictionary(x => x.Name, x => x.Hash)
             };
         });

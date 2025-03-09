@@ -116,6 +116,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             }
         };
 
+        loadComponent(sentry, _ => { }, true);
         loadComponent(globalClock = new GlobalClock(), Add, true);
         GameDependencies.CacheAs<IBeatSyncProvider>(globalClock);
         GameDependencies.CacheAs<IAmplitudeProvider>(globalClock);
