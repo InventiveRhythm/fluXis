@@ -133,7 +133,7 @@ public partial class SteamManager : Component
     {
         base.Dispose(isDisposing);
 
-        ticketCb.Dispose();
+        ticketCb?.Dispose();
     }
 }
 
