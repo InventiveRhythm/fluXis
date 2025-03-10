@@ -86,6 +86,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
         RelativeSizeAxes = Axes.X;
         Height = 48;
 
+        var color = FluXisColors.GetKeyColor(map.KeyCount);
+
         InternalChildren = new Drawable[]
         {
             outline = new Container
@@ -102,7 +104,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = ColourInfo.GradientVertical(FluXisColors.GetKeyColor(map.KeyCount).Lighten(1), FluXisColors.GetKeyColor(map.KeyCount))
+                            Colour = ColourInfo.GradientVertical(color.Lighten(1), color)
                         }
                     }
                 }
@@ -117,7 +119,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.GetKeyColor(map.KeyCount)
+                        Colour = color
                     },
                     new Container
                     {
