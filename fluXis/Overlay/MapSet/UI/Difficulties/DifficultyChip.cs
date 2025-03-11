@@ -34,6 +34,8 @@ public partial class DifficultyChip : CircularContainer
         AutoSizeAxes = Axes.X;
         Masking = true;
 
+        var color = FluXisColors.GetDifficultyColor((float)map.NotesPerSecond);
+
         InternalChildren = new Drawable[]
         {
             new Box
@@ -50,12 +52,12 @@ public partial class DifficultyChip : CircularContainer
                 Direction = FillDirection.Horizontal,
                 Children = new Drawable[]
                 {
-                    new KeyModeIcon
+                    new KeyModeIcon(map.Mode)
                     {
                         Size = new Vector2(48),
-                        KeyMode = map.Mode,
                         Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft
+                        Origin = Anchor.CentreLeft,
+                        Colour = color
                     },
                     text = new FillFlowContainer
                     {

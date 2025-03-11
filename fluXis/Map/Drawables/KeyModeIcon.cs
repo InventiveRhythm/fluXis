@@ -10,13 +10,17 @@ namespace fluXis.Map.Drawables;
 
 public partial class KeyModeIcon : Container
 {
-    public int KeyMode { get; set; }
+    public int KeyMode { get; }
+
+    public KeyModeIcon(int mode)
+    {
+        KeyMode = mode;
+        Colour = FluXisColors.GetKeyColor(mode);
+    }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Colour = FluXisColors.GetKeyColor(KeyMode);
-
         switch (KeyMode)
         {
             case 4:
