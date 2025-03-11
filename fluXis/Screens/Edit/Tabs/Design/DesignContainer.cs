@@ -40,7 +40,13 @@ public partial class DesignContainer : EditorTabContainer
 {
     protected override MarginPadding ContentPadding => new(16) { Right = 0 };
 
-    private static Type[] ignoredForRebuild { get; } = { typeof(FlashEvent), typeof(PulseEvent), typeof(ShaderEvent) };
+    private static Type[] ignoredForRebuild { get; } =
+    {
+        typeof(FlashEvent),
+        typeof(PulseEvent),
+        typeof(ShaderEvent),
+        typeof(NoteEvent)
+    };
 
     private DrawSizePreservingFillContainer drawSizePreserve;
     private ShaderStackContainer shaders;
