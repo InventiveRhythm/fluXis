@@ -1,18 +1,20 @@
-﻿using fluXis.Scoring.Enums;
+﻿using System;
+using fluXis.Scoring.Enums;
+using fluXis.Utils;
 using Newtonsoft.Json;
 
 namespace fluXis.Scoring.Structs;
 
-public class HitResult
+public readonly struct HitResult : IEquatable<HitResult>
 {
     [JsonProperty("time")]
-    public double Time { get; }
+    public double Time { get; init; }
 
     [JsonProperty("difference")]
-    public double Difference { get; }
+    public double Difference { get; init; }
 
     [JsonProperty("judgement")]
-    public Judgement Judgement { get; }
+    public Judgement Judgement { get; init; }
 
     public HitResult(double time, double diff, Judgement jud)
     {
@@ -20,4 +22,16 @@ public class HitResult
         Difference = diff;
         Judgement = jud;
     }
+
+    [JsonConstructor]
+    [Obsolete(JsonUtils.JSON_CONSTRUCTOR_ERROR)]
+    public HitResult()
+    {
+    }
+
+    public bool Equals(HitResult other) => Time.Equals(other.Time) && Difference.Equals(other.Difference) && Judgement == other.Judgement;
+    public override bool Equals(object obj) => obj is HitResult other && Equals(other);
+    public override int GetHashCode() => HashCode.Combine(Time, Difference, (int)Judgement);
+    public static bool operator ==(HitResult left, HitResult right) => left.Equals(right);
+    public static bool operator !=(HitResult left, HitResult right) => !(left == right);
 }

@@ -51,10 +51,10 @@ public class HitObject : ITimedObject
     }
 
     [JsonIgnore]
-    public HitResult Result { get; set; }
+    public HitResult? Result { get; set; }
 
     [JsonIgnore]
-    public HitResult HoldEndResult { get; set; }
+    public HitResult? HoldEndResult { get; set; }
 
     /// <summary>
     /// The next HitObject in the same lane.

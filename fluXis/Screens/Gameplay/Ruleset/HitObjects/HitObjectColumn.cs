@@ -121,7 +121,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         {
             var result = PastHitObjects.Peek().Result;
 
-            if (result is null || Clock.CurrentTime >= result.Time)
+            if (result is null || Clock.CurrentTime >= result.Value.Time)
                 break;
 
             revertHitObject(PastHitObjects.Pop());
@@ -203,9 +203,10 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (!playfield.IsSubPlayfield)
         {
             if (hit.HoldEndResult is not null)
-                judgementProcessor.RevertResult(hit.HoldEndResult);
+                judgementProcessor.RevertResult(hit.HoldEndResult.Value);
 
-            judgementProcessor.RevertResult(hit.Result);
+            if (hit.Result is not null)
+                judgementProcessor.RevertResult(hit.Result.Value);
         }
 
         var draw = createHitObject(hit);
