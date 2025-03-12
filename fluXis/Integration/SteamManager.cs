@@ -133,6 +133,9 @@ public partial class SteamManager : Component
     {
         base.Dispose(isDisposing);
 
+        if (Initialized)
+            SteamAPI.Shutdown();
+
         ticketCb?.Dispose();
     }
 }
