@@ -16,10 +16,13 @@ namespace fluXis.Tests;
 
 public class TestAPIClient : IAPIClient
 {
+    public const string USERNAME = "testing";
+    public const string PASSWORD = "passwd";
+
     public Bindable<APIUser?> User => new(new APIUser
     {
         ID = 1,
-        Username = "testing",
+        Username = USERNAME,
         CountryCode = "TD"
     });
 
@@ -59,13 +62,13 @@ public class TestAPIClient : IAPIClient
 
     public void Login(string username, string password)
     {
-        if (username == "testing" && password == "passwd")
+        if (username == USERNAME && password == PASSWORD)
         {
             Status.Value = ConnectionStatus.Online;
             User.Value = new APIUser
             {
                 ID = 1,
-                Username = "Local User",
+                Username = USERNAME,
                 CountryCode = "TD"
             };
         }

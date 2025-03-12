@@ -1,24 +1,33 @@
 using fluXis.Screens.Gameplay.Overlay;
-using osu.Framework.Allocation;
+using NUnit.Framework;
 
 namespace fluXis.Tests.Gameplay;
 
 public partial class TestFullComboOverlay : FluXisTestScene
 {
-    [BackgroundDependencyLoader]
-    private void load()
+    private FullComboOverlay overlay;
+
+    [SetUp]
+    public void Setup() => Schedule(() => Child = overlay = new FullComboOverlay());
+
+    [Test]
+    public void TestFullCombo()
     {
-        var overlay = new FullComboOverlay();
-        Add(overlay);
+        AddStep("show", () => overlay.Show(FullComboOverlay.FullComboType.FullCombo));
+        hide();
+    }
 
-        AddLabel("Full Combo");
-        AddStep("Show", () => overlay.Show(FullComboOverlay.FullComboType.FullCombo));
-        AddWaitStep("Wait", 8);
-        AddStep("Hide", () => overlay.Hide());
+    [Test]
+    public void TestAllFlawless()
+    {
+        AddStep("show", () => overlay.Show(FullComboOverlay.FullComboType.AllFlawless));
+        hide();
+    }
 
-        AddLabel("All Flawless");
-        AddStep("Show", () => overlay.Show(FullComboOverlay.FullComboType.AllFlawless));
-        AddWaitStep("Wait", 8);
-        AddStep("Hide", () => overlay.Hide());
+    private void hide()
+    {
+        AddWaitStep("wait", 8);
+        AddStep("hide", () => overlay.Hide());
+        AddWaitStep("wait", 8);
     }
 }
