@@ -2,18 +2,25 @@ using fluXis.Graphics;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Requests;
 using fluXis.Online.Fluxel;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Menu.UI.Updates;
 
-public partial class MenuUpdates : CompositeDrawable
+public partial class MenuUpdates : Container<Container<MenuUpdates.UpdateImage>>
 {
     [Resolved]
     private IAPIClient api { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private FluXisGame game { get; set; }
 
     public bool CanShow { get; set; }
 
@@ -42,30 +49,27 @@ public partial class MenuUpdates : CompositeDrawable
     {
         var req = new MenuUpdatesRequest();
 
-        req.Success += res =>
+        req.Success += res => Schedule(() =>
         {
-            Schedule(() =>
+            if (res.Data.Count == 0)
+                return;
+
+            foreach (var update in res.Data)
             {
-                if (res.Data.Count == 0)
-                    return;
-
-                foreach (var update in res.Data)
+                var container = new Container<UpdateImage>
                 {
-                    var container = new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        RelativePositionAxes = Axes.Both
-                    };
+                    RelativeSizeAxes = Axes.Both,
+                    RelativePositionAxes = Axes.Both
+                };
 
-                    AddInternal(container);
-                    LoadComponentAsync(new UpdateImage(update), img => container.Add(img));
-                }
+                Add(container);
+                LoadComponentAsync(new UpdateImage(update), img => container.Add(img));
+            }
 
-                cycle(true);
-                Show(); // in case the menu animation is already done
-                finishedLoading = true;
-            });
-        };
+            cycle(true);
+            Show(); // in case the menu animation is already done
+            finishedLoading = true;
+        });
 
         api.PerformRequestAsync(req);
     }
@@ -116,13 +120,37 @@ public partial class MenuUpdates : CompositeDrawable
         }
     }
 
-    private partial class UpdateImage : Sprite
+    protected override bool OnClick(ClickEvent e)
     {
-        private MenuUpdate update { get; }
+        if (Children.Count < 1)
+            return false;
+
+        var child = Children[currentIndex];
+        game?.OpenLink(child.Child.UpdateInfo.Url);
+        return true;
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Left)
+            return false;
+
+        this.ScaleTo(.95f, 1000, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        this.ScaleTo(1, 1000, Easing.OutElastic);
+    }
+
+    public partial class UpdateImage : Sprite
+    {
+        public MenuUpdate UpdateInfo { get; }
 
         public UpdateImage(MenuUpdate update)
         {
-            this.update = update;
+            UpdateInfo = update;
         }
 
         [BackgroundDependencyLoader]
@@ -132,7 +160,7 @@ public partial class MenuUpdates : CompositeDrawable
             FillMode = FillMode.Fill;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Texture = textures.Get(update.Image);
+            Texture = textures.Get(UpdateInfo.Image);
         }
 
         protected override void LoadComplete()
