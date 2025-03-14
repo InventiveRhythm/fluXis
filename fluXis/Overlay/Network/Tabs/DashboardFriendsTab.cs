@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Social;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Social;
@@ -75,28 +77,40 @@ public partial class DashboardFriendsTab : DashboardTab
         api.PerformRequestAsync(req);
     }
 
-    private Drawable createContent(APIFriends friends) => new FillFlowContainer
+    private static FillFlowContainer createContent(APIFriends friends)
     {
-        RelativeSizeAxes = Axes.X,
-        AutoSizeAxes = Axes.Y,
-        Direction = FillDirection.Vertical,
-        Spacing = new Vector2(24),
-        Children = new Drawable[]
-        {
-            new UserList("Online", friends.Users.Where(x => x.IsOnline).ToList()),
-            new UserList("Offline", friends.Users.Where(x => !x.IsOnline).ToList()),
-        }
-    };
+        var children = new List<Drawable>();
 
-    private partial class UserList : FillFlowContainer
+        if (friends.Rooms.Count > 0)
+            children.Add(new ItemList<MultiplayerRoom>("Active Lobbies", friends.Rooms, r => new DrawableMultiplayerCard(r) { Width = 348 }));
+
+        children.AddRange(new Drawable[]
+        {
+            new ItemList<APIUser>("Online", friends.Users.Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 }),
+            new ItemList<APIUser>("Offline", friends.Users.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 348 })
+        });
+
+        return new FillFlowContainer
+        {
+            RelativeSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Y,
+            Direction = FillDirection.Vertical,
+            Spacing = new Vector2(24),
+            Children = children
+        };
+    }
+
+    private partial class ItemList<T> : FillFlowContainer
     {
         private string title { get; }
-        private IList<APIUser> users { get; }
+        private IList<T> items { get; }
+        private Func<T, Drawable> create { get; }
 
-        public UserList(string title, IList<APIUser> users)
+        public ItemList(string title, IList<T> items, Func<T, Drawable> create)
         {
+            this.create = create;
             this.title = title;
-            this.users = users;
+            this.items = items;
         }
 
         [BackgroundDependencyLoader]
@@ -105,7 +119,7 @@ public partial class DashboardFriendsTab : DashboardTab
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
             Direction = FillDirection.Vertical;
-            Spacing = new Vector2(users.Any() ? 12 : 4);
+            Spacing = new Vector2(items.Any() ? 12 : 4);
 
             InternalChildren = new Drawable[]
             {
@@ -126,7 +140,7 @@ public partial class DashboardFriendsTab : DashboardTab
                         },
                         new FluXisSpriteText
                         {
-                            Text = $"{users.Count}",
+                            Text = $"{items.Count}",
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             WebFontSize = 14,
@@ -138,7 +152,7 @@ public partial class DashboardFriendsTab : DashboardTab
                 {
                     Text = "Nobody here...",
                     WebFontSize = 14,
-                    Alpha = users.Any() ? 0f : .8f
+                    Alpha = items.Any() ? 0f : .8f
                 },
                 new FillFlowContainer
                 {
@@ -146,11 +160,8 @@ public partial class DashboardFriendsTab : DashboardTab
                     AutoSizeAxes = Axes.Y,
                     Direction = FillDirection.Full,
                     Spacing = new Vector2(8),
-                    Alpha = users.Any() ? 1f : 0f,
-                    ChildrenEnumerable = users.Select(x => new DrawableUserCard(x)
-                    {
-                        Width = 348
-                    })
+                    Alpha = items.Any() ? 1f : 0f,
+                    ChildrenEnumerable = items.Select(create)
                 }
             };
         }

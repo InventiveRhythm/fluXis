@@ -78,6 +78,7 @@ public class FontAwesome6
         public static IconUsage LayerGroup => GetSolid(0xf5fd);
         public static IconUsage LeftRight => GetSolid(0xf337);
         public static IconUsage Link => GetSolid(0xf0c1);
+        public static IconUsage Lock => GetSolid(0xf023);
         public static IconUsage Magnet => GetSolid(0xf076);
         public static IconUsage MagnifyingGlass => GetSolid(0xf002);
         public static IconUsage Map => GetSolid(0xf279);

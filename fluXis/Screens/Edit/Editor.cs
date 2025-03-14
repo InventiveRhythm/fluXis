@@ -690,12 +690,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             return false;
         }
 
-        if (editorMap.MapInfo.HitObjects.Count == 0)
-        {
-            notifications.SendError("Map has no hit objects!");
-            return false;
-        }
-
         if (editorMap.MapInfo.TimingPoints.Count == 0)
         {
             notifications.SendError("Map has no timing points!");

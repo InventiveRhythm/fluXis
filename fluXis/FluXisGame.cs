@@ -330,9 +330,11 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public void JoinMultiplayerRoom(long id, string password) => Scheduler.ScheduleIfNeeded(() => WaitForReady(() =>
     {
-        Logger.Log($"joining multi room [{id}, {password}]");
-
         MenuScreen.MakeCurrent();
+
+        if (!MenuScreen.IsCurrentScreen())
+            return;
+
         MenuScreen.CanPlayAnimation();
 
         if (MenuScreen.IsCurrentScreen())
