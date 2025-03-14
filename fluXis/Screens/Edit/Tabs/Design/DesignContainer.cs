@@ -61,7 +61,6 @@ public partial class DesignContainer : EditorTabContainer
     private IdleTracker rulesetIdleTracker;
 
     private BackgroundVideo backgroundVideo;
-    private bool showingVideo;
 
     protected override IEnumerable<Drawable> CreateContent()
     {
@@ -115,6 +114,7 @@ public partial class DesignContainer : EditorTabContainer
         base.LoadComplete();
 
         backgroundVideo.LoadVideo(Map.MapInfo);
+        backgroundVideo.Start();
 
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Map.AnyChange += t =>
@@ -210,18 +210,6 @@ public partial class DesignContainer : EditorTabContainer
     {
         switch (e.Key)
         {
-            case Key.V:
-            {
-                showingVideo = !showingVideo;
-
-                if (showingVideo)
-                    backgroundVideo.Start();
-                else
-                    backgroundVideo.Stop();
-
-                return true;
-            }
-
             case Key.R when e.ShiftPressed:
                 rebuildRuleset();
                 rebuildShaderStack();
