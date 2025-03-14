@@ -240,7 +240,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         new SetupTab(),
                                         new ChartingTab(),
                                         new DesignTab(),
-                                        experiments.Get<bool>(ExperimentConfig.StoryboardTab) ? new StoryboardTab() : new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
+                                        experiments.Get<bool>(ExperimentConfig.StoryboardTab)
+                                            ? new StoryboardTab()
+                                            : new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
                                         new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
                                     }
                                 }
@@ -306,12 +308,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             new("Paste", FontAwesome6.Solid.Paste, () => ChartingContainer?.Paste()),
                                             new FluXisMenuSpacer(),
                                             new("Apply Offset", FontAwesome6.Solid.Clock, applyOffset),
-                                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => ChartingContainer?.FlipSelection()) { Enabled = () => ChartingContainer?.CanFlipSelection ?? false },
-                                            new("Shuffle Selection", FontAwesome6.Solid.Shuffle, () => ChartingContainer?.ShuffleSelection()) { Enabled = () => ChartingContainer?.CanShuffleSelection ?? false },
+                                            new("Flip Selection", FontAwesome6.Solid.LeftRight, () => ChartingContainer?.FlipSelection())
+                                                { Enabled = () => ChartingContainer?.CanFlipSelection ?? false },
+                                            new("Shuffle Selection", FontAwesome6.Solid.Shuffle, () => ChartingContainer?.ShuffleSelection())
+                                                { Enabled = () => ChartingContainer?.CanShuffleSelection ?? false },
                                             new("Re-snap all notes", FontAwesome6.Solid.ArrowsRotate, () => ChartingContainer?.ReSnapAll()),
                                             new FluXisMenuSpacer(),
                                             new("Delete", FontAwesome6.Solid.Trash, () => ChartingContainer?.BlueprintContainer.SelectionHandler.DeleteSelected()),
-                                            new("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll())
+                                            new("Select all", FontAwesome6.Solid.ObjectGroup, () => ChartingContainer?.BlueprintContainer.SelectAll()),
+                                            new FluXisMenuSpacer(),
+                                            new("Invert mouse scroll direction", FontAwesome6.Solid.UpDown, () => settings.InvertedScroll.Value = !settings.InvertedScroll.Value)
+                                                { IsActive = () => settings.InvertedScroll.Value },
                                         }
                                     },
                                     new("View", FontAwesome6.Solid.Eye)
@@ -367,9 +374,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             new FluXisMenuSpacer(),
                                             new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
                                                 { IsActive = () => settings.ShowSamples.Value },
-                                            new FluXisMenuSpacer(),
-                                            new("Invert scroll direction", FontAwesome6.Solid.UpDown, () => settings.InvertedScroll.Value = !settings.InvertedScroll.Value)
-                                                { IsActive = () => settings.InvertedScroll.Value },
                                             new FluXisMenuSpacer(),
                                             new("Force 16:9 Ratio", FontAwesome6.Solid.RectangleWide, () => settings.ForceAspectRatio.Toggle())
                                                 { IsActive = () => settings.ForceAspectRatio.Value },
