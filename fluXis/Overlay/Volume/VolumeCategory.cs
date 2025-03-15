@@ -135,6 +135,13 @@ public partial class VolumeCategory : CompositeDrawable
             .FadeTo(newValue ? 1f : .8f, FluXisScreen.FADE_DURATION);
     }
 
+    protected override bool OnScroll(ScrollEvent e)
+    {
+        volumeOverlay.ResetInactiveTimer();
+        Bindable.Value += e.ScrollDelta.Y > 0 ? .02f : -.02;
+        return true;
+    }
+
     protected override bool OnHover(HoverEvent e)
     {
         if (volumeOverlay.Alpha < 0.001f)

@@ -86,9 +86,11 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
         return false;
     }
 
+    public void ResetInactiveTimer() => timeInactive = 0;
+
     private void changeVolume(float amount)
     {
-        timeInactive = 0;
+        ResetInactiveTimer();
 
         var category = categories.Children[index];
         category.Bindable.Value += amount;
@@ -96,7 +98,7 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
 
     private void changeCategory(int amount)
     {
-        timeInactive = 0;
+        ResetInactiveTimer();
 
         index += amount;
 
@@ -111,7 +113,7 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
 
     public void SelectCategory(VolumeCategory cat)
     {
-        timeInactive = 0;
+        ResetInactiveTimer();
         int delta = categories.IndexOf(cat) - index;
         changeCategory(delta);
         samples.Hover();
