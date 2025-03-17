@@ -222,6 +222,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         APIClient.FriendOnline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
         APIClient.FriendOffline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now offline!", FontAwesome6.Solid.UserMinus));
         APIClient.AchievementEarned += a => Schedule(() => LoadComponentAsync(new AchievementOverlay(a), ov => Schedule(() => panelContainer.Content = ov)));
+        APIClient.NameChangeRequested += () => WaitForReady(() => Schedule(() => panelContainer.Content = new UsernameChangePanel()));
 
         APIClient.MessageReceived += message =>
         {

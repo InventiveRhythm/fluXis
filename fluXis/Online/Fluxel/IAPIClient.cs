@@ -31,6 +31,7 @@ public interface IAPIClient
     event Action<APIUser>? FriendOffline;
     event Action<Achievement> AchievementEarned;
     event Action<ServerMessage> MessageReceived;
+    event Action NameChangeRequested;
 
     event Action<string> ChatChannelAdded;
     event Action<string> ChatChannelRemoved;

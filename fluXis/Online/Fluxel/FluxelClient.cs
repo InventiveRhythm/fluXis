@@ -49,6 +49,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     public event Action<APIUser>? FriendOffline;
     public event Action<Achievement>? AchievementEarned;
     public event Action<ServerMessage>? MessageReceived;
+    public event Action? NameChangeRequested;
     public event Action<string>? ChatChannelAdded;
     public event Action<string>? ChatChannelRemoved;
     public event Action<APIChatMessage>? ChatMessageReceived;
@@ -358,6 +359,12 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         if (time > DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             MaintenanceTime = time;
 
+        return Task.CompletedTask;
+    }
+
+    Task INotificationClient.ForceNameChange()
+    {
+        NameChangeRequested?.Invoke();
         return Task.CompletedTask;
     }
 

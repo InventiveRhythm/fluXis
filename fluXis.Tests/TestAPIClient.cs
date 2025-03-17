@@ -39,6 +39,7 @@ public class TestAPIClient : IAPIClient
     public event Action<APIUser>? FriendOffline;
     public event Action<Achievement>? AchievementEarned;
     public event Action<ServerMessage>? MessageReceived;
+    public event Action? NameChangeRequested;
     public event Action<string>? ChatChannelAdded;
     public event Action<string>? ChatChannelRemoved;
     public event Action<APIChatMessage>? ChatMessageReceived;
