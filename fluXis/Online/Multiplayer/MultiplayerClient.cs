@@ -7,6 +7,7 @@ using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Graphics;
 
 namespace fluXis.Online.Multiplayer;
@@ -15,7 +16,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 {
     public event Action<MultiplayerParticipant> OnUserJoin;
     public event Action<MultiplayerParticipant> OnUserLeave;
-    public event Action<long, MultiplayerUserState> OnUserStateChange;
+    public event Action<long, MultiplayerUserState, MultiplayerUserState> OnUserStateChange;
     public event Action<long> OnHostChange;
 
     // public event Action RoomUpdated;
@@ -32,6 +33,8 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     public event Action OnDisconnect;
 
     public virtual APIUser Player => APIUser.Dummy;
+
+    [CanBeNull]
     public MultiplayerRoom Room { get; set; }
 
     public async Task Create(string name, long mapid, string hash)
@@ -79,8 +82,9 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
             if (Room?.Participants.FirstOrDefault(u => u.ID == id) is not { } participant)
                 return;
 
+            var current = participant.State;
             participant.State = state;
-            OnUserStateChange?.Invoke(id, state);
+            OnUserStateChange?.Invoke(id, current, state);
         });
 
         return Task.CompletedTask;

@@ -23,6 +23,7 @@ using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby.UI.Disc;
 using fluXis.Utils;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
@@ -30,6 +31,8 @@ using osu.Framework.Screens;
 using osuTK;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
+
+#nullable enable
 
 public partial class MultiLobby : MultiSubScreen
 {
@@ -40,46 +43,58 @@ public partial class MultiLobby : MultiSubScreen
     public override bool AllowMusicPausing => true;
 
     [Resolved]
-    private MapStore mapStore { get; set; }
+    private MapStore mapStore { get; set; } = null!;
 
     [Resolved]
-    private GlobalBackground backgrounds { get; set; }
+    private GlobalBackground backgrounds { get; set; } = null!;
 
     [Resolved]
-    private GlobalClock clock { get; set; }
+    private GlobalClock clock { get; set; } = null!;
 
     [Resolved]
-    private NotificationManager notifications { get; set; }
+    private NotificationManager notifications { get; set; } = null!;
 
     [Resolved]
-    private MultiplayerMenuMusic menuMusic { get; set; }
+    private MultiplayerMenuMusic menuMusic { get; set; } = null!;
 
     [Resolved]
-    private MultiplayerClient client { get; set; }
+    private MultiplayerClient client { get; set; } = null!;
 
     [Resolved]
-    private PanelContainer panels { get; set; }
+    private PanelContainer panels { get; set; } = null!;
 
     [Resolved]
-    private FluXisGame game { get; set; }
+    private FluXisGame game { get; set; } = null!;
 
-    public MultiplayerRoom Room => client.Room;
+    public MultiplayerRoom? Room => client.Room;
 
-    private bool hasMapDownloaded => mapStore.MapSets.Any(s => s.Maps.Any(m => m.OnlineID == Room.Map.ID));
+    private bool hasMapDownloaded => mapStore.MapSets.Any(s => s.Maps.Any(m => m.OnlineID == Room?.Map.ID));
 
     private bool ready;
     private bool confirmExit;
 
     private List<IMod> mods = new();
 
-    private FluXisSpriteText hostText;
-    private MultiLobbyPlayerList playerList;
-    private MultiLobbyDisc disc;
-    private MultiLobbyFooter footer;
+    private FluXisSpriteText hostText = null!;
+    private MultiLobbyPlayerList playerList = null!;
+    private MultiLobbyDisc disc = null!;
+    private MultiLobbyFooter footer = null!;
+
+    private Sample? joinSample;
+    private Sample? leaveSample;
+    private Sample? readySample;
+    private Sample? unreadySample;
+    private Sample? hostTransferSample;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(ISampleStore samples)
     {
+        joinSample = samples.Get("Multiplayer/join");
+        leaveSample = samples.Get("Multiplayer/leave");
+        readySample = samples.Get("Multiplayer/ready");
+        unreadySample = samples.Get("Multiplayer/unready");
+        hostTransferSample = samples.Get("Multiplayer/host-changed");
+
         if (Room is null)
         {
             notifications.SendError("Failed to join room!");
@@ -162,7 +177,7 @@ public partial class MultiLobby : MultiSubScreen
     {
         base.LoadComplete();
 
-        if (!ValidForPush)
+        if (!ValidForPush || Room is null)
             return;
 
         footer.CanChangeMap.Value = Room.Host.ID == client.Player.ID;
@@ -188,7 +203,7 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
-        mapStore.DownloadMapSet(Room.Map.MapSetID);
+        mapStore.DownloadMapSet(Room?.Map.MapSetID ?? throw new InvalidOperationException("Downloading while not in room."));
     }
 
     private void updateRightButton()
@@ -209,7 +224,7 @@ public partial class MultiLobby : MultiSubScreen
 
     private void mapAdded(RealmMapSet set)
     {
-        if (set.OnlineID != Room.Map.MapSetID)
+        if (set.OnlineID != Room?.Map.MapSetID)
             return;
 
         Schedule(() => onMapChange(Room.Map, Room.Mods));
@@ -248,6 +263,7 @@ public partial class MultiLobby : MultiSubScreen
 
         RefreshActivity();
         playerList.AddPlayer(user);
+        joinSample?.Play();
     }
 
     private void onOnUserLeave(MultiplayerParticipant user)
@@ -260,6 +276,7 @@ public partial class MultiLobby : MultiSubScreen
 
         RefreshActivity();
         playerList.RemovePlayer(user.ID);
+        leaveSample?.Play();
     }
 
     private void changeMap() => this.Push(new MultiSelectScreen(async void (map, mods) =>
@@ -327,22 +344,35 @@ public partial class MultiLobby : MultiSubScreen
     {
         var isHost = newHost == client.Player.ID;
         footer.CanChangeMap.Value = isHost;
-        hostText.Text = $"hosted by {Room.Host.Username}";
+        hostText.Text = $"hosted by {Room?.Host.Username}";
 
         if (isHost)
-            notifications.SendText("You are now the lobby host.");
+            notifications.SendSmallText("You are now the lobby host.", FontAwesome6.Solid.Crown);
+
+        hostTransferSample?.Play();
     }
 
-    private void updateOnUserState(long id, MultiplayerUserState state)
+    private void updateOnUserState(long id, MultiplayerUserState previous, MultiplayerUserState state)
     {
         if (!IsCurrentScreen)
         {
-            Scheduler.AddOnce(() => updateOnUserState(id, state));
+            Scheduler.AddOnce(() => updateOnUserState(id, previous, state));
             return;
         }
 
         var player = playerList.GetPlayer(id);
         player?.SetState(state);
+
+        switch (state)
+        {
+            case MultiplayerUserState.Idle when previous is MultiplayerUserState.Ready:
+                unreadySample?.Play();
+                break;
+
+            case MultiplayerUserState.Ready when previous is MultiplayerUserState.Idle:
+                readySample?.Play();
+                break;
+        }
 
         if (id != client.Player.ID)
             return;
@@ -353,7 +383,7 @@ public partial class MultiLobby : MultiSubScreen
 
     private void startLoading()
     {
-        var map = mapStore.CurrentMapSet.Maps.FirstOrDefault(x => x.OnlineID == Room.Map.ID);
+        var map = mapStore.CurrentMapSet.Maps.FirstOrDefault(x => x.OnlineID == Room?.Map.ID);
 
         if (map == null)
         {
@@ -362,7 +392,7 @@ public partial class MultiLobby : MultiSubScreen
             return;
         }
 
-        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room.Scores }));
+        MultiScreen.Push(new GameplayLoader(map, mods, () => new MultiGameplayScreen(client, map, mods) { Scores = client.Room?.Scores }));
     }
 
     private void stopClockMusic() => clock.VolumeOut(FluXisScreen.MOVE_DURATION).OnComplete(_ => clock.Stop());
@@ -391,6 +421,9 @@ public partial class MultiLobby : MultiSubScreen
     {
         menuMusic.StopAll();
 
+        if (Room is null)
+            return;
+
         onMapChange(Room.Map, Room.Mods);
         base.OnEntering(e);
     }
@@ -409,7 +442,7 @@ public partial class MultiLobby : MultiSubScreen
         client.SetReadyState(false);
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
+    public override bool OnExiting(ScreenExitEvent? e)
     {
         if (confirmExit)
         {
