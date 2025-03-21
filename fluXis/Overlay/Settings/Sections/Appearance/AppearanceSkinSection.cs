@@ -62,8 +62,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 Label = strings.SkinOpenFolder,
                 Description = strings.SkinOpenFolderDescription,
                 Action = skinManager.OpenFolder,
-                ButtonText = "Open",
-                EnabledBindable = buttonsEnabled
+                ButtonText = "Open"
             },
             new SettingsButton
             {

@@ -172,7 +172,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         if (isDefault(SkinFolder))
             skinStorage.PresentExternally();
         else
-            skinStorage.PresentFileExternally($"{SkinFolder}/.");
+            skinStorage.GetStorageForDirectory(SkinFolder).PresentExternally();
     }
 
     public void ExportCurrent()
