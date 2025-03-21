@@ -1,10 +1,12 @@
 ﻿using fluXis.Skinning.Default;
+using fluXis.Skinning.Default.Stage;
 using fluXis.Skinning.DefaultCircle.HitObject;
 using fluXis.Skinning.DefaultCircle.Lighting;
 using fluXis.Skinning.DefaultCircle.Receptor;
 using fluXis.Skinning.Json;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
 
@@ -38,6 +40,20 @@ public class DefaultCircleSkin : DefaultSkin
         var end = new DefaultCircleHitObjectEnd(SkinJson);
         end.UpdateColor(lane, keyCount);
         return end;
+    }
+
+    public override Drawable GetStageBackgroundPart(Anchor part)
+    {
+        if (part == Anchor.BottomCentre)
+        {
+            return new DefaultStageBackgroundBottom
+            {
+                Colour = ColourInfo.GradientVertical(Colour4.Black, Colour4.Black.Opacity(0)),
+                Alpha = 0.8f
+            };
+        }
+
+        return base.GetStageBackgroundPart(part);
     }
 
     public override Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultCircleTickNote(small);

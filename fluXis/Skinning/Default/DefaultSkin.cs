@@ -61,7 +61,7 @@ public class DefaultSkin : ISkin
 
     private const float extended = 48;
 
-    public Drawable GetStageBackgroundPart(Anchor part) => part switch
+    public virtual Drawable GetStageBackgroundPart(Anchor part) => part switch
     {
         Anchor.TopLeft => new DefaultStageBorderLeft(SkinJson)
         {
