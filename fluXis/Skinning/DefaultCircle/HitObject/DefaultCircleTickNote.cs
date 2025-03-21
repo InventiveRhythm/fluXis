@@ -33,6 +33,10 @@ public partial class DefaultCircleTickNote : CompositeDrawable
         Height = DrawWidth;
 
         var factor = 8 / (progress.DrawWidth / 4);
+
+        if (!float.IsFinite(factor))
+            factor = .2f;
+
         progress.InnerRadius = factor;
         progress.Rotation = (float)(360 * (.25f + (.5f - progress.Progress) / 2));
     }
