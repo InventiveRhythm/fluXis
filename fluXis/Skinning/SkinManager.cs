@@ -12,6 +12,7 @@ using fluXis.Screens.Course;
 using fluXis.Skinning.Bases.Judgements;
 using fluXis.Skinning.Custom;
 using fluXis.Skinning.Default;
+using fluXis.Skinning.DefaultCircle;
 using fluXis.Skinning.Json;
 using fluXis.Utils;
 using Newtonsoft.Json;
@@ -57,6 +58,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     private ISkin currentSkin { get; set; }
 
     private const string default_skin_name = "Default";
+    private const string default_circle_skin_name = "Default Circle";
 
     public Action SkinChanged { get; set; }
     public Action SkinListChanged { get; set; }
@@ -74,14 +76,14 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     {
         string[] defaultSkins =
         {
-            default_skin_name
+            default_skin_name,
+            default_circle_skin_name
         };
 
         var custom = skinStorage.GetDirectories("").ToArray();
 
         // remove default skins from customs if they exist
         custom = custom.Where(x => !isDefault(x)).ToArray();
-
         return defaultSkins.Concat(custom).ToArray();
     }
 
@@ -226,6 +228,9 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         {
             case default_skin_name:
                 return defaultSkin;
+
+            case default_circle_skin_name:
+                return new DefaultCircleSkin(textures, samples);
         }
 
         var skinJson = new SkinJson();
@@ -251,7 +256,11 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         return createCustomSkin(skinJson, folder);
     }
 
-    private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase);
+    private static bool isDefault(string name)
+    {
+        return string.Equals(name, default_skin_name, StringComparison.CurrentCultureIgnoreCase)
+               || string.Equals(name, default_circle_skin_name, StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
 

@@ -9,8 +9,6 @@ namespace fluXis.Skinning.Default.HitObject;
 
 public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapColor
 {
-    private readonly Box box;
-
     public DefaultHitObjectBody(SkinJson skinJson)
         : base(skinJson)
     {
@@ -18,20 +16,21 @@ public partial class DefaultHitObjectBody : ColorableSkinDrawable, ICanHaveSnapC
         Width = 0.9f;
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
-        InternalChild = box = new Box
+        InternalChild = new Box
         {
-            RelativeSizeAxes = Axes.Both
+            RelativeSizeAxes = Axes.Both,
+            Colour = ColourInfo.GradientVertical(Colour4.White.Darken(.4f), Colour4.White)
         };
     }
 
     protected override void SetColor(Colour4 color)
-        => box.Colour = ColourInfo.GradientVertical(color.Darken(.4f), color);
+        => Colour = color;
 
     public void ApplySnapColor(int start, int end)
     {
         UseCustomColor = true;
         var startColor = SkinJson.SnapColors.GetColor(start);
-        var endColor = SkinJson.SnapColors.GetColor(end).Darken(.4f);
-        box.Colour = ColourInfo.GradientVertical(endColor, startColor);
+        var endColor = SkinJson.SnapColors.GetColor(end);
+        Colour = ColourInfo.GradientVertical(endColor, startColor);
     }
 }

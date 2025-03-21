@@ -36,16 +36,13 @@ public partial class DefaultColumnLighting : VisibilityContainer
         };
     }
 
-    public void UpdateColor(int lane, int maxLanes)
+    public void UpdateColor(int lane, int maxLanes) => Schedule(() =>
     {
-        Schedule(() =>
-        {
-            if (colorProvider == null || !colorProvider.HasColorFor(lane, maxLanes, out var color))
-                color = skinJson.GetLaneColor(lane, maxLanes);
+        if (colorProvider == null || !colorProvider.HasColorFor(lane, maxLanes, out var color))
+            color = skinJson.GetLaneColor(lane, maxLanes);
 
-            Colour = ColourInfo.GradientVertical(color.Opacity(0), color);
-        });
-    }
+        Colour = ColourInfo.GradientVertical(color.Opacity(0), color);
+    });
 
     protected override void PopIn() => this.FadeIn();
     protected override void PopOut() => this.FadeOut(300, Easing.Out);

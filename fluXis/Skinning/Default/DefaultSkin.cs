@@ -100,37 +100,37 @@ public class DefaultSkin : ISkin
     public Drawable GetHealthBarBackground() => new DefaultHealthBackground();
     public Drawable GetHealthBar(HealthProcessor processor) => new DefaultHealthBar(SkinJson, processor);
 
-    public Drawable GetHitObject(int lane, int keyCount)
+    public virtual Drawable GetHitObject(int lane, int keyCount)
     {
         var piece = new DefaultHitObjectPiece(SkinJson);
         piece.UpdateColor(lane, keyCount);
         return piece;
     }
 
-    public Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultTickNote(small);
+    public virtual Drawable GetTickNote(int lane, int keyCount, bool small) => new DefaultTickNote(small);
 
-    public Drawable GetLongNoteBody(int lane, int keyCount)
+    public virtual Drawable GetLongNoteBody(int lane, int keyCount)
     {
         var body = new DefaultHitObjectBody(SkinJson);
         body.UpdateColor(lane, keyCount);
         return body;
     }
 
-    public Drawable GetLongNoteEnd(int lane, int keyCount)
+    public virtual Drawable GetLongNoteEnd(int lane, int keyCount)
     {
         var end = new DefaultHitObjectEnd(SkinJson);
         end.UpdateColor(lane, keyCount);
         return end;
     }
 
-    public VisibilityContainer GetColumnLighting(int lane, int keyCount)
+    public virtual VisibilityContainer GetColumnLighting(int lane, int keyCount)
     {
         var lighting = new DefaultColumnLighting(SkinJson);
         lighting.UpdateColor(lane, keyCount);
         return lighting;
     }
 
-    public Drawable GetReceptor(int lane, int keyCount, bool down)
+    public virtual Drawable GetReceptor(int lane, int keyCount, bool down)
     {
         var receptor = down ? new DefaultReceptorDown(SkinJson) : new DefaultReceptorUp(SkinJson);
         receptor.UpdateColor(lane, keyCount);
@@ -138,7 +138,7 @@ public class DefaultSkin : ISkin
         return receptor;
     }
 
-    public Drawable GetHitLine() => new DefaultHitLine(SkinJson);
+    public virtual Drawable GetHitLine() => new DefaultHitLine(SkinJson);
     public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => new DefaultJudgementText(judgement, isLate);
 
     public Drawable GetFailFlash() => new Box();
