@@ -37,6 +37,7 @@ using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.TabSwitcher;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Skinning.Default;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
@@ -189,6 +190,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(editorMap);
+        dependencies.CacheAs<ICustomColorProvider>(editorMap.MapInfo.Colors);
         dependencies.CacheAs(Waveform = new Bindable<Waveform>());
         dependencies.CacheAs(actionStack = new EditorActionStack(editorMap) { NotificationManager = notifications });
         dependencies.CacheAs(settings = new EditorSettings
