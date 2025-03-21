@@ -66,6 +66,7 @@ public partial class PlayfieldPlayer : CompositeDrawable
         base.LoadComplete();
 
         JudgementProcessor.ApplyMap(ruleset.MapInfo);
+        HealthProcessor.OnSavedDeath += () => samples?.EarlyFail();
         ScoreProcessor.OnComboBreak += () =>
         {
             if (ruleset.CatchingUp)

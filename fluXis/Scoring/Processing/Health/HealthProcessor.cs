@@ -25,6 +25,8 @@ public class HealthProcessor : JudgementDependant
     /// </summary>
     public bool FailedAlready { get; private set; }
 
+    public event Action OnSavedDeath;
+
     public BindableDouble Health { get; }
     public float SmoothHealth { get; private set; }
 
@@ -42,6 +44,9 @@ public class HealthProcessor : JudgementDependant
 
     protected void TriggerFailure()
     {
+        if (!FailedAlready && !CanFail)
+            OnSavedDeath?.Invoke();
+
         FailedAlready = true;
 
         if (Failed || !CanFail)
