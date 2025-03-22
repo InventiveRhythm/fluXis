@@ -84,7 +84,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
                     RelativeSizeAxes = Axes.Y,
                     Colour = accent
                 },
-                flow= new FillFlowContainer
+                flow = new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
@@ -209,52 +209,100 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
 
     private partial class ModEntryTooltip : CustomTooltipContainer<ModEntry>
     {
-        private FluXisSpriteText name { get; }
-        private FluXisSpriteText description { get; }
-        private FluXisSpriteText incompatibleMods { get; }
+        private ForcedHeightText type { get; }
+        private ForcedHeightText name { get; }
+        private ForcedHeightText description { get; }
+        private ForcedHeightText incompatibleMods { get; }
         private ModList modList { get; }
 
         public ModEntryTooltip()
         {
-            CornerRadius = 10;
+            CornerRadius = 12;
+
             Child = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
-                Padding = new MarginPadding(10),
+                Padding = new MarginPadding(4),
+                Spacing = new Vector2(6),
                 Children = new Drawable[]
                 {
-                    name = new FluXisSpriteText
+                    type = new ForcedHeightText
                     {
-                        FontSize = 28,
-                        Shadow = true
+                        Height = 9,
+                        WebFontSize = 12,
+                        Margin = new MarginPadding { Horizontal = 6, Top = 2 },
+                        Colour = FluXisColors.TextDark
                     },
-                    description = new FluXisSpriteText
+                    new Container
                     {
-                        FontSize = 20,
-                        Colour = FluXisColors.Text2,
-                        Shadow = true
-                    },
-                    incompatibleMods = new FluXisSpriteText
-                    {
-                        Text = LocalizationStrings.ModSelect.IncompatibleMods,
-                        FontSize = 20,
-                        Margin = new MarginPadding { Top = 10, Bottom = 5 },
-                        Shadow = true
-                    },
-                    modList = new ModList
-                    {
-                        Scale = new Vector2(.8f),
-                        Mods = new List<IMod>()
+                        AutoSizeAxes = Axes.Both,
+                        CornerRadius = 8,
+                        Masking = true,
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background2
+                            },
+                            new FillFlowContainer
+                            {
+                                AutoSizeAxes = Axes.Both,
+                                Direction = FillDirection.Vertical,
+                                Padding = new MarginPadding(12),
+                                Spacing = new Vector2(2),
+                                Children = new Drawable[]
+                                {
+                                    name = new ForcedHeightText()
+                                    {
+                                        Height = 15,
+                                        WebFontSize = 20
+                                    },
+                                    description = new ForcedHeightText
+                                    {
+                                        Height = 10,
+                                        WebFontSize = 14,
+                                        Alpha = .6f
+                                    },
+                                    incompatibleMods = new ForcedHeightText
+                                    {
+                                        Height = 9,
+                                        Text = LocalizationStrings.ModSelect.IncompatibleMods,
+                                        WebFontSize = 12,
+                                        Margin = new MarginPadding { Top = 10, Bottom = 5 },
+                                        Shadow = true
+                                    },
+                                    modList = new ModList
+                                    {
+                                        Scale = new Vector2(.6f),
+                                        Mods = new List<IMod>()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             };
+
+            /*Child = ;*/
         }
 
         public override void SetContent(ModEntry content)
         {
             var mod = content.mod;
 
+            BackgroundColor = FluXisColors.GetModTypeColor(mod.Type);
+            type.Text = mod.Type switch
+            {
+                ModType.Rate => LocalizationStrings.ModSelect.RateSection,
+                ModType.DifficultyDecrease => LocalizationStrings.ModSelect.DifficultyDecreaseSection,
+                ModType.DifficultyIncrease => LocalizationStrings.ModSelect.DifficultyIncreaseSection,
+                ModType.Automation => LocalizationStrings.ModSelect.AutomationSection,
+                ModType.Misc => LocalizationStrings.ModSelect.MiscSection,
+                ModType.Special => "Special",
+                _ => throw new ArgumentOutOfRangeException()
+            };
             name.Text = LocalizationStrings.Mods.GetName(mod);
             description.Text = LocalizationStrings.Mods.GetDescription(mod);
 

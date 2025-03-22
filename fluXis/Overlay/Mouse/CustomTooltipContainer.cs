@@ -1,6 +1,7 @@
 using fluXis.Graphics;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
@@ -16,10 +17,18 @@ public abstract partial class CustomTooltipContainer<T> : CustomTooltipContainer
 
 public abstract partial class CustomTooltipContainer : VisibilityContainer, ITooltip
 {
+    protected ColourInfo BackgroundColor
+    {
+        get => background.Colour;
+        set => background.Colour = value;
+    }
+
     protected override Container<Drawable> Content { get; } = new Container { AutoSizeAxes = Axes.Both };
     private bool instant = true;
 
     private const float starting_scale = .9f;
+
+    private Box background { get; }
 
     protected CustomTooltipContainer()
     {
@@ -32,7 +41,7 @@ public abstract partial class CustomTooltipContainer : VisibilityContainer, IToo
 
         InternalChildren = new Drawable[]
         {
-            new Box
+            background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = FluXisColors.Background2
