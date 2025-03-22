@@ -105,7 +105,6 @@ public partial class ScoreList : GridContainer
                     Height = 50,
                     CornerRadius = 10,
                     Masking = true,
-                    Shear = new Vector2(-.1f, 0),
                     Margin = new MarginPadding { Bottom = 10 },
                     EdgeEffect = FluXisStyles.ShadowSmall,
                     Children = new Drawable[]
@@ -137,7 +136,6 @@ public partial class ScoreList : GridContainer
                                             RelativeSizeAxes = Axes.X,
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,
-                                            Shear = new Vector2(.1f, 0),
                                             FontSize = 32
                                         }
                                     },
@@ -511,7 +509,7 @@ public partial class ScoreList : GridContainer
         {
             Width = 100;
             Height = 30;
-            Shear = new Vector2(.2f, 0);
+            Shear = new Vector2(.1f, 0);
 
             var color = Type switch
             {

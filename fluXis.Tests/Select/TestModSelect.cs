@@ -10,9 +10,9 @@ public partial class TestModSelect : FluXisTestScene
     {
         CreateClock();
 
-        var modSelector = new ModSelector();
+        var modSelector = new ModsOverlay();
         Add(modSelector);
 
-        AddStep("Toggle Mod Selector", modSelector.IsOpen.Toggle);
+        AddStep("Toggle Mod Selector", modSelector.ToggleVisibility);
     }
 }

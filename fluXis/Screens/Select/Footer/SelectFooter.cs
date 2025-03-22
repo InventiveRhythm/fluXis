@@ -151,6 +151,9 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
+        if (e.Repeat)
+            return false;
+
         switch (e.Key)
         {
             case >= Key.F1 and <= Key.F12:

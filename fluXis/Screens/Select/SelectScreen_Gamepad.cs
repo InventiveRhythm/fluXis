@@ -11,7 +11,7 @@ public partial class SelectScreen
         switch (e.Button)
         {
             case JoystickButton.Button1: // X
-                modSelector.IsOpen.Toggle();
+                modsOverlay.ToggleVisibility();
                 return true;
 
             case JoystickButton.Button2: // A

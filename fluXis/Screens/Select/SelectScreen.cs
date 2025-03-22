@@ -88,7 +88,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     private PanelContainer panels { get; set; }
 
     private MapList mapList { get; set; }
-    private ModSelector modSelector { get; set; }
+    private ModsOverlay modsOverlay { get; set; }
 
     private BackgroundVideo video;
     private Container storyboardContainer;
@@ -128,7 +128,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         dependencies.CacheAs(this);
         dependencies.CacheAs(Filters = new SearchFilters());
-        dependencies.CacheAs(modSelector = new ModSelector());
+        dependencies.CacheAs(modsOverlay = new ModsOverlay());
 
         InternalChildren = new Drawable[]
         {
@@ -217,18 +217,18 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                     }
                 }
             },
+            modsOverlay,
             footer = new SelectFooter
             {
                 BackAction = this.Exit,
-                ModsAction = modSelector.IsOpen.Toggle,
+                ModsAction = modsOverlay.ToggleVisibility,
                 RewindAction = RewindRandom,
                 RandomAction = RandomMap,
                 PlayAction = Accept,
                 DeleteAction = DeleteMapSet,
                 EditAction = EditMap,
                 ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
-            },
-            modSelector
+            }
         };
 
         Filters.OnChange += searchTracker.Reset;
@@ -304,7 +304,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         backgrounds.AddBackgroundFromMap(maps.CurrentMap);
         backgrounds.SwipeAnimation();
 
-        StartMap(maps.CurrentMap, modSelector.SelectedMods.ToList(), selectMapInfo.ScoreList.CurrentScores.ToList());
+        modsOverlay.Hide();
+
+        StartMap(maps.CurrentMap, modsOverlay.SelectedMods.ToList(), selectMapInfo.ScoreList.CurrentScores.ToList());
     }
 
     protected abstract void StartMap(RealmMap map, List<IMod> mods, List<ScoreInfo> scores);
@@ -684,9 +686,9 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 return true;
 
             case FluXisGlobalKeybind.Back:
-                if (modSelector.IsOpen.Value)
+                if (modsOverlay.State.Value == Visibility.Visible)
                 {
-                    modSelector.IsOpen.Value = false;
+                    modsOverlay.Hide();
                     return true;
                 }
 
@@ -704,7 +706,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         return false;
 
-        void changeRate(float by) => modSelector.RateMod.RateBindable.Value += by;
+        void changeRate(float by) => modsOverlay.RateMod.RateBindable.Value += by;
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e) { }

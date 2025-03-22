@@ -31,7 +31,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
     private MapStore maps { get; set; }
 
     [Resolved]
-    private ModSelector mods { get; set; }
+    private ModsOverlay mods { get; set; }
 
     private SpriteStack<MapBackground> backgrounds;
     private SectionedGradient gradient;

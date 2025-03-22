@@ -15,12 +15,12 @@ using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
 
-public partial class ModSelectRate : Container
+public partial class ModSelectRate : FillFlowContainer
 {
     [Resolved]
     private GlobalClock clock { get; set; }
 
-    public ModSelector Selector { get; set; }
+    public ModsOverlay Selector { get; set; }
 
     public BindableFloat RateBindable { get; private set; }
     private RateMod mod;
@@ -40,107 +40,124 @@ public partial class ModSelectRate : Container
 
         mod = new RateMod();
 
+        var color = FluXisColors.GetModTypeColor(ModType.Rate);
+
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
+        Direction = FillDirection.Vertical;
+        Spacing = new Vector2(8);
         CornerRadius = 10;
-        Masking = true;
+        AlwaysPresent = true;
         Children = new Drawable[]
         {
-            new Box
-            {
-                Colour = Colour4.FromHex("#ffdb69"),
-                RelativeSizeAxes = Axes.Both
-            },
             new Container
             {
                 RelativeSizeAxes = Axes.X,
-                Height = 30,
-                Padding = new MarginPadding { Vertical = 2, Horizontal = 10 },
-                Child = new FluXisSpriteText
+                Height = 32,
+                CornerRadius = 4,
+                Masking = true,
+                Shear = new Vector2(.2f, 0),
+                Children = new Drawable[]
                 {
-                    Text = LocalizationStrings.ModSelect.RateSection,
-                    Colour = FluXisColors.TextDark,
-                    Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    FontSize = 22
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = color
+                    },
+                    new Box
+                    {
+                        Width = 100,
+                        RelativeSizeAxes = Axes.Y,
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
+                        Colour = FluXisColors.Background2,
+                        Alpha = .5f
+                    },
+                    new FluXisSpriteText
+                    {
+                        Text = LocalizationStrings.ModSelect.RateSection,
+                        Colour = FluXisColors.TextDark,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Shear = new Vector2(-.2f, 0),
+                        WebFontSize = 16,
+                        X = 12
+                    }
                 }
             },
             new Container
             {
                 RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding { Horizontal = 2, Bottom = 2, Top = 30 },
-                Child = new Container
+                Height = 96,
+                Shear = new Vector2(.2f, 0),
+                CornerRadius = 4,
+                Masking = true,
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    CornerRadius = 8,
-                    Masking = true,
-                    Children = new Drawable[]
+                    new Box
                     {
-                        new Box
+                        Colour = FluXisColors.Background3,
+                        RelativeSizeAxes = Axes.Both
+                    },
+                    new FillFlowContainer
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Direction = FillDirection.Vertical,
+                        Spacing = new Vector2(6),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Padding = new MarginPadding(16),
+                        Shear = new Vector2(-.2f, 0),
+                        Children = new Drawable[]
                         {
-                            Colour = FluXisColors.Background2,
-                            RelativeSizeAxes = Axes.Both
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Padding = new MarginPadding(5),
-                            Children = new Drawable[]
+                            new Container
                             {
-                                new Box
+                                RelativeSizeAxes = Axes.X,
+                                Height = 22,
+                                Padding = new MarginPadding(8),
+                                Children = new Drawable[]
                                 {
-                                    Colour = FluXisColors.Background3,
-                                    RelativeSizeAxes = Axes.Both
-                                },
-                                new Container
-                                {
-                                    RelativeSizeAxes = Axes.X,
-                                    Height = 30,
-                                    Padding = new MarginPadding { Vertical = 2, Horizontal = 10 },
-                                    Children = new Drawable[]
+                                    rateText = new FluXisSpriteText
                                     {
-                                        rateText = new FluXisSpriteText
-                                        {
-                                            Text = "1x",
-                                            Anchor = Anchor.CentreLeft,
-                                            Origin = Anchor.CentreLeft,
-                                            FontSize = 22
-                                        },
-                                        multiplierText = new FluXisSpriteText
-                                        {
-                                            Text = "0%",
-                                            Anchor = Anchor.CentreRight,
-                                            Origin = Anchor.CentreRight,
-                                            FontSize = 22
-                                        }
-                                    }
-                                },
-                                new FluXisSlider<float>
-                                {
-                                    Bindable = RateBindable,
-                                    RelativeSizeAxes = Axes.X,
-                                    Step = RateBindable.Precision,
-                                    Margin = new MarginPadding { Top = 35 }
-                                },
-                                new Container
-                                {
-                                    RelativeSizeAxes = Axes.X,
-                                    Height = 30,
-                                    Padding = new MarginPadding { Horizontal = 20 },
-                                    Margin = new MarginPadding { Top = 57 },
-                                    Children = new SliderTickMark[]
+                                        Text = "1x",
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Colour = color,
+                                        FontSize = 22
+                                    },
+                                    multiplierText = new FluXisSpriteText
                                     {
-                                        new() { Value = 0.5f },
-                                        new() { Value = 1 },
-                                        new() { Value = 2 }
+                                        Text = "0%",
+                                        Anchor = Anchor.CentreRight,
+                                        Origin = Anchor.CentreRight,
+                                        Colour = color,
+                                        FontSize = 22
                                     }
+                                }
+                            },
+                            new FluXisSlider<float>
+                            {
+                                Bindable = RateBindable,
+                                RelativeSizeAxes = Axes.X,
+                                Step = RateBindable.Precision,
+                                CustomColor = color
+                            },
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                Height = 22,
+                                Padding = new MarginPadding { Horizontal = 20 },
+                                Colour = color,
+                                Children = new SliderTickMark[]
+                                {
+                                    new() { Value = 0.5f },
+                                    new() { Value = 1 },
+                                    new() { Value = 2 }
                                 }
                             }
                         }
-                    }
+                    },
                 }
             }
         };
@@ -164,6 +181,19 @@ public partial class ModSelectRate : Container
             int multiplier = (int)Math.Round(mod.ScoreMultiplier * 100) - 100;
             multiplierText.Text = $"{(multiplier > 0 ? "+" : string.Empty)}{multiplier}%";
         });
+    }
+
+    public override void Show()
+    {
+        this.MoveToX(50).FadeOut()
+            .Delay(ModsOverlay.STAGGER_DURATION)
+            .FadeIn(200).MoveToX(0, 400, Easing.OutQuint);
+    }
+
+    public override void Hide()
+    {
+        this.Delay(ModsOverlay.STAGGER_DURATION)
+            .FadeOut(200).MoveToX(-50, 400, Easing.OutQuint);
     }
 
     private partial class SliderTickMark : Container

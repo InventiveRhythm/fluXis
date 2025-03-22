@@ -5,6 +5,7 @@ using fluXis.Audio;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Localization;
 using fluXis.Mods;
 using fluXis.Mods.Drawables;
@@ -21,90 +22,152 @@ using osuTK;
 
 namespace fluXis.Screens.Select.Mods;
 
-public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
+public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
 {
     public ModEntry TooltipContent => this;
-
-    public ModSelector Selector { get; init; }
-
-    public IMod Mod { get; init; }
-    public string HexColour { get; init; }
 
     [Resolved]
     private UISamples samples { get; set; }
 
-    public bool Selected;
+    private Container content { get; }
+    private Box background { get; }
+    private HoverLayer hover { get; }
+    private FlashLayer flash { get; }
 
-    private Box background;
-    private HoverLayer hover;
-    private FlashLayer flash;
-    private SpriteIcon icon;
-    private FluXisSpriteText name;
-    private FluXisSpriteText description;
-    private FluXisSpriteText scoreMultiplier;
+    private Box line { get; }
+    private FillFlowContainer flow { get; }
+    private SpriteIcon icon { get; }
+    private ForcedHeightText name { get; }
+    private ForcedHeightText description { get; }
+    private FluXisSpriteText scoreMultiplier { get; }
 
-    [BackgroundDependencyLoader]
-    private void load()
+    private IMod mod { get; }
+    private ModsOverlay overlay { get; }
+    private Colour4 accent { get; }
+
+    private bool selected => overlay.SelectedMods.Any(x => x.GetType() == mod.GetType());
+
+    public ModEntry(IMod mod, ModsOverlay overlay)
     {
+        this.mod = mod;
+        this.overlay = overlay;
+        accent = FluXisColors.GetModTypeColor(mod.Type);
+
         RelativeSizeAxes = Axes.X;
-        Height = 50;
-        CornerRadius = 3;
-        Masking = true;
+        Height = 48;
+        AlwaysPresent = true;
+        Alpha = 0;
 
-        int multiplier = (int)Math.Round((Mod.ScoreMultiplier - 1) * 100);
-        string multiplierText = multiplier > 0 ? $"+{multiplier}" : multiplier.ToString();
+        var multiplier = (int)Math.Round((mod.ScoreMultiplier - 1) * 100);
+        var multiplierText = multiplier > 0 ? $"+{multiplier}" : multiplier.ToString();
 
-        InternalChildren = new Drawable[]
+        if (multiplier == 0)
+            multiplierText = "\u00b1" + multiplierText;
+
+        InternalChild = content = new Container
         {
-            background = new Box
+            RelativeSizeAxes = Axes.Both,
+            Shear = new Vector2(.2f, 0),
+            CornerRadius = 4,
+            Masking = true,
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
-            },
-            hover = new HoverLayer(),
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 12 },
-                Children = new Drawable[]
+                background = new Box
                 {
-                    icon = new FluXisSpriteIcon
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = FluXisColors.Background2
+                },
+                hover = new HoverLayer { Colour = accent },
+                line = new Box
+                {
+                    Width = 6,
+                    RelativeSizeAxes = Axes.Y,
+                    Colour = accent
+                },
+                flow= new FillFlowContainer
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Horizontal,
+                    Padding = new MarginPadding { Horizontal = 20 },
+                    Spacing = new Vector2(12),
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft,
+                    Shear = new Vector2(-.2f, 0),
+                    Children = new Drawable[]
                     {
-                        Size = new Vector2(25),
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Shadow = true,
-                        Icon = Mod.Icon
-                    },
-                    name = new FluXisSpriteText
-                    {
-                        Text = LocalizationStrings.Mods.GetName(Mod),
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.BottomLeft,
-                        Shadow = true,
-                        X = 35,
-                        Y = 4
-                    },
-                    description = new FluXisSpriteText
-                    {
-                        FontSize = 14,
-                        Text = LocalizationStrings.Mods.GetDescription(Mod),
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.TopLeft,
-                        Colour = FluXisColors.Text2,
-                        Shadow = true,
-                        X = 35
-                    },
-                    scoreMultiplier = new FluXisSpriteText
-                    {
-                        Anchor = Anchor.CentreRight,
-                        Origin = Anchor.CentreRight,
-                        Text = $"{multiplierText}%"
+                        icon = new FluXisSpriteIcon
+                        {
+                            Size = new Vector2(20),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            Icon = mod.Icon
+                        },
+                        new FillFlowContainer
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Direction = FillDirection.Vertical,
+                            Spacing = new Vector2(2),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            Children = new Drawable[]
+                            {
+                                name = new ForcedHeightText
+                                {
+                                    Height = 12,
+                                    Text = LocalizationStrings.Mods.GetName(mod),
+                                    TextColor = Colour4.White,
+                                    WebFontSize = 16,
+                                },
+                                description = new ForcedHeightText
+                                {
+                                    Height = 8,
+                                    Text = LocalizationStrings.Mods.GetDescription(mod),
+                                    TextColor = Colour4.White,
+                                    WebFontSize = 12,
+                                    Alpha = .8f
+                                }
+                            }
+                        }
                     }
-                }
-            },
-            flash = new FlashLayer()
+                },
+                scoreMultiplier = new FluXisSpriteText
+                {
+                    Text = $"{multiplierText}%",
+                    WebFontSize = 14,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight,
+                    Shear = new Vector2(-.2f, 0),
+                    X = -20
+                },
+                flash = new FlashLayer { Colour = accent }
+            }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        updateSelected();
+        FinishTransforms(true);
+
+        overlay.SelectedMods.BindCollectionChanged((_, _) => updateSelected());
+    }
+
+    private void updateSelected()
+    {
+        var sel = selected;
+        var color = sel ? FluXisColors.TextDark : accent;
+
+        background.FadeColour(sel ? accent : FluXisColors.Background2);
+        line.FadeColour(sel ? accent.Darken(.75f) : accent).ResizeWidthTo(sel ? 12 : 6, 400, Easing.OutQuint);
+        flow.MoveToX(sel ? 6 : 0, 400, Easing.OutQuint);
+        icon.FadeColour(color);
+        name.FadeColour(color);
+        description.FadeColour(color);
+        scoreMultiplier.FadeColour(color);
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -112,25 +175,10 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
         flash.Show();
         samples.Click();
 
-        Selected = !Selected;
+        if (selected) overlay.Deselect(mod);
+        else overlay.Select(mod);
 
-        UpdateSelected();
-
-        if (Selected) Selector.Select(Mod);
-        else Selector.Deselect(Mod);
-
-        return base.OnClick(e);
-    }
-
-    public void UpdateSelected()
-    {
-        var color = Selected ? FluXisColors.TextDark : FluXisColors.Text;
-
-        background.FadeColour(Selected ? Colour4.FromHex(HexColour) : FluXisColors.Background3);
-        icon.FadeColour(color);
-        name.FadeColour(color);
-        description.FadeColour(color);
-        scoreMultiplier.FadeColour(color);
+        return true;
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -143,6 +191,18 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
     protected override void OnHoverLost(HoverLostEvent e)
     {
         hover.Hide();
+    }
+
+    public override void Show()
+    {
+        this.FadeIn(200);
+        content.MoveToX(50).MoveToX(0, 400, Easing.OutQuint);
+    }
+
+    public override void Hide()
+    {
+        this.FadeOut(200);
+        content.MoveToX(-50, 400, Easing.OutQuint);
     }
 
     public ITooltip<ModEntry> GetCustomTooltip() => new ModEntryTooltip();
@@ -193,7 +253,7 @@ public partial class ModEntry : Container, IHasCustomTooltip<ModEntry>
 
         public override void SetContent(ModEntry content)
         {
-            var mod = content.Mod;
+            var mod = content.mod;
 
             name.Text = LocalizationStrings.Mods.GetName(mod);
             description.Text = LocalizationStrings.Mods.GetDescription(mod);

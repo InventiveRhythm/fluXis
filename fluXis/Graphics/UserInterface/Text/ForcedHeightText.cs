@@ -1,5 +1,6 @@
 ﻿using fluXis.Graphics.Sprites;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
 
@@ -11,6 +12,12 @@ public partial class ForcedHeightText : CompositeDrawable
     {
         get => text.Text;
         set => text.Text = value;
+    }
+
+    public ColourInfo TextColor
+    {
+        get => text.Colour;
+        set => text.Colour = value;
     }
 
     public float FontSize
