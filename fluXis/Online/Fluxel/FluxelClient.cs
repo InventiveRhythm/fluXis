@@ -19,7 +19,6 @@ using Midori.Networking.WebSockets.Typed;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
@@ -150,17 +149,12 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
             Logger.Log("Connected to server! Waiting for authentication...", LoggingTarget.Network);
 
-            // this is needed when using a local server
-            // else it will fail to connect most of the time
-            if (DebugUtils.IsDebugBuild)
-                Thread.Sleep(500);
-
             var waitTime = 10d;
 
             // ReSharper disable once AsyncVoidLambda
             var task = new Task(async () =>
             {
-                while (Status.Value == ConnectionStatus.Connecting && waitTime > 0)
+                while (Status.Value is ConnectionStatus.Connecting or ConnectionStatus.Reconnecting && waitTime > 0)
                 {
                     if (connection.State >= WebSocketState.Closing)
                     {
