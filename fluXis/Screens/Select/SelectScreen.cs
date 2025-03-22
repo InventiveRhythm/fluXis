@@ -220,7 +220,13 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
             modsOverlay,
             footer = new SelectFooter
             {
-                BackAction = this.Exit,
+                BackAction = () =>
+                {
+                    if (modsOverlay.State.Value == Visibility.Visible)
+                        modsOverlay.Hide();
+                    else
+                        this.Exit();
+                },
                 ModsAction = modsOverlay.ToggleVisibility,
                 RewindAction = RewindRandom,
                 RandomAction = RandomMap,
