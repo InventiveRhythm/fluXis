@@ -273,8 +273,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        Logger.Log($"Opening link: {link}", LoggingTarget.Runtime, LogLevel.Debug);
-
         panelContainer.Content = new ExternalLinkPanel(link);
     }
 
