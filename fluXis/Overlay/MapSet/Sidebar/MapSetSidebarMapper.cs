@@ -16,8 +16,8 @@ namespace fluXis.Overlay.MapSet.Sidebar;
 
 public partial class MapSetSidebarMapper : CompositeDrawable
 {
-    [Resolved]
     [CanBeNull]
+    [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
     private Bindable<APIMap> mapBind { get; }

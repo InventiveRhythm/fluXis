@@ -195,7 +195,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     Tabs = new TabContainer[]
                                     {
                                         new MapSetInfoTab(),
-                                        new MapSetScoreTab(),
+                                        new MapSetScoreTab(bindableMap),
                                         new MapSetCommentsTab()
                                     }
                                 },

@@ -30,6 +30,7 @@ public partial class DrawableScoreRank : CompositeDrawable
     public bool Shadow { get; init; } = true;
     public bool AlternateColor { get; init; }
     public bool Rainbow { get; init; }
+    public float LetterSpacing { get; init; } = 20;
 
     private ScoreRank rank = ScoreRank.X;
 
@@ -75,6 +76,8 @@ public partial class DrawableScoreRank : CompositeDrawable
 
     private void drawDoubleLetter(string letter, Colour4 color)
     {
+        var space = LetterSpacing / 2;
+
         InternalChildren = new Drawable[]
         {
             new FluXisSpriteText
@@ -85,7 +88,7 @@ public partial class DrawableScoreRank : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Shadow = true,
-                Margin = new MarginPadding { Left = 10 },
+                Margin = new MarginPadding { Left = space },
                 Colour = AlternateColor ? FluXisColors.Background2 : color.Darken(.4f),
                 Alpha = AlternateColor ? .8f : 1
             },
@@ -97,7 +100,7 @@ public partial class DrawableScoreRank : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Shadow = true,
-                Margin = new MarginPadding { Right = 10 },
+                Margin = new MarginPadding { Right = space },
                 Colour = AlternateColor ? FluXisColors.Background2 : color
             }
         };

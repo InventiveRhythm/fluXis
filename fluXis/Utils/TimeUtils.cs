@@ -79,6 +79,46 @@ public static class TimeUtils
         return span.TotalSeconds >= 30 ? $"{(int)span.TotalSeconds} seconds ago" : "now";
     }
 
+    public static string AgoShort(DateTimeOffset time)
+    {
+        TimeSpan span = DateTimeOffset.Now - time;
+
+        switch (span.TotalDays)
+        {
+            case > 365:
+            {
+                int years = (int)(span.TotalDays / 365);
+                return $"{years}y";
+            }
+
+            case > 30:
+            {
+                int months = (int)(span.TotalDays / 30);
+                return $"{months}m";
+            }
+
+            case > 1:
+            {
+                int days = (int)span.TotalDays;
+                return $"{days}d";
+            }
+        }
+
+        if (span.TotalHours > 1)
+        {
+            int hours = (int)span.TotalHours;
+            return $"{hours}h";
+        }
+
+        if (span.TotalMinutes > 1)
+        {
+            int minutes = (int)span.TotalMinutes;
+            return $"{minutes}min";
+        }
+
+        return $"{(int)span.TotalSeconds}s";
+    }
+
     public static string GetWeekDay(this DateTimeOffset time)
     {
         return time.DayOfWeek switch
