@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -208,6 +209,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         dependencies.CacheAs(new EditorSnapProvider(editorMap, settings, clock));
 
+        var tabList = new List<EditorTab>
+        {
+            new SetupTab(),
+            new ChartingTab(),
+            new DesignTab(),
+            // new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
+        };
+
+        if (experiments.Get<bool>(ExperimentConfig.StoryboardTab))
+            tabList.Add(new StoryboardTab());
+
         InternalChild = new EditorKeybindingContainer(this, realm)
         {
             Children = new Drawable[]
@@ -237,16 +249,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Children = new EditorTab[]
-                                    {
-                                        new SetupTab(),
-                                        new ChartingTab(),
-                                        new DesignTab(),
-                                        experiments.Get<bool>(ExperimentConfig.StoryboardTab)
-                                            ? new StoryboardTab()
-                                            : new WipEditorTab(FontAwesome6.Solid.PaintBrush, "Storyboard", "Soon you'll be able to create storyboards here."),
-                                        new WipEditorTab(FontAwesome6.Solid.Music, "Hitsounding", "Soon you'll be able to edit volume of hitsounds and other stuff here.")
-                                    }
+                                    Children = tabList
                                 }
                             },
                             menuBar = new EditorMenuBar
@@ -356,9 +359,11 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                 Items = new FluXisMenuItem[]
                                                 {
                                                     new("0%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0) { IsActive = () => settings.WaveformOpacity.Value == 0 },
-                                                    new("25%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.25f) { IsActive = () => settings.WaveformOpacity.Value == 0.25f },
+                                                    new("25%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.25f)
+                                                        { IsActive = () => settings.WaveformOpacity.Value == 0.25f },
                                                     new("50%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.5f) { IsActive = () => settings.WaveformOpacity.Value == 0.5f },
-                                                    new("75%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.75f) { IsActive = () => settings.WaveformOpacity.Value == 0.75f },
+                                                    new("75%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.75f)
+                                                        { IsActive = () => settings.WaveformOpacity.Value == 0.75f },
                                                     new("100%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 1) { IsActive = () => settings.WaveformOpacity.Value == 1 }
                                                 }
                                             },

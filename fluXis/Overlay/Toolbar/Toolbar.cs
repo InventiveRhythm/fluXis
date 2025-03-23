@@ -15,7 +15,6 @@ using fluXis.Screens.Menu;
 using fluXis.Screens.Multiplayer;
 using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
-using fluXis.Screens.Wiki;
 using fluXis.Utils;
 using Humanizer;
 using osu.Framework.Allocation;
@@ -191,14 +190,14 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Overlay = browse,
                                 RequireLogin = true
                             },
-                            new ToolbarScreenButton
+                            /*new ToolbarScreenButton
                             {
                                 TooltipTitle = "Wiki",
                                 TooltipSub = "Learn about the game.",
                                 Icon = FontAwesome6.Solid.Book,
                                 Screen = typeof(Wiki),
                                 Action = () => goToScreen(new Wiki())
-                            },
+                            },*/
                             new ToolbarOverlayButton
                             {
                                 TooltipTitle = "Music Player",

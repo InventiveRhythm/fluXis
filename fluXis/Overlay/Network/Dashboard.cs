@@ -78,8 +78,8 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
             }
         };
 
-        addTab(new DashboardNotificationsTab());
-        addTab(new DashboardNewsTab());
+        // addTab(new DashboardNotificationsTab());
+        // addTab(new DashboardNewsTab());
         addTab(new DashboardFriendsTab());
         addTab(new DashboardClubTab());
         addTab(new DashboardOnlineTab());
