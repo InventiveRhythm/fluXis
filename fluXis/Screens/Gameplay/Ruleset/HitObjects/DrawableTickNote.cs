@@ -39,7 +39,7 @@ public partial class DrawableTickNote : DrawableHitObject
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            SkinManager.GetTickNote(Data.Lane, ObjectManager.KeyCount, Data.HoldTime > 0)
+            SkinManager.GetTickNote(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0)
         };
     }
 

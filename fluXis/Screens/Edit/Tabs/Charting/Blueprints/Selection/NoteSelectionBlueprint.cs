@@ -13,6 +13,15 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.EndTime;
 
+    protected ITimePositionProvider PositionProvider
+    {
+        get
+        {
+            var index = (Object.Lane - 1) / Map.RealmMap.KeyCount;
+            return ChartingContainer.Playfields[index];
+        }
+    }
+
     public NoteSelectionBlueprint(ITimedObject info)
         : base(info)
     {
@@ -26,6 +35,6 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
         var parent = Parent;
 
         if (parent != null)
-            Position = parent.ToLocalSpace(HitObjectContainer.ScreenSpacePositionAtTime(Object.Time, Object.Lane));
+            Position = parent.ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(Object.Time, Object.Lane));
     }
 }

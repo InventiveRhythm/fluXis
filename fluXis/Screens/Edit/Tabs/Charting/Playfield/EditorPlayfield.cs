@@ -13,6 +13,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield;
@@ -36,15 +37,29 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
 
     public event Action<string> HitSoundPlayed;
 
+    public bool CursorInPlacementArea => ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
+    public int Index { get; }
+
+    private DependencyContainer dependencies;
+    private InputManager inputManager;
+
     public EditorHitObjectContainer HitObjectContainer { get; } = new();
     public EditorEffectContainer Effects { get; private set; }
     private WaveformGraph waveform;
 
     private Sample hitSound;
 
+    public EditorPlayfield(int idx)
+    {
+        Index = idx;
+    }
+
     [BackgroundDependencyLoader]
     private void load(Bindable<Waveform> waveformBind, ISampleStore samples)
     {
+        dependencies.CacheAs(this);
+        dependencies.CacheAs(HitObjectContainer);
+
         Width = EditorHitObjectContainer.NOTEWIDTH * map.RealmMap.KeyCount;
         RelativeSizeAxes = Axes.Y;
         Anchor = Origin = Anchor.Centre;
@@ -75,6 +90,13 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         };
         waveformBind.BindValueChanged(w => waveform.Waveform = w.NewValue, true);
         settings.WaveformOpacity.BindValueChanged(opacity => waveform.FadeTo(opacity.NewValue, 200), true);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        inputManager = GetContainingInputManager();
     }
 
     protected override void Update()
@@ -115,6 +137,10 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
         HitSoundPlayed?.Invoke(channel.SampleName);
     }
 
+    public float PositionAtTime(double time) => HitObjectContainer.PositionAtTime(time);
     public double TimeAtScreenSpacePosition(Vector2 pos) => HitObjectContainer.TimeAtScreenSpacePosition(pos);
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => HitObjectContainer.ScreenSpacePositionAtTime(time, lane);
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 }

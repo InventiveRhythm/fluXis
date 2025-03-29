@@ -10,6 +10,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Online.API.Models.Maps;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using Newtonsoft.Json;
@@ -26,6 +27,8 @@ public class EditorMap
     public MapEvents MapEvents => MapInfo.MapEvents;
     public Storyboard Storyboard => MapInfo.Storyboard;
     public RealmMapSet MapSet => RealmMap?.MapSet;
+
+    public int MaxKeyCount => RealmMap.KeyCount * (MapInfo.DualMode == DualMode.Separate ? 2 : 1);
 
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());

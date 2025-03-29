@@ -64,6 +64,9 @@ public class MapInfo
     public bool IsDual => DualMode > DualMode.Disabled;
 
     [JsonIgnore]
+    public bool IsSplit => DualMode == DualMode.Separate;
+
+    [JsonIgnore]
     public double StartTime => HitObjects[0].Time;
 
     [JsonIgnore]

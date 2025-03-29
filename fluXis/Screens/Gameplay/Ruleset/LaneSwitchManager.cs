@@ -103,7 +103,7 @@ public partial class LaneSwitchManager : CompositeComponent
         }
     }
 
-    private Drawable getLane(int lane) => InternalChildren[lane - 1];
+    private Drawable getLane(int lane) => InternalChildren[(lane - 1) % keycount];
 
     private IEnumerable<int> getWidths(LaneSwitchEvent ev)
     {

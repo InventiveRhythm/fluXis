@@ -1,6 +1,5 @@
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Actions;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -11,7 +10,7 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Placement;
 public partial class PlacementBlueprint : Container
 {
     [Resolved]
-    protected EditorPlayfield Playfield { get; private set; }
+    protected ChartingContainer ChartingContainer { get; private set; }
 
     [Resolved]
     protected EditorActionStack Actions { get; private set; }
@@ -22,8 +21,10 @@ public partial class PlacementBlueprint : Container
     [Resolved]
     protected EditorMap Map { get; private set; }
 
+    protected virtual ITimePositionProvider PositionProvider => ChartingContainer.Playfields[0];
+
     public PlacementState State { get; set; }
-    public ITimedObject Object { get; set; }
+    public ITimedObject Object { get; }
 
     protected PlacementBlueprint(ITimedObject obj)
     {

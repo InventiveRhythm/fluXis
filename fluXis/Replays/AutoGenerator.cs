@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures;
+using fluXis.Online.API.Models.Maps;
 using fluXis.Online.API.Models.Users;
 using fluXis.Screens.Gameplay.Input;
 
@@ -18,6 +19,7 @@ public class AutoGenerator
     private MapInfo map { get; }
     private int mode { get; }
     private bool dual { get; }
+    private bool split { get; }
 
     private List<FluXisGameplayKeybind> keys { get; }
 
@@ -28,6 +30,7 @@ public class AutoGenerator
         this.map = map;
         this.mode = mode;
         dual = map.IsDual;
+        split = map.DualMode == DualMode.Separate;
 
         keys = GameplayInput.GetKeys(mode, dual).ToList();
     }
@@ -67,7 +70,7 @@ public class AutoGenerator
                     case PressAction:
                         currentKeys.Add(keys[point.Lane - 1]);
 
-                        if (dual)
+                        if (dual && !split)
                             currentKeys.Add(keys[point.Lane - 1 + mode]);
 
                         break;
@@ -75,7 +78,7 @@ public class AutoGenerator
                     case ReleaseAction:
                         currentKeys.Remove(keys[point.Lane - 1]);
 
-                        if (dual)
+                        if (dual && !split)
                             currentKeys.Remove(keys[point.Lane - 1 + mode]);
 
                         break;
@@ -88,7 +91,7 @@ public class AutoGenerator
 
     private IEnumerable<IAction> generateActions()
     {
-        var down = new bool[mode];
+        var down = new bool[mode * (split ? 2 : 1)];
 
         for (int i = 0; i < map.HitObjects.Count; i++)
         {

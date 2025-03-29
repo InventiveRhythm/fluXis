@@ -31,6 +31,19 @@ public partial class DrawableLongNotePart : CompositeDrawable
     [Resolved]
     protected RulesetContainer Ruleset { get; private set; }
 
+    protected int VisualLane
+    {
+        get
+        {
+            var lane = Data.Lane;
+
+            while (lane > ObjectManager.KeyCount)
+                lane -= ObjectManager.KeyCount;
+
+            return lane;
+        }
+    }
+
     protected DrawableLongNotePart(HitObject data)
     {
         Data = data;

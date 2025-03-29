@@ -33,6 +33,19 @@ public partial class DrawableHitObject : CompositeDrawable
 
     protected double TimeDelta => Data.Time - Time.Current;
 
+    protected int VisualLane
+    {
+        get
+        {
+            var lane = Data.Lane;
+
+            while (lane > ObjectManager.KeyCount)
+                lane -= ObjectManager.KeyCount;
+
+            return lane;
+        }
+    }
+
     public FluXisGameplayKeybind Keybind { get; set; }
 
     public virtual bool CanBeRemoved => false;

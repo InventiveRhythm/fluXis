@@ -66,7 +66,15 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         RelativeSizeAxes = Axes.Both;
 
         InternalChildrenEnumerable = Enumerable.Range(0, KeyCount)
-                                               .Select(i => new HitObjectColumn(ruleset.MapInfo, this, i + 1));
+                                               .Select(i =>
+                                               {
+                                                   var lane = i + 1;
+
+                                                   if (ruleset.MapInfo.IsSplit)
+                                                       lane += KeyCount * playfield.Index;
+
+                                                   return new HitObjectColumn(ruleset.MapInfo, this, lane);
+                                               });
 
         scrollSpeed = config.GetBindable<float>(FluXisSetting.ScrollSpeed);
         useSnapColors = config.GetBindable<bool>(FluXisSetting.SnapColoring);
@@ -104,6 +112,9 @@ public partial class HitObjectManager : Container<HitObjectColumn>
 
     public float PositionAtLane(float lane)
     {
+        while (lane > KeyCount)
+            lane -= KeyCount;
+
         var receptors = playfield.Receptors;
         var x = 0f;
 
@@ -140,7 +151,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
         var drawable = GetDrawableFor(hitObject);
         var idx = hitObject.Lane - 1;
 
-        if (playfield.Index > 0)
+        if (playfield.Index > 0 && !playfield.MapInfo.IsSplit)
             idx += playfield.Index * (input.Keys.Count / 2);
 
         if (input.Keys.Count > idx)

@@ -27,7 +27,7 @@ public partial class TickNotePlacementBlueprint : NotePlacementBlueprint
         base.UpdatePlacement(time, lane);
 
         piece.Width = EditorHitObjectContainer.NOTEWIDTH;
-        piece.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(time, lane));
+        piece.Position = ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(time, lane));
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
