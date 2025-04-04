@@ -9,6 +9,7 @@ using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Screens.Select.Footer.Options;
+using fluXis.Screens.Select.Footer.Practice;
 using fluXis.UI;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
@@ -17,22 +18,26 @@ using osuTK.Input;
 
 namespace fluXis.Screens.Select.Footer;
 
+#nullable enable
+
 public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
 {
-    public Action BackAction { get; init; }
-    public Action ModsAction { get; init; }
-    public Action RandomAction { get; init; }
-    public Action RewindAction { get; init; }
-    public Action PlayAction { get; init; }
+    public Action? BackAction { get; init; }
+    public Action? ModsAction { get; init; }
+    public Action? RandomAction { get; init; }
+    public Action? RewindAction { get; init; }
+    public Action<int, int>? PracticeAction { get; set; }
+    public Action? PlayAction { get; init; }
 
-    public Action<RealmMapSet> DeleteAction { get; init; }
-    public Action<RealmMap> EditAction { get; init; }
-    public Action ScoresWiped { get; init; }
+    public Action<RealmMapSet>? DeleteAction { get; init; }
+    public Action<RealmMap>? EditAction { get; init; }
+    public Action? ScoresWiped { get; init; }
 
-    private FooterButton randomButton;
-    private FooterOptions options;
+    private FooterButton randomButton = null!;
+    private FooterOptions options = null!;
+    private FooterPractice practice = null!;
 
-    private InputManager inputManager;
+    private InputManager inputManager = null!;
 
     protected override void LoadComplete()
     {
@@ -69,35 +74,59 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         PlayClickSound = false
     };
 
-    protected override Drawable CreateBackgroundContent() => options = new FooterOptions
+    protected override Drawable[] CreateBackgroundContent() => new Drawable[]
     {
-        DeleteAction = DeleteAction,
-        EditAction = EditAction,
-        ScoresWiped = ScoresWiped
+        options = new FooterOptions
+        {
+            DeleteAction = DeleteAction,
+            EditAction = EditAction,
+            ScoresWiped = ScoresWiped
+        },
+        practice = new FooterPractice
+        {
+            PracticeAction = PracticeAction
+        }
     };
 
     protected override IEnumerable<FooterButton> CreateButtons()
     {
-        return new[]
+        yield return new SelectModsButton(ModsAction);
+
+        yield return randomButton = new FooterButton
         {
-            new SelectModsButton(ModsAction),
-            randomButton = new FooterButton
+            Text = LocalizationStrings.SongSelect.FooterRandom,
+            Icon = FontAwesome6.Solid.Shuffle,
+            AccentColor = FluXisColors.Footer2,
+            Action = () =>
             {
-                Text = LocalizationStrings.SongSelect.FooterRandom,
-                Icon = FontAwesome6.Solid.Shuffle,
-                AccentColor = FluXisColors.Footer2,
-                Action = randomMap,
-                Index = 1
+                if (inputManager.CurrentState.Keyboard.ShiftPressed)
+                    RewindAction?.Invoke();
+                else
+                    RandomAction?.Invoke();
             },
-            options.Button = new FooterButton
-            {
-                Text = LocalizationStrings.SongSelect.FooterOptions,
-                Icon = FontAwesome6.Solid.Gear,
-                AccentColor = FluXisColors.Footer3,
-                Action = OpenSettings,
-                Index = 2
-            }
+            Index = 1
         };
+
+        yield return options.Button = new FooterButton
+        {
+            Text = LocalizationStrings.SongSelect.FooterOptions,
+            Icon = FontAwesome6.Solid.Gear,
+            AccentColor = FluXisColors.Footer3,
+            Action = OpenSettings,
+            Index = 2
+        };
+
+        if (PracticeAction is not null)
+        {
+            yield return practice.Button = new FooterButton
+            {
+                Text = LocalizationStrings.SongSelect.FooterPractice,
+                Icon = FontAwesome6.Solid.BullseyeArrow,
+                AccentColor = FluXisColors.Footer4,
+                Action = practice.ToggleVisibility,
+                Index = 3
+            };
+        }
     }
 
     protected override GamepadTooltipBar CreateGamepadTooltips() => new()
@@ -170,16 +199,5 @@ public partial class SelectFooter : Graphics.UserInterface.Footer.Footer
         return false;
     }
 
-    public void OpenSettings()
-    {
-        options.ToggleVisibility();
-    }
-
-    private void randomMap()
-    {
-        if (inputManager.CurrentState.Keyboard.ShiftPressed)
-            RewindAction?.Invoke();
-        else
-            RandomAction?.Invoke();
-    }
+    public void OpenSettings() => options.ToggleVisibility();
 }

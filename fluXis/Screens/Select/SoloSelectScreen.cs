@@ -5,6 +5,8 @@ using fluXis.Mods;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Screens.Gameplay;
+using fluXis.Screens.Gameplay.Practice;
+using fluXis.Screens.Select.Footer;
 using osu.Framework.Input;
 using osu.Framework.Screens;
 
@@ -18,6 +20,18 @@ public partial class SoloSelectScreen : SelectScreen
     {
         base.LoadComplete();
         input = GetContainingInputManager();
+    }
+
+    protected override SelectFooter CreateFooter()
+    {
+        var footer = base.CreateFooter();
+        footer.PracticeAction = (s, e) =>
+        {
+            var map = Maps.CurrentMap;
+            var mods = CurrentMods.ToList();
+            this.Push(new GameplayLoader(Maps.CurrentMap, mods, () => new PracticeGameplayScreen(map, mods, s, e)));
+        };
+        return footer;
     }
 
     protected override void StartMap(RealmMap map, List<IMod> mods, List<ScoreInfo> scores)

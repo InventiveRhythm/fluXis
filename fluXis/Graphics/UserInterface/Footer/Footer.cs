@@ -51,7 +51,7 @@ public abstract partial class Footer : CompositeDrawable
         var backgroundContent = CreateBackgroundContent();
 
         if (backgroundContent != null)
-            AddInternal(backgroundContent);
+            AddRangeInternal(backgroundContent);
 
         content = new Container
         {
@@ -150,7 +150,7 @@ public abstract partial class Footer : CompositeDrawable
     protected abstract CornerButton? CreateLeftButton();
     protected abstract CornerButton? CreateRightButton();
 
-    protected virtual Drawable? CreateBackgroundContent() => null;
+    protected virtual Drawable[]? CreateBackgroundContent() => null;
     protected virtual Drawable? CreateForegroundContent() => null;
     protected virtual GamepadTooltipBar? CreateGamepadTooltips() => null;
 

@@ -3,7 +3,6 @@ using System.Linq;
 using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
-using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
@@ -69,7 +68,6 @@ public partial class FooterOptions : FocusedOverlayContainer
                 Y = 20,
                 Masking = true,
                 CornerRadius = 10,
-                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -85,7 +83,6 @@ public partial class FooterOptions : FocusedOverlayContainer
                 AutoSizeAxes = Axes.Y,
                 Masking = true,
                 CornerRadius = 20,
-                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -220,6 +217,6 @@ public partial class FooterOptions : FocusedOverlayContainer
 
     protected override void OnFocusLost(FocusLostEvent e) => Hide();
 
-    protected override void PopIn() => this.FadeIn(300).MoveToY(0, 600, Easing.OutQuint);
-    protected override void PopOut() => this.FadeOut(300).MoveToY(40, 600, Easing.OutQuint);
+    protected override void PopIn() => this.FadeIn(200).MoveToY(0, 400, Easing.OutQuint);
+    protected override void PopOut() => this.FadeOut(200).MoveToY(40, 400, Easing.OutQuint);
 }

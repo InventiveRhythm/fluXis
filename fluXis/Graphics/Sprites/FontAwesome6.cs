@@ -31,6 +31,7 @@ public class FontAwesome6
         public static IconUsage Book => GetSolid(0xf02d);
         public static IconUsage BoxOpen => GetSolid(0xf49e);
         public static IconUsage Bug => GetSolid(0xf188);
+        public static IconUsage BullseyeArrow => GetSolid(0xf648);
         public static IconUsage CandyCane => GetSolid(0xf786);
         public static IconUsage ChartLine => GetSolid(0xf201);
         public static IconUsage Check => GetSolid(0xf00c);

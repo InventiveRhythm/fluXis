@@ -67,7 +67,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     public override UserActivity InitialActivity => new UserActivity.SongSelect();
 
     [Resolved]
-    private MapStore maps { get; set; }
+    protected MapStore Maps { get; private set; }
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -86,6 +86,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     [Resolved]
     private PanelContainer panels { get; set; }
+
+    protected IEnumerable<IMod> CurrentMods => modsOverlay.SelectedMods;
 
     private MapList mapList { get; set; }
     private ModsOverlay modsOverlay { get; set; }
@@ -218,23 +220,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 }
             },
             modsOverlay,
-            footer = new SelectFooter
-            {
-                BackAction = () =>
-                {
-                    if (modsOverlay.State.Value == Visibility.Visible)
-                        modsOverlay.Hide();
-                    else
-                        this.Exit();
-                },
-                ModsAction = modsOverlay.ToggleVisibility,
-                RewindAction = RewindRandom,
-                RandomAction = RandomMap,
-                PlayAction = Accept,
-                DeleteAction = DeleteMapSet,
-                EditAction = EditMap,
-                ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
-            }
+            footer = CreateFooter()
         };
 
         Filters.OnChange += searchTracker.Reset;
@@ -242,8 +228,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     protected override void LoadComplete()
     {
-        if (maps.CurrentMap.Hash == "dummy" && maps.MapSets.Any())
-            maps.Select(maps.GetRandom()?.LowestDifficulty, true);
+        if (Maps.CurrentMap.Hash == "dummy" && Maps.MapSets.Any())
+            Maps.Select(Maps.GetRandom()?.LowestDifficulty, true);
 
         sortMode.BindValueChanged(setSortingMode);
         groupMode.BindValueChanged(setGroupingMode);
@@ -254,10 +240,10 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
             Schedule(() =>
             {
-                maps.MapSetAdded += addMapSet;
-                maps.MapSetUpdated += replaceMapSet;
-                maps.MapSetBindable.BindValueChanged(mapSetBindableChanged, true);
-                maps.MapBindable.BindValueChanged(mapBindableChanged, true);
+                Maps.MapSetAdded += addMapSet;
+                Maps.MapSetUpdated += replaceMapSet;
+                Maps.MapSetBindable.BindValueChanged(mapSetBindableChanged, true);
+                Maps.MapBindable.BindValueChanged(mapBindableChanged, true);
 
                 mapList.FadeIn(500);
                 loadingIcon.FadeOut(500);
@@ -269,12 +255,12 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     protected override void Dispose(bool isDisposing)
     {
-        maps.MapSetAdded -= addMapSet;
-        maps.MapSetUpdated -= replaceMapSet;
+        Maps.MapSetAdded -= addMapSet;
+        Maps.MapSetUpdated -= replaceMapSet;
         songSelectBlur.ValueChanged -= updateBackgroundBlur;
 
-        maps.MapSetBindable.ValueChanged -= mapSetBindableChanged;
-        maps.MapBindable.ValueChanged -= mapBindableChanged;
+        Maps.MapSetBindable.ValueChanged -= mapSetBindableChanged;
+        Maps.MapBindable.ValueChanged -= mapBindableChanged;
 
         Filters.OnChange -= UpdateSearch;
 
@@ -299,20 +285,42 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         }));
     }
 
+    #region Creating
+
+    protected virtual SelectFooter CreateFooter() => new()
+    {
+        BackAction = () =>
+        {
+            if (modsOverlay.State.Value == Visibility.Visible)
+                modsOverlay.Hide();
+            else
+                this.Exit();
+        },
+        ModsAction = modsOverlay.ToggleVisibility,
+        RewindAction = RewindRandom,
+        RandomAction = RandomMap,
+        PlayAction = Accept,
+        DeleteAction = DeleteMapSet,
+        EditAction = EditMap,
+        ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
+    };
+
+    #endregion
+
     #region Actions
 
     public void Accept()
     {
-        if (maps.CurrentMap == null)
+        if (Maps.CurrentMap == null)
             return;
 
         UISamples.Select();
-        backgrounds.AddBackgroundFromMap(maps.CurrentMap);
+        backgrounds.AddBackgroundFromMap(Maps.CurrentMap);
         backgrounds.SwipeAnimation();
 
         modsOverlay.Hide();
 
-        StartMap(maps.CurrentMap, modsOverlay.SelectedMods.ToList(), selectMapInfo.ScoreList.CurrentScores.ToList());
+        StartMap(Maps.CurrentMap, modsOverlay.SelectedMods.ToList(), selectMapInfo.ScoreList.CurrentScores.ToList());
     }
 
     protected abstract void StartMap(RealmMap map, List<IMod> mods, List<ScoreInfo> scores);
@@ -352,8 +360,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
     {
         if (map == null) return;
 
-        maps.Select(map, true);
-        if (maps.CurrentMap == null) return;
+        Maps.Select(map, true);
+        if (Maps.CurrentMap == null) return;
 
         if (map.MapSet.AutoImported)
         {
@@ -383,7 +391,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         };
 
         notifications.AddTask(notification);
-        Task.Run(() => maps.Export(set, notification));
+        Task.Run(() => Maps.Export(set, notification));
     }
 
     public void DeleteMapSet(RealmMapSet set)
@@ -395,10 +403,10 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         panels.Content ??= new ConfirmDeletionPanel(() =>
         {
-            if (Equals(set, maps.CurrentMapSet))
+            if (Equals(set, Maps.CurrentMapSet))
                 changeItemSelection(1);
 
-            maps.DeleteMapSet(set);
+            Maps.DeleteMapSet(set);
 
             foreach (var item in items)
             {
@@ -592,7 +600,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     private void loadMapSets()
     {
-        var sets = maps.MapSets;
+        var sets = Maps.MapSets;
 
         mapList.StartBulkInsert();
 
@@ -785,8 +793,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
-        if (maps.CurrentMap != null)
-            clock.RestartPoint = maps.CurrentMap.Metadata.PreviewTime;
+        if (Maps.CurrentMap != null)
+            clock.RestartPoint = Maps.CurrentMap.Metadata.PreviewTime;
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
@@ -809,11 +817,11 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         songSelectBlur.ValueChanged += updateBackgroundBlur;
 
-        if (maps.CurrentMap != null)
+        if (Maps.CurrentMap != null)
         {
-            lightController.FadeColour(FluXisColors.GetKeyColor(maps.CurrentMap.KeyCount), 400);
+            lightController.FadeColour(FluXisColors.GetKeyColor(Maps.CurrentMap.KeyCount), 400);
 
-            clock.RestartPoint = maps.CurrentMap.Metadata.PreviewTime;
+            clock.RestartPoint = Maps.CurrentMap.Metadata.PreviewTime;
 
             if (!clock.IsRunning)
                 clock.Start();
@@ -882,8 +890,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         if (Items.Count <= 1)
             return;
 
-        var title = maps.CurrentMapSet.Metadata.SortingTitle;
-        var current = title.Length < 1 ? '#' : getLetter(maps.CurrentMapSet.Metadata.SortingTitle[0]);
+        var title = Maps.CurrentMapSet.Metadata.SortingTitle;
+        var current = title.Length < 1 ? '#' : getLetter(Maps.CurrentMapSet.Metadata.SortingTitle[0]);
 
         var index = Array.IndexOf(letters, current);
         index += by;
@@ -967,7 +975,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         mapList.StartBulkInsert();
 
-        foreach (var set in maps.MapSets)
+        foreach (var set in Maps.MapSets)
         {
             if (!ShouldAdd(set))
                 continue;
