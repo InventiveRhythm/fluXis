@@ -180,7 +180,7 @@ public partial class FooterPractice : FocusedOverlayContainer
         if (e.OldValue.FullAudioPath == map.FullAudioPath && end.MaxValue != int.MaxValue)
             return;
 
-        var max = (int)Math.Ceiling(map.Filters.Length / 1000);
+        var max = (int)Math.Max(Math.Ceiling(map.Filters.Length / 1000), 1);
 
         start.Value = 0;
         end.Value = 1;
