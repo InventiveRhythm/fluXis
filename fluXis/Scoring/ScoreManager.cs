@@ -5,6 +5,7 @@ using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
 using fluXis.Map;
+using fluXis.Online.Fluxel;
 using fluXis.Scoring.Processing;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
@@ -33,20 +34,27 @@ public partial class ScoreManager : CompositeDrawable
     [Resolved]
     private MapStore maps { get; set; } = null!;
 
+    [Resolved]
+    private IAPIClient api { get; set; } = null!;
+
     private bool initialProcessing = true;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         checkForUpdates();
-        maps.MapSets.ForEach(set => set.Maps.ForEach(map => processMap(map.ID)));
+        reprocessAll();
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
         initialProcessing = false;
+
+        api.User.ValueChanged += _ => Scheduler.ScheduleIfNeeded(reprocessAll);
     }
+
+    private void reprocessAll() => maps.MapSets.ForEach(set => set.Maps.ForEach(map => processMap(map.ID)));
 
     private void checkForUpdates()
     {
@@ -135,7 +143,8 @@ public partial class ScoreManager : CompositeDrawable
 
     private void processMap(Guid map) => realm.Run(r =>
     {
-        var scores = r.All<RealmScore>().Where(s => s.MapID == map).ToList();
+        var player = api.User.Value?.ID ?? 0;
+        var scores = r.All<RealmScore>().Where(s => s.MapID == map && s.PlayerID == player).ToList();
 
         RealmScore? top = null;
 
