@@ -258,7 +258,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         if (skipWarning)
         {
-            if (Steam.Initialized)
+            if (Steam?.Initialized ?? false)
                 Steam.OpenLink(link);
             else
                 Host.OpenUrlExternally(link);

@@ -17,7 +17,7 @@
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     <PackageReference Include="NLua" Version="1.7.4" />
-    <PackageReference Include="flustix.Midori" Version="2025.312.0" />
+    <PackageReference Include="flustix.Midori" Version="2025.405.0" />
     <PackageReference Include="ppy.osu.Framework" Version="2025.311.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
@@ -29,17 +29,6 @@
   <ItemGroup Label="Code Analysis">
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
     <AdditionalFiles Include="..\CodeAnalysis\BannedSymbols.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="steam_api64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="libsteam_api.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="steam_appid.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Stores\" />

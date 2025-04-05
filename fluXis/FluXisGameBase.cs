@@ -83,7 +83,9 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected MapStore MapStore { get; private set; }
     protected SkinManager SkinManager { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
-    protected SteamManager Steam { get; }
+
+    [CanBeNull]
+    protected ISteamManager Steam { get; }
 
     public PluginManager Plugins { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
@@ -132,8 +134,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
-        Midori.Logging.Logger.LogToFiles = false;
-        Steam = new SteamManager(); // steam needs to load before the graphics
+        Midori.Logging.Logger.SaveToFiles = false;
+        Steam = CreateSteam(); // steam needs to load before the graphics
     }
 
     [BackgroundDependencyLoader]
@@ -209,8 +211,10 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(new UISamples(), true, true);
             cacheComponent(CreateLightController(), true, true);
-            cacheComponent(Steam, true, true);
             cacheComponent(CursorOverlay = new GlobalCursorOverlay());
+
+            if (Steam is not null)
+                cacheComponent(Steam, true, true);
 
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -434,6 +438,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         APIClient.Disconnect();
         base.Exit();
     }
+
+    [CanBeNull]
+    protected virtual ISteamManager CreateSteam() => null;
 
     protected virtual bool RestartOnClose() => false;
 

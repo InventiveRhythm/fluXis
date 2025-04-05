@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using osu.Framework.Logging;
 using EventType = DiscordRPC.EventType;
 
-namespace fluXis.Desktop;
+namespace fluXis.Desktop.Integration;
 
 public class DiscordActivity
 {

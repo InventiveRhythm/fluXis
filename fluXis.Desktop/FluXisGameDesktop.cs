@@ -58,11 +58,12 @@ public partial class FluXisGameDesktop : FluXisGame
         ipc?.Dispose();
     }
 
+    protected override ISteamManager CreateSteam() => new SteamManager();
     public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
 
     public override IUpdatePerformer CreateUpdatePerformer()
     {
-        if (Steam.Initialized || !OperatingSystem.IsWindows())
+        if ((Steam?.Initialized ?? false) || !OperatingSystem.IsWindows())
             return null;
 
         return new VelopackUpdatePerformer(NotificationManager);

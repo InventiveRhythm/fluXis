@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
 using osu.Framework.Allocation;
@@ -7,9 +8,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using Steamworks;
 
-namespace fluXis.Integration;
+namespace fluXis.Desktop.Integration;
 
-public partial class SteamManager : Component
+public partial class SteamManager : Component, ISteamManager
 {
     [Resolved]
     private IAPIClient api { get; set; }
@@ -118,6 +119,9 @@ public partial class SteamManager : Component
             return;
         }
 
+        if (api.User.Value is null)
+            return;
+
         logger.Add($"Received ticket. [{ticket.m_cubTicket}]");
 
         var bytes = ticket.m_rgubTicket;
@@ -138,10 +142,4 @@ public partial class SteamManager : Component
 
         ticketCb?.Dispose();
     }
-}
-
-public enum SteamRichPresenceKey
-{
-    Status,
-    Details
 }
