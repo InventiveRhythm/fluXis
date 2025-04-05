@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
-using fluXis.Database;
 using fluXis.Database.Maps;
-using fluXis.Database.Score;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
@@ -13,6 +10,7 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Overlay.Settings;
+using fluXis.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -39,7 +37,7 @@ public partial class FooterOptions : FocusedOverlayContainer
     private MapStore maps { get; set; }
 
     [Resolved]
-    private FluXisRealm realm { get; set; }
+    private ScoreManager scores { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -160,11 +158,8 @@ public partial class FooterOptions : FocusedOverlayContainer
                                         {
                                             new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                                             {
-                                                realm.RunWrite(r =>
-                                                {
-                                                    var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
-                                                    r.RemoveRange(scores);
-                                                });
+                                                scores.WipeFromMap(maps.CurrentMap.ID);
+
 
                                                 ScoresWiped?.Invoke();
                                             }, true),

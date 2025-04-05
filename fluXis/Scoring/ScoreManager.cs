@@ -133,6 +133,19 @@ public partial class ScoreManager : CompositeDrawable
         rScore.OnlineID = id;
     });
 
+    public void WipeFromMap(Guid map) => realm.RunWrite(r =>
+    {
+        var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
+        var detach = scores.ToList().Select(x => x.Detach()).ToList();
+        r.RemoveRange(scores);
+
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            detach.ForEach(s => ScoreRemoved?.Invoke(map, s));
+            processMap(map);
+        });
+    });
+
     public RealmScore? GetCurrentTop(Guid map)
     {
         if (highestScores.TryGetValue(map, out var top))
