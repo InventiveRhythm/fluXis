@@ -1,0 +1,23 @@
+{
+  "title": "Âm thanh",
+  "device-title": "Thiết bị",
+  "output-device": "Thiết bị xuất âm thanh",
+  "volume-title": "Âm lượng",
+  "master-volume": "Âm lượng chính",
+  "master-volume-inactive": "Âm lượng chính (Khi không hoạt động)",
+  "master-volume-inactive-description": "Âm lượng khi trò chơi không hoạt động (nhân với Âm lượng chính)",
+  "music-volume": "Âm lượng nhạc",
+  "effect-volume": "Âm lượng hiệu ứng",
+  "hit-sound-volume": "Âm lượng âm thanh đánh",
+  "offset-title": "Độ trễ",
+  "audio-offset": "Độ trễ âm thanh",
+  "audio-offset-description": "Thay đổi độ trễ âm thanh cho tất cả bài hát. Số cao hơn nghĩa là note xuất hiện muộn hơn.",
+  "disable-offset-in-replay": "Tắt độ trễ trong phát lại",
+  "disable-offset-in-replay-description": "Tắt độ trễ âm thanh khi xem phát lại. Hữu ích khi xem phát lại.",
+  "open-offset-wizard": "Mở trình cài đặt độ trễ",
+  "panning-title": "Cân bằng âm thanh",
+  "ui-panning": "Giao diện người dùng",
+  "ui-panning-description": "Thay đổi cân bằng âm thanh cho âm nhấp chuột và rê chuột dựa trên vị trí chuột.",
+  "hitsound-panning": "Hitsound",
+  "hitsound-panning-description": "Thay đổi cân bằng âm thanh cho hitsound dựa trên vị trí trên sân chơi."
+}

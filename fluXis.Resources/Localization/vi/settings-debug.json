@@ -1,0 +1,9 @@
+{
+  "title": "Gỡ lỗi",
+  "show-log-overlay": "Hiển thị nhật ký ở trên cùng",
+  "import-file": "Nhập tệp",
+  "log-api": "Ghi nhật ký phản hồi API.",
+  "log-api-description": "Ghi lại tất cả phản hồi của yêu cầu API vào bảng điều khiển và tệp nhật ký. Điều này có thể chứa thông tin nhạy cảm như email và mã token.",
+  "show-missing-localizations": "Hiển thị bản dịch bị thiếu.",
+  "show-missing-localizations-description": "Hiển thị ID của chuỗi chưa được dịch. (chuyển ngôn ngữ để cập nhật)"
+}

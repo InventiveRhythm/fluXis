@@ -1,0 +1,15 @@
+{
+  "title": "Chung",
+  "language-title": "Ngôn ngữ",
+  "language-current": "Ngôn ngữ hiện tại",
+  "updates-title": "Cập nhật",
+  "release-channel": "Kênh phát hành",
+  "release-channel-description": "Chọn kênh phát hành để nhận cập nhật.",
+  "check-updates": "Kiểm tra cập nhật",
+  "check-updates-description": "Kiểm tra và tải xuống nếu có bản cập nhật mới.",
+  "folders-title": "Thư mục",
+  "open-folder": "Mở thư mục fluXis",
+  "export-logs": "Xuất nhật ký",
+  "export-logs-description": "Nén tất cả tệp nhật ký vào một tệp zip để dễ chia sẻ.",
+  "change-folder": "Thay đổi vị trí thư mục"
+}
