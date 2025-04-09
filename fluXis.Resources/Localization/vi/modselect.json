@@ -1,0 +1,11 @@
+{
+  "title": "Điều chỉnh lối chơi",
+  "description": "Làm cho trò chơi khó hơn hoặc dễ hơn theo ý bạn!",
+  "section-rate": "Tốc độ",
+  "section-difficulty-increase": "Tăng độ khó",
+  "section-difficulty-decrease": "Giảm độ khó",
+  "section-misc": "Khác",
+  "section-automation": "Tự động",
+  "max-score": "Điểm tối đa: {0:0}%",
+  "incompatible-mods": "Mod không tương thích:"
+}

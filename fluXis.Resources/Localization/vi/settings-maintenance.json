@@ -1,0 +1,11 @@
+{
+  "title": "Bảo trì",
+  "files-title": "Tệp",
+  "files-clean-up": "Dọn dẹp tệp",
+  "files-clean-up-description": "Xoá tất cả các tệp không được sử dụng bởi bất kỳ bản map.",
+  "maps-title": "Map",
+  "maps-recalculate-filters": "Tính lại bộ lọc",
+  "maps-recalculate-filters-description": "Tính toán lại tất cả bộ lọc cho tất cả map.",
+  "maps-scores-clean-up": "Dọn dẹp điểm số",
+  "maps-scores-clean-up-description": "Xoá điểm số khỏi các map mà bạn không còn nữa."
+}
