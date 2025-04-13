@@ -461,7 +461,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected override IDictionary<FrameworkSetting, object> GetFrameworkConfigDefaults() => new Dictionary<FrameworkSetting, object>
     {
         { FrameworkSetting.VolumeUniversal, .15d },
-        { FrameworkSetting.ConfineMouseMode, ConfineMouseMode.Never }
+        { FrameworkSetting.ConfineMouseMode, ConfineMouseMode.Never },
     };
 
     protected override bool OnExiting()

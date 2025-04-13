@@ -133,7 +133,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipSub = "Play with others.",
                                 Icon = FontAwesome6.Solid.Users,
                                 Screen = typeof(MultiplayerScreen),
-                                Action = () => goToScreen(new MultiplayerScreen())
+                                Action = () => goToScreen(new MultiplayerScreen()),
+                                RequireLogin = true
                             },
                             new ToolbarScreenButton
                             {

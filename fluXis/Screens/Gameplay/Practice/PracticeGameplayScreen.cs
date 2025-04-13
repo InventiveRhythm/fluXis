@@ -24,6 +24,10 @@ public partial class PracticeGameplayScreen : GameplayScreen
     protected override MapInfo LoadMap()
     {
         var map = base.LoadMap();
+
+        if (map is null)
+            return null;
+
         map.HitObjects = map.HitObjects.Where(o => o.Time >= start && o.Time <= end).ToList();
         return map;
     }
