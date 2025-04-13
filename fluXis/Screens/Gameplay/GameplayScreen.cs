@@ -56,8 +56,8 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
@@ -251,21 +251,23 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                             Origin = Anchor.Centre,
                             Children = new Drawable[]
                             {
-                                background = new GlobalBackground
-                                {
-                                    DefaultMap = RealmMap,
-                                    InitialBlur = BackgroundBlur
-                                },
-                                backgroundVideo = new BackgroundVideo
-                                {
-                                    Clock = GameplayClock
-                                },
-                                new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
-                                new Box
+                                new Container
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = Color4.Black,
-                                    Alpha = BackgroundDim
+                                    Colour = ColourInfo.GradientHorizontal(Color4.White, Color4.Black).Interpolate(new Vector2(BackgroundDim, 0)),
+                                    Children = new Drawable[]
+                                    {
+                                        background = new GlobalBackground
+                                        {
+                                            DefaultMap = RealmMap,
+                                            InitialBlur = BackgroundBlur
+                                        },
+                                        backgroundVideo = new BackgroundVideo
+                                        {
+                                            Clock = GameplayClock
+                                        },
+                                        new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Background),
+                                    }
                                 },
                                 clockContainer,
                                 new DrawableStoryboardWrapper(GameplayClock, storyboard, StoryboardLayer.Foreground)
@@ -534,7 +536,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        fadeOut();
+        this.FadeOut(FADE_DURATION);
 
         if (FadeBackToGlobalClock)
         {
@@ -556,7 +558,6 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
     public override void OnEntering(ScreenTransitionEvent e)
     {
         GameplayClock.Start();
-        GameplayClock.Seek(GameplayStartTime - 2000 * Rate);
         GameplayClock.RateTo(Rate, 0);
 
         if (SubmitScore)
@@ -572,14 +573,28 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         IsPaused.BindValueChanged(_ => UpdatePausedState(), true);
 
-        if (e.Last is not IntroAnimation)
-            this.ScaleTo(1.2f).FadeOut();
+        var pause = 2000;
+
+        switch (e.Last)
+        {
+            case IntroAnimation:
+                break;
+
+            case GameplayLoader { HasRestarted: true }:
+                pause = 800;
+                this.FadeOut();
+                break;
+
+            default:
+                this.ScaleTo(1.2f).FadeOut();
+                break;
+        }
+
+        GameplayClock.Seek(GameplayStartTime - pause * Rate);
 
         using (BeginDelayedSequence(ENTER_DELAY))
             this.ScaleTo(1f, MOVE_DURATION, Easing.OutQuint).FadeIn(FADE_DURATION);
     }
-
-    private void fadeOut() => this.FadeOut(restarting ? FADE_DURATION / 2 : FADE_DURATION);
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {

@@ -25,20 +25,22 @@ namespace fluXis.Screens.Gameplay;
 
 public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    public override float Zoom => 1.3f;
-    public override float ParallaxStrength => .1f;
+    public override float Zoom => screen?.Zoom ?? 1.2f;
+    public override float ParallaxStrength => 0;
     public override bool ShowToolbar => false;
-    public override float BackgroundDim => 0.5f;
-    public override float BackgroundBlur => 0.5f;
+    public override float BackgroundDim => screen?.BackgroundDim ?? 0.5f;
+    public override float BackgroundBlur => screen?.BackgroundBlur ?? 0.5f;
     public override bool AllowMusicControl => false;
     public override UserActivity InitialActivity => new UserActivity.LoadingGameplay();
 
     [Resolved]
     private GlobalClock clock { get; set; }
 
-    public GameplayScreen GameplayScreen { get; set; }
+    private GameplayScreen screen;
     private readonly Func<GameplayScreen> createFunc;
     private bool fadeBackToGlobalClock;
+
+    public bool HasRestarted { get; private set; }
 
     private RealmMap map { get; }
     private List<IMod> mods { get; }
@@ -246,39 +248,47 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private void loadGameplay()
     {
         allowExiting = true;
-        GameplayScreen = createFunc();
+        screen = createFunc();
 
-        if (GameplayScreen == null)
+        if (screen == null)
         {
             this.Exit();
             return;
         }
 
-        GameplayScreen.OnRestart += requestRestart;
-        fadeBackToGlobalClock = GameplayScreen.FadeBackToGlobalClock;
+        screen.OnRestart += requestRestart;
+        fadeBackToGlobalClock = screen.FadeBackToGlobalClock;
 
-        LoadComponentAsync(GameplayScreen, _ =>
+        LoadComponentAsync(screen, _ =>
         {
             allowExiting = false;
 
-            if (!GameplayScreen.ValidForPush)
+            if (!screen.ValidForPush)
             {
-                GameplayScreen.Dispose();
+                screen.Dispose();
                 this.Exit();
                 return;
             }
 
             if (!this.IsCurrentScreen())
-                GameplayScreen.Dispose();
+                screen.Dispose();
             else
             {
                 ValidForResume = false;
                 loadingContainer.FadeOut(FADE_DURATION);
+
+                if (HasRestarted)
+                {
+                    clock.Stop();
+                    this.Push(screen);
+                    return;
+                }
+
                 clock.Delay(MOVE_DURATION).Schedule(() => clock.VolumeOut(MOVE_DURATION));
                 this.Delay(MOVE_DURATION * 2).Schedule(() =>
                 {
                     clock.Stop();
-                    this.Push(GameplayScreen);
+                    this.Push(screen);
                 });
             }
         });
@@ -287,11 +297,12 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
     private void requestRestart()
     {
         ValidForResume = true;
+        HasRestarted = true;
         this.MakeCurrent();
     }
 
     public override void OnEntering(ScreenTransitionEvent e) => contentIn();
-    public override void OnSuspending(ScreenTransitionEvent e) => contentOut();
+    public override void OnSuspending(ScreenTransitionEvent e) => contentOut(!HasRestarted);
     public override void OnResuming(ScreenTransitionEvent e) => contentIn();
 
     public override bool OnExiting(ScreenExitEvent e)
@@ -311,10 +322,15 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
 
         using (BeginDelayedSequence(ENTER_DELAY))
         {
-            this.ScaleTo(.9f).ScaleTo(1, MOVE_DURATION, Easing.OutQuint)
-                .FadeIn(FADE_DURATION).Then().Schedule(loadGameplay);
+            content.ScaleTo(1f);
+            var seq = this.FadeIn(FADE_DURATION);
 
-            tip.FadeIn();
+            if (!HasRestarted)
+                seq = seq.ScaleTo(.9f).ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
+
+            seq.Then(MOVE_DURATION).Schedule(loadGameplay);
+
+            tip.FadeIn().MoveToX(0);
             content.MoveToY(0);
             loadingContainer.FadeIn(FADE_DURATION);
             lowPass.CutoffTo(AudioFilter.MIN, MOVE_DURATION, Easing.OutQuint);
@@ -336,7 +352,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
         else
         {
             this.FadeOut(FADE_DURATION);
-            content.ScaleTo(.9f, MOVE_DURATION, Easing.OutQuint);
+            content.ScaleTo(.95f, MOVE_DURATION, Easing.OutQuint);
             tip.MoveToX(-40, MOVE_DURATION, Easing.OutQuint);
         }
     }
