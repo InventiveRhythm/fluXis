@@ -1,0 +1,14 @@
+{
+  "general": "Chung",
+  "back": "Quay lại",
+  "play": "Phát",
+  "edit": "Chỉnh sửa",
+  "select": "Chọn",
+  "delete": "Xóa",
+  "export": "Xuất",
+  "panel-generic-confirm": "Vâng, làm đi.",
+  "panel-generic-cancel": "Chờ đã, không có gì đâu.",
+  "panel-confirm-exit": "Bạn có chắc chắn muốn thoát không?",
+  "can-not-be-undone": "Hành động này không thể hoàn tác.",
+  "login-to-use": "Đăng nhập để sử dụng tính năng này."
+}

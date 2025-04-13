@@ -1,0 +1,12 @@
+{
+  "title": "Đồ họa",
+  "layout-title": "Bố cục",
+  "window-mode": "Chế độ cửa sổ",
+  "rendering-title": "Kết xuất",
+  "renderer": "Trình kết xuất",
+  "renderer-description": "Cần khởi động lại để áp dụng.",
+  "frame-limiter": "Giới hạn khung hình",
+  "threading-mode": "Chế độ xử lý đa luồng",
+  "show-fps": "Hiển thị FPS",
+  "show-fps-description": "Hiển thị DrawsPerSecond và UpdatesPerSecond hiện tại ở góc dưới bên phải."
+}
