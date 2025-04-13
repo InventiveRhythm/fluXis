@@ -57,7 +57,7 @@ public class DrainHealthProcessor : HealthProcessor
         delta = Clock.CurrentTime - lastTime;
 
         var loss = factor * maxCombo / (endTime / 1000);
-        rate -= factor * loss * (float)(delta / 1000f);
+        rate -= factor / (factor / .6f) * loss * (float)(delta / 1000f);
 
         if (!double.IsFinite(rate)) rate = 0;
         rate = Math.Clamp(rate, -3f, 2f);
