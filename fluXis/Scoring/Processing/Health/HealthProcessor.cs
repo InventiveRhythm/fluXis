@@ -1,4 +1,5 @@
 using System;
+using fluXis.Map;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
 using osu.Framework.Bindables;
@@ -35,6 +36,7 @@ public class HealthProcessor : JudgementDependant
     public double FailTime { get; private set; }
 
     protected float Difficulty { get; }
+    protected MapInfo Map { get; private set; }
 
     public HealthProcessor(float difficulty)
     {
@@ -59,6 +61,8 @@ public class HealthProcessor : JudgementDependant
         if (ClearHealthOnFail)
             Health.Value = Health.MinValue;
     }
+
+    public override void ApplyMap(MapInfo map) => Map = map;
 
     public override void AddResult(HitResult result)
     {
