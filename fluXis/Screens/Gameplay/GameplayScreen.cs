@@ -422,6 +422,12 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         if (failed)
             return;
 
+        if (Mods.Any(x => x is FlawlessMod))
+        {
+            RestartMap();
+            return;
+        }
+
         PlayfieldManager.Players.ForEach(p => p.HealthProcessor.Kill());
         failed = true;
         failMenu.Show();
