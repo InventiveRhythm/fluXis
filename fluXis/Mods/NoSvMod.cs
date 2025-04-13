@@ -5,7 +5,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace fluXis.Mods;
 
-public class NoSvMod : IMod, IApplicableToMap
+public class NoSvMod : IMod, IApplicableToMap, IApplicableToEvents
 {
     public string Name => "No SV";
     public string Acronym => "NSV";
@@ -17,4 +17,11 @@ public class NoSvMod : IMod, IApplicableToMap
     public Type[] IncompatibleMods => Array.Empty<Type>();
 
     public void Apply(MapInfo map) => map.ScrollVelocities.ForEach(sv => sv.Multiplier = 1);
+
+    public void Apply(MapEvents events)
+    {
+        events.HitObjectEaseEvents.Clear();
+        events.ScrollMultiplyEvents.Clear();
+        events.TimeOffsetEvents.Clear();
+    }
 }
