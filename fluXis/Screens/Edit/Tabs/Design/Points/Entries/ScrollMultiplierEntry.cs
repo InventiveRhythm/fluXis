@@ -24,13 +24,7 @@ public partial class ScrollMultiplierEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new ScrollMultiplierEvent
-    {
-        Time = Object.Time,
-        Duration = scroll.Duration,
-        Multiplier = scroll.Multiplier,
-        Easing = scroll.Easing
-    };
+    public override ITimedObject CreateClone() => scroll.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

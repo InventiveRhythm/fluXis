@@ -24,12 +24,7 @@ public partial class ShakeEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new ShakeEvent
-    {
-        Time = Object.Time,
-        Magnitude = shake.Magnitude,
-        Duration = shake.Duration
-    };
+    public override ITimedObject CreateClone() => shake.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

@@ -7,6 +7,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
@@ -25,17 +26,7 @@ public partial class FlashEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new FlashEvent
-    {
-        Time = Object.Time,
-        Duration = flash.Duration,
-        StartOpacity = flash.StartOpacity,
-        StartColor = flash.StartColor,
-        EndOpacity = flash.EndOpacity,
-        EndColor = flash.EndColor,
-        InBackground = flash.InBackground,
-        Easing = flash.Easing
-    };
+    public override ITimedObject CreateClone() => flash.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

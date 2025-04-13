@@ -8,6 +8,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
@@ -51,29 +52,7 @@ public partial class ShaderEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone()
-    {
-        return new ShaderEvent
-        {
-            Time = Object.Time,
-            Duration = shader.Duration,
-            Type = shader.Type,
-            UseStartParams = shader.UseStartParams,
-            Easing = shader.Easing,
-            StartParameters = new ShaderEvent.ShaderParameters
-            {
-                Strength = shader.StartParameters.Strength,
-                Strength2 = shader.StartParameters.Strength2,
-                Strength3 = shader.StartParameters.Strength3
-            },
-            EndParameters = new ShaderEvent.ShaderParameters
-            {
-                Strength = shader.EndParameters.Strength,
-                Strength2 = shader.EndParameters.Strength2,
-                Strength3 = shader.EndParameters.Strength3
-            }
-        };
-    }
+    public override ITimedObject CreateClone() => shader.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

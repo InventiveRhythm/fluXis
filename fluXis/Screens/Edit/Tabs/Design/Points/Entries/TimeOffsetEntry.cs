@@ -25,15 +25,7 @@ public partial class TimeOffsetEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new TimeOffsetEvent
-    {
-        Time = Object.Time,
-        Duration = offset.Duration,
-        UseStartValue = offset.UseStartValue,
-        StartOffset = offset.StartOffset,
-        TargetOffset = offset.TargetOffset,
-        Easing = offset.Easing
-    };
+    public override ITimedObject CreateClone() => offset.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {
