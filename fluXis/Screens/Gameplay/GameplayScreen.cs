@@ -372,7 +372,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 backgroundVideo.Start();
             else
                 backgroundVideo.Stop();
-        }, true);
+        });
     }
 
     protected virtual void UpdatePausedState()
