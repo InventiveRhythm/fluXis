@@ -360,12 +360,14 @@ public partial class MenuScreen : FluXisScreen
         };
 
         mapCount = maps.MapSets.Count;
-        maps.CollectionUpdated += () => Schedule(() => this.TransformTo(nameof(mapCount), maps.MapSets.Count, 500, Easing.OutQuint));
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        maps.CollectionUpdated += updateMapCount;
+        updateMapCount();
 
         forceSnow.BindValueChanged(_ =>
         {
@@ -375,6 +377,8 @@ public partial class MenuScreen : FluXisScreen
 
         api.User.BindValueChanged(updateButtons, true);
     }
+
+    private void updateMapCount() => Scheduler.ScheduleIfNeeded(() => this.TransformTo(nameof(mapCount), maps.MapSets.Count, 500, Easing.OutQuint));
 
     private void updateButtons(ValueChangedEvent<APIUser> e)
     {
