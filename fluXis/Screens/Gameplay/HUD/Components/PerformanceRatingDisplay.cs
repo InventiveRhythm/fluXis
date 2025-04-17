@@ -25,6 +25,7 @@ public partial class PerformanceRatingDisplay : GameplayHUDComponent
     private void load()
     {
         AutoSizeAxes = Axes.Both;
+        pr = 0;
 
         InternalChild = text = new FluXisSpriteText
         {
