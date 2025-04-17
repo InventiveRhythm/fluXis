@@ -56,7 +56,7 @@ public partial class PerformanceRatingDisplay : GameplayHUDComponent
         var format = ShowDecimals.Value ? "00.00" : "00";
         text.Text = $"{pr.ToStringInvariant(format)}";
 
-        if (ShowDecimals.Value)
+        if (ShowSuffix.Value)
             text.Text += "pr";
 
         base.Update();
