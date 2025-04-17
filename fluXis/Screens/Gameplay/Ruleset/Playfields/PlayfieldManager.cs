@@ -34,6 +34,10 @@ public partial class PlayfieldManager : CompositeDrawable
     {
         MapInfo = map;
         Count = map.IsDual ? 2 : 1;
+
+        Players = Enumerable.Range(0, Count)
+                            .Select(i => new PlayfieldPlayer(i, MapInfo.ExtraPlayfields))
+                            .ToArray();
     }
 
     [BackgroundDependencyLoader]
@@ -45,12 +49,7 @@ public partial class PlayfieldManager : CompositeDrawable
         InternalChild = new GridContainer
         {
             RelativeSizeAxes = Axes.Both,
-            Content = new[]
-            {
-                Players = Enumerable.Range(0, Count)
-                                    .Select(i => new PlayfieldPlayer(i, MapInfo.ExtraPlayfields))
-                                    .ToArray()
-            }
+            Content = new[] { Players }
         };
 
         Playfields = Players.Select(x => x.MainPlayfield).ToArray();

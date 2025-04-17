@@ -1,14 +1,10 @@
 ﻿using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Map;
-using fluXis.Database.Maps;
-using fluXis.Map;
 using fluXis.Online.API.Models.Users;
-using fluXis.Scoring;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
-using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;

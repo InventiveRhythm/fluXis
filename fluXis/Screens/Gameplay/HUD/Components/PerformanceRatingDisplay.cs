@@ -1,5 +1,7 @@
 ﻿using fluXis.Graphics.Sprites;
 using fluXis.Utils;
+using fluXis.Utils.Attributes;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,18 +11,20 @@ namespace fluXis.Screens.Gameplay.HUD.Components;
 public partial class PerformanceRatingDisplay : GameplayHUDComponent
 {
     private FluXisSpriteText text;
-    private float pr = 0;
 
-    private bool showSuffix;
-    private bool showDecimals;
+    [UsedImplicitly]
+    private float pr;
+
+    [BindableSetting("Show Suffix", "Show the 'pr' suffix.", "suffix")]
+    public BindableBool ShowSuffix { get; } = new(true);
+
+    [BindableSetting("Show Decimals", "Show decimals in the performance rating.", "decimals")]
+    public BindableBool ShowDecimals { get; } = new();
 
     [BackgroundDependencyLoader]
     private void load()
     {
         AutoSizeAxes = Axes.Both;
-
-        showSuffix = Settings.GetSetting("suffix", true);
-        showDecimals = Settings.GetSetting("decimals", false);
 
         InternalChild = text = new FluXisSpriteText
         {
@@ -44,16 +48,14 @@ public partial class PerformanceRatingDisplay : GameplayHUDComponent
     }
 
     private void prChanged(ValueChangedEvent<float> e)
-    {
-        this.TransformTo(nameof(pr), e.NewValue, 400, Easing.OutQuint);
-    }
+        => this.TransformTo(nameof(pr), e.NewValue, 400, Easing.OutQuint);
 
     protected override void Update()
     {
-        var format = showDecimals ? "00.00" : "00";
+        var format = ShowDecimals.Value ? "00.00" : "00";
         text.Text = $"{pr.ToStringInvariant(format)}";
 
-        if (showSuffix)
+        if (ShowDecimals.Value)
             text.Text += "pr";
 
         base.Update();

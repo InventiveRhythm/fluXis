@@ -9,6 +9,7 @@ using fluXis.Localization.Categories;
 using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Online.API.Models.Maps;
+using fluXis.Utils.Attributes;
 using osu.Framework.Localisation;
 
 namespace fluXis.Utils;

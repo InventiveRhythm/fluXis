@@ -3,7 +3,7 @@ using System.Reflection;
 using fluXis.Graphics.Sprites;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Utils;
+namespace fluXis.Utils.Attributes;
 
 [AttributeUsage(AttributeTargets.All)]
 public class IconAttribute : Attribute

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
+using fluXis.Audio.Transforms;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
@@ -337,7 +338,7 @@ public partial class MultiLobby : MultiSubScreen
         clock.AllowLimitedLoop = false;
 
         var rateMod = mods.OfType<RateMod>().FirstOrDefault();
-        clock.RateTo(rateMod?.Rate ?? 1, 400);
+        clock.RateTo(rateMod?.Rate ?? 1);
     }
 
     private void hostChanged(long newHost)

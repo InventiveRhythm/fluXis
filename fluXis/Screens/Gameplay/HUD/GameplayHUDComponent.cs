@@ -20,6 +20,4 @@ public partial class GameplayHUDComponent : Container
         Settings = settings;
         Deps = deps;
     }
-
-    public void OnSettingsApplied() { }
 }

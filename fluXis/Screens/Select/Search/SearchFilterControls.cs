@@ -7,6 +7,7 @@ using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;
 using fluXis.Utils;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;

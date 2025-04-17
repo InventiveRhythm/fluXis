@@ -215,11 +215,11 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                     rulesetWrapper.Add(c);
                     RulesetLoaded?.Invoke();
 
-                    LoadComponentAsync(hud = new GameplayHUD(c, layout), hud =>
+                    LoadComponentAsync(hud = new GameplayHUD(c, layout), hud => ScheduleAfterChildren(() =>
                     {
                         rulesetWrapper.Add(hud);
                         hud.Components.ForEach(ComponentAdded);
-                    });
+                    }));
                 }));
             }
             catch (Exception e)
@@ -238,8 +238,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         var key = ObjectId.GenerateNewId().ToString();
         layout.Gameplay[$"{type}#{key}"] = settings;
 
-        var comp = manager.CreateComponent(type, settings, this);
-        // hud.AddComponent(comp);
+        var comp = hud.AddComponent(type, settings);
         ComponentAdded?.Invoke(comp);
     }
 

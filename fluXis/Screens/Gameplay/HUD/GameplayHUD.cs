@@ -96,24 +96,32 @@ public partial class GameplayHUD : Container
         {
             try
             {
-                var loop = settings.AnchorToPlayfield ? playfields.Length : 1;
-
-                for (int i = 0; i < loop; i++)
-                {
-                    var manager = playfields[i].Player;
-                    var component = layouts.CreateComponent(key.Split('#')[0], settings, manager);
-
-                    if (settings.AnchorToPlayfield)
-                        playfields[i].Add(component);
-                    else
-                        components.Add(component);
-                }
+                AddComponent(key, settings);
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Failed to load component {key}.");
             }
         }
+    }
+
+    public GameplayHUDComponent AddComponent(string key, HUDComponentSettings settings)
+    {
+        var loop = settings.AnchorToPlayfield ? playfields.Length : 1;
+        GameplayHUDComponent component = null;
+
+        for (int i = 0; i < loop; i++)
+        {
+            var manager = playfields[i].Player;
+            component = layouts.CreateComponent(key.Split('#')[0], settings, manager);
+
+            if (settings.AnchorToPlayfield)
+                playfields[i].Add(component);
+            else
+                components.Add(component);
+        }
+
+        return component;
     }
 
     private partial class PlayfieldHUD : Container<GameplayHUDComponent>

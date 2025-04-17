@@ -6,6 +6,7 @@ using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Layout.Blueprints;
 using fluXis.Utils;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -127,6 +128,7 @@ public partial class ComponentsSettings : FluXisScrollContainer
                         CurrentValue = comp.Settings.Scale,
                         Min = .5f,
                         Max = 4f,
+                        Step = 0.02f,
                         OnValueChanged = v =>
                         {
                             comp.Settings.Scale = v;
@@ -144,6 +146,9 @@ public partial class ComponentsSettings : FluXisScrollContainer
                         }
                     }
                 });
+
+                flow.AddRange(comp.CreatePointSettings());
+
                 return;
 
             case > 1:

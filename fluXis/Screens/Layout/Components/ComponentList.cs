@@ -49,6 +49,7 @@ public partial class ComponentList : CompositeDrawable
 
     private void addComponents()
     {
-        flow.ChildrenEnumerable = manager.ComponentTypes.Select(pair => new LayoutListComponent(pair.Key, pair.Value));
+        // artificial delay because the health processor sometimes isn't set
+        Scheduler.AddDelayed(() => flow.ChildrenEnumerable = manager.ComponentTypes.Select(pair => new LayoutListComponent(pair.Key, pair.Value)), 200);
     }
 }

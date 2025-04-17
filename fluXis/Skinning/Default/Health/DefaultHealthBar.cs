@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Scoring.Processing.Health;
@@ -25,6 +26,7 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
     public DefaultHealthBar(SkinJson skinJson, HealthProcessor processor)
         : base(skinJson)
     {
+        Debug.Assert(processor != null);
         this.processor = processor;
     }
 

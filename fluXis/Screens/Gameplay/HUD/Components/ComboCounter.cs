@@ -1,6 +1,7 @@
 using fluXis.Audio;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Utils.Attributes;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -12,15 +13,15 @@ public partial class ComboCounter : GameplayHUDComponent
     [Resolved]
     private IBeatSyncProvider beatSync { get; set; }
 
-    private bool scaleAdditive;
     private FluXisSpriteText text;
+
+    [BindableSetting("Additive Scale", "Adds to the scale when combo changes.", "scale-additive")]
+    public BindableBool ScaleAdditive { get; set; } = new(true);
 
     [BackgroundDependencyLoader]
     private void load()
     {
         AutoSizeAxes = Axes.Both;
-
-        scaleAdditive = Settings.GetSetting("scale-additive", true);
 
         InternalChild = text = new FluXisSpriteText
         {
@@ -58,7 +59,7 @@ public partial class ComboCounter : GameplayHUDComponent
             case >= 5:
                 text.Text = $"{e.NewValue}";
                 text.FadeColour(FluXisColors.Text).FadeIn(400);
-                text.ScaleTo(scaleAdditive ? text.Scale.X + .05f : 1.05f).ScaleTo(1f, beatSync.BeatTime * 2, Easing.OutQuint);
+                text.ScaleTo(ScaleAdditive.Value ? text.Scale.X + .05f : 1.05f).ScaleTo(1f, beatSync.BeatTime * 2, Easing.OutQuint);
                 break;
         }
     }
