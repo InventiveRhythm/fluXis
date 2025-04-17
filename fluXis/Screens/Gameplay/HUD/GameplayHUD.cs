@@ -19,9 +19,10 @@ public partial class GameplayHUD : Container
     [Resolved]
     private LayoutManager layouts { get; set; }
 
-    public GameplayHUDComponent[] Components => components.Concat(playfields.SelectMany(p => p.Children)).ToArray();
+    public GameplayHUDComponent[] Components => components.Concat(playfields[0].Children).ToArray();
 
     public bool AutoRefresh { get; init; } = true;
+
     private HUDLayout layout;
 
     private Container<GameplayHUDComponent> components;
@@ -113,7 +114,15 @@ public partial class GameplayHUD : Container
         for (int i = 0; i < loop; i++)
         {
             var manager = playfields[i].Player;
-            component = layouts.CreateComponent(key.Split('#')[0], settings, manager);
+            var split = key.Split('#');
+            component = layouts.CreateComponent(split[0], settings, manager);
+            component.Name = key;
+
+            if (split.Length > 1)
+            {
+                var subKey = split[1];
+                settings.Key = subKey;
+            }
 
             if (settings.AnchorToPlayfield)
                 playfields[i].Add(component);
@@ -121,7 +130,15 @@ public partial class GameplayHUD : Container
                 components.Add(component);
         }
 
+        settings.Drawable = component;
         return component;
+    }
+
+    public void RemoveComponent(GameplayHUDComponent component)
+    {
+        var key = component.Name;
+        components.RemoveAll(c => c.Name == key, true);
+        playfields.ForEach(hud => hud.RemoveAll(c => c.Name == key, true));
     }
 
     private partial class PlayfieldHUD : Container<GameplayHUDComponent>

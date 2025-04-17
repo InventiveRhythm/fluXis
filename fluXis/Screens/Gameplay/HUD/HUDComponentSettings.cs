@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using fluXis.Utils.Attributes;
+using Newtonsoft.Json;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osuTK;
@@ -10,11 +12,17 @@ namespace fluXis.Screens.Gameplay.HUD;
 
 public class HUDComponentSettings
 {
+    [JsonIgnore]
+    public string Key { get; set; } = string.Empty;
+
+    [JsonIgnore]
+    public Drawable Drawable { get; set; }
+
     public Vector2 Position { get; set; } = Vector2.Zero;
     public Anchor Anchor { get; set; } = Anchor.TopLeft;
     public Anchor Origin { get; set; } = Anchor.TopLeft;
     public float Scale { get; set; } = 1f;
-    public bool AnchorToPlayfield { get; set; } = false;
+    public bool AnchorToPlayfield { get; set; }
 
     public Dictionary<string, object> Settings { get; init; } = new();
     private bool settingsApplied;
@@ -27,6 +35,26 @@ public class HUDComponentSettings
         drawable.Scale = new Vector2(Scale);
 
         applySettings(drawable);
+    }
+
+    public void GetSettingsFrom(Drawable drawable)
+    {
+        var infos = drawable.GetSettingInfos();
+
+        foreach (var info in infos)
+        {
+            if (string.IsNullOrWhiteSpace(info.Attribute.Key))
+                continue; // maybe throw?
+
+            var type = info.Bindable.GetType();
+            var prop = type.GetProperty(nameof(Bindable<object>.Value), BindingFlags.Public | BindingFlags.Instance);
+
+            if (prop is null)
+                continue;
+
+            var value = prop.GetValue(info.Bindable);
+            Settings[info.Attribute.Key] = value;
+        }
     }
 
     private void applySettings(Drawable drawable)
@@ -48,7 +76,7 @@ public class HUDComponentSettings
                     continue;
 
                 var type = info.Bindable.GetType();
-                var prop = type.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance);
+                var prop = type.GetProperty(nameof(Bindable<object>.Value), BindingFlags.Public | BindingFlags.Instance);
 
                 if (prop is null)
                     continue;

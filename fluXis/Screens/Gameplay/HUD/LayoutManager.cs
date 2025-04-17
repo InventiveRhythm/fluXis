@@ -107,7 +107,7 @@ public partial class LayoutManager : Component
     public GameplayHUDComponent CreateComponent(string key, HUDComponentSettings settings, IHUDDependencyProvider provider)
     {
         if (!componentLookup.TryGetValue(key, out var type))
-            throw new ArgumentOutOfRangeException($"'{nameof(key)}' is not a valid component key.");
+            throw new ArgumentOutOfRangeException($"'{nameof(key)}' is not a valid component key. [was '{key}']");
 
         var component = (GameplayHUDComponent)Activator.CreateInstance(type);
 
@@ -141,6 +141,33 @@ public partial class LayoutManager : Component
                     Logger.Error(ex, $"Failed to load layout {Path.GetFileName(file)}!");
             }
         }
+    }
+
+    public void SaveLayout(HUDLayout layout)
+    {
+        var id = layout.ID;
+        layout = layout.JsonCopy();
+        layout.ID = id;
+
+        var path = storage.GetFullPath($"{layout.ID}.json");
+        File.WriteAllText(path, layout.Serialize(true));
+
+        Layouts.RemoveAll(x => x.ID == layout.ID);
+        Layouts.Add(layout);
+        Layouts.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.InvariantCultureIgnoreCase));
+        Layout.Value = layout;
+        Reloaded?.Invoke();
+    }
+
+    public string GetKeyFromComponent(Drawable component)
+    {
+        var type = component.GetType();
+        var key = componentLookup.FirstOrDefault(x => x.Value == type).Key;
+
+        if (string.IsNullOrWhiteSpace(key))
+            throw new Exception($"Failed to get key from component {type.Name}");
+
+        return key;
     }
 
     public class DefaultLayout : HUDLayout

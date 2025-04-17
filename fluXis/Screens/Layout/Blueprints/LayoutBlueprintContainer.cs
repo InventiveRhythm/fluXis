@@ -26,6 +26,8 @@ public partial class LayoutBlueprintContainer : BlueprintContainer<GameplayHUDCo
         return blueprint;
     }
 
+    protected override SelectionHandler<GameplayHUDComponent> CreateSelectionHandler() => new ComponentSelectionHandler();
+
     protected override void MoveSelection(DragEvent e)
     {
         base.MoveSelection(e);

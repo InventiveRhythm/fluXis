@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Database.Maps;
@@ -215,7 +216,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                     rulesetWrapper.Add(c);
                     RulesetLoaded?.Invoke();
 
-                    LoadComponentAsync(hud = new GameplayHUD(c, layout), hud => ScheduleAfterChildren(() =>
+                    LoadComponentAsync(hud = new GameplayHUD(c, layout) { AutoRefresh = false }, hud => ScheduleAfterChildren(() =>
                     {
                         rulesetWrapper.Add(hud);
                         hud.Components.ForEach(ComponentAdded);
@@ -231,6 +232,24 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
     private void save()
     {
+        var components = hud.Components;
+        var settings = components.ToDictionary(x =>
+        {
+            var key = manager.GetKeyFromComponent(x.Settings.Drawable);
+
+            if (!string.IsNullOrWhiteSpace(x.Settings.Key))
+                key += $"#{x.Settings.Key}";
+
+            return key;
+        }, x =>
+        {
+            var settings = x.Settings;
+            settings.GetSettingsFrom(x.Settings.Drawable);
+            return settings;
+        });
+
+        layout.Gameplay = settings;
+        manager.SaveLayout(layout);
     }
 
     public void AddComponent(string type, HUDComponentSettings settings)
@@ -242,9 +261,22 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         ComponentAdded?.Invoke(comp);
     }
 
+    public void RemoveComponent(GameplayHUDComponent component)
+    {
+        var key = manager.GetKeyFromComponent(component.Settings.Drawable);
+
+        if (!string.IsNullOrWhiteSpace(component.Settings.Key))
+            key += $"#{component.Settings.Key}";
+
+        layout.Gameplay.Remove(key);
+        hud.RemoveComponent(component);
+        ComponentRemoved?.Invoke(component);
+    }
+
     #region Events
 
     public event Action<GameplayHUDComponent> ComponentAdded;
+    public event Action<GameplayHUDComponent> ComponentRemoved;
 
     #endregion
 
