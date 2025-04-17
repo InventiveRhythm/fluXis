@@ -35,7 +35,7 @@ public class HitObject : ITimedObject
     public int Type { get; set; }
 
     [JsonIgnore]
-    public bool LongNote => HoldTime > 0;
+    public bool LongNote => HoldTime > 0 && Type == 0;
 
     [JsonIgnore]
     public double EndTime
@@ -51,10 +51,10 @@ public class HitObject : ITimedObject
     }
 
     [JsonIgnore]
-    public HitResult Result { get; set; }
+    public HitResult? Result { get; set; }
 
     [JsonIgnore]
-    public HitResult HoldEndResult { get; set; }
+    public HitResult? HoldEndResult { get; set; }
 
     /// <summary>
     /// The next HitObject in the same lane.

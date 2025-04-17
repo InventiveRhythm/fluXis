@@ -16,13 +16,21 @@ public partial class GeneralSection : SettingsSection
     public override LocalisableString Title => LocalizationStrings.Settings.General.Title;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisGameBase game)
     {
+        Add(new GeneralLanguageSection());
+
+        if (game.CanUpdate)
+        {
+            AddRange(new Drawable[]
+            {
+                Divider,
+                new GeneralUpdatesSection(),
+            });
+        }
+
         AddRange(new Drawable[]
         {
-            new GeneralLanguageSection(),
-            Divider,
-            new GeneralUpdatesSection(),
             Divider,
             new GeneralFoldersSection(),
             new Container

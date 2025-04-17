@@ -16,8 +16,8 @@ public partial class EditorPlaytestScreen : GameplayScreen
 
     private MapInfo map { get; }
 
-    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, double startTime)
-        : base(realmMap, new List<IMod> { new NoFailMod() })
+    public EditorPlaytestScreen(RealmMap realmMap, MapInfo info, double startTime, List<IMod> mods)
+        : base(realmMap, mods)
     {
         GameplayStartTime = startTime;
         map = info;

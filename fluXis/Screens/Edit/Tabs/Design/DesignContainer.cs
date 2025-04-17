@@ -40,7 +40,13 @@ public partial class DesignContainer : EditorTabContainer
 {
     protected override MarginPadding ContentPadding => new(16) { Right = 0 };
 
-    private static Type[] ignoredForRebuild { get; } = { typeof(FlashEvent), typeof(PulseEvent), typeof(ShaderEvent) };
+    private static Type[] ignoredForRebuild { get; } =
+    {
+        typeof(FlashEvent),
+        typeof(PulseEvent),
+        typeof(ShaderEvent),
+        typeof(NoteEvent)
+    };
 
     private DrawSizePreservingFillContainer drawSizePreserve;
     private ShaderStackContainer shaders;
@@ -55,7 +61,6 @@ public partial class DesignContainer : EditorTabContainer
     private IdleTracker rulesetIdleTracker;
 
     private BackgroundVideo backgroundVideo;
-    private bool showingVideo;
 
     protected override IEnumerable<Drawable> CreateContent()
     {
@@ -82,8 +87,7 @@ public partial class DesignContainer : EditorTabContainer
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    VideoClock = EditorClock,
-                    ShowDim = false
+                    VideoClock = EditorClock
                 },
                 backgroundDim = new Box
                 {
@@ -109,9 +113,8 @@ public partial class DesignContainer : EditorTabContainer
     {
         base.LoadComplete();
 
-        backgroundVideo.Map = Map.RealmMap;
-        backgroundVideo.Info = Map.MapInfo;
-        backgroundVideo.LoadVideo();
+        backgroundVideo.LoadVideo(Map.MapInfo);
+        backgroundVideo.Start();
 
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Map.AnyChange += t =>
@@ -137,7 +140,7 @@ public partial class DesignContainer : EditorTabContainer
     private RulesetContainer createRuleset()
     {
         var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap!.KeyCount);
-        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod>());
+        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod> { new NoFailMod() });
         container.ParentClock = EditorClock;
         return container;
     }
@@ -207,18 +210,6 @@ public partial class DesignContainer : EditorTabContainer
     {
         switch (e.Key)
         {
-            case Key.V:
-            {
-                showingVideo = !showingVideo;
-
-                if (showingVideo)
-                    backgroundVideo.Start();
-                else
-                    backgroundVideo.Stop();
-
-                return true;
-            }
-
             case Key.R when e.ShiftPressed:
                 rebuildRuleset();
                 rebuildShaderStack();

@@ -71,7 +71,8 @@ public partial class DefaultHealthBar : ColorableSkinDrawable
             case DrainHealthProcessor drain:
                 //smoothen the drain rate to avoid flickering
                 drainRate = Interpolation.Lerp(drainRate, drain.HealthDrainRate, Math.Exp(-0.001f * Clock.ElapsedFrameTime));
-                BorderColour = text.Colour = drainGradient.Interpolate(new Vector2((Math.Clamp((float)drainRate, -1, 1) + 1) / 2f, 0));
+                if (!double.IsFinite(drainRate)) drainRate = 0;
+                BorderColour = text.Colour = drainGradient.Interpolate(new Vector2(1 - (Math.Clamp((float)drainRate, -.2f, .2f) + .2f) / .4f, 0));
                 break;
         }
     }

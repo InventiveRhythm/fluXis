@@ -20,11 +20,11 @@ public partial class LoadingScreen : FluXisScreen
     [Resolved]
     private FluXisConfig config { get; set; }
 
-    private FluXisGame.LoadInfo loadInfo { get; }
+    private FluXisGameBase.LoadInfo loadInfo { get; }
     private FluXisSpriteText loadingText { get; }
-    private Circle bar;
+    private Circle bar { get; }
 
-    public LoadingScreen(FluXisGame.LoadInfo loadInfo)
+    public LoadingScreen(FluXisGameBase.LoadInfo loadInfo)
     {
         this.loadInfo = loadInfo;
 
@@ -96,8 +96,8 @@ public partial class LoadingScreen : FluXisScreen
 
         loadInfo.TaskStarted += task =>
         {
-            loadingText.Text = $"Loading {task}... ({loadInfo.TasksDone + 1}/{loadInfo.TotalTasks})";
-            bar.ResizeWidthTo((loadInfo.TasksDone + 1) / (float)loadInfo.TotalTasks, 300, Easing.OutQuint);
+            loadingText.Text = $"{task.Name} ({loadInfo.TasksFinished + 1}/{loadInfo.TasksTotal})";
+            bar.ResizeWidthTo((loadInfo.TasksFinished + 1) / (float)loadInfo.TasksTotal, 300, Easing.OutQuint);
         };
 
         loadInfo.AllFinished += complete;
@@ -114,6 +114,7 @@ public partial class LoadingScreen : FluXisScreen
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         this.FadeOut(FADE_DURATION);
+        this.MoveToY(20, MOVE_DURATION, Easing.OutQuint);
         base.OnSuspending(e);
     }
 }

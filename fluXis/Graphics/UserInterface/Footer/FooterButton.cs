@@ -67,7 +67,7 @@ public partial class FooterButton : CompositeDrawable
                     RelativeSizeAxes = Axes.Both,
                     Colour = FluXisColors.Background3
                 },
-                hover = new HoverLayer(),
+                hover = new HoverLayer { Colour = AccentColor },
                 content = new Container
                 {
                     RelativeSizeAxes = Axes.Both,

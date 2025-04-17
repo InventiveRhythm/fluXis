@@ -1,6 +1,7 @@
 ﻿using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using fluXis.Skinning;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
@@ -28,7 +29,7 @@ public partial class Receptor : CompositeDrawable
     private Drawable down;
     private VisibilityContainer hitLighting;
 
-    public bool IsDown;
+    private BindableBool isDown { get; } = new();
 
     public Receptor(int idx)
     {
@@ -54,6 +55,29 @@ public partial class Receptor : CompositeDrawable
         };
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        isDown.BindValueChanged(v =>
+        {
+            if (v.NewValue)
+            {
+                up.Hide();
+                down.Show();
+                hitLighting.Show();
+            }
+            else
+            {
+                up.Show();
+                down.Hide();
+                hitLighting.Hide();
+            }
+        }, true);
+
+        FinishTransforms(true);
+    }
+
     protected override void Update()
     {
         var i = idx;
@@ -61,16 +85,7 @@ public partial class Receptor : CompositeDrawable
         if (playfield.Index > 0)
             i += playfield.RealmMap.KeyCount;
 
-        IsDown = ruleset.Input.Pressed[i];
-
-        up.Alpha = IsDown ? 0 : 1;
-        down.Alpha = IsDown ? 1 : 0;
-
-        if (IsDown)
-            hitLighting.Show();
-        else
-            hitLighting.Hide();
-
+        isDown.Value = ruleset.Input.Pressed[i];
         Width = laneSwitchManager.WidthFor(idx + 1);
     }
 }

@@ -4,10 +4,10 @@ using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.Actions.Notes.Hitsound;
-using fluXis.Screens.Edit.Tabs.Charting.Playfield;
 using fluXis.Screens.Edit.Tabs.Shared.Toolbox;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
@@ -38,9 +38,6 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 
     [Resolved]
     private EditorMap map { get; set; }
-
-    [Resolved]
-    private EditorPlayfield playfield { get; set; }
 
     [Resolved]
     private EditorClock clock { get; set; }
@@ -85,11 +82,11 @@ public partial class ToolboxHitsoundButton : ToolboxButton
         map.HitSoundsChanged += UpdateSelectionState;
 
         chartingContainer.CurrentHitSound.BindValueChanged(_ => UpdateSelectionState(), true);
-        playfield.HitSoundPlayed += sound =>
+        chartingContainer.Playfields.ForEach(p => p.HitSoundPlayed += sound =>
         {
             if (sound == sampleFormatted)
                 Flash.FadeTo(Flash.Alpha + .2f).FadeOut(clock.BeatTime * 2, Easing.OutQuint);
-        };
+        });
     }
 
     public override void Select()
@@ -106,7 +103,7 @@ public partial class ToolboxHitsoundButton : ToolboxButton
 
     protected override bool OnClick(ClickEvent e)
     {
-        playfield.PlayHitSound(new HitObject { HitSound = sampleFormatted }, true);
+        chartingContainer.Playfields.ForEach(p => p.PlayHitSound(new HitObject { HitSound = sampleFormatted }, true));
         return base.OnClick(e);
     }
 

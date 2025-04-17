@@ -6,7 +6,6 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Footer;
 using fluXis.UI;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
 
@@ -15,6 +14,7 @@ public partial class MultiLobbyFooter : Footer
     public Action LeaveAction { get; init; }
     public Action RightButtonAction { get; init; }
     public Action ChangeMapAction { get; init; }
+    public Action ViewMapAction { get; init; }
 
     public BindableBool CanChangeMap { get; } = new(true);
 
@@ -40,9 +40,17 @@ public partial class MultiLobbyFooter : Footer
         {
             Text = "Change Map",
             Icon = FontAwesome6.Solid.ArrowRightArrowLeft,
-            AccentColor = Colour4.FromHex("#edbb98"),
+            AccentColor = FluXisColors.Footer1,
             Enabled = CanChangeMap,
             Action = ChangeMapAction
+        };
+
+        yield return new FooterButton
+        {
+            Text = "View Map",
+            Icon = FontAwesome6.Solid.Eye,
+            AccentColor = FluXisColors.Footer2,
+            Action = ViewMapAction
         };
     }
 }

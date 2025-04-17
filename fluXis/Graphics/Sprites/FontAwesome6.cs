@@ -31,10 +31,12 @@ public class FontAwesome6
         public static IconUsage Book => GetSolid(0xf02d);
         public static IconUsage BoxOpen => GetSolid(0xf49e);
         public static IconUsage Bug => GetSolid(0xf188);
+        public static IconUsage BullseyeArrow => GetSolid(0xf648);
         public static IconUsage CandyCane => GetSolid(0xf786);
         public static IconUsage ChartLine => GetSolid(0xf201);
         public static IconUsage Check => GetSolid(0xf00c);
         public static IconUsage Circle => GetSolid(0xf111);
+        public static IconUsage CircleNodes => GetSolid(0xe4e2);
         public static IconUsage Clock => GetSolid(0xf017);
         public static IconUsage Clone => GetSolid(0xf24d);
         public static IconUsage ComputerMouse => GetSolid(0xf8cc);
@@ -77,6 +79,7 @@ public class FontAwesome6
         public static IconUsage LayerGroup => GetSolid(0xf5fd);
         public static IconUsage LeftRight => GetSolid(0xf337);
         public static IconUsage Link => GetSolid(0xf0c1);
+        public static IconUsage Lock => GetSolid(0xf023);
         public static IconUsage Magnet => GetSolid(0xf076);
         public static IconUsage MagnifyingGlass => GetSolid(0xf002);
         public static IconUsage Map => GetSolid(0xf279);
@@ -147,5 +150,6 @@ public class FontAwesome6
 
         public static IconUsage Discord => getBrands(0xf392);
         public static IconUsage GitHub => getBrands(0xf09b);
+        public static IconUsage Steam => getBrands(0xf1b6);
     }
 }

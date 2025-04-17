@@ -4,9 +4,12 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
+using fluXis.Utils;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -31,6 +34,9 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                 new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, MenuItemType.Highlighted, () => profile?.ShowUser(user.ID)),
                 new FluXisMenuItem("Open in Web", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}")),
             };
+
+            if (user.SteamID is not null)
+                list.Add(new FluXisMenuItem("View Steam Profile", FontAwesome6.Brands.Steam, MenuItemType.Normal, () => game?.OpenLink(StringUtils.FormatSteamProfile(user.SteamID!.Value), true)));
 
             if (FluXisGameBase.IsDebug)
             {
@@ -61,12 +67,14 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
     public DrawableUserCard(APIUser user)
     {
         this.user = user;
+
+        Width = 300;
+        Height = 80;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        Size = new Vector2(300, 80);
         CornerRadius = 12;
         Masking = true;
 
@@ -120,19 +128,37 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                         Direction = FillDirection.Vertical,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
+                        Spacing = new Vector2(2),
                         Children = new Drawable[]
                         {
-                            new FluXisSpriteText
+                            new FillFlowContainer
                             {
-                                Text = user.PreferredName,
-                                WebFontSize = 20,
-                                Shadow = true
+                                AutoSizeAxes = Axes.X,
+                                Height = 16,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(4),
+                                Children = new Drawable[]
+                                {
+                                    new ClubTag(user.Club)
+                                    {
+                                        WebFontSize = 12,
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Shadow = true,
+                                        Alpha = user.Club is null ? 0 : 1
+                                    },
+                                    createName().With(d =>
+                                    {
+                                        d.Anchor = Anchor.CentreLeft;
+                                        d.Origin = Anchor.CentreLeft;
+                                    })
+                                }
                             },
-                            new FluXisSpriteText
+                            new ForcedHeightText
                             {
                                 Text = user.Username,
+                                Height = 12,
                                 Alpha = string.IsNullOrWhiteSpace(user.DisplayName) ? 0 : .8f,
-                                Margin = new MarginPadding { Top = -5 },
                                 WebFontSize = 12,
                                 Shadow = true
                             },
@@ -148,6 +174,29 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                     }
                 }
             }
+        };
+    }
+
+    private Drawable createName()
+    {
+        var paint = user.NamePaint;
+
+        if (paint is not null)
+        {
+            return new GradientText
+            {
+                Colour = paint.Colors.CreateColorInfo(),
+                Text = user.PreferredName,
+                WebFontSize = 16,
+                Shadow = true
+            };
+        }
+
+        return new FluXisSpriteText
+        {
+            Text = user.PreferredName,
+            WebFontSize = 16,
+            Shadow = true
         };
     }
 

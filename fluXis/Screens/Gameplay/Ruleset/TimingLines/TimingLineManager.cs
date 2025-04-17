@@ -58,6 +58,9 @@ public partial class TimingLineManager : CompositeDrawable
             var increase = point.Signature * point.MsPerBeat;
             var position = point.Time;
 
+            if (increase < .1f)
+                continue;
+
             while (position < target)
             {
                 futureTimingLines.Add(new TimingLine(position));

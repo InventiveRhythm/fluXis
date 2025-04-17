@@ -11,7 +11,6 @@ using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osu.Framework.Utils;
 using osuTK;
 
@@ -122,7 +121,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         {
             var result = PastHitObjects.Peek().Result;
 
-            if (result is null || Clock.CurrentTime >= result.Time)
+            if (result is null || Clock.CurrentTime >= result.Value.Time)
                 break;
 
             revertHitObject(PastHitObjects.Pop());
@@ -204,9 +203,10 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (!playfield.IsSubPlayfield)
         {
             if (hit.HoldEndResult is not null)
-                judgementProcessor.RevertResult(hit.HoldEndResult);
+                judgementProcessor.RevertResult(hit.HoldEndResult.Value);
 
-            judgementProcessor.RevertResult(hit.Result);
+            if (hit.Result is not null)
+                judgementProcessor.RevertResult(hit.Result.Value);
         }
 
         var draw = createHitObject(hit);
@@ -236,9 +236,6 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
             FutureHitObjects.Insert(0, hitObject.Data);
         else
             PastHitObjects.Push(hitObject.Data);
-
-        if (hitObject.Data.Result is null && !addToFuture)
-            Logger.Log($"{hitObject.Data.Time}");
 
         RemoveInternal(hitObject, true);
     }

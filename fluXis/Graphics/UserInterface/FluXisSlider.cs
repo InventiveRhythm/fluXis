@@ -17,10 +17,8 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
 {
     public Bindable<T> Bindable { get; init; }
     public float Step { get; init; }
-    public bool PlaySample { get; init; } = true;
-    public bool ShowArrowButtons { get; init; } = true;
 
-    private float pad => ShowArrowButtons ? 20 : 0;
+    public Colour4? CustomColor { get; set; }
 
     private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
     private ClickableSpriteIcon leftIcon;
@@ -48,14 +46,13 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
                 Margin = new MarginPadding { Left = 5 },
-                Action = () => changeValue(-1),
-                Alpha = ShowArrowButtons ? 1 : 0
+                Action = () => changeValue(-1)
             },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Left = pad, Right = pad },
-                Child = new FluXisSliderBar(Height)
+                Padding = new MarginPadding { Horizontal = 20 },
+                Child = new FluXisSliderBar(this, Height)
                 {
                     RelativeSizeAxes = Axes.Both,
                     Current = Bindable,
@@ -69,8 +66,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 Margin = new MarginPadding { Right = 5 },
-                Action = () => changeValue(1),
-                Alpha = ShowArrowButtons ? 1 : 0
+                Action = () => changeValue(1)
             }
         };
 
@@ -96,7 +92,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
         leftIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MinValue) > 0;
         rightIcon.Enabled.Value = bindableNumber.Value.CompareTo(bindableNumber.MaxValue) < 0;
 
-        if (valueChange != null && PlaySample && !firstPlay && IsPresent)
+        if (valueChange != null && !firstPlay && IsPresent)
         {
             if (Time.Current - lastSampleTime < 50) return;
 
@@ -121,11 +117,14 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
 
     private partial class FluXisSliderBar : SliderBar<T>
     {
+        private FluXisSlider<T> parent { get; }
         private Box background { get; }
         private Box bar { get; }
 
-        public FluXisSliderBar(float height)
+        public FluXisSliderBar(FluXisSlider<T> parent, float height)
         {
+            this.parent = parent;
+
             CornerRadius = height / 2;
             Masking = true;
 
@@ -147,7 +146,7 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
 
         protected override void UpdateValue(float value)
         {
-            Colour4 colour = FluXisColors.AccentGradient.Interpolate(new Vector2(value, 1));
+            var colour = parent.CustomColor ?? FluXisColors.AccentGradient.Interpolate(new Vector2(value, 1));
             bar.FadeColour(colour, 400, Easing.OutQuint).ResizeWidthTo(value, 400, Easing.OutQuint);
             background.FadeColour(colour, 400, Easing.OutQuint);
         }

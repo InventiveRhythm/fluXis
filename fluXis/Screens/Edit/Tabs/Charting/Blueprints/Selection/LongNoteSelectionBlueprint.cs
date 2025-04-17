@@ -56,13 +56,13 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
     {
         base.Update();
 
-        var delta = HitObjectContainer.PositionAtTime(Object.EndTime) - HitObjectContainer.PositionAtTime(Object.Time);
+        var delta = PositionProvider.PositionAtTime(Object.EndTime) - PositionProvider.PositionAtTime(Object.Time);
         Height = -(delta - HitObject.LongNoteEnd.DrawHeight / 2);
     }
 
     private void dragStart(Vector2 vec)
     {
-        var newTime = HitObjectContainer.TimeAtScreenSpacePosition(vec);
+        var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
         newTime = Snaps.SnapTime(newTime);
         var newLen = Object.EndTime - newTime;
 
@@ -75,7 +75,7 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 
     private void dragEnd(Vector2 vec)
     {
-        var newTime = HitObjectContainer.TimeAtScreenSpacePosition(vec);
+        var newTime = PositionProvider.TimeAtScreenSpacePosition(vec);
         newTime = Snaps.SnapTime(newTime);
         var newLen = newTime - Object.Time;
 

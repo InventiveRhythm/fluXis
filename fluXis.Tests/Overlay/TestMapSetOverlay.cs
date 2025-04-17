@@ -11,8 +11,8 @@ public partial class TestMapSetOverlay : FluXisTestScene
         var overlay = new MapSetOverlay();
         Add(overlay);
 
+        AddStep("Show MapSet 11", () => overlay.ShowSet(11));
         AddStep("Show MapSet 1", () => overlay.ShowSet(1));
-        AddStep("Show MapSet 32", () => overlay.ShowSet(32));
         AddStep("Hide", overlay.Hide);
     }
 }

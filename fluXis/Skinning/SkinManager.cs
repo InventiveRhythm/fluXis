@@ -12,6 +12,7 @@ using fluXis.Screens.Course;
 using fluXis.Skinning.Bases.Judgements;
 using fluXis.Skinning.Custom;
 using fluXis.Skinning.Default;
+using fluXis.Skinning.DefaultCircle;
 using fluXis.Skinning.Json;
 using fluXis.Utils;
 using Newtonsoft.Json;
@@ -57,6 +58,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     private ISkin currentSkin { get; set; }
 
     private const string default_skin_name = "Default";
+    private const string default_circle_skin_name = "Default Circle";
 
     public Action SkinChanged { get; set; }
     public Action SkinListChanged { get; set; }
@@ -74,14 +76,14 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     {
         string[] defaultSkins =
         {
-            default_skin_name
+            default_skin_name,
+            default_circle_skin_name
         };
 
         var custom = skinStorage.GetDirectories("").ToArray();
 
         // remove default skins from customs if they exist
         custom = custom.Where(x => !isDefault(x)).ToArray();
-
         return defaultSkins.Concat(custom).ToArray();
     }
 
@@ -112,7 +114,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
             SkinFolder = e.NewValue;
             currentSkin = loadSkin(SkinFolder);
-            Logger.Log($"Switched skin to '{SkinFolder}'", LoggingTarget.Information);
 
             SkinChanged?.Invoke();
         }, true);
@@ -155,8 +156,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             entry.ExtractToFile(filePath, true);
         }
 
-        Logger.Log($"Imported skin '{folder}'", LoggingTarget.Information);
-
         zip.Dispose();
         File.Delete(file);
 
@@ -173,7 +172,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         if (isDefault(SkinFolder))
             skinStorage.PresentExternally();
         else
-            skinStorage.PresentFileExternally($"{SkinFolder}/.");
+            skinStorage.GetStorageForDirectory(SkinFolder).PresentExternally();
     }
 
     public void ExportCurrent()
@@ -194,7 +193,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             zip.CreateEntryFromFile(file, relativePath[1..]);
         }
 
-        Logger.Log($"Exported skin '{SkinFolder}' to '{zipPath}'", LoggingTarget.Information);
         game.ExportStorage.PresentFileExternally(zipPath);
     }
 
@@ -204,7 +202,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
         var path = skinStorage.GetFullPath(folder);
         Directory.Delete(path, true);
-        Logger.Log($"Deleted skin '{folder}'", LoggingTarget.Information);
 
         if (folder == SkinFolder)
             skinName.Value = default_skin_name;
@@ -231,6 +228,9 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         {
             case default_skin_name:
                 return defaultSkin;
+
+            case default_circle_skin_name:
+                return new DefaultCircleSkin(textures, samples);
         }
 
         var skinJson = new SkinJson();
@@ -241,7 +241,6 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             {
                 var path = skinStorage.GetFullPath($"{folder}/skin.json");
                 skinJson = File.ReadAllText(path).Deserialize<SkinJson>();
-                Logger.Log($"Loaded skin.json from '{folder}'", LoggingTarget.Information);
             }
             else
                 Logger.Log($"No skin.json in folder '{folder}' found, using default skin.json", LoggingTarget.Information);
@@ -257,7 +256,11 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         return createCustomSkin(skinJson, folder);
     }
 
-    private bool isDefault(string skinName) => string.Equals(skinName, default_skin_name, StringComparison.CurrentCultureIgnoreCase);
+    private static bool isDefault(string name)
+    {
+        return string.Equals(name, default_skin_name, StringComparison.CurrentCultureIgnoreCase)
+               || string.Equals(name, default_circle_skin_name, StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
 

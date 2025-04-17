@@ -17,6 +17,7 @@ public interface INotificationClient
     Task RewardAchievement(Achievement achievement);
     Task DisplayMessage(ServerMessage message);
     Task DisplayMaintenance(long time);
+    Task ForceNameChange();
 
     Task ReceiveChatMessage(APIChatMessage message);
     Task DeleteChatMessage(string channel, string id);

@@ -68,7 +68,9 @@ public partial class KeyOverlay : Container
 
     protected override void Update()
     {
-        if (keyCount != laneSwitchManager.CurrentCount)
+        if (ruleset.AlwaysShowKeys)
+            Alpha = 1;
+        else if (keyCount != laneSwitchManager.CurrentCount)
         {
             keyCount = laneSwitchManager.CurrentCount;
             flow.FadeIn(200).Delay(1200).FadeOut(200);

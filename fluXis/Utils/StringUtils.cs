@@ -21,6 +21,8 @@ public static class StringUtils
 
     public static bool EqualsLower(this string first, string second) => first.Equals(second, StringComparison.InvariantCultureIgnoreCase);
 
+    public static string FormatSteamProfile(ulong id) => $"https://steamcommunity.com/profiles/{id}";
+
     public static string CensorEmail(string mail)
     {
         // we want something like dummy@example.com

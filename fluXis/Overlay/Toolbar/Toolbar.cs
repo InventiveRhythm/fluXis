@@ -4,17 +4,17 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
 using fluXis.Online.Fluxel;
+using fluXis.Overlay.Browse;
 using fluXis.Overlay.Chat;
 using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar.Buttons;
 using fluXis.Screens;
-using fluXis.Screens.Browse;
 using fluXis.Screens.Menu;
+using fluXis.Screens.Multiplayer;
 using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
-using fluXis.Screens.Wiki;
 using fluXis.Utils;
 using Humanizer;
 using osu.Framework.Allocation;
@@ -66,7 +66,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
     private double lastTime;
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(BrowseOverlay browse)
     {
         RelativeSizeAxes = Axes.X;
         Height = 50;
@@ -125,15 +125,15 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipSub = "Browse your maps.",
                                 Icon = FontAwesome6.Solid.Map,
                                 Screen = typeof(SelectScreen),
-                                Action = () => goToScreen(new SelectScreen())
+                                Action = () => goToScreen(new SoloSelectScreen())
                             },
                             new ToolbarScreenButton
                             {
-                                TooltipTitle = "Download Maps",
-                                TooltipSub = "Download new maps.",
-                                Icon = FontAwesome6.Solid.Download,
-                                Screen = typeof(MapBrowser),
-                                Action = () => goToScreen(new MapBrowser()),
+                                TooltipTitle = "Multiplayer",
+                                TooltipSub = "Play with others.",
+                                Icon = FontAwesome6.Solid.Users,
+                                Screen = typeof(MultiplayerScreen),
+                                Action = () => goToScreen(new MultiplayerScreen()),
                                 RequireLogin = true
                             },
                             new ToolbarScreenButton
@@ -182,14 +182,23 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
                                 RequireLogin = true
                             },
-                            new ToolbarScreenButton
+                            new ToolbarOverlayButton
+                            {
+                                TooltipTitle = "Browse",
+                                TooltipSub = "Download community-made maps.",
+                                Icon = FontAwesome6.Solid.EarthAmericas,
+                                Keybind = FluXisGlobalKeybind.ToggleBrowse,
+                                Overlay = browse,
+                                RequireLogin = true
+                            },
+                            /*new ToolbarScreenButton
                             {
                                 TooltipTitle = "Wiki",
                                 TooltipSub = "Learn about the game.",
                                 Icon = FontAwesome6.Solid.Book,
                                 Screen = typeof(Wiki),
                                 Action = () => goToScreen(new Wiki())
-                            },
+                            },*/
                             new ToolbarOverlayButton
                             {
                                 TooltipTitle = "Music Player",

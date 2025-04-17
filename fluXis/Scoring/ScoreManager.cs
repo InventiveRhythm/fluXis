@@ -5,8 +5,10 @@ using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
 using fluXis.Map;
+using fluXis.Online.Fluxel;
 using fluXis.Scoring.Processing;
 using fluXis.Utils;
+using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Containers;
@@ -16,7 +18,7 @@ namespace fluXis.Scoring;
 
 #nullable enable
 
-public partial class ScoreManager : CompositeComponent
+public partial class ScoreManager : CompositeDrawable
 {
     public event Action<Guid, RealmScore>? ScoreAdded;
     public event Action<Guid, RealmScore>? ScoreRemoved;
@@ -32,20 +34,27 @@ public partial class ScoreManager : CompositeComponent
     [Resolved]
     private MapStore maps { get; set; } = null!;
 
+    [Resolved]
+    private IAPIClient api { get; set; } = null!;
+
     private bool initialProcessing = true;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         checkForUpdates();
-        maps.MapSets.ForEach(set => set.Maps.ForEach(map => processMap(map.ID)));
+        reprocessAll();
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
         initialProcessing = false;
+
+        api.User.ValueChanged += _ => Scheduler.ScheduleIfNeeded(reprocessAll);
     }
+
+    private void reprocessAll() => maps.MapSets.ForEach(set => set.Maps.ForEach(map => processMap(map.ID)));
 
     private void checkForUpdates()
     {
@@ -71,22 +80,24 @@ public partial class ScoreManager : CompositeComponent
             }
 
             if (failed > 0)
-                Logger.Log($"Failed to update ${failed} scores!");
+                Logger.Log($"Failed to update {failed} scores!");
         });
     }
 
-    public RealmScore Add(Guid map, ScoreInfo score, long onlineID = -1) => realm.RunWrite(r =>
+    public RealmScore Add(Guid map, ScoreInfo score, long onlineID = -1)
     {
-        var rScore = r.Add(RealmScore.FromScoreInfo(map, score, onlineID)).Detach();
+        var rScore = realm.RunWrite(r => r.Add(RealmScore.FromScoreInfo(map, score, onlineID)).Detach());
 
-        Schedule(() =>
+        // the score isn't instantly available when adding it
+        // so the delay is kinda necessary
+        Scheduler.AddDelayed(() =>
         {
             ScoreAdded?.Invoke(map, rScore);
             processMap(map);
-        });
+        }, 100);
 
         return rScore;
-    });
+    }
 
     public IEnumerable<RealmScore> OnMap(Guid map) => realm.Run(r =>
     {
@@ -105,7 +116,7 @@ public partial class ScoreManager : CompositeComponent
         var detach = score.Detach();
         r.Remove(score);
 
-        Schedule(() =>
+        Scheduler.ScheduleIfNeeded(() =>
         {
             ScoreRemoved?.Invoke(detach.MapID, detach);
             processMap(detach.MapID);
@@ -122,6 +133,19 @@ public partial class ScoreManager : CompositeComponent
         rScore.OnlineID = id;
     });
 
+    public void WipeFromMap(Guid map) => realm.RunWrite(r =>
+    {
+        var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
+        var detach = scores.ToList().Select(x => x.Detach()).ToList();
+        r.RemoveRange(scores);
+
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            detach.ForEach(s => ScoreRemoved?.Invoke(map, s));
+            processMap(map);
+        });
+    });
+
     public RealmScore? GetCurrentTop(Guid map)
     {
         if (highestScores.TryGetValue(map, out var top))
@@ -132,7 +156,8 @@ public partial class ScoreManager : CompositeComponent
 
     private void processMap(Guid map) => realm.Run(r =>
     {
-        var scores = r.All<RealmScore>().Where(s => s.MapID == map).ToList();
+        var player = api.User.Value?.ID ?? 0;
+        var scores = r.All<RealmScore>().Where(s => s.MapID == map && s.PlayerID == player).ToList();
 
         RealmScore? top = null;
 
@@ -147,15 +172,21 @@ public partial class ScoreManager : CompositeComponent
         if (top is null)
         {
             if (!initialProcessing)
+            {
                 TopScoreUpdated?.Invoke(map, null);
+                highestScores.Remove(map);
+            }
 
             return;
         }
 
-        var hasPrevious = highestScores.TryGetValue(map, out var previous);
+        highestScores.TryGetValue(map, out var previous);
         highestScores[map] = top.ID;
 
-        if (!initialProcessing && hasPrevious && previous != top.ID)
+        if (initialProcessing)
+            return;
+
+        if (!initialProcessing && previous != top.ID)
             TopScoreUpdated?.Invoke(map, top.Detach());
     });
 

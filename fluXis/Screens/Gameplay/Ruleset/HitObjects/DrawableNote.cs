@@ -18,7 +18,7 @@ public partial class DrawableNote : DrawableHitObject
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = SkinManager.GetHitObject(Data.Lane, ObjectManager.KeyCount).With(d =>
+        InternalChild = SkinManager.GetHitObject(VisualLane, ObjectManager.KeyCount).With(d =>
         {
             d.Anchor = Anchor.BottomCentre;
             d.Origin = Anchor.BottomCentre;

@@ -4,7 +4,6 @@ using AutoMapper.Internal;
 using fluXis.Database.Input;
 using fluXis.Database.Maps;
 using fluXis.Database.Score;
-using osu.Framework.Logging;
 using Realms;
 
 namespace fluXis.Database;
@@ -15,7 +14,6 @@ public static class RealmObjectUtils
     {
         c.ShouldMapField = _ => false;
         c.ShouldMapProperty = pi => pi.SetMethod?.IsPublic == true;
-        Logger.LogPrint("Creating write mapper", LoggingTarget.Database, LogLevel.Debug);
 
         c.CreateMap<RealmScore, RealmScore>();
         c.CreateMap<RealmMapMetadata, RealmMapMetadata>();

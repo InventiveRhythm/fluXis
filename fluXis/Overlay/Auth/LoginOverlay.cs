@@ -13,7 +13,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Logging;
 using osuTK;
 using osuTK.Graphics;
 
@@ -222,10 +221,7 @@ public partial class LoginOverlay : CompositeDrawable
     public override void Show()
     {
         if (api.Status.Value == ConnectionStatus.Online)
-        {
-            Logger.Log("Already connected, skipping login overlay.", LoggingTarget.Network, LogLevel.Debug);
             return;
-        }
 
         this.FadeInFromZero(400, Easing.OutQuint);
         content.ScaleTo(.75f).ScaleTo(1f, 800, Easing.OutElasticHalf);

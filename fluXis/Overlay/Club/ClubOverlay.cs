@@ -174,7 +174,7 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 Tabs = new TabContainer[]
                                 {
                                     new ClubMembersTab(club),
-                                    new ClubScoresTab(),
+                                    // new ClubScoresTab(),
                                 }
                             },
                             Empty(),
@@ -187,7 +187,7 @@ public partial class ClubOverlay : OverlayContainer, IKeyBindingHandler<FluXisGl
                                 Children = new Drawable[]
                                 {
                                     new ClubSidebarStats(club),
-                                    new ClubSidebarActivity(club),
+                                    // new ClubSidebarActivity(club),
                                 }
                             }
                         }

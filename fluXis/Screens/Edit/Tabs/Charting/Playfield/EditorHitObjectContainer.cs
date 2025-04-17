@@ -23,7 +23,12 @@ public partial class EditorHitObjectContainer : Container
     private EditorMap map { get; set; }
 
     [Resolved]
+    private EditorPlayfield playfield { get; set; }
+
+    [Resolved]
     private EditorClock clock { get; set; }
+
+    public int LaneOffset => playfield.Index * map.RealmMap.KeyCount;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -46,6 +51,9 @@ public partial class EditorHitObjectContainer : Container
 
     private void add(HitObject info)
     {
+        var idx = (info.Lane - 1) / map.RealmMap.KeyCount;
+        if (idx != playfield.Index) return;
+
         var draw = new EditorHitObject { Data = info };
         info.EditorDrawable = draw;
         Add(draw);
@@ -53,6 +61,9 @@ public partial class EditorHitObjectContainer : Container
 
     private void remove(HitObject info)
     {
+        var idx = (info.Lane - 1) / map.RealmMap.KeyCount;
+        if (idx != playfield.Index) return;
+
         var draw = info.EditorDrawable;
         if (draw == null) return;
 
@@ -62,10 +73,11 @@ public partial class EditorHitObjectContainer : Container
 
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));
     public float PositionAtTime(double time) => (float)(DrawHeight - HITPOSITION - .5f * ((time - clock.CurrentTime) * settings.Zoom));
-    public float PositionFromLane(float lane) => (lane - 1) * NOTEWIDTH;
+    public float PositionFromLane(float lane) => (lane - 1 - LaneOffset) * NOTEWIDTH;
+
+    public double TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / settings.Zoom + clock.CurrentTime;
+    public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH) + LaneOffset;
 
     public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition) => TimeAtPosition(ToLocalSpace(screenSpacePosition).Y);
     public int LaneAtScreenSpacePosition(Vector2 position) => LaneAtPosition(ToLocalSpace(position).X);
-    public double TimeAtPosition(float y) => (DrawHeight - HITPOSITION - y) * 2 / settings.Zoom + clock.CurrentTime;
-    public int LaneAtPosition(float x) => (int)((x + NOTEWIDTH) / NOTEWIDTH);
 }

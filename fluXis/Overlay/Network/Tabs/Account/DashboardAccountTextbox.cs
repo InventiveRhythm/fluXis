@@ -1,84 +1,98 @@
 using System;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace fluXis.Overlay.Network.Tabs.Account;
 
-public partial class DashboardAccountTextbox : Container
+public partial class DashboardAccountTextBox : Container
 {
-    public string Title { get; set; }
-    public string Value { get; set; }
-    public Action<string> OnTextChanged { get; set; }
-    public bool ShowSaveButton { get; set; } = false;
-    public Action<string> OnSave { get; set; }
+    public string Title { get; init; }
+    public string Default { get; init; }
+    public string Placeholder { get; init; }
+    public Action OnChange { get; init; }
+    public bool ReadOnly { get; init; }
 
-    private FluXisTextBox textBox;
-    private FluXisButton saveButton;
+    public string Value
+    {
+        get => textBox.Text;
+        set => textBox.Text = value;
+    }
+
+    private TextBox textBox;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.X;
-        Height = 32;
+        Size = new Vector2(500, 50);
+        CornerRadius = 10;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {
-            new FluXisSpriteText
+            new Box
             {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreRight,
-                X = 140,
-                FontSize = 16,
-                Text = Title
+                RelativeSizeAxes = Axes.Both,
+                Colour = FluXisColors.Background3
             },
-            textBox = new FluXisTextBox
+            new FillFlowContainer
             {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
-                BackgroundInactive = FluXisColors.Background3,
-                BackgroundActive = FluXisColors.Background4,
-                RelativeSizeAxes = Axes.Y,
-                Width = 300,
-                X = 150,
-                Text = Value,
-                OnTextChanged = textChanged
-            },
-            saveButton = new FluXisButton
-            {
-                Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
-                RelativeSizeAxes = Axes.Y,
-                Width = 100,
-                X = 460,
-                Text = "Save",
-                Action = save,
-                Alpha = 0
+                Direction = FillDirection.Vertical,
+                Padding = new MarginPadding { Horizontal = 10, Vertical = 8 },
+                Spacing = new Vector2(-3),
+                Children = new Drawable[]
+                {
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Children = new Drawable[]
+                        {
+                            new FluXisSpriteText
+                            {
+                                Text = Title,
+                                FontSize = 18,
+                                Alpha = .8f
+                            }
+                        }
+                    },
+                    textBox = new TextBox
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 24,
+                        Alpha = ReadOnly ? .5f : 1,
+                        Text = Default,
+                        PlaceholderText = Placeholder,
+                        ReadOnly = ReadOnly,
+                        OnTextChanged = OnChange
+                    }
+                }
             }
         };
     }
 
-    private void save()
+    private partial class TextBox : FluXisTextBox
     {
-        saveButton.FadeOut(200);
-        OnSave?.Invoke(textBox.Text);
-        Value = textBox.Text;
-    }
+        protected override float LeftRightPadding => 0;
 
-    private void textChanged()
-    {
-        OnTextChanged?.Invoke(textBox.Text);
-
-        if (ShowSaveButton)
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            if (textBox.Text == Value)
-                saveButton.FadeOut(200);
-            else
-                saveButton.FadeIn(200);
+            TextContainer.Height = 1;
+            BackgroundActive = FluXisColors.Background3;
+            BackgroundFocused = FluXisColors.Background3;
+            BackgroundInactive = FluXisColors.Background3;
+            BackgroundUnfocused = FluXisColors.Background3;
+            BackgroundCommit = FluXisColors.Background3;
         }
     }
 }

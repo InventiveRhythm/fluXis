@@ -1,7 +1,6 @@
 using System;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 
 namespace fluXis.Input;
 
@@ -24,7 +23,6 @@ public partial class GamepadHandler : Component
 
         GamepadConnected = status;
         OnGamepadStatusChanged?.Invoke(status);
-        Logger.Log($"Gamepad status changed to {status}", LoggingTarget.Runtime, LogLevel.Important);
         return true;
     }
 

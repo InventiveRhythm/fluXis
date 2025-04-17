@@ -19,7 +19,6 @@ using Midori.Networking.WebSockets.Typed;
 using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 
@@ -49,6 +48,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     public event Action<APIUser>? FriendOffline;
     public event Action<Achievement>? AchievementEarned;
     public event Action<ServerMessage>? MessageReceived;
+    public event Action? NameChangeRequested;
     public event Action<string>? ChatChannelAdded;
     public event Action<string>? ChatChannelRemoved;
     public event Action<APIChatMessage>? ChatMessageReceived;
@@ -149,27 +149,22 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
             Logger.Log("Connected to server! Waiting for authentication...", LoggingTarget.Network);
 
-            // this is needed when using a local server
-            // else it will fail to connect most of the time
-            if (DebugUtils.IsDebugBuild)
-                Thread.Sleep(500);
-
-            var waitTime = 5d;
+            var waitTime = 10d;
 
             // ReSharper disable once AsyncVoidLambda
             var task = new Task(async () =>
             {
-                while (Status.Value == ConnectionStatus.Connecting && waitTime > 0)
+                while (Status.Value is ConnectionStatus.Connecting or ConnectionStatus.Reconnecting && waitTime > 0)
                 {
                     if (connection.State >= WebSocketState.Closing)
                     {
-                        LastException = new APIException("" /*connection.CloseStatusDescription*/);
+                        LastException = new APIException(connection.CloseReason);
                         Status.Value = ConnectionStatus.Failed;
                         break;
                     }
 
-                    waitTime -= 0.1;
-                    await Task.Delay(100);
+                    waitTime -= 1;
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
 
                 if (Status.Value == ConnectionStatus.Online) return;
@@ -211,8 +206,17 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     {
         var socket = new TypedWebSocketClient<S, C>(target) { PingInterval = 30000 };
         socket.RequestHeaders["Authorization"] = AccessToken;
-        socket.Connect((Endpoint.APIUrl + path).Replace("http", "ws")); // this MIGHT be janky
-        return socket;
+        socket.RequestHeaders["X-Version"] = FluXisGameBase.VersionString;
+
+        try
+        {
+            socket.Connect((Endpoint.APIUrl + path).Replace("http", "ws")); // this MIGHT be janky
+            return socket;
+        }
+        catch (Exception ex)
+        {
+            throw new AggregateException(socket.CloseReason, ex);
+        }
     }
 
     #endregion
@@ -241,7 +245,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         if (!req.IsSuccessful)
         {
-            Logger.Log($"Failed to get access token! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+            Logger.Error(req.FailReason, "Failed to get access token!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
             return;
@@ -263,7 +267,7 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
         if (!req.IsSuccessful)
         {
-            Logger.Log($"Failed to register account! ({req.FailReason?.Message})", LoggingTarget.Network, LogLevel.Error);
+            Logger.Error(req.FailReason, "Failed to register account!", LoggingTarget.Network);
             LastException = req.FailReason;
             Status.Value = ConnectionStatus.Failed;
             return;
@@ -349,6 +353,12 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         if (time > DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             MaintenanceTime = time;
 
+        return Task.CompletedTask;
+    }
+
+    Task INotificationClient.ForceNameChange()
+    {
+        NameChangeRequested?.Invoke();
         return Task.CompletedTask;
     }
 

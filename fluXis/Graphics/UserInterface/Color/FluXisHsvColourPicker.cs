@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -15,36 +16,40 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
     [BackgroundDependencyLoader]
     private void load()
     {
-        Background.Colour = FluXisColors.Background4;
-        Content.Padding = new MarginPadding(10);
-        Content.Spacing = new Vector2(0, 10);
+        Background.Colour = Colour4.Transparent;
+        Content.Padding = new MarginPadding(8);
+        Content.Spacing = new Vector2(0, 8);
     }
 
     private partial class FluXisHueSelector : HueSelector
     {
         public FluXisHueSelector()
         {
-            SliderBar.CornerRadius = 10;
+            SliderBar.CornerRadius = 8;
             SliderBar.Masking = true;
         }
 
-        protected override Drawable CreateSliderNub() => new SliderNub();
+        protected override Drawable CreateSliderNub() => new SliderNub(Hue);
 
         private partial class SliderNub : CompositeDrawable
         {
-            public SliderNub()
+            public SliderNub(Bindable<float> hue)
             {
+                var box = new Box { RelativeSizeAxes = Axes.Both };
+
                 InternalChild = new CircularContainer
                 {
-                    Height = 35,
-                    Width = 10,
+                    Height = 32,
+                    Width = 12,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Masking = true,
-                    BorderThickness = 3,
+                    BorderThickness = 4,
                     BorderColour = FluXisColors.Text,
-                    Child = new Box { RelativeSizeAxes = Axes.Both }
+                    Child = box
                 };
+
+                hue.BindValueChanged(v => box.Colour = Colour4.FromHSL(v.NewValue, 1f, .5f), true);
             }
         }
     }
@@ -53,7 +58,7 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
     {
         public FluXisSaturationSelector()
         {
-            CornerRadius = 10;
+            CornerRadius = 12;
             Masking = true;
         }
 
@@ -63,15 +68,21 @@ public partial class FluXisHsvColourPicker : HSVColourPicker
         {
             public FluXisMarker()
             {
-                Size = new Vector2(20);
-                CornerRadius = 10;
+                Size = new Vector2(24);
+                CornerRadius = Width / 2f;
                 Masking = true;
-                BorderThickness = 3;
+                BorderThickness = 4;
                 BorderColour = FluXisColors.Text;
 
                 InternalChild = new Box { RelativeSizeAxes = Axes.Both };
 
-                Current.BindValueChanged(_ => InternalChild.Colour = Current.Value, true);
+                Current.BindValueChanged(_ =>
+                {
+                    var bright = FluXisColors.IsBright(Current.Value);
+
+                    InternalChild.Colour = Current.Value;
+                    BorderColour = bright ? FluXisColors.Background2 : FluXisColors.Text;
+                }, true);
             }
         }
     }

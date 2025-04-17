@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Graphics.UserInterface;
 
@@ -23,8 +24,6 @@ public partial class FluXisToggleSwitch : Container
     private Box background;
     private Circle nubHover;
     private Circle nub;
-
-    private Vector2 dragStartPos;
 
     private Sample toggleOn;
     private Sample toggleOff;
@@ -107,15 +106,11 @@ public partial class FluXisToggleSwitch : Container
         nubHover.Colour = nub.Colour;
     }
 
-    protected override bool OnDragStart(DragStartEvent e)
-    {
-        dragStartPos = e.MousePosition;
-        return true;
-    }
+    protected override bool OnDragStart(DragStartEvent e) => e.Button == MouseButton.Left;
 
     protected override void OnDrag(DragEvent e)
     {
-        var diff = e.MousePosition.X - dragStartPos.X;
+        var diff = e.MousePosition.X - e.MouseDownPosition.X;
 
         State.Value = diff switch
         {

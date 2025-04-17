@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using fluXis.Graphics.Sprites;
 using fluXis.Overlay.Notifications;
 using JetBrains.Annotations;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Edit.Actions;
 
@@ -34,8 +33,6 @@ public class EditorActionStack
         action.Run(editorMap);
         stack.Add(action);
         index = stack.Count - 1;
-
-        Logger.Log($"Added '{action.Description}' to stack.", LoggingTarget.Information, LogLevel.Debug);
     }
 
     public void Undo()

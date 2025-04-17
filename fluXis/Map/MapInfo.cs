@@ -64,6 +64,9 @@ public class MapInfo
     public bool IsDual => DualMode > DualMode.Disabled;
 
     [JsonIgnore]
+    public bool IsSplit => DualMode == DualMode.Separate;
+
+    [JsonIgnore]
     public double StartTime => HitObjects[0].Time;
 
     [JsonIgnore]
@@ -255,7 +258,7 @@ public class MapInfo
         if (!Directory.Exists(path))
             return null;
 
-        return new DrawableStoryboard(sb, MapFiles.GetFullPath(RealmEntry!.MapSet.ID.ToString()));
+        return new DrawableStoryboard(this, sb, MapFiles.GetFullPath(RealmEntry!.MapSet.ID.ToString()));
     }
 
     public virtual Stream GetVideoStream()

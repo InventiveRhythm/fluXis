@@ -3,7 +3,6 @@ using System.Linq;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 
 namespace fluXis.Graphics.Shaders;
 
@@ -22,9 +21,6 @@ public partial class ShaderStackContainer : CompositeDrawable
 
     public ShaderTransformHandler AddShader(ShaderContainer shader)
     {
-        Logger.Log($"Adding shader {shader.GetType().Name} to stack", LoggingTarget.Runtime, LogLevel.Debug);
-        Logger.Log($"{shaders.Count}", LoggingTarget.Runtime, LogLevel.Debug);
-
         if (shaders.Count == 0)
             InternalChild = shader;
         else

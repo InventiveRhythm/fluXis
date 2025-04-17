@@ -10,6 +10,11 @@ using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Background.Cropped;
+using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Graphics.UserInterface.Buttons.Presets;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Import;
 using fluXis.Map.Builtin.Christmashouse;
 using fluXis.Map.Builtin.Roundhouse;
@@ -54,6 +59,10 @@ public partial class MapStore : Component
     [Resolved(CanBeNull = true)]
     private GlobalClock clock { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PanelContainer panels { get; set; }
+
     [Resolved]
     private NotificationManager notifications { get; set; }
 
@@ -93,8 +102,6 @@ public partial class MapStore : Component
     {
         files = storage.GetStorageForDirectory("maps");
 
-        Logger.Log("Loading mapsets...");
-
         resources = new MapSetResources
         {
             BackgroundStore = backgroundStore,
@@ -111,8 +118,6 @@ public partial class MapStore : Component
 
             foreach (var set in sets)
                 AddMapSet(set.Detach());
-
-            Logger.Log($"Loaded {MapSets.Count} mapsets.");
         });
     }
 
@@ -120,7 +125,8 @@ public partial class MapStore : Component
     {
         base.LoadComplete();
 
-        MapSetBindable.BindValueChanged(e => Logger.Log($"Changed selected mapset to {e.NewValue?.Metadata.SortingTitle} - {e.NewValue?.Metadata.SortingArtist}", LoggingTarget.Runtime, LogLevel.Debug), true);
+        MapSetBindable.BindValueChanged(
+            e => Logger.Log($"Changed selected mapset to {e.NewValue?.Metadata.SortingTitle} - {e.NewValue?.Metadata.SortingArtist}", LoggingTarget.Runtime, LogLevel.Debug), true);
     }
 
     /// <summary>
@@ -264,7 +270,57 @@ public partial class MapStore : Component
         DownloadFinished?.Invoke(status);
     }
 
-    public void DownloadMapSet(long id)
+    public void DownloadBundledMaps(Action complete)
+    {
+        var req = new MapSetBundledRequest();
+        req.Failure += _ => displayError();
+        req.Success += res =>
+        {
+            if (!res.Success)
+            {
+                displayError();
+                return;
+            }
+
+            var count = res!.Data.Length;
+
+            if (count == 0)
+                complete();
+
+            foreach (var set in req.Response.Data)
+            {
+                DownloadMapSet(set, false, _ => Scheduler.ScheduleIfNeeded(() =>
+                {
+                    count--;
+
+                    if (count == 0)
+                        complete();
+                }));
+            }
+        };
+
+        api.PerformRequestAsync(req);
+
+        void displayError()
+        {
+            if (panels is null)
+                return;
+
+            panels.Content = new ButtonPanel
+            {
+                Text = "Failed to download bundled maps!",
+                SubText = "Make sure you have a working and stable internet connection when launching the game!",
+                Icon = FontAwesome6.Solid.ExclamationTriangle,
+                Buttons = new ButtonData[]
+                {
+                    new PrimaryButtonData("Retry", () => DownloadBundledMaps(complete)),
+                    new CancelButtonData("Quit", () => game.Exit())
+                }
+            };
+        }
+    }
+
+    public void DownloadMapSet(long id, bool allowNotificationClick = true, [CanBeNull] Action<DownloadState> finished = null)
     {
         if (DownloadQueue.Any(x => x.OnlineID == id))
             return;
@@ -276,10 +332,10 @@ public partial class MapStore : Component
         if (!req.IsSuccessful)
             return;
 
-        DownloadMapSet(req.Response!.Data);
+        DownloadMapSet(req.Response!.Data, allowNotificationClick, finished);
     }
 
-    public void DownloadMapSet(APIMapSet set)
+    public void DownloadMapSet(APIMapSet set, bool allowNotificationClick = true, [CanBeNull] Action<DownloadState> finished = null)
     {
         if (set == null)
             return;
@@ -287,11 +343,15 @@ public partial class MapStore : Component
         if (MapSets.Any(x => x.OnlineID == set.ID))
         {
             notifications.SendText("Mapset already downloaded.");
+            finished?.Invoke(DownloadState.Finished);
             return;
         }
 
         if (DownloadQueue.Any(x => x.OnlineID == set.ID))
+        {
+            finished?.Invoke(DownloadState.Downloading);
             return;
+        }
 
         var notification = new TaskNotificationData
         {
@@ -311,6 +371,7 @@ public partial class MapStore : Component
             Logger.Log($"Failed to download mapset: {exception.Message}", LoggingTarget.Network);
             notification.State = LoadingState.Failed;
 
+            finished?.Invoke(DownloadState.Failed);
             finishDownload(status);
         };
         req.Success += () =>
@@ -364,7 +425,11 @@ public partial class MapStore : Component
                 }
                 finally
                 {
+                    if (!allowNotificationClick)
+                        notification.ClickAction = () => { };
+
                     finishDownload(status);
+                    finished?.Invoke(status.State);
                 }
             });
         };

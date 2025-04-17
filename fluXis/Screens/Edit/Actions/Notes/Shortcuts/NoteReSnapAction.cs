@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures;
-using osu.Framework.Logging;
 
 namespace fluXis.Screens.Edit.Actions.Notes.Shortcuts;
 
@@ -38,7 +37,6 @@ public class NoteReSnapAction : EditorAction
             var lowerDiff = Math.Abs(note.Time - lower);
             var upperDiff = Math.Abs(note.Time - upper);
 
-            Logger.Log($"Time: {note.Time}, Lower: {lower}, Upper: {upper}, LowerDiff: {lowerDiff}, UpperDiff: {upperDiff}");
             note.Time = lowerDiff < upperDiff ? lower : upper;
         }
     }

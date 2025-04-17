@@ -3,6 +3,7 @@ using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Map;
 using fluXis.Online.Multiplayer;
 using fluXis.Screens.Multiplayer.SubScreens;
@@ -18,7 +19,7 @@ namespace fluXis.Screens.Multiplayer;
 public partial class MultiplayerScreen : FluXisScreen
 {
     public override float Zoom => 1.1f;
-    public override float ParallaxStrength => .05f;
+    public override float ParallaxStrength => 0;
     public override float BackgroundDim => .5f;
     public override float BackgroundBlur => .2f;
     public override bool AllowMusicControl => false;
@@ -95,24 +96,30 @@ public partial class MultiplayerScreen : FluXisScreen
     {
         base.LoadComplete();
 
+        client.OnConnectionError += ex => Schedule(() =>
+        {
+            panels.Content = new SingleButtonPanel(FontAwesome6.Solid.TriangleExclamation, "Failed to connect to multiplayer server.", ex.Message, action: this.Exit);
+            connectingContainer.FadeOut(FADE_DURATION);
+        });
+
         LoadComponentAsync(client, _ =>
         {
-            if (!IsPresent)
+            if (!IsPresent || !client.Connected)
+            {
                 client.Dispose();
+                return;
+            }
 
             AddInternal(client);
             connectingContainer.FadeOut(FADE_DURATION);
 
-            client.OnDisconnect += () =>
+            client.OnDisconnect += () => panels.Content = new DisconnectedPanel(() =>
             {
-                panels.Content = new DisconnectedPanel(() =>
-                {
-                    if (!this.IsCurrentScreen())
-                        this.MakeCurrent();
+                if (!this.IsCurrentScreen())
+                    this.MakeCurrent();
 
-                    this.Exit();
-                });
-            };
+                this.Exit();
+            });
 
             var modes = new MultiModeSelect();
             screenStack.Push(modes);
@@ -133,16 +140,18 @@ public partial class MultiplayerScreen : FluXisScreen
 
     private bool canExit()
     {
-        while (screenStack.CurrentScreen != null && screenStack.CurrentScreen is not MultiModeSelect)
+        while (true)
         {
-            var subScreen = (MultiSubScreen)screenStack.CurrentScreen;
-            if (subScreen.IsLoaded && subScreen.OnExiting(null))
+            var screen = screenStack.CurrentScreen as Screen;
+
+            if (screen is null or MultiModeSelect)
+                return true;
+
+            if (screen.IsLoaded && screen.OnExiting(null))
                 return false;
 
-            subScreen.Exit();
+            screen.Exit();
         }
-
-        return true;
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -174,6 +183,9 @@ public partial class MultiplayerScreen : FluXisScreen
     public override bool OnExiting(ScreenExitEvent e)
     {
         if (!canExit()) return true;
+
+        var screen = screenStack.CurrentScreen as MultiSubScreen;
+        screen?.OnSuspending(null);
 
         menuMusic.StopAll();
         this.Delay(FADE_DURATION).FadeOut();

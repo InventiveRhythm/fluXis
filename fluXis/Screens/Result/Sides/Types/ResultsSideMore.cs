@@ -40,9 +40,9 @@ public partial class ResultsSideMore : ResultsSideContainer
 
         if (score.HitResults is { Count: > 0 })
         {
-            var nonMiss = score.HitResults.Where(r => r.Judgement > Judgement.Miss);
-            var avg = nonMiss.Average(x => x.Difference);
-            flow.Add(new ResultsSideDoubleText("Mean", $"{(int)avg}ms"));
+            var nonMiss = score.HitResults.Where(r => r.Judgement > Judgement.Miss).ToList();
+            var avg = nonMiss.Count > 1 ? nonMiss.Average(x => x.Difference) : 0;
+            flow.Add(new ResultsSideDoubleText("Mean", $"{(int)-avg}ms"));
         }
 
         flow.Add(new ResultsSideDoubleText("Scroll Speed", $"{score.ScrollSpeed.ToStringInvariant()}"));

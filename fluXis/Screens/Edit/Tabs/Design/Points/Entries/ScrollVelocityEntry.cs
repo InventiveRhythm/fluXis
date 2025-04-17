@@ -24,12 +24,7 @@ public partial class ScrollVelocityEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new ScrollVelocity
-    {
-        Time = Object.Time,
-        Multiplier = sv.Multiplier,
-        LaneMask = sv.LaneMask.ToList()
-    };
+    public override ITimedObject CreateClone() => sv.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

@@ -34,13 +34,7 @@ public partial class TimingPointEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new TimingPoint
-    {
-        Time = Object.Time,
-        BPM = timing.BPM,
-        Signature = timing.Signature,
-        HideLines = timing.HideLines
-    };
+    public override ITimedObject CreateClone() => timing.JsonCopy();
 
     protected override Drawable[] CreateValueContent() => new Drawable[]
     {

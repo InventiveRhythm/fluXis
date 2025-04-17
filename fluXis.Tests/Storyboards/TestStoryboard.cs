@@ -30,10 +30,11 @@ public partial class TestStoryboard : FluXisTestScene
         Add(GlobalClock);
 
         var set = maps.MapSets.FirstOrDefault(s => s.Metadata.Title == "My Love" && s.Metadata.Artist == "Raphlesia & BilliumMoto");
+        var map = set?.LowestDifficulty;
 
-        if (set is not null)
+        if (map is not null)
         {
-            GlobalClock.LoadMap(set.LowestDifficulty);
+            GlobalClock.LoadMap(map);
             GlobalClock.Stop();
         }
 
@@ -42,7 +43,7 @@ public partial class TestStoryboard : FluXisTestScene
         var parser = new OsuStoryboardParser();
         var storyboard = parser.Parse(data);
 
-        var drawable = new DrawableStoryboard(storyboard, @"W:\osu-lazer\exports\mylove\");
+        var drawable = new DrawableStoryboard(map?.GetMapInfo() ?? new MapInfo(), storyboard, @"W:\osu-lazer\exports\mylove\");
         LoadComponent(drawable);
 
         Add(new Container

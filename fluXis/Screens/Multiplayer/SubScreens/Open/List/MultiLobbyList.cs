@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Audio;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Sprites;
@@ -194,9 +195,9 @@ public partial class MultiLobbyList : MultiSubScreen
         base.OnResuming(e);
     }
 
-    private void startCreate() => this.Push(new MultiSongSelect(create));
+    private void startCreate() => this.Push(new MultiSelectScreen(create));
 
-    private async void create(RealmMap map)
+    private async void create(RealmMap map, List<string> mods)
     {
         var panel = new LoadingPanel { Text = "Creating lobby...", };
         Schedule(() => panels.Content = panel);

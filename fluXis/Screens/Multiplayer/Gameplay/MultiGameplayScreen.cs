@@ -17,7 +17,7 @@ public partial class MultiGameplayScreen : GameplayScreen
 {
     protected override bool InstantlyExitOnPause => true;
     protected override bool AllowRestart => false;
-    public override bool SubmitScore => false;
+    protected override bool SubmitScore => false;
 
     private PlayfieldPlayer player => PlayfieldManager.FirstPlayer;
 
@@ -71,12 +71,15 @@ public partial class MultiGameplayScreen : GameplayScreen
 
     private void onScoreUpdate(long user, int score)
     {
-        var si = client.Room?.Scores?.FirstOrDefault(s => s.PlayerID == user);
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            var si = client.Room?.Scores?.FirstOrDefault(s => s.PlayerID == user);
 
-        if (si is null)
-            return;
+            if (si is null)
+                return;
 
-        si.Score = score;
+            si.Score = score;
+        });
     }
 
     private void onOnResultsReady(List<ScoreInfo> scores)
@@ -84,7 +87,7 @@ public partial class MultiGameplayScreen : GameplayScreen
         Scheduler.ScheduleOnceIfNeeded(() =>
         {
             if (this.IsCurrentScreen())
-                this.Push(new MultiResults(RealmMap, scores));
+                this.Push(new MultiplayerResults(RealmMap, scores, client));
         });
     }
 

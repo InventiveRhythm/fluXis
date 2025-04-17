@@ -18,8 +18,6 @@ namespace fluXis.Overlay.Network;
 
 public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    private const int rounding = 20;
-
     private Container content;
     private DashboardSidebar sidebar;
     private Container<DashboardTab> tabsContainer;
@@ -47,69 +45,43 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
                     }
                 }
             },
-            new Container
+            content = new ClickableContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Horizontal = 50, Bottom = 50, Top = 20 },
-                Child = content = new ClickableContainer
+                Width = 1200,
+                RelativeSizeAxes = Axes.Y,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                EdgeEffect = FluXisStyles.ShadowLargeNoOffset,
+                Masking = true,
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    CornerRadius = rounding,
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    EdgeEffect = FluXisStyles.ShadowLarge,
-                    Children = new Drawable[]
+                    new Box
                     {
-                        new Box
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = FluXisColors.Background2
+                    },
+                    new FluXisContextMenuContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Child = tabsContainer = new Container<DashboardTab>
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = FluXisColors.Background2
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Child = new GridContainer
+                            Padding = new MarginPadding(12)
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                ColumnDimensions = new Dimension[]
-                                {
-                                    new(GridSizeMode.AutoSize),
-                                    new()
-                                },
-                                RowDimensions = new Dimension[]
-                                {
-                                    new()
-                                },
-                                Content = new[]
-                                {
-                                    new Drawable[]
-                                    {
-                                        sidebar = new DashboardSidebar
-                                        {
-                                            SelectAction = selectTab
-                                        },
-                                        new FluXisContextMenuContainer
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Child = tabsContainer = new Container<DashboardTab>
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Padding = new MarginPadding(10) { Top = 48 },
-                                            }
-                                        }
-                                    }
-                                }
+                                Top = 50 + 12,
+                                Left = DashboardSidebar.SIZE_CLOSED + 12
                             }
                         }
-                    }
+                    },
+                    sidebar = new DashboardSidebar { SelectAction = selectTab }
                 }
             }
         };
 
-        addTab(new DashboardNotificationsTab());
-        addTab(new DashboardNewsTab());
+        // addTab(new DashboardNotificationsTab());
+        // addTab(new DashboardNewsTab());
         addTab(new DashboardFriendsTab());
+        addTab(new DashboardClubTab());
         addTab(new DashboardOnlineTab());
         addTab(new DashboardAccountTab());
     }
@@ -178,13 +150,15 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
     protected override void PopIn()
     {
         this.FadeIn(200);
-        content.MoveToY(0, 400, Easing.OutQuint);
+        content.MoveToX(0, 400, Easing.OutQuint);
+        sidebar.MoveToX(0, 400, Easing.OutQuint);
     }
 
     protected override void PopOut()
     {
         this.FadeOut(200);
-        content.MoveToY(-50, 400, Easing.OutQuint);
+        content.MoveToX(-50, 400, Easing.OutQuint);
+        sidebar.MoveToX(-25, 400, Easing.OutQuint);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

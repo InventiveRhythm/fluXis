@@ -1,4 +1,5 @@
-﻿using fluXis.Map.Structures.Bases;
+﻿using System;
+using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.HitObjects;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
@@ -22,6 +23,6 @@ public class ScrollMultiplierEvent : IMapEvent, IHasDuration, IHasEasing, IAppli
     public void Apply(HitObjectManager manager)
     {
         using (manager.BeginAbsoluteSequence(Time))
-            manager.TransformTo(nameof(manager.DirectScrollMultiplier), Multiplier, Duration, Easing);
+            manager.TransformTo(nameof(manager.DirectScrollMultiplier), Multiplier, Math.Max(Duration, 0), Easing);
     }
 }

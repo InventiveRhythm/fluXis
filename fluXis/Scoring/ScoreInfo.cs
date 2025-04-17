@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using fluXis.Replays;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
@@ -47,7 +48,7 @@ public class ScoreInfo
     public int Miss { get; set; }
 
     [JsonProperty("results")]
-    public List<HitResult> HitResults { get; set; } = new();
+    public List<HitResult>? HitResults { get; set; } = new();
 
     [JsonProperty("mapid")]
     public long MapID { get; set; }
@@ -95,4 +96,16 @@ public class ScoreInfo
 
     [JsonIgnore]
     public bool FullCombo => Miss == 0;
+
+    [JsonIgnore]
+    public float Rate
+    {
+        get
+        {
+            var rate = Mods.FirstOrDefault(x => x.EndsWith('x')) ?? "1.0";
+            rate = rate.TrimEnd('x');
+
+            return float.TryParse(rate, out var result) ? result : 1;
+        }
+    }
 }

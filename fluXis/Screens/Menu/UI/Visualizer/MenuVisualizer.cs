@@ -56,13 +56,13 @@ public partial class MenuVisualizer : Container
 
         for (int i = 0; i < circle_count; i++)
         {
-            Add(new DotCircle
-            {
-                X = DrawWidth * RNG.NextSingle(),
-                Y = -DrawHeight * RNG.NextSingle(),
-                RandomSpeed = 1 + RNG.NextSingle() * max_extra_speed,
-                Scale = new Vector2(1 + RNG.NextSingle() * max_extra_scale)
-            });
+            ShapeBase shape = RNG.NextBool() ? new SquareShape() : new CircleShape();
+            shape.X = DrawWidth * RNG.NextSingle();
+            shape.Y = -DrawHeight * RNG.NextSingle();
+            shape.Rotation = 360 * RNG.NextSingle();
+            shape.RandomSpeed = 1 + RNG.NextSingle() * max_extra_speed;
+            shape.Scale = new Vector2(1 + RNG.NextSingle() * max_extra_scale);
+            Add(shape);
         }
 
         loaded = true;
@@ -75,51 +75,68 @@ public partial class MenuVisualizer : Container
 
         foreach (var child in Children)
         {
-            var circle = (DotCircle)child;
-            float move = amplitude * .2f * circle.RandomSpeed;
+            var shape = (ShapeBase)child;
+            float move = amplitude * .2f * shape.RandomSpeed;
             move *= (float)Time.Elapsed;
-            circle.Y -= move;
+            shape.Y -= move;
+
+            shape.Rotation += (float)(amplitude * .2f * shape.RandomSpeed * Time.Elapsed);
 
             if (swayEnabled.Value)
             {
-                float x = 40 * (float)Math.Sin(Time.Current * .001f * circle.RandomSpeed) * .01f;
-                x *= amplitude * circle.RandomSpeed;
+                float x = 40 * (float)Math.Sin(Time.Current * .001f * shape.RandomSpeed) * .01f;
+                x *= amplitude * shape.RandomSpeed;
                 x *= (float)Time.Elapsed;
-                circle.X += x;
+                shape.X += x;
             }
 
-            if (!(circle.Y < -DrawHeight - circle.Height / 2f)) continue;
+            if (!(shape.Y < -DrawHeight - shape.Height / 2f)) continue;
 
-            circle.X = DrawWidth * RNG.NextSingle();
-            circle.Y += DrawHeight + circle.Height;
-            circle.RandomSpeed = 1 + RNG.NextSingle() * max_extra_speed;
-            circle.Scale = new Vector2(1 + RNG.NextSingle() * max_extra_scale);
+            shape.X = DrawWidth * RNG.NextSingle();
+            shape.Y += DrawHeight + shape.Height;
+            shape.RandomSpeed = 1 + RNG.NextSingle() * max_extra_speed;
+            shape.Scale = new Vector2(1 + RNG.NextSingle() * max_extra_scale);
         }
 
         base.Update();
     }
 
-    private partial class DotCircle : CircularContainer
+    private abstract partial class ShapeBase : Container
     {
         public float RandomSpeed { get; set; }
 
-        public DotCircle()
+        protected ShapeBase()
         {
             Size = new Vector2(32);
             Anchor = Anchor.BottomLeft;
             Origin = Anchor.Centre;
             Blending = BlendingParameters.Additive;
-            Masking = true;
-            BorderThickness = 9;
-            BorderColour = Colour4.DarkGray;
             Alpha = .1f;
 
-            Child = new Box
+            Child = CreateShape().With(d =>
+            {
+                d.RelativeSizeAxes = Axes.Both;
+                d.Masking = true;
+                d.BorderThickness = 9;
+                d.BorderColour = Colour4.DarkGray;
+            }).WithChild(new Box
             {
                 AlwaysPresent = true,
                 Alpha = 0,
                 RelativeSizeAxes = Axes.Both
-            };
+            });
         }
+
+        protected abstract Container CreateShape();
+    }
+
+    private partial class CircleShape : ShapeBase
+    {
+        protected override Container CreateShape() => new CircularContainer();
+    }
+
+    private partial class SquareShape : ShapeBase
+    {
+        protected override Container CreateShape() => new();
     }
 }

@@ -25,15 +25,7 @@ public partial class TimeOffsetEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new TimeOffsetEvent
-    {
-        Time = Object.Time,
-        Duration = offset.Duration,
-        UseStartValue = offset.UseStartValue,
-        StartOffset = offset.StartOffset,
-        TargetOffset = offset.TargetOffset,
-        Easing = offset.Easing
-    };
+    public override ITimedObject CreateClone() => offset.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {
@@ -88,22 +80,24 @@ public partial class TimeOffsetEntry : PointListEntry
                     Map.Update(offset);
                 }
             },
-            new PointSettingsTextBox
-            {
-                Text = "Target Offset",
-                TooltipText = "The visual offset in milliseconds.",
-                DefaultText = offset.TargetOffset.ToStringInvariant(),
-                OnTextChanged = box =>
-                {
-                    if (box.Text.TryParseIntInvariant(out var result))
-                        offset.TargetOffset = result;
-                    else
-                        box.NotifyError();
-
-                    Map.Update(offset);
-                }
-            },
+            new TargetOffset(Map, offset, BeatLength),
             new PointSettingsEasing<TimeOffsetEvent>(Map, offset)
         });
+    }
+
+    private partial class TargetOffset : PointSettingsBeats<TimeOffsetEvent>
+    {
+        protected override double Value
+        {
+            get => Object.TargetOffset;
+            set => Object.TargetOffset = value;
+        }
+
+        public TargetOffset(EditorMap map, TimeOffsetEvent obj, float beatLength)
+            : base(map, obj, beatLength)
+        {
+            Text = "Target Offset";
+            TooltipText = "The visual offset in milliseconds.";
+        }
     }
 }

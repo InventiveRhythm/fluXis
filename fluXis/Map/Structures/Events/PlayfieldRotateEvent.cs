@@ -1,3 +1,4 @@
+using System;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Gameplay.Ruleset.Playfields;
 using Newtonsoft.Json;
@@ -40,6 +41,6 @@ public class PlayfieldRotateEvent : IMapEvent, IHasDuration, IHasEasing, IApplic
             return;
 
         using (playfield.BeginAbsoluteSequence(Time))
-            playfield.RotateTo(Roll, Duration, Easing);
+            playfield.RotateTo(Roll, Math.Max(Duration, 0), Easing);
     }
 }

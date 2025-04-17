@@ -71,9 +71,9 @@ public class ShaderEvent : IMapEvent, IHasDuration, IHasEasing
                 shader.Strength3To(StartParameters.Strength3);
             }
 
-            shader.StrengthTo(EndParameters.Strength, Duration, Easing);
-            shader.Strength2To(EndParameters.Strength2, Duration, Easing);
-            shader.Strength3To(EndParameters.Strength3, Duration, Easing);
+            shader.StrengthTo(EndParameters.Strength, Math.Max(Duration, 0), Easing);
+            shader.Strength2To(EndParameters.Strength2, Math.Max(Duration, 0), Easing);
+            shader.Strength3To(EndParameters.Strength3, Math.Max(Duration, 0), Easing);
         }
     }
 }

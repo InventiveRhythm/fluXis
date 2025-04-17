@@ -50,8 +50,6 @@ public class FluXisImport : MapImporter
 
         try
         {
-            Logger.Log($"Loading mapset from {path}");
-
             var set = getRealmMaps(path);
 
             var existing = Realm.Run(r =>
@@ -68,7 +66,6 @@ public class FluXisImport : MapImporter
 
                 foreach (var file in files)
                 {
-                    Logger.Log($"Moving {file}");
                     var f = new FileInfo(file);
                     f.MoveTo($"{originalPath}/{f.Name}", true);
                 }

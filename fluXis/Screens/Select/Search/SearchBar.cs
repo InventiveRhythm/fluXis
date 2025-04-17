@@ -6,8 +6,10 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace fluXis.Screens.Select.Search;
 
@@ -16,6 +18,9 @@ public partial class SearchBar : Container
     private SearchDropdown dropdown;
 
     private readonly BindableBool dropdownOpen = new();
+
+    private SearchTextBox textBox;
+    private IFocusManager focus;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -74,7 +79,7 @@ public partial class SearchBar : Container
                                 RelativeSizeAxes = Axes.Both,
                                 Padding = new MarginPadding { Left = 110, Right = 20 },
                                 Shear = new Vector2(.2f, 0),
-                                Child = new SearchTextBox()
+                                Child = textBox = new SearchTextBox()
                             }
                         }
                     },
@@ -112,6 +117,22 @@ public partial class SearchBar : Container
         };
 
         dropdownOpen.BindValueChanged(_ => updateDropdownStatus());
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        focus = GetContainingFocusManager();
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key != Key.Tab)
+            return false;
+
+        focus.ChangeFocus(textBox.HasFocus ? null : textBox);
+        return true;
     }
 
     private void updateDropdownStatus()

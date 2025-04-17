@@ -50,7 +50,8 @@ public partial class BlurableBackground : CompositeDrawable, IHasLoadedValue
             wrapper.LoadContent = () => new BufferedContainer(cachedFrameBuffer: true)
             {
                 RelativeSizeAxes = Axes.Both,
-                BlurSigma = new Vector2(blur * 25),
+                BlurSigma = new Vector2(blur * 12),
+                FrameBufferScale = new Vector2(1 - blur * .5f),
                 RedrawOnScale = false,
                 Child = sprite
             };

@@ -20,7 +20,7 @@ namespace fluXis.Screens.Select.Footer;
 public partial class SelectModsButton : FooterButton
 {
     [Resolved]
-    private ModSelector modSelector { get; set; }
+    private ModsOverlay modsOverlay { get; set; }
 
     private Drawable icon;
     private ModList mods;
@@ -28,8 +28,8 @@ public partial class SelectModsButton : FooterButton
     public SelectModsButton(Action action)
     {
         Text = LocalizationStrings.SongSelect.FooterMods;
-        Icon = FontAwesome6.Solid.LayerGroup;
-        AccentColor = Colour4.FromHex("#edbb98");
+        Icon = FontAwesome6.Solid.Cube;
+        AccentColor = FluXisColors.Footer1;
         Action = action;
     }
 
@@ -37,8 +37,8 @@ public partial class SelectModsButton : FooterButton
     {
         base.LoadComplete();
 
-        modSelector.SelectedMods.BindCollectionChanged((_, _) => modsChanged(modSelector.SelectedMods));
-        modSelector.RateChanged += _ => modsChanged(modSelector.SelectedMods);
+        modsOverlay.SelectedMods.BindCollectionChanged((_, _) => modsChanged(modsOverlay.SelectedMods));
+        modsOverlay.RateChanged += _ => modsChanged(modsOverlay.SelectedMods);
     }
 
     protected override Drawable CreateIcon() => new Container
@@ -77,7 +77,7 @@ public partial class SelectModsButton : FooterButton
 
             Schedule(() =>
             {
-                var multiplier = modSelector.ScoreMultiplier;
+                var multiplier = modsOverlay.ScoreMultiplier;
                 SpriteText.Text = $"{multiplier.ToStringInvariant("0.00")}x";
                 SpriteText.FadeColour(multiplier switch
                 {
@@ -104,6 +104,6 @@ public partial class SelectModsButton : FooterButton
         if (e.Button != MouseButton.Right || !IsHovered)
             return;
 
-        modSelector.DeselectAll();
+        modsOverlay.DeselectAll();
     }
 }

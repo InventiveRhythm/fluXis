@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fluXis.Map.Structures.Events;
 using osu.Framework.Allocation;
@@ -37,9 +38,11 @@ public partial class FlashOverlay : CompositeDrawable
         {
             using (BeginAbsoluteSequence(flash.Time))
             {
+                var dur = Math.Max(flash.Duration, 0);
+
                 box.FadeColour(flash.StartColor).FadeTo(flash.StartOpacity)
-                   .FadeColour(flash.EndColor, flash.Duration, flash.Easing)
-                   .FadeTo(flash.EndOpacity, flash.Duration, flash.Easing);
+                   .FadeColour(flash.EndColor, dur, flash.Easing)
+                   .FadeTo(flash.EndOpacity, dur, flash.Easing);
             }
         }
     }

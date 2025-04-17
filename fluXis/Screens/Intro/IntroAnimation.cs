@@ -2,6 +2,7 @@ using System.Linq;
 using fluXis.Map;
 using fluXis.Screens.Gameplay.Tutorial;
 using fluXis.UI;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.IEnumerableExtensions;
@@ -41,7 +42,11 @@ public partial class IntroAnimation : FluXisScreen
     [Resolved]
     private FluXisGameBase game { get; set; }
 
-    private bool tutorial = false;
+    // used for testing
+    [CanBeNull]
+    public Screen TargetScreen { get; init; }
+
+    private bool tutorial;
     private Sample sample;
 
     private Container barsContainer;
@@ -78,7 +83,7 @@ public partial class IntroAnimation : FluXisScreen
                     Origin = Anchor.CentreLeft,
                     MaskingSmoothness = 0,
                     Width = 1f / bars,
-                    X = i / (float)bars,
+                    X = i / (float)bars - .001f * i,
                     Height = 1.2f,
                     Colour = Colour4.Black
                 })
@@ -100,7 +105,7 @@ public partial class IntroAnimation : FluXisScreen
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        game.MenuScreen.PreEnter();
+        game.MenuScreen?.PreEnter();
         playAnimation();
     }
 
@@ -154,14 +159,14 @@ public partial class IntroAnimation : FluXisScreen
 
     private void continueTo()
     {
-        if (tutorial)
+        if (TargetScreen is null && tutorial)
         {
             tutorial = false;
 
             var store = Dependencies.Get<MapStore>();
-            LoadComponentAsync(new TutorialGameplay(store.GetMapFromGuid("425da057-b66e-4d56-9eb6-f4edbd3ad599")), this.Push);
+            LoadComponentAsync(new TutorialGameplay(store.GetMapFromGuid("5cc4737e-ec31-48a8-9eec-5b089cb8f4f3")), this.Push);
         }
         else
-            this.Push(game.MenuScreen);
+            this.Push(TargetScreen ?? game.MenuScreen);
     }
 }

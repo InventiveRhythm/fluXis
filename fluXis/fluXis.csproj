@@ -14,37 +14,21 @@
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="NLua" Version="1.7.3" />
-    <PackageReference Include="flustix.Midori" Version="2025.129.0" />
-    <PackageReference Include="ppy.osu.Framework" Version="2024.1224.0" />
+    <PackageReference Include="NLua" Version="1.7.5" />
+    <PackageReference Include="flustix.Midori" Version="2025.411.0" />
+    <PackageReference Include="ppy.osu.Framework" Version="2025.321.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
-    <PackageReference Include="Realm" Version="20.0.0" />
-    <PackageReference Include="Sentry" Version="5.0.0" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    <PackageReference Include="Realm" Version="20.1.0" />
+    <PackageReference Include="Sentry" Version="5.5.1" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     <PackageReference Include="Steamworks.NET" Version="2024.8.0" IncludeAssets="all" />
-
-    <!-- Required for building specific platforms with TeamCity -->
-    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup Label="Code Analysis">
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="All" />
     <AdditionalFiles Include="..\CodeAnalysis\BannedSymbols.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="steam_api64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="libsteam_api.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="steam_appid.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Stores\" />

@@ -34,6 +34,7 @@ public class SongSelectStrings : LocalizationCategory
     public TranslatableString FooterRandom => Get("footer-random", "Random");
     public TranslatableString FooterRewind => Get("footer-rewind", "Rewind");
     public TranslatableString FooterOptions => Get("footer-options", "Options");
+    public TranslatableString FooterPractice => Get("footer-practice", "Practice");
 
     public TranslatableString LeaderboardTitle => Get("leaderboard-title", "Scores");
     public TranslatableString LeaderboardLocal => Get("leaderboard-local", "Local");

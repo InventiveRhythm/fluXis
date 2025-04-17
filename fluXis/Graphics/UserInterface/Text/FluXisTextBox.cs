@@ -21,9 +21,10 @@ public partial class FluXisTextBox : BasicTextBox
     protected override Color4 InputErrorColour => FluXisColors.ButtonRed;
     protected override float LeftRightPadding => SidePadding;
 
-    public int SidePadding { get; set; } = 5;
+    public int SidePadding { get; init; } = 5;
     public float TextContainerHeight { get; set; } = .75f;
-    public bool IsPassword { get; set; }
+    public bool IsPassword { get; init; }
+    public bool FixedWidth { get; init; }
 
     public Action OnTextChanged { get; set; }
     public Action OnCommitAction { get; set; }
@@ -154,7 +155,8 @@ public partial class FluXisTextBox : BasicTextBox
             container.Child = new FluXisSpriteText
             {
                 Text = c.ToString(),
-                FontSize = FontSize
+                FontSize = FontSize,
+                FixedWidth = FixedWidth
             };
         }
 

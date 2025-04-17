@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using fluXis.Mods;
+using JetBrains.Annotations;
 
 namespace fluXis.Utils;
 
@@ -16,6 +17,7 @@ public static class ModUtils
         return (IMod)Activator.CreateInstance(type);
     }
 
+    [CanBeNull]
     public static IMod GetFromAcronym(string acronym)
     {
         if (string.IsNullOrEmpty(acronym))

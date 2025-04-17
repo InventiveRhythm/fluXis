@@ -24,5 +24,8 @@ public class MultiplayerRoom
     [JsonProperty("map")]
     public APIMap Map { get; set; } = null!;
 
+    [JsonProperty("mods")]
+    public List<string> Mods { get; set; } = new();
+
     public List<ScoreInfo> Scores { get; set; } = new();
 }

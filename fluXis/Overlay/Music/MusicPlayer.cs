@@ -101,7 +101,6 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            ShowDim = false,
                             Clock = globalClock,
                             PlaybackStarted = hideMetadata
                         },
@@ -277,10 +276,7 @@ public partial class MusicPlayer : OverlayContainer, IKeyBindingHandler<FluXisGl
 
         Task.Run(() =>
         {
-            video.Map = next;
-            video.Info = next.GetMapInfo();
-
-            video.LoadVideo();
+            video.LoadVideo(next.GetMapInfo());
             ScheduleAfterChildren(video.Start);
         });
     }

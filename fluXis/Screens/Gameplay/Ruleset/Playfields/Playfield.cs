@@ -12,7 +12,6 @@ using fluXis.Skinning;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -48,6 +47,7 @@ public partial class Playfield : Container
         }
     }
 
+    public Stage Stage { get; private set; }
     public FillFlowContainer<Receptor> Receptors { get; private set; }
     public HitObjectManager HitManager { get; private set; }
 
@@ -57,7 +57,6 @@ public partial class Playfield : Container
 
     private DependencyContainer dependencies;
 
-    private Stage stage;
     private Drawable hitline;
     private Drawable topCover;
     private Drawable bottomCover;
@@ -113,7 +112,7 @@ public partial class Playfield : Container
         InternalChildren = new[]
         {
             new LaneSwitchAlert(),
-            stage = new Stage(),
+            Stage = new Stage(),
             new TimingLineManager(),
             receptorsFirst ? Receptors : HitManager,
             receptorsFirst ? HitManager : Receptors,
@@ -135,14 +134,10 @@ public partial class Playfield : Container
                 }
             },
             new KeyOverlay(),
-            new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(shake.Duration, shake.Magnitude))
+            new EventHandler<ShakeEvent>(MapEvents.ShakeEvents, shake => ruleset.ShakeTarget.Shake(Math.Max(shake.Duration, 0), shake.Magnitude))
         };
 
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.HitObjects).ForEach(e => e.Apply(HitManager));
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Stage).ForEach(e => e.Apply(stage));
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Receptors).ForEach(e => e.Apply(Receptors));
-        MapEvents.LayerFadeEvents.Where(x => x.Layer == LayerFadeEvent.FadeLayer.Playfield).ForEach(e => e.Apply(this));
-
+        MapEvents.LayerFadeEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldMoveEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldScaleEvents.ForEach(e => e.Apply(this));
         MapEvents.PlayfieldRotateEvents.ForEach(e => e.Apply(this));
@@ -150,19 +145,10 @@ public partial class Playfield : Container
         MapEvents.TimeOffsetEvents.ForEach(e => e.Apply(HitManager));
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        scrollDirection.BindValueChanged(_ =>
-        {
-            if (IsUpScroll)
-                Scale *= new Vector2(1, -1);
-        }, true);
-    }
-
     protected override void Update()
     {
+        updatePositionScale();
+
         hitline.Y = -laneSwitchManager.HitPosition;
 
         topCover.Y = (topCoverHeight.Value - 1f) / 2f;
@@ -174,4 +160,29 @@ public partial class Playfield : Container
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+    #region Position
+
+    public float AnimationX { get; set; }
+    public float AnimationY { get; set; }
+    public float AnimationZ { get; set; }
+    public Vector2 AnimationScale { get; set; } = Vector2.One;
+
+    private readonly Vector3 camera = new(0, 0, -100);
+
+    private void updatePositionScale()
+    {
+        var scale = scaleForZ(AnimationZ);
+
+        if (!float.IsFinite(scale))
+            scale = 1;
+
+        var result = (new Vector2(AnimationX, AnimationY) - camera.Xy) * scale + camera.Xy;
+        Position = result;
+        Scale = new Vector2(scale) * AnimationScale * new Vector2(1, IsUpScroll ? -1 : 1);
+    }
+
+    private float scaleForZ(float z) => -camera.Z / Math.Max(1f, z - camera.Z);
+
+    #endregion
 }

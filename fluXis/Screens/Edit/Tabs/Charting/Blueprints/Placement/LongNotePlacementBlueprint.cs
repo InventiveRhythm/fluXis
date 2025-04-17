@@ -53,8 +53,8 @@ public partial class LongNotePlacementBlueprint : NotePlacementBlueprint
 
         if (Object is not HitObject hit) return;
 
-        head.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.Time, hit.Lane));
-        end.Position = ToLocalSpace(Playfield.HitObjectContainer.ScreenSpacePositionAtTime(hit.EndTime, hit.Lane));
+        head.Position = ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(hit.Time, hit.Lane));
+        end.Position = ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(hit.EndTime, hit.Lane));
         body.Height = Math.Abs(head.Y - end.Y);
         body.Position = new Vector2(head.X, head.Y - head.DrawHeight / 2);
     }

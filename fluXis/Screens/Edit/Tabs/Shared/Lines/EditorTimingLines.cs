@@ -107,6 +107,9 @@ public partial class EditorTimingLines : Container<EditorTimingLines.Line>
             var target = i + 1 < points.Count ? points[i + 1].Time : clock.TrackLength;
             var increase = point.MsPerBeat / settings.SnapDivisor;
 
+            if (increase < .1f)
+                continue;
+
             int j = 0;
 
             for (var position = point.Time; position < target; position += increase)

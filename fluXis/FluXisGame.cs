@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
@@ -16,6 +14,7 @@ using fluXis.Localization.Stores;
 using fluXis.Online.API.Models.Users;
 using fluXis.Overlay.Achievements;
 using fluXis.Overlay.Auth;
+using fluXis.Overlay.Browse;
 using fluXis.Overlay.Chat;
 using fluXis.Overlay.Club;
 using fluXis.Overlay.Exit;
@@ -81,8 +80,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     private FloatingNotificationContainer notificationContainer;
     private ExitAnimation exitAnimation;
 
-    private LoadInfo loadInfo { get; } = new();
-
     private SentryClient sentry { get; }
 
     private bool isExiting;
@@ -118,6 +115,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             }
         };
 
+        loadComponent(sentry, _ => { }, true);
         loadComponent(globalClock = new GlobalClock(), Add, true);
         GameDependencies.CacheAs<IBeatSyncProvider>(globalClock);
         GameDependencies.CacheAs<IAmplitudeProvider>(globalClock);
@@ -131,6 +129,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(overlayContainer = new Container<VisibilityContainer> { RelativeSizeAxes = Axes.Both }, buffer.Add);
         loadComponent(dashboard = new Dashboard(), overlayContainer.Add, true);
         loadComponent(new ChatOverlay(), overlayContainer.Add, true);
+        loadComponent(new BrowseOverlay(), overlayContainer.Add, true);
         loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
         loadComponent(new ClubOverlay(), overlayContainer.Add, true);
@@ -151,7 +150,21 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(new FpsOverlay(), Add);
         loadComponent(exitAnimation = new ExitAnimation(), Add);
 
-        loadComponent(MenuScreen = new MenuScreen(), _ => { });
+        loadComponent(MenuScreen = new MenuScreen());
+
+        if (CanUpdate)
+            LoadQueue.Push(new LoadTask("Checking for updates...", complete => PerformUpdateCheck(true, () => Schedule(complete))));
+
+        LoadQueue.Push(new LoadTask("Downloading bundled maps...", c =>
+        {
+            if (MapStore.MapSets.Count > 0)
+            {
+                c?.Invoke();
+                return;
+            }
+
+            MapStore.DownloadBundledMaps(c);
+        }));
 
         Audio.AddAdjustment(AdjustableProperty.Volume, inactiveVolume);
 
@@ -162,7 +175,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         }, true);
     }
 
-    private T loadComponent<T>(T component, Action<T> action, bool cache = false, bool preload = false)
+    private T loadComponent<T>(T component, Action<T> action = null, bool cache = false, bool preload = false)
         where T : Drawable
     {
         if (cache)
@@ -170,14 +183,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         if (preload)
         {
-            action(component);
+            action?.Invoke(component);
             return component;
         }
 
-        LoadQueue[component] = _ => action(component);
-        loadInfo.TotalTasks = LoadQueue.Count;
+        CreateComponentLoadTask(component, action);
         Scheduler.AddOnce(loadNext);
-
         return component;
     }
 
@@ -189,31 +200,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
         }
 
-        if (LoadQueue.Count == 0)
-            return;
-
-        var sw = new Stopwatch();
-        sw.Start();
-
-        var next = LoadQueue.First();
-        LoadQueue.Remove(next.Key);
-
-        var (component, action) = next;
-
-        var name = component.GetType().Name;
-        Logger.Log($"Loading {name}...", LoggingTarget.Runtime, LogLevel.Debug);
-        loadInfo.StartNext(name);
-
-        LoadComponentAsync(component, c =>
-        {
-            action(c);
-            loadInfo.FinishCurrent();
-
-            sw.Stop();
-            Logger.Log($"Finished loading {name} in {sw.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);
-
-            loadNext();
-        });
+        LoadQueue.PerformNext(loadNext);
     }
 
     public void WaitForReady(Action action)
@@ -230,7 +217,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             return;
 
         base.LoadComplete();
-        WaitForReady(() => PerformUpdateCheck(true));
 
         sentry.BindUser(APIClient.User);
 
@@ -240,17 +226,16 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         allowOverlays.ValueChanged += e =>
         {
-            Logger.Log($"Overlays {(e.NewValue ? "enabled" : "disabled")}", LoggingTarget.Runtime, LogLevel.Debug);
-
             if (!e.NewValue)
                 CloseOverlays();
         };
 
-        ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(loadInfo)));
+        ScheduleAfterChildren(() => screenStack.Push(new LoadingScreen(LoadQueue)));
 
         APIClient.FriendOnline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now online!", FontAwesome6.Solid.UserPlus));
         APIClient.FriendOffline += u => Schedule(() => NotificationManager.SendSmallText($"{u.PreferredName} is now offline!", FontAwesome6.Solid.UserMinus));
         APIClient.AchievementEarned += a => Schedule(() => LoadComponentAsync(new AchievementOverlay(a), ov => Schedule(() => panelContainer.Content = ov)));
+        APIClient.NameChangeRequested += () => WaitForReady(() => Schedule(() => panelContainer.Content = new UsernameChangePanel()));
 
         APIClient.MessageReceived += message =>
         {
@@ -286,7 +271,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
     {
         if (skipWarning)
         {
-            if (Steam.Initialized)
+            if (Steam?.Initialized ?? false)
                 Steam.OpenLink(link);
             else
                 Host.OpenUrlExternally(link);
@@ -296,13 +281,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         if (panelContainer.Content != null)
         {
-            Logger.Log("Blocking link open due to panel being open.", LoggingTarget.Runtime, LogLevel.Debug);
             var panel = panelContainer.Content as Panel;
             panel?.Flash();
             return;
         }
-
-        Logger.Log($"Opening link: {link}", LoggingTarget.Runtime, LogLevel.Debug);
 
         panelContainer.Content = new ExternalLinkPanel(link);
     }
@@ -366,15 +348,17 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             MenuScreen.MakeCurrent();
 
             if (MenuScreen.IsCurrentScreen())
-                MenuScreen.Push(new SelectScreen());
+                MenuScreen.Push(new SoloSelectScreen());
         }
     }
 
     public void JoinMultiplayerRoom(long id, string password) => Scheduler.ScheduleIfNeeded(() => WaitForReady(() =>
     {
-        Logger.Log($"joining multi room [{id}, {password}]");
-
         MenuScreen.MakeCurrent();
+
+        if (!MenuScreen.IsCurrentScreen())
+            return;
+
         MenuScreen.CanPlayAnimation();
 
         if (MenuScreen.IsCurrentScreen())
@@ -497,31 +481,12 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             {
                 return new LocaleMapping(code, new ResourceLocaleStore(code, localeStore, missingBindable));
             }
-            catch (FileNotFoundException)
+            catch
             {
                 return null;
             }
         }).Where(m => m != null);
 
         Localisation.AddLocaleMappings(mappings);
-    }
-
-    public class LoadInfo
-    {
-        public long TasksDone { get; private set; }
-        public long TotalTasks { get; set; }
-
-        public event Action<string> TaskStarted;
-        public event Action AllFinished;
-
-        public void StartNext(string task) => TaskStarted?.Invoke(task);
-
-        public void FinishCurrent()
-        {
-            TasksDone++;
-
-            if (TasksDone == TotalTasks)
-                AllFinished?.Invoke();
-        }
     }
 }

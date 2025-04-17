@@ -4,6 +4,7 @@ using System.Linq;
 using fluXis.Graphics.Background;
 using fluXis.Graphics.Sprites;
 using fluXis.Map.Structures;
+using fluXis.Online.API.Models.Maps;
 using fluXis.Overlay.Notifications;
 using fluXis.Screens.Edit.Actions.Notes;
 using fluXis.Screens.Edit.Actions.Notes.Shortcuts;
@@ -22,6 +23,7 @@ using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
@@ -75,10 +77,10 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     private SpriteStack<BlurableBackground> backgrounds;
     private Box backgroundDim;
 
-    public EditorPlayfield Playfield { get; private set; }
+    public EditorPlayfield[] Playfields { get; private set; }
     public ChartingBlueprintContainer BlueprintContainer { get; private set; }
-    public IEnumerable<EditorHitObject> HitObjects => Playfield.HitObjectContainer.HitObjects;
-    public bool CursorInPlacementArea => Playfield.ReceivePositionalInputAt(inputManager.CurrentState.Mouse.Position);
+    public IEnumerable<EditorHitObject> HitObjects => Playfields.SelectMany(x => x.HitObjectContainer.HitObjects);
+    public bool CursorInPlacementArea => Playfields.Any(p => p.CursorInPlacementArea);
 
     public bool CanFlipSelection => BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject);
     public bool CanShuffleSelection => BlueprintContainer.SelectionHandler.SelectedObjects.Any(x => x is HitObject);
@@ -87,10 +89,10 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     {
         Editor.ChartingContainer = this;
 
+        Playfields = Enumerable.Range(0, Map.MapInfo.DualMode == DualMode.Separate ? 2 : 1).Select(x => new EditorPlayfield(x)).ToArray();
+
         dependencies.Cache(this);
-        dependencies.CacheAs(Playfield = new EditorPlayfield());
-        dependencies.CacheAs<ITimePositionProvider>(Playfield);
-        dependencies.CacheAs(Playfield.HitObjectContainer);
+        dependencies.CacheAs<ITimePositionProvider>(Playfields[0]);
         dependencies.CacheAs(sidebar = new ChartingSidebar());
     }
 
@@ -114,7 +116,11 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
             Colour = Colour4.Black,
             Alpha = 0
         },
-        Playfield,
+        new GridContainer
+        {
+            RelativeSizeAxes = Axes.Both,
+            Content = new[] { Playfields }
+        },
         BlueprintContainer = new ChartingBlueprintContainer { ChartingContainer = this }
     };
 
@@ -233,9 +239,7 @@ public partial class ChartingContainer : EditorTabContainer, IKeyBindingHandler<
     }
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-    {
-        return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-    }
+        => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     public override bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
     {

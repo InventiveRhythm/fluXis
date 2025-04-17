@@ -6,7 +6,6 @@ using fluXis.Overlay.Notifications.Tasks;
 using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Logging;
 
 namespace fluXis.Overlay.Notifications;
 
@@ -23,7 +22,6 @@ public partial class NotificationManager : Component
             return;
         }
 
-        Logger.Log($"Sending notification: {notification}");
         Floating?.Add(notification.CreateFloating());
     }
 
@@ -35,7 +33,6 @@ public partial class NotificationManager : Component
             return;
         }
 
-        Logger.Log($"Sending task notification: {notification}");
         Tasks?.Add(notification.Create());
     }
 
@@ -49,7 +46,6 @@ public partial class NotificationManager : Component
             return;
         }
 
-        Logger.Log($"Sending small notification: {text}");
         Floating?.Add(new SmallFloatingTextNotification
         {
             Text = text,
@@ -67,7 +63,6 @@ public partial class NotificationManager : Component
             return;
         }
 
-        Logger.Log($"Sending notification: {text}");
         Floating?.Add(new FloatingTextNotification
         {
             Text = text,
@@ -87,7 +82,6 @@ public partial class NotificationManager : Component
             return;
         }
 
-        Logger.Log($"Sending error notification: {text}");
         Floating?.Add(new FloatingTextNotification
         {
             Text = text,

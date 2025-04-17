@@ -31,6 +31,21 @@ public partial class DrawableHitObject : CompositeDrawable
     protected double ScrollVelocityTime { get; private set; }
     protected double ScrollVelocityEndTime { get; private set; }
 
+    protected double TimeDelta => Data.Time - Time.Current;
+
+    protected int VisualLane
+    {
+        get
+        {
+            var lane = Data.Lane;
+
+            while (lane > ObjectManager.KeyCount)
+                lane -= ObjectManager.KeyCount;
+
+            return lane;
+        }
+    }
+
     public FluXisGameplayKeybind Keybind { get; set; }
 
     public virtual bool CanBeRemoved => false;
@@ -84,9 +99,7 @@ public partial class DrawableHitObject : CompositeDrawable
         if (Judged)
             return;
 
-        var offset = Data.Time - Time.Current;
-
-        CheckJudgement(byUser, offset);
+        CheckJudgement(byUser, TimeDelta);
     }
 
     protected virtual void CheckJudgement(bool byUser, double offset) { }

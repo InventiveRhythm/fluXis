@@ -11,7 +11,7 @@ public partial class SelectScreen
         switch (e.Button)
         {
             case JoystickButton.Button1: // X
-                modSelector.IsOpen.Toggle();
+                modsOverlay.ToggleVisibility();
                 return true;
 
             case JoystickButton.Button2: // A
@@ -41,19 +41,19 @@ public partial class SelectScreen
                 return true;
 
             case JoystickButton.Hat1Up: // Up
-                changeMapSelection(-1);
+                changeSubItemSelection(-1);
                 return true;
 
             case JoystickButton.Hat1Down: // Down
-                changeMapSelection(1);
+                changeSubItemSelection(1);
                 return true;
 
             case JoystickButton.Hat1Left: // Left
-                changeSelection(-1);
+                changeItemSelection(-1);
                 return true;
 
             case JoystickButton.Hat1Right: // Right
-                changeSelection(1);
+                changeItemSelection(1);
                 return true;
 
             case JoystickButton.Button9: // Back

@@ -7,6 +7,7 @@ using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Graphics;
 
 namespace fluXis.Online.Multiplayer;
@@ -15,19 +16,25 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 {
     public event Action<MultiplayerParticipant> OnUserJoin;
     public event Action<MultiplayerParticipant> OnUserLeave;
-    public event Action<long, MultiplayerUserState> OnUserStateChange;
+    public event Action<long, MultiplayerUserState, MultiplayerUserState> OnUserStateChange;
+    public event Action<long> OnHostChange;
 
     // public event Action RoomUpdated;
 
-    public event Action<APIMap> OnMapChange;
+    public event Action<APIMap, List<string>> OnMapChange;
 
     public event Action OnStart;
     public event Action<long, int> OnScore;
     public event Action<List<ScoreInfo>> OnResultsReady;
 
+    public abstract bool Connected { get; }
+
+    public event Action<Exception> OnConnectionError;
     public event Action OnDisconnect;
 
     public virtual APIUser Player => APIUser.Dummy;
+
+    [CanBeNull]
     public MultiplayerRoom Room { get; set; }
 
     public async Task Create(string name, long mapid, string hash)
@@ -75,14 +82,30 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
             if (Room?.Participants.FirstOrDefault(u => u.ID == id) is not { } participant)
                 return;
 
+            var current = participant.State;
             participant.State = state;
-            OnUserStateChange?.Invoke(id, state);
+            OnUserStateChange?.Invoke(id, current, state);
         });
 
         return Task.CompletedTask;
     }
 
-    public Task MapUpdated(APIMap map)
+    public Task HostChanged(long id)
+    {
+        if (Room is null)
+            return Task.CompletedTask;
+
+        Schedule(() =>
+        {
+            var part = Room.Participants.FirstOrDefault(x => x.ID == id);
+            Room.Host = part?.Player ?? APIUser.CreateUnknown(id);
+            OnHostChange?.Invoke(id);
+        });
+
+        return Task.CompletedTask;
+    }
+
+    public Task MapUpdated(APIMap map, List<string> mods)
     {
         Schedule(() =>
         {
@@ -90,7 +113,8 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
                 return;
 
             Room.Map = map;
-            OnMapChange?.Invoke(map);
+            Room.Mods = mods.ToList();
+            OnMapChange?.Invoke(map, mods);
         });
 
         return Task.CompletedTask;
@@ -111,13 +135,10 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     public Task ScoreUpdated(long user, int score)
     {
-        Schedule(() =>
-        {
-            if (user == Player.ID)
-                return;
+        if (user == Player.ID)
+            return Task.CompletedTask;
 
-            OnScore?.Invoke(user, score);
-        });
+        OnScore?.Invoke(user, score);
 
         return Task.CompletedTask;
     }
@@ -152,12 +173,15 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
         Scheduler.ScheduleIfNeeded(() => OnDisconnect?.Invoke());
     }
 
+    protected void TriggerConnectionError(Exception ex) => OnConnectionError?.Invoke(ex);
+
     #region Abstract Methods
 
     protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
     protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
     public abstract Task LeaveRoom();
-    public abstract Task ChangeMap(long map, string hash);
+    public abstract Task ChangeMap(long map, string hash, List<string> mods);
+    public abstract Task TransferHost(long target);
     public abstract Task UpdateScore(int score);
     public abstract Task Finish(ScoreInfo score);
     public abstract Task SetReadyState(bool ready);

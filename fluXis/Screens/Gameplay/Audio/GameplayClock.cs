@@ -9,7 +9,6 @@ using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Audio;
-using osu.Framework.Logging;
 using osu.Framework.Timing;
 
 namespace fluXis.Screens.Gameplay.Audio;
@@ -76,7 +75,6 @@ public partial class GameplayClock : TransformableClock, IFrameBasedClock, ISour
         var current = CurrentTime;
         var result = underlying.Seek(position);
         OnSeek?.Invoke(current, position);
-        Logger.Log($"Seeking from {current} to {position}.", LoggingTarget.Runtime, LogLevel.Debug);
         return result;
     }
 

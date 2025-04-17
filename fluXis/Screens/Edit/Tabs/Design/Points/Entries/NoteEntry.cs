@@ -6,6 +6,7 @@ using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
+using fluXis.Utils;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Points.Entries;
@@ -22,11 +23,7 @@ public partial class NoteEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new NoteEvent
-    {
-        Time = note.Time,
-        Content = note.Content
-    };
+    public override ITimedObject CreateClone() => note.JsonCopy();
 
     protected override Drawable[] CreateValueContent() => new Drawable[] { new FluXisSpriteText { Text = note.Content } };
 

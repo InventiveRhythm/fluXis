@@ -6,7 +6,6 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Localization;
 using fluXis.UI;
-using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Result;
 
@@ -46,7 +45,7 @@ public partial class ResultsFooter : Footer
             {
                 Text = "View Replay",
                 Icon = FontAwesome6.Solid.Film,
-                AccentColor = Colour4.FromHex("#98cbed"),
+                AccentColor = FluXisColors.Footer1,
                 Action = ViewReplayAction
             };
         }

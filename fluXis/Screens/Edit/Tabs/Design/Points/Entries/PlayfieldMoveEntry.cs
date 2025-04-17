@@ -32,7 +32,7 @@ public partial class PlayfieldMoveEntry : PointListEntry
         {
             new FluXisSpriteText
             {
-                Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.Duration}ms P{move.PlayfieldIndex}S{move.PlayfieldSubIndex}",
+                Text = $"{(int)move.OffsetX}x {(int)move.OffsetY}y {(int)move.OffsetZ}z {(int)move.Duration}ms P{move.PlayfieldIndex}S{move.PlayfieldSubIndex}",
                 Colour = Color
             }
         };
@@ -67,6 +67,21 @@ public partial class PlayfieldMoveEntry : PointListEntry
                 {
                     if (box.Text.TryParseFloatInvariant(out var result))
                         move.OffsetY = result;
+                    else
+                        box.NotifyError();
+
+                    Map.Update(move);
+                }
+            },
+            new PointSettingsTextBox
+            {
+                Text = "Offset Z",
+                TooltipText = "The depth of the playfield.",
+                DefaultText = move.OffsetZ.ToStringInvariant(),
+                OnTextChanged = box =>
+                {
+                    if (box.Text.TryParseFloatInvariant(out var result))
+                        move.OffsetZ = result;
                     else
                         box.NotifyError();
 

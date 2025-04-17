@@ -23,13 +23,7 @@ public partial class BeatPulseEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new BeatPulseEvent
-    {
-        Time = Object.Time,
-        Strength = pulse.Strength,
-        ZoomIn = pulse.ZoomIn,
-        Interval = pulse.Interval
-    };
+    public override ITimedObject CreateClone() => pulse.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

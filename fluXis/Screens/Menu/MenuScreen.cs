@@ -14,10 +14,10 @@ using fluXis.Map;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
+using fluXis.Overlay.Browse;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
-using fluXis.Screens.Browse;
 using fluXis.Screens.Edit;
 using fluXis.Screens.Menu.UI;
 using fluXis.Screens.Menu.UI.Buttons;
@@ -26,7 +26,6 @@ using fluXis.Screens.Menu.UI.Snow;
 using fluXis.Screens.Menu.UI.Updates;
 using fluXis.Screens.Menu.UI.Visualizer;
 using fluXis.Screens.Multiplayer;
-using fluXis.Screens.Ranking;
 using fluXis.Screens.Select;
 using fluXis.UI;
 using fluXis.Utils.Extensions;
@@ -80,6 +79,9 @@ public partial class MenuScreen : FluXisScreen
 
     [Resolved]
     private Dashboard dashboard { get; set; }
+
+    [Resolved]
+    private BrowseOverlay browse { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -358,12 +360,14 @@ public partial class MenuScreen : FluXisScreen
         };
 
         mapCount = maps.MapSets.Count;
-        maps.CollectionUpdated += () => Schedule(() => this.TransformTo(nameof(mapCount), maps.MapSets.Count, 500, Easing.OutQuint));
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        maps.CollectionUpdated += updateMapCount;
+        updateMapCount();
 
         forceSnow.BindValueChanged(_ =>
         {
@@ -373,6 +377,8 @@ public partial class MenuScreen : FluXisScreen
 
         api.User.BindValueChanged(updateButtons, true);
     }
+
+    private void updateMapCount() => Scheduler.ScheduleIfNeeded(() => this.TransformTo(nameof(mapCount), maps.MapSets.Count, 500, Easing.OutQuint));
 
     private void updateButtons(ValueChangedEvent<APIUser> e)
     {
@@ -385,11 +391,10 @@ public partial class MenuScreen : FluXisScreen
         });
     }
 
-    private void continueToPlay() => this.Push(new SelectScreen());
+    private void continueToPlay() => this.Push(new SoloSelectScreen());
     private void continueToMultiplayer() => this.Push(new MultiplayerScreen());
-    private void continueToRankings() => this.Push(new Rankings());
     private void openDashboard() => dashboard.Show();
-    private void continueToBrowse() => this.Push(new MapBrowser());
+    private void continueToBrowse() => browse.Show();
 
     public bool CanPlayAnimation()
     {

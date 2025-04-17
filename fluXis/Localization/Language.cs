@@ -59,6 +59,9 @@ public enum Language
     [Description("Tagalog")]
     tl,
 
+    [Description("Tiếng Việt")]
+    vi,
+
     [Description("Türkçe")]
     tr,
 

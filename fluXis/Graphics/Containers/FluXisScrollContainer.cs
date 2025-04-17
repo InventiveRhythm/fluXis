@@ -112,7 +112,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
                 Width = direction == Direction.Vertical ? 8 : 1,
                 Height = direction == Direction.Vertical ? 1 : 8,
                 Colour = FluXisColors.Background4,
-                Blending = BlendingParameters.Additive
+                Alpha = .6f
             };
         }
 

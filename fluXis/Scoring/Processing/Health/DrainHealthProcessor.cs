@@ -1,4 +1,6 @@
 using System;
+using fluXis.Map;
+using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
 
 namespace fluXis.Scoring.Processing.Health;
@@ -6,6 +8,12 @@ namespace fluXis.Scoring.Processing.Health;
 public class DrainHealthProcessor : HealthProcessor
 {
     public double HealthDrainRate { get; private set; }
+
+    private float factor = .2f;
+    private int maxCombo;
+    private double endTime;
+    private double rate = 0;
+
     private double lastTime;
 
     public DrainHealthProcessor(float difficulty)
@@ -13,9 +21,17 @@ public class DrainHealthProcessor : HealthProcessor
     {
     }
 
+    public override void ApplyMap(MapInfo map)
+    {
+        base.ApplyMap(map);
+        maxCombo = map.MaxCombo;
+        endTime = map.EndTime;
+        factor = 0.008f + 80f / maxCombo;
+    }
+
     public override void AddResult(HitResult result)
     {
-        HealthDrainRate -= GetHealthIncreaseFor(result, Difficulty);
+        rate += GetHealthIncreaseFor(result, Difficulty);
 
         if (MeetsFailCondition(result))
             TriggerFailure();
@@ -38,15 +54,36 @@ public class DrainHealthProcessor : HealthProcessor
             return;
         }
 
-        var d = Clock.CurrentTime - lastTime;
+        delta = Clock.CurrentTime - lastTime;
 
-        HealthDrainRate = Math.Clamp(HealthDrainRate, -1f, 2f);
-        Health.Value -= HealthDrainRate * (d / 1000f);
-        HealthDrainRate += 0.00016f * Difficulty * d;
+        var loss = factor * maxCombo / (endTime / 1000);
+        rate -= factor / (factor / .6f) * loss * (float)(delta / 1000f);
+
+        if (!double.IsFinite(rate)) rate = 0;
+        rate = Math.Clamp(rate, -3f, 2f);
+
+        HealthDrainRate = -loss + rate;
+
+        var change = HealthDrainRate * (delta / 1000f);
+        Health.Value += !double.IsFinite(change) ? 0 : (float)change;
 
         lastTime = Clock.CurrentTime;
 
         if (Health.Value == 0)
             TriggerFailure();
+    }
+
+    protected override float GetHealthIncreaseFor(HitResult result, float difficulty)
+    {
+        return (float)(result.Judgement switch
+        {
+            Judgement.Flawless => 1.2f * Math.Log(2) * factor,
+            Judgement.Perfect => .75f * Math.Log(2) * factor,
+            Judgement.Great => .25f * Math.Log(2) * factor,
+            Judgement.Alright => -1f * Math.Log(2) * factor,
+            Judgement.Okay => -2 * Math.Log(2),
+            Judgement.Miss => -5 * Math.Log(2),
+            _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+        });
     }
 }

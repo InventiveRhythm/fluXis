@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Development;
 using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
 using osu.Framework.Threading;
@@ -132,6 +133,10 @@ public static class DrawableExtensions
     public static TransformSequence<T> Strength3To<T>(this TransformSequence<T> seq, float str, double dur = 0, Easing ease = Easing.None)
         where T : Transformable, IHasStrength
         => seq.Append(d => d.TransformTo(nameof(d.Strength3), str, dur, ease));
+
+    public static TransformSequence<T> BorderColorTo<T>(this T drawable, ColourInfo newColor, double duration = 0f, Easing ease = Easing.None)
+        where T : class, ITransformable
+        => drawable.TransformTo(nameof(Container.BorderColour), newColor, duration, ease);
 
     public static TransformSequence<T> BorderTo<T>(this T drawable, float newBorder, double duration = 0f, Easing ease = Easing.None)
         where T : class, ITransformable

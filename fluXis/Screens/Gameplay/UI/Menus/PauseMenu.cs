@@ -32,6 +32,7 @@ public partial class PauseMenu : CompositeDrawable, IKeyBindingHandler<FluXisGlo
     private void load()
     {
         RelativeSizeAxes = Axes.Both;
+        Masking = true;
 
         InternalChildren = new Drawable[]
         {

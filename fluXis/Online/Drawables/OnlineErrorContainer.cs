@@ -9,6 +9,8 @@ namespace fluXis.Online.Drawables;
 
 public partial class OnlineErrorContainer : FillFlowContainer
 {
+    public bool ShowInstantly { get; init; }
+
     public LocalisableString Text
     {
         get => text.Text;
@@ -47,6 +49,14 @@ public partial class OnlineErrorContainer : FillFlowContainer
                 Alpha = .8f
             }
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        if (ShowInstantly)
+            Show();
     }
 
     public override void Show() => this.ScaleTo(1.1f).FadeIn(FluXisScreen.FADE_DURATION).ScaleTo(1, FluXisScreen.MOVE_DURATION, Easing.OutQuint);

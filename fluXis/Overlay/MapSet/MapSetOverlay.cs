@@ -1,7 +1,6 @@
 using System.Linq;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
-using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Tabs;
 using fluXis.Input;
@@ -165,9 +164,9 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 Spacing = new Vector2(12),
                                 Children = new Drawable[]
                                 {
-                                    new MapSetButton(FontAwesome6.Solid.Star, () => { }),
+                                    // new MapSetButton(FontAwesome6.Solid.Star, () => { }),
                                     new MapSetDownloadButton(set),
-                                    new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
+                                    // new MapSetButton(FontAwesome6.Solid.EllipsisVertical, () => { })
                                 }
                             }
                         }
@@ -194,9 +193,9 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                 {
                                     Tabs = new TabContainer[]
                                     {
-                                        new MapSetInfoTab(),
-                                        new MapSetScoreTab(),
-                                        new MapSetCommentsTab()
+                                        // new MapSetInfoTab(),
+                                        new MapSetScoreTab(bindableMap),
+                                        // new MapSetCommentsTab()
                                     }
                                 },
                                 Empty(),

@@ -7,6 +7,7 @@ using fluXis.Map.Structures.Events;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 using fluXis.Screens.Edit.Tabs.Shared.Points.Settings.Preset;
+using fluXis.Utils;
 using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Points.Entries;
@@ -23,12 +24,7 @@ public partial class LaneSwitchEntry : PointListEntry
     {
     }
 
-    public override ITimedObject CreateClone() => new LaneSwitchEvent
-    {
-        Time = Object.Time,
-        Count = laneSwitch.Count,
-        Duration = laneSwitch.Duration
-    };
+    public override ITimedObject CreateClone() => laneSwitch.JsonCopy();
 
     protected override Drawable[] CreateValueContent()
     {

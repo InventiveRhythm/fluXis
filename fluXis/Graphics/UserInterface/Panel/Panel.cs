@@ -36,9 +36,9 @@ public partial class Panel : Container
         EdgeEffect = FluXisStyles.ShadowMedium;
         BorderColour = FluXisColors.Red;
 
-        Children = new Drawable[]
+        Children = new[]
         {
-            new PanelBackground(),
+            CreateBackground(),
             Content = new Container
             {
                 RelativeSizeAxes = Axes.Both,
@@ -66,6 +66,8 @@ public partial class Panel : Container
             }
         };
     }
+
+    protected virtual Drawable CreateBackground() => new PanelBackground();
 
     protected override void LoadComplete()
     {

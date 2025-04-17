@@ -1,4 +1,6 @@
 ﻿using System;
+using fluXis.Map;
+using fluXis.Scripting.Models;
 using fluXis.Scripting.Models.Storyboarding;
 using fluXis.Scripting.Models.Storyboarding.Elements;
 using fluXis.Storyboards;
@@ -9,13 +11,18 @@ namespace fluXis.Scripting.Runners;
 
 public class StoryboardScriptRunner : ScriptRunner
 {
+    private readonly MapInfo map;
     private readonly Storyboard storyboard;
 
-    public StoryboardScriptRunner(Storyboard storyboard)
+    public StoryboardScriptRunner(MapInfo map, Storyboard storyboard)
     {
         this.storyboard = storyboard;
+        this.map = map;
+
+        AddField("screen", new LuaVector(storyboard.Resolution));
 
         AddFunction("Add", add);
+        AddFunction("BPMAtTime", findBpm);
 
         // enums
         AddFunction("Layer", (string str) => Enum.TryParse(str, out StoryboardLayer layer) ? layer : StoryboardLayer.Background);
@@ -49,4 +56,10 @@ public class StoryboardScriptRunner : ScriptRunner
     }
 
     private void add(LuaStoryboardElement element) => storyboard.Elements.Add(element.Build());
+
+    private float findBpm(double time)
+    {
+        var point = map.GetTimingPoint(time);
+        return point.BPM;
+    }
 }

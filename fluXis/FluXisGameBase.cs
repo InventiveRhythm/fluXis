@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -38,6 +39,7 @@ using fluXis.UI;
 using fluXis.UI.Tips;
 using fluXis.Updater;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Configuration;
@@ -62,7 +64,8 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected bool LoadFailed { get; set; }
 
     protected virtual bool LoadComponentsLazy => false;
-    protected Dictionary<Drawable, Action<Drawable>> LoadQueue { get; } = new();
+
+    protected LoadInfo LoadQueue { get; } = new();
 
     private Vector2 targetDrawSize => new(1920, 1080);
     private DrawSizePreservingFillContainer drawSizePreserver;
@@ -82,15 +85,21 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected LayoutManager LayoutManager { get; private set; }
     protected GlobalCursorOverlay CursorOverlay { get; private set; }
 
+    [CanBeNull]
+    protected ISteamManager Steam { get; }
+
     public PluginManager Plugins { get; private set; }
     public MenuScreen MenuScreen { get; protected set; }
-    public SteamManager Steam { get; init; }
 
     private KeybindStore keybindStore;
     private ImportManager importManager;
 
-    private Storage exportStorage;
+    [CanBeNull]
+    protected IUpdatePerformer UpdatePerformer { get; private set; }
 
+    public bool CanUpdate => UpdatePerformer is not null;
+
+    private Storage exportStorage;
     public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
 
     public Season CurrentSeason { get; private set; }
@@ -126,8 +135,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
-        Midori.Logging.Logger.LogToFiles = false;
-        Steam = new SteamManager(); // steam needs to load before the graphics
+        Midori.Logging.Logger.SaveToFiles = false;
+        Steam = CreateSteam(); // steam needs to load before the graphics
     }
 
     [BackgroundDependencyLoader]
@@ -177,6 +186,8 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(NotificationManager = new NotificationManager());
 
+            UpdatePerformer = CreateUpdatePerformer();
+
             cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
             cacheComponent(APIClient as FluxelClient);
             cacheComponent(new ChatClient(), true, true);
@@ -201,8 +212,10 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(new UISamples(), true, true);
             cacheComponent(CreateLightController(), true, true);
-            cacheComponent(Steam, true, true);
             cacheComponent(CursorOverlay = new GlobalCursorOverlay());
+
+            if (Steam is not null)
+                cacheComponent(Steam, true, true);
 
             Textures.AddTextureSource(Host.CreateTextureLoaderStore(new HttpOnlineStore()));
 
@@ -286,11 +299,11 @@ public partial class FluXisGameBase : osu.Framework.Game
 
         if (LoadComponentsLazy)
         {
-            LoadQueue[drawable] = d =>
+            CreateComponentLoadTask(drawable, _ =>
             {
                 if (add)
-                    base.Content.Add(d);
-            };
+                    base.Content.Add(drawable);
+            });
 
             return;
         }
@@ -307,6 +320,31 @@ public partial class FluXisGameBase : osu.Framework.Game
         });
     }
 
+    protected void CreateComponentLoadTask<T>(T component, Action<T> action)
+        where T : Drawable
+    {
+        var name = component.GetType().Name;
+
+        var task = new LoadTask($"Loading {name}...", complete =>
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            Logger.Log($"Loading {name}...", LoggingTarget.Runtime, LogLevel.Debug);
+
+            LoadComponentAsync(component, c =>
+            {
+                action?.Invoke(c);
+                complete.Invoke();
+
+                sw.Stop();
+                Logger.Log($"Finished loading {name} in {sw.ElapsedMilliseconds}ms.", LoggingTarget.Runtime, LogLevel.Debug);
+            });
+        });
+
+        LoadQueue.Push(task);
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -318,14 +356,22 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
-    public void PerformUpdateCheck(bool silent) => Task.Run(() =>
+    public void PerformUpdateCheck(bool silent, Action then = null) => Task.Run(() =>
     {
-        var performer = CreateUpdatePerformer();
-
-        if (performer is null)
+        if (UpdatePerformer is null)
+        {
+            then?.Invoke();
             return;
+        }
 
-        performer.Perform(silent, Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel) == ReleaseChannel.Beta);
+        try
+        {
+            UpdatePerformer.Perform(silent, Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel) == ReleaseChannel.Beta);
+        }
+        finally
+        {
+            then?.Invoke();
+        }
     });
 
     private Season getSeason()
@@ -394,6 +440,9 @@ public partial class FluXisGameBase : osu.Framework.Game
         base.Exit();
     }
 
+    [CanBeNull]
+    protected virtual ISteamManager CreateSteam() => null;
+
     protected virtual bool RestartOnClose() => false;
 
     public override void SetHost(GameHost host)
@@ -413,7 +462,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected override IDictionary<FrameworkSetting, object> GetFrameworkConfigDefaults() => new Dictionary<FrameworkSetting, object>
     {
         { FrameworkSetting.VolumeUniversal, .15d },
-        { FrameworkSetting.ConfineMouseMode, ConfineMouseMode.Never }
+        { FrameworkSetting.ConfineMouseMode, ConfineMouseMode.Never },
     };
 
     protected override bool OnExiting()
@@ -484,4 +533,60 @@ public partial class FluXisGameBase : osu.Framework.Game
     }
 
     #endregion
+
+    public class LoadInfo
+    {
+        private Queue<LoadTask> queue { get; } = new();
+
+        public long TasksFinished { get; private set; }
+        public long TasksTotal { get; private set; }
+
+        public event Action<LoadTask> TaskStarted;
+        public event Action AllFinished;
+
+        public void Push(LoadTask task)
+        {
+            queue.Enqueue(task);
+            TasksTotal = queue.Count;
+        }
+
+        public LoadTask PerformNext(Action then)
+        {
+            if (queue.Count == 0)
+            {
+                AllFinished?.Invoke();
+                return null;
+            }
+
+            var task = queue.Dequeue();
+            TaskStarted?.Invoke(task);
+            task.Perform?.Invoke(() =>
+            {
+                TasksFinished++;
+                then?.Invoke();
+            });
+
+            return task;
+        }
+
+        public override string ToString()
+        {
+            var finished = TasksTotal - queue.Count;
+            return $"{finished / TasksTotal * 100:00.00}% ({finished}/{TasksTotal})";
+        }
+    }
+
+    public class LoadTask
+    {
+        public string Name { get; }
+        public Action<Action> Perform { get; }
+
+        public LoadTask(string name, Action<Action> perform)
+        {
+            Name = name;
+            Perform = perform;
+        }
+
+        public override string ToString() => Name;
+    }
 }

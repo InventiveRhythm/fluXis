@@ -16,7 +16,7 @@ public partial class TestMapList : FluXisTestScene
     private MapList list;
 
     [SetUp]
-    public void Setup()
+    public void Setup() => Schedule(() =>
     {
         Clear();
 
@@ -28,8 +28,8 @@ public partial class TestMapList : FluXisTestScene
             TestDependencies.Cache(new PanelContainer());
             TestDependencies.Cache(new SettingsMenu());
 
-            var screen = new SelectScreen();
-            TestDependencies.Cache(screen);
+            var screen = new SoloSelectScreen();
+            TestDependencies.CacheAs<SelectScreen>(screen);
             LoadComponent(screen);
         }
 
@@ -38,7 +38,7 @@ public partial class TestMapList : FluXisTestScene
         list = new MapList(new Bindable<MapUtils.SortingMode>());
         Add(list);
         list.Show();
-    }
+    });
 
     [Test]
     public void TestSingleSet()

@@ -108,7 +108,8 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         if (BlurContainer == null)
             return;
 
-        BlurContainer.BlurSigma = new Vector2(blur * 10);
+        BlurContainer.FrameBufferScale = new Vector2(1 - blur * .75f);
+        BlurContainer.BlurSigma = new Vector2(blur * 5);
     }
 
     private void setCutOff(int cutoff)

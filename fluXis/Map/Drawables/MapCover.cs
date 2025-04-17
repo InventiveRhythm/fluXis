@@ -25,6 +25,7 @@ public partial class MapCover : Sprite, IHasLoadedValue
     }
 
     public bool Loaded { get; private set; }
+    public float FadeDuration { get; init; } = 400;
 
     private RealmMapSet mapSet { get; set; }
 
@@ -45,5 +46,5 @@ public partial class MapCover : Sprite, IHasLoadedValue
         Texture = MapSet?.GetCover() ?? textures.Get("Covers/default.png");
     }
 
-    public override void Show() => this.FadeInFromZero(400).OnComplete(_ => Loaded = true);
+    public override void Show() => this.FadeInFromZero(FadeDuration).OnComplete(_ => Loaded = true);
 }

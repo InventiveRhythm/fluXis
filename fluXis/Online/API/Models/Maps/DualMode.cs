@@ -2,6 +2,7 @@
 
 public enum DualMode
 {
-    Disabled,
-    Mirrored
+    Disabled = 0,
+    Mirrored = 1,
+    Separate = 2,
 }

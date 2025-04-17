@@ -6,7 +6,6 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Footer;
 using fluXis.Localization;
 using fluXis.UI;
-using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Multiplayer.SubScreens.Open.List;
 
@@ -38,7 +37,7 @@ public partial class MultiLobbyListFooter : Footer
         {
             Text = "Create",
             Icon = FontAwesome6.Solid.Plus,
-            AccentColor = Colour4.FromHex("#edbb98"),
+            AccentColor = FluXisColors.Footer1,
             Action = CreateAction
         };
     }

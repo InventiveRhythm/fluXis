@@ -1,9 +1,5 @@
 using System;
-using System.Linq;
-using fluXis.Database;
 using fluXis.Database.Maps;
-using fluXis.Database.Score;
-using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
@@ -14,6 +10,7 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Localization;
 using fluXis.Map;
 using fluXis.Overlay.Settings;
+using fluXis.Scoring;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -40,7 +37,7 @@ public partial class FooterOptions : FocusedOverlayContainer
     private MapStore maps { get; set; }
 
     [Resolved]
-    private FluXisRealm realm { get; set; }
+    private ScoreManager scores { get; set; }
 
     [Resolved]
     private PanelContainer panels { get; set; }
@@ -69,7 +66,6 @@ public partial class FooterOptions : FocusedOverlayContainer
                 Y = 20,
                 Masking = true,
                 CornerRadius = 10,
-                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -85,7 +81,6 @@ public partial class FooterOptions : FocusedOverlayContainer
                 AutoSizeAxes = Axes.Y,
                 Masking = true,
                 CornerRadius = 20,
-                EdgeEffect = FluXisStyles.ShadowMedium,
                 Children = new Drawable[]
                 {
                     new Box
@@ -163,11 +158,8 @@ public partial class FooterOptions : FocusedOverlayContainer
                                         {
                                             new DangerButtonData(LocalizationStrings.General.PanelGenericConfirm, () =>
                                             {
-                                                realm.RunWrite(r =>
-                                                {
-                                                    var scores = r.All<RealmScore>().Where(s => s.MapID == maps.CurrentMap.ID);
-                                                    r.RemoveRange(scores);
-                                                });
+                                                scores.WipeFromMap(maps.CurrentMap.ID);
+
 
                                                 ScoresWiped?.Invoke();
                                             }, true),
@@ -220,6 +212,6 @@ public partial class FooterOptions : FocusedOverlayContainer
 
     protected override void OnFocusLost(FocusLostEvent e) => Hide();
 
-    protected override void PopIn() => this.FadeIn(300).MoveToY(0, 600, Easing.OutQuint);
-    protected override void PopOut() => this.FadeOut(300).MoveToY(40, 600, Easing.OutQuint);
+    protected override void PopIn() => this.FadeIn(200).MoveToY(0, 400, Easing.OutQuint);
+    protected override void PopOut() => this.FadeOut(200).MoveToY(40, 400, Easing.OutQuint);
 }

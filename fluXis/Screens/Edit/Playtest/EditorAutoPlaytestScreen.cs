@@ -16,8 +16,8 @@ public partial class EditorAutoPlaytestScreen : ReplayGameplayScreen
 
     private MapInfo map { get; }
 
-    public EditorAutoPlaytestScreen(RealmMap realmMap, MapInfo info, double startTime)
-        : base(realmMap, new List<IMod> { new AutoPlayMod() }, new AutoGenerator(info, realmMap.KeyCount).Generate())
+    public EditorAutoPlaytestScreen(RealmMap realmMap, MapInfo info, double startTime, List<IMod> mods)
+        : base(realmMap, mods, new AutoGenerator(info, realmMap.KeyCount).Generate())
     {
         GameplayStartTime = startTime;
         map = info;

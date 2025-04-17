@@ -53,14 +53,14 @@ public partial class DashboardAccountTab : DashboardTab
     private Container unsavedContent = null!;
     private LoadingIcon loadingIcon = null!;
 
-    private DashboardAccountEntry twitterEntry = null!;
-    private DashboardAccountEntry youtubeEntry = null!;
-    private DashboardAccountEntry twitchEntry = null!;
-    private DashboardAccountEntry discordEntry = null!;
+    private DashboardAccountTextBox twitterEntry = null!;
+    private DashboardAccountTextBox youtubeEntry = null!;
+    private DashboardAccountTextBox twitchEntry = null!;
+    private DashboardAccountTextBox discordEntry = null!;
 
-    private DashboardAccountEntry displayNameEntry = null!;
-    private DashboardAccountEntry aboutmeEntry = null!;
-    private DashboardAccountEntry pronounsEntry = null!;
+    private DashboardAccountTextBox displayNameEntry = null!;
+    private DashboardAccountTextBox aboutmeEntry = null!;
+    private DashboardAccountTextBox pronounsEntry = null!;
 
     private bool hasUnsavedChanges;
     private bool saving;
@@ -147,18 +147,16 @@ public partial class DashboardAccountTab : DashboardTab
 
         return new FillFlowContainer
         {
-            Width = 1200,
+            RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
-            Direction = FillDirection.Full,
-            Anchor = Anchor.TopCentre,
-            Origin = Anchor.TopCentre,
-            Padding = new MarginPadding { Horizontal = 50, Vertical = 20 },
-            Spacing = new Vector2(50),
+            Direction = FillDirection.Vertical,
+            Padding = new MarginPadding { Top = 12 },
+            Spacing = new Vector2(16),
             Children = new Drawable[]
             {
                 new Container
                 {
-                    Width = 1100,
+                    RelativeSizeAxes = Axes.X,
                     Height = 250,
                     Children = new Drawable[]
                     {
@@ -205,109 +203,117 @@ public partial class DashboardAccountTab : DashboardTab
                                     FillMode = FillMode.Fill
                                 }
                             },
-                            Action = () =>
+                            Action = () => panels.Content = new FileSelect
                             {
-                                panels.Content = new FileSelect
-                                {
-                                    OnFileSelected = file => uploadImage(file, true),
-                                    AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
-                                };
+                                OnFileSelected = file => uploadImage(file, true),
+                                AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
                             }
                         }
                     }
                 },
-                new DashboardAccountCategory("Account")
+                new FillFlowContainer
                 {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Full,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Padding = new MarginPadding { Vertical = 20 },
+                    Spacing = new Vector2(32),
                     Children = new Drawable[]
                     {
-                        new DashboardAccountEntry
+                        new DashboardAccountCategory("Account")
                         {
-                            Title = "Username",
-                            Default = user.Username,
-                            ReadOnly = true
+                            Children = new Drawable[]
+                            {
+                                new DashboardAccountTextBox
+                                {
+                                    Title = "Username",
+                                    Default = user.Username,
+                                    ReadOnly = true
+                                },
+                                new DashboardAccountTextBox
+                                {
+                                    Title = "E-Mail",
+                                    Default = StringUtils.CensorEmail(user.Email),
+                                    ReadOnly = true
+                                }
+                            }
                         },
-                        new DashboardAccountEntry
+                        new DashboardAccountCategory("Auth")
                         {
-                            Title = "E-Mail",
-                            Default = StringUtils.CensorEmail(user.Email),
-                            ReadOnly = true
-                        }
-                    }
-                },
-                new DashboardAccountCategory("Password")
-                {
-                    Children = new Drawable[]
-                    {
-                        new DashboardAccountEntry
-                        {
-                            Title = "New Password",
-                            Default = "",
-                            Placeholder = "...",
-                            ReadOnly = true
+                            Children = new Drawable[]
+                            {
+                                new DashboardAccountButton
+                                {
+                                    LabelText = "Change Password",
+                                    ButtonText = "Change",
+                                    Alpha = .5f
+                                },
+                                new DashboardAccountButton
+                                {
+                                    LabelText = "Setup 2FA",
+                                    ButtonText = "Setup",
+                                    Alpha = .5f
+                                }
+                            }
                         },
-                        new DashboardAccountEntry
+                        new DashboardAccountCategory("Socials")
                         {
-                            Title = "Confirm Password",
-                            Default = "",
-                            Placeholder = "...",
-                            ReadOnly = true
-                        }
-                    }
-                },
-                new DashboardAccountCategory("Socials")
-                {
-                    Children = new Drawable[]
-                    {
-                        twitterEntry = new DashboardAccountEntry
-                        {
-                            Title = "Twitter",
-                            Default = user.Socials.Twitter,
-                            OnChange = updateUnsavedStatus
+                            Children = new Drawable[]
+                            {
+                                twitterEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "Twitter",
+                                    Default = user.Socials.Twitter,
+                                    OnChange = updateUnsavedStatus
+                                },
+                                youtubeEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "YouTube",
+                                    Default = user.Socials.YouTube,
+                                    OnChange = updateUnsavedStatus
+                                },
+                                twitchEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "Twitch",
+                                    Default = user.Socials.Twitch,
+                                    OnChange = updateUnsavedStatus
+                                },
+                                discordEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "Discord",
+                                    Default = user.Socials.Discord,
+                                    OnChange = updateUnsavedStatus
+                                }
+                            }
                         },
-                        youtubeEntry = new DashboardAccountEntry
+                        new DashboardAccountCategory("Vanity")
                         {
-                            Title = "YouTube",
-                            Default = user.Socials.YouTube,
-                            OnChange = updateUnsavedStatus
-                        },
-                        twitchEntry = new DashboardAccountEntry
-                        {
-                            Title = "Twitch",
-                            Default = user.Socials.Twitch,
-                            OnChange = updateUnsavedStatus
-                        },
-                        discordEntry = new DashboardAccountEntry
-                        {
-                            Title = "Discord",
-                            Default = user.Socials.Discord,
-                            OnChange = updateUnsavedStatus
-                        }
-                    }
-                },
-                new DashboardAccountCategory("Vanity")
-                {
-                    Children = new Drawable[]
-                    {
-                        displayNameEntry = new DashboardAccountEntry
-                        {
-                            Title = "Display Name",
-                            Placeholder = "...",
-                            Default = user.DisplayName,
-                            OnChange = updateUnsavedStatus
-                        },
-                        aboutmeEntry = new DashboardAccountEntry
-                        {
-                            Title = "About Me",
-                            Placeholder = "...",
-                            Default = user.AboutMe,
-                            OnChange = updateUnsavedStatus
-                        },
-                        pronounsEntry = new DashboardAccountEntry
-                        {
-                            Title = "Pronouns",
-                            Placeholder = "../..",
-                            Default = user.Pronouns,
-                            OnChange = updateUnsavedStatus
+                            Children = new Drawable[]
+                            {
+                                displayNameEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "Display Name",
+                                    Placeholder = "...",
+                                    Default = user.DisplayName,
+                                    OnChange = updateUnsavedStatus
+                                },
+                                aboutmeEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "About Me",
+                                    Placeholder = "...",
+                                    Default = user.AboutMe,
+                                    OnChange = updateUnsavedStatus
+                                },
+                                pronounsEntry = new DashboardAccountTextBox
+                                {
+                                    Title = "Pronouns",
+                                    Placeholder = "../..",
+                                    Default = user.Pronouns,
+                                    OnChange = updateUnsavedStatus
+                                }
+                            }
                         }
                     }
                 }

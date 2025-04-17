@@ -114,11 +114,16 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
 
     private void updatePlacementPosition()
     {
-        var hitObjectContainer = ChartingContainer.Playfield.HitObjectContainer;
+        var playfield = ChartingContainer.Playfields.FirstOrDefault(p => p.CursorInPlacementArea);
+
+        if (playfield is null)
+            return;
+
+        var container = playfield.HitObjectContainer;
         var mousePosition = InputManager.CurrentState.Mouse.Position;
 
-        var time = snaps.SnapTime(hitObjectContainer.TimeAtScreenSpacePosition(mousePosition));
-        var lane = hitObjectContainer.LaneAtScreenSpacePosition(mousePosition);
+        var time = snaps.SnapTime(container.TimeAtScreenSpacePosition(mousePosition));
+        var lane = container.LaneAtScreenSpacePosition(mousePosition);
         currentPlacement.UpdatePlacement(time, lane);
     }
 
@@ -162,8 +167,8 @@ public partial class ChartingBlueprintContainer : BlueprintContainer<ITimedObjec
         var delta = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
 
         var position = DraggedBlueprintsPositions.First() + delta;
-        var time = ChartingContainer.Playfield.HitObjectContainer.TimeAtScreenSpacePosition(position);
-        int lane = ChartingContainer.Playfield.HitObjectContainer.LaneAtScreenSpacePosition(position);
+        var time = ChartingContainer.Playfields[0].HitObjectContainer.TimeAtScreenSpacePosition(position);
+        int lane = ChartingContainer.Playfields[0].HitObjectContainer.LaneAtScreenSpacePosition(position);
         var snappedTime = snaps.SnapTime(time, true);
 
         var timeDelta = snappedTime - DraggedBlueprints.First().Object.Time;
