@@ -17,6 +17,9 @@ namespace fluXis.Screens.Layout.Settings;
 
 public partial class ComponentsSettings : FluXisScrollContainer
 {
+    [Resolved]
+    private LayoutEditor editor { get; set; }
+
     private static List<Anchor> anchors => new()
     {
         Anchor.TopLeft, Anchor.TopCentre, Anchor.TopRight,
@@ -142,13 +145,14 @@ public partial class ComponentsSettings : FluXisScrollContainer
                         OnStateChanged = v =>
                         {
                             comp.Settings.AnchorToPlayfield = v;
-                            update(comp);
+                            editor.UpdateAnchorToPlayfield(comp);
+                            selectionChanged(null, null);
                         }
                     }
                 });
 
                 flow.AddRange(comp.CreatePointSettings());
-
+                flow.FinishTransforms(true);
                 return;
 
             case > 1:

@@ -57,6 +57,18 @@ public class HUDComponentSettings
         }
     }
 
+    public string GetDictionaryKey(LayoutManager manager)
+    {
+        var key = manager.GetKeyFromComponent(Drawable);
+
+        if (!string.IsNullOrWhiteSpace(Key))
+            key += $"#{Key}";
+
+        return key;
+    }
+
+    public void ResetSettingsStatus() => settingsApplied = false;
+
     private void applySettings(Drawable drawable)
     {
         if (settingsApplied)

@@ -182,6 +182,12 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
         }
     }
 
+    public void Select(T obj)
+    {
+        if (blueprints.TryGetValue(obj, out var blueprint))
+            blueprint.Select();
+    }
+
     public void SelectAll()
     {
         foreach (var blueprint in SelectionBlueprints)

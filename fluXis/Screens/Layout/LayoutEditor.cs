@@ -71,6 +71,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     private BindableBool forceAspect { get; } = new();
 
     private EditorMenuBar menuBar;
+    private LayoutBlueprintContainer blueprints;
     private AspectRatioContainer content;
     private Container rulesetWrapper;
     private ReplayRulesetContainer ruleset;
@@ -88,8 +89,6 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     private void load()
     {
         dependencies.CacheAs(this);
-
-        LayoutBlueprintContainer blueprints;
 
         InternalChildren = new Drawable[]
         {
@@ -233,20 +232,15 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     private void save()
     {
         var components = hud.Components;
-        var settings = components.ToDictionary(x =>
-        {
-            var key = manager.GetKeyFromComponent(x.Settings.Drawable);
-
-            if (!string.IsNullOrWhiteSpace(x.Settings.Key))
-                key += $"#{x.Settings.Key}";
-
-            return key;
-        }, x =>
-        {
-            var settings = x.Settings;
-            settings.GetSettingsFrom(x.Settings.Drawable);
-            return settings;
-        });
+        var settings = components.ToDictionary(
+            x => x.Settings.GetDictionaryKey(manager),
+            x =>
+            {
+                var settings = x.Settings;
+                settings.GetSettingsFrom(x.Settings.Drawable);
+                return settings;
+            }
+        );
 
         layout.Gameplay = settings;
         manager.SaveLayout(layout);
@@ -261,12 +255,24 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         ComponentAdded?.Invoke(comp);
     }
 
+    public void UpdateAnchorToPlayfield(GameplayHUDComponent comp)
+    {
+        var key = comp.Settings.GetDictionaryKey(manager);
+
+        hud.RemoveComponent(comp);
+        ComponentRemoved?.Invoke(comp);
+
+        comp.Settings.ResetSettingsStatus();
+
+        comp = hud.AddComponent(key, comp.Settings);
+        ComponentAdded?.Invoke(comp);
+
+        blueprints.Select(comp);
+    }
+
     public void RemoveComponent(GameplayHUDComponent component)
     {
-        var key = manager.GetKeyFromComponent(component.Settings.Drawable);
-
-        if (!string.IsNullOrWhiteSpace(component.Settings.Key))
-            key += $"#{component.Settings.Key}";
+        var key = component.Settings.GetDictionaryKey(manager);
 
         layout.Gameplay.Remove(key);
         hud.RemoveComponent(component);

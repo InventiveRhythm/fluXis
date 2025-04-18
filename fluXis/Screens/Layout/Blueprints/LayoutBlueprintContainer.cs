@@ -17,6 +17,7 @@ public partial class LayoutBlueprintContainer : BlueprintContainer<GameplayHUDCo
     private void load()
     {
         editor.ComponentAdded += AddBlueprint;
+        editor.ComponentRemoved += RemoveBlueprint;
     }
 
     protected override SelectionBlueprint<GameplayHUDComponent> CreateBlueprint(GameplayHUDComponent obj)
@@ -34,7 +35,10 @@ public partial class LayoutBlueprintContainer : BlueprintContainer<GameplayHUDCo
 
         SelectedObjects.ForEach(c =>
         {
-            c.Settings.Position -= e.ScreenSpaceLastMousePosition - e.ScreenSpaceMousePosition;
+            var last = c.ToLocalSpace(e.ScreenSpaceLastMousePosition);
+            var current = c.ToLocalSpace(e.ScreenSpaceMousePosition);
+
+            c.Settings.Position += current - last;
             c.Settings.ApplyTo(c);
         });
     }
