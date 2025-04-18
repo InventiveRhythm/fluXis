@@ -25,7 +25,6 @@ public class HUDComponentSettings
     public bool AnchorToPlayfield { get; set; }
 
     public Dictionary<string, object> Settings { get; init; } = new();
-    private bool settingsApplied;
 
     public void ApplyTo(Drawable drawable)
     {
@@ -33,8 +32,6 @@ public class HUDComponentSettings
         drawable.Origin = Origin;
         drawable.Position = Position;
         drawable.Scale = new Vector2(Scale);
-
-        applySettings(drawable);
     }
 
     public void GetSettingsFrom(Drawable drawable)
@@ -67,15 +64,8 @@ public class HUDComponentSettings
         return key;
     }
 
-    public void ResetSettingsStatus() => settingsApplied = false;
-
-    private void applySettings(Drawable drawable)
+    public void ApplySettings(Drawable drawable)
     {
-        if (settingsApplied)
-            return;
-
-        settingsApplied = true;
-
         var infos = drawable.GetSettingInfos();
 
         foreach (var info in infos)

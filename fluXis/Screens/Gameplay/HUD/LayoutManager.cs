@@ -117,6 +117,7 @@ public partial class LayoutManager : Component
 
         component.Populate(settings, provider);
         settings.ApplyTo(component);
+        settings.ApplySettings(component);
         return component;
     }
 

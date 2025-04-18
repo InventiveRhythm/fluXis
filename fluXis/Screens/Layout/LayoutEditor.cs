@@ -300,8 +300,6 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         hud.RemoveComponent(comp);
         ComponentRemoved?.Invoke(comp);
 
-        comp.Settings.ResetSettingsStatus();
-
         comp = hud.AddComponent(key, comp.Settings);
         ComponentAdded?.Invoke(comp);
 
