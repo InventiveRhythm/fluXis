@@ -20,8 +20,6 @@
   "layout-reload-description": "利用可能なレイアウトリストを再読み込みします。",
   "layout-create": "新しいレイアウトを作成",
   "layout-create-description": "新しいレイアウトを作成できます。",
-  "layout-show-in-explorer": "レイアウトファイルを開く",
-  "layout-show-in-explorer-description": "エクスプローラーでレイアウトが含まれるフォルダを開きます。（これはレイアウトエディタが完成するまでの一時的な機能です）",
   "layout-open-editor": "レイアウトエディタを開く",
   "layout-open-editor-description": "ゲーム内エディタでレイアウトを開きます。"
 }

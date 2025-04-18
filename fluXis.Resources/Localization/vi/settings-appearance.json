@@ -20,8 +20,6 @@
   "layout-reload-description": "Tải lại danh sách các bố cục có sẵn.",
   "layout-create": "Tạo bố cục mới",
   "layout-create-description": "Tạo một bố cục mới.",
-  "layout-show-in-explorer": "Hiển thị tệp bố cục trong trình duyệt",
-  "layout-show-in-explorer-description": "Mở thư mục chứa tệp bố cục trong trình duyệt tệp của bạn. (Tạm thời cho đến khi trình chỉnh sửa bố cục hoàn tất)",
   "layout-open-editor": "Mở trình chỉnh sửa bố cục",
   "layout-open-editor-description": "Mở bố cục trong trình chỉnh sửa trong trò chơi."
 }

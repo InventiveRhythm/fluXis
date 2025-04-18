@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -182,6 +183,18 @@ public static class Program
 
             var json = dict.Serialize(true);
             File.WriteAllText($"langfiles/{file}.json", json);
+        }
+
+        if (OperatingSystem.IsWindows())
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = Path.Combine(AppContext.BaseDirectory, "langfiles"),
+                UseShellExecute = true
+            };
+
+            Process.Start(startInfo);
         }
 
         (string, string) getValues(TranslatableString str) => (str.Key.Split(':')[1], str.Format);

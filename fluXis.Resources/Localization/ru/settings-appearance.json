@@ -20,8 +20,6 @@
   "layout-reload-description": "Обновить список доступных макетов.",
   "layout-create": "Создать макет",
   "layout-create-description": "Создать новый макет.",
-  "layout-show-in-explorer": "Открыть папку макета",
-  "layout-show-in-explorer-description": "Открывает папку с расположением макета. (Временно, изменится с созданием редактора)",
   "layout-open-editor": "Открыть редактор макетов",
   "layout-open-editor-description": "Изменить макет в редакторе."
 }

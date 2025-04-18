@@ -11,6 +11,8 @@
   "hd-description": "Health drain, the more you miss, the faster you die.",
   "mr-name": "Mirror",
   "mr-description": "Flips the notes horizontally.",
+  "nev-name": "No Events",
+  "nev-description": "Removes all visual effects.",
   "nf-name": "No Fail",
   "nf-description": "You can't fail, no matter what.",
   "nln-name": "No LN",

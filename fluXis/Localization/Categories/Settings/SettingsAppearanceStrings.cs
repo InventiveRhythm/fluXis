@@ -45,11 +45,11 @@ public class SettingsAppearanceStrings : LocalizationCategory
     public TranslatableString LayoutCreate => Get("layout-create", "Create New Layout");
     public TranslatableString LayoutCreateDescription => Get("layout-create-description", "Create a new layout.");
 
-    public TranslatableString LayoutShowInExplorer => Get("layout-show-in-explorer", "Show layout file in explorer");
-    public TranslatableString LayoutShowInExplorerDescription => Get("layout-show-in-explorer-description", "Opens the folder containing the layout file in your file explorer. (This is temporary until the layout editor is finished)");
+    public TranslatableString LayoutOpenFolder => Get("layout-open-folder", "Open Layouts folder");
+    public TranslatableString LayoutOpenFolderDescription => Get("layout-open-folder-description", "Open the folder containing the layouts in your file explorer.");
 
     public TranslatableString LayoutOpenEditor => Get("layout-open-editor", "Open Layout editor");
-    public TranslatableString LayoutOpenEditorDescription => Get("layout-open-editor-description", "Open the layout in the in-game editor.");
+    public TranslatableString LayoutOpenEditorDescription => Get("layout-open-editor-description", "Edit the current layout in the in-game editor.");
 
     #endregion
 }

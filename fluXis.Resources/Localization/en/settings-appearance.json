@@ -20,8 +20,8 @@
   "layout-reload-description": "Reload the list of available layouts.",
   "layout-create": "Create New Layout",
   "layout-create-description": "Create a new layout.",
-  "layout-show-in-explorer": "Show layout file in explorer",
-  "layout-show-in-explorer-description": "Opens the folder containing the layout file in your file explorer. (This is temporary until the layout editor is finished)",
+  "layout-open-folder": "Open Layouts folder",
+  "layout-open-folder-description": "Open the folder containing the layouts in your file explorer.",
   "layout-open-editor": "Open Layout editor",
-  "layout-open-editor-description": "Open the layout in the in-game editor."
+  "layout-open-editor-description": "Edit the current layout in the in-game editor."
 }

@@ -5,6 +5,7 @@ using fluXis.Overlay.Settings.UI;
 using fluXis.Screens.Gameplay.HUD;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
@@ -18,14 +19,20 @@ public partial class AppearanceLayoutSection : SettingsSubSection
 
     private SettingsAppearanceStrings strings => LocalizationStrings.Settings.Appearance;
 
+    [Resolved]
+    private LayoutManager layouts { get; set; }
+
+    private SettingsDropdown<HUDLayout> currentDropdown;
+    private BindableBool buttonsEnabled;
+
     [BackgroundDependencyLoader]
-    private void load(LayoutManager layouts, [CanBeNull] FluXisGame game)
+    private void load([CanBeNull] FluXisGame game)
     {
-        SettingsDropdown<HUDLayout> layoutDropdown;
+        buttonsEnabled = new BindableBool(true) { Value = !layouts.IsDefault };
 
         AddRange(new Drawable[]
         {
-            layoutDropdown = new SettingsDropdown<HUDLayout>
+            currentDropdown = new SettingsDropdown<HUDLayout>
             {
                 Label = strings.LayoutCurrent,
                 Description = strings.LayoutCurrentDescription,
@@ -50,8 +57,8 @@ public partial class AppearanceLayoutSection : SettingsSubSection
             },
             new SettingsButton
             {
-                Label = strings.LayoutShowInExplorer,
-                Description = strings.LayoutShowInExplorerDescription,
+                Label = strings.LayoutOpenFolder,
+                Description = strings.LayoutOpenFolderDescription,
                 Enabled = true,
                 ButtonText = "Show",
                 Action = layouts.PresentExternally
@@ -61,10 +68,17 @@ public partial class AppearanceLayoutSection : SettingsSubSection
                 Label = strings.LayoutOpenEditor,
                 Description = strings.LayoutOpenEditorDescription,
                 ButtonText = "Open",
+                EnabledBindable = buttonsEnabled,
                 Action = () => game?.OpenLayoutEditor()
             }
         });
+    }
 
-        layouts.Reloaded += () => layoutDropdown.Items = layouts.Layouts;
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        layouts.Reloaded += () => currentDropdown.Items = layouts.Layouts;
+        layouts.Layout.ValueChanged += _ => buttonsEnabled.Value = !layouts.IsDefault;
     }
 }
