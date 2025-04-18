@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Audio;
+using fluXis.Database;
 using fluXis.Database.Maps;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Drawables;
 using fluXis.Map.Structures;
 using fluXis.Mods;
+using fluXis.Overlay.Notifications;
 using fluXis.Replays;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing;
 using fluXis.Scoring.Processing.Health;
+using fluXis.Screens.Edit.Input;
 using fluXis.Screens.Edit.MenuBar;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Screens.Gameplay.HUD;
@@ -42,7 +47,7 @@ using osuTK;
 
 namespace fluXis.Screens.Layout;
 
-public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBindingHandler<FluXisGlobalKeybind>, IKeyBindingHandler<EditorKeybinding>
 {
     public override bool AllowMusicControl => false;
     public override bool AllowMusicPausing => true;
@@ -63,12 +68,24 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     [Resolved]
     private LayoutManager manager { get; set; }
 
+    [Resolved]
+    private NotificationManager notifications { get; set; }
+
+    [Resolved]
+    private PanelContainer panels { get; set; }
+
     public event Action RulesetLoaded;
     public bool RulesetIsLoaded => ruleset is not null;
 
     private HUDLayout layout { get; }
 
     private BindableBool forceAspect { get; } = new();
+
+    private string lastHash = string.Empty;
+    private string currentHash => MapUtils.GetHash(layout.Serialize(true));
+
+    private bool unsavedChanges => lastHash != currentHash;
+    private bool confirmedExit;
 
     private EditorMenuBar menuBar;
     private LayoutBlueprintContainer blueprints;
@@ -86,99 +103,103 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(FluXisRealm realm)
     {
         dependencies.CacheAs(this);
 
-        InternalChildren = new Drawable[]
+        InternalChild = new EditorKeybindingContainer(this, realm)
         {
-            dependencies.CacheAsAndReturn(new Hitsounding(maps.CurrentMapSet, new List<HitSoundFade>(), clock.RateBindable.GetBoundCopy())),
-            new Box
+            RelativeSizeAxes = Axes.Both,
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background2
-            },
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding { Top = 45 },
-                Child = new GridContainer
+                dependencies.CacheAsAndReturn(new Hitsounding(maps.CurrentMapSet, new List<HitSoundFade>(), clock.RateBindable.GetBoundCopy())),
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ColumnDimensions = new Dimension[]
+                    Colour = FluXisColors.Background2
+                },
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Top = 45 },
+                    Child = new GridContainer
                     {
-                        new(GridSizeMode.AutoSize),
-                        new(),
-                        new(GridSizeMode.AutoSize)
-                    },
-                    Content = new[]
-                    {
-                        new Drawable[]
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new Dimension[]
                         {
-                            new ComponentList
+                            new(GridSizeMode.AutoSize),
+                            new(),
+                            new(GridSizeMode.AutoSize)
+                        },
+                        Content = new[]
+                        {
+                            new Drawable[]
                             {
-                                Width = sidebar_width,
-                                RelativeSizeAxes = Axes.Y
-                            },
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Padding = new MarginPadding { Vertical = 16 },
-                                Child = content = new AspectRatioContainer(forceAspect)
+                                new ComponentList
                                 {
-                                    CornerRadius = 12,
-                                    Masking = true,
-                                    Children = new Drawable[]
+                                    Width = sidebar_width,
+                                    RelativeSizeAxes = Axes.Y
+                                },
+                                new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Padding = new MarginPadding { Vertical = 16 },
+                                    Child = content = new AspectRatioContainer(forceAspect)
                                     {
-                                        new MapBackground(maps.CurrentMap)
+                                        CornerRadius = 12,
+                                        Masking = true,
+                                        Children = new Drawable[]
                                         {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre
-                                        },
-                                        new Box
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Colour = Colour4.Black,
-                                            Alpha = 0.4f
-                                        },
-                                        rulesetWrapper = new DrawSizePreservingFillContainer
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            TargetDrawSize = new Vector2(1920, 1080)
-                                        },
-                                        blueprints = new LayoutBlueprintContainer()
+                                            new MapBackground(maps.CurrentMap)
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre
+                                            },
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = Colour4.Black,
+                                                Alpha = 0.4f
+                                            },
+                                            rulesetWrapper = new DrawSizePreservingFillContainer
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                TargetDrawSize = new Vector2(1920, 1080)
+                                            },
+                                            blueprints = new LayoutBlueprintContainer()
+                                        }
                                     }
+                                },
+                                new ComponentsSettings(blueprints)
+                                {
+                                    Width = sidebar_width,
+                                    RelativeSizeAxes = Axes.Y
                                 }
-                            },
-                            new ComponentsSettings(blueprints)
-                            {
-                                Width = sidebar_width,
-                                RelativeSizeAxes = Axes.Y
                             }
                         }
-                    }
-                },
-            },
-            menuBar = new EditorMenuBar
-            {
-                Items = new MenuItem[]
-                {
-                    new FluXisMenuItem("File", FontAwesome6.Solid.File)
-                    {
-                        Items = new MenuItem[]
-                        {
-                            new FluXisMenuItem("Save", FontAwesome6.Solid.FloppyDisk, MenuItemType.Normal, save),
-                            new FluXisMenuItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, this.Exit)
-                        }
                     },
-                    new FluXisMenuItem("View", FontAwesome6.Solid.Eye)
+                },
+                menuBar = new EditorMenuBar
+                {
+                    Items = new MenuItem[]
                     {
-                        Items = new MenuItem[]
+                        new FluXisMenuItem("File", FontAwesome6.Solid.File)
                         {
-                            new FluXisMenuItem("Force 16:9", FontAwesome6.Solid.RectangleWide, MenuItemType.Normal, forceAspect.Toggle)
+                            Items = new MenuItem[]
                             {
-                                IsActive = () => forceAspect.Value
+                                new FluXisMenuItem("Save", FontAwesome6.Solid.FloppyDisk, MenuItemType.Normal, () => save()),
+                                new FluXisMenuItem("Exit", FontAwesome6.Solid.DoorOpen, MenuItemType.Dangerous, this.Exit)
+                            }
+                        },
+                        new FluXisMenuItem("View", FontAwesome6.Solid.Eye)
+                        {
+                            Items = new MenuItem[]
+                            {
+                                new FluXisMenuItem("Force 16:9", FontAwesome6.Solid.RectangleWide, MenuItemType.Normal, forceAspect.Toggle)
+                                {
+                                    IsActive = () => forceAspect.Value
+                                }
                             }
                         }
                     }
@@ -190,6 +211,7 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     protected override void LoadComplete()
     {
         base.LoadComplete();
+        updateHash();
 
         Task.Run(() =>
         {
@@ -229,10 +251,28 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         });
     }
 
-    private void save()
+    private bool save()
+    {
+        if (!unsavedChanges)
+        {
+            notifications.SendSmallText("Layout is already up to date!", FontAwesome6.Solid.Check);
+            return true;
+        }
+
+        updateDictionary();
+        manager.SaveLayout(layout);
+        notifications.SendSmallText("Saved!", FontAwesome6.Solid.Check);
+        updateHash();
+
+        return true;
+    }
+
+    private void updateHash() => lastHash = currentHash;
+
+    private void updateDictionary()
     {
         var components = hud.Components;
-        var settings = components.ToDictionary(
+        layout.Gameplay = components.ToDictionary(
             x => x.Settings.GetDictionaryKey(manager),
             x =>
             {
@@ -241,18 +281,16 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
                 return settings;
             }
         );
-
-        layout.Gameplay = settings;
-        manager.SaveLayout(layout);
     }
 
     public void AddComponent(string type, HUDComponentSettings settings)
     {
-        var key = ObjectId.GenerateNewId().ToString();
-        layout.Gameplay[$"{type}#{key}"] = settings;
+        settings.Key = ObjectId.GenerateNewId().ToString();
 
-        var comp = hud.AddComponent(type, settings);
+        var comp = hud.AddComponent($"{type}#{settings.Key}", settings);
         ComponentAdded?.Invoke(comp);
+
+        updateDictionary();
     }
 
     public void UpdateAnchorToPlayfield(GameplayHUDComponent comp)
@@ -268,6 +306,8 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         ComponentAdded?.Invoke(comp);
 
         blueprints.Select(comp);
+
+        updateDictionary();
     }
 
     public void RemoveComponent(GameplayHUDComponent component)
@@ -277,6 +317,8 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
         layout.Gameplay.Remove(key);
         hud.RemoveComponent(component);
         ComponentRemoved?.Invoke(component);
+
+        updateDictionary();
     }
 
     #region Events
@@ -319,6 +361,24 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
 
     public override bool OnExiting(ScreenExitEvent e)
     {
+        if (unsavedChanges && !confirmedExit)
+        {
+            panels.Content = new UnsavedChangesPanel(() =>
+            {
+                if (!save())
+                    return;
+
+                confirmedExit = true;
+                this.Exit();
+            }, () =>
+            {
+                confirmedExit = true;
+                this.Exit();
+            });
+
+            return true;
+        }
+
         clock.Looping = false;
 
         menuBar.MoveToY(-45, MOVE_DURATION, Easing.OutQuint);
@@ -341,6 +401,26 @@ public partial class LayoutEditor : FluXisScreen, IHUDDependencyProvider, IKeyBi
     }
 
     public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e)
+    {
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<EditorKeybinding> e)
+    {
+        if (e.Repeat)
+            return false;
+
+        switch (e.Action)
+        {
+            case EditorKeybinding.Save:
+                save();
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<EditorKeybinding> e)
     {
     }
 

@@ -617,30 +617,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         if (HasUnsavedChanges && !exitConfirmed)
         {
-            panels.Content ??= new ButtonPanel
+            panels.Content ??= new UnsavedChangesPanel(() =>
             {
-                Icon = FontAwesome6.Solid.ExclamationTriangle,
-                Text = "There are unsaved changes.",
-                SubText = "Are you sure you want to exit?",
-                IsDangerous = true,
-                Buttons = new ButtonData[]
-                {
-                    new PrimaryButtonData("Save and exit.", () =>
-                    {
-                        if (!save())
-                            return;
+                if (!save())
+                    return;
 
-                        exitConfirmed = true;
-                        this.Exit();
-                    }),
-                    new DangerButtonData("Exit without saving.", () =>
-                    {
-                        exitConfirmed = true;
-                        this.Exit();
-                    }),
-                    new CancelButtonData("Nevermind, back to editing.")
-                }
-            };
+                exitConfirmed = true;
+                this.Exit();
+            }, () =>
+            {
+                exitConfirmed = true;
+                this.Exit();
+            });
 
             return true;
         }
