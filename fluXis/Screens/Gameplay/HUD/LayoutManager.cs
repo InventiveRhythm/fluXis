@@ -38,6 +38,7 @@ public partial class LayoutManager : Component
     {
         componentLookup.Add("Accuracy", typeof(AccuracyDisplay));
         componentLookup.Add("AttributeText", typeof(AttributeText));
+        componentLookup.Add("BigBlackBox", typeof(BigBlackBox));
         componentLookup.Add("Combo", typeof(ComboCounter));
         componentLookup.Add("Health", typeof(HealthBar));
         componentLookup.Add("HitError", typeof(HitErrorBar));

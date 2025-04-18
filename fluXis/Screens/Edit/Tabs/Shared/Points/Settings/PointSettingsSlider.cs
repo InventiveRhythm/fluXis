@@ -82,7 +82,7 @@ public partial class PointSettingsSlider<T> : Container, IHasTooltip
     {
         base.LoadComplete();
 
-        Bindable.BindValueChanged(valueChanged);
+        Bindable.BindValueChanged(valueChanged, true);
 
         Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1f : HideWhenDisabled ? 0 : .4f, 200), true);
         FinishTransforms();
