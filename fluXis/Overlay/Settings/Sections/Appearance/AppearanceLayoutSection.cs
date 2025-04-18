@@ -25,7 +25,7 @@ public partial class AppearanceLayoutSection : SettingsSubSection
     private SettingsDropdown<HUDLayout> currentDropdown;
     private BindableBool buttonsEnabled;
 
-    [BackgroundDependencyLoader]
+    [BackgroundDependencyLoader(true)]
     private void load([CanBeNull] FluXisGame game)
     {
         buttonsEnabled = new BindableBool(true) { Value = !layouts.IsDefault };

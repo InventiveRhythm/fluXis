@@ -1,4 +1,5 @@
-﻿using fluXis.Map;
+﻿using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Map;
 using fluXis.Screens.Gameplay.HUD;
 using fluXis.Screens.Layout;
 using osu.Framework.Allocation;
@@ -19,6 +20,10 @@ public partial class TestLayoutEditor : FluXisTestScene
 
         var stack = new ScreenStack();
         Add(stack);
+
+        var panels = new PanelContainer();
+        TestDependencies.CacheAs(panels);
+        Add(panels);
 
         AddStep("Push Screen", () => stack.Push(new LayoutEditor(manager.Layout.Value)));
     }
