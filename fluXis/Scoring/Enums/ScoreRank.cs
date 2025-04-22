@@ -1,5 +1,6 @@
 ﻿namespace fluXis.Scoring.Enums;
 
+// ReSharper disable InconsistentNaming
 public enum ScoreRank
 {
     X,

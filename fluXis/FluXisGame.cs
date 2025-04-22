@@ -155,7 +155,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         if (CanUpdate)
             LoadQueue.Push(new LoadTask("Checking for updates...", complete => PerformUpdateCheck(true, () => Schedule(complete))));
 
-        LoadQueue.Push(new LoadTask("Downloading bundled maps...", c =>
+        LoadQueue.Push(new LoadTask("Checking for bundled maps...", c =>
         {
             if (MapStore.MapSets.Count > 0)
             {
