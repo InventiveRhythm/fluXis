@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using System.Collections.Generic;
+using Steamworks;
 
 namespace fluXis.Integration;
 
@@ -6,6 +7,8 @@ public interface ISteamManager
 {
     uint AppID { get; }
     bool Initialized { get; }
+
+    List<PublishedFileId_t> WorkshopItems { get; }
 
     void OpenLink(string url);
     void SetRichPresence(SteamRichPresenceKey key, string value);

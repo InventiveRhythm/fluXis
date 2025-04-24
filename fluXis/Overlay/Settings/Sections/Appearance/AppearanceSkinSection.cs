@@ -87,7 +87,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
                     if (skinManager.IsDefault)
                         return;
 
-                    panels.Content = new ConfirmDeletionPanel(() => skinManager.Delete(skinManager.SkinFolder), itemName: "skin");
+                    panels.Content = new ConfirmDeletionPanel(() => skinManager.Delete(skinManager.CurrentSkinID), itemName: "skin");
                 }
             },
         });

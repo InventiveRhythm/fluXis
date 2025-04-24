@@ -1,4 +1,5 @@
 ﻿using fluXis.Audio;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Skinning;
@@ -81,6 +82,13 @@ public partial class SkinIcon : CompositeDrawable
                 Spacing = new Vector2(2),
                 Children = new Drawable[]
                 {
+                    new FluXisSpriteIcon
+                    {
+                        Icon = FontAwesome6.Brands.Steam,
+                        Size = new Vector2(12),
+                        Alpha = skin.SteamWorkshop ? 1 : 0,
+                        Margin = new MarginPadding { Bottom = 4 },
+                    },
                     new ForcedHeightText(true)
                     {
                         RelativeSizeAxes = Axes.X,
@@ -97,7 +105,7 @@ public partial class SkinIcon : CompositeDrawable
                         Alpha = .8f
                     }
                 }
-            }
+            },
         };
     }
 

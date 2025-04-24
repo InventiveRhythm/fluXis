@@ -23,6 +23,7 @@ public partial class SteamManager : Component, ISteamManager
 
     public uint AppID => 3440100;
     public bool Initialized { get; }
+    public List<PublishedFileId_t> WorkshopItems { get; }
 
     private Logger logger { get; } = Logger.GetLogger("Steam");
     private Dictionary<string, string> rpc { get; } = new();
@@ -46,6 +47,14 @@ public partial class SteamManager : Component, ISteamManager
 
             ticketCb = Callback<GetTicketForWebApiResponse_t>.Create(authTicketCallback);
             createItemCb = CallResult<CreateItemResult_t>.Create(createItemCallback);
+
+            var num = SteamUGC.GetNumSubscribedItems();
+            var items = new PublishedFileId_t[num];
+            var result = SteamUGC.GetSubscribedItems(items, num);
+
+            logger.Add($"Found {items.Length} subscribed items. [subscribed: {num}, result: {result}]");
+
+            WorkshopItems = new List<PublishedFileId_t>(items);
         }
         catch (Exception e)
         {

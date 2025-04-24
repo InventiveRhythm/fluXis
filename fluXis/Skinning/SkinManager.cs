@@ -28,6 +28,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
+using Steamworks;
 
 namespace fluXis.Skinning;
 
@@ -71,11 +72,12 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     public SkinJson SkinJson => currentSkin.SkinJson;
     public SkinInfo SkinInfo => currentSkin.SkinJson.Info;
-    public string SkinFolder { get; private set; } = DEFAULT_SKIN_NAME;
-    public string FullSkinPath => skinStorage.GetFullPath(SkinFolder);
+    public string CurrentSkinID { get; private set; } = DEFAULT_SKIN_NAME;
+    public string FullSkinPath => getDirectoryForSkin(CurrentSkinID);
+
     public bool CanChangeSkin { get; set; } = true;
 
-    public bool IsDefault => isDefault(SkinFolder);
+    public bool IsDefault => isDefault(CurrentSkinID);
 
     private readonly List<SkinInfo> skins = new();
     public IReadOnlyList<SkinInfo> AvailableSkins => skins;
@@ -111,6 +113,8 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             IconTexture = textures.Get("Skins/circle.png")
         });
 
+        var extra = new List<SkinInfo>();
+
         foreach (var dir in dirs)
         {
             if (isDefault(dir))
@@ -125,7 +129,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
                 try
                 {
                     var json = File.ReadAllText(path).Deserialize<SkinJson>();
-                    var skin = createCustomSkin(json, dir);
+                    var skin = createCustomSkin(json, dir, false);
                     info = json.Info;
                     info.IconTexture = skin.GetIcon();
                 }
@@ -143,8 +147,51 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
             info.Name = info.Name.Trim();
             info.Creator = info.Creator.Trim();
-            skins.Add(info);
+            extra.Add(info);
         }
+
+        if (steam is not null)
+        {
+            foreach (var item in steam.WorkshopItems)
+            {
+                SteamUGC.GetItemInstallInfo(item, out ulong _, out string folder, 2048, out _);
+
+                var id = $"steam/{item.m_PublishedFileId}";
+                var path = Path.Combine(folder, "skin.json");
+                SkinInfo info = null;
+
+                if (File.Exists(path))
+                {
+                    try
+                    {
+                        var json = File.ReadAllText(path).Deserialize<SkinJson>();
+                        var skin = createCustomSkin(json, folder, true);
+                        info = json.Info;
+                        info.IconTexture = skin.GetIcon();
+                    }
+                    catch (Exception ex)
+                    {
+                        logParseException(id, ex);
+                    }
+                }
+                else
+                {
+                    info = new SkinInfo
+                    {
+                        Name = item.ToString(),
+                        Creator = "Steam Workshop"
+                    };
+                }
+
+                info ??= new SkinInfo();
+                info.Path = id;
+                info.SteamWorkshop = true;
+                extra.Add(info);
+            }
+        }
+
+        extra.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
+        skins.AddRange(extra);
 
         SkinListChanged?.Invoke();
     }
@@ -164,8 +211,8 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             if (currentSkin is not DefaultSkin)
                 currentSkin.Dispose();
 
-            SkinFolder = e.NewValue;
-            currentSkin = loadSkin(SkinFolder);
+            CurrentSkinID = e.NewValue;
+            currentSkin = loadSkin(CurrentSkinID);
 
             SkinChanged?.Invoke();
         }, true);
@@ -195,10 +242,13 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     public void UpdateAndSave(SkinJson newSkinJson)
     {
-        currentSkin = createCustomSkin(newSkinJson, SkinFolder);
+        if (CurrentSkinID.StartsWith("steam/"))
+            return;
+
+        currentSkin = createCustomSkin(newSkinJson, CurrentSkinID, false);
 
         var json = SkinJson.Serialize(true);
-        var path = skinStorage.GetFullPath($"{SkinFolder}/skin.json");
+        var path = skinStorage.GetFullPath($"{CurrentSkinID}/skin.json");
         File.WriteAllText(path, json);
     }
 
@@ -243,27 +293,30 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     public void OpenFolder()
     {
-        if (isDefault(SkinFolder))
+        if (isDefault(CurrentSkinID))
             skinStorage.PresentExternally();
         else
-            skinStorage.GetStorageForDirectory(SkinFolder).PresentExternally();
+        {
+            var path = getDirectoryForSkin(CurrentSkinID);
+            host.PresentFileExternally(path);
+        }
     }
 
     public void ExportCurrent()
     {
-        if (isDefault(SkinFolder)) return;
+        if (isDefault(CurrentSkinID)) return;
 
-        var zipPath = game.ExportStorage.GetFullPath($"{SkinFolder}.fsk");
+        var zipPath = game.ExportStorage.GetFullPath($"{CurrentSkinID}.fsk");
 
         if (File.Exists(zipPath))
             File.Delete(zipPath);
 
         using var zip = new ZipArchive(File.Create(zipPath), ZipArchiveMode.Create);
-        var files = Directory.GetFiles(skinStorage.GetFullPath(SkinFolder), "*", SearchOption.AllDirectories);
+        var files = Directory.GetFiles(skinStorage.GetFullPath(CurrentSkinID), "*", SearchOption.AllDirectories);
 
         foreach (var file in files)
         {
-            var relativePath = file.Replace(skinStorage.GetFullPath(SkinFolder), "");
+            var relativePath = file.Replace(skinStorage.GetFullPath(CurrentSkinID), "");
             zip.CreateEntryFromFile(file, relativePath[1..]);
         }
 
@@ -277,16 +330,16 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         var path = skinStorage.GetFullPath(folder);
         Directory.Delete(path, true);
 
-        var current = SkinFolder;
+        var current = CurrentSkinID;
         ReloadSkinList();
 
         if (folder == current)
             skinName.Value = DEFAULT_SKIN_NAME;
     }
 
-    private ISkin createCustomSkin(SkinJson skinJson, string folder)
+    private ISkin createCustomSkin(SkinJson skinJson, string folder, bool absolute)
     {
-        var storage = skinStorage.GetStorageForDirectory(folder);
+        var storage = absolute ? new NativeStorage(folder) : skinStorage.GetStorageForDirectory(folder);
         var resources = new StorageBackedResourceStore(storage);
         var textureStore = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(resources));
         var sampleStore = audio.GetSampleStore(resources);
@@ -297,9 +350,9 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         return new CustomSkin(skinJson, textureStore, storage, sampleStore);
     }
 
-    private ISkin loadSkin(string folder)
+    private ISkin loadSkin(string id)
     {
-        switch (folder)
+        switch (id)
         {
             case DEFAULT_SKIN_NAME:
                 return defaultSkin;
@@ -309,24 +362,24 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         }
 
         var skinJson = new SkinJson();
+        var path = getDirectoryForSkin(id);
 
         try
         {
-            if (skinStorage.Exists($"{folder}/skin.json"))
-            {
-                var path = skinStorage.GetFullPath($"{folder}/skin.json");
-                skinJson = File.ReadAllText(path).Deserialize<SkinJson>();
-            }
+            var jsonPath = Path.Combine(path, "skin.json");
+
+            if (File.Exists(jsonPath))
+                skinJson = File.ReadAllText(jsonPath).Deserialize<SkinJson>();
             else
-                Logger.Log($"No skin.json in folder '{folder}' found, using default skin.json", LoggingTarget.Information);
+                Logger.Log($"No skin.json in folder '{id}' found, using default skin.json", LoggingTarget.Information);
         }
         catch (Exception ex)
         {
-            logParseException(folder, ex);
+            logParseException(id, ex);
         }
 
-        skinJson.Info.Path = folder;
-        return createCustomSkin(skinJson, folder);
+        skinJson.Info.Path = id;
+        return createCustomSkin(skinJson, path, id.StartsWith("steam/"));
     }
 
     private void logParseException(string folder, Exception ex)
@@ -341,6 +394,21 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     {
         return string.Equals(name, DEFAULT_SKIN_NAME, StringComparison.CurrentCultureIgnoreCase)
                || string.Equals(name, DEFAULT_CIRCLE_SKIN_NAME, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    private string getDirectoryForSkin(string id)
+    {
+        if (id.StartsWith("steam/"))
+        {
+            var idString = id.Split('/')[1];
+            if (!ulong.TryParse(idString, out var steamId))
+                return null;
+
+            SteamUGC.GetItemInstallInfo(new PublishedFileId_t(steamId), out ulong _, out string folder, 2048, out _);
+            return folder;
+        }
+
+        return skinStorage.GetFullPath(id);
     }
 
     #region ISkin Implementation

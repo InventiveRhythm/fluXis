@@ -15,6 +15,9 @@ public class SkinInfo
     [JsonIgnore]
     public string Path { get; set; } = string.Empty;
 
+    [JsonIgnore]
+    public bool SteamWorkshop { get; set; } = false;
+
     [CanBeNull]
     [JsonIgnore]
     public Texture IconTexture { get; set; }
