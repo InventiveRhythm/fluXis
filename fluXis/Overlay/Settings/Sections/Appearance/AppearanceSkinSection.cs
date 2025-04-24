@@ -4,6 +4,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
+using fluXis.Integration;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
 using fluXis.Overlay.Settings.Sections.Appearance.Skin;
@@ -35,7 +36,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
     private BindableBool buttonsEnabled;
 
     [BackgroundDependencyLoader(true)]
-    private void load(SkinManager skinManager, [CanBeNull] FluXisGame game, PanelContainer panels)
+    private void load(SkinManager skinManager, [CanBeNull] FluXisGame game, PanelContainer panels, [CanBeNull] ISteamManager steam)
     {
         buttonsEnabled = new BindableBool(true);
 
@@ -88,8 +89,20 @@ public partial class AppearanceSkinSection : SettingsSubSection
 
                     panels.Content = new ConfirmDeletionPanel(() => skinManager.Delete(skinManager.SkinFolder), itemName: "skin");
                 }
-            }
+            },
         });
+
+        if (steam?.Initialized ?? false)
+        {
+            Add(new SettingsButton
+            {
+                Label = "Upload to Workshop",
+                Description = "Publish your skin to the Steam Workshop.",
+                ButtonText = "Upload",
+                EnabledBindable = buttonsEnabled,
+                Action = skinManager.UploadToWorkshop
+            });
+        }
     }
 
     protected override void LoadComplete()

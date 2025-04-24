@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
+using fluXis.Skinning;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -15,6 +18,10 @@ public partial class SteamManager : Component, ISteamManager
     [Resolved]
     private IAPIClient api { get; set; }
 
+    [Resolved]
+    private SkinManager skinManager { get; set; }
+
+    public uint AppID => 3440100;
     public bool Initialized { get; }
 
     private Logger logger { get; } = Logger.GetLogger("Steam");
@@ -22,17 +29,23 @@ public partial class SteamManager : Component, ISteamManager
     private double lastUpdate;
 
     private Callback<GetTicketForWebApiResponse_t> ticketCb { get; }
+    private CallResult<CreateItemResult_t> createItemCb { get; }
+
+    [CanBeNull]
+    private IWorkshopItem currentItem;
 
     public SteamManager()
     {
         try
         {
+            File.WriteAllText("steam_appid.txt", AppID.ToString());
             Initialized = SteamAPI.Init();
 
             if (!Initialized)
                 throw new Exception("SteamAPI.Init() failed.");
 
             ticketCb = Callback<GetTicketForWebApiResponse_t>.Create(authTicketCallback);
+            createItemCb = CallResult<CreateItemResult_t>.Create(createItemCallback);
         }
         catch (Exception e)
         {
@@ -102,6 +115,31 @@ public partial class SteamManager : Component, ISteamManager
         rpc[pchKey] = value;
     }
 
+    public void UploadItem(IWorkshopItem item)
+    {
+        currentItem = item;
+        logger.Add($"Uploading item: {item}.");
+
+        var handle = SteamUGC.CreateItem((AppId_t)AppID, EWorkshopFileType.k_EWorkshopFileTypeCommunity);
+        createItemCb.Set(handle);
+    }
+
+    public void UpdateItem(PublishedFileId_t id, IWorkshopItem item)
+    {
+        logger.Add($"Updating item: {item}.");
+        var handle = SteamUGC.StartItemUpdate((AppId_t)AppID, id);
+
+        SteamUGC.SetItemTitle(handle, item.Title);
+
+        if (!string.IsNullOrWhiteSpace(item.Preview) && File.Exists(item.Preview))
+            SteamUGC.SetItemPreview(handle, item.Preview);
+
+        SteamUGC.SetItemContent(handle, item.Folder);
+        SteamUGC.SubmitItemUpdate(handle, "");
+
+        OpenLink($"https://steamcommunity.com/sharedfiles/filedetails/?id={id.m_PublishedFileId}");
+    }
+
     private void startAccountLink()
     {
         if (api.User.Value is null || api.User.Value.SteamID is not null)
@@ -133,6 +171,26 @@ public partial class SteamManager : Component, ISteamManager
         api.PerformRequestAsync(req);
     }
 
+    private void createItemCallback(CreateItemResult_t result, bool biofail)
+    {
+        if (result.m_eResult != EResult.k_EResultOK)
+        {
+            logger.Add($"Failed to create item! [{result.m_eResult}]", LogLevel.Error);
+            return;
+        }
+
+        logger.Add($"Created item! [{result.m_nPublishedFileId}]");
+
+        if (currentItem is null)
+            throw new InvalidOperationException("Current item is null!");
+
+        Logger.Log(Path.Combine(currentItem.Folder, "workshopid.txt"));
+        File.WriteAllText(Path.Combine(currentItem.Folder, "workshopid.txt"), result.m_nPublishedFileId.ToString());
+
+        UpdateItem(result.m_nPublishedFileId, currentItem);
+        currentItem = null;
+    }
+
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
@@ -141,5 +199,6 @@ public partial class SteamManager : Component, ISteamManager
             SteamAPI.Shutdown();
 
         ticketCb?.Dispose();
+        createItemCb?.Dispose();
     }
 }

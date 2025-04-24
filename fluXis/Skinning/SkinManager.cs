@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Integration;
 using fluXis.Overlay.Notifications;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
@@ -15,6 +16,7 @@ using fluXis.Skinning.Default;
 using fluXis.Skinning.DefaultCircle;
 using fluXis.Skinning.Json;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -54,6 +56,10 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     [Resolved]
     private FluXisGameBase game { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ISteamManager steam { get; set; }
+
     private DefaultSkin defaultSkin { get; set; }
     private ISkin currentSkin { get; set; }
 
@@ -66,6 +72,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     public SkinJson SkinJson => currentSkin.SkinJson;
     public SkinInfo SkinInfo => currentSkin.SkinJson.Info;
     public string SkinFolder { get; private set; } = DEFAULT_SKIN_NAME;
+    public string FullSkinPath => skinStorage.GetFullPath(SkinFolder);
     public bool CanChangeSkin { get; set; } = true;
 
     public bool IsDefault => isDefault(SkinFolder);
@@ -162,6 +169,26 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
             SkinChanged?.Invoke();
         }, true);
+    }
+
+    public void UploadToWorkshop()
+    {
+        if (steam is null) return;
+        if (IsDefault) return;
+
+        var path = FullSkinPath;
+        var idPath = Path.Combine(path, "workshopid.txt");
+        ulong? id = null;
+
+        if (File.Exists(idPath))
+            id = ulong.Parse(File.ReadAllText(idPath));
+
+        var item = new BasicWorkshopItem(SkinInfo.Name, Path.Combine(path, "icon.png"), path);
+
+        if (id is not null)
+            steam.UpdateItem(id.Value, item);
+        else
+            steam.UploadItem(item);
     }
 
     public void SetSkin(SkinInfo info) => skinName.Value = info.Path;
