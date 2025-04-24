@@ -43,7 +43,12 @@ public partial class SkinIcon : CompositeDrawable
         CornerRadius = 8;
         Masking = true;
 
-        BorderColour = FluXisColors.Highlight;
+        var accent = FluXisColors.Highlight;
+
+        if (!string.IsNullOrWhiteSpace(skin.AccentHex) && Colour4.TryParseHex(skin.AccentHex, out var acc))
+            accent = acc;
+
+        BorderColour = accent;
         BorderThickness = 0;
 
         InternalChildren = new Drawable[]
@@ -68,7 +73,7 @@ public partial class SkinIcon : CompositeDrawable
             selected = new Gradient
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Highlight,
+                Colour = accent,
                 Alpha = .5f
             },
             new FillFlowContainer
