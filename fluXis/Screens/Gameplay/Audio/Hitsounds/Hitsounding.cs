@@ -53,7 +53,7 @@ public partial class Hitsounding : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(ISampleStore defaultSamples, SkinManager skinManager, FluXisConfig config)
+    private void load(ISampleStore defaultSamples, ISkin skin, FluXisConfig config)
     {
         userVolume = config.GetBindable<double>(FluXisSetting.HitSoundVolume);
         volume = new Bindable<double>();
@@ -62,7 +62,7 @@ public partial class Hitsounding : CompositeDrawable
         foreach (var sample in Defaults.Concat(new[] { tick_big, tick_small }))
         {
             var s = sample == hit_normal
-                ? skinManager.GetHitSample()
+                ? skin.GetHitSample()
                 : defaultSamples.Get($"Gameplay/{sample}");
 
             if (s == null)

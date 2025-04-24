@@ -35,24 +35,28 @@ public class CustomSkin : ISkin
         this.samples = samples;
     }
 
+    public Texture GetIcon()
+    {
+        const string path = "icon.png";
+        return storage.Exists(path) ? textures.Get(path) : null;
+    }
+
     public Texture GetDefaultBackground()
     {
         string path = SkinJson.GetOverrideOrDefault("UserInterface/background") + ".png";
         return storage.Exists(path) ? textures.Get(path) : null;
     }
 
-    public Sample GetUISample(UISamples.SampleType type)
+    public Sample GetUISample(UISamples.SampleType type) => type switch
     {
-        return type switch
-        {
-            UISamples.SampleType.Back => samples.Get("Samples/UI/back"),
-            UISamples.SampleType.Select => samples.Get("Samples/UI/select"),
-            UISamples.SampleType.Hover => samples.Get("Samples/UI/hover"),
-            UISamples.SampleType.Click => samples.Get("Samples/UI/click"),
-            UISamples.SampleType.ClickDisabled => samples.Get("Samples/UI/click-disabled"),
-            _ => null
-        };
-    }
+        UISamples.SampleType.Back => samples.Get("Samples/UI/back"),
+        UISamples.SampleType.Select => samples.Get("Samples/UI/select"),
+        UISamples.SampleType.Hover => samples.Get("Samples/UI/hover"),
+        UISamples.SampleType.Click => samples.Get("Samples/UI/click"),
+        UISamples.SampleType.ClickDisabled => samples.Get("Samples/UI/click-disabled"),
+        UISamples.SampleType.SkinSelectClick => samples.Get("Samples/UI/skin-select-click"),
+        _ => null
+    };
 
     public Sample GetCourseSample(CourseScreen.SampleType type)
     {

@@ -17,6 +17,8 @@ public partial class SettingsSubSection : FillFlowContainer
     public virtual LocalisableString Title => "Subsection";
     public virtual IconUsage Icon => FontAwesome6.Solid.AngleRight;
 
+    protected Container RightSide { get; private set; }
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -25,27 +27,43 @@ public partial class SettingsSubSection : FillFlowContainer
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(0, 10);
 
-        InternalChild = new FillFlowContainer
+        InternalChild = new Container
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
-            Direction = FillDirection.Horizontal,
-            Spacing = new Vector2(10, 0),
             Children = new Drawable[]
             {
-                new FluXisSpriteIcon
+                new FillFlowContainer
                 {
-                    Icon = Icon,
-                    Size = new Vector2(24),
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Horizontal,
+                    Spacing = new Vector2(10),
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft
+                    Origin = Anchor.CentreLeft,
+                    Children = new Drawable[]
+                    {
+                        new FluXisSpriteIcon
+                        {
+                            Icon = Icon,
+                            Size = new Vector2(24),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = Title,
+                            FontSize = 38,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft
+                        }
+                    }
                 },
-                new FluXisSpriteText
+                RightSide = new Container
                 {
-                    Text = Title,
-                    FontSize = 38,
-                    Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight,
                 }
             }
         };

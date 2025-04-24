@@ -11,10 +11,8 @@ namespace fluXis.Screens.Gameplay.Input;
 
 public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplayKeybind>
 {
-    private readonly bool[] pressedStatus;
-    public bool[] JustPressed { get; }
     public bool[] Pressed { get; }
-    public bool[] JustReleased { get; }
+    public double[] PressTimes { get; }
     public List<FluXisGameplayKeybind> Keys { get; }
 
     public event Action<FluXisGameplayKeybind> OnPress;
@@ -33,36 +31,8 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
         if (dual)
             mode *= 2;
 
-        pressedStatus = new bool[mode];
-        JustPressed = new bool[mode];
         Pressed = new bool[mode];
-        JustReleased = new bool[mode];
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        for (int i = 0; i < Keys.Count; i++)
-        {
-            switch (pressedStatus[i])
-            {
-                case true when !Pressed[i]:
-                    JustPressed[i] = true;
-                    Pressed[i] = true;
-                    break;
-
-                case false when Pressed[i]:
-                    JustReleased[i] = true;
-                    Pressed[i] = false;
-                    break;
-
-                default:
-                    JustPressed[i] = false;
-                    JustReleased[i] = false;
-                    break;
-            }
-        }
+        PressTimes = new double[mode];
     }
 
     public virtual bool OnPressed(KeyBindingPressEvent<FluXisGameplayKeybind> e) => !e.Repeat && PressKey(e.Action);
@@ -76,7 +46,8 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
         var idx = Keys.IndexOf(key);
         if (idx == -1) return false;
 
-        pressedStatus[idx] = true;
+        Pressed[idx] = true;
+        PressTimes[idx] = Time.Current;
         OnPress?.Invoke(key);
         return true;
     }
@@ -89,7 +60,8 @@ public partial class GameplayInput : Drawable, IKeyBindingHandler<FluXisGameplay
         var idx = Keys.IndexOf(key);
         if (idx == -1) return;
 
-        pressedStatus[idx] = false;
+        Pressed[idx] = false;
+        PressTimes[idx] = 0;
         OnRelease?.Invoke(key);
     }
 

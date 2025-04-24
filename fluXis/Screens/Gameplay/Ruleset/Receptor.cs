@@ -10,7 +10,7 @@ namespace fluXis.Screens.Gameplay.Ruleset;
 public partial class Receptor : CompositeDrawable
 {
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private ISkin skin { get; set; }
 
     [Resolved]
     private RulesetContainer ruleset { get; set; }
@@ -44,14 +44,14 @@ public partial class Receptor : CompositeDrawable
 
         InternalChildren = new[]
         {
-            up = skinManager.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, false),
-            down = skinManager.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, true),
-            hitLighting = skinManager.GetColumnLighting(idx + 1, playfield.RealmMap.KeyCount).With(l => l.AlwaysPresent = true)
+            up = skin.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, false),
+            down = skin.GetReceptor(idx + 1, playfield.RealmMap.KeyCount, true),
+            hitLighting = skin.GetColumnLighting(idx + 1, playfield.RealmMap.KeyCount).With(l => l.AlwaysPresent = true)
         };
 
         hitLighting.Margin = new MarginPadding
         {
-            Bottom = skinManager.SkinJson.GetKeymode(playfield.RealmMap.KeyCount).HitPosition
+            Bottom = skin.SkinJson.GetKeymode(playfield.RealmMap.KeyCount).HitPosition
         };
     }
 

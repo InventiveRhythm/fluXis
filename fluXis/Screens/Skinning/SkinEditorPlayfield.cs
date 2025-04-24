@@ -10,7 +10,7 @@ namespace fluXis.Screens.Skinning;
 public partial class SkinEditorPlayfield : Container
 {
     public SkinJson SkinJson { get; set; }
-    public SkinManager SkinManager { get; set; }
+    public ISkin Skin { get; set; }
     public int KeyMode { get; set; }
 
     private Drawable hitline;
@@ -51,7 +51,7 @@ public partial class SkinEditorPlayfield : Container
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            hitline = SkinManager.GetHitLine().With(line =>
+            hitline = Skin.GetHitLine().With(line =>
             {
                 line.Width = 1;
                 line.RelativeSizeAxes = Axes.X;
@@ -60,11 +60,11 @@ public partial class SkinEditorPlayfield : Container
 
         for (int i = 0; i < KeyMode; i++)
         {
-            var receptor = SkinManager.GetReceptor(i + 1, KeyMode, false);
+            var receptor = Skin.GetReceptor(i + 1, KeyMode, false);
             receptorContainer.Add(receptor);
             receptor.Width = 1f / KeyMode;
 
-            var hitObject = SkinManager.GetHitObject(i + 1, KeyMode);
+            var hitObject = Skin.GetHitObject(i + 1, KeyMode);
             hitObject.Anchor = Anchor.BottomLeft;
             hitObject.Origin = Anchor.BottomLeft;
             hitObjectContainer.Add(hitObject);

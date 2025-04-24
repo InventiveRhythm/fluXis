@@ -21,7 +21,7 @@ namespace fluXis.Screens.Gameplay.Ruleset.Playfields;
 public partial class Playfield : Container
 {
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private ISkin skin { get; set; }
 
     [Resolved]
     private RulesetContainer ruleset { get; set; }
@@ -97,7 +97,7 @@ public partial class Playfield : Container
             Origin = Anchor.Centre,
             Direction = FillDirection.Horizontal,
             ChildrenEnumerable = Enumerable.Range(0, RealmMap.KeyCount).Select(i => new Receptor(i)),
-            Padding = new MarginPadding { Bottom = skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
+            Padding = new MarginPadding { Bottom = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorOffset }
         };
 
         dependencies.CacheAs(this);
@@ -107,7 +107,7 @@ public partial class Playfield : Container
             Masking = true
         });
 
-        var receptorsFirst = skinManager.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorsFirst;
+        var receptorsFirst = skin.SkinJson.GetKeymode(RealmMap.KeyCount).ReceptorsFirst;
 
         InternalChildren = new[]
         {
@@ -116,7 +116,7 @@ public partial class Playfield : Container
             new TimingLineManager(),
             receptorsFirst ? Receptors : HitManager,
             receptorsFirst ? HitManager : Receptors,
-            hitline = skinManager.GetHitLine().With(d =>
+            hitline = skin.GetHitLine().With(d =>
             {
                 d.Width = 1;
                 d.RelativeSizeAxes = Axes.X;
@@ -129,8 +129,8 @@ public partial class Playfield : Container
                 Masking = true,
                 Children = new[]
                 {
-                    topCover = skinManager.GetLaneCover(false),
-                    bottomCover = skinManager.GetLaneCover(true)
+                    topCover = skin.GetLaneCover(false),
+                    bottomCover = skin.GetLaneCover(true)
                 }
             },
             new KeyOverlay(),

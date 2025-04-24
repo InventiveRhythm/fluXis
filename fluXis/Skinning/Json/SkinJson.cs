@@ -9,6 +9,9 @@ namespace fluXis.Skinning.Json;
 
 public class SkinJson
 {
+    [JsonProperty("info")]
+    public SkinInfo Info { get; set; } = new();
+
     [JsonProperty("1k")]
     public SkinKeymode OneKey { get; set; } = new() { ColumnWidth = 132 };
 

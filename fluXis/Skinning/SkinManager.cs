@@ -57,35 +57,24 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     private DefaultSkin defaultSkin { get; set; }
     private ISkin currentSkin { get; set; }
 
-    private const string default_skin_name = "Default";
-    private const string default_circle_skin_name = "Default Circle";
+    public const string DEFAULT_SKIN_NAME = "Default";
+    public const string DEFAULT_CIRCLE_SKIN_NAME = "Default Circle";
 
     public Action SkinChanged { get; set; }
     public Action SkinListChanged { get; set; }
 
     public SkinJson SkinJson => currentSkin.SkinJson;
-    public string SkinFolder { get; private set; } = default_skin_name;
+    public SkinInfo SkinInfo => currentSkin.SkinJson.Info;
+    public string SkinFolder { get; private set; } = DEFAULT_SKIN_NAME;
     public bool CanChangeSkin { get; set; } = true;
 
     public bool IsDefault => isDefault(SkinFolder);
 
+    private readonly List<SkinInfo> skins = new();
+    public IReadOnlyList<SkinInfo> AvailableSkins => skins;
+
     private Bindable<string> skinName;
     private Storage skinStorage;
-
-    public IEnumerable<string> GetSkinNames()
-    {
-        string[] defaultSkins =
-        {
-            default_skin_name,
-            default_circle_skin_name
-        };
-
-        var custom = skinStorage.GetDirectories("").ToArray();
-
-        // remove default skins from customs if they exist
-        custom = custom.Where(x => !isDefault(x)).ToArray();
-        return defaultSkins.Concat(custom).ToArray();
-    }
 
     [BackgroundDependencyLoader]
     private void load(Storage storage)
@@ -95,6 +84,62 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         skinName = config.GetBindable<string>(FluXisSetting.SkinName);
 
         game.AddDragDropHandler(this);
+        ReloadSkinList();
+    }
+
+    public void ReloadSkinList()
+    {
+        var dirs = skinStorage.GetDirectories("").ToArray();
+        skins.Clear();
+
+        var def = defaultSkin.SkinJson.Info;
+        def.IconTexture = defaultSkin.GetIcon();
+        skins.Add(def);
+
+        skins.Add(new SkinInfo
+        {
+            Name = DEFAULT_CIRCLE_SKIN_NAME,
+            Creator = "flustix",
+            Path = DEFAULT_CIRCLE_SKIN_NAME,
+            IconTexture = textures.Get("Skins/circle.png")
+        });
+
+        foreach (var dir in dirs)
+        {
+            if (isDefault(dir))
+                continue;
+
+            SkinInfo info = null;
+
+            var path = skinStorage.GetFullPath($"{dir}/skin.json");
+
+            if (File.Exists(path))
+            {
+                try
+                {
+                    var json = File.ReadAllText(path).Deserialize<SkinJson>();
+                    var skin = createCustomSkin(json, dir);
+                    info = json.Info;
+                    info.IconTexture = skin.GetIcon();
+                }
+                catch (Exception ex)
+                {
+                    logParseException(dir, ex);
+                }
+            }
+
+            info ??= new SkinInfo();
+            info.Path = dir;
+
+            if (string.IsNullOrWhiteSpace(info.Name))
+                info.Name = info.Path;
+
+            info.Name = info.Name.Trim();
+            info.Creator = info.Creator.Trim();
+            skins.Add(info);
+        }
+
+        SkinListChanged?.Invoke();
     }
 
     protected override void LoadComplete()
@@ -118,6 +163,8 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             SkinChanged?.Invoke();
         }, true);
     }
+
+    public void SetSkin(SkinInfo info) => skinName.Value = info.Path;
 
     public void UpdateAndSave(SkinJson newSkinJson)
     {
@@ -203,10 +250,11 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         var path = skinStorage.GetFullPath(folder);
         Directory.Delete(path, true);
 
-        if (folder == SkinFolder)
-            skinName.Value = default_skin_name;
+        var current = SkinFolder;
+        ReloadSkinList();
 
-        SkinListChanged?.Invoke();
+        if (folder == current)
+            skinName.Value = DEFAULT_SKIN_NAME;
     }
 
     private ISkin createCustomSkin(SkinJson skinJson, string folder)
@@ -226,10 +274,10 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
     {
         switch (folder)
         {
-            case default_skin_name:
+            case DEFAULT_SKIN_NAME:
                 return defaultSkin;
 
-            case default_circle_skin_name:
+            case DEFAULT_CIRCLE_SKIN_NAME:
                 return new DefaultCircleSkin(textures, samples);
         }
 
@@ -247,49 +295,60 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         }
         catch (Exception ex)
         {
-            if (ex is JsonReaderException)
-                Logger.Log($"Failed to parse skin.json for '{folder}'! {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
-            else
-                Logger.Error(ex, $"Failed to load skin.json '{folder}'");
+            logParseException(folder, ex);
         }
 
+        skinJson.Info.Path = folder;
         return createCustomSkin(skinJson, folder);
+    }
+
+    private void logParseException(string folder, Exception ex)
+    {
+        if (ex is JsonReaderException)
+            Logger.Log($"Failed to parse skin.json for '{folder}'! {ex.Message}", LoggingTarget.Runtime, LogLevel.Error);
+        else
+            Logger.Error(ex, $"Failed to load skin.json '{folder}'");
     }
 
     private static bool isDefault(string name)
     {
-        return string.Equals(name, default_skin_name, StringComparison.CurrentCultureIgnoreCase)
-               || string.Equals(name, default_circle_skin_name, StringComparison.CurrentCultureIgnoreCase);
+        return string.Equals(name, DEFAULT_SKIN_NAME, StringComparison.CurrentCultureIgnoreCase)
+               || string.Equals(name, DEFAULT_CIRCLE_SKIN_NAME, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    public Texture GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
+    #region ISkin Implementation
 
-    public Sample GetUISample(UISamples.SampleType type) => currentSkin.GetUISample(type) ?? defaultSkin.GetUISample(type);
-    public Sample GetCourseSample(CourseScreen.SampleType type) => currentSkin.GetCourseSample(type) ?? defaultSkin.GetCourseSample(type);
+    Texture ISkin.GetIcon() => currentSkin.GetIcon() ?? defaultSkin.GetIcon();
+    Texture ISkin.GetDefaultBackground() => currentSkin.GetDefaultBackground() ?? defaultSkin.GetDefaultBackground();
 
-    public Drawable GetStageBackgroundPart(Anchor part) => currentSkin.GetStageBackgroundPart(part) ?? defaultSkin.GetStageBackgroundPart(part);
-    public Drawable GetLaneCover(bool bottom) => currentSkin.GetLaneCover(bottom) ?? defaultSkin.GetLaneCover(bottom);
+    Sample ISkin.GetUISample(UISamples.SampleType type) => currentSkin.GetUISample(type) ?? defaultSkin.GetUISample(type);
+    Sample ISkin.GetCourseSample(CourseScreen.SampleType type) => currentSkin.GetCourseSample(type) ?? defaultSkin.GetCourseSample(type);
 
-    public Drawable GetHealthBarBackground() => currentSkin.GetHealthBarBackground() ?? defaultSkin.GetHealthBarBackground();
-    public Drawable GetHealthBar(HealthProcessor processor) => currentSkin.GetHealthBar(processor) ?? defaultSkin.GetHealthBar(processor);
+    Drawable ISkin.GetStageBackgroundPart(Anchor part) => currentSkin.GetStageBackgroundPart(part) ?? defaultSkin.GetStageBackgroundPart(part);
+    Drawable ISkin.GetLaneCover(bool bottom) => currentSkin.GetLaneCover(bottom) ?? defaultSkin.GetLaneCover(bottom);
 
-    public Drawable GetHitObject(int lane, int keyCount) => currentSkin.GetHitObject(lane, keyCount) ?? defaultSkin.GetHitObject(lane, keyCount);
-    public Drawable GetTickNote(int lane, int keyCount, bool small) => currentSkin.GetTickNote(lane, keyCount, small) ?? defaultSkin.GetTickNote(lane, keyCount, small);
-    public Drawable GetLongNoteBody(int lane, int keyCount) => currentSkin.GetLongNoteBody(lane, keyCount) ?? defaultSkin.GetLongNoteBody(lane, keyCount);
-    public Drawable GetLongNoteEnd(int lane, int keyCount) => currentSkin.GetLongNoteEnd(lane, keyCount) ?? defaultSkin.GetLongNoteEnd(lane, keyCount);
-    public VisibilityContainer GetColumnLighting(int lane, int keyCount) => currentSkin.GetColumnLighting(lane, keyCount) ?? defaultSkin.GetColumnLighting(lane, keyCount);
-    public Drawable GetReceptor(int lane, int keyCount, bool down) => currentSkin.GetReceptor(lane, keyCount, down) ?? defaultSkin.GetReceptor(lane, keyCount, down);
-    public Drawable GetHitLine() => currentSkin.GetHitLine() ?? defaultSkin.GetHitLine();
-    public AbstractJudgementText GetJudgement(Judgement judgement, bool isLate) => currentSkin.GetJudgement(judgement, isLate) ?? defaultSkin.GetJudgement(judgement, isLate);
+    Drawable ISkin.GetHealthBarBackground() => currentSkin.GetHealthBarBackground() ?? defaultSkin.GetHealthBarBackground();
+    Drawable ISkin.GetHealthBar(HealthProcessor processor) => currentSkin.GetHealthBar(processor) ?? defaultSkin.GetHealthBar(processor);
 
-    public Drawable GetFailFlash() => currentSkin.GetFailFlash() ?? defaultSkin.GetFailFlash();
+    Drawable ISkin.GetHitObject(int lane, int keyCount) => currentSkin.GetHitObject(lane, keyCount) ?? defaultSkin.GetHitObject(lane, keyCount);
+    Drawable ISkin.GetTickNote(int lane, int keyCount, bool small) => currentSkin.GetTickNote(lane, keyCount, small) ?? defaultSkin.GetTickNote(lane, keyCount, small);
+    Drawable ISkin.GetLongNoteBody(int lane, int keyCount) => currentSkin.GetLongNoteBody(lane, keyCount) ?? defaultSkin.GetLongNoteBody(lane, keyCount);
+    Drawable ISkin.GetLongNoteEnd(int lane, int keyCount) => currentSkin.GetLongNoteEnd(lane, keyCount) ?? defaultSkin.GetLongNoteEnd(lane, keyCount);
+    VisibilityContainer ISkin.GetColumnLighting(int lane, int keyCount) => currentSkin.GetColumnLighting(lane, keyCount) ?? defaultSkin.GetColumnLighting(lane, keyCount);
+    Drawable ISkin.GetReceptor(int lane, int keyCount, bool down) => currentSkin.GetReceptor(lane, keyCount, down) ?? defaultSkin.GetReceptor(lane, keyCount, down);
+    Drawable ISkin.GetHitLine() => currentSkin.GetHitLine() ?? defaultSkin.GetHitLine();
+    AbstractJudgementText ISkin.GetJudgement(Judgement judgement, bool isLate) => currentSkin.GetJudgement(judgement, isLate) ?? defaultSkin.GetJudgement(judgement, isLate);
 
-    public Drawable GetResultsScoreRank(ScoreRank rank) => currentSkin.GetResultsScoreRank(rank) ?? defaultSkin.GetResultsScoreRank(rank);
+    Drawable ISkin.GetFailFlash() => currentSkin.GetFailFlash() ?? defaultSkin.GetFailFlash();
 
-    public Sample GetHitSample() => currentSkin.GetHitSample() ?? defaultSkin.GetHitSample();
-    public Sample[] GetMissSamples() => currentSkin.GetMissSamples() ?? defaultSkin.GetMissSamples();
-    public Sample GetFailSample() => currentSkin.GetFailSample() ?? defaultSkin.GetFailSample();
-    public Sample GetRestartSample() => currentSkin.GetRestartSample() ?? defaultSkin.GetRestartSample();
-    public Sample GetFullComboSample() => currentSkin.GetFullComboSample() ?? defaultSkin.GetFullComboSample();
-    public Sample GetAllFlawlessSample() => currentSkin.GetAllFlawlessSample() ?? defaultSkin.GetAllFlawlessSample();
+    Drawable ISkin.GetResultsScoreRank(ScoreRank rank) => currentSkin.GetResultsScoreRank(rank) ?? defaultSkin.GetResultsScoreRank(rank);
+
+    Sample ISkin.GetHitSample() => currentSkin.GetHitSample() ?? defaultSkin.GetHitSample();
+    Sample[] ISkin.GetMissSamples() => currentSkin.GetMissSamples() ?? defaultSkin.GetMissSamples();
+    Sample ISkin.GetFailSample() => currentSkin.GetFailSample() ?? defaultSkin.GetFailSample();
+    Sample ISkin.GetRestartSample() => currentSkin.GetRestartSample() ?? defaultSkin.GetRestartSample();
+    Sample ISkin.GetFullComboSample() => currentSkin.GetFullComboSample() ?? defaultSkin.GetFullComboSample();
+    Sample ISkin.GetAllFlawlessSample() => currentSkin.GetAllFlawlessSample() ?? defaultSkin.GetAllFlawlessSample();
+
+    #endregion
 }

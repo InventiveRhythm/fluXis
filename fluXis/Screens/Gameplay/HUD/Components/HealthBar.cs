@@ -13,7 +13,7 @@ namespace fluXis.Screens.Gameplay.HUD.Components;
 public partial class HealthBar : GameplayHUDComponent
 {
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private ISkin skin { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -31,8 +31,8 @@ public partial class HealthBar : GameplayHUDComponent
 
         InternalChildren = new[]
         {
-            skinManager.GetHealthBarBackground(),
-            bar = skinManager.GetHealthBar(HealthProcessor),
+            skin.GetHealthBarBackground(),
+            bar = skin.GetHealthBar(HealthProcessor),
             icon = new FluXisSpriteIcon
             {
                 Size = new Vector2(24),

@@ -14,7 +14,7 @@ public partial class MapBackground : Sprite, IHasLoadedValue
     private RealmMap map;
 
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private ISkin skin { get; set; }
 
     [CanBeNull]
     public RealmMap Map
@@ -47,7 +47,7 @@ public partial class MapBackground : Sprite, IHasLoadedValue
     private void setTexture()
     {
         var custom = cropped ? Map?.GetPanelBackground() : Map?.GetBackground();
-        Texture = custom ?? skinManager.GetDefaultBackground();
+        Texture = custom ?? skin.GetDefaultBackground();
     }
 
     public override void Show() => this.FadeInFromZero(400).OnComplete(_ => Loaded = true);

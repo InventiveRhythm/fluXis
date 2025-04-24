@@ -2,6 +2,7 @@ using System;
 using fluXis.Input;
 using fluXis.Map.Structures;
 using fluXis.Scoring.Enums;
+using fluXis.Screens.Gameplay.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -14,6 +15,9 @@ public partial class DrawableTickNote : DrawableHitObject
     public override bool CanBeRemoved => Judged || wouldMiss;
 
     private bool wouldMiss => Time.Current - Data.Time > HitWindows.TimingFor(HitWindows.LowestHitable);
+
+    [Resolved]
+    private GameplayInput input { get; set; }
 
     private bool isBeingHeld;
     private double? holdStartTime;
@@ -39,7 +43,7 @@ public partial class DrawableTickNote : DrawableHitObject
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre
             },
-            SkinManager.GetTickNote(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0)
+            Skin.GetTickNote(VisualLane, ObjectManager.KeyCount, Data.HoldTime > 0)
         };
     }
 
@@ -75,8 +79,8 @@ public partial class DrawableTickNote : DrawableHitObject
     {
         if (!byUser)
         {
-            var judge = lagCompensation();
-            ApplyResult(HitWindows.TimingFor(judge ?? HitWindows.Lowest));
+            var off = lagCompensation();
+            ApplyResult(off ?? HitWindows.TimingFor(HitWindows.Lowest));
             return;
         }
 
@@ -85,31 +89,33 @@ public partial class DrawableTickNote : DrawableHitObject
 
         if (wouldMiss)
         {
-            var judge = lagCompensation();
+            var off = lagCompensation();
 
-            if (judge != null)
+            if (off != null)
             {
-                ApplyResult(HitWindows.TimingFor(judge.Value));
+                ApplyResult(off.Value);
                 return;
             }
         }
 
         ObjectManager.PlayHitSound(Data, false);
-        ApplyResult(offset);
+        ApplyResult(lagCompensation() ?? offset);
+        return;
 
-        Judgement? lagCompensation()
+        double? lagCompensation()
         {
-            Judgement judge;
+            double off;
 
             if (isBeingHeld && holdStartTime != null)
             {
                 var delta = holdStartTime.Value - Data.Time;
-                judge = delta < HitWindows.TimingFor(Judgement.Flawless) ? Judgement.Flawless : HitWindows.JudgementFor(delta);
+
+                off = delta < 0 ? 0 : delta;
             }
             else
                 return null;
 
-            return judge;
+            return off;
         }
     }
 
@@ -128,7 +134,9 @@ public partial class DrawableTickNote : DrawableHitObject
         }
 
         isBeingHeld = true;
-        holdStartTime = Time.Current;
+
+        var idx = input.Keys.IndexOf(key);
+        holdStartTime = input.PressTimes[idx];
     }
 
     public override void OnReleased(FluXisGameplayKeybind key)

@@ -26,7 +26,7 @@ public partial class DrawableLongNotePart : CompositeDrawable
     protected HitObjectManager ObjectManager { get; private set; }
 
     [Resolved]
-    protected SkinManager SkinManager { get; private set; }
+    protected ISkin Skin { get; private set; }
 
     [Resolved]
     protected RulesetContainer Ruleset { get; private set; }

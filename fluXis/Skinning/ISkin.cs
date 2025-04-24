@@ -16,6 +16,7 @@ public interface ISkin : IDisposable
 {
     SkinJson SkinJson { get; }
 
+    Texture GetIcon();
     Texture GetDefaultBackground();
 
     Sample GetUISample(UISamples.SampleType type);

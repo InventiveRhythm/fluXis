@@ -36,14 +36,14 @@ public partial class ResultsContent : CompositeDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skins)
+    private void load(ISkin skin)
     {
         RelativeSizeAxes = Axes.Both;
         Padding = new MarginPadding(20) { Bottom = 100 };
 
         InternalChildren = new[]
         {
-            rank = skins.GetResultsScoreRank(score.Rank).With(d =>
+            rank = skin.GetResultsScoreRank(score.Rank).With(d =>
             {
                 d.RelativePositionAxes = Axes.X;
                 d.X = 0.5f;
@@ -83,7 +83,7 @@ public partial class ResultsContent : CompositeDrawable
                                     {
                                         ChildrenEnumerable = new Drawable[]
                                         {
-                                            new ResultsSideJudgements(skins, score),
+                                            new ResultsSideJudgements(skin, score),
                                             new ResultsSideMore(score)
                                         }.Concat(leftContent)
                                     },

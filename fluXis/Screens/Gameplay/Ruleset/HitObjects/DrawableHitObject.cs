@@ -25,7 +25,7 @@ public partial class DrawableHitObject : CompositeDrawable
     protected GameplayInput Input { get; private set; }
 
     [Resolved]
-    protected SkinManager SkinManager { get; private set; }
+    protected ISkin Skin { get; private set; }
 
     public HitObject Data { get; }
     protected double ScrollVelocityTime { get; private set; }

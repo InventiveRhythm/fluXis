@@ -16,11 +16,11 @@ public partial class GameplaySamples : Component
     private SampleChannel failChannel;
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skins, ISampleStore samples)
+    private void load(ISkin skin, ISampleStore samples)
     {
-        restartSample = skins.GetRestartSample();
-        missSamples = skins.GetMissSamples();
-        failSample = skins.GetFailSample();
+        restartSample = skin.GetRestartSample();
+        missSamples = skin.GetMissSamples();
+        failSample = skin.GetFailSample();
         earlyFailSample = samples.Get("Gameplay/fail-no-fail");
     }
 

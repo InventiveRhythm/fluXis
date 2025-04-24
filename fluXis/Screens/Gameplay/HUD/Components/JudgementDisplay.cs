@@ -24,7 +24,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
     private LightController lightController { get; set; }
 
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private ISkin skin { get; set; }
 
     private AbstractJudgementText missGhost;
     private Container skinnableTextContainer;
@@ -47,7 +47,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
         InternalChildren = new Drawable[]
         {
             splash = new Splash(),
-            missGhost = skinManager.GetJudgement(Judgement.Miss, false).With(d =>
+            missGhost = skin.GetJudgement(Judgement.Miss, false).With(d =>
             {
                 d.Alpha = 0.5f;
                 d.Scale = new Vector2(1.4f);
@@ -86,7 +86,7 @@ public partial class JudgementDisplay : GameplayHUDComponent
 
         skinnableTextContainer.RemoveAll(_ => true, true);
 
-        var judgementText = skinManager.GetJudgement(judgement, result.Difference < 0);
+        var judgementText = skin.GetJudgement(judgement, result.Difference < 0);
         skinnableTextContainer.Add(judgementText);
         judgementText.Animate(showEarlyLate.Value);
 
@@ -96,13 +96,13 @@ public partial class JudgementDisplay : GameplayHUDComponent
         if (judgementSplash.Value)
             doSplash(judgement);
 
-        lightController.FadeColour(skinManager.SkinJson.GetColorForJudgement(judgement))
+        lightController.FadeColour(skin.SkinJson.GetColorForJudgement(judgement))
                        .FadeColour(Color4.Black, 400);
     }
 
     private void doSplash(Judgement judgement)
     {
-        splash.Colour = skinManager.SkinJson.GetColorForJudgement(judgement);
+        splash.Colour = skin.SkinJson.GetColorForJudgement(judgement);
         splash.Splat(judgement);
     }
 

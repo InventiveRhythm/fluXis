@@ -106,7 +106,7 @@ public partial class SkinEditor : FluXisScreen, IKeyBindingHandler<FluXisGlobalK
                                     playfield = new SkinEditorPlayfield
                                     {
                                         SkinJson = skinJson,
-                                        SkinManager = skinManager,
+                                        Skin = skinManager,
                                         KeyMode = keyMode.Value
                                     },
                                     new Container

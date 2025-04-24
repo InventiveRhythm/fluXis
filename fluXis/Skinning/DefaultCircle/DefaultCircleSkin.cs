@@ -21,6 +21,8 @@ public class DefaultCircleSkin : DefaultSkin
     {
     }
 
+    public override Texture GetIcon() => Textures.Get("Skins/circle.png");
+
     public override Drawable GetHitObject(int lane, int keyCount)
     {
         var piece = new DefaultCircleHitObjectPiece(SkinJson);
@@ -72,6 +74,12 @@ public class DefaultCircleSkin : DefaultSkin
     {
         // too lazy to find a better way
         var json = base.CreateJson();
+        json.Info = new SkinInfo
+        {
+            Name = SkinManager.DEFAULT_CIRCLE_SKIN_NAME,
+            Creator = "flustix",
+            Path = SkinManager.DEFAULT_CIRCLE_SKIN_NAME
+        };
         json.OneKey = json.TwoKey = json.ThreeKey = json.FourKey = json.FiveKey =
             json.SixKey = json.SevenKey = json.EightKey = json.NineKey = json.TenKey = create();
         return json;

@@ -21,6 +21,10 @@ public partial class UISamples : Component
     [Resolved(CanBeNull = true)]
     private SkinManager skinManager { get; set; }
 
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private ISkin skin { get; set; }
+
     private float pan => cursorOverlay?.RelativePosition.X ?? 0;
 
     private Sample back;
@@ -36,6 +40,7 @@ public partial class UISamples : Component
     private Sample panelDangerOpen;
     private Sample panelClose;
     private Sample panelDangerClose;
+    private Sample skinSelectClick;
 
     private Bindable<double> panStrength;
 
@@ -49,11 +54,11 @@ public partial class UISamples : Component
     {
         panStrength = config.GetBindable<double>(FluXisSetting.UIPanning);
 
-        back = skinManager?.GetUISample(SampleType.Back);
-        select = skinManager?.GetUISample(SampleType.Select);
-        hover = skinManager?.GetUISample(SampleType.Hover);
-        click = skinManager?.GetUISample(SampleType.Click);
-        clickDisabled = skinManager?.GetUISample(SampleType.ClickDisabled);
+        back = skin?.GetUISample(SampleType.Back);
+        select = skin?.GetUISample(SampleType.Select);
+        hover = skin?.GetUISample(SampleType.Hover);
+        click = skin?.GetUISample(SampleType.Click);
+        clickDisabled = skin?.GetUISample(SampleType.ClickDisabled);
         dropdownOpen = samples.Get("UI/dropdown-open");
         dropdownClose = samples.Get("UI/dropdown-close");
         overlayOpen = samples.Get("UI/Overlay/open");
@@ -62,6 +67,7 @@ public partial class UISamples : Component
         panelDangerOpen = samples.Get("UI/panel-open-danger");
         panelClose = samples.Get("UI/panel-close");
         panelDangerClose = samples.Get("UI/panel-close-danger");
+        skinSelectClick = skin?.GetUISample(SampleType.SkinSelectClick);
     }
 
     protected override void LoadComplete()
@@ -102,12 +108,13 @@ public partial class UISamples : Component
         click?.Dispose();
         clickDisabled?.Dispose();
 
-        // we're sure skinManager is not null here
-        back = skinManager!.GetUISample(SampleType.Back);
-        select = skinManager.GetUISample(SampleType.Select);
-        hover = skinManager.GetUISample(SampleType.Hover);
-        click = skinManager.GetUISample(SampleType.Click);
-        clickDisabled = skinManager.GetUISample(SampleType.ClickDisabled);
+        // we're sure skin is not null here
+        back = skin!.GetUISample(SampleType.Back);
+        select = skin.GetUISample(SampleType.Select);
+        hover = skin.GetUISample(SampleType.Hover);
+        click = skin.GetUISample(SampleType.Click);
+        clickDisabled = skin.GetUISample(SampleType.ClickDisabled);
+        skinSelectClick = skin.GetUISample(SampleType.SkinSelectClick);
     }
 
     public void Back() => back?.Play();
@@ -127,6 +134,17 @@ public partial class UISamples : Component
     {
         customPan = customPan >= 0 ? customPan : pan;
         PlayPanned(disabled ? clickDisabled : click, customPan);
+    }
+
+    public void SkinSelectClick()
+    {
+        if (skinSelectClick == null)
+        {
+            Click();
+            return;
+        }
+
+        PlayPanned(skinSelectClick, pan, true);
     }
 
     public void Dropdown(bool close)
@@ -170,6 +188,7 @@ public partial class UISamples : Component
         Select,
         Hover,
         Click,
-        ClickDisabled
+        ClickDisabled,
+        SkinSelectClick
     }
 }

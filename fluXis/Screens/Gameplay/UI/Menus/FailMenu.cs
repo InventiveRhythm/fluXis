@@ -35,7 +35,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
     private bool failed;
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skins, FluXisConfig config)
+    private void load(ISkin skin, FluXisConfig config)
     {
         dimOnLowHealth = config.GetBindable<bool>(FluXisSetting.DimAndFade);
 
@@ -115,7 +115,7 @@ public partial class FailMenu : Container, IKeyBindingHandler<FluXisGlobalKeybin
                     }
                 }
             },
-            flash = skins.GetFailFlash().With(d =>
+            flash = skin.GetFailFlash().With(d =>
             {
                 d.RelativeSizeAxes = Axes.Both;
                 d.Size = Vector2.One;

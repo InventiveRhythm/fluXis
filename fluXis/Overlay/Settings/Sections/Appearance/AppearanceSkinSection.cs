@@ -1,17 +1,23 @@
-using fluXis.Configuration;
+using System.Linq;
+using fluXis.Audio;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Panel.Presets;
 using fluXis.Localization;
 using fluXis.Localization.Categories.Settings;
+using fluXis.Overlay.Settings.Sections.Appearance.Skin;
 using fluXis.Overlay.Settings.UI;
 using fluXis.Skinning;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
+using osuTK;
 
 namespace fluXis.Overlay.Settings.Sections.Appearance;
 
@@ -25,7 +31,7 @@ public partial class AppearanceSkinSection : SettingsSubSection
     [Resolved]
     private SkinManager skinManager { get; set; }
 
-    private SettingsDropdown<string> currentDropdown;
+    private FillFlowContainer skinFlow;
     private BindableBool buttonsEnabled;
 
     [BackgroundDependencyLoader(true)]
@@ -33,21 +39,25 @@ public partial class AppearanceSkinSection : SettingsSubSection
     {
         buttonsEnabled = new BindableBool(true);
 
+        RightSide.Add(new RefreshButton { Action = skinManager.ReloadSkinList });
+
         AddRange(new Drawable[]
         {
-            currentDropdown = new SettingsDropdown<string>
+            skinFlow = new FillFlowContainer
             {
-                Label = strings.SkinCurrent,
-                Description = strings.SkinCurrentDescription,
-                Bindable = Config.GetBindable<string>(FluXisSetting.SkinName),
-                Items = skinManager.GetSkinNames()
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Full,
+                Spacing = new Vector2(20),
+                ChildrenEnumerable = skinManager.AvailableSkins.Select(x => new SkinIcon(x)),
+                Margin = new MarginPadding { Bottom = 8 }
             },
             new SettingsButton
             {
-                Label = strings.SkinRefresh,
-                Description = strings.SkinRefreshDescription,
-                ButtonText = "Refresh",
-                Action = reloadList
+                Label = strings.SkinOpenFolder,
+                Description = strings.SkinOpenFolderDescription,
+                Action = skinManager.OpenFolder,
+                ButtonText = "Open"
             },
             new SettingsButton
             {
@@ -56,13 +66,6 @@ public partial class AppearanceSkinSection : SettingsSubSection
                 ButtonText = "Open",
                 Action = () => game?.OpenSkinEditor(),
                 EnabledBindable = buttonsEnabled
-            },
-            new SettingsButton
-            {
-                Label = strings.SkinOpenFolder,
-                Description = strings.SkinOpenFolderDescription,
-                Action = skinManager.OpenFolder,
-                ButtonText = "Open"
             },
             new SettingsButton
             {
@@ -99,5 +102,76 @@ public partial class AppearanceSkinSection : SettingsSubSection
         skinManager.SkinListChanged += reloadList;
     }
 
-    private void reloadList() => currentDropdown.Items = skinManager.GetSkinNames();
+    private void reloadList()
+    {
+        skinFlow.Clear();
+        skinFlow.ChildrenEnumerable = skinManager.AvailableSkins.Select(x => new SkinIcon(x));
+    }
+
+    private partial class RefreshButton : ClickableContainer
+    {
+        [Resolved]
+        private UISamples samples { get; set; }
+
+        private HoverLayer hover { get; }
+        private FlashLayer flash { get; }
+
+        public RefreshButton()
+        {
+            AutoSizeAxes = Axes.X;
+            Height = 32;
+            CornerRadius = 16;
+            Masking = true;
+
+            InternalChildren = new Drawable[]
+            {
+                hover = new HoverLayer(),
+                flash = new FlashLayer(),
+                new FillFlowContainer
+                {
+                    AutoSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Padding = new MarginPadding(16),
+                    Spacing = new Vector2(6),
+                    Children = new Drawable[]
+                    {
+                        new FluXisSpriteIcon
+                        {
+                            Icon = FontAwesome.Solid.Sync,
+                            Size = new Vector2(14),
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft
+                        },
+                        new FluXisSpriteText
+                        {
+                            Text = "Refresh",
+                            WebFontSize = 14,
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft
+                        }
+                    }
+                }
+            };
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            hover.Show();
+            samples.Hover();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            hover.Hide();
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            flash.Show();
+            samples.Click();
+            return base.OnClick(e);
+        }
+    }
 }

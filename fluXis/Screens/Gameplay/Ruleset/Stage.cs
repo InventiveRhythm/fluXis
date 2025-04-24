@@ -12,7 +12,7 @@ namespace fluXis.Screens.Gameplay.Ruleset;
 public partial class Stage : Container
 {
     [Resolved]
-    private SkinManager skinManager { get; set; }
+    private ISkin skin { get; set; }
 
     private Container center;
     private Container left;
@@ -64,7 +64,7 @@ public partial class Stage : Container
 
         foreach (var part in parts)
         {
-            var drawable = skinManager.GetStageBackgroundPart(part);
+            var drawable = skin.GetStageBackgroundPart(part);
 
             if (drawable is null)
                 return;

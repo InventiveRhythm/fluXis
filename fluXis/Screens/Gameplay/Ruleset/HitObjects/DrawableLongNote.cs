@@ -42,7 +42,7 @@ public partial class DrawableLongNote : DrawableHitObject
     {
         InternalChildren = new[]
         {
-            bodyPiece = SkinManager.GetLongNoteBody(VisualLane, ObjectManager.KeyCount).With(d =>
+            bodyPiece = Skin.GetLongNoteBody(VisualLane, ObjectManager.KeyCount).With(d =>
             {
                 d.Anchor = Anchor.BottomCentre;
                 d.Origin = Anchor.BottomCentre;

@@ -24,7 +24,7 @@ namespace fluXis.Skinning.Default;
 public class DefaultSkin : ISkin
 {
     public SkinJson SkinJson { get; }
-    private TextureStore textures { get; }
+    protected TextureStore Textures { get; }
     private ISampleStore samples { get; }
 
     public const float BORDER_BASE = 8;
@@ -33,13 +33,22 @@ public class DefaultSkin : ISkin
     public DefaultSkin(TextureStore textures, ISampleStore samples)
     {
         SkinJson = CreateJson();
-        this.textures = textures;
+        Textures = textures;
         this.samples = samples;
     }
 
-    protected virtual SkinJson CreateJson() => new DefaultSkinJson();
+    protected virtual SkinJson CreateJson() => new DefaultSkinJson
+    {
+        Info = new SkinInfo
+        {
+            Name = SkinManager.DEFAULT_SKIN_NAME,
+            Creator = "flustix",
+            Path = SkinManager.DEFAULT_SKIN_NAME
+        }
+    };
 
-    public Texture GetDefaultBackground() => textures.Get("Backgrounds/default.png");
+    public virtual Texture GetIcon() => Textures.Get("Skins/default.png");
+    public Texture GetDefaultBackground() => Textures.Get("Backgrounds/default.png");
 
     public Sample GetUISample(UISamples.SampleType type)
     {
@@ -155,7 +164,7 @@ public class DefaultSkin : ISkin
     public void Dispose()
     {
         GC.SuppressFinalize(this);
-        textures?.Dispose();
+        Textures?.Dispose();
         samples?.Dispose();
     }
 }

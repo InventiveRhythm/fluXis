@@ -33,11 +33,11 @@ public partial class CourseScreen : FluXisScreen, IKeyBindingHandler<FluXisGloba
     }
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skinManager)
+    private void load(ISkin skin)
     {
-        sampleConfirm = skinManager.GetCourseSample(SampleType.Confirm);
-        sampleComplete = skinManager.GetCourseSample(SampleType.Complete);
-        sampleFailed = skinManager.GetCourseSample(SampleType.Failed);
+        sampleConfirm = skin.GetCourseSample(SampleType.Confirm);
+        sampleComplete = skin.GetCourseSample(SampleType.Complete);
+        sampleFailed = skin.GetCourseSample(SampleType.Failed);
 
         InternalChildren = new Drawable[]
         {

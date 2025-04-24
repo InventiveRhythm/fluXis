@@ -23,13 +23,13 @@ public partial class FullComboOverlay : CompositeDrawable
     private Sample sampleAllFlawless;
 
     [BackgroundDependencyLoader]
-    private void load(SkinManager skins)
+    private void load(ISkin skin)
     {
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        sampleFullCombo = skins.GetFullComboSample();
-        sampleAllFlawless = skins.GetAllFlawlessSample();
+        sampleFullCombo = skin.GetFullComboSample();
+        sampleAllFlawless = skin.GetAllFlawlessSample();
 
         InternalChildren = new Drawable[]
         {
