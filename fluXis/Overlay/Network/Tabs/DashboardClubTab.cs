@@ -1,11 +1,14 @@
-﻿using fluXis.Graphics.Containers;
+﻿using System.Linq;
+using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Online.API.Models.Clubs;
+using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Clubs;
 using fluXis.Online.Drawables;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Club;
+using fluXis.Overlay.Network.Tabs.Shared;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -94,9 +97,11 @@ public partial class DashboardClubTab : DashboardTab
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
                 Padding = new MarginPadding { Top = 24, Horizontal = 16 },
+                Spacing = new Vector2(24),
                 Children = new Drawable[]
                 {
-                    new DashboardClubOnlineMembers(club)
+                    new DashboardItemList<APIUser>("Online Members", club.Members!.Where(x => x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
+                    new DashboardItemList<APIUser>("Offline Members", club.Members!.Where(x => !x.IsOnline).ToList(), u => new DrawableUserCard(u) { Width = 338 }),
                 }
             }
         }
