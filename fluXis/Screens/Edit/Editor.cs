@@ -67,6 +67,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public override float BackgroundBlur => BindableBackgroundBlur.Value;
     public override bool AllowMusicControl => false;
     public override bool ApplyValuesAfterLoad => true;
+    public override float ParallaxStrength => 0f;
 
     [Resolved]
     private NotificationManager notifications { get; set; }
@@ -148,6 +149,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     public Bindable<float> BindableBackgroundBlur { get; private set; }
 
     public ChartingContainer ChartingContainer { get; set; }
+    private VerifyTab verifyTab;
 
     public Editor(EditorLoader loader, RealmMap realmMap = null, EditorMap.EditorMapInfo map = null)
     {
@@ -219,6 +221,8 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
         if (experiments.Get<bool>(ExperimentConfig.StoryboardTab))
             tabList.Add(new StoryboardTab());
+
+        tabList.Add(verifyTab = new VerifyTab());
 
         InternalChild = new EditorKeybindingContainer(this, realm)
         {
@@ -835,6 +839,29 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
             {
                 notifications.SendError("Map is from another game!");
                 Schedule(() => panels.Content?.Hide());
+                return;
+            }
+
+            var checking = true;
+            Schedule(() =>
+            {
+                verifyTab.RefreshIssues();
+                checking = false;
+            });
+
+            while (checking)
+                await Task.Delay(100);
+
+            if (verifyTab.ProblematicIssues > 0)
+            {
+                Schedule(() => panels.Content = new SingleButtonPanel(
+                    FontAwesome6.Solid.ExclamationTriangle,
+                    "Issues found!",
+                    $"You have {verifyTab.ProblematicIssues} problematic issue(s) in your mapset.\n" +
+                    "Please fix them before uploading.\n" +
+                    "You can check the issues in the verify tab."
+                ));
+
                 return;
             }
 
