@@ -272,10 +272,14 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
         foreach (var entry in zip.Entries)
         {
-            var filePath = Path.Combine(path, entry.FullName);
+            if (entry.FullName.EndsWith('/') || entry.FullName.EndsWith('\\'))
+                continue;
 
-            if (filePath.Contains(Path.DirectorySeparatorChar))
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            var filePath = Path.Combine(path, entry.FullName);
+            var dir = Path.GetDirectoryName(filePath);
+
+            if (dir != null && !Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
             entry.ExtractToFile(filePath, true);
         }
@@ -285,9 +289,10 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
         Schedule(() =>
         {
-            SkinListChanged?.Invoke();
+            ReloadSkinList();
             skinName.Value = folder;
         });
+
         return true;
     }
 
