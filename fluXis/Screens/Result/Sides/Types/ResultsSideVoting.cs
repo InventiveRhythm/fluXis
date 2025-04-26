@@ -157,7 +157,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
         [Resolved]
         private UISamples samples { get; set; }
 
-        public bool Active { set => Colour = value ? color : FluXisColors.Background5; }
+        public bool Active { set => Colour = value ? color : FluXisColors.Background6; }
 
         private Colour4 color { get; }
         private IconUsage icon { get; }
