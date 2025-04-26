@@ -4,7 +4,6 @@ using System.IO;
 using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
-using fluXis.Skinning;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -17,9 +16,6 @@ public partial class SteamManager : Component, ISteamManager
 {
     [Resolved]
     private IAPIClient api { get; set; }
-
-    [Resolved]
-    private SkinManager skinManager { get; set; }
 
     public uint AppID => 3440100;
     public bool Initialized { get; }

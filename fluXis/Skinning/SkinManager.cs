@@ -150,7 +150,7 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
             extra.Add(info);
         }
 
-        if (steam is not null)
+        if (steam?.WorkshopItems != null)
         {
             foreach (var item in steam.WorkshopItems)
             {
