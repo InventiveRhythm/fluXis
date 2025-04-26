@@ -208,7 +208,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                     Children = new Drawable[]
                                     {
                                         new MapSetSidebarMapper(bindableMap),
-                                        new MapSetSidebarVoting(bindableMap),
+                                        new MapSetSidebarVoting(set),
                                         new MapSetSidebarStats(bindableMap)
                                     }
                                 }

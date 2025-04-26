@@ -5,7 +5,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Online.API.Requests.Maps.Votes;
+using fluXis.Online.API.Requests.MapSets.Votes;
 using fluXis.Online.Fluxel;
 using Humanizer;
 using osu.Framework.Allocation;
@@ -45,7 +45,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
         base.LoadComplete();
 
         sendingRequest = true;
-        var req = new MapVotesRequest(map.OnlineID);
+        var req = new MapVotesRequest(map.MapSet.OnlineID);
         req.Success += res => setData(res.Data);
         req.Failure += _ =>
         {
@@ -80,7 +80,7 @@ public partial class ResultsSideVoting : ResultsSideContainer
             if (currentVote == value)
                 vote = 0;
 
-            var req = new MapVotesUpdateRequest(map.OnlineID, vote);
+            var req = new MapVotesUpdateRequest(map.MapSet.OnlineID, vote);
             req.Success += res => setData(res.Data);
             req.Failure += ex =>
             {

@@ -69,8 +69,6 @@ public partial class TestMapCard : FluXisTestScene
                     MaxCombo = 488,
                     NotesPerSecond = 14.24,
                     Rating = 8,
-                    UpVotes = 4,
-                    DownVotes = 6,
                     FileName = "195769352.fsc"
                 }
             }

@@ -30,7 +30,7 @@ public partial class SoloResults : Results
     {
         var list = new List<Drawable>();
 
-        if (Map.OnlineID > 0)
+        if (Map.MapSet.OnlineID > 0)
             list.Add(new ResultsSideVoting());
 
         list.Add(new ResultsSideRankings(SubmitRequest));

@@ -3,7 +3,6 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Maps;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -13,16 +12,11 @@ namespace fluXis.Overlay.MapSet.Sidebar;
 
 public partial class MapSetSidebarVoting : FillFlowContainer
 {
-    private Bindable<APIMap> mapBind { get; }
+    private APIMapSet set { get; }
 
-    private Circle progress;
-    private FluXisSpriteText upCount;
-    private FluXisSpriteText percent;
-    private FluXisSpriteText downCount;
-
-    public MapSetSidebarVoting(Bindable<APIMap> mapBind)
+    public MapSetSidebarVoting(APIMapSet set)
     {
-        this.mapBind = mapBind;
+        this.set = set;
     }
 
     [BackgroundDependencyLoader]
@@ -32,6 +26,9 @@ public partial class MapSetSidebarVoting : FillFlowContainer
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
         Spacing = new Vector2(6);
+
+        var total = set.UpVotes + set.DownVotes;
+        var progress = total == 0 ? .5f : set.UpVotes / (float)total;
 
         InternalChildren = new Drawable[]
         {
@@ -54,11 +51,11 @@ public partial class MapSetSidebarVoting : FillFlowContainer
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.VoteDown
                     },
-                    progress = new Circle
+                    new Circle
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.VoteUp,
-                        Width = 0.5f
+                        Width = progress
                     }
                 }
             },
@@ -68,21 +65,24 @@ public partial class MapSetSidebarVoting : FillFlowContainer
                 Height = 20,
                 Children = new Drawable[]
                 {
-                    upCount = new FluXisSpriteText
+                    new FluXisSpriteText
                     {
+                        Text = $"{set.UpVotes}",
                         WebFontSize = 14,
                         Colour = FluXisColors.VoteUp,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft
                     },
-                    percent = new FluXisSpriteText
+                    new FluXisSpriteText
                     {
+                        Text = $"{(int)(progress * 100)}%",
                         WebFontSize = 14,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
-                    downCount = new FluXisSpriteText
+                    new FluXisSpriteText
                     {
+                        Text = $"{set.DownVotes}",
                         WebFontSize = 14,
                         Colour = FluXisColors.VoteDown,
                         Anchor = Anchor.CentreRight,
@@ -91,22 +91,5 @@ public partial class MapSetSidebarVoting : FillFlowContainer
                 }
             }
         };
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        mapBind.BindValueChanged(e =>
-        {
-            var map = e.NewValue;
-            upCount.Text = $"{map.UpVotes}";
-            downCount.Text = $"{map.DownVotes}";
-
-            var total = map.UpVotes + map.DownVotes;
-            var p = total == 0 ? .5f : map.UpVotes / (float)total;
-            percent.Text = $"{(int)(p * 100)}%";
-            progress.ResizeWidthTo(p, 300, Easing.OutQuint);
-        }, true);
     }
 }

@@ -47,6 +47,12 @@ public class APIMapSet
     [JsonProperty("updated")]
     public long LastUpdated { get; set; }
 
+    [JsonProperty("ups")]
+    public long UpVotes { get; init; }
+
+    [JsonProperty("downs")]
+    public long DownVotes { get; init; }
+
     #region Localization
 
     [JsonIgnore]

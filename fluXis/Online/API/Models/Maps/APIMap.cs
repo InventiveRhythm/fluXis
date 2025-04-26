@@ -71,12 +71,6 @@ public class APIMap
     [JsonProperty("effects")]
     public MapEffectType Effects { get; init; }
 
-    [JsonProperty("ups")]
-    public long UpVotes { get; init; }
-
-    [JsonProperty("downs")]
-    public long DownVotes { get; init; }
-
     #region Optional
 
     [JsonProperty("file")]

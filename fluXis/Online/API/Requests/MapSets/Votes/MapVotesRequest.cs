@@ -1,10 +1,10 @@
 ﻿using fluXis.Online.API.Models.Maps;
 
-namespace fluXis.Online.API.Requests.Maps.Votes;
+namespace fluXis.Online.API.Requests.MapSets.Votes;
 
 public class MapVotesRequest : APIRequest<APIMapVotes>
 {
-    protected override string Path => $"/map/{id}/votes";
+    protected override string Path => $"/mapset/{id}/votes";
 
     private long id { get; }
 
