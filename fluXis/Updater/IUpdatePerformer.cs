@@ -1,3 +1,5 @@
+#if VELOPACK_BUILD
+
 namespace fluXis.Updater;
 
 /// <summary>
@@ -16,3 +18,5 @@ public interface IUpdatePerformer
     /// </param>
     public void Perform(bool silent, bool beta);
 }
+
+#endif

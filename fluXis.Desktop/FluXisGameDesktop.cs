@@ -1,14 +1,17 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using fluXis.Configuration;
 using fluXis.Desktop.Integration;
 using fluXis.Integration;
 using fluXis.IPC;
-using fluXis.Updater;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
+
+#if VELOPACK_BUILD
+using System;
+using fluXis.Updater;
+#endif
 
 namespace fluXis.Desktop;
 
@@ -50,8 +53,6 @@ public partial class FluXisGameDesktop : FluXisGame
         WaitForReady(() => HandleDragDrop(args.ToArray()));
     }
 
-    protected override bool RestartOnClose() => (UpdatePerformer as VelopackUpdatePerformer)?.RestartOnClose() ?? false;
-
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
@@ -61,6 +62,9 @@ public partial class FluXisGameDesktop : FluXisGame
     protected override ISteamManager CreateSteam() => new SteamManager();
     public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
 
+#if VELOPACK_BUILD
+    protected override bool RestartOnClose() => (UpdatePerformer as VelopackUpdatePerformer)?.RestartOnClose() ?? false;
+
     public override IUpdatePerformer CreateUpdatePerformer()
     {
         if ((Steam?.Initialized ?? false) || !OperatingSystem.IsWindows())
@@ -68,4 +72,5 @@ public partial class FluXisGameDesktop : FluXisGame
 
         return new VelopackUpdatePerformer(NotificationManager);
     }
+#endif
 }

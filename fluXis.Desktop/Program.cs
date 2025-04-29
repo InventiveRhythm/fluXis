@@ -14,7 +14,10 @@ using osu.Framework.Platform;
 using osu.Framework;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
+
+#if VELOPACK_BUILD
 using Velopack;
+#endif
 
 namespace fluXis.Desktop;
 
@@ -24,7 +27,9 @@ public static class Program
 
     public static void Main(string[] args)
     {
+#if VELOPACK_BUILD
         VelopackApp.Build().Run();
+#endif
 
         if (args.Contains("--generate-langfiles"))
         {
@@ -68,7 +73,7 @@ public static class Program
         if (OperatingSystem.IsWindows())
             FileExtensionHelper.EnsureAssociationsSet();
 
-        using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { IPCPort = 44127 });
+        using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { IPCPipeName = name });
 
         switch (host.IsPrimaryInstance)
         {

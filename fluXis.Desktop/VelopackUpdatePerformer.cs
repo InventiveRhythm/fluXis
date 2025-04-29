@@ -1,3 +1,4 @@
+#if VELOPACK_BUILD
 using fluXis.Graphics.Sprites;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
@@ -71,3 +72,4 @@ public partial class VelopackUpdatePerformer : IUpdatePerformer
         }
     }
 }
+#endif

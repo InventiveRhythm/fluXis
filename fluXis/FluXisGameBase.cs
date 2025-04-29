@@ -37,7 +37,6 @@ using fluXis.Screens.Menu;
 using fluXis.Skinning;
 using fluXis.UI;
 using fluXis.UI.Tips;
-using fluXis.Updater;
 using fluXis.Utils;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
@@ -52,6 +51,10 @@ using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
+
+#if VELOPACK_BUILD
+using fluXis.Updater;
+#endif
 
 namespace fluXis;
 
@@ -94,11 +97,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     private KeybindStore keybindStore;
     private ImportManager importManager;
 
-    [CanBeNull]
-    protected IUpdatePerformer UpdatePerformer { get; private set; }
-
-    public bool CanUpdate => UpdatePerformer is not null;
-
     private Storage exportStorage;
     public Storage ExportStorage => exportStorage ??= Host.Storage.GetStorageForDirectory("export");
 
@@ -131,7 +129,6 @@ public partial class FluXisGameBase : osu.Framework.Game
     public string ClientHash { get; private set; }
 
     public virtual LightController CreateLightController() => new();
-    public virtual IUpdatePerformer CreateUpdatePerformer() => null;
 
     protected FluXisGameBase()
     {
@@ -186,7 +183,9 @@ public partial class FluXisGameBase : osu.Framework.Game
 
             cacheComponent(NotificationManager = new NotificationManager());
 
+#if VELOPACK_BUILD
             UpdatePerformer = CreateUpdatePerformer();
+#endif
 
             cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
             cacheComponent(APIClient as FluxelClient);
@@ -356,6 +355,13 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
+#if VELOPACK_BUILD
+    [CanBeNull]
+    protected IUpdatePerformer UpdatePerformer { get; private set; }
+
+    public bool CanUpdate => UpdatePerformer is not null;
+    public virtual IUpdatePerformer CreateUpdatePerformer() => null;
+
     public void PerformUpdateCheck(bool silent, Action then = null) => Task.Run(() =>
     {
         if (UpdatePerformer is null)
@@ -373,6 +379,9 @@ public partial class FluXisGameBase : osu.Framework.Game
             then?.Invoke();
         }
     });
+
+    protected virtual bool RestartOnClose() => false;
+#endif
 
     private Season getSeason()
     {
@@ -433,8 +442,10 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public virtual void Exit(bool restart)
     {
+#if VELOPACK_BUILD
         if (restart && !RestartOnClose())
             return;
+#endif
 
         APIClient.Disconnect();
         base.Exit();
@@ -442,8 +453,6 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     [CanBeNull]
     protected virtual ISteamManager CreateSteam() => null;
-
-    protected virtual bool RestartOnClose() => false;
 
     public override void SetHost(GameHost host)
     {

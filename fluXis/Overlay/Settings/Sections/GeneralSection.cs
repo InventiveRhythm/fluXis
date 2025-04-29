@@ -20,6 +20,7 @@ public partial class GeneralSection : SettingsSection
     {
         Add(new GeneralLanguageSection());
 
+#if VELOPACK_BUILD
         if (game.CanUpdate)
         {
             AddRange(new Drawable[]
@@ -28,6 +29,8 @@ public partial class GeneralSection : SettingsSection
                 new GeneralUpdatesSection(),
             });
         }
+
+#endif
 
         AddRange(new Drawable[]
         {

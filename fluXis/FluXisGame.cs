@@ -152,8 +152,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
         loadComponent(MenuScreen = new MenuScreen());
 
+#if VELOPACK_BUILD
         if (CanUpdate)
             LoadQueue.Push(new LoadTask("Checking for updates...", complete => PerformUpdateCheck(true, () => Schedule(complete))));
+#endif
 
         LoadQueue.Push(new LoadTask("Checking for bundled maps...", c =>
         {
@@ -452,8 +454,10 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
     public override void Exit(bool restart)
     {
+#if VELOPACK_BUILD
         if (restart && !RestartOnClose())
             return;
+#endif
 
         toolbar.Hide();
         globalClock.RateTo(0, 1500, Easing.Out);

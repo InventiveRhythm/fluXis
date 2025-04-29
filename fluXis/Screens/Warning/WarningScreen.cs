@@ -24,8 +24,10 @@ public partial class WarningScreen : FluXisScreen
     private FillFlowContainer epilepsyContainer;
     private FluXisTextFlow epilepsyText;
 
+#if VELOPACK_BUILD
     private FillFlowContainer earlyAccessContainer;
     private FluXisTextFlow earlyAccessText;
+#endif
 
     [BackgroundDependencyLoader]
     private void load()
@@ -62,6 +64,7 @@ public partial class WarningScreen : FluXisScreen
                     }
                 }
             },
+#if VELOPACK_BUILD
             earlyAccessContainer = new FillFlowContainer
             {
                 AlwaysPresent = true,
@@ -84,7 +87,8 @@ public partial class WarningScreen : FluXisScreen
                     {
                         AlwaysPresent = true,
                         AutoSizeAxes = Axes.Y,
-                        Text = "This means that the game is not finished yet and that you may encounter bugs and other issues.\n\nIf you encounter any issues, please report them on the GitHub repository or the Discord server.\n",
+                        Text =
+ "This means that the game is not finished yet and that you may encounter bugs and other issues.\n\nIf you encounter any issues, please report them on the GitHub repository or the Discord server.\n",
                         TextAnchor = Anchor.TopCentre,
                         FontSize = 30,
                         Anchor = Anchor.TopCentre,
@@ -94,6 +98,7 @@ public partial class WarningScreen : FluXisScreen
                     }
                 }
             }
+#endif
         };
     }
 
@@ -107,7 +112,9 @@ public partial class WarningScreen : FluXisScreen
         this.Delay(200).FadeIn().OnComplete(_ =>
         {
             epilepsyContainer.AutoSizeDuration = 99999;
+#if VELOPACK_BUILD
             earlyAccessContainer.AutoSizeDuration = 99999;
+#endif
         });
     }
 
@@ -130,7 +137,7 @@ public partial class WarningScreen : FluXisScreen
                             .FadeIn(FADE_DURATION)
                             .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
                 break;
-
+#if VELOPACK_BUILD
             case 2:
                 seq = earlyAccessContainer.FadeOut().ScaleTo(1.1f)
                                           .FadeInFromZero(FADE_DURATION)
@@ -143,12 +150,9 @@ public partial class WarningScreen : FluXisScreen
                                .FadeIn(FADE_DURATION)
                                .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
                 break;
-
-            case 3:
-                continueToMenu();
-                return;
-
+#endif
             default:
+                continueToMenu();
                 return;
         }
 

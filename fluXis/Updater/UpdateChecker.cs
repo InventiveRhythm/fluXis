@@ -1,3 +1,4 @@
+#if VELOPACK_BUILD
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,3 +83,4 @@ public class UpdateChecker
             : releases[0].TagName;
     }
 }
+#endif

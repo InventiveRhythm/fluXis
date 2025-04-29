@@ -1,3 +1,4 @@
+#if VELOPACK_BUILD
 using System;
 using fluXis.Configuration;
 using fluXis.Graphics.Sprites;
@@ -40,3 +41,4 @@ public partial class GeneralUpdatesSection : SettingsSubSection
         });
     }
 }
+#endif

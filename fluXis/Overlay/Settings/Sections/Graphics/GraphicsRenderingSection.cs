@@ -83,11 +83,19 @@ public partial class GraphicsRenderingSection : SettingsSubSection
         var panel = new ButtonPanel
         {
             Text = "Restart Required",
+#if VELOPACK_BUILD
             SubText = "Changing the renderer requires a restart to take effect.",
+#else
+            SubText = "Changing the renderer requires a restart to take effect. (You will have to open the game again manually.)",
+#endif
             Icon = FontAwesome6.Solid.ArrowsRotate,
             Buttons = new ButtonData[]
             {
+#if VELOPACK_BUILD
                 new PrimaryButtonData("Restart now.", () => game.Exit(true)),
+#else
+                new PrimaryButtonData("Exit now.", () => game.Exit(true)),
+#endif
                 new CancelButtonData("I'll do it later.")
             }
         };

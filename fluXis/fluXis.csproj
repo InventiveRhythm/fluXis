@@ -8,7 +8,8 @@
     <!-- So until I figure out how to change them using DotSettings or .editorconfig, -->
     <!-- I will keep this here -->
     <LangVersion>11</LangVersion>
-<!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
+    <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
+<!--    <DefineConstants>VELOPACK_BUILD</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
