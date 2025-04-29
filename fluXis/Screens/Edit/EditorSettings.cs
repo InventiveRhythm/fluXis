@@ -1,4 +1,3 @@
-using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Bindables;
 
 namespace fluXis.Screens.Edit;
@@ -18,8 +17,6 @@ public class EditorSettings
     }
 
     public Bindable<float> WaveformOpacity { get; } = new(.25f);
-    public BindableBool FlashUnderlay { get; } = new();
-    public BindableColour4 FlashUnderlayColor { get; } = new(FluXisColors.Background1);
     public Bindable<bool> ShowSamples { get; init; }
     public Bindable<bool> InvertedScroll { get; init; }
     public BindableBool ForceAspectRatio { get; } = new();

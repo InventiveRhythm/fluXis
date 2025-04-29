@@ -372,17 +372,6 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                                 }
                                             },
                                             new FluXisMenuSpacer(),
-                                            new("Flash underlay", FontAwesome6.Solid.LayerGroup, settings.FlashUnderlay.Toggle) { IsActive = () => settings.FlashUnderlay.Value },
-                                            new("Underlay color", FontAwesome6.Solid.Palette)
-                                            {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("Dark", () => settings.FlashUnderlayColor.Value = FluXisColors.Background1)
-                                                        { IsActive = () => settings.FlashUnderlayColor.Value == FluXisColors.Background1 },
-                                                    new("Light", () => settings.FlashUnderlayColor.Value = Colour4.White) { IsActive = () => settings.FlashUnderlayColor.Value == Colour4.White }
-                                                }
-                                            },
-                                            new FluXisMenuSpacer(),
                                             new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
                                                 { IsActive = () => settings.ShowSamples.Value },
                                             new FluXisMenuSpacer(),
