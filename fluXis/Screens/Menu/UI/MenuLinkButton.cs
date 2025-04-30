@@ -28,7 +28,7 @@ public partial class MenuLinkButton : Container, IHasTooltip
     public MenuLinkButton()
     {
         Size = new Vector2(40);
-        Alpha = .6f;
+        Alpha = .8f;
 
         Child = icon = new FluXisSpriteIcon
         {
@@ -48,7 +48,7 @@ public partial class MenuLinkButton : Container, IHasTooltip
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        this.FadeTo(.6f, 200);
+        this.FadeTo(.8f, 200);
     }
 
     protected override bool OnClick(ClickEvent e)

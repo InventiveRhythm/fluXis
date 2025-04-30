@@ -322,7 +322,7 @@ public partial class MenuScreen : FluXisScreen
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
                         Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(10),
+                        Spacing = new Vector2(16),
                         Alpha = 0,
                         X = -200,
                         Children = new Drawable[]
