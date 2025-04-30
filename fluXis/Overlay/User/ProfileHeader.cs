@@ -12,6 +12,7 @@ using fluXis.Online.Fluxel;
 using fluXis.Overlay.User.Header;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -33,8 +34,8 @@ public partial class ProfileHeader : Container
         this.user = user;
     }
 
-    [BackgroundDependencyLoader]
-    private void load(IAPIClient api)
+    [BackgroundDependencyLoader(true)]
+    private void load(IAPIClient api, [CanBeNull] FluXisGame game)
     {
         RelativeSizeAxes = Axes.X;
         Height = 420; // this is changed in Update()
@@ -146,7 +147,7 @@ public partial class ProfileHeader : Container
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Horizontal,
                                             Spacing = new Vector2(12),
-                                            Children = new[]
+                                            Children = new Drawable[]
                                             {
                                                 new ClubTag(user.Club)
                                                 {
@@ -156,7 +157,14 @@ public partial class ProfileHeader : Container
                                                     Anchor = Anchor.CentreLeft,
                                                     Origin = Anchor.CentreLeft
                                                 },
-                                                getName(user.PreferredName).With(d => d.Anchor = d.Origin = Anchor.CentreLeft)
+                                                new ClickableContainer
+                                                {
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Anchor = Anchor.CentreLeft,
+                                                    Origin = Anchor.CentreLeft,
+                                                    Child = getName(user.PreferredName),
+                                                    Action = () => game?.OpenLink($"{api.Endpoint.WebsiteRootUrl}/u/{user.ID}"),
+                                                }
                                             }
                                         },
                                         new FillFlowContainer
