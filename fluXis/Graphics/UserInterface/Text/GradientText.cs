@@ -4,6 +4,8 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Graphics.UserInterface.Text;
@@ -11,8 +13,10 @@ namespace fluXis.Graphics.UserInterface.Text;
 /// <summary>
 /// A container that displays text with a proper gradient.
 /// </summary>
-public partial class GradientText : FillFlowContainer
+public partial class GradientText : FillFlowContainer, IHasTooltip
 {
+    public LocalisableString TooltipText { get; set; }
+
     public new ColourInfo Colour
     {
         get => colour;
