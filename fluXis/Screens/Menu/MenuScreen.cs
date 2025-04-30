@@ -40,7 +40,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Input;
@@ -118,7 +117,7 @@ public partial class MenuScreen : FluXisScreen
     private const double inactivity_timeout = 60 * 1000;
 
     [BackgroundDependencyLoader]
-    private void load(GameHost host, TextureStore textures)
+    private void load(TextureStore textures)
     {
         forceSnow = config.GetBindable<bool>(FluXisSetting.ForceSnow);
 
@@ -261,7 +260,7 @@ public partial class MenuScreen : FluXisScreen
                                             Row = 2,
                                             Column = 2
                                         },
-                                        new MenuSmallButton
+                                        new MenuExitButton
                                         {
                                             Icon = FontAwesome6.Solid.DoorOpen,
                                             Action = Game.Exit,
