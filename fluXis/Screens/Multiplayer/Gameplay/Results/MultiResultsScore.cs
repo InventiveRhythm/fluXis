@@ -1,7 +1,7 @@
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
 using fluXis.Skinning;

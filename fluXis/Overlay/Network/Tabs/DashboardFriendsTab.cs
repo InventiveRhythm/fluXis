@@ -8,6 +8,7 @@ using fluXis.Online.API.Models.Social;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Social;
 using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Shared;
 using osu.Framework.Allocation;

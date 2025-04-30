@@ -9,7 +9,7 @@ using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Chat;
 using fluXis.Online.API.Requests.Chat;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
 using fluXis.Utils;

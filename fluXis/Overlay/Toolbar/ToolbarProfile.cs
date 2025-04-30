@@ -10,7 +10,7 @@ using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Input;
 using fluXis.Localization;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Auth;
 using fluXis.Overlay.User;

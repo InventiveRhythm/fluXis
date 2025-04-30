@@ -2,7 +2,7 @@
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

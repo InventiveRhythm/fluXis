@@ -2,7 +2,7 @@
 using fluXis.Graphics.Sprites;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Overlay.User;
 using fluXis.Utils;
 using JetBrains.Annotations;

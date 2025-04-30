@@ -4,17 +4,17 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Images;
 
 [LongRunningLoad]
-public partial class DrawableClubIcon : Sprite
+public partial class DrawableClubBanner : Sprite
 {
     [Resolved]
     private OnlineTextureStore store { get; set; }
 
     private APIClub club { get; }
 
-    public DrawableClubIcon(APIClub club)
+    public DrawableClubBanner(APIClub club)
     {
         this.club = club;
         FillMode = FillMode.Fill;
@@ -23,6 +23,6 @@ public partial class DrawableClubIcon : Sprite
     [BackgroundDependencyLoader]
     private void load()
     {
-        Texture = store.GetClubIcon(club.IconHash);
+        Texture = store.GetClubBanner(club.BannerHash);
     }
 }

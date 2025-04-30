@@ -4,7 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Images;
 
 [LongRunningLoad]
 public partial class DrawableOnlineBackground : Sprite

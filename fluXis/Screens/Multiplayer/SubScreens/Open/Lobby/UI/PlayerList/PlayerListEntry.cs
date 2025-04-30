@@ -5,7 +5,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Multi;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Multiplayer;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
