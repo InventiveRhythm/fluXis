@@ -9,6 +9,7 @@ using fluXis.Map;
 using fluXis.Mods;
 using fluXis.Scoring.Processing;
 using fluXis.Utils;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
@@ -35,6 +36,22 @@ public partial class ModsOverlay : VisibilityContainer
     public BindableList<IMod> SelectedMods { get; } = new();
     public ModSelectRate RateMod { get; private set; }
     public Action<float> RateChanged { get; set; }
+
+    [CanBeNull]
+    public BufferedContainer BackgroundBlur { get; set; }
+
+    private float blur
+    {
+        get => BackgroundBlur?.BlurSigma.X / 8 ?? 0;
+        set
+        {
+            if (BackgroundBlur != null)
+            {
+                BackgroundBlur.BlurSigma = new Vector2(value * 6);
+                BackgroundBlur.FrameBufferScale = new Vector2(1 - value * .5f);
+            }
+        }
+    }
 
     private FullInputBlockingContainer background;
 
@@ -273,6 +290,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Show((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
+        this.TransformTo(nameof(blur), 1f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         sampleOpen?.Play();
     }
@@ -287,6 +305,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Hide((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
+        this.TransformTo(nameof(blur), 0f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         if (!first)
             sampleClose?.Play();
