@@ -55,7 +55,8 @@ public partial class DrawableChatMessage : Container
                     RelativeSizeAxes = Axes.Both,
                     ClickAction = () => profile.ShowUser(InitialMessage.Sender.ID),
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
+                    Origin = Anchor.Centre,
+                    ShowTooltip = true
                 },
                 OnComplete = a => a.FadeInFromZero(400)
             },

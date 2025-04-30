@@ -1,150 +1,219 @@
-using System;
-using System.Threading.Tasks;
+﻿using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Text;
+using fluXis.Online.API.Models.Users;
+using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
-using fluXis.Utils;
-using osu.Framework.Allocation;
+using fluXis.Overlay.Mouse;
+using fluXis.Utils.Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Online.Drawables.Users;
 
-public partial class UserTooltip : Container
+public partial class UserTooltip : CustomTooltipContainer<APIUser>
 {
-    [Resolved]
-    private UserCache users { get; set; }
+    private Container banner { get; }
+    private Container avatar { get; }
+    private FillFlowContainer topText { get; }
+    private ForcedHeightText bottomText { get; }
 
-    public long UserID { get; set; }
+    private FluXisSpriteIcon statusIcon;
+    private FluXisSpriteText statusText;
 
-    private FluXisSpriteText username;
-    private FluXisSpriteText onlineStatus;
-    private FluXisSpriteText lastOnline;
-    private DrawableAvatar avatar;
-    private DrawableBanner banner;
-    private Container loadingContainer;
+    private long lastId = -1;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    public UserTooltip()
     {
-        Height = 80;
+        AutoSizeAxes = Axes.Y;
         Width = 300;
-        CornerRadius = 20;
+        CornerRadius = 8;
+        Masking = true;
 
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
-            banner = new DrawableBanner(null)
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
-            },
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.Black.Opacity(.5f),
-                Width = .4f
+                Colour = FluXisColors.Background2
             },
-            new Box
+            new FillFlowContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                RelativePositionAxes = Axes.Both,
-                Colour = ColourInfo.GradientHorizontal(Colour4.Black.Opacity(.5f), Colour4.Black.Opacity(.2f)),
-                Width = .6f,
-                X = .4f
-            },
-            new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new MarginPadding(10),
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
                     new Container
                     {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Size = new Vector2(60),
-                        CornerRadius = 10,
-                        Masking = true,
-                        Child = avatar = new DrawableAvatar(null)
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fill,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre
-                        }
-                    },
-                    new Container
-                    {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Padding = new MarginPadding { Left = 70 },
+                        Height = 56,
+                        CornerRadius = 8,
+                        Masking = true,
                         Children = new Drawable[]
                         {
-                            username = new FluXisSpriteText
+                            banner = new Container { RelativeSizeAxes = Axes.Both },
+                            new Box
                             {
-                                Shadow = true,
-                                FontSize = 28
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = FluXisColors.Background2,
+                                Alpha = .5f
                             },
-                            onlineStatus = new FluXisSpriteText
+                            new FillFlowContainer
                             {
-                                Margin = new MarginPadding { Top = 24 },
-                                Shadow = true,
-                                FontSize = 18
-                            },
-                            lastOnline = new FluXisSpriteText
-                            {
-                                Margin = new MarginPadding { Top = 40 },
-                                Shadow = true,
-                                FontSize = 15
+                                RelativeSizeAxes = Axes.Both,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(8),
+                                Children = new Drawable[]
+                                {
+                                    avatar = new Container
+                                    {
+                                        Size = new Vector2(56),
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                    },
+                                    new FillFlowContainer
+                                    {
+                                        AutoSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Vertical,
+                                        Spacing = new Vector2(4),
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Children = new Drawable[]
+                                        {
+                                            topText = new FillFlowContainer
+                                            {
+                                                AutoSizeAxes = Axes.X,
+                                                Height = 14,
+                                                Direction = FillDirection.Horizontal,
+                                                Spacing = new Vector2(4)
+                                            },
+                                            bottomText = new ForcedHeightText()
+                                            {
+                                                Height = 14,
+                                                WebFontSize = 12,
+                                                Alpha = .8f,
+                                                Shadow = true
+                                            }
+                                        }
+                                    }
+                                },
                             }
                         }
-                    }
-                }
-            },
-            loadingContainer = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]
-                {
-                    new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = FluXisColors.Background4
                     },
-                    new LoadingIcon
+                    new FillFlowContainer()
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Size = new Vector2(30)
+                        RelativeSizeAxes = Axes.X,
+                        Height = 32,
+                        Padding = new MarginPadding { Horizontal = 12 },
+                        Spacing = new Vector2(4),
+                        Direction = FillDirection.Horizontal,
+                        Children = new Drawable[]
+                        {
+                            statusIcon = new FluXisSpriteIcon
+                            {
+                                Size = new Vector2(12),
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
+                            statusText = new FluXisSpriteText
+                            {
+                                WebFontSize = 10,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            }
+                        }
                     }
                 }
             }
         };
     }
 
-    protected override void LoadComplete()
+    public override void SetContent(APIUser user)
     {
-        base.LoadComplete();
-        Task.Run(loadUser);
-    }
+        if (user.ID == lastId)
+            return;
 
-    private void loadUser()
-    {
-        var user = users.Get(UserID);
+        lastId = user.ID;
 
-        avatar.UpdateUser(user);
-        banner.UpdateUser(user);
-        username.Text = user.Username;
-        onlineStatus.Text = user.IsOnline ? "Online" : "Offline";
-        lastOnline.Text = user.IsOnline ? "Right Now" : $"Last seen {TimeUtils.Ago(DateTimeOffset.FromUnixTimeSeconds(user.LastLogin ?? 0))}";
+        banner.Child = new LoadWrapper<DrawableBanner>
+        {
+            RelativeSizeAxes = Axes.Both,
+            LoadContent = () => new DrawableBanner(user)
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
+        };
 
-        Schedule(() => loadingContainer.FadeOut(200));
+        avatar.Child = new LoadWrapper<DrawableAvatar>
+        {
+            RelativeSizeAxes = Axes.Both,
+            CornerRadius = 8,
+            Masking = true,
+            LoadContent = () => new DrawableAvatar(user)
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre
+            },
+        };
+
+        topText.Clear();
+
+        if (user.Club is not null)
+        {
+            topText.Add(new ClubTag(user.Club)
+            {
+                WebFontSize = 12,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                Shadow = true
+            });
+        }
+
+        if (user.NamePaint is not null)
+        {
+            topText.Add(new GradientText
+            {
+                Text = user.PreferredName,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                WebFontSize = 14,
+                Colour = user.NamePaint.Colors.CreateColorInfo(),
+                Shadow = true
+            });
+        }
+        else
+        {
+            topText.Add(new FluXisSpriteText
+            {
+                Text = user.PreferredName,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
+                WebFontSize = 14,
+                Shadow = true
+            });
+        }
+
+        bottomText.FadeTo(user.HasDisplayName ? .8f : 0);
+        bottomText.Text = user.Username;
+
+        if (user.IsOnline)
+        {
+            statusIcon.Icon = FontAwesome6.Solid.Circle;
+            statusIcon.Colour = FluXisColors.Green;
+            statusText.Text = "Online";
+        }
+        else
+        {
+            statusIcon.Icon = FontAwesome6.Regular.Circle;
+            statusIcon.Colour = FluXisColors.Foreground;
+            statusText.Text = "Offline";
+        }
     }
 }

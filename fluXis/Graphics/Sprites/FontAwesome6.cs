@@ -142,6 +142,7 @@ public class FontAwesome6
     {
         private static IconUsage getRegular(int icon) => get(icon).With(weight: "Regular");
 
+        public static IconUsage Circle => getRegular(0xf111);
         public static IconUsage Clock => getRegular(0xf017);
     }
 

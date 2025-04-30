@@ -167,7 +167,8 @@ public partial class ProfileFollowerList : FillFlowContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
+                        Origin = Anchor.Centre,
+                        ShowTooltip = true
                     }
                 },
                 new FluXisSpriteText
@@ -265,7 +266,8 @@ public partial class ProfileFollowerList : FillFlowContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
+                        Origin = Anchor.Centre,
+                        ShowTooltip = true
                     }
                 }
             };
