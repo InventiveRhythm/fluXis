@@ -1,6 +1,7 @@
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Graphics.UserInterface.Buttons.Presets;
+using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel.Types;
 using fluXis.Integration;
 using JetBrains.Annotations;
@@ -25,7 +26,13 @@ public partial class ExternalLinkPanel : ButtonPanel
     {
         Icon = FontAwesome6.Solid.Link;
         Text = "Just to make sure...";
-        SubText = $"You're about to open the following link in your browser:\n{link}";
+
+        CreateSubText = flow =>
+        {
+            flow.AddText("You're about to open the following link in your browser:\n");
+            flow.AddText<FluXisSpriteText>(link, text => text.Colour = FluXisColors.Highlight);
+        };
+
         Buttons = new ButtonData[]
         {
             new PrimaryButtonData(() =>
