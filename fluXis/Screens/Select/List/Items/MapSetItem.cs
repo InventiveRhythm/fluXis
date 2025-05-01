@@ -36,6 +36,22 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
     public float Position { get; set; }
     public bool Displayed { get; set; }
 
+    public float ScrollPosition
+    {
+        get
+        {
+            var sorted = set.MapsSorted;
+            var current = sorted.IndexOf(Store.CurrentMap);
+
+            if (current < 0 || current >= sorted.Count)
+                return Position;
+
+            return Position + 85 + current * (48 + 5);
+        }
+    }
+
+    public float ScrollSize => 48;
+
     public Drawable Drawable { get; set; }
 
     private RealmMapSet set { get; }
@@ -45,26 +61,16 @@ public class MapSetItem : IListItem, IComparable<MapSetItem>
         this.set = set;
     }
 
-    public Drawable CreateDrawable()
+    public Drawable CreateDrawable() => Drawable = new DrawableMapSetItem(this, set)
     {
-        return Drawable = new DrawableMapSetItem(this, set)
-        {
-            SelectAction = Screen.Accept,
-            EditAction = Screen.EditMap,
-            DeleteAction = Screen.DeleteMapSet,
-            ExportAction = Screen.ExportMapSet
-        };
-    }
+        SelectAction = Screen.Accept,
+        EditAction = Screen.EditMap,
+        DeleteAction = Screen.DeleteMapSet,
+        ExportAction = Screen.ExportMapSet
+    };
 
-    public void Bind()
-    {
-        Store.MapSetBindable.BindValueChanged(mapSetChanged, true);
-    }
-
-    public void Unbind()
-    {
-        Store.MapSetBindable.ValueChanged -= mapSetChanged;
-    }
+    public void Bind() => Store.MapSetBindable.BindValueChanged(mapSetChanged, true);
+    public void Unbind() => Store.MapSetBindable.ValueChanged -= mapSetChanged;
 
     public void Select(bool last = false)
     {

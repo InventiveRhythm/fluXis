@@ -22,6 +22,9 @@ public interface IListItem : IComparable<IListItem>
     float Position { get; set; }
     bool Displayed { get; set; }
 
+    float ScrollPosition => Position;
+    float ScrollSize => Size;
+
     Drawable Drawable { get; set; }
     Drawable CreateDrawable();
 

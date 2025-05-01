@@ -148,7 +148,7 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                                                 {
                                                     new SettingsSidebar(currentSection)
                                                     {
-                                                        ScrollToSection = s => scrollContainer.ScrollTo(s, true)
+                                                        ScrollToSection = s => scrollContainer.ScrollTo(s)
                                                     },
                                                     new Container
                                                     {
@@ -213,6 +213,8 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
 
     private void sectionChanged(ValueChangedEvent<SettingsSection> e)
     {
+        scrollContainer.ScrollToStart();
+
         var prev = e.OldValue;
         var next = e.NewValue;
 
