@@ -48,7 +48,9 @@ public class EditorMap
     public event Action BackgroundChanged;
     public event Action CoverChanged;
 
-    public event Action<ITimedObject> AnyChange;
+#nullable enable
+    public event Action<ITimedObject?>? AnyChange;
+#nullable disable
 
     public event Action<HitObject> HitObjectAdded;
     public event Action<HitObject> HitObjectRemoved;
@@ -168,6 +170,7 @@ public class EditorMap
 
         RealmMap.KeyCount = mode;
         KeyModeChanged?.Invoke(mode);
+        AnyChange?.Invoke(null);
         return true;
     }
 

@@ -119,7 +119,7 @@ public partial class DesignContainer : EditorTabContainer
         Scheduler.AddOnce(rulesetIdleTracker.Reset);
         Map.AnyChange += t =>
         {
-            if (ignoredForRebuild.Contains(t.GetType()))
+            if (t is not null && ignoredForRebuild.Contains(t.GetType()))
                 return;
 
             Scheduler.AddOnce(rulesetIdleTracker.Reset);
@@ -139,7 +139,7 @@ public partial class DesignContainer : EditorTabContainer
 
     private RulesetContainer createRuleset()
     {
-        var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap!.KeyCount);
+        var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap.KeyCount);
         var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod> { new NoFailMod() });
         container.ParentClock = EditorClock;
         return container;
