@@ -18,16 +18,10 @@ public class UnusedAssetsCheck : IVerifyCheck
                                .Where(x => x != null).ToList();
 
         var setPath = MapFiles.GetFullPath($"{set.ID}");
+
         if (!Directory.Exists(setPath))
-        {
-            yield return new VerifyIssue(
-                    VerifyIssueSeverity.Problematic,
-                    VerifyIssueCategory.Assets,
-                    null,
-                    $"Map directory was not found: \"{setPath}\"."
-                );
             yield break;
-        }
+
         var files = Directory.EnumerateFiles(setPath, "*", SearchOption.AllDirectories);
 
         foreach (var file in files)

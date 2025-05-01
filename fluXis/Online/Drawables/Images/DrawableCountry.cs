@@ -7,7 +7,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Images;
 
 public partial class DrawableCountry : Container
 {

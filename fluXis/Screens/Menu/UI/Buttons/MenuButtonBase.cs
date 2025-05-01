@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Localization;
 using osu.Framework.Allocation;
@@ -55,9 +56,13 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
     }
 
     [Resolved]
-    private UISamples samples { get; set; }
+    protected UISamples Samples { get; private set; }
+
+    protected Box Background { get; private set; }
 
     private Container content;
+    private HoverLayer hover;
+    private FlashLayer flash;
     private Box dim;
 
     [BackgroundDependencyLoader]
@@ -77,13 +82,15 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
                 EdgeEffect = FluXisStyles.ShadowMedium,
                 ChildrenEnumerable = new Drawable[]
                 {
-                    new Box
+                    Background = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Colour = FluXisColors.Background2
-                    }
+                    },
+                    hover = new HoverLayer()
                 }.Concat(CreateContent()).Concat(new Drawable[]
                 {
+                    flash = new FlashLayer(),
                     dim = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -112,7 +119,8 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
         if (!IsVisible)
             return false;
 
-        samples.Click(!Enabled.Value);
+        Samples.Click(!Enabled.Value);
+        flash.Show();
 
         if (!Enabled.Value)
             return false;
@@ -133,6 +141,18 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
     protected override void OnMouseUp(MouseUpEvent e)
     {
         content.ScaleTo(1, 1000, Easing.OutElasticHalf);
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        Samples.Hover();
+        hover.Show();
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        hover.Hide();
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

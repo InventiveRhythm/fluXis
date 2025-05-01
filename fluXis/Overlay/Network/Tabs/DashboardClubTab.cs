@@ -6,6 +6,7 @@ using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Clubs;
 using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Users;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Club;
 using fluXis.Overlay.Network.Tabs.Shared;

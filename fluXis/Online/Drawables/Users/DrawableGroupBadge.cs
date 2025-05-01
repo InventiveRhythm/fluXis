@@ -7,7 +7,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Users;
 
 public partial class DrawableGroupBadge : CircularContainer
 {

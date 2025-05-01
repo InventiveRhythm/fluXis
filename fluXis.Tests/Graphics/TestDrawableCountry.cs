@@ -1,7 +1,7 @@
 using System;
 using fluXis.Graphics.Containers;
 using fluXis.Online;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Utils;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

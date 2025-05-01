@@ -11,7 +11,7 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Maps;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;

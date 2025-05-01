@@ -40,7 +40,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Input;
@@ -118,7 +117,7 @@ public partial class MenuScreen : FluXisScreen
     private const double inactivity_timeout = 60 * 1000;
 
     [BackgroundDependencyLoader]
-    private void load(GameHost host, TextureStore textures)
+    private void load(TextureStore textures)
     {
         forceSnow = config.GetBindable<bool>(FluXisSetting.ForceSnow);
 
@@ -252,7 +251,7 @@ public partial class MenuScreen : FluXisScreen
                                         {
                                             Text = LocalizationStrings.MainMenu.BrowseText,
                                             Description = LocalizationStrings.MainMenu.BrowseDescription,
-                                            Icon = FontAwesome6.Solid.EarthAmericas,
+                                            Icon = FontAwesome6.Solid.ArrowDownToLine,
                                             GamepadButton = JoystickButton.Button4, // Y
                                             Keys = new[] { Key.B },
                                             Action = continueToBrowse,
@@ -261,7 +260,7 @@ public partial class MenuScreen : FluXisScreen
                                             Row = 2,
                                             Column = 2
                                         },
-                                        new MenuSmallButton
+                                        new MenuExitButton
                                         {
                                             Icon = FontAwesome6.Solid.DoorOpen,
                                             Action = Game.Exit,
@@ -323,7 +322,7 @@ public partial class MenuScreen : FluXisScreen
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
                         Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(10),
+                        Spacing = new Vector2(16),
                         Alpha = 0,
                         X = -200,
                         Children = new Drawable[]

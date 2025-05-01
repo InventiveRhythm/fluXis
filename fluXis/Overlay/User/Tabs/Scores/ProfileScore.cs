@@ -5,7 +5,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Scores;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Scoring.Enums;
 using fluXis.Screens;
 using fluXis.Utils;

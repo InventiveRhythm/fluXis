@@ -124,7 +124,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 TooltipTitle = "Maps",
                                 TooltipSub = "Browse your maps.",
                                 Icon = FontAwesome6.Solid.Map,
-                                Screen = typeof(SelectScreen),
+                                Screen = typeof(SoloSelectScreen),
                                 Action = () => goToScreen(new SoloSelectScreen())
                             },
                             new ToolbarScreenButton
@@ -186,7 +186,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             {
                                 TooltipTitle = "Browse",
                                 TooltipSub = "Download community-made maps.",
-                                Icon = FontAwesome6.Solid.EarthAmericas,
+                                Icon = FontAwesome6.Solid.ArrowDownToLine,
                                 Keybind = FluXisGlobalKeybind.ToggleBrowse,
                                 Overlay = browse,
                                 RequireLogin = true

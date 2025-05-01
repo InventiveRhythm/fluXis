@@ -6,7 +6,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Groups;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Clubs;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User.Header;
 using fluXis.Utils;
@@ -145,7 +146,7 @@ public partial class ProfileHeader : Container
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Horizontal,
                                             Spacing = new Vector2(12),
-                                            Children = new Drawable[]
+                                            Children = new[]
                                             {
                                                 new ClubTag(user.Club)
                                                 {
@@ -263,12 +264,16 @@ public partial class ProfileHeader : Container
 
     private Drawable getName(string text)
     {
+        var displayName = text != user.Username;
+        var tooltipText = displayName ? "Display Name" : "Username";
+
         if (user.NamePaint is null)
         {
             return new FluXisTooltipText
             {
                 Text = text,
                 WebFontSize = 48,
+                TooltipText = tooltipText,
                 Shadow = true
             };
         }
@@ -278,6 +283,7 @@ public partial class ProfileHeader : Container
             Text = text,
             WebFontSize = 48,
             Shadow = true,
+            TooltipText = tooltipText,
             Colour = user.NamePaint.Colors.CreateColorInfo()
         };
     }

@@ -12,7 +12,7 @@ using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Payloads.Users;
 using fluXis.Online.API.Requests.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Network.Tabs.Account;
 using fluXis.Overlay.Notifications;

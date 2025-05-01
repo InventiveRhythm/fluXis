@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Online.Drawables.Images;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,7 +12,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Users;
 
 public partial class UserTooltip : Container
 {

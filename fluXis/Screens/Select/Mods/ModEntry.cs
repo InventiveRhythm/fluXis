@@ -13,6 +13,7 @@ using fluXis.Overlay.Mouse;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
@@ -292,7 +293,7 @@ public partial class ModEntry : CompositeDrawable, IHasCustomTooltip<ModEntry>
         {
             var mod = content.mod;
 
-            BackgroundColor = FluXisColors.GetModTypeColor(mod.Type);
+            this.TransformTo(nameof(BackgroundColor), (ColourInfo)FluXisColors.GetModTypeColor(mod.Type), 50);
             type.Text = mod.Type switch
             {
                 ModType.Rate => LocalizationStrings.ModSelect.RateSection,

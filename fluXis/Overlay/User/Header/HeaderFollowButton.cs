@@ -42,7 +42,7 @@ public partial class HeaderFollowButton : CompositeDrawable
     [BackgroundDependencyLoader]
     private void load()
     {
-        AutoSizeAxes = Axes.X;
+        Width = 160;
         Height = 50;
         CornerRadius = 25;
         Masking = true;

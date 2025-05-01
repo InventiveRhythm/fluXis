@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
@@ -32,6 +33,8 @@ public partial class MenuImageButton : MenuButtonBase
     private LocalisableString description;
     private FluXisSpriteText descriptionText;
 
+    private Container dim;
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -52,24 +55,32 @@ public partial class MenuImageButton : MenuButtonBase
                 Scale = new Vector2(1.1f),
                 Shear = new Vector2(-SHEAR_AMOUNT, 0)
             },
-            new Box
+            dim = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Height = .8f,
-                Anchor = Anchor.TopLeft,
-                Origin = Anchor.TopLeft,
-                Colour = ColourInfo.GradientVertical(FluXisColors.Background2.Opacity(0), FluXisColors.Background2),
-                Alpha = .8f
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Height = .8f,
+                        Anchor = Anchor.TopLeft,
+                        Origin = Anchor.TopLeft,
+                        Colour = ColourInfo.GradientVertical(FluXisColors.Background2.Opacity(0), FluXisColors.Background2),
+                        Alpha = .8f
+                    },
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Height = .2f,
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Colour = FluXisColors.Background2,
+                        Alpha = .8f
+                    },
+                }
             },
-            new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Height = .2f,
-                Anchor = Anchor.BottomLeft,
-                Origin = Anchor.BottomLeft,
-                Colour = FluXisColors.Background2,
-                Alpha = .8f
-            },
+
             new Container
             {
                 RelativeSizeAxes = Axes.X,
@@ -135,5 +146,18 @@ public partial class MenuImageButton : MenuButtonBase
                 }
             }
         };
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        dim.FadeTo(.5f, 50);
+        Samples.Hover();
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        dim.FadeTo(1, 200);
+        base.OnHoverLost(e);
     }
 }

@@ -6,7 +6,7 @@ using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using Humanizer;
 using JetBrains.Annotations;

@@ -6,7 +6,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Clubs;
 
 public partial class ClubTag : FillFlowContainer
 {

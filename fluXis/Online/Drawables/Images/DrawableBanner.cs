@@ -6,7 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Images;
 
 #nullable enable
 

@@ -4,7 +4,7 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Images;
 using fluXis.Scoring;
 using fluXis.Utils;
 using osu.Framework.Allocation;

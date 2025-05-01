@@ -6,6 +6,8 @@ using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Drawables.Clubs;
+using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.User;
 using fluXis.Utils;
@@ -21,7 +23,7 @@ using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osuTK;
 
-namespace fluXis.Online.Drawables;
+namespace fluXis.Online.Drawables.Users;
 
 public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
 {

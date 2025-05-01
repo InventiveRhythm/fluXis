@@ -1,5 +1,5 @@
 using fluXis.Online;
-using fluXis.Online.Drawables;
+using fluXis.Online.Drawables.Users;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
