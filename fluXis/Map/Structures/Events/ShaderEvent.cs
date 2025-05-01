@@ -90,5 +90,6 @@ public enum ShaderType
     Retro,
     HueShift,
     Glitch,
-    SplitScreen
+    SplitScreen,
+    FishEye
 }

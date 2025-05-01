@@ -272,6 +272,40 @@ public partial class ShaderEntry : PointListEntry
                     }
                 });
                 break;
+            case ShaderType.FishEye:
+                settings.AddRange(new Drawable[]
+                {
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Strength",
+                        TooltipText = "Strength of the fish eye effect.",
+                        CurrentValue = shader.StartParameters.Strength,
+                        Min = -1.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Strength",
+                        TooltipText = "Strength of the fish eye effect.",
+                        CurrentValue = shader.EndParameters.Strength,
+                        Min = -1.0f,
+                        Max = 1.0f,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    }
+                });
+                break;
             case ShaderType.Bloom:
             case ShaderType.Greyscale:
             case ShaderType.Invert:

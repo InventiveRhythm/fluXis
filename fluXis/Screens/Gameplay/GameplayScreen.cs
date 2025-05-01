@@ -22,6 +22,7 @@ using fluXis.Graphics.Shaders.Noise;
 using fluXis.Graphics.Shaders.Retro;
 using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Shaders.SplitScreen;
+using fluXis.Graphics.Shaders.FishEye;
 using fluXis.Input;
 using fluXis.Map;
 using fluXis.Map.Structures.Events;
@@ -334,6 +335,7 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
                 ShaderType.HueShift => new HueShiftContainer(),
                 ShaderType.Glitch => new GlitchContainer(),
                 ShaderType.SplitScreen => new SplitScreenContainer(),
+                ShaderType.FishEye => new FishEyeContainer(),
                 _ => null
             };
 
