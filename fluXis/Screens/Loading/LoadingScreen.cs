@@ -28,12 +28,19 @@ public partial class LoadingScreen : FluXisScreen
     {
         this.loadInfo = loadInfo;
 
-        AddRangeInternal(new Drawable[]
+        InternalChildren = new Drawable[]
         {
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = Colour4.Black
+            },
+            new BufferedContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                BlurSigma = new Vector2(256),
+                FrameBufferScale = new Vector2(.4f),
+                Child = new LoadingBubbles()
             },
             new Container
             {
@@ -87,7 +94,7 @@ public partial class LoadingScreen : FluXisScreen
                     }
                 }
             }
-        });
+        };
     }
 
     protected override void LoadComplete()
