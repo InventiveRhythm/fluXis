@@ -116,14 +116,11 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
 
     protected override bool OnClick(ClickEvent e)
     {
-        if (!IsVisible)
+        if (!IsVisible || !Enabled.Value)
             return false;
 
         Samples.Click(!Enabled.Value);
         flash.Show();
-
-        if (!Enabled.Value)
-            return false;
 
         Action?.Invoke();
         return true;
@@ -145,6 +142,9 @@ public abstract partial class MenuButtonBase : CompositeDrawable, IHasTooltip
 
     protected override bool OnHover(HoverEvent e)
     {
+        if (!Enabled.Value || !IsVisible)
+            return false;
+
         Samples.Hover();
         hover.Show();
         return true;

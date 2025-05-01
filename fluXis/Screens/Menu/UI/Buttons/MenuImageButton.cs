@@ -150,6 +150,9 @@ public partial class MenuImageButton : MenuButtonBase
 
     protected override bool OnHover(HoverEvent e)
     {
+        if (!Enabled.Value || !IsVisible)
+            return false;
+
         dim.FadeTo(.5f, 50);
         Samples.Hover();
         return true;
