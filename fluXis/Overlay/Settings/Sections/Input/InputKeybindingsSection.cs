@@ -9,7 +9,7 @@ using fluXis.Map;
 using fluXis.Overlay.Settings.UI;
 using fluXis.Screens.Edit.Input;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
@@ -26,41 +26,14 @@ public partial class InputKeybindingsSection : SettingsSubSection
     [Resolved]
     private MapStore mapStore { get; set; }
 
-    private Drawable[] otherKeymodesSection => new Drawable[]
-    {
-        otherKeymodesTitle,
-        oneKeyLayout,
-        twoKeyLayout,
-        threeKeyLayout,
-        nineKeyLayout,
-        tenKeyLayout,
-        otherKeymodesTitleDual,
-        oneKeyLayoutDual,
-        twoKeyLayoutDual,
-        threeKeyLayoutDual,
-        nineKeyLayoutDual,
-        tenKeyLayoutDual
-    };
-
-    private KeybindSectionTitle otherKeymodesTitle;
-    private SettingsKeybind oneKeyLayout;
-    private SettingsKeybind twoKeyLayout;
-    private SettingsKeybind threeKeyLayout;
-    private SettingsKeybind nineKeyLayout;
-    private SettingsKeybind tenKeyLayout;
-    private KeybindSectionTitle otherKeymodesTitleDual;
-    private SettingsKeybind oneKeyLayoutDual;
-    private SettingsKeybind twoKeyLayoutDual;
-    private SettingsKeybind threeKeyLayoutDual;
-    private SettingsKeybind nineKeyLayoutDual;
-    private SettingsKeybind tenKeyLayoutDual;
+    private readonly BindableBool showOtherModes = new(true);
 
     [BackgroundDependencyLoader]
     private void load(FluXisConfig config)
     {
         AddRange(new Drawable[]
         {
-            new KeybindSectionTitle { Text = strings.Navigation },
+            new SettingsSubSectionTitle(strings.Navigation),
             new SettingsKeybind
             {
                 Label = strings.PreviousSelection,
@@ -91,7 +64,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = strings.Select,
                 Keybinds = new object[] { FluXisGlobalKeybind.Select }
             },
-            new KeybindSectionTitle { Text = strings.SongSelect },
+            new SettingsSubSectionTitle(strings.SongSelect),
             new SettingsKeybind
             {
                 Label = strings.DecreaseRate,
@@ -102,7 +75,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = strings.IncreaseRate,
                 Keybinds = new object[] { FluXisGlobalKeybind.IncreaseRate }
             },
-            new KeybindSectionTitle { Text = strings.Editing },
+            new SettingsSubSectionTitle(strings.Editing),
             new SettingsKeybind
             {
                 Label = strings.DeleteSelection,
@@ -146,7 +119,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Bindable = config.GetBindable<EditorScrollAction>(FluXisSetting.EditorControlShiftScrollAction),
                 Padded = true
             },
-            new KeybindSectionTitle { Text = strings.Overlays },
+            new SettingsSubSectionTitle(strings.Overlays),
             new SettingsKeybind
             {
                 Label = strings.ToggleSettings,
@@ -157,7 +130,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = strings.ToggleDashboard,
                 Keybinds = new object[] { FluXisGlobalKeybind.ToggleDashboard }
             },
-            new KeybindSectionTitle { Text = strings.Audio },
+            new SettingsSubSectionTitle(strings.Audio),
             new SettingsKeybind
             {
                 Label = strings.VolumeDown,
@@ -193,7 +166,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                 Label = strings.PlayPause,
                 Keybinds = new object[] { FluXisGlobalKeybind.MusicPause }
             },
-            new KeybindSectionTitle { Text = strings.Keymodes },
+            new SettingsSubSectionTitle(strings.Keymodes),
             new SettingsKeybind
             {
                 Label = strings.FourKey,
@@ -259,7 +232,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key8k8
                 }
             },
-            new KeybindSectionTitle { Text = strings.KeymodesDual },
+            new SettingsSubSectionTitle(strings.KeymodesDual),
             new SettingsKeybind
             {
                 Label = strings.FourKey,
@@ -325,27 +298,30 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key8k8D
                 }
             },
-            otherKeymodesTitle = new KeybindSectionTitle { Text = strings.OtherKeymodes },
-            oneKeyLayout = new SettingsKeybind
+            new SettingsSubSectionTitle(strings.OtherKeymodes) { Visible = showOtherModes },
+            new SettingsKeybind
             {
                 Label = strings.OneKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key1k1
                 }
             },
-            twoKeyLayout = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.TwoKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key2k1,
                     FluXisGameplayKeybind.Key2k2
                 }
             },
-            threeKeyLayout = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.ThreeKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key3k1,
@@ -353,9 +329,10 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key3k3
                 }
             },
-            nineKeyLayout = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.NineKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key9k1,
@@ -369,9 +346,10 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key9k9
                 }
             },
-            tenKeyLayout = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.TenKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key10k1,
@@ -386,27 +364,30 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key10k10
                 }
             },
-            otherKeymodesTitleDual = new KeybindSectionTitle { Text = strings.OtherKeymodesDual },
-            oneKeyLayoutDual = new SettingsKeybind
+            new SettingsSubSectionTitle(strings.OtherKeymodesDual) { Visible = showOtherModes },
+            new SettingsKeybind
             {
                 Label = strings.OneKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key1k1D
                 }
             },
-            twoKeyLayoutDual = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.TwoKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key2k1D,
                     FluXisGameplayKeybind.Key2k2D
                 }
             },
-            threeKeyLayoutDual = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.ThreeKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key3k1D,
@@ -414,9 +395,10 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key3k3D
                 }
             },
-            nineKeyLayoutDual = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.NineKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key9k1D,
@@ -430,9 +412,10 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key9k9D
                 }
             },
-            tenKeyLayoutDual = new SettingsKeybind
+            new SettingsKeybind
             {
                 Label = strings.TenKey,
+                EnabledBindable = showOtherModes,
                 Keybinds = new object[]
                 {
                     FluXisGameplayKeybind.Key10k1D,
@@ -447,7 +430,7 @@ public partial class InputKeybindingsSection : SettingsSubSection
                     FluXisGameplayKeybind.Key10k10D
                 }
             },
-            new KeybindSectionTitle { Text = strings.InGame },
+            new SettingsSubSectionTitle(strings.InGame),
             new SettingsKeybind
             {
                 Label = strings.SkipIntro,
@@ -494,19 +477,5 @@ public partial class InputKeybindingsSection : SettingsSubSection
     }
 
     private void updateOtherKeymodes()
-    {
-        if (mapStore.MapSets.Any(x => x.Maps.Any(y => y.KeyCount is > 8 or < 4)))
-            otherKeymodesSection.ForEach(x => x.Show());
-        else
-            otherKeymodesSection.ForEach(x => x.Hide());
-    }
-
-    private partial class KeybindSectionTitle : FluXisSpriteText
-    {
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            FontSize = 30;
-        }
-    }
+        => showOtherModes.Value = mapStore.MapSets.Any(x => x.Maps.Any(y => y.KeyCount is > 8 or < 4));
 }

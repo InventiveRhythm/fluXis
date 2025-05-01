@@ -35,6 +35,7 @@ public partial class SettingsKeybind : SettingsItem
     public SettingsKeybind()
     {
         Padded = true;
+        HideWhenDisabled = true;
     }
 
     [BackgroundDependencyLoader]

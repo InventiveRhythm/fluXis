@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
+using fluXis.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,29 +11,29 @@ using osuTK;
 
 namespace fluXis.Overlay.Settings.Sidebar;
 
-public partial class SettingsSidebarButton : Container
+public partial class SettingsSidebarSubButton : Container
 {
     public Action ClickAction { get; init; }
 
     [Resolved]
     private UISamples samples { get; set; }
 
-    private SettingsSubSection section { get; }
+    private SettingsSubSectionTitle sub { get; }
 
     private Container content;
     private HoverLayer hover;
     private FlashLayer flash;
 
-    public SettingsSidebarButton(SettingsSubSection subSection)
+    public SettingsSidebarSubButton(SettingsSubSectionTitle sub)
     {
-        section = subSection;
+        this.sub = sub;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 48;
+        Height = 32;
 
         InternalChild = content = new Container
         {
@@ -53,19 +54,26 @@ public partial class SettingsSidebarButton : Container
                     Padding = new MarginPadding(14),
                     Children = new Drawable[]
                     {
-                        new FluXisSpriteIcon
+                        new Container
                         {
+                            Size = new Vector2(20),
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Icon = section.Icon,
-                            Size = new Vector2(20)
+                            Child = new FluXisSpriteIcon
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Icon = FontAwesome6.Solid.Circle,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Scale = new Vector2(.3f)
+                            },
                         },
-                        new FluXisSpriteText
+                        new FluXisSpriteText()
                         {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Text = section.Title,
-                            WebFontSize = 16
+                            Text = sub.Text,
+                            WebFontSize = 14
                         }
                     }
                 }

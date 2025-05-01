@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Overlay.Settings.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -12,7 +13,7 @@ namespace fluXis.Overlay.Settings.Sidebar;
 
 public partial class SettingsSidebar : Container
 {
-    public Action<SettingsSubSection> ScrollToSection { get; init; }
+    public Action<Drawable> ScrollToSection { get; init; }
 
     private Bindable<SettingsSection> currentSection { get; }
 
@@ -39,8 +40,8 @@ public partial class SettingsSidebar : Container
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
-                Padding = new MarginPadding(10),
-                Spacing = new Vector2(0, 10)
+                Padding = new MarginPadding(12),
+                Spacing = new Vector2(4)
             }
         };
     }
@@ -54,10 +55,27 @@ public partial class SettingsSidebar : Container
             var section = e.NewValue;
 
             flow.Clear();
-            flow.AddRange(section.SubSections.Select(s => new SettingsSidebarButton(s)
+
+            var first = true;
+
+            foreach (var subSection in section.SubSections)
             {
-                ClickAction = () => ScrollToSection?.Invoke(s)
-            }));
+                flow.Add(new SettingsSidebarButton(subSection)
+                {
+                    Margin = new MarginPadding { Top = first ? 0 : 4 },
+                    ClickAction = () => ScrollToSection?.Invoke(subSection)
+                });
+
+                foreach (var sub in subSection.OfType<SettingsSubSectionTitle>())
+                {
+                    flow.Add(new SettingsSidebarSubButton(sub)
+                    {
+                        ClickAction = () => ScrollToSection?.Invoke(sub)
+                    });
+                }
+
+                first = false;
+            }
         }, true);
     }
 }

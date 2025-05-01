@@ -148,7 +148,7 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
                                                 {
                                                     new SettingsSidebar(currentSection)
                                                     {
-                                                        ScrollToSection = s => scrollContainer.ScrollTo(s)
+                                                        ScrollToSection = s => scrollContainer.ScrollTo(s, true)
                                                     },
                                                     new Container
                                                     {

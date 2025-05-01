@@ -50,7 +50,7 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
         Scrollbar.Origin = ScrollbarOrigin;
     }
 
-    public void ScrollTo(T entry)
+    public void ScrollTo(T entry, bool top = false)
     {
         if (entry == null) return;
         if (!entry.IsPresent) return;
@@ -61,7 +61,9 @@ public partial class FluXisScrollContainer<T> : BasicScrollContainer<T> where T 
         var min = Math.Min(pos1, pos2);
         var max = Math.Max(pos1, pos2);
 
-        if (min < Current || (min > Current && entry.DrawSize[ScrollDim] > DisplayableContent))
+        if (top && max < AvailableContent)
+            ScrollTo(min);
+        else if (min < Current || (min > Current && entry.DrawSize[ScrollDim] > DisplayableContent))
             ScrollTo(min);
         else if (max > Current + DisplayableContent)
             ScrollTo(max - DisplayableContent);
