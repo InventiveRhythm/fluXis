@@ -208,7 +208,70 @@ public partial class ShaderEntry : PointListEntry
                     }
                 });
                 break;
-
+            case ShaderType.SplitScreen:
+                settings.AddRange(new Drawable[]
+                {
+                    new PointSettingsSlider<float>
+                    {
+                        Enabled = startValToggle.Bindable,
+                        Text = "Start Strength",
+                        TooltipText = "The strength of the screen split.",
+                        CurrentValue = shader.StartParameters.Strength,
+                        Min = 0,
+                        Max = maxStrength,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "End Strength",
+                        TooltipText = "The strength of the screen split.",
+                        CurrentValue = shader.EndParameters.Strength,
+                        Min = 0,
+                        Max = maxStrength,
+                        Step = step,
+                        OnValueChanged = value =>
+                        {
+                            shader.EndParameters.Strength = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "Splits X",
+                        TooltipText = "Splits on X axis",
+                        CurrentValue = shader.StartParameters.Strength2,
+                        Min = 1.0f,
+                        Max = 16.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength2 = value;
+                            shader.EndParameters.Strength2 = value;
+                            Map.Update(shader);
+                        }
+                    },
+                    new PointSettingsSlider<float>
+                    {
+                        Text = "Splits Y",
+                        TooltipText = "Splits on Y axis",
+                        CurrentValue = shader.StartParameters.Strength3,
+                        Min = 1.0f,
+                        Max = 16.0f,
+                        Step = 1.0f,
+                        OnValueChanged = value =>
+                        {
+                            shader.StartParameters.Strength3 = value;
+                            shader.EndParameters.Strength3 = value;
+                            Map.Update(shader);
+                        }
+                    }
+                });
+                break;
             case ShaderType.Bloom:
             case ShaderType.Greyscale:
             case ShaderType.Invert:

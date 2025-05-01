@@ -89,5 +89,6 @@ public enum ShaderType
     Vignette,
     Retro,
     HueShift,
-    Glitch
+    Glitch,
+    SplitScreen
 }
