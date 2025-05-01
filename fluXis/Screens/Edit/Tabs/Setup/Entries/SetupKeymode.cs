@@ -1,6 +1,8 @@
 using System.Linq;
+using fluXis.Audio;
 using fluXis.Graphics.Drawables;
 using fluXis.Graphics.Sprites;
+using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -44,11 +46,16 @@ public partial class SetupKeymode : CompositeDrawable
         [Resolved]
         private EditorMap map { get; set; }
 
+        [Resolved]
+        private UISamples samples { get; set; }
+
         private int mode { get; }
 
         private const float blur_strength = 10;
 
         private FillFlowContainer flow;
+        private HoverLayer hover;
+        private FlashLayer flash;
 
         private float blurStrength
         {
@@ -71,8 +78,12 @@ public partial class SetupKeymode : CompositeDrawable
             RedrawOnScale = false;
             DrawOriginal = true;
 
+            var color = FluXisColors.GetKeyColor(mode);
+
             InternalChildren = new Drawable[]
             {
+                hover = new HoverLayer { Colour = color },
+                flash = new FlashLayer { Colour = color },
                 flow = new FillFlowContainer
                 {
                     AutoSizeAxes = Axes.Both,
@@ -80,7 +91,7 @@ public partial class SetupKeymode : CompositeDrawable
                     Spacing = new Vector2(4),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = FluXisColors.GetKeyColor(mode),
+                    Colour = color,
                     Children = new Drawable[]
                     {
                         new FillFlowContainer
@@ -107,7 +118,30 @@ public partial class SetupKeymode : CompositeDrawable
 
         protected override bool OnClick(ClickEvent e)
         {
-            return map.SetKeyMode(mode);
+            var changed = map.SetKeyMode(mode);
+
+            if (changed)
+            {
+                samples.Click();
+                flash.Show();
+            }
+
+            return changed;
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            if (!map.CanChangeTo(mode))
+                return false;
+
+            samples.Hover();
+            hover.Show();
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            hover.Hide();
         }
 
         protected override void LoadComplete()
