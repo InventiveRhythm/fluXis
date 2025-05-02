@@ -118,7 +118,13 @@ public partial class LoginOverlay : CompositeDrawable
                             Empty().With(d => d.Anchor = d.Origin = Anchor.TopCentre),
                             new AuthOverlayButton("Continue") { Action = login },
                             new AuthOverlayButton("Forgot password?") { Action = openPasswordReset },
-                            new AuthOverlayButton("Create new account") { Action = openRegister }
+                            new AuthOverlayButton("Create new account") { Action = openRegister },
+                            new AuthOverlayButton("Play offline")
+                            {
+                                Action = Hide,
+                                Color = FluXisColors.Background3,
+                                TextColor = FluXisColors.Text,
+                            }
                         }
                     },
                     loadingLayer = new FullInputBlockingContainer
