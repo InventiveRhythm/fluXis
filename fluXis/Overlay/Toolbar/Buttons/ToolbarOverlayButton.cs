@@ -1,3 +1,5 @@
+using System;
+using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
 
@@ -9,10 +11,17 @@ public partial class ToolbarOverlayButton : ToolbarButton
     {
         init
         {
-            Action = value.ToggleVisibility;
+            Action = () =>
+            {
+                value.ToggleVisibility();
+                OnVisibilityToggle?.Invoke(value.State.Value);
+            };
             overlayState.BindTo(value.State);
         }
     }
+
+    [CanBeNull]
+    public Action<Visibility> OnVisibilityToggle { get; init; }
 
     private Bindable<Visibility> overlayState { get; } = new();
 

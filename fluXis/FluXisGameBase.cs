@@ -435,6 +435,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Solid");
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Regular");
         AddFont(Resources, "Fonts/FontAwesome6/FontAwesome6-Brands");
+
+        AddFont(Resources, "Fonts/JetBrainsMono/JetBrainsMono");
         // Resharper restore StringLiteralTypo
     }
 

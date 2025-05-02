@@ -29,6 +29,7 @@ using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
+using fluXis.Overlay.Wiki;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.BottomBar;
 using fluXis.Screens.Edit.Input;
@@ -42,6 +43,7 @@ using fluXis.Skinning.Default;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using ManagedBass.Fx;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -89,6 +91,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     [Resolved]
     private PanelContainer panels { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private WikiOverlay wiki { get; set; }
 
     /// <summary>
     /// overwrites the tab the editor opens with
@@ -515,7 +521,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
     }
 
-    private void openHelp() => Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
+    private void openHelp()
+    {
+        if (wiki != null)
+        {
+            wiki.NavigateTo("/editor");
+            return;
+        }
+
+        Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
+    }
+
     private void openFolder() => MapFiles.PresentExternally(editorMap.RealmMap);
 
     protected override bool OnKeyDown(KeyDownEvent e)
