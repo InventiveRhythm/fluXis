@@ -16,7 +16,7 @@ public class EditorSettings
         set => SnapDivisorBindable.Value = value;
     }
 
-    public Bindable<float> WaveformOpacity { get; } = new(.25f);
+    public Bindable<float> WaveformOpacity { get; } = new(.2f);
     public Bindable<bool> ShowSamples { get; init; }
     public Bindable<bool> InvertedScroll { get; init; }
     public BindableBool ForceAspectRatio { get; } = new();

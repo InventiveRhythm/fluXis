@@ -336,40 +336,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         {
                                             new("Background Dim", FontAwesome6.Solid.Image)
                                             {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("0%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = 0) { IsActive = () => BindableBackgroundDim.Value == 0f },
-                                                    new("20%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .2f) { IsActive = () => BindableBackgroundDim.Value == .2f },
-                                                    new("40%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .4f) { IsActive = () => BindableBackgroundDim.Value == .4f },
-                                                    new("60%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .6f) { IsActive = () => BindableBackgroundDim.Value == .6f },
-                                                    new("80%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .8f) { IsActive = () => BindableBackgroundDim.Value == .8f },
-                                                }
+                                                Items = createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)
                                             },
                                             new("Background Blur", FontAwesome6.Solid.Aperture)
                                             {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("0%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = 0) { IsActive = () => BindableBackgroundBlur.Value == 0f },
-                                                    new("20%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .2f) { IsActive = () => BindableBackgroundBlur.Value == .2f },
-                                                    new("40%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .4f) { IsActive = () => BindableBackgroundBlur.Value == .4f },
-                                                    new("60%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .6f) { IsActive = () => BindableBackgroundBlur.Value == .6f },
-                                                    new("80%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .8f) { IsActive = () => BindableBackgroundBlur.Value == .8f },
-                                                    new("100%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = 1f) { IsActive = () => BindableBackgroundBlur.Value == 1f }
-                                                }
+                                                Items = createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)
                                             },
                                             new FluXisMenuSpacer(),
                                             new("Waveform opacity", FontAwesome6.Solid.WaveformLines)
                                             {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("0%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0) { IsActive = () => settings.WaveformOpacity.Value == 0 },
-                                                    new("25%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.25f)
-                                                        { IsActive = () => settings.WaveformOpacity.Value == 0.25f },
-                                                    new("50%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.5f) { IsActive = () => settings.WaveformOpacity.Value == 0.5f },
-                                                    new("75%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.75f)
-                                                        { IsActive = () => settings.WaveformOpacity.Value == 0.75f },
-                                                    new("100%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 1) { IsActive = () => settings.WaveformOpacity.Value == 1 }
-                                                }
+                                                Items = createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)
                                             },
                                             new FluXisMenuSpacer(),
                                             new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
@@ -420,6 +396,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             }
         };
+    }
+
+    private FluXisMenuItem[] createPercentItems(Func<float> get, Action<float> set)
+    {
+        float[] values = { 0, .2f, .4f, .6f, .8f, 1 };
+
+        return values.Select(x => new FluXisMenuItem($"{x * 100:0}%", FontAwesome6.Solid.Percent, () => set(x))
+        {
+            IsActive = () => Math.Abs(get() - x) < .01f
+        }).ToArray();
     }
 
     private void updateStateHash()
