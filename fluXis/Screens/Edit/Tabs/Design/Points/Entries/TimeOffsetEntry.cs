@@ -64,25 +64,24 @@ public partial class TimeOffsetEntry : PointListEntry
         {
             new PointSettingsLength<TimeOffsetEvent>(Map, offset, BeatLength),
             startToggle,
-            new PointSettingsTextBox
-            {
-                Enabled = startToggle.Bindable,
-                Text = "Start Offset",
-                TooltipText = "The visual offset at the start of the event in milliseconds.",
-                DefaultText = offset.StartOffset.ToStringInvariant(),
-                OnTextChanged = box =>
-                {
-                    if (box.Text.TryParseIntInvariant(out var result))
-                        offset.StartOffset = result;
-                    else
-                        box.NotifyError();
-
-                    Map.Update(offset);
-                }
-            },
-            new TargetOffset(Map, offset, BeatLength),
+            new StartTargetOffset(Map, offset, BeatLength),
+            new TargetOffset("Target Offset", "The visual offset in milliseconds.", Map, offset, BeatLength),
             new PointSettingsEasing<TimeOffsetEvent>(Map, offset)
         });
+    }
+
+    private partial class StartTargetOffset : TargetOffset
+    {
+        protected override double Value
+        {
+            get => Object.StartOffset;
+            set => Object.StartOffset = value;
+        }
+
+        public StartTargetOffset(EditorMap map, TimeOffsetEvent obj, float beatLength)
+            : base("Start Offset", "The starting visual offset in milliseconds.", map, obj, beatLength)
+        {
+        }
     }
 
     private partial class TargetOffset : PointSettingsBeats<TimeOffsetEvent>
@@ -93,11 +92,11 @@ public partial class TimeOffsetEntry : PointListEntry
             set => Object.TargetOffset = value;
         }
 
-        public TargetOffset(EditorMap map, TimeOffsetEvent obj, float beatLength)
+        public TargetOffset(string text, string tooltip, EditorMap map, TimeOffsetEvent obj, float beatLength)
             : base(map, obj, beatLength)
         {
-            Text = "Target Offset";
-            TooltipText = "The visual offset in milliseconds.";
+            Text = text;
+            TooltipText = tooltip;
         }
     }
 }
