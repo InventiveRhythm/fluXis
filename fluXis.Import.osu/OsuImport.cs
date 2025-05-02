@@ -70,36 +70,45 @@ public class OsuImport : MapImporter
                 }
             }
 
-            var success = 0;
-            var failed = 0;
+            var toProcess = new List<ZipArchiveEntry>();
+            var files = new List<ZipArchiveEntry>();
 
             foreach (var entry in osz.Entries)
             {
                 if (entry.FullName.EndsWith(".osu"))
-                {
-                    try
-                    {
-                        var map = parseOsuMap(entry);
-                        var info = map.ToMapInfo();
-
-                        if (info == null)
-                        {
-                            failed++;
-                            continue;
-                        }
-
-                        info.StoryboardFile = sb ?? string.Empty;
-                        WriteFile(info.Serialize(), folder, $"{entry.FullName}.fsc");
-                        success++;
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e, "Error while importing osu! map");
-                        failed++;
-                    }
-                }
+                    toProcess.Add(entry);
                 else
+                {
                     CopyFile(entry, folder);
+                    files.Add(entry);
+                }
+            }
+
+            var success = 0;
+            var failed = 0;
+
+            foreach (var entry in toProcess)
+            {
+                try
+                {
+                    var map = parseOsuMap(entry, files.Select(x => x.FullName));
+                    var info = map.ToMapInfo();
+
+                    if (info == null)
+                    {
+                        failed++;
+                        continue;
+                    }
+
+                    info.StoryboardFile = sb ?? string.Empty;
+                    WriteFile(info.Serialize(), folder, $"{entry.FullName}.fsc");
+                    success++;
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Error while importing osu! map");
+                    failed++;
+                }
             }
 
             if (success == 0)
@@ -125,9 +134,10 @@ public class OsuImport : MapImporter
         }
     }
 
-    private OsuMap parseOsuMap(ZipArchiveEntry entry) => ParseOsuMap(new StreamReader(entry.Open()).ReadToEnd());
+    private OsuMap parseOsuMap(ZipArchiveEntry entry, IEnumerable<string> files)
+        => ParseOsuMap(new StreamReader(entry.Open()).ReadToEnd(), files);
 
-    public static OsuMap ParseOsuMap(string fileContent, bool eventsOnly = false)
+    public static OsuMap ParseOsuMap(string fileContent, IEnumerable<string> files, bool eventsOnly = false)
     {
         string[] lines = fileContent.Split(Environment.NewLine);
 
@@ -154,7 +164,9 @@ public class OsuImport : MapImporter
             parser.AddLine(line, section);
         }
 
-        return parser.Parse(eventsOnly);
+        var map = parser.Parse(eventsOnly);
+        map.MapFiles = files.ToList();
+        return map;
     }
 
     private static OsuFileSection sectionFromString(string line)
@@ -240,12 +252,14 @@ public class OsuImport : MapImporter
                         // to get the map background, we have to load the map,
                         // because for some reason the background is not in the .db file
                         // this increases the loading time by a lot, but there is no other way
-                        var mapPath = Path.Combine(songsPath, map.FolderName, map.BeatmapFileName);
+                        var directory = Path.Combine(songsPath, map.FolderName);
+                        var mapPath = Path.Combine(directory, map.BeatmapFileName);
 
                         if (!File.Exists(mapPath))
                             continue;
 
-                        var osuMap = ParseOsuMap(File.ReadAllText(mapPath), true);
+                        var files = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
+                        var osuMap = ParseOsuMap(File.ReadAllText(mapPath), files, true);
                         realmMap.Metadata.Background = osuMap.GetBackground();
                     }
 

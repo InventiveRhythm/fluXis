@@ -13,8 +13,11 @@ public class OsuRealmMap : RealmMap
         if (!File.Exists(path))
             return null;
 
+        var dir = Path.GetDirectoryName(path);
+        var files = Directory.GetFiles(dir!, "*", SearchOption.AllDirectories);
+
         string osu = File.ReadAllText(path);
-        var info = OsuImport.ParseOsuMap(osu).ToMapInfo();
+        var info = OsuImport.ParseOsuMap(osu, files).ToMapInfo();
 
         if (info is null)
             return null;
