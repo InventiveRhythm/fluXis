@@ -3,6 +3,7 @@ using fluXis.Audio;
 using fluXis.Audio.Preview;
 using fluXis.Graphics;
 using fluXis.Graphics.Containers;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Context;
@@ -56,7 +57,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private Container content;
     private FluXisScrollContainer scroll;
     private FillFlowContainer<MapCard> flow;
-    private LoadingIcon loadingIcon;
+    private FillFlowContainer loading;
 
     private bool fetchingMore = true;
     private bool loadedAll;
@@ -136,17 +137,35 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Full,
                                             Spacing = new Vector2(20)
+                                        },
+                                        loading = new FillFlowContainer()
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(8),
+                                            Padding = new MarginPadding { Vertical = 24 },
+                                            Children = new Drawable[]
+                                            {
+                                                new LoadingIcon
+                                                {
+                                                    Anchor = Anchor.TopCentre,
+                                                    Origin = Anchor.TopCentre,
+                                                    Size = new Vector2(24)
+                                                },
+                                                new FluXisSpriteText
+                                                {
+                                                    Anchor = Anchor.TopCentre,
+                                                    Origin = Anchor.TopCentre,
+                                                    Text = "Loading...",
+                                                    WebFontSize = 16,
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         },
-                        loadingIcon = new LoadingIcon
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Size = new Vector2(24)
-                        }
                     }
                 }
             }
@@ -156,7 +175,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     private void loadMapsets(long offset = 0, bool reload = false)
     {
         fetchingMore = true;
-        loadingIcon.Show();
+        loading.FadeIn(200);
 
         if (reload)
             flow.Clear();
@@ -185,7 +204,9 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
             // needed, else it does 2 request when entering
             ScheduleAfterChildren(() => fetchingMore = false);
-            loadingIcon.Hide();
+
+            if (loadedAll)
+                loading.FadeOut(200);
         };
 
         req.Failure += e =>
@@ -193,7 +214,7 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
             Logger.Log($"Failed to load mapsets: {e.Message}", LoggingTarget.Network);
             fetchingMore = false;
             loadedAll = true;
-            loadingIcon.Hide();
+            loading.FadeOut(200);
         };
 
         api.PerformRequestAsync(req);
@@ -241,7 +262,9 @@ public partial class BrowseOverlay : OverlayContainer, IKeyBindingHandler<FluXis
     {
         base.Update();
 
-        if (scroll.IsScrolledToEnd() && !fetchingMore && !loadedAll)
+        var end = scroll.ScrollableExtent - scroll.Current <= loading.DrawHeight;
+
+        if (end && !fetchingMore && !loadedAll)
             loadMapsets(flow.Count);
     }
 
