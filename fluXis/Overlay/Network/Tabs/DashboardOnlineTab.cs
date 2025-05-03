@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
 using fluXis.Online.API.Requests.Users;
+using fluXis.Online.Drawables;
 using fluXis.Online.Drawables.Users;
 using fluXis.Online.Fluxel;
 using osu.Framework.Allocation;
@@ -23,8 +25,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
     [Resolved]
     private IAPIClient fluxel { get; set; }
 
-    private bool visible;
-    private FillFlowContainer flow;
+    private FluXisScrollContainer content;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -41,46 +42,48 @@ public partial class DashboardOnlineTab : DashboardWipTab
             Action = refresh
         };
 
-        Content.Child = new FluXisScrollContainer
+        Content.Children = new Drawable[]
         {
-            RelativeSizeAxes = Axes.Both,
-            Child = flow = new FillFlowContainer
+            content = new FluXisScrollContainer
             {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
-                Direction = FillDirection.Full,
-                Spacing = new Vector2(12)
+                RelativeSizeAxes = Axes.Both,
+                ScrollbarVisible = false
             }
         };
     }
 
     private void refresh()
     {
-        flow.Clear();
+        content.Clear();
 
         try
         {
             var req = new OnlineUsersRequest();
-            fluxel.PerformRequest(req);
-
-            if (req.IsSuccessful)
+            req.Success += res =>
             {
-                Schedule(() =>
+                content.Child = new FillFlowContainer
                 {
-                    if (!visible)
-                        return;
-
-                    foreach (var user in req.Response.Data.Users)
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Full,
+                    Spacing = new Vector2(12),
+                    ChildrenEnumerable = req.Response.Data.Users.Select(x => new DrawableUserCard(x)
                     {
-                        flow.Add(new DrawableUserCard(user)
-                        {
-                            Width = 346,
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre
-                        });
-                    }
-                });
-            }
+                        Width = 346,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre
+                    })
+                };
+            };
+            req.Failure += ex => content.Child = new OnlineErrorContainer
+            {
+                Text = ex.Message,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.Centre,
+                ShowInstantly = true,
+                Y = 200
+            };
+            fluxel.PerformRequestAsync(req);
         }
         catch (Exception e)
         {
@@ -90,12 +93,6 @@ public partial class DashboardOnlineTab : DashboardWipTab
 
     public override void Enter()
     {
-        visible = true;
         refresh();
-    }
-
-    public override void Exit()
-    {
-        visible = false;
     }
 }
