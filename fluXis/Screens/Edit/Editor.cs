@@ -39,6 +39,7 @@ using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.TabSwitcher;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Scripting;
 using fluXis.Skinning.Default;
 using fluXis.Storyboards;
 using fluXis.Utils;
@@ -180,7 +181,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         isNewMap = editorMap.IsNew;
 
         if (editorMap.RealmMap == null)
+        {
             editorMap.RealmMap = mapStore.CreateNew();
+        }
         else
         {
             var resources = editorMap.RealmMap.MapSet.Resources;
@@ -216,6 +219,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs<IBeatSyncProvider>(clock);
 
         dependencies.CacheAs(new EditorSnapProvider(editorMap, settings, clock));
+
+        var setPath = MapFiles.GetFullPath($"{editorMap.MapSet.ID}");
+
+        if (!Directory.Exists(setPath))
+            Directory.CreateDirectory(setPath);
+
+        dependencies.CacheAs(new ScriptStorage(setPath));
 
         var tabList = new List<EditorTab>
         {

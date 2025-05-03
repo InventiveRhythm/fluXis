@@ -117,6 +117,10 @@ public class EditorMap
     public event Action<TimeOffsetEvent> TimeOffsetEventRemoved;
     public event Action<TimeOffsetEvent> TimeOffsetEventUpdated;
 
+    public event Action<ScriptEvent> ScriptEventAdded;
+    public event Action<ScriptEvent> ScriptEventRemoved;
+    public event Action<ScriptEvent> ScriptEventUpdated;
+
     public event Action<NoteEvent> NoteEventAdded;
     public event Action<NoteEvent> NoteEventRemoved;
     public event Action<NoteEvent> NoteEventUpdated;
@@ -152,6 +156,7 @@ public class EditorMap
                 obj => ScrollMultiplierEventUpdated?.Invoke(obj)),
             new ChangeNotifier<TimeOffsetEvent>(MapEvents.TimeOffsetEvents, obj => TimeOffsetEventAdded?.Invoke(obj), obj => TimeOffsetEventRemoved?.Invoke(obj),
                 obj => TimeOffsetEventUpdated?.Invoke(obj)),
+            new ChangeNotifier<ScriptEvent>(MapEvents.ScriptEvents, obj => ScriptEventAdded?.Invoke(obj), obj => ScriptEventRemoved?.Invoke(obj), obj => ScriptEventUpdated?.Invoke(obj)),
             new ChangeNotifier<NoteEvent>(MapEvents.NoteEvents, obj => NoteEventAdded?.Invoke(obj), obj => NoteEventRemoved?.Invoke(obj), obj => NoteEventUpdated?.Invoke(obj))
         };
 
@@ -332,9 +337,9 @@ public class EditorMap
 
         public EditorMapInfo DeepClone()
         {
-            var clone = (EditorMapInfo)MemberwiseClone();
-            clone.MapEvents = MapEvents.DeepClone();
-            clone.Storyboard = Storyboard;
+            var clone = this.JsonCopy();
+            clone.MapEvents = MapEvents.JsonCopy();
+            clone.Storyboard = Storyboard.JsonCopy();
             return clone;
         }
     }

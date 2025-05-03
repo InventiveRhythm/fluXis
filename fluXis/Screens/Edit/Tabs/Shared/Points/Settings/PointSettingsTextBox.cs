@@ -20,6 +20,7 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
     public string ExtraText { get; init; }
     public int TextBoxWidth { get; init; } = 210;
     public Action<FluXisTextBox> OnTextChanged { get; set; }
+    public Action<FluXisTextBox> OnCommit { get; set; }
 
     public FluXisTextBox TextBox { get; private set; }
 
@@ -63,7 +64,11 @@ public partial class PointSettingsTextBox : Container, IHasTooltip
                         BackgroundInactive = FluXisColors.Background3,
                         BackgroundActive = FluXisColors.Background4,
                         OnTextChanged = () => OnTextChanged?.Invoke(TextBox),
-                        OnCommitAction = () => OnTextChanged?.Invoke(TextBox)
+                        OnCommitAction = () =>
+                        {
+                            OnTextChanged?.Invoke(TextBox);
+                            OnCommit?.Invoke(TextBox);
+                        }
                     },
                     new FluXisSpriteText
                     {

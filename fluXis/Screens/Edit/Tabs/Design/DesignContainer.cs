@@ -26,7 +26,9 @@ using fluXis.Screens.Edit.Tabs.Shared.Points;
 using fluXis.Screens.Gameplay.Overlay.Effect;
 using fluXis.Screens.Gameplay.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
+using fluXis.Scripting;
 using fluXis.Utils;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -39,6 +41,9 @@ namespace fluXis.Screens.Edit.Tabs.Design;
 public partial class DesignContainer : EditorTabContainer
 {
     protected override MarginPadding ContentPadding => new(16) { Right = 0 };
+
+    [Resolved]
+    private ScriptStorage scripts { get; set; }
 
     private static Type[] ignoredForRebuild { get; } =
     {
@@ -57,6 +62,8 @@ public partial class DesignContainer : EditorTabContainer
     private Container rulesetWrapper;
     private LoadingIcon loadingIcon;
     private PulseEffect pulseEffect;
+    private EditorFlashLayer backFlash;
+    private EditorFlashLayer frontFlash;
 
     private IdleTracker rulesetIdleTracker;
 
@@ -95,7 +102,7 @@ public partial class DesignContainer : EditorTabContainer
                     Colour = Colour4.Black,
                     Alpha = Editor.BindableBackgroundDim.Value
                 },
-                new EditorFlashLayer { InBackground = true },
+                backFlash = new EditorFlashLayer { Clock = EditorClock },
                 rulesetWrapper = new Container { RelativeSizeAxes = Axes.Both },
                 pulseEffect = new PulseEffect(Map.MapEvents.PulseEvents) { Clock = EditorClock },
                 loadingIcon = new LoadingIcon
@@ -104,7 +111,7 @@ public partial class DesignContainer : EditorTabContainer
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 },
-                new EditorFlashLayer()
+                frontFlash = new EditorFlashLayer { Clock = EditorClock }
             }))
         };
     }
@@ -139,8 +146,14 @@ public partial class DesignContainer : EditorTabContainer
 
     private RulesetContainer createRuleset()
     {
+        var effects = Map.MapEvents.JsonCopy();
+        effects.RunScripts(scripts);
+
+        backFlash.Rebuild(effects.FlashEvents.Where(x => x.InBackground).ToList());
+        frontFlash.Rebuild(effects.FlashEvents.Where(x => !x.InBackground).ToList());
+
         var auto = new AutoGenerator(Map.MapInfo, Map.RealmMap.KeyCount);
-        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, Map.MapEvents, new List<IMod> { new NoFailMod() });
+        var container = new ReplayRulesetContainer(auto.Generate(), Map.MapInfo, effects, new List<IMod> { new NoFailMod() });
         container.ParentClock = EditorClock;
         return container;
     }

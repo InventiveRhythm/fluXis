@@ -120,6 +120,7 @@ public partial class EditorBottomBar : Container
                                         var startTime = clock.CurrentTime;
 
                                         var clone = map.MapInfo.DeepClone();
+                                        clone.RealmEntry = map.MapInfo.RealmEntry;
                                         clone.HitObjects = clone.HitObjects.Where(o => o.Time > startTime).ToList();
 
                                         var mods = new List<IMod>();

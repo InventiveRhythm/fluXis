@@ -4,14 +4,16 @@ using System.Globalization;
 using System.Linq;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
+using fluXis.Scripting;
+using fluXis.Scripting.Runners;
 using fluXis.Utils;
 using Newtonsoft.Json;
 using osu.Framework.Graphics;
-using SixLabors.ImageSharp;
+using osu.Framework.Logging;
 
 namespace fluXis.Map;
 
-public class MapEvents : IDeepCloneable<MapEvents>
+public class MapEvents
 {
     [JsonProperty("laneswitch")]
     public List<LaneSwitchEvent> LaneSwitchEvents { get; private set; } = new();
@@ -52,6 +54,9 @@ public class MapEvents : IDeepCloneable<MapEvents>
     [JsonProperty("time-offset")]
     public List<TimeOffsetEvent> TimeOffsetEvents { get; private set; } = new();
 
+    [JsonProperty("scripts")]
+    public List<ScriptEvent> ScriptEvents { get; private set; } = new();
+
     [JsonProperty("notes")]
     public List<NoteEvent> NoteEvents { get; private set; } = new();
 
@@ -86,6 +91,7 @@ public class MapEvents : IDeepCloneable<MapEvents>
                          && BeatPulseEvents.Count == 0
                          && ScrollMultiplyEvents.Count == 0
                          && TimeOffsetEvents.Count == 0
+                         && ScriptEvents.Count == 0
                          && NoteEvents.Count == 0;
 
     #region Server-Side Stuff
@@ -263,9 +269,32 @@ public class MapEvents : IDeepCloneable<MapEvents>
         PlayfieldRotateEvents.Sort(compare);
         ScrollMultiplyEvents.Sort(compare);
         TimeOffsetEvents.Sort(compare);
+        ScriptEvents.Sort(compare);
         NoteEvents.Sort(compare);
 
         return this;
+    }
+
+    public void RunScripts(ScriptStorage storage)
+    {
+        foreach (var ev in ScriptEvents)
+        {
+            try
+            {
+                var runner = storage.GetRunner(ev.ScriptPath, s => new EffectScriptRunner(s)
+                {
+                    AddFlash = FlashEvents.Add
+                }) ?? throw new Exception("Could not create script runner.");
+
+                runner.Handle(ev);
+            }
+            catch (Exception ex)
+            {
+                ScriptRunner.Logger.Add($"Failed to run script at {ev.Time}: {ex.Message}", LogLevel.Error);
+            }
+        }
+
+        Sort();
     }
 
     private static int compare(ITimedObject a, ITimedObject b)
@@ -275,26 +304,4 @@ public class MapEvents : IDeepCloneable<MapEvents>
     }
 
     public string Save() => Sort().Serialize();
-
-    public MapEvents DeepClone()
-    {
-        if (MemberwiseClone() is not MapEvents clone)
-            throw new InvalidOperationException("Failed to clone MapEvents");
-
-        clone.LaneSwitchEvents = new List<LaneSwitchEvent>(LaneSwitchEvents);
-        clone.FlashEvents = new List<FlashEvent>(FlashEvents);
-        clone.PulseEvents = new List<PulseEvent>(PulseEvents);
-        clone.PlayfieldMoveEvents = new List<PlayfieldMoveEvent>(PlayfieldMoveEvents);
-        clone.PlayfieldScaleEvents = new List<PlayfieldScaleEvent>(PlayfieldScaleEvents);
-        clone.PlayfieldRotateEvents = new List<PlayfieldRotateEvent>(PlayfieldRotateEvents);
-        clone.LayerFadeEvents = new List<LayerFadeEvent>(LayerFadeEvents);
-        clone.HitObjectEaseEvents = new List<HitObjectEaseEvent>(HitObjectEaseEvents);
-        clone.ShakeEvents = new List<ShakeEvent>(ShakeEvents);
-        clone.ShaderEvents = new List<ShaderEvent>(ShaderEvents);
-        clone.BeatPulseEvents = new List<BeatPulseEvent>(BeatPulseEvents);
-        clone.ScrollMultiplyEvents = new List<ScrollMultiplierEvent>(ScrollMultiplyEvents);
-        clone.TimeOffsetEvents = new List<TimeOffsetEvent>(TimeOffsetEvents);
-        clone.NoteEvents = new List<NoteEvent>(NoteEvents);
-        return clone;
-    }
 }

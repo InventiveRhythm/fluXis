@@ -2,7 +2,7 @@
   <PropertyGroup Label="Project">
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <description>A free and open-source vertical scrolling rhythm game. </description>
+    <description>A free and open-source vertical scrolling rhythm game.</description>
     <ApplicationIcon>game.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Version>0.0.0</Version>
@@ -11,21 +11,21 @@
     <LangVersion>11</LangVersion>
     <PackageId>fluXis.Desktop</PackageId>
     <AssemblyName>fluXis</AssemblyName>
-<!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
-<!--    <DefineConstants>VELOPACK_BUILD</DefineConstants>-->
+    <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
+    <!--    <DefineConstants>VELOPACK_BUILD</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\fluXis\fluXis.csproj" />
-    <ProjectReference Include="..\fluXis.Import.Quaver\fluXis.Import.Quaver.csproj" />
-    <ProjectReference Include="..\fluXis.Import.osu\fluXis.Import.osu.csproj" />
-    <ProjectReference Include="..\fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj" />
+    <ProjectReference Include="..\fluXis\fluXis.csproj"/>
+    <ProjectReference Include="..\fluXis.Import.Quaver\fluXis.Import.Quaver.csproj"/>
+    <ProjectReference Include="..\fluXis.Import.osu\fluXis.Import.osu.csproj"/>
+    <ProjectReference Include="..\fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj"/>
   </ItemGroup>
   <ItemGroup Label="Package References">
-    <PackageReference Include="OpenRGB.NET" Version="3.1.1" />
-    <PackageReference Include="Velopack" Version="0.0.1053" Condition="$(DefineConstants.Contains(VELOPACK_BUILD))" />
+    <PackageReference Include="OpenRGB.NET" Version="3.1.1"/>
+    <PackageReference Include="Velopack" Version="0.0.1053" Condition="$(DefineConstants.Contains(VELOPACK_BUILD))"/>
   </ItemGroup>
   <ItemGroup Label="Resources">
-    <EmbeddedResource Include="game.ico" />
+    <EmbeddedResource Include="game.ico"/>
   </ItemGroup>
   <ItemGroup>
     <None Update="libsteam_api.so">
@@ -34,5 +34,11 @@
     <None Update="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\scripting\**\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>scripting\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+    </Content>
   </ItemGroup>
 </Project>

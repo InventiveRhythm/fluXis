@@ -9,8 +9,9 @@ namespace fluXis.Scripting;
 
 public class ScriptRunner
 {
-    protected static Logger Logger { get; } = Logger.GetLogger("scripting");
+    public static Logger Logger { get; } = Logger.GetLogger("scripting");
 
+    public Action<string, string, string> DefineParameter;
     protected Lua Lua { get; }
 
     protected ScriptRunner()
@@ -23,13 +24,13 @@ public class ScriptRunner
         AddFunction("RandomRange", (int from, int to) => RNG.Next(from, to + 1));
         AddFunction("Vector2", (float x, float y) => new LuaVector(x, y));
 
+        AddFunction("DefineParameter", (string k, string t, string ty) => DefineParameter?.Invoke(k, t, ty));
+
         Lua.DoString("import = function() end"); // disable importing
     }
 
-    protected void AddFunction(string name, Delegate function)
-    {
-        Lua.RegisterFunction(name, function.Target, function.Method);
-    }
+    public void AddFunction(string name, Delegate function)
+        => Lua.RegisterFunction(name, function.Target, function.Method);
 
     [CanBeNull]
     protected LuaFunction GetFunction(string name)
