@@ -32,7 +32,7 @@ public class EditorSettings
     public BindableInt SnapDivisorBindable { get; } = new(4)
     {
         MinValue = 1,
-        MaxValue = 16,
+        MaxValue = 32,
         Default = 4
     };
 
