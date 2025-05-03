@@ -290,7 +290,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Show((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Show((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
-        this.TransformTo(nameof(blur), 1f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        // this.TransformTo(nameof(blur), 1f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         sampleOpen?.Play();
     }
@@ -305,7 +305,7 @@ public partial class ModsOverlay : VisibilityContainer
         diffIncrease.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         miscellaneous.Hide((diffDecrease.ModCount + 3) * STAGGER_DURATION);
         automation.Hide((diffDecrease.ModCount + diffIncrease.ModCount + 4) * STAGGER_DURATION);
-        this.TransformTo(nameof(blur), 0f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        // this.TransformTo(nameof(blur), 0f, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
 
         if (!first)
             sampleClose?.Play();
