@@ -139,7 +139,11 @@ public class OsuImport : MapImporter
 
     public static OsuMap ParseOsuMap(string fileContent, IEnumerable<string> files, bool eventsOnly = false)
     {
-        string[] lines = fileContent.Split(Environment.NewLine);
+        string[] lines = fileContent.Split(new[]
+        {
+            "\r\n",
+            "\n"
+        }, StringSplitOptions.None);
 
         OsuParser parser = new();
         OsuFileSection section = OsuFileSection.General;
