@@ -125,7 +125,7 @@ public partial class DesignPointsList : PointsList
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }), x => x is ShaderEvent),
             new("Scroll Multiplier", FluXisColors.ScrollMultiply, () => Create(new ScrollMultiplierEvent()), x => x is ScrollMultiplierEvent),
             new("Time Offset", FluXisColors.TimeOffset, () => Create(new TimeOffsetEvent()), x => x is TimeOffsetEvent),
-            new("Script", FluXisColors.Script, () => Create(new ScriptEvent()), x => x is ScriptEvent),
+            // new("Script", FluXisColors.Script, () => Create(new ScriptEvent()), x => x is ScriptEvent),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent()), x => x is NoteEvent),
         };
 
