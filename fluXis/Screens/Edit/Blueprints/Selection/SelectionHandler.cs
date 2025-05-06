@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fluXis.Input;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -8,12 +9,13 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
 namespace fluXis.Screens.Edit.Blueprints.Selection;
 
-public partial class SelectionHandler<T> : Container, IHasContextMenu
+public partial class SelectionHandler<T> : Container, IHasContextMenu, IKeyBindingHandler<FluXisGlobalKeybind>
 {
     public virtual MenuItem[] ContextMenuItems => Array.Empty<MenuItem>();
 
@@ -127,5 +129,18 @@ public partial class SelectionHandler<T> : Container, IHasContextMenu
     {
         selected.ToList().ForEach(b => b.Deselect());
         SelectedObjects.Clear();
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
+    {
+        if (e.Action != FluXisGlobalKeybind.Back || selected.Count <= 0)
+            return false;
+
+        DeselectAll();
+        return true;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<FluXisGlobalKeybind> e)
+    {
     }
 }
