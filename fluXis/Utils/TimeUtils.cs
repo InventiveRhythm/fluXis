@@ -39,6 +39,8 @@ public static class TimeUtils
         return timeString;
     }
 
+    public static string Ago(long time) => Ago(GetFromSeconds(time));
+
     public static string Ago(DateTimeOffset time)
     {
         TimeSpan span = DateTimeOffset.Now - time;
