@@ -7,9 +7,9 @@ namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Assets;
 
 public class UnusedAssetsCheck : IVerifyCheck
 {
-    public IEnumerable<VerifyIssue> Check(EditorMap map)
+    public IEnumerable<VerifyIssue> Check(IVerifyContext ctx)
     {
-        var set = map.MapSet;
+        var set = ctx.MapSet;
         var infos = set.Maps.Select(x => x.GetMapInfo())
                        .Where(x => x != null).ToList();
 
@@ -32,11 +32,9 @@ public class UnusedAssetsCheck : IVerifyCheck
             var relative = file.Replace(setPath, string.Empty).TrimStart(Path.DirectorySeparatorChar).Replace("\\", "/");
             var exists = false;
 
+            // Ignore .vscode folder for lua scripting
             if (relative.StartsWith(".vscode"))
-            {
-                // Ignore .vscode folder
                 continue;
-            }
 
             foreach (var info in infos)
             {

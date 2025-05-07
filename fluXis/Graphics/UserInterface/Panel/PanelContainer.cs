@@ -97,6 +97,28 @@ public partial class PanelContainer : CompositeDrawable, IKeyBindingHandler<FluX
         }
     }
 
+    /// <summary>
+    /// waits for the current panel to fade out
+    /// </summary>
+    /// <param name="content">the new panel</param>
+    public void Replace(Drawable content)
+    {
+        if (Content is null)
+        {
+            Content = content;
+            return;
+        }
+
+        Content.Hide();
+        var alpha = Content.TransformsForTargetMember(nameof(Alpha));
+        var duration = 0d;
+
+        foreach (var transform in alpha)
+            duration = transform.EndTime - transform.StartTime;
+
+        Scheduler.AddDelayed(() => Content = content, duration);
+    }
+
     private void tryClose()
     {
         if (Content is ICloseable closeable)

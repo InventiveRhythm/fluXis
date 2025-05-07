@@ -4,15 +4,15 @@ namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Effects;
 
 public class UnevenInEvenCountCheck : IVerifyCheck
 {
-    public IEnumerable<VerifyIssue> Check(EditorMap map)
+    public IEnumerable<VerifyIssue> Check(IVerifyContext ctx)
     {
-        var count = map.RealmMap.KeyCount;
+        var count = ctx.RealmMap.KeyCount;
 
         // skip if the map is not even
         if (count % 2 != 0)
             yield break;
 
-        foreach (var switchEvent in map.MapEvents.LaneSwitchEvents)
+        foreach (var switchEvent in ctx.MapEvents.LaneSwitchEvents)
         {
             // skip if the is even
             if (switchEvent.Count % 2 == 0)

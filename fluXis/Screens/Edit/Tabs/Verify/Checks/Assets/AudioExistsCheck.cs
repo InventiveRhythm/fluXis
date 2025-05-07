@@ -6,9 +6,9 @@ namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Assets;
 
 public class AudioExistsCheck : IVerifyCheck
 {
-    public IEnumerable<VerifyIssue> Check(EditorMap map)
+    public IEnumerable<VerifyIssue> Check(IVerifyContext ctx)
     {
-        var path = map.MapSet.GetPathForFile(map.MapInfo.AudioFile);
+        var path = ctx.MapSet.GetPathForFile(ctx.MapInfo.AudioFile);
         path = MapFiles.GetFullPath(path);
 
         if (string.IsNullOrEmpty(path))

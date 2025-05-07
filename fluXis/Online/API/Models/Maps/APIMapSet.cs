@@ -6,6 +6,8 @@ using osu.Framework.Localisation;
 
 namespace fluXis.Online.API.Models.Maps;
 
+#nullable enable
+
 public class APIMapSet
 {
     [JsonProperty("id")]
@@ -52,6 +54,16 @@ public class APIMapSet
 
     [JsonProperty("downs")]
     public long DownVotes { get; init; }
+
+    [JsonProperty("show_mod_actions")]
+    public bool ShowModActions { get; set; }
+
+    #region Optional
+
+    [JsonProperty("queue_votes")]
+    public List<bool>? QueueVotes { get; set; }
+
+    #endregion
 
     #region Localization
 
