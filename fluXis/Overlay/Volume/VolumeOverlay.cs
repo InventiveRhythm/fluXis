@@ -4,7 +4,6 @@ using fluXis.Input;
 using fluXis.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -15,8 +14,12 @@ using osuTK;
 
 namespace fluXis.Overlay.Volume;
 
-public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalKeybind>
+public partial class VolumeOverlay : VisibilityContainer, IKeyBindingHandler<FluXisGlobalKeybind>
 {
+    public override bool PropagateNonPositionalInputSubTree => true;
+    public override bool PropagatePositionalInputSubTree => true;
+    protected override bool StartHidden => true;
+
     private const int max_inactive = 2000;
 
     [Resolved]
@@ -25,8 +28,6 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
     private AudioManager audioManager;
     private int index;
     private int timeInactive = max_inactive;
-
-    private readonly BindableBool visible = new();
 
     private FillFlowContainer<VolumeCategory> categories;
 
@@ -68,13 +69,6 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
         };
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        visible.BindValueChanged(updateVisibility, true);
-    }
-
     protected override bool OnScroll(ScrollEvent e)
     {
         if (e.AltPressed)
@@ -86,7 +80,11 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
         return false;
     }
 
-    public void ResetInactiveTimer() => timeInactive = 0;
+    public void ResetInactiveTimer()
+    {
+        Show();
+        timeInactive = 0;
+    }
 
     private void changeVolume(float amount)
     {
@@ -122,25 +120,24 @@ public partial class VolumeOverlay : Container, IKeyBindingHandler<FluXisGlobalK
     protected override void Update()
     {
         timeInactive += (int)Clock.ElapsedFrameTime;
-        visible.Value = timeInactive < max_inactive;
+
+        if (timeInactive >= max_inactive)
+            Hide();
+        else
+            Show();
     }
 
-    private void updateVisibility(ValueChangedEvent<bool> e)
+    protected override void PopIn()
     {
-        if (e.OldValue == e.NewValue)
-            return;
+        this.FadeIn(FluXisScreen.FADE_DURATION);
+        categories.MoveToY(-60).MoveToY(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
+        changeCategory(-index);
+    }
 
-        if (e.NewValue)
-        {
-            this.FadeIn(FluXisScreen.FADE_DURATION);
-            categories.MoveToY(-60).MoveToY(-100, FluXisScreen.MOVE_DURATION, Easing.OutQuint);
-            changeCategory(-index);
-        }
-        else
-        {
-            this.FadeOut(FluXisScreen.FADE_DURATION);
-            categories.MoveToY(200, FluXisScreen.MOVE_DURATION, Easing.InQuint);
-        }
+    protected override void PopOut()
+    {
+        this.FadeOut(FluXisScreen.FADE_DURATION);
+        categories.MoveToY(200, FluXisScreen.MOVE_DURATION, Easing.InQuint);
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
