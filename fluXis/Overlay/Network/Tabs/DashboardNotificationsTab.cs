@@ -68,6 +68,19 @@ public partial class DashboardNotificationsTab : DashboardTab
         updatedUnread = false;
         timeOpen = 0;
 
+        if (api.CurrentNotifications.Count == 0)
+        {
+            scroll.Child = new FluXisSpriteText
+            {
+                Text = "Nothing here...",
+                Margin = new MarginPadding { Top = 64 },
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre
+            };
+
+            return;
+        }
+
         var flow = new FillFlowContainer
         {
             RelativeSizeAxes = Axes.X,
