@@ -8,11 +8,6 @@ using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
 
-#if VELOPACK_BUILD
-using System;
-using fluXis.Updater;
-#endif
-
 namespace fluXis.Desktop;
 
 public partial class FluXisGameDesktop : FluXisGame
@@ -61,16 +56,4 @@ public partial class FluXisGameDesktop : FluXisGame
 
     protected override ISteamManager CreateSteam() => new SteamManager();
     public override LightController CreateLightController() => Config.Get<bool>(FluXisSetting.OpenRGBIntegration) ? new OpenRGBController() : new LightController();
-
-#if VELOPACK_BUILD
-    protected override bool RestartOnClose() => (UpdatePerformer as VelopackUpdatePerformer)?.RestartOnClose() ?? false;
-
-    public override IUpdatePerformer CreateUpdatePerformer()
-    {
-        if ((Steam?.Initialized ?? false) || !OperatingSystem.IsWindows())
-            return null;
-
-        return new VelopackUpdatePerformer(NotificationManager);
-    }
-#endif
 }

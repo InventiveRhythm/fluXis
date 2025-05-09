@@ -12,7 +12,6 @@
     <PackageId>fluXis.Desktop</PackageId>
     <AssemblyName>fluXis</AssemblyName>
     <!--    <DefineConstants>CLOSED_TESTING</DefineConstants>-->
-    <!--    <DefineConstants>VELOPACK_BUILD</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\fluXis\fluXis.csproj"/>
@@ -22,7 +21,6 @@
   </ItemGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="OpenRGB.NET" Version="3.1.1"/>
-    <PackageReference Include="Velopack" Version="0.0.1053" Condition="$(DefineConstants.Contains(VELOPACK_BUILD))"/>
   </ItemGroup>
   <ItemGroup Label="Resources">
     <EmbeddedResource Include="game.ico"/>

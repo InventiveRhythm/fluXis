@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Audio.Transforms;
@@ -153,11 +154,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(exitAnimation = new ExitAnimation(), Add);
 
         loadComponent(MenuScreen = new MenuScreen());
-
-#if VELOPACK_BUILD
-        if (CanUpdate)
-            LoadQueue.Push(new LoadTask("Checking for updates...", complete => PerformUpdateCheck(true, () => Schedule(complete))));
-#endif
 
         LoadQueue.Push(new LoadTask("Checking for bundled maps...", c =>
         {
@@ -454,18 +450,26 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         return !isExiting;
     }
 
-    public override void Exit(bool restart)
+    public override void Exit()
     {
-#if VELOPACK_BUILD
-        if (restart && !RestartOnClose())
-            return;
-#endif
-
         toolbar.Hide();
         globalClock.RateTo(0, 1500, Easing.Out);
         globalClock.VolumeOut(1300);
-        exitAnimation.Show(buffer.Hide, () => base.Exit(false));
+        exitAnimation.Show(buffer.Hide, () => base.Exit());
         isExiting = true;
+    }
+
+    private readonly Dictionary<Language, float> languageCompletions = new();
+    public IReadOnlyDictionary<Language, float> LanguageCompletions => languageCompletions;
+
+    public override IEnumerable<Language> SupportedLanguages
+    {
+        get
+        {
+            var lang = base.SupportedLanguages.ToList();
+            lang.RemoveAll(x => LanguageCompletions.TryGetValue(x, out var value) && value <= 0);
+            return lang;
+        }
     }
 
     private void loadLocales()
@@ -473,9 +477,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         var localeStore = new NamespacedResourceStore<byte[]>(Resources, "Localization");
         localeStore.AddExtension("json");
 
-        var languages = Enum.GetValues<Language>();
-
+        var languages = Enum.GetValues<Language>().ToList();
         var missingBindable = Config.GetBindable<bool>(FluXisSetting.ShowMissingLocalizations);
+
+        var enCode = Language.en.ToCultureCode();
+        var enStore = new ResourceLocaleStore(enCode, localeStore, missingBindable);
+        var english = new LocaleMapping(enCode, enStore);
+        languages.Remove(Language.en);
 
         var mappings = languages.Select(l =>
         {
@@ -485,7 +493,13 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
 
             try
             {
-                return new LocaleMapping(code, new ResourceLocaleStore(code, localeStore, missingBindable));
+                var resources = new ResourceLocaleStore(code, localeStore, missingBindable);
+                var completion = enStore.CompareTo(resources);
+                languageCompletions[l] = completion * 100;
+
+                Logger.Log($"{l} has a completion of {completion * 100:0}%", LoggingTarget.Runtime, LogLevel.Debug);
+
+                return new LocaleMapping(code, resources);
             }
             catch
             {
@@ -493,6 +507,6 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
             }
         }).Where(m => m != null);
 
-        Localisation.AddLocaleMappings(mappings);
+        Localisation.AddLocaleMappings(new[] { english }.Concat(mappings));
     }
 }

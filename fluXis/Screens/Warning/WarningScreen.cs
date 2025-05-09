@@ -24,11 +24,6 @@ public partial class WarningScreen : FluXisScreen
     private FillFlowContainer epilepsyContainer;
     private FluXisTextFlow epilepsyText;
 
-#if VELOPACK_BUILD
-    private FillFlowContainer earlyAccessContainer;
-    private FluXisTextFlow earlyAccessText;
-#endif
-
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -63,42 +58,7 @@ public partial class WarningScreen : FluXisScreen
                         Alpha = 0
                     }
                 }
-            },
-#if VELOPACK_BUILD
-            earlyAccessContainer = new FillFlowContainer
-            {
-                AlwaysPresent = true,
-                Alpha = 0,
-                AutoSizeAxes = Axes.Both,
-                Direction = FillDirection.Vertical,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Spacing = new Vector2(0, 20),
-                Children = new Drawable[]
-                {
-                    new FluXisSpriteText
-                    {
-                        Text = "This game is currently in early access.",
-                        FontSize = 60,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre
-                    },
-                    earlyAccessText = new FluXisTextFlow
-                    {
-                        AlwaysPresent = true,
-                        AutoSizeAxes = Axes.Y,
-                        Text =
- "This means that the game is not finished yet and that you may encounter bugs and other issues.\n\nIf you encounter any issues, please report them on the GitHub repository or the Discord server.\n",
-                        TextAnchor = Anchor.TopCentre,
-                        FontSize = 30,
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        Width = 800,
-                        Alpha = 0
-                    }
-                }
             }
-#endif
         };
     }
 
@@ -109,13 +69,7 @@ public partial class WarningScreen : FluXisScreen
         next();
 
         // yes, this is stupid, and I know
-        this.Delay(200).FadeIn().OnComplete(_ =>
-        {
-            epilepsyContainer.AutoSizeDuration = 99999;
-#if VELOPACK_BUILD
-            earlyAccessContainer.AutoSizeDuration = 99999;
-#endif
-        });
+        this.Delay(200).FadeIn().OnComplete(_ => epilepsyContainer.AutoSizeDuration = 99999);
     }
 
     private void next()
@@ -137,20 +91,7 @@ public partial class WarningScreen : FluXisScreen
                             .FadeIn(FADE_DURATION)
                             .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
                 break;
-#if VELOPACK_BUILD
-            case 2:
-                seq = earlyAccessContainer.FadeOut().ScaleTo(1.1f)
-                                          .FadeInFromZero(FADE_DURATION)
-                                          .ScaleTo(1, MOVE_DURATION, Easing.OutQuint)
-                                          .Then(5000)
-                                          .ScaleTo(0.9f, MOVE_DURATION, Easing.OutQuint)
-                                          .FadeOut(FADE_DURATION);
 
-                earlyAccessText.Delay(2000).ScaleTo(1.1f)
-                               .FadeIn(FADE_DURATION)
-                               .ScaleTo(1, MOVE_DURATION, Easing.OutQuint);
-                break;
-#endif
             default:
                 continueToMenu();
                 return;

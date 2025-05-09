@@ -52,10 +52,6 @@ using osu.Framework.Platform;
 using osu.Framework.Utils;
 using osuTK;
 
-#if VELOPACK_BUILD
-using fluXis.Updater;
-#endif
-
 namespace fluXis;
 
 public partial class FluXisGameBase : osu.Framework.Game
@@ -182,10 +178,6 @@ public partial class FluXisGameBase : osu.Framework.Game
             uiScale = Config.GetBindable<float>(FluXisSetting.UIScale);
 
             cacheComponent(NotificationManager = new NotificationManager());
-
-#if VELOPACK_BUILD
-            UpdatePerformer = CreateUpdatePerformer();
-#endif
 
             cacheComponent(APIClient = new FluxelClient(endpoint), true, true);
             cacheComponent(APIClient as FluxelClient);
@@ -355,34 +347,6 @@ public partial class FluXisGameBase : osu.Framework.Game
         }, true);
     }
 
-#if VELOPACK_BUILD
-    [CanBeNull]
-    protected IUpdatePerformer UpdatePerformer { get; private set; }
-
-    public bool CanUpdate => UpdatePerformer is not null;
-    public virtual IUpdatePerformer CreateUpdatePerformer() => null;
-
-    public void PerformUpdateCheck(bool silent, Action then = null) => Task.Run(() =>
-    {
-        if (UpdatePerformer is null)
-        {
-            then?.Invoke();
-            return;
-        }
-
-        try
-        {
-            UpdatePerformer.Perform(silent, Config.Get<ReleaseChannel>(FluXisSetting.ReleaseChannel) == ReleaseChannel.Beta);
-        }
-        finally
-        {
-            then?.Invoke();
-        }
-    });
-
-    protected virtual bool RestartOnClose() => false;
-#endif
-
     private Season getSeason()
     {
         var date = DateTime.Now;
@@ -440,15 +404,8 @@ public partial class FluXisGameBase : osu.Framework.Game
         // Resharper restore StringLiteralTypo
     }
 
-    public new void Exit() => Exit(false);
-
-    public virtual void Exit(bool restart)
+    public new virtual void Exit()
     {
-#if VELOPACK_BUILD
-        if (restart && !RestartOnClose())
-            return;
-#endif
-
         APIClient.Disconnect();
         base.Exit();
     }
@@ -520,16 +477,14 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     public Bindable<Language> CurrentLanguage { get; } = new();
 
-    public IEnumerable<Language> SupportedLanguages
+    public virtual IEnumerable<Language> SupportedLanguages
     {
         get
         {
-            var languages = Enum.GetValues(typeof(Language)).Cast<Language>().ToList();
+            var languages = Enum.GetValues<Language>().ToList();
 
             if (!IsDebug)
-            {
                 languages.Remove(Language.debug);
-            }
 
             return languages;
         }

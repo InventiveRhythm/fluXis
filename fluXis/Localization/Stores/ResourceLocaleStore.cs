@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Utils;
 using osu.Framework.Bindables;
 using osu.Framework.IO.Stores;
 using osu.Framework.Localisation;
+using osu.Framework.Logging;
 
 namespace fluXis.Localization.Stores;
 
@@ -16,7 +18,6 @@ public class ResourceLocaleStore : ILocalisationStore
     protected virtual bool ForceFallback => EffectiveCulture.Name == "en";
 
     public CultureInfo EffectiveCulture { get; }
-    private ResourceStore<byte[]> store { get; }
     private Bindable<bool> showMissing { get; }
 
     private readonly Dictionary<string, Dictionary<string, string>> cache = new();
@@ -24,8 +25,31 @@ public class ResourceLocaleStore : ILocalisationStore
     public ResourceLocaleStore(string code, ResourceStore<byte[]> store, Bindable<bool> showMissing)
     {
         EffectiveCulture = new CultureInfo(code);
-        this.store = store;
         this.showMissing = showMissing;
+
+        foreach (var resource in store.GetAvailableResources())
+        {
+            try
+            {
+                if (!resource.StartsWith(code, StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+
+                var name = Path.GetFileNameWithoutExtension(resource);
+
+                using var stream = store.GetStream(resource);
+                if (stream == null) continue;
+
+                using var reader = new StreamReader(stream);
+                var content = reader.ReadToEnd();
+                cache[name] = content.Deserialize<Dictionary<string, string>>();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Failed to load '{resource}' for locale {code}!");
+            }
+        }
+
+        Logger.Log($"Locale '{code}': loaded {cache.Count} files with {cache.Sum(x => x.Value.Count)} keys.", LoggingTarget.Runtime, LogLevel.Debug);
     }
 
     public virtual string Get(string name)
@@ -53,19 +77,8 @@ public class ResourceLocaleStore : ILocalisationStore
         var category = split[0];
         var key = split[1];
 
-        var id = $"{EffectiveCulture.Name}/{category}";
-
-        if (!cache.TryGetValue(id, out var dict))
-        {
-            using var stream = store.GetStream($"{id}.json");
-
-            if (stream == null)
-                return null;
-
-            using var reader = new StreamReader(stream);
-            cache[id] = reader.ReadToEnd().Deserialize<Dictionary<string, string>>();
-            dict = cache[id];
-        }
+        if (!cache.TryGetValue(category, out var dict))
+            return null;
 
         if (dict == null)
             return null;
@@ -78,6 +91,31 @@ public class ResourceLocaleStore : ILocalisationStore
         {
             return null;
         }
+    }
+
+    public float CompareTo(ResourceLocaleStore other)
+    {
+        var total = 0;
+        var existing = 0;
+
+        foreach (var (catKey, catValue) in cache)
+        {
+            total += catValue.Count;
+
+            if (!other.cache.TryGetValue(catKey, out var otherCat))
+                continue;
+
+            foreach (var (stringKey, _) in catValue)
+            {
+                if (!otherCat.TryGetValue(stringKey, out var otherVal))
+                    continue;
+
+                if (!string.IsNullOrWhiteSpace(otherVal))
+                    existing++;
+            }
+        }
+
+        return existing / (float)total;
     }
 
     public Task<string> GetAsync(string name, CancellationToken cancellationToken = new()) => Task.FromResult(Get(name));
