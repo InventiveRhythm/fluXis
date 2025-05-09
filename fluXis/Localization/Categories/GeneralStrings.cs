@@ -13,6 +13,7 @@ public class GeneralStrings : LocalizationCategory
     public TranslatableString Select => Get("select", "Select");
     public TranslatableString Delete => Get("delete", "Delete");
     public TranslatableString Export => Get("export", "Export");
+    public TranslatableString Refresh => Get("refresh", "Refresh");
 
     public TranslatableString PanelGenericConfirm => Get("panel-generic-confirm", "Yes, do it.");
     public TranslatableString PanelGenericCancel => Get("panel-generic-cancel", "Wait, no nevermind.");

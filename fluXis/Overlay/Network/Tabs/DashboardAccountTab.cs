@@ -8,6 +8,7 @@ using fluXis.Graphics.UserInterface.Buttons.Presets;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Files;
 using fluXis.Graphics.UserInterface.Panel;
+using fluXis.Localization;
 using fluXis.Online;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Payloads.Users;
@@ -23,6 +24,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osuTK;
 
@@ -32,7 +34,7 @@ namespace fluXis.Overlay.Network.Tabs;
 
 public partial class DashboardAccountTab : DashboardTab
 {
-    public override string Title => "Account";
+    public override LocalisableString Title => LocalizationStrings.Dashboard.Account;
     public override IconUsage Icon => FontAwesome6.Solid.Gear;
     public override DashboardTabType Type => DashboardTabType.Account;
 

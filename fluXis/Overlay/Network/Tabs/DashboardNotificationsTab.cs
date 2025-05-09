@@ -7,6 +7,7 @@ using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Text;
+using fluXis.Localization;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Notifications.Data;
 using fluXis.Online.Drawables.Clubs;
@@ -19,13 +20,14 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Overlay.Network.Tabs;
 
 public partial class DashboardNotificationsTab : DashboardTab
 {
-    public override string Title => "Notifications";
+    public override LocalisableString Title => LocalizationStrings.Dashboard.Notifications;
     public override IconUsage Icon => FontAwesome6.Solid.Bell;
     public override DashboardTabType Type => DashboardTabType.Notifications;
 
@@ -72,7 +74,7 @@ public partial class DashboardNotificationsTab : DashboardTab
         {
             scroll.Child = new FluXisSpriteText
             {
-                Text = "Nothing here...",
+                Text = LocalizationStrings.Dashboard.NotificationEmpty,
                 Margin = new MarginPadding { Top = 64 },
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre

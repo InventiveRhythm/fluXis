@@ -14,6 +14,9 @@ public class SettingsGeneralStrings : LocalizationCategory
 
     public TranslatableString LanguageCurrent => Get("language-current", "Current Language");
 
+    public TranslatableString OriginalMeta => Get("original-meta", "Prefer original metadata");
+    public TranslatableString OriginalMetaDescription => Get("original-meta-description", "Displays song metadata in its original language.");
+
     #endregion
 
     #region Folders

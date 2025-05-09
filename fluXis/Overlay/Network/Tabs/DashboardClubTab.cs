@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Localization;
 using fluXis.Online.API.Models.Clubs;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.API.Requests.Clubs;
@@ -14,13 +14,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Overlay.Network.Tabs;
 
 public partial class DashboardClubTab : DashboardTab
 {
-    public override string Title => "Club";
+    public override LocalisableString Title => LocalizationStrings.Dashboard.Club;
     public override IconUsage Icon => FontAwesome6.Solid.CircleNodes;
     public override DashboardTabType Type => DashboardTabType.Club;
 
@@ -32,17 +33,7 @@ public partial class DashboardClubTab : DashboardTab
     [BackgroundDependencyLoader]
     private void load()
     {
-        Header.Child = new FluXisButton
-        {
-            Text = "Refresh",
-            FontSize = 20,
-            Size = new Vector2(144, 36),
-            Anchor = Anchor.CentreRight,
-            Origin = Anchor.CentreRight,
-            Margin = new MarginPadding { Right = 20 },
-            Color = Colour4.Transparent,
-            Action = refresh
-        };
+        Header.Child = new DashboardRefreshButton(refresh);
 
         Content.Children = new Drawable[]
         {

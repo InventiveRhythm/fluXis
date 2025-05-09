@@ -33,8 +33,8 @@ public partial class GeneralLanguageSection : SettingsSubSection
             },
             new SettingsToggle
             {
-                Label = "Prefer original metadata",
-                Description = "Displays song metadata in its original language.",
+                Label = strings.OriginalMeta,
+                Description = strings.OriginalMetaDescription,
                 Bindable = frameworkConfig.GetBindable<bool>(FrameworkSetting.ShowUnicode)
             }
         });

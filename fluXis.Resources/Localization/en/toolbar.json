@@ -1,0 +1,22 @@
+{
+  "settings": "Settings",
+  "settings-description": "Change your settings.",
+  "home": "Home",
+  "home-description": "Return to the main menu.",
+  "maps": "Maps",
+  "maps-description": "Browse your maps.",
+  "multiplayer": "Multiplayer",
+  "multiplayer-description": "Play with others.",
+  "ranking": "Ranking",
+  "ranking-description": "See the top players.",
+  "chat": "Chat",
+  "chat-description": "Talk to other players.",
+  "dashboard": "Dashboard",
+  "dashboard-description": "See news, updates, and more.",
+  "browse": "Browse",
+  "browse-description": "Download community-made maps.",
+  "wiki": "Wiki",
+  "wiki-description": "Learn about the game.",
+  "music": "Music Player",
+  "music-description": "Listen to your music."
+}

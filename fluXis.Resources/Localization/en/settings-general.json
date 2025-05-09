@@ -2,6 +2,8 @@
   "title": "General",
   "language-title": "Language",
   "language-current": "Current Language",
+  "original-meta": "Prefer original metadata",
+  "original-meta-description": "Displays song metadata in its original language.",
   "folders-title": "Folders",
   "open-folder": "Open fluXis folder",
   "export-logs": "Export logs",

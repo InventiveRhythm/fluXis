@@ -26,8 +26,8 @@ namespace fluXis.Overlay.Toolbar;
 
 public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<ToolbarButton>, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    public string TooltipTitle { get; init; }
-    public string TooltipSub { get; init; }
+    public LocalisableString TooltipTitle { get; init; }
+    public LocalisableString TooltipSub { get; init; }
     public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public FluXisGlobalKeybind Keybind { get; init; } = FluXisGlobalKeybind.None;
     public bool RequireLogin { get; init; }
@@ -192,6 +192,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     {
         private SpriteIcon icon { get; }
         private FluXisSpriteText title { get; }
+        private FluXisSpriteText keybind { get; }
         private FluXisTextFlow description { get; }
 
         private LocalisableString currentDesc;
@@ -215,12 +216,23 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
                             icon = new FluXisSpriteIcon
                             {
                                 Size = new Vector2(16),
-                                Margin = new MarginPadding(4)
+                                Margin = new MarginPadding(4),
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
                             },
                             title = new FluXisSpriteText
                             {
-                                FontSize = 24
-                            }
+                                FontSize = 24,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
+                            keybind = new FluXisSpriteText
+                            {
+                                FontSize = 20,
+                                Alpha = .8f,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
                         }
                     },
                     description = new FluXisTextFlow
@@ -246,7 +258,8 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
             description.Alpha = 1;
 
             icon.Icon = content.Icon;
-            title.Text = content.TooltipTitle + content.keybindText;
+            title.Text = content.TooltipTitle;
+            keybind.Text = content.keybindText;
 
             if (currentDesc != content.TooltipSub)
                 description.Text = currentDesc = content.TooltipSub;
