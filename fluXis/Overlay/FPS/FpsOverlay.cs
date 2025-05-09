@@ -96,13 +96,13 @@ public partial class FpsOverlay : Container
 
     protected override bool OnHover(HoverEvent e)
     {
-        this.FadeIn(FluXisScreen.FADE_DURATION);
+        // this.FadeIn(FluXisScreen.FADE_DURATION);
         return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        this.Delay(1200).FadeTo(.6f, FluXisScreen.FADE_DURATION);
+        // this.Delay(1200).FadeTo(.6f, FluXisScreen.FADE_DURATION);
     }
 
     public override void Show()

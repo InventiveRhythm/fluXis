@@ -181,6 +181,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Icon = FontAwesome6.Solid.ChartLine,
                                 Overlay = dashboard,
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
+                                ShowPulse = api.HasUnreadNotifications.GetBoundCopy(),
                                 RequireLogin = true
                             },
                             new ToolbarOverlayButton

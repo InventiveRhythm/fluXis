@@ -1,10 +1,12 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Online;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
@@ -34,6 +36,11 @@ public class TestAPIClient : IAPIClient
     public string MultifactorToken { get; set; } = "mfa-token";
     public APIEndpointConfig Endpoint => new();
     public Exception? LastException { get; private set; }
+    public long LastReadTime { get; } = 0;
+
+    public Bindable<bool> HasUnreadNotifications { get; } = new();
+    public List<APINotification> CurrentNotifications { get; } = new();
+    public event Action<APINotification>? NewNotification;
 
     public event Action<APIUser>? FriendOnline;
     public event Action<APIUser>? FriendOffline;

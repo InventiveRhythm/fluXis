@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
 using Midori.Networking.WebSockets.Typed;
@@ -26,6 +28,11 @@ public interface IAPIClient
 
     APIEndpointConfig Endpoint { get; }
     Exception? LastException { get; }
+
+    long LastReadTime { get; }
+    Bindable<bool> HasUnreadNotifications { get; }
+    List<APINotification> CurrentNotifications { get; }
+    event Action<APINotification>? NewNotification;
 
     event Action<APIUser>? FriendOnline;
     event Action<APIUser>? FriendOffline;
