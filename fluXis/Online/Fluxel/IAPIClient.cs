@@ -52,6 +52,8 @@ public interface IAPIClient
     void Register(string username, string password, string email);
     void Logout();
 
+    void UpdateLastRead();
+
     TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path)
         where S : class where C : class;
 

@@ -128,6 +128,16 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
         CurrentNotifications.AddRange(notif);
     }
 
+    public void UpdateLastRead()
+    {
+        if (connection?.State != WebSocketState.Open)
+            return;
+
+        var time = DateTimeOffset.Now.ToUnixTimeSeconds();
+        connection.Server.UpdateNotificationUnread(time);
+        LastReadTime = time;
+    }
+
     #endregion
 
     #region Socket Connect

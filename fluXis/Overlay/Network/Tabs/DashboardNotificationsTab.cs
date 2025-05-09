@@ -5,9 +5,11 @@ using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Graphics.UserInterface.Text;
 using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Notifications.Data;
+using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Utils;
@@ -17,7 +19,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osuTK;
 
 namespace fluXis.Overlay.Network.Tabs;
@@ -31,6 +32,8 @@ public partial class DashboardNotificationsTab : DashboardTab
     [Resolved]
     private IAPIClient api { get; set; }
 
+    private double timeOpen;
+    private bool updatedUnread;
     private FluXisScrollContainer scroll;
 
     [BackgroundDependencyLoader]
@@ -45,9 +48,25 @@ public partial class DashboardNotificationsTab : DashboardTab
         };
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        timeOpen += Time.Elapsed;
+
+        if (timeOpen > 2000 && !updatedUnread)
+        {
+            api.UpdateLastRead();
+            updatedUnread = true;
+        }
+    }
+
     public override void Enter()
     {
         base.Enter();
+
+        updatedUnread = false;
+        timeOpen = 0;
 
         var flow = new FillFlowContainer
         {
@@ -65,6 +84,9 @@ public partial class DashboardNotificationsTab : DashboardTab
 
     private partial class DrawableNotification : CompositeDrawable
     {
+        [Resolved]
+        private PanelContainer panels { get; set; }
+
         private APINotification notification { get; }
         private bool unread { get; }
 
@@ -215,7 +237,7 @@ public partial class DashboardNotificationsTab : DashboardTab
                     title.Text = "Club Invitation";
 
                     text.Text = $"You have been invited to join the '{data.Club.Name}' club!";
-                    action = () => Logger.Log("clickckncka");
+                    action = () => panels.Content = new ClubInvitePanel(data.InviteCode);
                     break;
                 }
             }

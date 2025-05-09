@@ -36,7 +36,7 @@ public class TestAPIClient : IAPIClient
     public string MultifactorToken { get; set; } = "mfa-token";
     public APIEndpointConfig Endpoint => new();
     public Exception? LastException { get; private set; }
-    public long LastReadTime { get; } = 0;
+    public long LastReadTime { get; set; } = 0;
 
     public Bindable<bool> HasUnreadNotifications { get; } = new();
     public List<APINotification> CurrentNotifications { get; } = new();
@@ -105,6 +105,8 @@ public class TestAPIClient : IAPIClient
         Status.Value = ConnectionStatus.Offline;
         User.Value = null;
     }
+
+    public void UpdateLastRead() => LastReadTime = 0;
 
     public TypedWebSocketClient<S, C> GetWebSocket<S, C>(C target, string path) where S : class where C : class
     {
