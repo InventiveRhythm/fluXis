@@ -150,7 +150,7 @@ public abstract class UserActivity
 
             if (Room is not null)
             {
-                rpc.State = Room.Settings.Name;
+                rpc.State = Room.Name;
                 rpc.PartyID = Room.RoomID;
                 rpc.PartySize = Room.Participants.Count;
                 rpc.PartyMax = Math.Max(8, Room.Participants.Count * 2);
@@ -275,7 +275,7 @@ public abstract class UserActivity
         {
             var rpc = base.CreateDiscord();
             rpc.Details = "In a multiplayer lobby";
-            rpc.State = room.Settings.Name;
+            rpc.State = room.Name;
             rpc.PartyID = room.RoomID;
             rpc.PartySize = room.Participants.Count;
             rpc.PartyMax = Math.Max(8, room.Participants.Count * 2);

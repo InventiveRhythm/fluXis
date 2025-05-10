@@ -90,12 +90,6 @@ public partial class MultiLobby : MultiSubScreen
     [BackgroundDependencyLoader]
     private void load(ISampleStore samples)
     {
-        joinSample = samples.Get("Multiplayer/join");
-        leaveSample = samples.Get("Multiplayer/leave");
-        readySample = samples.Get("Multiplayer/ready");
-        unreadySample = samples.Get("Multiplayer/unready");
-        hostTransferSample = samples.Get("Multiplayer/host-changed");
-
         if (Room is null)
         {
             notifications.SendError("Failed to join room!");
@@ -104,6 +98,12 @@ public partial class MultiLobby : MultiSubScreen
             ValidForPush = false;
             return;
         }
+
+        joinSample = samples.Get("Multiplayer/join");
+        leaveSample = samples.Get("Multiplayer/leave");
+        readySample = samples.Get("Multiplayer/ready");
+        unreadySample = samples.Get("Multiplayer/unready");
+        hostTransferSample = samples.Get("Multiplayer/host-changed");
 
         InternalChildren = new Drawable[]
         {
@@ -118,7 +118,7 @@ public partial class MultiLobby : MultiSubScreen
                 {
                     new FluXisSpriteText
                     {
-                        Text = Room.Settings.Name,
+                        Text = Room.Name,
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight,
                         FontSize = 30

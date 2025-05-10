@@ -77,13 +77,19 @@ public partial class DrawableMultiplayerCard : CompositeDrawable
                             new FluXisSpriteIcon
                             {
                                 Size = new Vector2(16),
-                                Icon = room.Settings.HasPassword ? FontAwesome6.Solid.Lock : FontAwesome6.Solid.EarthAmericas,
+                                Icon = room.Privacy switch
+                                {
+                                    MultiplayerPrivacy.Public => FontAwesome6.Solid.EarthAmericas,
+                                    MultiplayerPrivacy.Club => FontAwesome6.Solid.CircleNodes,
+                                    MultiplayerPrivacy.Private => FontAwesome6.Solid.Lock,
+                                    _ => FontAwesome6.Solid.Question
+                                },
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
                             },
                             new FluXisSpriteText
                             {
-                                Text = room.Settings.Name,
+                                Text = room.Name,
                                 WebFontSize = 16,
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft
@@ -112,7 +118,7 @@ public partial class DrawableMultiplayerCard : CompositeDrawable
                 {
                     AutoSizeAxes = Axes.Both,
                     Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(8),
+                    Spacing = new Vector2(-8),
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     ChildrenEnumerable = room.Participants.Take(max).Select(x => new LoadWrapper<DrawableAvatar>

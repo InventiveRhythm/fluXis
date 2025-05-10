@@ -9,7 +9,7 @@ namespace fluXis.Online.Multiplayer;
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public interface IMultiplayerServer
 {
-    Task<MultiplayerRoom> CreateRoom(string name, string password, long map, string hash);
+    Task<MultiplayerRoom> CreateRoom(string name, MultiplayerPrivacy privacy, string password, long map, string hash);
     Task<MultiplayerRoom> JoinRoom(long id, string password);
 
     Task KickPlayer(long id);

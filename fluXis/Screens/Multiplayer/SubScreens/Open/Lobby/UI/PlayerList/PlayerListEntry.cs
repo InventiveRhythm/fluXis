@@ -30,7 +30,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
                 new FluXisMenuItem("View Profile", FontAwesome6.Solid.User, () => game?.PresentUser(Participant.ID))
             };
 
-            if (client.Room.Host.ID == client.Player.ID && Participant.ID != client.Player.ID)
+            if (client.Room!.Host.ID == client.Player.ID && Participant.ID != client.Player.ID)
                 list.Add(new FluXisMenuItem("Promote to Host", FontAwesome6.Solid.Crown, MenuItemType.Normal, () => client.TransferHost(Participant.ID)));
 
             return list.ToArray();
@@ -46,6 +46,7 @@ public partial class PlayerListEntry : Container, IHasContextMenu
     [Resolved(CanBeNull = true)]
     private FluXisGame game { get; set; }
 
+    private FluXisSpriteIcon hostCrown;
     private Box stateBackground;
     private FluXisSpriteText stateText;
 
@@ -75,6 +76,15 @@ public partial class PlayerListEntry : Container, IHasContextMenu
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 }
+            },
+            hostCrown = new FluXisSpriteIcon
+            {
+                Position = new Vector2(8, -4),
+                Icon = FontAwesome6.Solid.Crown,
+                Origin = Anchor.Centre,
+                Size = new Vector2(32),
+                Rotation = -14,
+                Alpha = 0
             },
             new FillFlowContainer
             {
@@ -127,6 +137,13 @@ public partial class PlayerListEntry : Container, IHasContextMenu
     {
         base.LoadComplete();
         SetState(Participant.State);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        hostCrown.Alpha = client.Room?.Host.ID == Participant.ID ? 1 : 0;
     }
 
     public void SetState(MultiplayerUserState state)

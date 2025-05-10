@@ -37,12 +37,12 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     [CanBeNull]
     public MultiplayerRoom Room { get; set; }
 
-    public async Task Create(string name, long mapid, string hash)
+    public async Task Create(string name, MultiplayerPrivacy privacy, string password, long mapid, string hash)
     {
         if (Room != null)
             throw new InvalidOperationException("Cannot create a room while already in one");
 
-        Room = await CreateRoom(name, mapid, hash);
+        Room = await CreateRoom(name, privacy, password, mapid, hash);
     }
 
     public async Task Join(long id, string password = "")
@@ -178,7 +178,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
     #region Abstract Methods
 
     protected abstract Task<MultiplayerRoom> JoinRoom(long id, string password);
-    protected abstract Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash);
+    protected abstract Task<MultiplayerRoom> CreateRoom(string name, MultiplayerPrivacy privacy, string password, long mapid, string hash);
     public abstract Task LeaveRoom();
     public abstract Task ChangeMap(long map, string hash, List<string> mods);
     public abstract Task TransferHost(long target);

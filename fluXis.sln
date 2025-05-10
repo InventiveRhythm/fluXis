@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.osu", "fluXis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.Stepmania", "fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj", "{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midori", "..\..\flustix\Midori\Midori\Midori.csproj", "{F776CCEA-627D-4413-BFA6-CD8758790DD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,18 @@ Global
 		{21AA3FE0-6B08-4DC6-BA96-154E54DA1D36}.Release|iPhone.Build.0 = Release|Any CPU
 		{21AA3FE0-6B08-4DC6-BA96-154E54DA1D36}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{21AA3FE0-6B08-4DC6-BA96-154E54DA1D36}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Release|iPhone.Build.0 = Release|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{F776CCEA-627D-4413-BFA6-CD8758790DD2}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

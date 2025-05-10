@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using fluXis.Online.API;
 using fluXis.Online.API.Models.Multi;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Fluxel;
@@ -47,18 +46,11 @@ public partial class OnlineMultiplayerClient : MultiplayerClient
         connection?.Dispose();
     }
 
-    protected override async Task<MultiplayerRoom> CreateRoom(string name, long mapid, string hash)
-        => await connection.Server.CreateRoom(name, "", mapid, hash);
+    protected override async Task<MultiplayerRoom> CreateRoom(string name, MultiplayerPrivacy privacy, string password, long mapid, string hash)
+        => await connection.Server.CreateRoom(name, privacy, password, mapid, hash);
 
     protected override async Task<MultiplayerRoom> JoinRoom(long id, string password)
-    {
-        var lobby = await connection.Server.JoinRoom(id, password);
-
-        if (lobby is null)
-            throw new APIException("failed to join room");
-
-        return lobby;
-    }
+        => await connection.Server.JoinRoom(id, password);
 
     public override async Task LeaveRoom()
     {

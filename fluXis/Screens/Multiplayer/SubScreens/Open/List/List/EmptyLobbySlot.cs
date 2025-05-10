@@ -3,7 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
-namespace fluXis.Screens.Multiplayer.SubScreens.Open.List.UI;
+namespace fluXis.Screens.Multiplayer.SubScreens.Open.List.List;
 
 public partial class EmptyLobbySlot : Container
 {

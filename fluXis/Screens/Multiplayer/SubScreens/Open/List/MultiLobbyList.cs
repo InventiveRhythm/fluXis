@@ -12,11 +12,12 @@ using fluXis.Online.API.Requests.Multiplayer;
 using fluXis.Online.Fluxel;
 using fluXis.Online.Multiplayer;
 using fluXis.Overlay.Notifications;
-using fluXis.Screens.Multiplayer.SubScreens.Open.List.UI;
+using fluXis.Screens.Multiplayer.SubScreens.Open.List.List;
 using fluXis.Screens.Multiplayer.SubScreens.Open.Lobby;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
@@ -68,14 +69,18 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         InternalChildren = new Drawable[]
         {
-            lobbyList = new FillFlowContainer
+            new PopoverContainer
             {
-                Width = 1320,
-                AutoSizeAxes = Axes.Y,
-                Spacing = new Vector2(20),
-                Direction = FillDirection.Full,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                RelativeSizeAxes = Axes.Both,
+                Child = lobbyList = new FillFlowContainer
+                {
+                    Width = 1320,
+                    AutoSizeAxes = Axes.Y,
+                    Spacing = new Vector2(20),
+                    Direction = FillDirection.Full,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre
+                }
             },
             textFlow = new FluXisTextFlow
             {
@@ -127,7 +132,7 @@ public partial class MultiLobbyList : MultiSubScreen
                 var lobbies = res.Data;
 
                 foreach (var lobby in lobbies)
-                    lobbyList.Add(new LobbySlot { Room = lobby, List = this });
+                    lobbyList.Add(new LobbySlot(lobby, pw => JoinLobby(lobby.RoomID, pw)));
 
                 for (var i = 0; i < 12 - lobbies.Count; i++)
                     lobbyList.Add(new EmptyLobbySlot());
@@ -149,6 +154,30 @@ public partial class MultiLobbyList : MultiSubScreen
 
             api.PerformRequestAsync(request);
         });
+    }
+
+    private void startCreate() => this.Push(new MultiSelectScreen(create));
+
+    private void create(RealmMap map, List<string> mods)
+    {
+        var panel = new CreateRoomPanel($"{client.Player.NameWithApostrophe} Room", async void (name, privacy, pw, cb) =>
+        {
+            try
+            {
+                await client.Create(name, privacy, pw, map.OnlineID, map.Hash);
+
+                if (client.Room != null)
+                    Schedule(() => this.Push(new MultiLobby()));
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to create lobby!");
+                notifications.SendError("Failed to join lobby", ex.Message);
+            }
+            finally { cb?.Invoke(); }
+        });
+
+        Schedule(() => panels.Content = panel);
     }
 
     public async void JoinLobby(long room, string password = "")
@@ -193,28 +222,5 @@ public partial class MultiLobbyList : MultiSubScreen
     {
         loadLobbies();
         base.OnResuming(e);
-    }
-
-    private void startCreate() => this.Push(new MultiSelectScreen(create));
-
-    private async void create(RealmMap map, List<string> mods)
-    {
-        var panel = new LoadingPanel { Text = "Creating lobby...", };
-        Schedule(() => panels.Content = panel);
-
-        try
-        {
-            await client.Create($"{client.Player.NameWithApostrophe} Room", map.OnlineID, map.Hash);
-
-            if (client.Room != null)
-                Schedule(() => this.Push(new MultiLobby()));
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "Failed to create lobby!");
-            notifications.SendError("Failed to join lobby", ex.Message);
-        }
-
-        Schedule(() => panel.Hide());
     }
 }
