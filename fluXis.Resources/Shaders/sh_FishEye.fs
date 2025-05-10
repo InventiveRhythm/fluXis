@@ -9,8 +9,9 @@ layout(set = 1, binding = 1) uniform sampler m_Sampler;
 
 layout(location = 0) out vec4 o_Colour;
 
-#undef PI
+#ifndef PI
 #define PI 3.141593
+#endif
 
 vec2 FishEyeUV(vec2 uv)
 {
@@ -26,7 +27,7 @@ vec2 FishEyeUV(vec2 uv)
     }
     else
     {
-        float fac = g_Strength * PI * 10.0;
+        float fac = tan(g_Strength) * PI * 2;
         uv = vec2(0.5) + normalize(d) * atan(r * -fac) * 0.5 / atan (0.5 * -fac);
     }
     return uv;

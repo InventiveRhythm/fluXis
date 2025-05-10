@@ -91,5 +91,6 @@ public enum ShaderType
     HueShift,
     Glitch,
     SplitScreen,
-    FishEye
+    FishEye,
+    Reflections
 }

@@ -16,6 +16,7 @@ using fluXis.Graphics.Shaders.Retro;
 using fluXis.Graphics.Shaders.Vignette;
 using fluXis.Graphics.Shaders.SplitScreen;
 using fluXis.Graphics.Shaders.FishEye;
+using fluXis.Graphics.Shaders.Reflections;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Map.Structures.Events;
@@ -169,6 +170,7 @@ public partial class DesignContainer : EditorTabContainer
                 ShaderType.Glitch => new GlitchContainer(),
                 ShaderType.SplitScreen => new SplitScreenContainer(),
                 ShaderType.FishEye => new FishEyeContainer(),
+                ShaderType.Reflections => new ReflectionsContainer(),
                 _ => null
             };
 
