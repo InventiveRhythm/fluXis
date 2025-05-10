@@ -5,7 +5,6 @@ using fluXis.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osuTK;
 
@@ -33,30 +32,25 @@ public partial class SettingsSidebarButton : Container
     private void load()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 50;
+        Height = 48;
 
         InternalChild = content = new Container
         {
             RelativeSizeAxes = Axes.Both,
             Masking = true,
-            CornerRadius = 10,
+            CornerRadius = 8,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Children = new Drawable[]
             {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0
-                },
                 hover = new HoverLayer(),
                 flash = new FlashLayer(),
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Horizontal,
-                    Spacing = new Vector2(10),
-                    Padding = new MarginPadding(10) { Horizontal = 15 },
+                    Spacing = new Vector2(12),
+                    Padding = new MarginPadding(14),
                     Children = new Drawable[]
                     {
                         new FluXisSpriteIcon
@@ -71,7 +65,7 @@ public partial class SettingsSidebarButton : Container
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
                             Text = section.Title,
-                            FontSize = 24
+                            WebFontSize = 16
                         }
                     }
                 }

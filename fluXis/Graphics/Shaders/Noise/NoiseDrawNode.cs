@@ -50,7 +50,7 @@ public partial class NoiseContainer
                 {
                     TexSize = current.Size,
                     Strength = strength,
-                    Time = (float)Source.Time.Current
+                    Time = (float)Source.Time.Current / 1000f
                 };
 
                 Shader.BindUniformBlock("m_NoiseParameters", parametersBuffer);

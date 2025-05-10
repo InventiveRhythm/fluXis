@@ -213,6 +213,8 @@ public partial class SettingsMenu : OverlayContainer, IKeyBindingHandler<FluXisG
 
     private void sectionChanged(ValueChangedEvent<SettingsSection> e)
     {
+        scrollContainer.ScrollToStart();
+
         var prev = e.OldValue;
         var next = e.NewValue;
 

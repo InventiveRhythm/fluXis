@@ -77,6 +77,11 @@ public partial class DesignPointsList : PointsList
         Map.TimeOffsetEventRemoved += RemovePoint;
         Map.MapEvents.TimeOffsetEvents.ForEach(AddPoint);
 
+        Map.ScriptEventAdded += AddPoint;
+        Map.ScriptEventUpdated += UpdatePoint;
+        Map.ScriptEventRemoved += RemovePoint;
+        Map.MapEvents.ScriptEvents.ForEach(AddPoint);
+
         Map.NoteEventAdded += AddPoint;
         Map.NoteEventUpdated += UpdatePoint;
         Map.NoteEventRemoved += RemovePoint;
@@ -98,6 +103,7 @@ public partial class DesignPointsList : PointsList
         ShaderEvent shader => new ShaderEntry(shader),
         ScrollMultiplierEvent scroll => new ScrollMultiplierEntry(scroll),
         TimeOffsetEvent offset => new TimeOffsetEntry(offset),
+        ScriptEvent script => new ScriptEntry(script),
         NoteEvent note => new NoteEntry(note),
         _ => null
     };
@@ -119,6 +125,7 @@ public partial class DesignPointsList : PointsList
             new("Shader", FluXisColors.Shader, () => Create(new ShaderEvent { ShaderName = "Bloom" }), x => x is ShaderEvent),
             new("Scroll Multiplier", FluXisColors.ScrollMultiply, () => Create(new ScrollMultiplierEvent()), x => x is ScrollMultiplierEvent),
             new("Time Offset", FluXisColors.TimeOffset, () => Create(new TimeOffsetEvent()), x => x is TimeOffsetEvent),
+            // new("Script", FluXisColors.Script, () => Create(new ScriptEvent()), x => x is ScriptEvent),
             new("Note", FluXisColors.Note, () => Create(new NoteEvent()), x => x is NoteEvent),
         };
 

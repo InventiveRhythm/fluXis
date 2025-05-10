@@ -52,5 +52,6 @@ public enum FluXisFont
 {
     Renogare,
     RenogareSoft,
-    YoureGone
+    YoureGone,
+    JetBrainsMono,
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fluXis.Map.Structures;
 using osu.Framework.Graphics.Primitives;
 
@@ -10,6 +11,7 @@ public class OsuHitObject
     public float StartTime { get; init; }
     public OsuHitObjectType Type { get; init; }
     public OsuHitSound HitSound { get; init; }
+    public OsuSampleSet SampleSet { get; init; }
     public string CustomHitSound { get; set; }
     public float EndTime { get; set; }
 
@@ -25,15 +27,14 @@ public class OsuHitObject
 
         if (string.IsNullOrEmpty(CustomHitSound))
         {
-            // whistle and finish doesn't exist in fluXis but no harm in keeping it
-            if (HitSound.HasFlag(OsuHitSound.Normal))
-                CustomHitSound = ":normal";
-            else if (HitSound.HasFlag(OsuHitSound.Whistle))
-                CustomHitSound = ":whistle";
+            if (HitSound.HasFlag(OsuHitSound.Clap))
+                CustomHitSound = getSound(map.MapFiles, SampleSet, OsuHitSound.Clap, ":clap");
             else if (HitSound.HasFlag(OsuHitSound.Finish))
-                CustomHitSound = ":finish";
-            else if (HitSound.HasFlag(OsuHitSound.Clap))
-                CustomHitSound = ":clap";
+                CustomHitSound = getSound(map.MapFiles, SampleSet, OsuHitSound.Finish, ":finish");
+            else if (HitSound.HasFlag(OsuHitSound.Whistle))
+                CustomHitSound = getSound(map.MapFiles, SampleSet, OsuHitSound.Whistle, ":whistle");
+            else
+                CustomHitSound = getSound(map.MapFiles, SampleSet, OsuHitSound.Normal, ":normal");
         }
 
         return new HitObject
@@ -43,6 +44,48 @@ public class OsuHitObject
             HoldTime = holdTime,
             HitSound = CustomHitSound
         };
+    }
+
+    private string getSound(List<string> files, OsuSampleSet set, OsuHitSound sound, string fallback)
+    {
+        var prefix = set switch
+        {
+            OsuSampleSet.Normal => "normal",
+            OsuSampleSet.Soft => "soft",
+            OsuSampleSet.Drum => "drum",
+            _ => "normal"
+        };
+
+        var name = $"{prefix}-";
+
+        switch (sound)
+        {
+            case OsuHitSound.Normal:
+                name += "hitnormal";
+                break;
+
+            case OsuHitSound.Whistle:
+                name += "hitwhistle";
+                break;
+
+            case OsuHitSound.Finish:
+                name += "hitfinish";
+                break;
+
+            case OsuHitSound.Clap:
+                name += "hitclap";
+                break;
+
+            default:
+                return fallback;
+        }
+
+        name += ".wav";
+
+        if (files.Contains(name))
+            return name;
+
+        return fallback;
     }
 }
 
@@ -65,4 +108,12 @@ public enum OsuHitSound
     Whistle = 1 << 1,
     Finish = 1 << 2,
     Clap = 1 << 3
+}
+
+public enum OsuSampleSet
+{
+    None = 0,
+    Normal = 1,
+    Soft = 2,
+    Drum = 3
 }

@@ -80,6 +80,9 @@ public class APIUser
     public string PreferredName => string.IsNullOrWhiteSpace(DisplayName) ? Username : DisplayName;
 
     [JsonIgnore]
+    public bool HasDisplayName => !string.IsNullOrWhiteSpace(DisplayName) && DisplayName != Username;
+
+    [JsonIgnore]
     public string NameWithApostrophe
     {
         get

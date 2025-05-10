@@ -1,7 +1,10 @@
 using System;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
+using fluXis.Overlay.Wiki;
 using fluXis.Screens.Edit.Tabs.Shared.Points.List;
+using Humanizer;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,6 +14,10 @@ namespace fluXis.Screens.Edit.Tabs.Shared.Points.Settings;
 
 public partial class PointSettingsTitle : CompositeDrawable
 {
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private WikiOverlay wiki { get; set; }
+
     private string title { get; }
     private Action deleteAction { get; }
 
@@ -34,6 +41,13 @@ public partial class PointSettingsTitle : CompositeDrawable
                 Origin = Anchor.CentreLeft,
                 WebFontSize = 20,
                 Text = title,
+            },
+            new PointsList.PointsListIconButton(() => wiki?.NavigateTo($"/editor/events/{title.Kebaberize()}"))
+            {
+                ButtonIcon = FontAwesome.Solid.Book,
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.CentreRight,
+                X = -40,
             },
             new DeleteButton(deleteAction)
             {

@@ -45,6 +45,8 @@ public class OsuMap
     // [HitObjects]
     public List<OsuHitObject> HitObjects { get; init; } = new();
 
+    public List<string> MapFiles { get; set; } = new();
+
     public string GetBackground()
     {
         foreach (var osuEvent in Events)

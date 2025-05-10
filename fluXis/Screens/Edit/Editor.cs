@@ -29,6 +29,7 @@ using fluXis.Online.API.Requests.MapSets;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Notifications;
 using fluXis.Overlay.Notifications.Tasks;
+using fluXis.Overlay.Wiki;
 using fluXis.Screens.Edit.Actions;
 using fluXis.Screens.Edit.BottomBar;
 using fluXis.Screens.Edit.Input;
@@ -38,10 +39,12 @@ using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
 using fluXis.Screens.Edit.TabSwitcher;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
+using fluXis.Scripting;
 using fluXis.Skinning.Default;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
+using JetBrains.Annotations;
 using ManagedBass.Fx;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
@@ -89,6 +92,10 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     [Resolved]
     private PanelContainer panels { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private WikiOverlay wiki { get; set; }
 
     /// <summary>
     /// overwrites the tab the editor opens with
@@ -174,7 +181,9 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         isNewMap = editorMap.IsNew;
 
         if (editorMap.RealmMap == null)
+        {
             editorMap.RealmMap = mapStore.CreateNew();
+        }
         else
         {
             var resources = editorMap.RealmMap.MapSet.Resources;
@@ -210,6 +219,13 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         dependencies.CacheAs<IBeatSyncProvider>(clock);
 
         dependencies.CacheAs(new EditorSnapProvider(editorMap, settings, clock));
+
+        var setPath = MapFiles.GetFullPath($"{editorMap.MapSet.ID}");
+
+        if (!Directory.Exists(setPath))
+            Directory.CreateDirectory(setPath);
+
+        dependencies.CacheAs(new ScriptStorage(setPath));
 
         var tabList = new List<EditorTab>
         {
@@ -336,40 +352,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                         {
                                             new("Background Dim", FontAwesome6.Solid.Image)
                                             {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("0%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = 0) { IsActive = () => BindableBackgroundDim.Value == 0f },
-                                                    new("20%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .2f) { IsActive = () => BindableBackgroundDim.Value == .2f },
-                                                    new("40%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .4f) { IsActive = () => BindableBackgroundDim.Value == .4f },
-                                                    new("60%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .6f) { IsActive = () => BindableBackgroundDim.Value == .6f },
-                                                    new("80%", FontAwesome6.Solid.Percent, () => BindableBackgroundDim.Value = .8f) { IsActive = () => BindableBackgroundDim.Value == .8f },
-                                                }
+                                                Items = createPercentItems(() => BindableBackgroundDim.Value, v => BindableBackgroundDim.Value = v)
                                             },
                                             new("Background Blur", FontAwesome6.Solid.Aperture)
                                             {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("0%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = 0) { IsActive = () => BindableBackgroundBlur.Value == 0f },
-                                                    new("20%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .2f) { IsActive = () => BindableBackgroundBlur.Value == .2f },
-                                                    new("40%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .4f) { IsActive = () => BindableBackgroundBlur.Value == .4f },
-                                                    new("60%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .6f) { IsActive = () => BindableBackgroundBlur.Value == .6f },
-                                                    new("80%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = .8f) { IsActive = () => BindableBackgroundBlur.Value == .8f },
-                                                    new("100%", FontAwesome6.Solid.Percent, () => BindableBackgroundBlur.Value = 1f) { IsActive = () => BindableBackgroundBlur.Value == 1f }
-                                                }
+                                                Items = createPercentItems(() => BindableBackgroundBlur.Value, v => BindableBackgroundBlur.Value = v)
                                             },
                                             new FluXisMenuSpacer(),
                                             new("Waveform opacity", FontAwesome6.Solid.WaveformLines)
                                             {
-                                                Items = new FluXisMenuItem[]
-                                                {
-                                                    new("0%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0) { IsActive = () => settings.WaveformOpacity.Value == 0 },
-                                                    new("25%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.25f)
-                                                        { IsActive = () => settings.WaveformOpacity.Value == 0.25f },
-                                                    new("50%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.5f) { IsActive = () => settings.WaveformOpacity.Value == 0.5f },
-                                                    new("75%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 0.75f)
-                                                        { IsActive = () => settings.WaveformOpacity.Value == 0.75f },
-                                                    new("100%", FontAwesome6.Solid.Percent, () => settings.WaveformOpacity.Value = 1) { IsActive = () => settings.WaveformOpacity.Value == 1 }
-                                                }
+                                                Items = createPercentItems(() => settings.WaveformOpacity.Value, v => settings.WaveformOpacity.Value = v)
                                             },
                                             new FluXisMenuSpacer(),
                                             new("Show sample on notes", FontAwesome6.Solid.LayerGroup, () => settings.ShowSamples.Value = !settings.ShowSamples.Value)
@@ -420,6 +412,16 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 }
             }
         };
+    }
+
+    private FluXisMenuItem[] createPercentItems(Func<float> get, Action<float> set)
+    {
+        float[] values = { 0, .2f, .4f, .6f, .8f, 1 };
+
+        return values.Select(x => new FluXisMenuItem($"{x * 100:0}%", FontAwesome6.Solid.Percent, () => set(x))
+        {
+            IsActive = () => Math.Abs(get() - x) < .01f
+        }).ToArray();
     }
 
     private void updateStateHash()
@@ -529,7 +531,17 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
     }
 
-    private void openHelp() => Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
+    private void openHelp()
+    {
+        if (wiki != null)
+        {
+            wiki.NavigateTo("/editor");
+            return;
+        }
+
+        Game.OpenLink($"{api.Endpoint.WikiRootUrl}/editor");
+    }
+
     private void openFolder() => MapFiles.PresentExternally(editorMap.RealmMap);
 
     protected override bool OnKeyDown(KeyDownEvent e)

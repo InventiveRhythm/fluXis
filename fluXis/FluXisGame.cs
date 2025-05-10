@@ -29,6 +29,7 @@ using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar;
 using fluXis.Overlay.User;
 using fluXis.Overlay.Volume;
+using fluXis.Overlay.Wiki;
 using fluXis.Scoring;
 using fluXis.Screens;
 using fluXis.Screens.Intro;
@@ -132,6 +133,7 @@ public partial class FluXisGame : FluXisGameBase, IKeyBindingHandler<FluXisGloba
         loadComponent(new BrowseOverlay(), overlayContainer.Add, true);
         loadComponent(mapSetOverlay = new MapSetOverlay(), overlayContainer.Add, true);
         loadComponent(userProfileOverlay = new UserProfileOverlay(), overlayContainer.Add, true);
+        loadComponent(new WikiOverlay(), overlayContainer.Add, true);
         loadComponent(new ClubOverlay(), overlayContainer.Add, true);
         loadComponent(new MusicPlayer(), overlayContainer.Add, true);
         loadComponent(new SettingsMenu(), overlayContainer.Add, true);

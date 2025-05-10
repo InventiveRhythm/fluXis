@@ -92,7 +92,8 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
     private MapList mapList { get; set; }
     private ModsOverlay modsOverlay { get; set; }
-    private BufferedContainer modsBlur { get; set; }
+
+    // private BufferedContainer modsBlur { get; set; }
 
     private BackgroundVideo video;
     private Container storyboardContainer;
@@ -137,103 +138,101 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         InternalChildren = new Drawable[]
         {
             searchTracker = new IdleTracker(250, UpdateSearch),
-            modsBlur = new BufferedContainer
+            /*modsBlur = new BufferedContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 RedrawOnScale = false,
+                Children = new Drawable[] { }
+            },*/
+            new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Top = -10 },
                 Children = new Drawable[]
                 {
+                    new BufferedContainer
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        BlurSigma = new Vector2(12),
+                        RedrawOnScale = false,
+                        Children = new Drawable[]
+                        {
+                            video = new BackgroundVideo
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                FillMode = FillMode.Fill,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                VideoClock = clock
+                            },
+                            storyboardContainer = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                AlwaysPresent = true
+                            }
+                        }
+                    },
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
+                    }
+                }
+            },
+            new Container()
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding { Bottom = 50 },
+                Children = new Drawable[]
+                {
+                    new FluXisContextMenuContainer
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        RelativeSizeAxes = Axes.Both,
+                        Width = .5f,
+                        Child = new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Padding = new MarginPadding(10)
+                            {
+                                Top = 140,
+                                Bottom = 40
+                            },
+                            Child = mapList = new MapList(sortMode)
+                        }
+                    },
+                    filterControl = new SearchFilterControls(),
+                    searchBar = new SearchBar(),
+                    selectMapInfo = new SelectMapInfo
+                    {
+                        HoverAction = () => mapList.ScrollToSelected()
+                    },
                     new Container
                     {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Both,
-                        Padding = new MarginPadding { Top = -10 },
+                        Width = .5f,
                         Children = new Drawable[]
                         {
-                            new BufferedContainer
+                            noMapsContainer = new SelectNoMaps(),
+                            letterContainer = new SelectLetter(),
+                            loadingIcon = new LoadingIcon
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                BlurSigma = new Vector2(12),
-                                RedrawOnScale = false,
-                                Children = new Drawable[]
-                                {
-                                    video = new BackgroundVideo
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        FillMode = FillMode.Fill,
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        VideoClock = clock
-                                    },
-                                    storyboardContainer = new Container
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        AlwaysPresent = true
-                                    }
-                                }
-                            },
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = ColourInfo.GradientVertical(Colour4.Black.Opacity(.8f), Colour4.Black.Opacity(0))
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Size = new Vector2(50)
                             }
                         }
-                    },
-                    new Container()
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Padding = new MarginPadding { Bottom = 50 },
-                        Children = new Drawable[]
-                        {
-                            new FluXisContextMenuContainer
-                            {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                RelativeSizeAxes = Axes.Both,
-                                Width = .5f,
-                                Child = new Container
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Padding = new MarginPadding(10)
-                                    {
-                                        Top = 140,
-                                        Bottom = 40
-                                    },
-                                    Child = mapList = new MapList(sortMode)
-                                }
-                            },
-                            filterControl = new SearchFilterControls(),
-                            searchBar = new SearchBar(),
-                            selectMapInfo = new SelectMapInfo
-                            {
-                                HoverAction = () => mapList.ScrollToSelected()
-                            },
-                            new Container
-                            {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                RelativeSizeAxes = Axes.Both,
-                                Width = .5f,
-                                Children = new Drawable[]
-                                {
-                                    noMapsContainer = new SelectNoMaps(),
-                                    letterContainer = new SelectLetter(),
-                                    loadingIcon = new LoadingIcon
-                                    {
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        Size = new Vector2(50)
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    }
                 }
             },
             modsOverlay,
             footer = CreateFooter()
         };
 
-        modsOverlay.BackgroundBlur = modsBlur;
+        // modsOverlay.BackgroundBlur = modsBlur;
         Filters.OnChange += searchTracker.Reset;
     }
 

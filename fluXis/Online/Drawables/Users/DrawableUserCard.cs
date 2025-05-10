@@ -64,6 +64,8 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
     [Resolved]
     private IAPIClient api { get; set; }
 
+    public bool ShowLastOnline { get; set; } = true;
+
     private APIUser user { get; }
 
     public DrawableUserCard(APIUser user)
@@ -171,6 +173,15 @@ public partial class DrawableUserCard : CompositeDrawable, IHasContextMenu
                                 Spacing = new Vector2(5),
                                 Alpha = user.Groups.Count != 0 ? 1 : 0,
                                 ChildrenEnumerable = user.Groups.Select(group => new DrawableGroupBadge(group))
+                            },
+                            new ForcedHeightText
+                            {
+                                Text = $"Last online {TimeUtils.Ago(user.LastLogin ?? 0)}",
+                                Height = 10,
+                                Alpha = ShowLastOnline && !user.IsOnline && user.LastLogin != null ? .8f : 0,
+                                WebFontSize = 10,
+                                Shadow = true,
+                                Margin = new MarginPadding { Top = 4 }
                             }
                         }
                     }

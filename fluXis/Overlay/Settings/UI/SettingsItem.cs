@@ -21,6 +21,7 @@ public abstract partial class SettingsItem : Container
     public LocalisableString Description { get; init; } = string.Empty;
 
     protected virtual bool IsDefault => true;
+    public bool HideWhenDisabled { get; init; }
 
     public bool Padded { get; init; }
 
@@ -83,7 +84,11 @@ public abstract partial class SettingsItem : Container
         base.LoadComplete();
         updateResetButton();
 
-        EnabledBindable.BindValueChanged(e => this.FadeTo(e.NewValue ? 1 : .5f, 200), true);
+        EnabledBindable.BindValueChanged(e =>
+        {
+            var hideAlpha = HideWhenDisabled ? 0 : .5f;
+            this.FadeTo(e.NewValue ? 1 : hideAlpha, HideWhenDisabled ? 0 : 200);
+        }, true);
     }
 
     protected override void Update()

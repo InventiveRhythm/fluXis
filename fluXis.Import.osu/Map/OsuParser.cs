@@ -189,6 +189,7 @@ public class OsuParser
                 Time = split[0].ToFloatInvariant(),
                 BeatLength = split[1].ToFloatInvariant(),
                 Meter = split[2].ToIntInvariant(),
+                SampleSet = (OsuSampleSet)split[3].ToIntInvariant(),
                 Inherited = split[6].ToIntInvariant()
             });
         }
@@ -205,7 +206,19 @@ public class OsuParser
             var startTime = split[2].ToFloatInvariant();
             var type = (OsuHitObjectType)int.Parse(split[3]);
             var sound = (OsuHitSound)int.Parse(split[4]);
+
+            var set = (OsuSampleSet)int.Parse(colonSplit[0]);
+            var additional = (OsuSampleSet)int.Parse(colonSplit[1]);
             var customSound = colonSplit.LastOrDefault();
+
+            if (set == OsuSampleSet.None && additional != OsuSampleSet.None)
+                set = additional;
+
+            if (set == OsuSampleSet.None)
+            {
+                var point = getTimingPoint(map, startTime);
+                if (point != null) set = point.SampleSet;
+            }
 
             var hit = new OsuHitObject
             {
@@ -213,6 +226,7 @@ public class OsuParser
                 StartTime = startTime,
                 HitSound = sound,
                 CustomHitSound = customSound,
+                SampleSet = set,
                 Type = type
             };
 
@@ -221,5 +235,18 @@ public class OsuParser
 
             map.HitObjects.Add(hit);
         }
+    }
+
+    private OsuTimingPoint getTimingPoint(OsuMap map, float time)
+    {
+        if (map.TimingPoints.Count == 0)
+            return null;
+
+        var timingPoint = map.TimingPoints.FirstOrDefault(t => t.Time >= time);
+
+        if (timingPoint == null)
+            return map.TimingPoints.LastOrDefault();
+
+        return timingPoint;
     }
 }

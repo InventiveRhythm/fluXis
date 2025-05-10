@@ -8,6 +8,7 @@ public class OsuTimingPoint
     public float Time { get; init; }
     public float BeatLength { get; init; }
     public int Meter { get; init; }
+    public OsuSampleSet SampleSet { get; init; }
     public int Inherited { get; init; }
 
     public bool IsScrollVelocity => Inherited == 0 || BeatLength < 0;

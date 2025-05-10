@@ -3,6 +3,7 @@ using System.Linq;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Skinning;
 using fluXis.Utils;
 using osu.Framework.Allocation;
@@ -19,6 +20,8 @@ public partial class SnapControlPopover : CompositeDrawable
     [Resolved]
     private EditorSettings settings { get; set; }
 
+    private FluXisTextBox custom;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -26,17 +29,42 @@ public partial class SnapControlPopover : CompositeDrawable
 
         InternalChild = new FillFlowContainer
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Full,
-            MaximumSize = new Vector2(196, 0),
-            ChildrenEnumerable = SnapControl.DefaultSnaps.Select(snap => new SnapChip(snap, updateSnap))
+            Width = 196,
+            AutoSizeAxes = Axes.Y,
+            Children = new Drawable[]
+            {
+                new FillFlowContainer
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Direction = FillDirection.Full,
+                    ChildrenEnumerable = SnapControl.DefaultSnaps.Select(snap => new SnapChip(snap, _ => updateSnap(snap)))
+                },
+                custom = new FluXisTextBox
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 42,
+                    FontSize = FluXisSpriteText.GetWebFontSize(14),
+                    SidePadding = 12,
+                    PlaceholderText = "Custom snap...",
+                    Text = SnapControl.DefaultSnaps.Contains(settings.SnapDivisor) ? string.Empty : settings.SnapDivisor.ToString(),
+                    OnTextChanged = () =>
+                    {
+                        if (int.TryParse(custom.Text, out int snap) && snap > 0)
+                            updateSnap(snap, false);
+                        else
+                            custom.NotifyError();
+                    },
+                    OnCommitAction = this.HidePopover
+                }
+            }
         };
     }
 
-    private void updateSnap(int num)
+    private void updateSnap(int num, bool hide = true)
     {
         settings.SnapDivisor = num;
-        this.HidePopover();
+        if (hide) this.HidePopover();
     }
 
     private partial class SnapChip : CompositeDrawable

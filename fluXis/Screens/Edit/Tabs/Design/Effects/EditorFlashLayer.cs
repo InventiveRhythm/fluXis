@@ -1,23 +1,16 @@
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using fluXis.Map.Structures.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Utils;
-using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Design.Effects;
 
 public partial class EditorFlashLayer : CompositeDrawable
 {
-    [Resolved]
-    private EditorMap map { get; set; }
-
-    [Resolved]
-    private EditorClock clock { get; set; }
-
-    public bool InBackground { get; init; } = false;
+    public override bool RemoveCompletedTransforms => false;
 
     private Box box;
 
@@ -33,36 +26,21 @@ public partial class EditorFlashLayer : CompositeDrawable
         };
     }
 
-    protected override void Update()
+    public void Rebuild(List<FlashEvent> flashes)
     {
-        base.Update();
+        ClearTransforms();
+        box.FadeOut();
 
-        var currentFlash = map.MapEvents.FlashEvents.LastOrDefault(e => e.Time <= clock.CurrentTime && e.InBackground == InBackground);
-
-        if (currentFlash != null)
+        flashes.ForEach(flash =>
         {
-            var progress = (float)(clock.CurrentTime - currentFlash.Time) / currentFlash.Duration;
-
-            switch (progress)
+            using (BeginAbsoluteSequence(flash.Time))
             {
-                case > 1:
-                    box.Colour = currentFlash.EndColor;
-                    box.Alpha = currentFlash.EndOpacity;
-                    return;
+                var dur = Math.Max(flash.Duration, 0);
 
-                case <= 0:
-                    box.Colour = currentFlash.StartColor;
-                    box.Alpha = currentFlash.StartOpacity;
-                    return;
+                box.FadeColour(flash.StartColor).FadeTo(flash.StartOpacity)
+                   .FadeColour(flash.EndColor, dur, flash.Easing)
+                   .FadeTo(flash.EndOpacity, dur, flash.Easing);
             }
-
-            var gradient = ColourInfo.GradientHorizontal(currentFlash.StartColor, currentFlash.EndColor);
-            box.Colour = gradient.Interpolate(new Vector2((float)progress, 0));
-            box.Alpha = Interpolation.ValueAt(progress, currentFlash.StartOpacity, currentFlash.EndOpacity, 0, 1);
-        }
-        else
-        {
-            box.Alpha = 0;
-        }
+        });
     }
 }

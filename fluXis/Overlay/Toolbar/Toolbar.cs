@@ -10,6 +10,7 @@ using fluXis.Overlay.Music;
 using fluXis.Overlay.Network;
 using fluXis.Overlay.Settings;
 using fluXis.Overlay.Toolbar.Buttons;
+using fluXis.Overlay.Wiki;
 using fluXis.Screens;
 using fluXis.Screens.Menu;
 using fluXis.Screens.Multiplayer;
@@ -66,7 +67,7 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
     private double lastTime;
 
     [BackgroundDependencyLoader]
-    private void load(BrowseOverlay browse)
+    private void load(BrowseOverlay browse, WikiOverlay wiki)
     {
         RelativeSizeAxes = Axes.X;
         Height = 50;
@@ -191,14 +192,18 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                                 Overlay = browse,
                                 RequireLogin = true
                             },
-                            /*new ToolbarScreenButton
+                            new ToolbarOverlayButton
                             {
                                 TooltipTitle = "Wiki",
                                 TooltipSub = "Learn about the game.",
                                 Icon = FontAwesome6.Solid.Book,
-                                Screen = typeof(Wiki),
-                                Action = () => goToScreen(new Wiki())
-                            },*/
+                                Overlay = wiki,
+                                OnVisibilityToggle = v =>
+                                {
+                                    if (v == Visibility.Visible)
+                                        wiki.NavigateTo("/home");
+                                },
+                            },
                             new ToolbarOverlayButton
                             {
                                 TooltipTitle = "Music Player",

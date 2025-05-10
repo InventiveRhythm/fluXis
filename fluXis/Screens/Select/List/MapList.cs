@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Containers;
@@ -141,15 +140,14 @@ public partial class MapList : FluXisScrollContainer
 
     public void ScrollToItem(IListItem item, bool smooth = true)
     {
-        var pos1 = item.Position;
-        var pos2 = item.Position + item.Size;
+        var top = item.ScrollPosition;
+        var center = top + item.ScrollSize / 2;
 
-        var min = Math.Min(pos1, pos2);
-        var max = Math.Max(pos1, pos2);
-
-        if (min < Current || (min > Current && pos2 > AvailableContent))
-            ScrollTo(min, smooth);
-        else if (max > Current + DisplayableContent)
-            ScrollTo(max - DisplayableContent, smooth);
+        if (center < DisplayableContent / 2)
+            ScrollTo(0, smooth);
+        else if (center > ScrollableExtent - DisplayableContent / 2)
+            ScrollToEnd(smooth);
+        else
+            ScrollTo(center - DisplayableContent / 2, smooth);
     }
 }

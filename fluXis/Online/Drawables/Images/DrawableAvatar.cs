@@ -1,9 +1,11 @@
 using System;
 using fluXis.Graphics;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.Drawables.Users;
 using fluXis.Utils.Extensions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Events;
@@ -13,7 +15,7 @@ namespace fluXis.Online.Drawables.Images;
 #nullable enable
 
 [LongRunningLoad]
-public partial class DrawableAvatar : Sprite
+public partial class DrawableAvatar : Sprite, IHasCustomTooltip<APIUser>
 {
     [Resolved]
     private OnlineTextureStore store { get; set; } = null!;
@@ -90,4 +92,12 @@ public partial class DrawableAvatar : Sprite
         base.Dispose(isDisposing);
         unregisterCallback();
     }
+
+    #region Tooltip
+
+    public bool ShowTooltip { get; init; }
+    APIUser? IHasCustomTooltip<APIUser>.TooltipContent => ShowTooltip ? user : null;
+    public ITooltip<APIUser> GetCustomTooltip() => new UserTooltip();
+
+    #endregion
 }
