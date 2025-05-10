@@ -23,6 +23,7 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
 
     public event Action<APIMap, List<string>> OnMapChange;
 
+    public event Action<long?> CountdownUpdated;
     public event Action OnStart;
     public event Action<long, int> OnScore;
     public event Action<List<ScoreInfo>> OnResultsReady;
@@ -117,6 +118,12 @@ public abstract partial class MultiplayerClient : Component, IMultiplayerClient
             OnMapChange?.Invoke(map, mods);
         });
 
+        return Task.CompletedTask;
+    }
+
+    public Task CountdownStarted(long? time)
+    {
+        Scheduler.ScheduleIfNeeded(() => CountdownUpdated?.Invoke(time));
         return Task.CompletedTask;
     }
 

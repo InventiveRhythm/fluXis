@@ -170,7 +170,8 @@ public partial class MultiLobby : MultiSubScreen
                 RightButtonAction = rightButtonPress,
                 ChangeMapAction = changeMap,
                 ViewMapAction = () => game.PresentMapSet(Room.Map.MapSetID)
-            }
+            },
+            new MultiCountdown()
         };
     }
 

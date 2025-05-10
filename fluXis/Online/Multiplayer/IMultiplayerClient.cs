@@ -18,6 +18,7 @@ public interface IMultiplayerClient
 
     Task MapUpdated(APIMap map, List<string> mods);
 
+    Task CountdownStarted(long? time);
     Task LoadRequested();
     Task ScoreUpdated(long user, int score);
     Task EveryoneFinished(List<ScoreInfo> scores);
