@@ -5,11 +5,13 @@ using System.IO.Compression;
 using System.Linq;
 using fluXis.Audio;
 using fluXis.Configuration;
+using fluXis.Graphics.UserInterface.Panel;
 using fluXis.Integration;
 using fluXis.Overlay.Notifications;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Processing.Health;
 using fluXis.Screens.Course;
+using fluXis.Screens.Edit;
 using fluXis.Skinning.Bases.Judgements;
 using fluXis.Skinning.Custom;
 using fluXis.Skinning.Default;
@@ -56,6 +58,10 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
     [Resolved]
     private FluXisGameBase game { get; set; }
+
+    [CanBeNull]
+    [Resolved(CanBeNull = true)]
+    private PanelContainer panels { get; set; }
 
     [CanBeNull]
     [Resolved(CanBeNull = true)]
@@ -232,10 +238,61 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
 
         var item = new BasicWorkshopItem(SkinInfo.Name, Path.Combine(path, "icon.png"), path);
 
+        var panel = new EditorUploadOverlay
+        {
+            Text = id is null ? "Uploading skin..." : "Updating skin...",
+        };
+
+        if (panels is not null)
+            panels.Content = panel;
+
+        steam.ItemUpdated += itemSubmit;
+
         if (id is not null)
+        {
+            panel.SubText = "Updating item...";
             steam.UpdateItem(id.Value, item);
+        }
         else
+        {
+            steam.ItemCreated += itemCreate;
+            panel.SubText = "Creating item...";
             steam.UploadItem(item);
+        }
+
+        return;
+
+        void hidePanel()
+        {
+            if (steam is null)
+                return;
+
+            steam.ItemUpdated -= itemSubmit;
+            steam.ItemCreated -= itemCreate;
+            panel.Hide();
+        }
+
+        void itemCreate(bool result)
+        {
+            if (!result)
+            {
+                hidePanel();
+                notifications.SendError("Failed to create item.");
+                return;
+            }
+
+            panel.SubText = "Uploading...";
+        }
+
+        void itemSubmit(bool result)
+        {
+            hidePanel();
+
+            if (result)
+                return;
+
+            notifications.SendError("Failed to submit item.");
+        }
     }
 
     public void SetSkin(SkinInfo info) => skinName.Value = info.Path;
