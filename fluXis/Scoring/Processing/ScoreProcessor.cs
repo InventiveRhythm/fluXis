@@ -98,9 +98,6 @@ public class ScoreProcessor : JudgementDependant
         HitResults = JudgementProcessor.Results,
         MapID = MapInfo.RealmEntry!.OnlineID,
         PlayerID = Player.ID,
-        MapHash = MapInfo.Hash,
-        EffectHash = MapInfo.EffectHash,
-        StoryboardHash = MapInfo.StoryboardHash,
         Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
         Mods = Mods.Select(m => m.Acronym).ToList()
     };

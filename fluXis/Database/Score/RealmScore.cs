@@ -92,7 +92,6 @@ public class RealmScore : RealmObject
         HitResults = null,
         PlayerID = PlayerID,
         MapID = -1,
-        MapHash = null,
         Timestamp = Date.ToUnixTimeSeconds(),
         Mods = Mods.Split(' ').ToList(),
         ScrollSpeed = ScrollSpeed

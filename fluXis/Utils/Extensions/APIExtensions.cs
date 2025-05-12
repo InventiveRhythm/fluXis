@@ -69,7 +69,6 @@ public static class APIExtensions
         Okay = score.OkayCount,
         Miss = score.MissCount,
         MapID = score.Map?.ID ?? -1,
-        MapHash = score.Map?.SHA256Hash ?? "",
         ScrollSpeed = score.ScrollSpeed,
         Timestamp = score.Time,
         Mods = score.Mods.Split(",").ToList(),
