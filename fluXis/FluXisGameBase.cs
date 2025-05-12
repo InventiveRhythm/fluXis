@@ -38,6 +38,7 @@ using fluXis.Skinning;
 using fluXis.UI;
 using fluXis.UI.Tips;
 using fluXis.Utils;
+using fluXis.Utils.Exceptions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -63,6 +64,7 @@ public partial class FluXisGameBase : osu.Framework.Game
     protected bool LoadFailed { get; set; }
 
     protected virtual bool LoadComponentsLazy => false;
+    protected virtual bool RequiresSteam => false;
 
     protected LoadInfo LoadQueue { get; } = new();
 
@@ -161,6 +163,12 @@ public partial class FluXisGameBase : osu.Framework.Game
             Resources.AddStore(new DllResourceStore(FluXisResources.ResourceAssembly));
             initFonts();
 
+            if (RequiresSteam && !(Steam?.Initialized ?? false))
+            {
+                Host.OpenUrlExternally("https://store.steampowered.com/app/3440100");
+                throw new SteamInitException();
+            }
+
             CurrentSeason = getSeason();
 
             var endpoint = getApiEndpoint();
@@ -247,7 +255,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             LoadFailed = true;
             Logger.Error(ex, "Failed to initialize game!");
 
-            Child = new FillFlowContainer
+            base.Content.Child = new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
@@ -422,7 +430,7 @@ public partial class FluXisGameBase : osu.Framework.Game
             exceptionCount++;
             Task.Delay(1000).ContinueWith(_ => exceptionCount--);
 
-            NotificationManager.SendError("An unhandled error occurred!", IsDebug ? e.Message : "This has been automatically reported to the developers.", FontAwesome6.Solid.Bomb);
+            NotificationManager?.SendError("An unhandled error occurred!", IsDebug ? e.Message : "This has been automatically reported to the developers.", FontAwesome6.Solid.Bomb);
             return exceptionCount <= MaxExceptions;
         };
     }

@@ -12,6 +12,8 @@ namespace fluXis.Desktop;
 
 public partial class FluXisGameDesktop : FluXisGame
 {
+    protected override bool RequiresSteam => true;
+
     private IPCImportChannel ipc;
 
     public override void SetHost(GameHost host)
