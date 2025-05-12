@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.osu", "fluXis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluXis.Import.Stepmania", "fluXis.Import.Stepmania\fluXis.Import.Stepmania.csproj", "{D6386B1C-DD5D-4EC6-AF18-79A20B64D468}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Midori", "..\..\flustix\Midori\Midori\Midori.csproj", "{F776CCEA-627D-4413-BFA6-CD8758790DD2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
