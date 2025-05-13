@@ -37,7 +37,7 @@ public class ScoreProcessor : JudgementDependant
     public bool FullFlawless => Flawless == totalNotes && Miss == 0;
     public bool FullCombo => Combo.Value == totalNotes;
 
-    private float mapRating => MapInfo.RealmEntry!.Filters.NotesPerSecond;
+    private float mapRating => MapInfo.RealmEntry!.Rating;
 
     private int totalNotes => Flawless + Perfect + Great + Alright + Okay + Miss;
     private float ratedNotes => Flawless + Perfect * 0.98f + Great * 0.65f + Alright * 0.25f + Okay * 0.1f;

@@ -26,7 +26,7 @@ public partial class ScoreManager : CompositeDrawable
 
     private Dictionary<Guid, Guid> highestScores { get; } = new();
 
-    public const int SCORE_VERSION = 2;
+    public const int SCORE_VERSION = 3;
 
     [Resolved]
     private FluXisRealm realm { get; set; } = null!;
@@ -195,6 +195,7 @@ public partial class ScoreManager : CompositeDrawable
         switch (version)
         {
             case 2:
+            case 3:
             {
                 var map = realm.Run(r => r.Find<RealmMap>(score.MapID).Detach());
 
@@ -203,7 +204,7 @@ public partial class ScoreManager : CompositeDrawable
 
                 var mods = score.Mods.Split(' ').Select(ModUtils.GetFromAcronym).ToList();
                 score.PerformanceRating = ScoreProcessor.CalculatePerformance(
-                    map.Filters.NotesPerSecond,
+                    map.Rating,
                     score.Accuracy,
                     score.Flawless,
                     score.Perfect,

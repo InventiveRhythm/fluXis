@@ -88,7 +88,7 @@ public partial class MapSetSidebarStats : FillFlowContainer
             bpm.SetValue((float)map.BPM);
             hits.SetValue(map.NoteCount);
             lns.SetValue(map.LongNoteCount);
-            rating.SetValue((float)map.NotesPerSecond);
+            rating.SetValue((float)map.Rating);
             accuracy.SetValue(0);
             health.SetValue(0);
         }, true);

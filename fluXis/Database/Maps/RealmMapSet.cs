@@ -49,11 +49,11 @@ public class RealmMapSet : RealmObject
 
     [Ignored]
     [CanBeNull]
-    public RealmMap LowestDifficulty => Maps.MinBy(map => map.Filters?.NotesPerSecond);
+    public RealmMap LowestDifficulty => Maps.MinBy(map => map.Rating);
 
     [Ignored]
     [CanBeNull]
-    public RealmMap HighestDifficulty => Maps.MaxBy(map => map.Filters?.NotesPerSecond);
+    public RealmMap HighestDifficulty => Maps.MaxBy(map => map.Rating);
 
     public RealmMapSet([CanBeNull] List<RealmMap> maps = null)
     {

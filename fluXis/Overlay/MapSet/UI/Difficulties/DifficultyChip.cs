@@ -34,7 +34,7 @@ public partial class DifficultyChip : CircularContainer
         AutoSizeAxes = Axes.X;
         Masking = true;
 
-        var color = FluXisColors.GetDifficultyColor((float)map.NotesPerSecond);
+        var color = FluXisColors.GetDifficultyColor((float)map.Rating);
 
         InternalChildren = new Drawable[]
         {

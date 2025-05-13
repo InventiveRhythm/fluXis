@@ -164,7 +164,7 @@ public partial class GameplayLoader : FluXisScreen, IKeyBindingHandler<FluXisGlo
                             {
                                 Size = new Vector2(80, 20),
                                 FontSize = 14 * 1.4f,
-                                Rating = map.Filters.NotesPerSecond
+                                Rating = map.Rating
                             }
                         }
                     },
