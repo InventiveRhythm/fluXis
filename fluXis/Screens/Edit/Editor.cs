@@ -315,6 +315,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             new FluXisMenuSpacer(),
                                             new("Export", FontAwesome6.Solid.BoxOpen, export),
                                             new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave && api.IsLoggedIn },
+                                            new("Submit to Queue", FontAwesome6.Solid.Upload, submitToQueue) { Enabled = () => editorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
                                             new FluXisMenuSpacer(),
                                             new("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
                                             new FluXisMenuSpacer(),
@@ -735,6 +736,34 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     }
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
+
+    private void submitToQueue()
+    {
+        if (editorMap.MapSet.OnlineID <= 0)
+            return;
+
+        var panel = new EditorUploadOverlay
+        {
+            Text = "Submitting to queue...",
+            SubText = "Please wait..."
+        };
+
+        panels.Content = panel;
+
+        var req = new MapSetSubmitQueueRequest(editorMap.MapSet.OnlineID);
+        req.Success += _ =>
+        {
+            notifications.SendSmallText("Submitted to queue!");
+            panels.Hide();
+        };
+        req.Failure += ex => panels.Replace(new SingleButtonPanel(
+            FontAwesome6.Solid.ExclamationTriangle,
+            "Failed to submit!",
+            ex.Message
+        ));
+
+        api.PerformRequestAsync(req);
+    }
 
     private void startUpload()
     {
