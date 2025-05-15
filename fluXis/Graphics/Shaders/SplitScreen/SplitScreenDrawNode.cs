@@ -1,12 +1,9 @@
-using System;
 using System.Runtime.InteropServices;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
-using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -32,8 +29,8 @@ public partial class SplitScreenContainer
             base.ApplyState();
 
             strength = Source.Strength;
-            splitsX = (int) Source.Strength2;
-            splitsY = (int) Source.Strength3;
+            splitsX = (int)Source.Strength2;
+            splitsY = (int)Source.Strength3;
         }
 
         protected override void PopulateContents(IRenderer renderer)
@@ -50,7 +47,7 @@ public partial class SplitScreenContainer
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
-            
+
             renderer.SetBlend(BlendingParameters.None);
 
             using (BindFrameBuffer(target))

@@ -1,13 +1,9 @@
-using System;
 using System.Runtime.InteropServices;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders.Types;
-using osu.Framework.Utils;
-using osuTK;
 using osuTK.Graphics;
 
 namespace fluXis.Graphics.Shaders.Reflections;
@@ -20,6 +16,7 @@ public partial class ReflectionsContainer
         private IUniformBuffer<ReflectionsParameters> parametersBuffer;
 
         private float scale;
+
         public ReflectionsContainerDrawNode(ReflectionsContainer source, BufferedDrawNodeSharedData sharedData)
             : base(source, sharedData)
         {
@@ -47,7 +44,7 @@ public partial class ReflectionsContainer
 
             IFrameBuffer current = SharedData.CurrentEffectBuffer;
             IFrameBuffer target = SharedData.GetNextEffectBuffer();
-            
+
             renderer.SetBlend(BlendingParameters.None);
 
             using (BindFrameBuffer(target))
