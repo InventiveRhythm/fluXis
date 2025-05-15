@@ -78,7 +78,7 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
             }
         };
 
-        // addTab(new DashboardNotificationsTab());
+        addTab(new DashboardNotificationsTab());
         // addTab(new DashboardNewsTab());
         addTab(new DashboardFriendsTab());
         addTab(new DashboardClubTab());
@@ -149,6 +149,8 @@ public partial class Dashboard : OverlayContainer, IKeyBindingHandler<FluXisGlob
 
     protected override void PopIn()
     {
+        selectedTab.Enter();
+
         this.FadeIn(200);
         content.MoveToX(0, 400, Easing.OutQuint);
         sidebar.MoveToX(0, 400, Easing.OutQuint);

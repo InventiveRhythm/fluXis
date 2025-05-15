@@ -2,13 +2,14 @@ using fluXis.Graphics.Sprites;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osuTK;
 
 namespace fluXis.Overlay.Network;
 
 public abstract partial class DashboardTab : Container
 {
-    public abstract string Title { get; }
+    public abstract LocalisableString Title { get; }
     public abstract IconUsage Icon { get; }
     public abstract DashboardTabType Type { get; }
 

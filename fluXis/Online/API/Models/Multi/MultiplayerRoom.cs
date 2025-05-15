@@ -12,8 +12,11 @@ public class MultiplayerRoom
     [JsonProperty("id")]
     public long RoomID { get; init; }
 
-    [JsonProperty("settings")]
-    public MultiplayerRoomSettings Settings { get; init; } = new();
+    [JsonProperty("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonProperty("privacy")]
+    public MultiplayerPrivacy Privacy { get; init; }
 
     [JsonProperty("host")]
     public APIUser Host { get; set; }

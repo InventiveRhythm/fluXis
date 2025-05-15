@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using fluXis.Audio;
 using fluXis.Configuration;
@@ -37,6 +38,7 @@ using fluXis.Screens.Edit.MenuBar;
 using fluXis.Screens.Edit.Tabs;
 using fluXis.Screens.Edit.Tabs.Charting;
 using fluXis.Screens.Edit.Tabs.Storyboarding;
+using fluXis.Screens.Edit.Tabs.Verify.Checks;
 using fluXis.Screens.Edit.TabSwitcher;
 using fluXis.Screens.Gameplay.Audio.Hitsounds;
 using fluXis.Scripting;
@@ -313,6 +315,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                                             new FluXisMenuSpacer(),
                                             new("Export", FontAwesome6.Solid.BoxOpen, export),
                                             new("Upload", FontAwesome6.Solid.Upload, startUpload) { Enabled = () => canSave && api.IsLoggedIn },
+                                            new("Submit to Queue", FontAwesome6.Solid.Upload, submitToQueue) { Enabled = () => editorMap.MapSet.OnlineID > 0 && api.IsLoggedIn },
                                             new FluXisMenuSpacer(),
                                             new("Open Song Folder", FontAwesome6.Solid.FolderOpen, openFolder),
                                             new FluXisMenuSpacer(),
@@ -734,6 +737,34 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
 
     private void tryExit() => this.Exit(); // TODO: unsaved changes check
 
+    private void submitToQueue()
+    {
+        if (editorMap.MapSet.OnlineID <= 0)
+            return;
+
+        var panel = new EditorUploadOverlay
+        {
+            Text = "Submitting to queue...",
+            SubText = "Please wait..."
+        };
+
+        panels.Content = panel;
+
+        var req = new MapSetSubmitQueueRequest(editorMap.MapSet.OnlineID);
+        req.Success += _ =>
+        {
+            notifications.SendSmallText("Submitted to queue!");
+            panels.Hide();
+        };
+        req.Failure += ex => panels.Replace(new SingleButtonPanel(
+            FontAwesome6.Solid.ExclamationTriangle,
+            "Failed to submit!",
+            ex.Message
+        ));
+
+        api.PerformRequestAsync(req);
+    }
+
     private void startUpload()
     {
         if (isUploading)
@@ -742,6 +773,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         if (!api.IsLoggedIn)
         {
             notifications.SendError("You need to be logged in to upload maps!");
+            return;
+        }
+
+        if (!canSave)
+        {
+            notifications.SendError("Map is from another game!");
             return;
         }
 
@@ -836,43 +873,47 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
     {
         try
         {
-            if (!canSave)
-            {
-                notifications.SendError("Map is from another game!");
-                Schedule(() => panels.Content?.Hide());
-                return;
-            }
-
-            var checking = true;
-            Schedule(() =>
-            {
-                verifyTab.RefreshIssues();
-                checking = false;
-            });
-
-            while (checking)
-                await Task.Delay(100);
-
-            if (verifyTab.ProblematicIssues > 0)
-            {
-                Schedule(() => panels.Content = new SingleButtonPanel(
-                    FontAwesome6.Solid.ExclamationTriangle,
-                    "Issues found!",
-                    $"You have {verifyTab.ProblematicIssues} problematic issue(s) in your mapset.\n" +
-                    "Please fix them before uploading.\n" +
-                    "You can check the issues in the verify tab."
-                ));
-
-                return;
-            }
-
             var overlay = new EditorUploadOverlay
             {
                 Text = isUpdate ? "Updating mapset..." : "Uploading mapset...",
-                SubText = "Saving..."
+                SubText = "Checking for issues..."
             };
 
             Schedule(() => panels.Content = overlay);
+
+            var files = new Dictionary<string, int>();
+
+            foreach (var map in editorMap.MapSet.Maps)
+            {
+                overlay.SubText = $"Checking for issues in '{map.Difficulty}'...";
+
+                var results = verifyTab.RunVerify(new BasicVerifyContext(map));
+                files[map.Difficulty] = results.ProblematicIssues;
+            }
+
+            var problems = files.Sum(x => x.Value);
+
+            if (problems > 0)
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine($"You have {problems} problematic issue(s) in your mapset.");
+                builder.AppendLine("Please fix them before uploading.");
+                builder.AppendLine("You can check the issues in the verify tab.");
+                builder.AppendLine();
+
+                foreach (var kvp in files)
+                    builder.AppendLine($"{kvp.Key}: {kvp.Value} issue(s)");
+
+                Schedule(() => panels.Replace(new SingleButtonPanel(
+                    FontAwesome6.Solid.ExclamationTriangle,
+                    "Issues found!",
+                    builder.ToString()
+                )));
+
+                return;
+            }
+
+            overlay.SubText = "Saving...";
 
             if (!save(false))
             {
@@ -892,15 +933,18 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
                 setID = editorMap.MapSet.OnlineID;
 
             var request = new MapSetUploadRequest(buffer, setID);
-            request.Progress += (l1, l2) => overlay.SubText = $"{Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
+            request.Progress += (l1, l2) => overlay.SubText = $"{StringUtils.FormatBytes(l1)}/{StringUtils.FormatBytes(l2)} {Math.Round((float)l1 / l2 * 100, 2).ToStringInvariant("00.00")}%";
             await api.PerformRequestAsync(request);
 
             overlay.SubText = "Reading response...";
 
             if (!request.IsSuccessful)
             {
-                notifications.SendError(request.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR);
-                Schedule(() => panels.Content?.Hide());
+                Schedule(() => panels.Replace(new SingleButtonPanel(
+                    FontAwesome6.Solid.ExclamationTriangle,
+                    $"Failed up {(isUpdate ? "update" : "upload")} mapset!",
+                    request.FailReason?.Message ?? APIRequest.UNKNOWN_ERROR
+                )));
                 return;
             }
 
@@ -930,9 +974,12 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         }
         catch (Exception e)
         {
-            notifications.SendError("An error occurred while uploading the mapset!", e.Message);
             Logger.Error(e, "An error occurred while uploading the mapset!");
-            Schedule(() => panels.Content?.Hide());
+            Schedule(() => panels.Replace(new SingleButtonPanel(
+                FontAwesome6.Solid.ExclamationTriangle,
+                $"Failed up {(isUpdate ? "update" : "upload")} mapset!",
+                e.Message
+            )));
         }
     }
 }

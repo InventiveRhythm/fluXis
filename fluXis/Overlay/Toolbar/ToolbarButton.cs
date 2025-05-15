@@ -26,8 +26,8 @@ namespace fluXis.Overlay.Toolbar;
 
 public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<ToolbarButton>, IKeyBindingHandler<FluXisGlobalKeybind>
 {
-    public string TooltipTitle { get; init; }
-    public string TooltipSub { get; init; }
+    public LocalisableString TooltipTitle { get; init; }
+    public LocalisableString TooltipSub { get; init; }
     public IconUsage Icon { get; init; } = FontAwesome6.Solid.Question;
     public FluXisGlobalKeybind Keybind { get; init; } = FluXisGlobalKeybind.None;
     public bool RequireLogin { get; init; }
@@ -47,7 +47,11 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
+    public Bindable<bool> ShowPulse { get; init; } = new();
+
+    private Circle pulse;
     private Circle line;
+    private Container content;
     private HoverLayer hover;
     private FlashLayer flash;
 
@@ -58,11 +62,16 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
         Margin = new MarginPadding(5);
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.CentreLeft;
-        CornerRadius = 5;
-        Masking = true;
 
-        Children = new Drawable[]
+        InternalChildren = new Drawable[]
         {
+            pulse = new Circle
+            {
+                Colour = FluXisColors.Highlight,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Alpha = 0
+            },
             new Container
             {
                 RelativeSizeAxes = Axes.X,
@@ -79,14 +88,25 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
                     Width = 0
                 }
             },
-            hover = new HoverLayer(),
-            flash = new FlashLayer(),
-            new FluXisSpriteIcon
+            content = new Container
             {
-                Icon = Icon,
-                Size = new Vector2(20),
+                RelativeSizeAxes = Axes.Both,
+                CornerRadius = 5,
+                Masking = true,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
+                {
+                    hover = new HoverLayer(),
+                    flash = new FlashLayer(),
+                    new FluXisSpriteIcon
+                    {
+                        Icon = Icon,
+                        Size = new Vector2(20),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    }
+                }
             }
         };
     }
@@ -94,6 +114,21 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        ShowPulse.BindValueChanged(v =>
+        {
+            if (v.NewValue)
+            {
+                pulse.Delay(800).ResizeTo(0)
+                     .ResizeTo(64, 2000, Easing.OutQuint)
+                     .FadeOutFromOne(1200).Loop();
+            }
+            else
+            {
+                pulse.ClearTransforms();
+                pulse.Hide();
+            }
+        }, true);
 
         Enabled.BindValueChanged(e => this.FadeTo(e.NewValue ? 1 : .2f, 200), true);
 
@@ -125,6 +160,17 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
         return base.OnClick(e);
     }
 
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        content.ScaleTo(.9f, 1000, Easing.OutQuint);
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        content.ScaleTo(1, 1000, Easing.OutElastic);
+    }
+
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)
     {
         if (e.Action != Keybind || e.Repeat) return false;
@@ -146,6 +192,7 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
     {
         private SpriteIcon icon { get; }
         private FluXisSpriteText title { get; }
+        private FluXisSpriteText keybind { get; }
         private FluXisTextFlow description { get; }
 
         private LocalisableString currentDesc;
@@ -169,12 +216,23 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
                             icon = new FluXisSpriteIcon
                             {
                                 Size = new Vector2(16),
-                                Margin = new MarginPadding(4)
+                                Margin = new MarginPadding(4),
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
                             },
                             title = new FluXisSpriteText
                             {
-                                FontSize = 24
-                            }
+                                FontSize = 24,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
+                            keybind = new FluXisSpriteText
+                            {
+                                FontSize = 20,
+                                Alpha = .8f,
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft
+                            },
                         }
                     },
                     description = new FluXisTextFlow
@@ -200,7 +258,8 @@ public partial class ToolbarButton : ClickableContainer, IHasCustomTooltip<Toolb
             description.Alpha = 1;
 
             icon.Icon = content.Icon;
-            title.Text = content.TooltipTitle + content.keybindText;
+            title.Text = content.TooltipTitle;
+            keybind.Text = content.keybindText;
 
             if (currentDesc != content.TooltipSub)
                 description.Text = currentDesc = content.TooltipSub;

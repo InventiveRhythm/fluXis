@@ -31,6 +31,10 @@ public class SettingsInputStrings : LocalizationCategory
     public TranslatableString DeleteSelection => Get("keybindings-delete-selection", "Delete Selection");
     public TranslatableString Undo => Get("keybindings-undo", "Undo");
     public TranslatableString Redo => Get("keybindings-redo", "Redo");
+    public TranslatableString ScrollAction => Get("scroll-action", "Scroll Action");
+    public TranslatableString ScrollCtrlAction => Get("scroll-ctrl-action", "Ctrl-Scroll Action");
+    public TranslatableString ScrollShiftAction => Get("scroll-shift-action", "Shift-Scroll Action");
+    public TranslatableString ScrollCtrlShiftAction => Get("scroll-ctrl-shift-action", "Ctrl-Shift-Scroll Action");
 
     public TranslatableString Overlays => Get("keybindings-overlays", "Overlays");
 

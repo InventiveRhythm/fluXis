@@ -13,6 +13,7 @@ using fluXis.Map.Drawables;
 using fluXis.Online.API.Models.Maps;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
+using fluXis.Utils.Extensions;
 using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -30,7 +31,7 @@ using osuTK;
 
 namespace fluXis.Screens.Select.List.Drawables.MapSet;
 
-public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
+public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, IComparable<DrawableMapSetDifficulty>
 {
     public MenuItem[] ContextMenuItems
     {
@@ -71,6 +72,9 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
     private readonly RealmMap map;
     private Container outline;
     private DrawableScoreRank rank;
+    private DifficultyChip ratingChip;
+
+    public Action RequestedResort { get; set; }
 
     public float TargetY = 0;
 
@@ -191,12 +195,12 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
                                                     Direction = FillDirection.Horizontal,
                                                     Children = new Drawable[]
                                                     {
-                                                        new DifficultyChip
+                                                        ratingChip = new DifficultyChip
                                                         {
                                                             Width = 50,
                                                             Height = 14,
                                                             FontSize = 14,
-                                                            Rating = map.Filters.NotesPerSecond,
+                                                            Rating = map.Rating,
                                                             Margin = new MarginPadding { Right = 5 }
                                                         }
                                                     }.Concat(getIcons()).ToArray()
@@ -253,6 +257,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
     {
         base.LoadComplete();
 
+        map.RatingChanged += updateRating;
         scores.TopScoreUpdated += updateTopScore;
         updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
     }
@@ -267,6 +272,21 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
             Y = (float)Interpolation.Lerp(TargetY, Y, Math.Exp(-0.01 * Time.Elapsed));
     }
 
+    protected override void Dispose(bool isDisposing)
+    {
+        maps.MapBindable.ValueChanged -= updateSelected;
+        scores.TopScoreUpdated -= updateTopScore;
+        map.RatingChanged -= updateRating;
+
+        base.Dispose(isDisposing);
+    }
+
+    private void updateRating() => Scheduler.ScheduleIfNeeded(() =>
+    {
+        ratingChip.Rating = map.Rating;
+        RequestedResort?.Invoke();
+    });
+
     private void updateTopScore(Guid id, [CanBeNull] RealmScore score)
     {
         if (id != map.ID)
@@ -274,14 +294,6 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
 
         rank.Alpha = score is null ? 0 : 1;
         rank.Rank = score?.Rank ?? ScoreRank.D;
-    }
-
-    protected override void Dispose(bool isDisposing)
-    {
-        maps.MapBindable.ValueChanged -= updateSelected;
-        scores.TopScoreUpdated -= updateTopScore;
-
-        base.Dispose(isDisposing);
     }
 
     protected override bool OnClick(ClickEvent e)
@@ -362,5 +374,14 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu
         }
 
         protected override bool OnHover(HoverEvent e) => true;
+    }
+
+    public int CompareTo(DrawableMapSetDifficulty other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (other is null) return 1;
+
+        var result = map.Rating.CompareTo(other.map.Rating);
+        return result == 0 ? (map.Filters?.NotesPerSecond ?? 0).CompareTo(other.map.Filters?.NotesPerSecond ?? 0) : result;
     }
 }

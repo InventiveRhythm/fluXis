@@ -407,7 +407,12 @@ public partial class ScoreList : GridContainer
             var oldHash = map.OnlineHash;
 
             m.OnlineHash = map.OnlineHash = onlineMap.SHA256Hash;
-            m.Rating = map.Rating = (float)onlineMap.Rating;
+
+            if (Math.Abs(m.Rating - onlineMap.Rating) > .001f)
+            {
+                m.UpdateRating(onlineMap.Rating);
+                map.UpdateRating(onlineMap.Rating);
+            }
 
             if (map.OnlineHash != oldHash)
                 map.OnlineHashUpdated?.Invoke();

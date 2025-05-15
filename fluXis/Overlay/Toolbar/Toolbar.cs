@@ -3,6 +3,7 @@ using fluXis.Graphics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Input;
+using fluXis.Localization;
 using fluXis.Online.Fluxel;
 using fluXis.Overlay.Browse;
 using fluXis.Overlay.Chat;
@@ -104,8 +105,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                         {
                             new ToolbarOverlayButton
                             {
-                                TooltipTitle = "Settings",
-                                TooltipSub = "Change your settings.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Settings,
+                                TooltipSub = LocalizationStrings.Toolbar.SettingsDescription,
                                 Icon = FontAwesome6.Solid.Gear,
                                 Overlay = settings,
                                 Keybind = FluXisGlobalKeybind.ToggleSettings
@@ -113,8 +114,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             new ToolbarSeparator(),
                             new ToolbarScreenButton
                             {
-                                TooltipTitle = "Home",
-                                TooltipSub = "Return to the main menu.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Home,
+                                TooltipSub = LocalizationStrings.Toolbar.HomeDescription,
                                 Icon = FontAwesome6.Solid.House,
                                 Screen = typeof(MenuScreen),
                                 Action = () => game.MenuScreen?.MakeCurrent(),
@@ -122,16 +123,16 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             new ToolbarScreenButton
                             {
-                                TooltipTitle = "Maps",
-                                TooltipSub = "Browse your maps.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Maps,
+                                TooltipSub = LocalizationStrings.Toolbar.MapsDescription,
                                 Icon = FontAwesome6.Solid.Map,
                                 Screen = typeof(SoloSelectScreen),
                                 Action = () => goToScreen(new SoloSelectScreen())
                             },
                             new ToolbarScreenButton
                             {
-                                TooltipTitle = "Multiplayer",
-                                TooltipSub = "Play with others.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Multiplayer,
+                                TooltipSub = LocalizationStrings.Toolbar.MultiplayerDescription,
                                 Icon = FontAwesome6.Solid.Users,
                                 Screen = typeof(MultiplayerScreen),
                                 Action = () => goToScreen(new MultiplayerScreen()),
@@ -139,8 +140,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             new ToolbarScreenButton
                             {
-                                TooltipTitle = "Ranking",
-                                TooltipSub = "See the top players.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Ranking,
+                                TooltipSub = LocalizationStrings.Toolbar.RankingDescription,
                                 Icon = FontAwesome6.Solid.Trophy,
                                 Screen = typeof(Rankings),
                                 Action = () => goToScreen(new Rankings()),
@@ -167,8 +168,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                         {
                             new ToolbarOverlayButton
                             {
-                                TooltipTitle = "Chat",
-                                TooltipSub = "Talk to other players.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Chat,
+                                TooltipSub = LocalizationStrings.Toolbar.ChatDescription,
                                 Icon = FontAwesome6.Solid.Message,
                                 Overlay = chat,
                                 Keybind = FluXisGlobalKeybind.ToggleChat,
@@ -176,17 +177,18 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             new ToolbarOverlayButton
                             {
-                                TooltipTitle = "Dashboard",
-                                TooltipSub = "See news, updates, and more.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Dashboard,
+                                TooltipSub = LocalizationStrings.Toolbar.DashboardDescription,
                                 Icon = FontAwesome6.Solid.ChartLine,
                                 Overlay = dashboard,
                                 Keybind = FluXisGlobalKeybind.ToggleDashboard,
+                                ShowPulse = api.HasUnreadNotifications.GetBoundCopy(),
                                 RequireLogin = true
                             },
                             new ToolbarOverlayButton
                             {
-                                TooltipTitle = "Browse",
-                                TooltipSub = "Download community-made maps.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Browse,
+                                TooltipSub = LocalizationStrings.Toolbar.BrowseDescription,
                                 Icon = FontAwesome6.Solid.ArrowDownToLine,
                                 Keybind = FluXisGlobalKeybind.ToggleBrowse,
                                 Overlay = browse,
@@ -194,8 +196,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             new ToolbarOverlayButton
                             {
-                                TooltipTitle = "Wiki",
-                                TooltipSub = "Learn about the game.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Wiki,
+                                TooltipSub = LocalizationStrings.Toolbar.WikiDescription,
                                 Icon = FontAwesome6.Solid.Book,
                                 Overlay = wiki,
                                 OnVisibilityToggle = v =>
@@ -206,8 +208,8 @@ public partial class Toolbar : VisibilityContainer, IKeyBindingHandler<FluXisGlo
                             },
                             new ToolbarOverlayButton
                             {
-                                TooltipTitle = "Music Player",
-                                TooltipSub = "Listen to your music.",
+                                TooltipTitle = LocalizationStrings.Toolbar.Music,
+                                TooltipSub = LocalizationStrings.Toolbar.MusicDescription,
                                 Icon = FontAwesome6.Solid.Music,
                                 Overlay = musicPlayer,
                                 Keybind = FluXisGlobalKeybind.ToggleMusicPlayer,

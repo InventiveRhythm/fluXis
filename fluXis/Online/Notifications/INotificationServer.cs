@@ -8,4 +8,5 @@ namespace fluXis.Online.Notifications;
 public interface INotificationServer
 {
     Task UpdateActivity(string name, JObject data);
+    Task UpdateNotificationUnread(long time);
 }

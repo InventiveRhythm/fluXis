@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Map;
 using fluXis.Screens.Select.List.Items;
@@ -60,7 +61,16 @@ public partial class DrawableMapSetItem : CompositeDrawable
 
         foreach (var map in MapSet.MapsSorted)
         {
-            difficultyFlow.Add(new DrawableMapSetDifficulty(this, map));
+            difficultyFlow.Add(new DrawableMapSetDifficulty(this, map)
+            {
+                RequestedResort = () =>
+                {
+                    var children = difficultyFlow.Children.ToList();
+                    difficultyFlow.Clear(false);
+                    children.Sort();
+                    difficultyFlow.Children = children;
+                }
+            });
         }
     }
 

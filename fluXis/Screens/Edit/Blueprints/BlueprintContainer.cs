@@ -139,7 +139,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
 
     private bool selectByClick(MouseButtonEvent e)
     {
-        foreach (var blueprint in SelectionBlueprints.AliveChildren.Reverse().OrderByDescending(b => b.IsSelected))
+        foreach (var blueprint in SelectionBlueprints.All.Reverse().OrderByDescending(b => b.IsSelected))
         {
             if (!blueprint.IsHovered) continue;
 
@@ -165,7 +165,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     {
         var quad = SelectionBox.Box.ScreenSpaceDrawQuad;
 
-        foreach (var blueprint in SelectionBlueprints)
+        foreach (var blueprint in SelectionBlueprints.All)
         {
             switch (blueprint.State)
             {
@@ -189,10 +189,7 @@ public partial class BlueprintContainer<T> : Container, ICursorDrag
     }
 
     public void SelectAll()
-    {
-        foreach (var blueprint in SelectionBlueprints)
-            blueprint.Select();
-    }
+        => SelectionHandler.HandleSelection(SelectionBlueprints.All);
 
     private void onSelected(SelectionBlueprint<T> blueprint) => SelectionHandler.HandleSelection(blueprint);
     private void onDeselected(SelectionBlueprint<T> blueprint) => SelectionHandler.HandleDeselection(blueprint);

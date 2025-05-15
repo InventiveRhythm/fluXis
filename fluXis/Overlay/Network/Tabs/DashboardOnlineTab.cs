@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using fluXis.Graphics.Containers;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface.Buttons;
+using fluXis.Localization;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Drawables;
 using fluXis.Online.Drawables.Users;
@@ -11,6 +11,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Framework.Logging;
 using osuTK;
 
@@ -18,7 +19,7 @@ namespace fluXis.Overlay.Network.Tabs;
 
 public partial class DashboardOnlineTab : DashboardWipTab
 {
-    public override string Title => "Online";
+    public override LocalisableString Title => LocalizationStrings.Dashboard.Online;
     public override IconUsage Icon => FontAwesome6.Solid.EarthAmericas;
     public override DashboardTabType Type => DashboardTabType.Online;
 
@@ -30,17 +31,7 @@ public partial class DashboardOnlineTab : DashboardWipTab
     [BackgroundDependencyLoader]
     private void load()
     {
-        Header.Child = new FluXisButton
-        {
-            Text = "Refresh",
-            FontSize = 20,
-            Size = new Vector2(144, 36),
-            Anchor = Anchor.CentreRight,
-            Origin = Anchor.CentreRight,
-            Margin = new MarginPadding { Right = 20 },
-            Color = Colour4.Transparent,
-            Action = refresh
-        };
+        Header.Child = new DashboardRefreshButton(refresh);
 
         Content.Children = new Drawable[]
         {

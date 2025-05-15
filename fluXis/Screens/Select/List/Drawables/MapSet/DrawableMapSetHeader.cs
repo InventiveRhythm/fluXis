@@ -44,7 +44,8 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             if (mapset.OnlineID > 0)
                 items.Add(new FluXisMenuItem("View Online", FontAwesome6.Solid.EarthAmericas, MenuItemType.Normal, () => game?.PresentMapSet(mapset.OnlineID)));
 
-            items.Add(new FluXisMenuItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset)) { Enabled = () => !mapset.AutoImported });
+            items.Add(new FluXisMenuItem(LocalizationStrings.General.Export, FontAwesome6.Solid.BoxOpen, MenuItemType.Normal, () => parent.ExportAction?.Invoke(mapset))
+                { Enabled = () => !mapset.AutoImported });
             items.Add(new FluXisMenuItem(LocalizationStrings.General.Delete, FontAwesome6.Solid.Trash, MenuItemType.Dangerous, () => parent.DeleteAction?.Invoke(mapset)));
 
             if (FluXisGameBase.IsDebug)
@@ -195,7 +196,35 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
 
         Hide();
         FinishTransforms();
+
+        foreach (var map in mapset.Maps)
+            map.RatingChanged += updateRating;
     }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        foreach (var map in mapset.Maps)
+            map.RatingChanged -= updateRating;
+    }
+
+    private void updateRating() => Scheduler.ScheduleIfNeeded(() =>
+    {
+        try
+        {
+            if (diffsContainer is null)
+                return;
+
+            diffsContainer.Clear();
+            createDiffs();
+        }
+        catch
+        {
+            // in case the container is disposed
+            // no, there isn't a way to check that
+        }
+    });
 
     private Drawable getContent()
     {
@@ -300,6 +329,13 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
             }
         };
 
+        createDiffs();
+
+        return content;
+    }
+
+    private void createDiffs()
+    {
         var modes = mapset.Maps.GroupBy(x => x.KeyCount)
                           .OrderBy(x => x.Key).ToList();
 
@@ -317,7 +353,7 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 SidePadding = 8
             });
 
-            var difficulties = mode.OrderBy(x => x.Filters.NotesPerSecond).ToList();
+            var difficulties = mode.OrderBy(x => x.Rating).ToList();
 
             foreach (var diff in difficulties)
             {
@@ -325,13 +361,11 @@ public partial class DrawableMapSetHeader : Container, IHasContextMenu
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
-                    Colour = FluXisColors.GetDifficultyColor(diff.Filters.NotesPerSecond),
+                    Colour = FluXisColors.GetDifficultyColor(diff.Rating),
                     EdgeEffect = FluXisStyles.ShadowSmall
                 });
             }
         }
-
-        return content;
     }
 
     protected override bool OnHover(HoverEvent e)

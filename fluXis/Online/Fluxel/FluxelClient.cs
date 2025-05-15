@@ -1,6 +1,8 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fluXis.Configuration;
@@ -8,11 +10,14 @@ using fluXis.Graphics.Sprites;
 using fluXis.Online.Activity;
 using fluXis.Online.API;
 using fluXis.Online.API.Models.Chat;
+using fluXis.Online.API.Models.Notifications;
 using fluXis.Online.API.Models.Other;
 using fluXis.Online.API.Models.Users;
+using fluXis.Online.API.Requests;
 using fluXis.Online.API.Requests.Auth;
 using fluXis.Online.Notifications;
 using fluXis.Overlay.Notifications;
+using fluXis.Utils.Extensions;
 using Midori.Networking.WebSockets;
 using Midori.Networking.WebSockets.Frame;
 using Midori.Networking.WebSockets.Typed;
@@ -85,9 +90,55 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
 
             connection.Server.UpdateActivity(activity.GetType().Name, JObject.FromObject(activity));
         });
+
+        Status.BindValueChanged(v => Scheduler.ScheduleIfNeeded(() =>
+        {
+            HasUnreadNotifications.Value = false;
+
+            if (v.NewValue == ConnectionStatus.Online)
+                RefreshNotifications().WaitAsync(CancellationToken.None);
+        }));
     }
 
     internal new void Schedule(Action action) => base.Schedule(action);
+
+    #region Notifations
+
+    public Bindable<bool> HasUnreadNotifications { get; } = new();
+    public List<APINotification> CurrentNotifications { get; } = new();
+    public event Action<APINotification>? NewNotification;
+    public long LastReadTime { get; set; }
+
+    public async Task RefreshNotifications()
+    {
+        CurrentNotifications.Clear();
+
+        var req = new NotificationsRequest();
+        await PerformRequestAsync(req);
+
+        if (!req.IsSuccessful)
+            return;
+
+        var notif = req.Response.Data.Notifications;
+        LastReadTime = req.Response.Data.LastRead;
+
+        if (notif.Any(x => x.Time > LastReadTime))
+            HasUnreadNotifications.Value = true;
+
+        CurrentNotifications.AddRange(notif);
+    }
+
+    public void UpdateLastRead()
+    {
+        if (connection?.State != WebSocketState.Open)
+            return;
+
+        var time = DateTimeOffset.Now.ToUnixTimeSeconds();
+        connection.Server.UpdateNotificationUnread(time);
+        LastReadTime = time;
+    }
+
+    #endregion
 
     #region Socket Connect
 
@@ -323,6 +374,18 @@ public partial class FluxelClient : Component, IAPIClient, INotificationClient
     {
         Logout();
         notifications.SendText("You have been logged out!", reason, FontAwesome6.Solid.TriangleExclamation);
+        return Task.CompletedTask;
+    }
+
+    public Task NotificationReceived(APINotification notification)
+    {
+        Scheduler.ScheduleIfNeeded(() =>
+        {
+            HasUnreadNotifications.Value = true;
+            CurrentNotifications.Add(notification);
+            NewNotification?.Invoke(notification);
+        });
+
         return Task.CompletedTask;
     }
 

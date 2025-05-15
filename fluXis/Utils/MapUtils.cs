@@ -111,16 +111,28 @@ public static class MapUtils
         if (first.Filters is null) return 1;
         if (second.Filters is null) return -1;
 
-        var firstHighest = first.Filters.NotesPerSecond;
-        var secondHighest = second.Filters.NotesPerSecond;
+        var firstHighest = first.Rating;
+        var secondHighest = second.Rating;
+
         var result = firstHighest.CompareTo(secondHighest);
-        return result;
+
+        if (result != 0)
+            return result;
+
+        firstHighest = first.Filters?.NotesPerSecond ?? 0;
+        secondHighest = second.Filters?.NotesPerSecond ?? 0;
+        result = firstHighest.CompareTo(secondHighest);
+
+        if (result != 0)
+            return result;
+
+        return string.Compare(first.Difficulty, second.Difficulty, StringComparison.OrdinalIgnoreCase);
     }
 
     private static int compareDifficulty(RealmMapSet first, RealmMapSet second)
     {
-        var firstLowest = first.Maps.MaxBy(x => x.Filters?.NotesPerSecond);
-        var secondLowest = second.Maps.MaxBy(x => x.Filters?.NotesPerSecond);
+        var firstLowest = first.Maps.MaxBy(x => x.Rating);
+        var secondLowest = second.Maps.MaxBy(x => x.Rating);
         return compareDifficulty(firstLowest, secondLowest);
     }
 

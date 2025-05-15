@@ -4,9 +4,9 @@ namespace fluXis.Screens.Edit.Tabs.Verify.Checks.Metadata;
 
 public class EmptyFieldCheck : IVerifyCheck
 {
-    public IEnumerable<VerifyIssue> Check(EditorMap map)
+    public IEnumerable<VerifyIssue> Check(IVerifyContext ctx)
     {
-        var info = map.MapInfo;
+        var info = ctx.MapInfo;
         var metadata = info.Metadata;
 
         if (string.IsNullOrWhiteSpace(metadata.Title))

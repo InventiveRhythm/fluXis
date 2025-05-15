@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using fluXis.Replays;
 using fluXis.Scoring.Enums;
 using fluXis.Scoring.Structs;
 using Newtonsoft.Json;
@@ -56,15 +55,6 @@ public class ScoreInfo
     [JsonProperty("player")]
     public long PlayerID { get; set; }
 
-    [JsonProperty("hash")]
-    public string MapHash { get; set; } = "";
-
-    [JsonProperty("effect-hash")]
-    public string EffectHash { get; set; } = "";
-
-    [JsonProperty("sb-hash")]
-    public string StoryboardHash { get; set; } = "";
-
     [JsonProperty("mods")]
     public List<string> Mods { get; set; } = new();
 
@@ -74,7 +64,7 @@ public class ScoreInfo
     [JsonProperty("time")]
     public long Timestamp { get; set; }
 
-    [JsonProperty("ratio")]
+    [JsonIgnore]
     public long Ratio
     {
         get
@@ -87,9 +77,6 @@ public class ScoreInfo
             return Flawless * 100 / nonFlawless;
         }
     }
-
-    [JsonProperty("replay")]
-    public Replay? Replay { get; set; }
 
     [JsonIgnore]
     public bool FullFlawless => Flawless == MaxCombo;

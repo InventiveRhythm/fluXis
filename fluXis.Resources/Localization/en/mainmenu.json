@@ -1,6 +1,7 @@
 {
   "press-any-key": "Press any key.",
   "play-text": "Play",
+  "play-description": "{0:0} maps loaded",
   "multiplayer-text": "Multiplayer",
   "multiplayer-description": "Play with others",
   "dashboard-text": "Dashboard",

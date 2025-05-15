@@ -13,6 +13,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osuTK;
 
@@ -79,6 +80,14 @@ public partial class EditorPlayfield : Container, ITimePositionProvider
             Effects = new EditorEffectContainer(),
             new EditorTimingLines(),
             HitObjectContainer,
+            new Box
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 5,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Y = -EditorHitObjectContainer.HITPOSITION
+            },
             new TimingTagContainer(),
             new EffectTagContainer()
         };

@@ -124,7 +124,7 @@ public partial class MapSetOverlay : OverlayContainer, IKeyBindingHandler<FluXis
 
     private void displayData(APIMapSet set)
     {
-        set.Maps.Sort((a, b) => a.NotesPerSecond.CompareTo(b.NotesPerSecond));
+        set.Maps.Sort((a, b) => a.Rating.CompareTo(b.Rating));
         var bindableMap = new Bindable<APIMap>(set.Maps.First());
 
         flow.Show();

@@ -5,6 +5,8 @@ namespace fluXis.Utils;
 
 public static class StringUtils
 {
+    private static readonly string[] size_suffixes = { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
 #pragma warning disable RS0030
     public static string ToStringInvariant(this float value, string style = "") => value.ToString(style, CultureInfo.InvariantCulture);
     public static string ToStringInvariant(this double value, string style = "") => value.ToString(style, CultureInfo.InvariantCulture);
@@ -22,6 +24,23 @@ public static class StringUtils
     public static bool EqualsLower(this string first, string second) => first.Equals(second, StringComparison.InvariantCultureIgnoreCase);
 
     public static string FormatSteamProfile(ulong id) => $"https://steamcommunity.com/profiles/{id}";
+
+    public static string FormatBytes(long bytes)
+    {
+        if (bytes < 0) return $"-{FormatBytes(-bytes)}";
+        if (bytes == 0) return "0 bytes";
+
+        var m = (int)Math.Log(bytes, 1024);
+        var adjust = (decimal)bytes / (1L << (m * 10));
+
+        if (Math.Round(adjust, 2) >= 1000)
+        {
+            m += 1;
+            adjust /= 1024;
+        }
+
+        return $"{adjust:0.0}{size_suffixes[m]}";
+    }
 
     public static string CensorEmail(string mail)
     {

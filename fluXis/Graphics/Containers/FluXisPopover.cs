@@ -9,8 +9,8 @@ namespace fluXis.Graphics.Containers;
 public partial class FluXisPopover : Popover
 {
     public bool HandleHover { get; init; } = true;
-    public int ContentPadding { get; init; } = 10;
-    public float BodyRadius { get; init; } = 20;
+    public int ContentPadding { get; init; } = 12;
+    public float BodyRadius { get; init; } = 16;
 
     [BackgroundDependencyLoader]
     private void load()

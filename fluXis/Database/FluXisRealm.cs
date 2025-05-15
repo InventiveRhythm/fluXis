@@ -36,8 +36,9 @@ public class FluXisRealm : IDisposable
     /// 15 - Add `PerformanceRating` and `ScrollSpeed` to `RealmScore` and change OnlineID to long
     /// 16 - Add `Version` to `RealmScore`
     /// 17 - Romanizable Title and Artist
+    /// 18 - Reset online score IDs
     /// </summary>
-    private const int schema_version = 17;
+    private const int schema_version = 18;
 
     private Realm updateRealm;
 
@@ -268,6 +269,13 @@ public class FluXisRealm : IDisposable
                     m.Metadata.TitleRomanized = m.Metadata.Title;
                     m.Metadata.ArtistRomanized = m.Metadata.Artist;
                 });
+                break;
+            }
+
+            case 18:
+            {
+                var scores = migration.NewRealm.All<RealmScore>().ToList();
+                scores.ForEach(x => x.OnlineID = -1);
                 break;
             }
         }

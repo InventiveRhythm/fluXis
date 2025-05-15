@@ -483,11 +483,11 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
             if (Mods.All(m => m.SaveScore) && SubmitScore && !RealmMap.MapSet.AutoImported)
             {
                 var id = scores.Add(RealmMap.ID, score).ID;
-                score.Replay = SaveReplay(id);
+                var replay = SaveReplay(id);
 
                 if (canBeUploaded)
                 {
-                    var request = new ScoreSubmitRequest(score);
+                    var request = new ScoreSubmitRequest(score, Mods, replay, Map.Hash, Map.EffectHash, Map.StoryboardHash);
                     screen.SubmitRequest = request;
                     api.PerformRequest(request);
 

@@ -10,7 +10,7 @@ using fluXis.Map;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
-using fluXis.Online.API.Models.Maps;
+using fluXis.Screens.Edit.Tabs.Verify;
 using fluXis.Storyboards;
 using fluXis.Utils;
 using Newtonsoft.Json;
@@ -19,7 +19,7 @@ using SixLabors.ImageSharp;
 
 namespace fluXis.Screens.Edit;
 
-public class EditorMap
+public class EditorMap : IVerifyContext
 {
     public EditorMapInfo MapInfo { get; set; }
     public RealmMap RealmMap { get; set; }
@@ -27,8 +27,6 @@ public class EditorMap
     public MapEvents MapEvents => MapInfo.MapEvents;
     public Storyboard Storyboard => MapInfo.Storyboard;
     public RealmMapSet MapSet => RealmMap?.MapSet;
-
-    public int MaxKeyCount => RealmMap.KeyCount * (MapInfo.DualMode == DualMode.Separate ? 2 : 1);
 
     public string MapInfoHash => MapUtils.GetHash(MapInfo.Serialize());
     public string MapEventsHash => MapUtils.GetHash(MapEvents.Save());
@@ -309,6 +307,14 @@ public class EditorMap
         MapInfo.Sort();
         MapEvents.Sort();
     }
+
+    #endregion
+
+    #region IVerifyContext Implementation
+
+    MapInfo IVerifyContext.MapInfo => MapInfo;
+    MapEvents IVerifyContext.MapEvents => MapEvents;
+    RealmMap IVerifyContext.RealmMap => RealmMap;
 
     #endregion
 

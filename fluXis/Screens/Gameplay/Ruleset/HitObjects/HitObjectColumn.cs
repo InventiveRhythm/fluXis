@@ -254,7 +254,7 @@ public partial class HitObjectColumn : Container<DrawableHitObject>
         if (player.HealthProcessor.Failed)
             return;
 
-        var result = new HitResult(Time.Current, difference, judgement);
+        var result = new HitResult(Time.Current, difference, judgement, isHoldEnd);
         judgementProcessor.AddResult(result);
 
         if (isHoldEnd)

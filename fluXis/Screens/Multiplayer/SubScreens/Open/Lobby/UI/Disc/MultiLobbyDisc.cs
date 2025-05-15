@@ -170,7 +170,7 @@ public partial class MultiLobbyDisc : CircularContainer
             difficulty.Text = map.Difficulty;
             modeChip.Text = $"{map.KeyCount}K";
             modeChip.BackgroundColour = FluXisColors.GetKeyColor(map.KeyCount);
-            difficultyChip.Rating = map.Filters.NotesPerSecond;
+            difficultyChip.Rating = map.Rating;
 
             flash.Show();
         }, true);

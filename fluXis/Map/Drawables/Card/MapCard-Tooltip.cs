@@ -55,7 +55,7 @@ public partial class MapCard
                     {
                         Size = new Vector2(48, 14),
                         WebFontSize = 10,
-                        Rating = map.NotesPerSecond
+                        Rating = map.Rating
                     }
                 }
             };
@@ -81,7 +81,7 @@ public partial class MapCard
         public override void SetContent(APIMapSet content)
         {
             var list = content.Maps;
-            list.Sort((a, b) => a.NotesPerSecond.CompareTo(b.NotesPerSecond));
+            list.Sort((a, b) => a.Rating.CompareTo(b.Rating));
 
             if (maps is not null && maps.SequenceEqual(list))
                 return;

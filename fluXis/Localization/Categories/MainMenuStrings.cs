@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using osu.Framework.Localisation;
 
 namespace fluXis.Localization.Categories;
@@ -10,6 +11,9 @@ public class MainMenuStrings : LocalizationCategory
 
     public TranslatableString PlayText => new(GetKey("play-text"), "Play");
     public TranslatableString PlayDescription(int mapcount) => new(GetKey("play-description"), "{0:0} maps loaded", mapcount);
+
+    [UsedImplicitly]
+    private TranslatableString playDescription => Get("play-description", "{0:0} maps loaded");
 
     public TranslatableString MultiplayerText => new(GetKey("multiplayer-text"), "Multiplayer");
     public TranslatableString MultiplayerDescription => new(GetKey("multiplayer-description"), "Play with others");

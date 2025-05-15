@@ -74,7 +74,7 @@ public partial class ResultsMap : CompositeDrawable
                                 new DifficultyChip
                                 {
                                     Size = new Vector2(80, 20),
-                                    Rating = map.Filters.NotesPerSecond,
+                                    Rating = map.Rating,
                                     Anchor = Anchor.CentreLeft,
                                     Origin = Anchor.CentreLeft,
                                     EdgeEffect = FluXisStyles.ShadowSmall

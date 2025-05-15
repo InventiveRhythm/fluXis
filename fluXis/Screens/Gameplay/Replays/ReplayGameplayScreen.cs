@@ -7,7 +7,6 @@ using fluXis.Online.Activity;
 using fluXis.Replays;
 using fluXis.Screens.Gameplay.Ruleset;
 using fluXis.Utils.Extensions;
-using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 
 namespace fluXis.Screens.Gameplay.Replays;
@@ -37,7 +36,7 @@ public partial class ReplayGameplayScreen : GameplayScreen
     }
 
     protected override RulesetContainer CreateRuleset() => new ReplayRulesetContainer(replay, Map, MapEvents, Mods) { CurrentPlayer = replay.GetPlayer(Users) };
-    protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
+    // protected override Drawable CreateTextOverlay() => new ReplayOverlay(replay);
     protected override UserActivity GetPlayingActivity() => new UserActivity.WatchingReplay(this, RealmMap, replay.GetPlayer(Users));
 
     protected override void UpdatePausedState()

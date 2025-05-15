@@ -16,11 +16,15 @@ public readonly struct HitResult : IEquatable<HitResult>
     [JsonProperty("judgement")]
     public Judgement Judgement { get; init; }
 
-    public HitResult(double time, double diff, Judgement jud)
+    [JsonProperty("holdend")]
+    public bool HoldEnd { get; init; }
+
+    public HitResult(double time, double diff, Judgement jud, bool end)
     {
         Time = time;
         Difference = diff;
         Judgement = jud;
+        HoldEnd = end;
     }
 
     [JsonConstructor]

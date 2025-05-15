@@ -3,6 +3,7 @@ using fluXis.Graphics.UserInterface;
 using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
@@ -15,6 +16,7 @@ namespace fluXis.Screens.Edit.Tabs.Setup;
 public partial class SetupEntry : CompositeDrawable, IHasTooltip
 {
     public LocalisableString TooltipText { get; set; }
+    public ColourInfo BackgroundColor { get; init; } = FluXisColors.Background3;
 
     protected virtual float ContentSpacing => 4;
     protected virtual bool ShowHoverFlash => false;
@@ -42,7 +44,7 @@ public partial class SetupEntry : CompositeDrawable, IHasTooltip
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = FluXisColors.Background3
+                Colour = BackgroundColor
             },
             hover = new HoverLayer(),
             flash = new FlashLayer(),

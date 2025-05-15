@@ -5,12 +5,12 @@ namespace fluXis.Screens.Edit.Tabs.Verify.Checks.HitObjects;
 
 public class EmptyColumnsCheck : IVerifyCheck
 {
-    public IEnumerable<VerifyIssue> Check(EditorMap map)
+    public IEnumerable<VerifyIssue> Check(IVerifyContext ctx)
     {
-        var hits = map.MapInfo.HitObjects;
+        var hits = ctx.MapInfo.HitObjects;
         if (hits.Count == 0) yield break;
 
-        var count = map.MaxKeyCount;
+        var count = ctx.MaxKeyCount;
 
         for (int i = 0; i < count; i++)
         {

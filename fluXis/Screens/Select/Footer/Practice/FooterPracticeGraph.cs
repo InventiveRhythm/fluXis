@@ -67,7 +67,7 @@ public partial class FooterPracticeGraph : GridContainer
         end.BindValueChanged(updateHighlight, true);
     }
 
-    private void updateHighlight(object _) => Scheduler.AddOnce(() =>
+    private void updateHighlight(ValueChangedEvent<int> _) => Scheduler.AddOnce(() =>
     {
         var s = start.Value / (float)end.MaxValue;
         var e = end.Value / (float)end.MaxValue;

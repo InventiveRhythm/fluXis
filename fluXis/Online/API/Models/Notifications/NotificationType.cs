@@ -3,5 +3,6 @@
 public enum NotificationType : long
 {
     Unknown,
-    ClubInvite = 1
+    ClubInvite,
+    QueueStatus
 }

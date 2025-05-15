@@ -93,28 +93,28 @@ public partial class InputKeybindingsSection : SettingsSubSection
             },
             new SettingsDropdown<EditorScrollAction>
             {
-                Label = "Scroll Action",
+                Label = strings.ScrollAction,
                 Items = Enum.GetValues<EditorScrollAction>(),
                 Bindable = config.GetBindable<EditorScrollAction>(FluXisSetting.EditorScrollAction),
                 Padded = true
             },
             new SettingsDropdown<EditorScrollAction>
             {
-                Label = "Ctrl-Scroll Action",
+                Label = strings.ScrollCtrlAction,
                 Items = Enum.GetValues<EditorScrollAction>(),
                 Bindable = config.GetBindable<EditorScrollAction>(FluXisSetting.EditorControlScrollAction),
                 Padded = true
             },
             new SettingsDropdown<EditorScrollAction>
             {
-                Label = "Shift-Scroll Action",
+                Label = strings.ScrollShiftAction,
                 Items = Enum.GetValues<EditorScrollAction>(),
                 Bindable = config.GetBindable<EditorScrollAction>(FluXisSetting.EditorShiftScrollAction),
                 Padded = true
             },
             new SettingsDropdown<EditorScrollAction>
             {
-                Label = "Ctrl-Shift-Scroll Action",
+                Label = strings.ScrollCtrlShiftAction,
                 Items = Enum.GetValues<EditorScrollAction>(),
                 Bindable = config.GetBindable<EditorScrollAction>(FluXisSetting.EditorControlShiftScrollAction),
                 Padded = true

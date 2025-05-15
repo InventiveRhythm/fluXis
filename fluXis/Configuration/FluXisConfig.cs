@@ -100,9 +100,6 @@ public class FluXisConfig : IniConfigManager<FluXisSetting>
         SetDefault(FluXisSetting.ShowMissingLocalizations, false);
 
         // Misc
-#if VELOPACK_BUILD
-        SetDefault(FluXisSetting.ReleaseChannel, ReleaseChannel.Stable);
-#endif
         SetDefault(FluXisSetting.OpenRGBIntegration, false);
     }
 }
@@ -194,8 +191,5 @@ public enum FluXisSetting
     ShowMissingLocalizations,
 
     // Misc
-#if VELOPACK_BUILD
-    ReleaseChannel,
-#endif
     OpenRGBIntegration
 }

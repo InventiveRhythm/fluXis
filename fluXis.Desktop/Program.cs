@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,10 +14,6 @@ using osu.Framework;
 using osu.Framework.Localisation;
 using osu.Framework.Logging;
 
-#if VELOPACK_BUILD
-using Velopack;
-#endif
-
 namespace fluXis.Desktop;
 
 public static class Program
@@ -27,10 +22,6 @@ public static class Program
 
     public static void Main(string[] args)
     {
-#if VELOPACK_BUILD
-        VelopackApp.Build().Run();
-#endif
-
         if (args.Contains("--generate-langfiles"))
         {
             generateDefaultLangfiles();
@@ -119,6 +110,11 @@ public static class Program
 
         var cats = new List<LocalizationCategory>
         {
+            new DashboardStrings(),
+            new GeneralStrings(),
+            new MainMenuStrings(),
+            new ModSelectStrings(),
+            new ModStrings(),
             new SettingsAppearanceStrings(),
             new SettingsAudioStrings(),
             new SettingsDebugStrings(),
@@ -129,19 +125,20 @@ public static class Program
             new SettingsMaintenanceStrings(),
             new SettingsPluginsStrings(),
             new SettingsUIStrings(),
-            new GeneralStrings(),
-            new MainMenuStrings(),
-            new ModSelectStrings(),
-            new ModStrings(),
-            new SongSelectStrings()
+            new SongSelectStrings(),
+            new ToolbarStrings(),
         };
 
         Directory.CreateDirectory("langfiles");
 
+        var count = 0;
+        var words = 0;
+
         foreach (var cat in cats)
         {
             var file = cat.FileName;
-            var props = cat.GetType().GetProperties().Where(p => p.PropertyType == typeof(TranslatableString) || p.PropertyType == typeof(LocalisableString));
+            var props = cat.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+                           .Where(p => p.PropertyType == typeof(TranslatableString) || p.PropertyType == typeof(LocalisableString));
 
             var dict = new Dictionary<string, string>();
 
@@ -160,7 +157,12 @@ public static class Program
                     var (descriptionKey, descriptionDefault) = getValues(description);
 
                     dict.Add(nameKey, nameDefault);
+                    words += nameDefault.Split(" ").Length;
+                    count++;
+
                     dict.Add(descriptionKey, descriptionDefault);
+                    words += descriptionDefault.Split(" ").Length;
+                    count++;
                 }
             }
 
@@ -184,23 +186,16 @@ public static class Program
 
                 var (key, defaultStr) = getValues(value);
                 dict.Add(key, defaultStr);
+
+                words += defaultStr.Split(" ").Length;
+                count++;
             }
 
             var json = dict.Serialize(true);
-            File.WriteAllText($"langfiles/{file}.json", json);
+            File.WriteAllText($"../../../../fluXis.Resources/Localization/en/{file}.json", json);
         }
 
-        if (OperatingSystem.IsWindows())
-        {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = "explorer.exe",
-                Arguments = Path.Combine(AppContext.BaseDirectory, "langfiles"),
-                UseShellExecute = true
-            };
-
-            Process.Start(startInfo);
-        }
+        Logger.Log($"Wrote {count} strings with {words} words.");
 
         (string, string) getValues(TranslatableString str) => (str.Key.Split(':')[1], str.Format);
     }

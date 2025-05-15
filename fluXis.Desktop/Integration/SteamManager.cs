@@ -19,7 +19,11 @@ public partial class SteamManager : Component, ISteamManager
 
     public uint AppID => 3440100;
     public bool Initialized { get; }
+
     public List<PublishedFileId_t> WorkshopItems { get; }
+
+    public Action<bool> ItemCreated { get; set; }
+    public Action<bool> ItemUpdated { get; set; }
 
     private Logger logger { get; } = Logger.GetLogger("Steam");
     private Dictionary<string, string> rpc { get; } = new();
@@ -27,6 +31,7 @@ public partial class SteamManager : Component, ISteamManager
 
     private Callback<GetTicketForWebApiResponse_t> ticketCb { get; }
     private CallResult<CreateItemResult_t> createItemCb { get; }
+    private CallResult<SubmitItemUpdateResult_t> submitItemCb { get; }
 
     [CanBeNull]
     private IWorkshopItem currentItem;
@@ -43,6 +48,7 @@ public partial class SteamManager : Component, ISteamManager
 
             ticketCb = Callback<GetTicketForWebApiResponse_t>.Create(authTicketCallback);
             createItemCb = CallResult<CreateItemResult_t>.Create(createItemCallback);
+            submitItemCb = CallResult<SubmitItemUpdateResult_t>.Create(onItemSubmitted);
 
             var num = SteamUGC.GetNumSubscribedItems();
             var items = new PublishedFileId_t[num];
@@ -140,9 +146,8 @@ public partial class SteamManager : Component, ISteamManager
             SteamUGC.SetItemPreview(handle, item.Preview);
 
         SteamUGC.SetItemContent(handle, item.Folder);
-        SteamUGC.SubmitItemUpdate(handle, "");
-
-        OpenLink($"https://steamcommunity.com/sharedfiles/filedetails/?id={id.m_PublishedFileId}");
+        var submitHandle = SteamUGC.SubmitItemUpdate(handle, "");
+        submitItemCb.Set(submitHandle);
     }
 
     private void startAccountLink()
@@ -181,10 +186,12 @@ public partial class SteamManager : Component, ISteamManager
         if (result.m_eResult != EResult.k_EResultOK)
         {
             logger.Add($"Failed to create item! [{result.m_eResult}]", LogLevel.Error);
+            ItemCreated?.Invoke(false);
             return;
         }
 
         logger.Add($"Created item! [{result.m_nPublishedFileId}]");
+        ItemCreated?.Invoke(true);
 
         if (currentItem is null)
             throw new InvalidOperationException("Current item is null!");
@@ -196,6 +203,20 @@ public partial class SteamManager : Component, ISteamManager
         currentItem = null;
     }
 
+    private void onItemSubmitted(SubmitItemUpdateResult_t result, bool biofail)
+    {
+        if (result.m_eResult != EResult.k_EResultOK)
+        {
+            logger.Add($"Failed to submit item! [{result.m_eResult}]", LogLevel.Error);
+            ItemUpdated?.Invoke(false);
+            return;
+        }
+
+        ItemUpdated?.Invoke(true);
+
+        OpenLink($"https://steamcommunity.com/sharedfiles/filedetails/?id={result.m_nPublishedFileId}");
+    }
+
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
@@ -205,5 +226,6 @@ public partial class SteamManager : Component, ISteamManager
 
         ticketCb?.Dispose();
         createItemCb?.Dispose();
+        submitItemCb?.Dispose();
     }
 }

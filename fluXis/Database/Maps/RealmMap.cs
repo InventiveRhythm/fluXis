@@ -55,6 +55,9 @@ public class RealmMap : RealmObject
     [Ignored]
     public string FullAudioPath => MapSet.GetPathForFile(Metadata.Audio);
 
+    [Ignored]
+    public Action RatingChanged { get; set; } = null!;
+
     public float AccuracyDifficulty { get; set; } = 8;
     public float HealthDifficulty { get; set; } = 8;
 
@@ -74,6 +77,12 @@ public class RealmMap : RealmObject
     }
 
     public override string ToString() => $"{ID} - {Hash} - {Metadata}";
+
+    public void UpdateRating(double rating)
+    {
+        Rating = (float)rating;
+        RatingChanged?.Invoke();
+    }
 
     public void ResetOnlineInfo()
     {

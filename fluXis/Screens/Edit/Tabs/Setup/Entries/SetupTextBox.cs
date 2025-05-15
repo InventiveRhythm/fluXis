@@ -1,6 +1,5 @@
 using System;
 using fluXis.Graphics.Sprites;
-using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -41,8 +40,8 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
             FontSize = FluXisSpriteText.GetWebFontSize(18),
             SidePadding = 0,
             PlaceholderText = Placeholder,
-            BackgroundActive = FluXisColors.Background3,
-            BackgroundInactive = FluXisColors.Background3,
+            BackgroundActive = BackgroundColor,
+            BackgroundInactive = BackgroundColor,
             OnTextChanged = () => OnChange.Invoke(textBox.Text),
             OnCommitAction = () => OnChange.Invoke(textBox.Text),
             CommitOnFocusLost = true,

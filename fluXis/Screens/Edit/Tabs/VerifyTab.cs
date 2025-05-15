@@ -202,8 +202,22 @@ public partial class VerifyTab : EditorTab
     public void RefreshIssues()
     {
         issues.Clear();
-        issues.AddRange(checks.SelectMany(x => x.Check(map)));
-        issues.Sort((a, b) =>
+
+        var results = RunVerify(map);
+
+        issues.AddRange(results.Issues);
+
+        issuesContainer.Clear();
+        issuesContainer.AddRange(issues.Select(x => new VerifyIssueEntry(x)));
+
+        totalIssuesText.Text = $"{TotalIssues} total issues";
+        problematicIssuesText.Text = $"{ProblematicIssues} problematic";
+    }
+
+    public VerifyResults RunVerify(IVerifyContext ctx)
+    {
+        var list = checks.SelectMany(x => x.Check(ctx)).ToList();
+        list.Sort((a, b) =>
         {
             if (a.Time != b.Time)
                 return a.Time?.CompareTo(b.Time) ?? 0;
@@ -214,10 +228,6 @@ public partial class VerifyTab : EditorTab
             return string.Compare(a.Message, b.Message, StringComparison.Ordinal);
         });
 
-        issuesContainer.Clear();
-        issuesContainer.AddRange(issues.Select(x => new VerifyIssueEntry(x)));
-
-        totalIssuesText.Text = $"{TotalIssues} total issues";
-        problematicIssuesText.Text = $"{ProblematicIssues} problematic";
+        return new VerifyResults(list);
     }
 }

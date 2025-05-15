@@ -14,17 +14,8 @@ public class SettingsGeneralStrings : LocalizationCategory
 
     public TranslatableString LanguageCurrent => Get("language-current", "Current Language");
 
-    #endregion
-
-    #region Updates
-
-    public TranslatableString Updates => Get("updates-title", "Updates");
-
-    public TranslatableString ReleaseChannel => Get("release-channel", "Release Channel");
-    public TranslatableString ReleaseChannelDescription => Get("release-channel-description", "Select the release channel to receive updates from.");
-
-    public TranslatableString UpdatesCheck => Get("check-updates", "Check for updates");
-    public TranslatableString UpdatesCheckDescription => Get("check-updates-description", "Checks for updates and downloads them if available.");
+    public TranslatableString OriginalMeta => Get("original-meta", "Prefer original metadata");
+    public TranslatableString OriginalMetaDescription => Get("original-meta-description", "Displays song metadata in its original language.");
 
     #endregion
 
