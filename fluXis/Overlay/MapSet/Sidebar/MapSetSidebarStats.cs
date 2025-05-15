@@ -89,8 +89,8 @@ public partial class MapSetSidebarStats : FillFlowContainer
             hits.SetValue(map.NoteCount);
             lns.SetValue(map.LongNoteCount);
             rating.SetValue((float)map.Rating);
-            accuracy.SetValue(0);
-            health.SetValue(0);
+            accuracy.SetValue(map.AccuracyDifficulty);
+            health.SetValue(map.HealthDifficulty);
         }, true);
 
         FinishTransforms(true);

@@ -68,6 +68,12 @@ public class APIMap
     [JsonProperty("rating")]
     public double Rating { get; init; }
 
+    [JsonProperty("accuracy")]
+    public float AccuracyDifficulty { get; init; }
+
+    [JsonProperty("health")]
+    public float HealthDifficulty { get; init; }
+
     [JsonProperty("effects")]
     public MapEffectType Effects { get; init; }
 
