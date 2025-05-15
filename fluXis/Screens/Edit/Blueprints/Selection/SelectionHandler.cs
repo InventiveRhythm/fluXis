@@ -44,10 +44,21 @@ public partial class SelectionHandler<T> : Container, IHasContextMenu, IKeyBindi
         if (selected.Count == 0)
             return;
 
-        RectangleF rect = ToLocalSpace(selected[0].Drawable.ScreenSpaceDrawQuad).AABBFloat;
+        RectangleF rect = ToLocalSpace(selected[0].ScreenSpaceDrawQuad).AABBFloat;
 
         for (int i = 1; i < selected.Count; i++)
-            rect = RectangleF.Union(rect, ToLocalSpace(selected[i].Drawable.ScreenSpaceDrawQuad).AABBFloat);
+        {
+            var blueprint = selected[i];
+
+            if (!blueprint.Visible)
+            {
+                blueprint.UpdatePosition(this);
+                // stupid fix but it works
+                blueprint.X += ScreenSpaceDrawQuad.TopLeft.X;
+            }
+
+            rect = RectangleF.Union(rect, ToLocalSpace(blueprint.ScreenSpaceDrawQuad).AABBFloat);
+        }
 
         rect = rect.Inflate(5);
         outline.UpdatePositionAndSize(rect.Location, rect.Size, !wasVisible);
@@ -62,10 +73,24 @@ public partial class SelectionHandler<T> : Container, IHasContextMenu, IKeyBindi
         selected.Add(blueprint);
     }
 
+    public void HandleSelection(IEnumerable<SelectionBlueprint<T>> blueprints)
+    {
+        var list = blueprints.ToList();
+
+        var objects = list.Where(x => !SelectedObjects.Contains(x.Object)).Select(x => x.Object);
+        SelectedObjects.AddRange(objects);
+
+        selected.AddRange(list);
+        list.ForEach(l => l.Select());
+    }
+
     public void HandleDeselection(SelectionBlueprint<T> blueprint)
     {
-        SelectedObjects.Remove(blueprint.Object);
-        selected.Remove(blueprint);
+        if (SelectedObjects.Contains(blueprint.Object))
+            SelectedObjects.Remove(blueprint.Object);
+
+        if (selected.Contains(blueprint))
+            selected.Remove(blueprint);
     }
 
     private void updateVisibility()
@@ -127,8 +152,12 @@ public partial class SelectionHandler<T> : Container, IHasContextMenu, IKeyBindi
 
     public void DeselectAll()
     {
-        selected.ToList().ForEach(b => b.Deselect());
+        var list = selected.ToList();
+
+        selected.Clear();
         SelectedObjects.Clear();
+
+        list.ForEach(b => b.Deselect());
     }
 
     public bool OnPressed(KeyBindingPressEvent<FluXisGlobalKeybind> e)

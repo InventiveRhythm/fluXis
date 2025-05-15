@@ -18,6 +18,8 @@ public partial class SelectionBlueprint<T> : Container
     public virtual double FirstComparer => 0;
     public virtual double SecondComparer => 0;
 
+    public virtual bool Visible => true;
+
     public SelectedState State
     {
         get => state;
@@ -56,6 +58,14 @@ public partial class SelectionBlueprint<T> : Container
         base.LoadComplete();
         updateState();
     }
+
+    protected override void Update()
+    {
+        base.Update();
+        UpdatePosition(Parent);
+    }
+
+    public virtual void UpdatePosition(Drawable parent) { }
 
     private void updateState()
     {

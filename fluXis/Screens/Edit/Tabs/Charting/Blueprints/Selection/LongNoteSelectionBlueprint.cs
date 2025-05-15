@@ -1,4 +1,6 @@
+using System;
 using fluXis.Map.Structures;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,6 +15,10 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
 
     private DraggableSelectionPiece head;
     private DraggableSelectionPiece end;
+
+    private EditorLongNote drawable => Drawable as EditorLongNote;
+
+    public override bool Visible => base.Visible || Math.Abs(EditorClock.CurrentTime - Object.EndTime) <= 4000;
 
     public LongNoteSelectionBlueprint(HitObject info)
         : base(info)
@@ -34,7 +40,7 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
             end = new DraggableSelectionPiece
             {
                 DragAction = dragEnd,
-                Origin = Anchor.CentreLeft
+                Origin = Anchor.TopLeft
             },
             new Container
             {
@@ -52,12 +58,12 @@ public partial class LongNoteSelectionBlueprint : NoteSelectionBlueprint
         };
     }
 
-    protected override void Update()
+    public override void UpdatePosition(Drawable parent)
     {
-        base.Update();
+        base.UpdatePosition(parent);
 
         var delta = PositionProvider.PositionAtTime(Object.EndTime) - PositionProvider.PositionAtTime(Object.Time);
-        Height = -(delta - HitObject.LongNoteEnd.DrawHeight / 2);
+        Height = -(delta - drawable.End.DrawHeight);
     }
 
     private void dragStart(Vector2 vec)

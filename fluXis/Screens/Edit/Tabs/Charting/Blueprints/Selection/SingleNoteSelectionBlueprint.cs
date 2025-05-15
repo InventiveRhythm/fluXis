@@ -27,7 +27,7 @@ public partial class SingleNoteSelectionBlueprint : NoteSelectionBlueprint
     protected override void Update()
     {
         base.Update();
-        Height = HitObject.HitObjectPiece.DrawHeight;
+        Height = HitObject.DrawHeight;
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

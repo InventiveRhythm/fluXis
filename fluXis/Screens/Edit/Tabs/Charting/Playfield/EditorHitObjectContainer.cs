@@ -1,20 +1,23 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures;
+using fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osuTK;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Playfield;
 
-public partial class EditorHitObjectContainer : Container
+public partial class EditorHitObjectContainer : Container<EditorHitObject>
 {
     public const int HITPOSITION = 130;
     public const int NOTEWIDTH = 98;
 
-    public IEnumerable<EditorHitObject> HitObjects => InternalChildren.OfType<EditorHitObject>();
+    public IEnumerable<EditorHitObject> HitObjects => back.Concat(InternalChildren.OfType<EditorHitObject>());
+
+    private readonly List<EditorHitObject> back = new();
 
     [Resolved]
     private EditorSettings settings { get; set; }
@@ -38,15 +41,6 @@ public partial class EditorHitObjectContainer : Container
         map.HitObjectAdded += add;
         map.HitObjectRemoved += remove;
         map.MapInfo.HitObjects.ForEach(add);
-
-        Add(new Box
-        {
-            RelativeSizeAxes = Axes.X,
-            Height = 5,
-            Anchor = Anchor.BottomCentre,
-            Origin = Anchor.BottomCentre,
-            Y = -HITPOSITION
-        });
     }
 
     private void add(HitObject info)
@@ -54,9 +48,29 @@ public partial class EditorHitObjectContainer : Container
         var idx = (info.Lane - 1) / map.RealmMap.KeyCount;
         if (idx != playfield.Index) return;
 
-        var draw = new EditorHitObject { Data = info };
+        EditorHitObject draw = null;
+
+        switch (info.Type)
+        {
+            case 0:
+                if (info.LongNote)
+                    draw = new EditorLongNote(info);
+                else
+                    draw = new EditorSingleNote(info);
+
+                break;
+
+            case 1:
+                draw = new EditorTickNote(info);
+                break;
+        }
+
+        if (draw is null)
+            return;
+
+        LoadComponent(draw);
         info.EditorDrawable = draw;
-        Add(draw);
+        back.Add(draw);
     }
 
     private void remove(HitObject info)
@@ -67,8 +81,30 @@ public partial class EditorHitObjectContainer : Container
         var draw = info.EditorDrawable;
         if (draw == null) return;
 
-        Remove(draw, true);
+        Remove(draw, false);
+        back.Remove(draw);
+
         info.EditorDrawable = null;
+        draw.Dispose();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        var remove = Children.Where(x => Math.Abs(x.Delta) >= 2000).ToList();
+        remove.ForEach(x =>
+        {
+            Remove(x, false);
+            back.Add(x);
+        });
+
+        var add = back.Where(x => Math.Abs(x.Delta) <= 2000).ToList();
+        add.ForEach(x =>
+        {
+            Add(x);
+            back.Remove(x);
+        });
     }
 
     public Vector2 ScreenSpacePositionAtTime(double time, int lane) => ToScreenSpace(new Vector2(PositionFromLane(lane), PositionAtTime(time)));

@@ -1,6 +1,8 @@
+using System;
 using fluXis.Map.Structures;
 using fluXis.Map.Structures.Bases;
 using fluXis.Screens.Edit.Tabs.Charting.Playfield;
+using osu.Framework.Graphics;
 
 namespace fluXis.Screens.Edit.Tabs.Charting.Blueprints.Selection;
 
@@ -12,6 +14,8 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
 
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.EndTime;
+
+    public override bool Visible => Math.Abs(EditorClock.CurrentTime - Object.Time) <= 4000;
 
     protected ITimePositionProvider PositionProvider
     {
@@ -28,11 +32,9 @@ public partial class NoteSelectionBlueprint : ChartingSelectionBlueprint
         Width = EditorHitObjectContainer.NOTEWIDTH;
     }
 
-    protected override void Update()
+    public override void UpdatePosition(Drawable parent)
     {
-        base.Update();
-
-        var parent = Parent;
+        base.UpdatePosition(parent);
 
         if (parent != null)
             Position = parent.ToLocalSpace(PositionProvider.ScreenSpacePositionAtTime(Object.Time, Object.Lane));

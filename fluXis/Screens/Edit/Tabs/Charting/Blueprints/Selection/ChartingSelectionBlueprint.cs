@@ -15,6 +15,9 @@ public partial class ChartingSelectionBlueprint : SelectionBlueprint<ITimedObjec
     [Resolved]
     protected ChartingContainer ChartingContainer { get; private set; }
 
+    [Resolved]
+    protected EditorClock EditorClock { get; private set; }
+
     public override double FirstComparer => Object.Time;
     public override double SecondComparer => Object.Time;
 
