@@ -66,9 +66,11 @@ public static class Program
 
         using GameHost host = Host.GetSuitableDesktopHost(name, new HostOptions { IPCPipeName = name });
 
+        string cwd = Environment.CurrentDirectory;
+
         switch (host.IsPrimaryInstance)
         {
-            case false when sendIpcMessage(host, args):
+            case false when sendIpcMessage(host, cwd, args):
                 return;
 
             case false when !FluXisGameBase.IsDebug:
@@ -87,7 +89,7 @@ public static class Program
         host.Run(game);
     }
 
-    private static bool sendIpcMessage(IIpcHost host, IReadOnlyList<string> args)
+    private static bool sendIpcMessage(IIpcHost host, string cwd, IReadOnlyList<string> args)
     {
         if (args.Count <= 0 || !args[0].Contains('.')) return false;
 
@@ -95,7 +97,7 @@ public static class Program
         {
             var channel = new IPCImportChannel(host);
 
-            if (!channel.Import(file).Wait(3000))
+            if (!channel.Import(Path.GetFullPath(file, cwd)).Wait(3000))
                 throw new TimeoutException();
 
             return true;
