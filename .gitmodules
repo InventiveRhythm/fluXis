@@ -1,0 +1,3 @@
+[submodule "Framework"]
+	path = Framework
+	url = https://github.com/InventiveRhythm/osu-framework

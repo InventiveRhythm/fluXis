@@ -5,7 +5,9 @@
       "fluXis.Android\\fluXis.Android.csproj",
       "fluXis\\fluXis.csproj",
       "fluXis.Tests\\fluXis.Tests.csproj",
-      "fluXis.Resources\\fluXis.Resources.csproj"
+      "fluXis.Resources\\fluXis.Resources.csproj",
+      "Framework\\osu.Framework.Android\\osu.Framework.Android.csproj",
+      "Framework\\osu.Framework\\osu.Framework.csproj"
     ]
   }
 }

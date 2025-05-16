@@ -2,7 +2,6 @@
   "solution": {
     "path": "fluXis.sln",
     "projects": [
-      "..\\..\\flustix\\Midori\\Midori\\Midori.csproj",
       "fluXis.Desktop\\fluXis.Desktop.csproj",
       "fluXis.Import.osu\\fluXis.Import.osu.csproj",
       "fluXis.Import.Quaver\\fluXis.Import.Quaver.csproj",
@@ -10,7 +9,8 @@
       "fluXis.Resources\\fluXis.Resources.csproj",
       "fluXis.Shared\\fluXis.Shared.csproj",
       "fluXis.Tests\\fluXis.Tests.csproj",
-      "fluXis\\fluXis.csproj"
+      "fluXis\\fluXis.csproj",
+      "Framework\\osu.Framework\\osu.Framework.csproj"
     ]
   }
 }

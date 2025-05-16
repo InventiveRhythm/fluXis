@@ -12,13 +12,13 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\fluXis.Resources\fluXis.Resources.csproj" />
+    <ProjectReference Include="..\Framework\osu.Framework\osu.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     <PackageReference Include="NLua" Version="1.7.5" />
     <PackageReference Include="flustix.Midori" Version="2025.512.0" />
-    <PackageReference Include="ppy.osu.Framework" Version="2025.321.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
     <PackageReference Include="Realm" Version="20.1.0" />
