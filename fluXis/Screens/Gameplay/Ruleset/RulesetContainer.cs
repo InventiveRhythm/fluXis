@@ -45,6 +45,8 @@ public partial class RulesetContainer : CompositeDrawable
 
     private DependencyContainer dependencies;
 
+    protected override bool ForceChildUpdate => true;
+
     public RulesetContainer(MapInfo map, MapEvents events, List<IMod> mods)
     {
         MapInfo = map;
