@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="OpenRGB.NET" Version="3.1.1"/>
+    <PackageReference Include="Steamworks.NET" Version="2024.8.0" IncludeAssets="all" />
   </ItemGroup>
   <ItemGroup Label="Resources">
     <EmbeddedResource Include="game.ico"/>

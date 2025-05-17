@@ -30,7 +30,6 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
-using Steamworks;
 
 namespace fluXis.Skinning;
 
@@ -160,9 +159,12 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         {
             foreach (var item in steam.WorkshopItems)
             {
-                SteamUGC.GetItemInstallInfo(item, out ulong _, out string folder, 2048, out _);
+                var folder = steam.GetWorkshopItemDirectory(item);
 
-                var id = $"steam/{item.m_PublishedFileId}";
+                if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
+                    continue;
+
+                var id = $"steam/{item}";
                 var path = Path.Combine(folder, "skin.json");
                 SkinInfo info = null;
 
@@ -463,10 +465,10 @@ public partial class SkinManager : Component, ISkin, IDragDropHandler
         if (id.StartsWith("steam/"))
         {
             var idString = id.Split('/')[1];
-            if (!ulong.TryParse(idString, out var steamId))
+            if (steam is null || !ulong.TryParse(idString, out var steamId))
                 return null;
 
-            SteamUGC.GetItemInstallInfo(new PublishedFileId_t(steamId), out ulong _, out string folder, 2048, out _);
+            var folder = steam.GetWorkshopItemDirectory(steamId);
             return folder;
         }
 

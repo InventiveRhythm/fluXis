@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using fluXis.Integration;
 using fluXis.Online.API.Requests.Users;
 using fluXis.Online.Fluxel;
@@ -20,7 +21,7 @@ public partial class SteamManager : Component, ISteamManager
     public uint AppID => 3440100;
     public bool Initialized { get; }
 
-    public List<PublishedFileId_t> WorkshopItems { get; }
+    public List<ulong> WorkshopItems { get; }
 
     public Action<bool> ItemCreated { get; set; }
     public Action<bool> ItemUpdated { get; set; }
@@ -56,7 +57,7 @@ public partial class SteamManager : Component, ISteamManager
 
             logger.Add($"Found {items.Length} subscribed items. [subscribed: {num}, result: {result}]");
 
-            WorkshopItems = new List<PublishedFileId_t>(items);
+            WorkshopItems = new List<ulong>(items.Select(x => x.m_PublishedFileId));
         }
         catch (Exception e)
         {
@@ -135,10 +136,10 @@ public partial class SteamManager : Component, ISteamManager
         createItemCb.Set(handle);
     }
 
-    public void UpdateItem(PublishedFileId_t id, IWorkshopItem item)
+    public void UpdateItem(ulong id, IWorkshopItem item)
     {
         logger.Add($"Updating item: {item}.");
-        var handle = SteamUGC.StartItemUpdate((AppId_t)AppID, id);
+        var handle = SteamUGC.StartItemUpdate((AppId_t)AppID, new PublishedFileId_t(id));
 
         SteamUGC.SetItemTitle(handle, item.Title);
 
@@ -148,6 +149,12 @@ public partial class SteamManager : Component, ISteamManager
         SteamUGC.SetItemContent(handle, item.Folder);
         var submitHandle = SteamUGC.SubmitItemUpdate(handle, "");
         submitItemCb.Set(submitHandle);
+    }
+
+    public string GetWorkshopItemDirectory(ulong id)
+    {
+        SteamUGC.GetItemInstallInfo(new PublishedFileId_t(id), out ulong _, out string folder, 2048, out _);
+        return folder;
     }
 
     private void startAccountLink()
@@ -199,7 +206,7 @@ public partial class SteamManager : Component, ISteamManager
         Logger.Log(Path.Combine(currentItem.Folder, "workshopid.txt"));
         File.WriteAllText(Path.Combine(currentItem.Folder, "workshopid.txt"), result.m_nPublishedFileId.ToString());
 
-        UpdateItem(result.m_nPublishedFileId, currentItem);
+        UpdateItem(result.m_nPublishedFileId.m_PublishedFileId, currentItem);
         currentItem = null;
     }
 

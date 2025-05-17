@@ -130,7 +130,7 @@ public partial class FluXisGameBase : osu.Framework.Game
 
     protected FluXisGameBase()
     {
-        Midori.Logging.Logger.SaveToFiles = false;
+        // Midori.Logging.Logger.SaveToFiles = false;
         Steam = CreateSteam(); // steam needs to load before the graphics
     }
 
