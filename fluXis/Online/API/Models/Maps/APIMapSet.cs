@@ -46,6 +46,9 @@ public class APIMapSet
     [JsonProperty("submitted")]
     public long DateSubmitted { get; set; }
 
+    [JsonProperty("ranked")]
+    public long? DateRanked { get; set; }
+
     [JsonProperty("updated")]
     public long LastUpdated { get; set; }
 

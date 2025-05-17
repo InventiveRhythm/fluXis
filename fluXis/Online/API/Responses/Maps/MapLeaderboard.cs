@@ -10,14 +10,18 @@ namespace fluXis.Online.API.Responses.Maps;
 
 public class MapLeaderboard
 {
+    [JsonProperty("set")]
+    public APIMapSet MapSet { get; set; } = null!;
+
     [JsonProperty("map")]
     public APIMap Map { get; set; } = null!;
 
     [JsonProperty("scores")]
     public List<APIScore> Scores { get; set; } = new();
 
-    public MapLeaderboard(APIMap map, IEnumerable<APIScore> scores)
+    public MapLeaderboard(APIMapSet set, APIMap map, IEnumerable<APIScore> scores)
     {
+        MapSet = set;
         Map = map;
         Scores = scores.ToList();
     }

@@ -395,6 +395,7 @@ public partial class ScoreList : GridContainer
             return null;
         }
 
+        var onlineSet = req.Response.Data.MapSet;
         var onlineMap = req.Response.Data.Map;
 
         realm?.RunWrite(r =>
@@ -405,8 +406,10 @@ public partial class ScoreList : GridContainer
                 return;
 
             var oldHash = map.OnlineHash;
-
             m.OnlineHash = map.OnlineHash = onlineMap.SHA256Hash;
+
+            if (map.OnlineHash != oldHash)
+                map.OnlineHashUpdated?.Invoke();
 
             if (Math.Abs(m.Rating - onlineMap.Rating) > .001f)
             {
@@ -414,11 +417,10 @@ public partial class ScoreList : GridContainer
                 map.UpdateRating(onlineMap.Rating);
             }
 
-            if (map.OnlineHash != oldHash)
-                map.OnlineHashUpdated?.Invoke();
+            m.LastOnlineUpdate = map.LastOnlineUpdate = TimeUtils.GetFromSeconds(onlineSet.LastUpdated);
 
-            // I would like to know why I didn't put "last update" on the map but on the mapset
-            // m.LastOnlineUpdate = map.LastOnlineUpdate = onlineMap.LastUpdate;
+            if (onlineSet.DateRanked != null)
+                m.MapSet.DateRanked = map.MapSet.DateRanked = TimeUtils.GetFromSeconds(onlineSet.DateRanked.Value);
 
             if (m.StatusInt != onlineMap.Status)
             {

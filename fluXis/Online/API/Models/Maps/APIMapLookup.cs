@@ -16,6 +16,9 @@ public class APIMapLookup
     [JsonProperty("status")]
     public int Status { get; set; }
 
+    [JsonProperty("rating")]
+    public double Rating { get; set; }
+
     [JsonProperty("submitted")]
     public long DateSubmitted { get; set; }
 

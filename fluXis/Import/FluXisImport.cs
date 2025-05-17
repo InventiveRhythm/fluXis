@@ -273,13 +273,15 @@ public class FluXisImport : MapImporter
                     var lookup = MapStore.LookUpHash(hash);
                     if (lookup == null) continue;
 
-                    map.OnlineID = (int)lookup.ID;
+                    map.OnlineID = lookup.ID;
                     map.StatusInt = lookup.Status;
-                    mapSet.OnlineID = (int)lookup.SetID;
+                    map.Rating = (float)lookup.Rating;
+                    mapSet.OnlineID = lookup.SetID;
                     mapSet.DateSubmitted = TimeUtils.GetFromSeconds(lookup.DateSubmitted);
+                    map.LastOnlineUpdate = TimeUtils.GetFromSeconds(lookup.LastUpdated);
 
                     if (lookup.DateRanked != null)
-                        mapSet.DateRanked = TimeUtils.GetFromSeconds((long)lookup.DateRanked);
+                        mapSet.DateRanked = TimeUtils.GetFromSeconds(lookup.DateRanked.Value);
                 }
                 catch (Exception e)
                 {
