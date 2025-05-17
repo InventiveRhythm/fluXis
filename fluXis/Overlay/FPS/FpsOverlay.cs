@@ -53,6 +53,7 @@ public partial class FpsOverlay : Container
                 {
                     AutoSizeAxes = Axes.Both,
                     TextAnchor = Anchor.TopRight,
+                    ParagraphSpacing = 0,
                     WebFontSize = 10
                 }
             }
@@ -90,7 +91,7 @@ public partial class FpsOverlay : Container
             var firstChar = thread.Name.First();
 
             if (firstChar is 'U' or 'D') // Update or Draw
-                textFlow.AddParagraph($"{clock.FramesPerSecond} {firstChar}PS ({clock.ElapsedFrameTime:0}ms)");
+                textFlow.AddParagraph($"{clock.FramesPerSecond} {firstChar}PS ({clock.ElapsedFrameTime:0.0}ms)");
         }
     }
 
