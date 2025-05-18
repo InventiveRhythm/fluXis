@@ -8,6 +8,7 @@ using fluXis.Graphics.Drawables;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Color;
 using fluXis.Graphics.UserInterface.Menus;
+using fluXis.Graphics.UserInterface.Text;
 using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Online.Drawables.Clubs;
@@ -457,40 +458,60 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
 
     private partial class ScoreListEntryTooltip : CustomTooltipContainer<ScoreInfo>
     {
-        private FluXisSpriteText dateText { get; }
-        private FluXisSpriteText flawlessText { get; }
-        private FluXisSpriteText perfectText { get; }
-        private FluXisSpriteText greatText { get; }
-        private FluXisSpriteText alrightText { get; }
-        private FluXisSpriteText okayText { get; }
-        private FluXisSpriteText missText { get; }
+        private ForcedHeightText dateText { get; }
+        private ForcedHeightText dateAgoText { get; }
+        private TooltipRow flawlessText { get; }
+        private TooltipRow perfectText { get; }
+        private TooltipRow greatText { get; }
+        private TooltipRow alrightText { get; }
+        private TooltipRow okayText { get; }
+        private TooltipRow missText { get; }
 
         public ScoreListEntryTooltip()
         {
             CornerRadius = 10;
             Child = new FillFlowContainer
             {
-                Padding = new MarginPadding(10),
+                Padding = new MarginPadding(16),
                 AutoSizeAxes = Axes.Both,
                 Direction = FillDirection.Vertical,
-                Spacing = new Vector2(10),
+                Spacing = new Vector2(12),
                 Children = new Drawable[]
                 {
-                    dateText = new FluXisSpriteText(),
                     new FillFlowContainer
                     {
-                        AutoSizeAxes = Axes.Y,
-                        Direction = FillDirection.Full,
-                        Spacing = new Vector2(10, 5),
-                        Width = 290,
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Vertical,
+                        Spacing = new Vector2(4),
                         Children = new Drawable[]
                         {
-                            flawlessText = new FluXisSpriteText(),
-                            perfectText = new FluXisSpriteText(),
-                            greatText = new FluXisSpriteText(),
-                            alrightText = new FluXisSpriteText(),
-                            okayText = new FluXisSpriteText(),
-                            missText = new FluXisSpriteText()
+                            dateText = new ForcedHeightText
+                            {
+                                Height = 12,
+                                WebFontSize = 16
+                            },
+                            dateAgoText = new ForcedHeightText
+                            {
+                                Height = 10,
+                                WebFontSize = 14,
+                                Alpha = .6f
+                            }
+                        }
+                    },
+                    new FillFlowContainer
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Direction = FillDirection.Vertical,
+                        Spacing = new Vector2(12),
+                        Children = new Drawable[]
+                        {
+                            flawlessText = new TooltipRow("Flawless"),
+                            perfectText = new TooltipRow("Perfect"),
+                            greatText = new TooltipRow("Great"),
+                            alrightText = new TooltipRow("Alright"),
+                            okayText = new TooltipRow("Okay"),
+                            missText = new TooltipRow("Miss"),
                         }
                     }
                 }
@@ -512,14 +533,45 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
         {
             var date = TimeUtils.GetFromSeconds(score.Timestamp);
 
-            dateText.Text = $"Played on {date:dd MMMM yyyy} at {date:HH:mm}";
+            dateText.Text = $"{date:dd MMMM yyyy} @ {date:HH:mm}";
+            dateAgoText.Text = TimeUtils.Ago(date);
 
-            flawlessText.Text = $"FLAWLESS {score.Flawless}";
-            perfectText.Text = $"PERFECT {score.Perfect}";
-            greatText.Text = $"GREAT {score.Great}";
-            alrightText.Text = $"ALRIGHT {score.Alright}";
-            okayText.Text = $"OKAY {score.Okay}";
-            missText.Text = $"MISS {score.Miss}";
+            flawlessText.Text = $"{score.Flawless}";
+            perfectText.Text = $"{score.Perfect}";
+            greatText.Text = $"{score.Great}";
+            alrightText.Text = $"{score.Alright}";
+            okayText.Text = $"{score.Okay}";
+            missText.Text = $"{score.Miss}";
+        }
+    }
+
+    private partial class TooltipRow : Container
+    {
+        public string Text { set => text.Text = value; }
+
+        private readonly FluXisSpriteText text;
+
+        public TooltipRow(string title)
+        {
+            RelativeSizeAxes = Axes.X;
+            Height = 10;
+
+            InternalChildren = new Drawable[]
+            {
+                new FluXisSpriteText
+                {
+                    Text = title,
+                    WebFontSize = 14,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft
+                },
+                text = new FluXisSpriteText
+                {
+                    WebFontSize = 14,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight
+                }
+            };
         }
     }
 }
