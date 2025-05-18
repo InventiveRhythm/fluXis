@@ -6,7 +6,6 @@ using fluXis.Screens.Select.List.Items;
 using fluXis.UI;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -90,18 +89,16 @@ public partial class DrawableMapSetItem : CompositeDrawable
         else
             Y = (float)Interpolation.Lerp(item.Position, Y, Math.Exp(-0.01 * Time.Elapsed));
 
-        if (!Selected)
-        {
-            difficultyFlow.ForEach(d => d.TargetY = 30);
-            return;
-        }
-
-        var pos = 85f;
+        var selected = Selected;
+        var pos = selected ? 85f : 20;
 
         foreach (var difficulty in difficultyFlow)
         {
             difficulty.TargetY = pos;
-            pos += 48 + 5;
+            if (selected) pos += 48 + 5;
+
+            difficulty.UpdatePosition(Time.Elapsed);
+            difficulty.Alpha = difficulty.Y <= 30 ? 0 : 1;
         }
     }
 

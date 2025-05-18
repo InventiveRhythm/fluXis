@@ -262,14 +262,12 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
     }
 
-    protected override void Update()
+    public void UpdatePosition(double elapsed)
     {
-        base.Update();
-
         if (Precision.AlmostEquals(TargetY, Y))
             Y = TargetY;
         else
-            Y = (float)Interpolation.Lerp(TargetY, Y, Math.Exp(-0.01 * Time.Elapsed));
+            Y = (float)Interpolation.Lerp(TargetY, Y, Math.Exp(-0.01 * elapsed));
     }
 
     protected override void Dispose(bool isDisposing)
