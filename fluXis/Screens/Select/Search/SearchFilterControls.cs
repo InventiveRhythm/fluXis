@@ -30,17 +30,31 @@ public partial class SearchFilterControls : CompositeDrawable
         Height = 40;
         Y = 90;
 
-        InternalChild = new FillFlowContainer
+        InternalChild = new Container
         {
             RelativeSizeAxes = Axes.Both,
-            Direction = FillDirection.Horizontal,
-            Spacing = new Vector2(12),
             Padding = new MarginPadding { Left = 24 },
-            Shear = new Vector2(-.2f, 0),
-            Children = new Drawable[]
+            Child = new GridContainer
             {
-                new Control<MapUtils.SortingMode>(LocalizationStrings.SongSelect.SortBy, Enum.GetValues<MapUtils.SortingMode>(), config.GetBindable<MapUtils.SortingMode>(FluXisSetting.SortingMode)),
-                new Control<MapUtils.GroupingMode>(LocalizationStrings.SongSelect.GroupBy, Enum.GetValues<MapUtils.GroupingMode>(), config.GetBindable<MapUtils.GroupingMode>(FluXisSetting.GroupingMode)),
+                RelativeSizeAxes = Axes.Both,
+                Shear = new Vector2(-.2f, 0),
+                ColumnDimensions = new Dimension[]
+                {
+                    new(),
+                    new(GridSizeMode.Absolute, 12),
+                    new(),
+                },
+                Content = new[]
+                {
+                    new[]
+                    {
+                        new Control<MapUtils.SortingMode>(LocalizationStrings.SongSelect.SortBy, Enum.GetValues<MapUtils.SortingMode>(),
+                            config.GetBindable<MapUtils.SortingMode>(FluXisSetting.SortingMode)),
+                        Empty(),
+                        new Control<MapUtils.GroupingMode>(LocalizationStrings.SongSelect.GroupBy, Enum.GetValues<MapUtils.GroupingMode>(),
+                            config.GetBindable<MapUtils.GroupingMode>(FluXisSetting.GroupingMode)),
+                    }
+                }
             }
         };
     }
@@ -69,7 +83,7 @@ public partial class SearchFilterControls : CompositeDrawable
         [BackgroundDependencyLoader]
         private void load()
         {
-            AutoSizeAxes = Axes.X;
+            RelativeSizeAxes = Axes.X;
             Height = 40;
 
             InternalChildren = new Drawable[]
@@ -138,8 +152,7 @@ public partial class SearchFilterControls : CompositeDrawable
             {
                 this.focusAction = focusAction;
 
-                AutoSizeAxes = Axes.X;
-                RelativeSizeAxes = Axes.Y;
+                RelativeSizeAxes = Axes.Both;
                 CornerRadius = 8;
                 Masking = true;
                 EdgeEffect = FluXisStyles.ShadowSmall;
@@ -153,12 +166,11 @@ public partial class SearchFilterControls : CompositeDrawable
                     },
                     new GridContainer
                     {
-                        AutoSizeAxes = Axes.X,
-                        RelativeSizeAxes = Axes.Y,
+                        RelativeSizeAxes = Axes.Both,
                         ColumnDimensions = new Dimension[]
                         {
                             new(GridSizeMode.AutoSize),
-                            new(GridSizeMode.Absolute, 220)
+                            new()
                         },
                         Content = new[]
                         {
