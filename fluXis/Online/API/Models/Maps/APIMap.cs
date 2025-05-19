@@ -77,6 +77,9 @@ public class APIMap
     [JsonProperty("effects")]
     public MapEffectType Effects { get; init; }
 
+    [JsonProperty("has_voted_rate")]
+    public bool HasVotedRate { get; set; }
+
     #region Optional
 
     [JsonProperty("file")]
