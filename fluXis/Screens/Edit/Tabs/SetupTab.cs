@@ -119,7 +119,8 @@ public partial class SetupTab : EditorTab
                                                         {
                                                             Default = map.MapInfo.Metadata.Tags,
                                                             Placeholder = "No Tags",
-                                                            OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value
+                                                            OnChange = value => map.MapInfo.Metadata.Tags = map.RealmMap.Metadata.Tags = value,
+                                                            MaxLength = 2048
                                                         }
                                                     }
                                                 },

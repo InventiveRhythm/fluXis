@@ -17,6 +17,7 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
     public string Default { get; init; } = string.Empty;
     public string Placeholder { get; init; } = string.Empty;
     public Action<string> OnChange { get; init; } = _ => { };
+    public int MaxLength { get; init; } = 256;
 
     public CompositeDrawable TabbableContentContainer
     {
@@ -45,6 +46,7 @@ public partial class SetupTextBox : SetupEntry, ITabbableContainer
             OnTextChanged = () => OnChange.Invoke(textBox.Text),
             OnCommitAction = () => OnChange.Invoke(textBox.Text),
             CommitOnFocusLost = true,
+            LengthLimit = MaxLength
         };
     }
 
