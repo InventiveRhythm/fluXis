@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using fluXis.Screens.Select.Info.Scores;
+using fluXis.Screens.Select.Info.Tabs.Scores;
 using fluXis.Utils;
 using osu.Framework.Configuration;
 using osu.Framework.Platform;

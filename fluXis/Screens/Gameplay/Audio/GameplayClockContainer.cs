@@ -21,7 +21,7 @@ public partial class GameplayClockContainer : Container
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
 
-        GameplayClock = new GameplayClock(tracks, info, realmMap.GetTrack(), useOffset);
+        GameplayClock = new GameplayClock(tracks, info, realmMap.GetTrack(), realmMap.Settings.Offset, useOffset);
 
         InternalChildren = new Drawable[]
         {

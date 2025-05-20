@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.UserInterface.Menus;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
@@ -41,21 +40,18 @@ public partial class SettingsDropdown<T> : SettingsItem
 
     private Dropdown<T> menu;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    protected override Drawable CreateContent()
     {
         AutoSizeAxes = Axes.Y;
-        Content.RelativeSizeAxes = Axes.X;
-        Content.AutoSizeAxes = Axes.Y;
 
-        Add(menu = CreateMenu().With(m =>
+        return menu = CreateMenu().With(m =>
         {
             m.Width = 400;
             m.Anchor = Anchor.CentreRight;
             m.Origin = Anchor.CentreRight;
             m.Items = Items;
             m.Current = Bindable;
-        }));
+        });
     }
 
     protected virtual Dropdown<T> CreateMenu() => new CustomDropdown();

@@ -103,6 +103,7 @@ public class FontAwesome6
         public static IconUsage Plus => GetSolid(0x2b);
         public static IconUsage PuzzlePiece => GetSolid(0xf12e);
         public static IconUsage Question => GetSolid(0x3f);
+        public static IconUsage RankingStar => GetSolid(0xe561);
         public static IconUsage RectangleWide => GetSolid(0xf2fc);
         public static IconUsage RightLeft => GetSolid(0xf362);
         public static IconUsage Rotate => GetSolid(0xf2f1);

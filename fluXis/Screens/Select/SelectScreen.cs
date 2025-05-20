@@ -179,28 +179,20 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                     }
                 }
             },
-            new Container()
+            new FluXisContextMenuContainer()
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Bottom = 50 },
                 Children = new Drawable[]
                 {
-                    new FluXisContextMenuContainer
+                    new Container
                     {
+                        Width = .5f,
+                        RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
-                        RelativeSizeAxes = Axes.Both,
-                        Width = .5f,
-                        Child = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(10)
-                            {
-                                Top = 140,
-                                Bottom = 40
-                            },
-                            Child = mapList = new MapList(sortMode)
-                        }
+                        Padding = new MarginPadding(10) { Top = 140, Bottom = 40 },
+                        Child = mapList = new MapList(sortMode)
                     },
                     filterControl = new SearchFilterControls(),
                     searchBar = new SearchBar(),
@@ -291,7 +283,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         this.Push(new GameplayLoader(map, mods, () =>
         {
             var replay = replayFunc();
-            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay) { Scores = selectMapInfo.ScoreList.CurrentScores.ToList() };
+            return replay == null ? null : new ReplayGameplayScreen(map, mods, replay) { Scores = selectMapInfo.ScoreList?.CurrentScores.ToList() };
         }));
     }
 
@@ -312,7 +304,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
         PlayAction = Accept,
         DeleteAction = DeleteMapSet,
         EditAction = EditMap,
-        ScoresWiped = () => selectMapInfo.ScoreList.Refresh()
+        ScoresWiped = () => selectMapInfo.ScoreList?.Refresh()
     };
 
     #endregion
@@ -330,7 +322,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
 
         modsOverlay.Hide();
 
-        StartMap(Maps.CurrentMap, modsOverlay.SelectedMods.ToList(), selectMapInfo.ScoreList.CurrentScores.ToList());
+        StartMap(Maps.CurrentMap, modsOverlay.SelectedMods.ToList(), selectMapInfo.ScoreList?.CurrentScores.ToList());
     }
 
     protected abstract void StartMap(RealmMap map, List<IMod> mods, List<ScoreInfo> scores);
@@ -837,7 +829,7 @@ public abstract partial class SelectScreen : FluXisScreen, IKeyBindingHandler<Fl
                 clock.Start();
         }
 
-        selectMapInfo.ScoreList.Refresh();
+        selectMapInfo.ScoreList?.Refresh();
     }
 
     public override bool OnExiting(ScreenExitEvent e)

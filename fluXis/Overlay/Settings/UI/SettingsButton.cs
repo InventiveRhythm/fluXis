@@ -1,6 +1,6 @@
 using System;
+using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface.Buttons;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 
 namespace fluXis.Overlay.Settings.UI;
@@ -12,20 +12,14 @@ public partial class SettingsButton : SettingsItem
 
     private FluXisButton button;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    protected override Drawable CreateContent() => button = new FluXisButton
     {
-        Add(button = new FluXisButton
-        {
-            Anchor = Anchor.CentreRight,
-            Origin = Anchor.CentreRight,
-            Height = 30,
-            Width = 150,
-            FontSize = 20,
-            Text = ButtonText,
-            Action = Action
-        });
-    }
+        Text = ButtonText,
+        Height = 32,
+        Width = 150,
+        FontSize = FluXisSpriteText.GetWebFontSize(14),
+        Action = Action
+    };
 
     protected override void LoadComplete()
     {

@@ -43,6 +43,8 @@ public class RealmMap : RealmObject
     public int KeyCount { get; set; } = 4;
     public float Rating { get; set; }
 
+    public RealmMapUserSettings Settings { get; set; } = new();
+
     public string Hash { get; set; } = string.Empty;
     public string OnlineHash { get; set; } = string.Empty;
 

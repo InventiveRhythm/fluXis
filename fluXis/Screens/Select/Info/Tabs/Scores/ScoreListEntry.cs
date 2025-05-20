@@ -33,7 +33,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace fluXis.Screens.Select.Info.Scores;
+namespace fluXis.Screens.Select.Info.Tabs.Scores;
 
 public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, IHasContextMenu
 {
@@ -76,6 +76,7 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     }
 
     public ScoreInfo TooltipContent => ScoreInfo;
+    public bool Disappearing { get; private set; }
 
     public ScoreInfo ScoreInfo { get; init; }
     public RealmMap Map { get; init; }
@@ -361,10 +362,21 @@ public partial class ScoreListEntry : Container, IHasCustomTooltip<ScoreInfo>, I
     {
         wrapper.MoveToX(100).FadeOut()
                .Then((Place - 1) * 50)
-               .MoveToX(0, 500, Easing.OutQuint).FadeIn(400);
+               .MoveToX(0, 600, Easing.OutQuint).FadeIn(300);
 
         if (ScoreInfo.Rank == ScoreRank.X)
             rankBackground.Rainbow();
+    }
+
+    public override void Hide()
+    {
+        Disappearing = true;
+        var delay = (Place - 1) * 50;
+
+        wrapper.MoveToY(0).Then(delay)
+               .MoveToX(-200, 600, Easing.OutQuint).FadeOut(300);
+
+        this.Delay(delay + 600).Expire();
     }
 
     protected override void Update()

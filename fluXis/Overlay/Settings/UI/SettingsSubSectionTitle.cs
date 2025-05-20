@@ -11,7 +11,7 @@ public partial class SettingsSubSectionTitle : FluXisSpriteText
     public SettingsSubSectionTitle(LocalisableString text)
     {
         Text = text;
-        WebFontSize = 22;
+        WebFontSize = 20;
     }
 
     protected override void LoadComplete()

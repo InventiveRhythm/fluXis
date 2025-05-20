@@ -1,5 +1,4 @@
 using fluXis.Graphics.UserInterface;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
@@ -11,19 +10,10 @@ public partial class SettingsToggle : SettingsItem
 
     public Bindable<bool> Bindable { get; init; } = new();
 
-    [BackgroundDependencyLoader]
-    private void load()
+    protected override Drawable CreateContent() => new FluXisToggleSwitch
     {
-        AddRange(new Drawable[]
-        {
-            new FluXisToggleSwitch
-            {
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight,
-                State = Bindable
-            }
-        });
-    }
+        State = Bindable
+    };
 
     protected override void Reset() => Bindable.SetDefault();
 }

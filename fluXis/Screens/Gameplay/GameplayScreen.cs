@@ -208,7 +208,13 @@ public partial class GameplayScreen : FluXisScreen, IKeyBindingHandler<FluXisGlo
         getKeyCountFromEvents();
 
         dependencies.CacheAs(Samples);
-        dependencies.CacheAs<ICustomColorProvider>(Map.Colors);
+
+        var colors = Map.Colors.JsonCopy();
+
+        if (RealmMap.Settings.DisableColors)
+            colors.PrimaryHex = colors.SecondaryHex = colors.MiddleHex = "";
+
+        dependencies.CacheAs<ICustomColorProvider>(colors);
 
         var shaders = buildShaders();
         var transforms = shaders.TransformHandlers.ToList();

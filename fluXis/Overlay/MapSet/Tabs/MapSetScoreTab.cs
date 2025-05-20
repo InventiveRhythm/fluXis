@@ -14,7 +14,7 @@ using fluXis.Online.Drawables.Clubs;
 using fluXis.Online.Drawables.Images;
 using fluXis.Online.Fluxel;
 using fluXis.Scoring.Enums;
-using fluXis.Screens.Select.Info.Scores;
+using fluXis.Screens.Select.Info.Tabs.Scores;
 using fluXis.Utils;
 using fluXis.Utils.Extensions;
 using JetBrains.Annotations;

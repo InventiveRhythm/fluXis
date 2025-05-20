@@ -1,3 +1,4 @@
+using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,15 +12,15 @@ public partial class SettingsDivider : CircularContainer
     private void load()
     {
         Masking = true;
-        CornerRadius = 5;
+        CornerRadius = 2;
         RelativeSizeAxes = Axes.X;
-        Height = 3;
-        Margin = new MarginPadding { Vertical = 10 };
+        Height = 4;
+        Margin = new MarginPadding { Vertical = 12 };
 
         Child = new Box
         {
             RelativeSizeAxes = Axes.Both,
-            Alpha = 0.5f
+            Colour = FluXisColors.Background3
         };
     }
 }

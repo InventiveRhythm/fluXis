@@ -22,6 +22,7 @@ public partial class SettingsKeybind : SettingsItem
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
+    [Resolved]
     private FluXisRealm realm { get; set; }
 
     public override bool AcceptsFocus => true;
@@ -29,7 +30,6 @@ public partial class SettingsKeybind : SettingsItem
     public object[] Keybinds;
 
     private FillFlowContainer<KeybindContainer> flow;
-
     private int index = -1;
 
     public SettingsKeybind()
@@ -38,20 +38,14 @@ public partial class SettingsKeybind : SettingsItem
         HideWhenDisabled = true;
     }
 
-    [BackgroundDependencyLoader]
-    private void load(FluXisRealm realm)
+    protected override Drawable CreateContent() => flow = new FillFlowContainer<KeybindContainer>
     {
-        this.realm = realm;
-
-        Add(flow = new FillFlowContainer<KeybindContainer>
-        {
-            AutoSizeAxes = Axes.Both,
-            Anchor = Anchor.CentreRight,
-            Origin = Anchor.CentreRight,
-            Direction = FillDirection.Horizontal,
-            Spacing = new Vector2(5, 0)
-        });
-    }
+        AutoSizeAxes = Axes.Both,
+        Anchor = Anchor.CentreRight,
+        Origin = Anchor.CentreRight,
+        Direction = FillDirection.Horizontal,
+        Spacing = new Vector2(4, 0)
+    };
 
     protected override void LoadComplete()
     {

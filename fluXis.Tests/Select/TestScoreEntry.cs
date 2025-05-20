@@ -4,7 +4,7 @@ using fluXis.Graphics.UserInterface.Context;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Scoring.Enums;
-using fluXis.Screens.Select.Info.Scores;
+using fluXis.Screens.Select.Info.Tabs.Scores;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;

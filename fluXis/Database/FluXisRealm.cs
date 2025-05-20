@@ -37,8 +37,9 @@ public class FluXisRealm : IDisposable
     /// 16 - Add `Version` to `RealmScore`
     /// 17 - Romanizable Title and Artist
     /// 18 - Reset online score IDs
+    /// 19 - Add `RealmMapUserSettings`
     /// </summary>
-    private const int schema_version = 18;
+    private const int schema_version = 19;
 
     private Realm updateRealm;
 
@@ -276,6 +277,13 @@ public class FluXisRealm : IDisposable
             {
                 var scores = migration.NewRealm.All<RealmScore>().ToList();
                 scores.ForEach(x => x.OnlineID = -1);
+                break;
+            }
+
+            case 19:
+            {
+                var maps = migration.NewRealm.All<RealmMap>().ToList();
+                maps.ForEach(x => x.Settings = new RealmMapUserSettings());
                 break;
             }
         }

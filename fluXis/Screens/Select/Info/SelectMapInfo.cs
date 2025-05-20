@@ -1,6 +1,6 @@
 using System;
 using fluXis.Screens.Select.Info.Header;
-using fluXis.Screens.Select.Info.Scores;
+using fluXis.Screens.Select.Info.Tabs.Scores;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,9 +10,10 @@ namespace fluXis.Screens.Select.Info;
 
 public partial class SelectMapInfo : GridContainer
 {
-    public ScoreList ScoreList { get; private set; }
-
+    public ScoreListTab ScoreList => tabs.Scores;
     public Action HoverAction { get; init; }
+
+    private SelectInfoTabs tabs;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -26,23 +27,13 @@ public partial class SelectMapInfo : GridContainer
         RowDimensions = new Dimension[]
         {
             new(GridSizeMode.AutoSize),
-            new(GridSizeMode.Absolute, 10),
             new()
         };
 
         Content = new[]
         {
             new Drawable[] { new SelectMapInfoHeader() },
-            Array.Empty<Drawable>(), // Spacer
-            new Drawable[]
-            {
-                new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Bottom = 20 },
-                    Child = ScoreList = new ScoreList()
-                }
-            }
+            new Drawable[] { tabs = new SelectInfoTabs() }
         };
     }
 

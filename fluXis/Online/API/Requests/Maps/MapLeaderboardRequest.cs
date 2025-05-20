@@ -1,5 +1,5 @@
 using fluXis.Online.API.Responses.Maps;
-using fluXis.Screens.Select.Info.Scores;
+using fluXis.Screens.Select.Info.Tabs.Scores;
 using osu.Framework.IO.Network;
 
 namespace fluXis.Online.API.Requests.Maps;

@@ -25,7 +25,7 @@ public partial class SettingsSubSection : FillFlowContainer
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         Direction = FillDirection.Vertical;
-        Spacing = new Vector2(0, 10);
+        Spacing = new Vector2(12);
 
         InternalChild = new Container
         {
@@ -53,7 +53,7 @@ public partial class SettingsSubSection : FillFlowContainer
                         new FluXisSpriteText
                         {
                             Text = Title,
-                            FontSize = 38,
+                            WebFontSize = 28,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft
                         }

@@ -35,7 +35,15 @@ public partial class HitObjectManager : Container<HitObjectColumn>
     public bool UseSnapColors => useSnapColors.Value;
 
     private Bindable<float> scrollSpeed;
-    public float ScrollSpeed => scrollSpeed.Value * (scrollSpeed.Value / (scrollSpeed.Value * ruleset.Rate));
+
+    public float ScrollSpeed
+    {
+        get
+        {
+            var speed = playfield.RealmMap.Settings.ScrollSpeed ?? scrollSpeed.Value;
+            return speed * (speed / (speed * ruleset.Rate));
+        }
+    }
 
     private Bindable<bool> hitsounds;
 
@@ -209,7 +217,7 @@ public partial class HitObjectManager : Container<HitObjectColumn>
                 sound = ":tick-small";
         }
 
-        var channel = hitsounding.GetSample(sound, hitsounds.Value);
+        var channel = hitsounding.GetSample(sound, hitsounds.Value && !playfield.RealmMap.Settings.DisableHitSounds);
         channel?.Play();
     }
 }

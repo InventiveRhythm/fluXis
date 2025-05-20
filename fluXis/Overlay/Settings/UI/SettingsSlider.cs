@@ -3,9 +3,10 @@ using System.Numerics;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
 using fluXis.Utils;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using Vector2 = osuTK.Vector2;
 
 namespace fluXis.Overlay.Settings.UI;
 
@@ -19,33 +20,32 @@ public partial class SettingsSlider<T> : SettingsItem
 
     protected override bool IsDefault => Bindable.IsDefault;
 
-    private BindableNumber<T> bindableNumber => Bindable as BindableNumber<T>;
-
     private FluXisSpriteText valueLabel;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    protected override Drawable CreateContent() => new FillFlowContainer
     {
-        AddRange(new Drawable[]
+        AutoSizeAxes = Axes.Both,
+        Direction = FillDirection.Horizontal,
+        Spacing = new Vector2(8),
+        Children = new Drawable[]
         {
             valueLabel = new FluXisSpriteText
             {
                 Text = ValueLabel,
-                FontSize = 24,
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight,
-                Margin = new MarginPadding { Right = 410 }
+                WebFontSize = 14,
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft
             },
             new FluXisSlider<T>
             {
                 Bindable = Bindable,
                 Step = Step,
                 Width = 400,
-                Anchor = Anchor.CentreRight,
-                Origin = Anchor.CentreRight
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft
             }
-        });
-    }
+        }
+    };
 
     protected override void Reset() => Bindable.SetDefault();
 

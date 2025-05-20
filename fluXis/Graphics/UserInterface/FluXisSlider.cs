@@ -144,6 +144,12 @@ public partial class FluXisSlider<T> : Container where T : struct, INumber<T>, I
             };
         }
 
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            Scheduler.Add(() => FinishTransforms(true));
+        }
+
         protected override void UpdateValue(float value)
         {
             var colour = parent.CustomColor ?? FluXisColors.AccentGradient.Interpolate(new Vector2(value, 1));

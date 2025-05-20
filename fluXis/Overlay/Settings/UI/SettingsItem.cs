@@ -2,7 +2,6 @@ using System;
 using fluXis.Audio;
 using fluXis.Graphics.Sprites;
 using fluXis.Graphics.UserInterface;
-using fluXis.Graphics.UserInterface.Color;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -24,6 +23,7 @@ public abstract partial class SettingsItem : Container
     public bool HideWhenDisabled { get; init; }
 
     public bool Padded { get; init; }
+    public bool SmallReset { get; init; }
 
     public bool Enabled
     {
@@ -34,6 +34,13 @@ public abstract partial class SettingsItem : Container
     public BindableBool EnabledBindable { get; init; } = new(true);
 
     protected FillFlowContainer TextFlow { get; private set; }
+
+    protected new Container Content { get; } = new()
+    {
+        AutoSizeAxes = Axes.Both,
+        Anchor = Anchor.CentreRight,
+        Origin = Anchor.CentreRight
+    };
 
     private bool isDefault;
     private ResetButton resetButton;
@@ -48,6 +55,7 @@ public abstract partial class SettingsItem : Container
         {
             resetButton = new ResetButton
             {
+                Small = SmallReset,
                 ClickAction = Reset
             },
             TextFlow = new FillFlowContainer
@@ -62,20 +70,17 @@ public abstract partial class SettingsItem : Container
                     new FluXisSpriteText
                     {
                         Text = Label,
-                        FontSize = 24,
-                        Anchor = Anchor.TopLeft,
-                        Origin = Anchor.TopLeft
+                        WebFontSize = 16
                     },
                     new FluXisSpriteText
                     {
                         Text = Description,
-                        Colour = FluXisColors.Text2,
-                        FontSize = 16,
-                        Anchor = Anchor.TopLeft,
-                        Origin = Anchor.TopLeft
+                        WebFontSize = 12,
+                        Alpha = .8f
                     }
                 }
-            }
+            },
+            Content.WithChild(CreateContent())
         };
     }
 
@@ -84,12 +89,16 @@ public abstract partial class SettingsItem : Container
         base.LoadComplete();
         updateResetButton();
 
+        Content.FinishTransforms(true);
+
         EnabledBindable.BindValueChanged(e =>
         {
             var hideAlpha = HideWhenDisabled ? 0 : .5f;
             this.FadeTo(e.NewValue ? 1 : hideAlpha, HideWhenDisabled ? 0 : 200);
         }, true);
     }
+
+    protected abstract Drawable CreateContent();
 
     protected override void Update()
     {
@@ -116,6 +125,8 @@ public abstract partial class SettingsItem : Container
 
         public Action ClickAction { get; init; }
 
+        public bool Small { get; init; }
+
         private Container content;
         private HoverLayer hover;
         private FlashLayer flash;
@@ -127,7 +138,7 @@ public abstract partial class SettingsItem : Container
             Size = new Vector2(32);
             Anchor = Anchor.CentreLeft;
             Origin = Anchor.Centre;
-            X = -10 - 16;
+            X = Small ? -16 : -26;
             Alpha = 0;
             AlwaysPresent = true;
 
@@ -161,14 +172,14 @@ public abstract partial class SettingsItem : Container
         public override void Show()
         {
             this.FadeIn(200);
-            this.ScaleTo(1, 400, Easing.OutQuint);
+            this.ScaleTo(Small ? .8f : 1, 400, Easing.OutQuint);
             icon.RotateTo(40).RotateTo(0, 400, Easing.OutQuint);
         }
 
         public override void Hide()
         {
             this.FadeOut(200);
-            this.ScaleTo(.9f, 400, Easing.OutQuint);
+            this.ScaleTo(Small ? .7f : .9f, 400, Easing.OutQuint);
             icon.RotateTo(-40, 400, Easing.OutQuint);
         }
 

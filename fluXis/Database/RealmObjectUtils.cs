@@ -17,6 +17,7 @@ public static class RealmObjectUtils
 
         c.CreateMap<RealmScore, RealmScore>();
         c.CreateMap<RealmMapMetadata, RealmMapMetadata>();
+        c.CreateMap<RealmMapUserSettings, RealmMapUserSettings>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();
         c.CreateMap<RealmMap, RealmMap>()
          .ForMember(s => s.Metadata, cc => cc.Ignore())
@@ -133,6 +134,7 @@ public static class RealmObjectUtils
 
         c.CreateMap<RealmMap, RealmMap>();
         c.CreateMap<RealmMapMetadata, RealmMapMetadata>();
+        c.CreateMap<RealmMapUserSettings, RealmMapUserSettings>();
         c.CreateMap<RealmMapSet, RealmMapSet>();
         c.CreateMap<RealmScore, RealmScore>();
         c.CreateMap<RealmMapFilters, RealmMapFilters>();
