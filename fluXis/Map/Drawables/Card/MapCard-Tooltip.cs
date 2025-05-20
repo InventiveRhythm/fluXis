@@ -55,7 +55,7 @@ public partial class MapCard
                     {
                         Size = new Vector2(48, 14),
                         WebFontSize = 10,
-                        Rating = map.Rating
+                        APIMap = map
                     }
                 }
             };

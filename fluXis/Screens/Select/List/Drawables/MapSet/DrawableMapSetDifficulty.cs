@@ -200,7 +200,6 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
                                                             Width = 50,
                                                             Height = 14,
                                                             FontSize = 14,
-                                                            Rating = map.Rating,
                                                             Margin = new MarginPadding { Right = 5 }
                                                         }
                                                     }.Concat(getIcons()).ToArray()
@@ -258,6 +257,8 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
         base.LoadComplete();
 
         map.RatingChanged += updateRating;
+        updateRating();
+
         scores.TopScoreUpdated += updateTopScore;
         updateTopScore(map.ID, scores.GetCurrentTop(map.ID));
     }
@@ -281,7 +282,7 @@ public partial class DrawableMapSetDifficulty : Container, IHasContextMenu, ICom
 
     private void updateRating() => Scheduler.ScheduleIfNeeded(() =>
     {
-        ratingChip.Rating = map.Rating;
+        ratingChip.RealmMap = map;
         RequestedResort?.Invoke();
     });
 

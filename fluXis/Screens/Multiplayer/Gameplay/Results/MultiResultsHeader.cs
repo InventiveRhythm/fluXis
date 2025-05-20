@@ -143,7 +143,7 @@ public partial class MultiResultsHeader : CompositeDrawable
                                         new DifficultyChip
                                         {
                                             Size = new Vector2(80, 20),
-                                            Rating = map.Rating,
+                                            RealmMap = map,
                                             FontSize = 19,
                                             Anchor = Anchor.CentreLeft,
                                             Origin = Anchor.CentreLeft,

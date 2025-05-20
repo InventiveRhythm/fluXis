@@ -235,7 +235,7 @@ public partial class SelectMapInfoHeader : CompositeDrawable
         title.Text = map.Metadata.LocalizedTitle;
         artist.Text = map.Metadata.LocalizedArtist;
         gradient.FadeColour(map.Metadata.Color, 400, Easing.OutQuint);
-        difficulty.Rating = map.Rating;
+        difficulty.RealmMap = map;
         difficultyText.Text = map.Difficulty;
         mapper.Text = $"mapped by {map.Metadata.Mapper}";
 

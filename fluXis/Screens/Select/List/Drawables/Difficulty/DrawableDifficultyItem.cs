@@ -306,7 +306,7 @@ public partial class DrawableDifficultyItem : CompositeDrawable, IHasContextMenu
                                 {
                                     Size = new Vector2(64, 20),
                                     WebFontSize = 12,
-                                    Rating = map.Rating,
+                                    RealmMap = map,
                                     EdgeEffect = FluXisStyles.ShadowSmall,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight
