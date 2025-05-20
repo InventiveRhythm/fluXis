@@ -16,6 +16,7 @@ public partial class FluXisTextFlow : TextFlowContainer
     public FluXisTextFlow(Action<SpriteText> defaultCreationParameters = null)
         : base(defaultCreationParameters)
     {
+        ParagraphSpacing = 0;
     }
 
     public ITextPart AddCustom(Drawable drawable) => AddPart(new TextPartManual(drawable.Yield()));
