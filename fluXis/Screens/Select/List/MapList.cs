@@ -145,7 +145,7 @@ public partial class MapList : FluXisScrollContainer
 
         if (center < DisplayableContent / 2)
             ScrollTo(0, smooth);
-        else if (center > ScrollableExtent - DisplayableContent / 2)
+        else if (center > ScrollableExtent + DisplayableContent / 2)
             ScrollToEnd(smooth);
         else
             ScrollTo(center - DisplayableContent / 2, smooth);
