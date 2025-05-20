@@ -754,7 +754,7 @@ public partial class Editor : FluXisScreen, IKeyBindingHandler<FluXisGlobalKeybi
         req.Success += _ =>
         {
             notifications.SendSmallText("Submitted to queue!");
-            panels.Hide();
+            panel.Hide();
         };
         req.Failure += ex => panels.Replace(new SingleButtonPanel(
             FontAwesome6.Solid.ExclamationTriangle,
