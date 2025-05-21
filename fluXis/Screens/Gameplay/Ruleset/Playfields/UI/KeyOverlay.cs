@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using fluXis.Database;
 using fluXis.Graphics.Sprites;
-using fluXis.Input;
 using fluXis.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -28,25 +26,9 @@ public partial class KeyOverlay : Container
     [Resolved]
     private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
 
-    public List<FluXisGameplayKeybind> Keybinds
-    {
-        get
-        {
-            var binds = ruleset.Input.Keys;
-
-            if (ruleset.Input.Dual)
-            {
-                var half = ruleset.Input.Keys.Count / 2;
-                var start = half * playfield.Index;
-                return binds.GetRange(start, half);
-            }
-
-            return binds;
-        }
-    }
-
     private FillFlowContainer flow;
     private int keyCount;
+    private bool first = true;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -55,11 +37,20 @@ public partial class KeyOverlay : Container
         Anchor = Anchor.BottomCentre;
         Origin = Anchor.BottomCentre;
 
+        var binds = ruleset.Input.Keys;
+
+        if (ruleset.Input.Dual)
+        {
+            var half = ruleset.Input.Keys.Count / 2;
+            var start = half * playfield.Index;
+            binds = binds.GetRange(start, half);
+        }
+
         InternalChild = flow = new FillFlowContainer
         {
             AutoSizeAxes = Axes.Both,
             Direction = FillDirection.Horizontal,
-            Children = Keybinds.Select(x => new KeybindContainer
+            Children = binds.Select(x => new KeybindContainer
             {
                 Keybind = keyCombinationProvider.GetReadableString(InputUtils.GetBindingFor(x, realm).KeyCombination)
             }).ToList()
@@ -73,7 +64,13 @@ public partial class KeyOverlay : Container
         else if (keyCount != laneSwitchManager.CurrentCount)
         {
             keyCount = laneSwitchManager.CurrentCount;
-            flow.FadeIn(200).Delay(1200).FadeOut(200);
+
+            const double fade_duration = 300;
+            var duration = first ? 8000d : 4000d;
+            duration -= fade_duration * 2;
+            first = false;
+
+            flow.FadeIn(fade_duration).Delay(duration).FadeOut(fade_duration);
         }
 
         Y = -laneSwitchManager.HitPosition - 50;
