@@ -256,6 +256,7 @@ public class MapEvents
         return Sort();
     }
 
+    [JsonIgnore]
     public IEnumerable<PropertyInfo> AllListProperties
     {
         get
