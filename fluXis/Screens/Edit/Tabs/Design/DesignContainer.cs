@@ -50,7 +50,6 @@ public partial class DesignContainer : EditorTabContainer
 
     private static Type[] ignoredForRebuild { get; } =
     {
-        typeof(FlashEvent),
         typeof(PulseEvent),
         typeof(ShaderEvent),
         typeof(NoteEvent)
