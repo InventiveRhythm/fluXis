@@ -19,6 +19,10 @@ public class EditorSnapProvider
 
     public double SnapTime(double time, bool allowNext)
     {
+        // fix for a weird bug that tries to snap a 17-digit number
+        if (time >= clock.TrackLength)
+            return time;
+
         var tp = map.MapInfo.GetTimingPoint(time);
         double t = tp.Time;
         double increase = tp.Signature * tp.MsPerBeat / (4 * settings.SnapDivisor);
