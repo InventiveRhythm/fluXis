@@ -22,16 +22,18 @@ public partial class LaneSwitchManager : CompositeComponent
     private List<LaneSwitchEvent> events { get; set; }
     private int keycount { get; set; }
     private bool newLayout { get; set; }
+    private bool mirror { get; }
 
     public LaneSwitchEvent Current { get; private set; }
     public int CurrentCount { get; private set; }
     public float HitPosition { get; private set; }
 
-    public LaneSwitchManager(List<LaneSwitchEvent> events, int keycount, bool newLayout)
+    public LaneSwitchManager(List<LaneSwitchEvent> events, int keycount, bool newLayout, bool mirror)
     {
         this.newLayout = newLayout;
         this.events = events;
         this.keycount = keycount;
+        this.mirror = mirror;
     }
 
     [BackgroundDependencyLoader]
@@ -109,6 +111,11 @@ public partial class LaneSwitchManager : CompositeComponent
     {
         var count = Math.Max(1, ev.Count);
         var w = skin.SkinJson.GetKeymode(count).ColumnWidth;
-        return LaneSwitchEvent.GetRow(count, keycount, newLayout).Select(l => l ? w : 0);
+        var row = LaneSwitchEvent.GetRow(count, keycount, newLayout).Select(l => l ? w : 0);
+
+        if (mirror)
+            row = row.Reverse();
+
+        return row;
     }
 }

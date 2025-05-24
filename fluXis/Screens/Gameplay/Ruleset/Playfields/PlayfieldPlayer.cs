@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using fluXis.Database.Maps;
 using fluXis.Map;
+using fluXis.Mods;
 using fluXis.Online.API.Models.Users;
 using fluXis.Scoring;
 using fluXis.Scoring.Processing;
@@ -57,7 +58,7 @@ public partial class PlayfieldPlayer : CompositeDrawable, IHUDDependencyProvider
             }
         });
 
-        AddInternal(dependencies.CacheAsAndReturn(new LaneSwitchManager(ruleset.MapEvents.LaneSwitchEvents, ruleset.MapInfo.RealmEntry!.KeyCount, ruleset.MapInfo.NewLaneSwitchLayout)));
+        AddInternal(dependencies.CacheAsAndReturn(new LaneSwitchManager(ruleset.MapEvents.LaneSwitchEvents, ruleset.MapInfo.RealmEntry!.KeyCount, ruleset.MapInfo.NewLaneSwitchLayout, ruleset.Mods.Any(x => x is MirrorMod))));
 
         var content = new SortingContainer { RelativeSizeAxes = Axes.Both };
         content.Child = MainPlayfield;
