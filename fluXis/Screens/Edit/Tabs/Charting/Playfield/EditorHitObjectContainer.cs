@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Map.Structures;
@@ -92,14 +91,14 @@ public partial class EditorHitObjectContainer : Container<EditorHitObject>
     {
         base.Update();
 
-        var remove = Children.Where(x => Math.Abs(x.Delta) >= 2000).ToList();
+        var remove = Children.Where(x => !x.Visible).ToList();
         remove.ForEach(x =>
         {
             Remove(x, false);
             back.Add(x);
         });
 
-        var add = back.Where(x => Math.Abs(x.Delta) <= 2000).ToList();
+        var add = back.Where(x => x.Visible).ToList();
         add.ForEach(x =>
         {
             Add(x);

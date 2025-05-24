@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using fluXis.Graphics.Sprites;
@@ -16,13 +17,14 @@ public abstract partial class EditorHitObject : CompositeDrawable
     protected EditorPlayfield Playfield { get; private set; }
 
     [Resolved]
-    private EditorClock clock { get; set; }
+    protected EditorClock EditorClock { get; private set; }
 
     [Resolved]
     private EditorSettings settings { get; set; }
 
     public HitObject Data { get; }
-    public double Delta => Data.Time - clock.CurrentTime;
+
+    public virtual bool Visible => Math.Abs(EditorClock.CurrentTime - Data.Time) <= 2000;
 
     private FluXisSpriteText text { get; set; }
 
@@ -72,10 +74,10 @@ public abstract partial class EditorHitObject : CompositeDrawable
         X = Playfield.HitObjectContainer.PositionFromLane(Data.Lane);
         Y = Playfield.HitObjectContainer.PositionAtTime(Data.Time);
 
-        if (Data.Time <= clock.CurrentTime && clock.CurrentTime - Data.Time <= max_distance && overZero)
+        if (Data.Time <= EditorClock.CurrentTime && EditorClock.CurrentTime - Data.Time <= max_distance && overZero)
             Playfield.PlayHitSound(Data);
 
-        overZero = Data.Time > clock.CurrentTime;
+        overZero = Data.Time > EditorClock.CurrentTime;
     }
 
     protected override bool OnHover(HoverEvent e) => true;

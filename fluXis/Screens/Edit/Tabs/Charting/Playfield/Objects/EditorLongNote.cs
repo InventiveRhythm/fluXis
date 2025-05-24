@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using fluXis.Map.Structures;
 using fluXis.Skinning.Bases;
 using fluXis.Skinning.Default.HitObject;
@@ -8,6 +9,20 @@ namespace fluXis.Screens.Edit.Tabs.Charting.Playfield.Objects;
 
 public partial class EditorLongNote : EditorHitObject
 {
+    public override bool Visible
+    {
+        get
+        {
+            var inbound = EditorClock.CurrentTime >= Data.Time && EditorClock.CurrentTime <= Data.EndTime;
+            if (inbound) return true;
+
+            var start = base.Visible;
+            var end = Math.Abs(EditorClock.CurrentTime - Data.EndTime) <= 2000;
+
+            return start || end;
+        }
+    }
+
     private Drawable head;
     private Drawable body;
     public Drawable End { get; private set; }
