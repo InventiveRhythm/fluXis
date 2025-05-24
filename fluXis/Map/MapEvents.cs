@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using fluXis.Map.Structures.Bases;
 using fluXis.Map.Structures.Events;
 using fluXis.Scripting;
@@ -254,23 +256,62 @@ public class MapEvents
         return Sort();
     }
 
+    public IEnumerable<PropertyInfo> AllListProperties
+    {
+        get
+        {
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.GetField);
+
+            foreach (var prop in properties)
+            {
+                var type = prop.PropertyType;
+
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(List<>))
+                    continue;
+
+                var obsolete = prop.GetCustomAttribute<ObsoleteAttribute>();
+                if (obsolete is not null) continue;
+
+                var itemType = prop.PropertyType.GetGenericArguments()[0];
+
+                if (!typeof(ITimedObject).IsAssignableFrom(itemType))
+                    continue;
+
+                yield return prop;
+            }
+        }
+    }
+
+    public void ForAllEvents(Action<ITimedObject> action)
+    {
+        foreach (var prop in AllListProperties)
+        {
+            if (prop.GetValue(this) is not IEnumerable list)
+                continue;
+
+            foreach (var o in list)
+            {
+                var obj = o as ITimedObject;
+                action?.Invoke(obj);
+            }
+        }
+    }
+
     public MapEvents Sort()
     {
-        LaneSwitchEvents.Sort(compare);
-        FlashEvents.Sort(compare);
-        PulseEvents.Sort(compare);
-        PlayfieldMoveEvents.Sort(compare);
-        PlayfieldScaleEvents.Sort(compare);
-        LayerFadeEvents.Sort(compare);
-        HitObjectEaseEvents.Sort(compare);
-        ShakeEvents.Sort(compare);
-        ShaderEvents.Sort(compare);
-        BeatPulseEvents.Sort(compare);
-        PlayfieldRotateEvents.Sort(compare);
-        ScrollMultiplyEvents.Sort(compare);
-        TimeOffsetEvents.Sort(compare);
-        ScriptEvents.Sort(compare);
-        NoteEvents.Sort(compare);
+        foreach (var prop in AllListProperties)
+        {
+            var itemType = prop.PropertyType.GetGenericArguments()[0];
+
+            var list = prop.GetValue(this);
+            if (list is null) continue;
+
+            var compare = typeof(MapEvents).GetMethod(nameof(MapEvents.compare), BindingFlags.Static | BindingFlags.NonPublic);
+            var comparison = Delegate.CreateDelegate(typeof(Comparison<>).MakeGenericType(itemType), compare);
+
+            var sort = typeof(List<>).MakeGenericType(itemType).GetMethod("Sort", new[] { comparison.GetType() });
+            sort?.Invoke(list, new object[] { comparison });
+        }
 
         return this;
     }
