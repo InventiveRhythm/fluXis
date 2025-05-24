@@ -50,7 +50,6 @@ public partial class ProfileHeader : Container
                 LoadContent = () => new DrawableBanner(user)
                 {
                     RelativeSizeAxes = Axes.Both,
-                    FillMode = FillMode.Fill,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre
                 },
@@ -95,7 +94,6 @@ public partial class ProfileHeader : Container
                                     LoadContent = () => new DrawableAvatar(user)
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        FillMode = FillMode.Fill,
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre
                                     },

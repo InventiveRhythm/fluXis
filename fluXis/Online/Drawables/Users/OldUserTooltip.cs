@@ -73,7 +73,6 @@ public partial class OldUserTooltip : Container
                         Child = avatar = new DrawableAvatar(null)
                         {
                             RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fill,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
                         }

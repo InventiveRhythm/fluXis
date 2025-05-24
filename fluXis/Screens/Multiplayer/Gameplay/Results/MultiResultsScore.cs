@@ -67,7 +67,6 @@ public partial class MultiResultsScore : CompositeDrawable
                         LoadContent = () => new DrawableAvatar(user)
                         {
                             RelativeSizeAxes = Axes.Both,
-                            FillMode = FillMode.Fill,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre
                         }

@@ -25,8 +25,14 @@ public class APIUser
     [JsonProperty("avatar")]
     public string? AvatarHash { get; set; }
 
+    [JsonProperty("avatar_animated")]
+    public bool HasAnimatedAvatar { get; set; }
+
     [JsonProperty("banner")]
     public string? BannerHash { get; set; }
+
+    [JsonProperty("banner_animated")]
+    public bool HasAnimatedBanner { get; set; }
 
     [JsonProperty("aboutme")]
     public string? AboutMe { get; set; }

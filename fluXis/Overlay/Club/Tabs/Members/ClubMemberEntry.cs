@@ -54,8 +54,7 @@ public partial class ClubMemberEntry : FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    FillMode = FillMode.Fill
+                    Origin = Anchor.Centre
                 },
                 OnComplete = a => a.FadeInFromZero(300)
             },

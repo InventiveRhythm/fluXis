@@ -174,8 +174,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    FillMode = FillMode.Fill
+                                    Origin = Anchor.Centre
                                 }
                             },
                             Action = () =>
@@ -183,7 +182,7 @@ public partial class DashboardAccountTab : DashboardTab
                                 panels.Content = new FileSelect
                                 {
                                     OnFileSelected = file => uploadImage(file, false),
-                                    AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
+                                    AllowedExtensions = FluXisGame.PROFILE_ASSET_EXTENSIONS
                                 };
                             }
                         },
@@ -201,14 +200,13 @@ public partial class DashboardAccountTab : DashboardTab
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                    FillMode = FillMode.Fill
+                                    Origin = Anchor.Centre
                                 }
                             },
                             Action = () => panels.Content = new FileSelect
                             {
                                 OnFileSelected = file => uploadImage(file, true),
-                                AllowedExtensions = FluXisGame.IMAGE_EXTENSIONS
+                                AllowedExtensions = FluXisGame.PROFILE_ASSET_EXTENSIONS
                             }
                         }
                     }
