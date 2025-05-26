@@ -82,7 +82,7 @@ public class MapImporter
     /// </returns>
     protected string CreateTempFolder(string name)
     {
-        string path = Path.Combine(Storage.GetFullPath("import"), name);
+        string path = Path.Combine(Storage.GetFullPath("temp"), name);
 
         if (Directory.Exists(path))
             Directory.Delete(path, true);
@@ -117,7 +117,7 @@ public class MapImporter
     /// </returns>
     protected string CreatePackage(string name, string folder)
     {
-        string path = Path.Combine(Storage.GetFullPath("import"), PathUtils.RemoveAllInvalidPathCharacters(name) + ".fms");
+        string path = Path.Combine(Storage.GetFullPath("temp"), PathUtils.RemoveAllInvalidPathCharacters(name) + ".fms");
         ZipFile.CreateFromDirectory(folder, path, CompressionLevel.NoCompression, false);
         return path;
     }

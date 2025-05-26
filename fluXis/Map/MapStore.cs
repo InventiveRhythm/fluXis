@@ -394,7 +394,7 @@ public partial class MapStore : Component
                     }
 
                     // write data to file
-                    var path = storage.GetFullPath($"download/{set.ID}.zip");
+                    var path = storage.GetFullPath($"temp/{set.ID}.zip");
                     var dir = Path.GetDirectoryName(path);
 
                     if (!Directory.Exists(dir))
@@ -488,7 +488,7 @@ public partial class MapStore : Component
                     }
 
                     // write data to file
-                    var path = storage.GetFullPath($"download/{set.ID}.zip");
+                    var path = storage.GetFullPath($"temp/{set.ID}.zip");
                     var dir = Path.GetDirectoryName(path);
 
                     if (!Directory.Exists(dir))
